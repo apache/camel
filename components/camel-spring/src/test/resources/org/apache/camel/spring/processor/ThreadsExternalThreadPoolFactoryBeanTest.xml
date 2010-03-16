@@ -31,7 +31,7 @@
                 threadName="myPool"
                 keepAliveTime="30"
                 rejectedPolicy="DiscardOldest"
-                units="SECONDS"
+                timeUnit="SECONDS"
                 daemon="true"
                 xmlns="http://camel.apache.org/schema/spring"/>
 

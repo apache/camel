@@ -57,7 +57,7 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .threads()
+                    .threads(25, 45)
                     .to("mock:result");
             }
         };

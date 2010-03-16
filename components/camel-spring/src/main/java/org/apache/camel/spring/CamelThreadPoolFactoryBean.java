@@ -47,7 +47,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelThreadPoolFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware, ApplicationContextAware {
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private Integer poolSize;
     @XmlAttribute
     private Integer maxPoolSize;
@@ -55,11 +55,11 @@ public class CamelThreadPoolFactoryBean extends IdentifiedType implements Factor
     private Long keepAliveTime = 60L;
     @XmlAttribute
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
-    private TimeUnit units = TimeUnit.SECONDS;
+    private TimeUnit timeUnit = TimeUnit.SECONDS;
     @XmlAttribute
     private Integer maxQueueSize = -1;
     @XmlAttribute
-    private ThreadPoolRejectedPolicy rejectedPolicy;
+    private ThreadPoolRejectedPolicy rejectedPolicy = ThreadPoolRejectedPolicy.CallerRuns;
     @XmlAttribute
     private String threadName;
     @XmlAttribute
@@ -75,24 +75,22 @@ public class CamelThreadPoolFactoryBean extends IdentifiedType implements Factor
         if (camelContext == null && camelContextId != null) {
             camelContext = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
         }
+
         notNull(camelContext, "camelContext");
+        if (poolSize == null || poolSize <= 0) {
+            throw new IllegalArgumentException("PoolSize must be a positive number");
+        }
 
         String name = getThreadName() != null ? getThreadName() : getId();
 
-        ExecutorService answer;
-        if (getPoolSize() == null || getPoolSize() <= 0) {
-            // use the default profile
-            answer = camelContext.getExecutorServiceStrategy().newDefaultThreadPool(getId(), name);
-        } else {
-            // use a custom pool based on the settings
-            int max = getMaxPoolSize() != null ? getMaxPoolSize() : getPoolSize();
-            RejectedExecutionHandler rejected = null;
-            if (rejectedPolicy != null) {
-                rejected = rejectedPolicy.asRejectedExecutionHandler();
-            }
-            answer = camelContext.getExecutorServiceStrategy().newThreadPool(getId(), name, getPoolSize(), max,
-                    getKeepAliveTime(), getUnits(), getMaxQueueSize(), rejected, isDaemon());
+        int max = getMaxPoolSize() != null ? getMaxPoolSize() : getPoolSize();
+        RejectedExecutionHandler rejected = null;
+        if (rejectedPolicy != null) {
+            rejected = rejectedPolicy.asRejectedExecutionHandler();
         }
+
+        ExecutorService answer = camelContext.getExecutorServiceStrategy().newThreadPool(getId(), name, getPoolSize(), max,
+                    getKeepAliveTime(), getTimeUnit(), getMaxQueueSize(), rejected, isDaemon());
         return answer;
     }
 
@@ -128,12 +126,12 @@ public class CamelThreadPoolFactoryBean extends IdentifiedType implements Factor
         this.keepAliveTime = keepAliveTime;
     }
 
-    public TimeUnit getUnits() {
-        return units;
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
     }
 
-    public void setUnits(TimeUnit units) {
-        this.units = units;
+    public void setTimeUnit(TimeUnit timeUnit) {
+        this.timeUnit = timeUnit;
     }
 
     public Integer getMaxQueueSize() {
