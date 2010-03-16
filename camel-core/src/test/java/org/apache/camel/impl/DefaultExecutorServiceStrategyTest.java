@@ -16,6 +16,10 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 
 /**
@@ -68,4 +72,44 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
         // reset it so we can shutdown properly
         context.getExecutorServiceStrategy().setThreadNamePattern("Camel Thread ${counter} - ${name}");
     }
+
+    public void testDefaultThreadPool() throws Exception {
+        ExecutorService myPool = context.getExecutorServiceStrategy().newDefaultThreadPool(this, "myPool");
+        assertEquals(false, myPool.isShutdown());
+
+        // should use default settings
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
+        assertEquals(10, executor.getCorePoolSize());
+        assertEquals(20, executor.getMaximumPoolSize());
+        assertEquals(60, executor.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(Integer.MAX_VALUE, executor.getQueue().remainingCapacity());
+
+        context.stop();
+        assertEquals(true, myPool.isShutdown());
+    }
+
+    public void testCustomDefaultThreadPool() throws Exception {
+        ThreadPoolProfileSupport custom = new ThreadPoolProfileSupport();
+        custom.setKeepAliveTime(20L);
+        custom.setMaxPoolSize(40);
+        custom.setPoolSize(5);
+        custom.setMaxQueueSize(2000);
+
+        context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(custom);
+        assertEquals(true, custom.isDefaultProfile().booleanValue());
+
+        ExecutorService myPool = context.getExecutorServiceStrategy().newDefaultThreadPool(this, "myPool");
+        assertEquals(false, myPool.isShutdown());
+
+        // should use default settings
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
+        assertEquals(5, executor.getCorePoolSize());
+        assertEquals(40, executor.getMaximumPoolSize());
+        assertEquals(20, executor.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(2000, executor.getQueue().remainingCapacity());
+
+        context.stop();
+        assertEquals(true, myPool.isShutdown());
+    }
+
 }

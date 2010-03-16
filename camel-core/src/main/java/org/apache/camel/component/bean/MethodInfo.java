@@ -91,8 +91,8 @@ public class MethodInfo {
             }
 
             if (annotation.parallelProcessoing() && recipientList.getExecutorService() == null) {
-                // we are running in parallel so create a cached thread pool which grows/shrinks automatic
-                ExecutorService executor = camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, "@RecipientList");
+                // we are running in parallel so we need a thread pool
+                ExecutorService executor = camelContext.getExecutorServiceStrategy().newDefaultThreadPool(this, "@RecipientList");
                 recipientList.setExecutorService(executor);
             }
 

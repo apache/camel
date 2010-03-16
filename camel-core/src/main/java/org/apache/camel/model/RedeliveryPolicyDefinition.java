@@ -63,7 +63,7 @@ public class RedeliveryPolicyDefinition {
     @XmlAttribute
     private Boolean logHandled;
     @XmlAttribute
-    private Boolean logExhasted;
+    private Boolean logExhausted;
     @XmlAttribute
     private Boolean disableRedelivery;
 
@@ -115,8 +115,8 @@ public class RedeliveryPolicyDefinition {
         if (logRetryAttempted != null) {
             answer.setLogRetryAttempted(logRetryAttempted);
         }
-        if (logExhasted != null) {
-            answer.setLogExhausted(logExhasted);
+        if (logExhausted != null) {
+            answer.setLogExhausted(logExhausted);
         }
         if (disableRedelivery != null && disableRedelivery) {
             answer.setMaximumRedeliveries(0);
@@ -253,7 +253,7 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition logExhausted(boolean logExhausted) {
-        setLogExhasted(logExhausted);
+        setLogExhausted(logExhausted);
         return this;
     }
 
@@ -438,11 +438,11 @@ public class RedeliveryPolicyDefinition {
         this.logRetryAttempted = logRetryAttempted;
     }
 
-    public Boolean isLogExhasted() {
-        return logExhasted;
+    public Boolean isLogExhausted() {
+        return logExhausted;
     }
 
-    public void setLogExhasted(Boolean logExhasted) {
-        this.logExhasted = logExhasted;
+    public void setLogExhausted(Boolean logExhausted) {
+        this.logExhausted = logExhausted;
     }
 }

@@ -98,7 +98,7 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
         if (isParallelProcessing() && executorService == null) {
             // we are running in parallel so create a cached thread pool which grows/shrinks automatic
-            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "RecipientList");
+            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "RecipientList");
         }
         answer.setExecutorService(executorService);
 

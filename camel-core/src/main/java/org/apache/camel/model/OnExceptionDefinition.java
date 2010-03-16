@@ -366,7 +366,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
      * Sets whether to log exhausted exceptions
      */
     public OnExceptionDefinition logExhausted(boolean logExhausted) {
-        getOrCreateRedeliveryPolicy().setLogExhasted(logExhausted);
+        getOrCreateRedeliveryPolicy().setLogExhausted(logExhausted);
         return this;
     }
 

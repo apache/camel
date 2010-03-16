@@ -151,7 +151,7 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> i
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
         if (isParallelProcessing() && executorService == null) {
             // we are running in parallel so create a cached thread pool which grows/shrinks automatic
-            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "Multicast");
+            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "Multicast");
         }
 
         return new MulticastProcessor(routeContext.getCamelContext(), list, aggregationStrategy, isParallelProcessing(),

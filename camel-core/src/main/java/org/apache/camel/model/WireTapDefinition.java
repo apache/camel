@@ -69,7 +69,7 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
 
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
         if (executorService == null) {
-            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "WireTap");
+            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "WireTap");
         }
         WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern(), executorService);
 

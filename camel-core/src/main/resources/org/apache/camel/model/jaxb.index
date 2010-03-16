@@ -69,6 +69,7 @@ SetPropertyDefinition
 SortDefinition
 SplitDefinition
 StopDefinition
+ThreadPoolProfileDefinition
 ThreadsDefinition
 ThrottleDefinition
 ThrowExceptionDefinition

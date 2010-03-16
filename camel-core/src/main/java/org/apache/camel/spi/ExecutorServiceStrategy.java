@@ -33,10 +33,27 @@ import org.apache.camel.ShutdownableService;
  * do not have to exactly create those kind of pools. Feel free to return a shared or different kind of pool.
  * <p/>
  * However there are two types of pools: regular and scheduled.
+ * <p/>
+ * If you use the <tt>newXXX</tt> methods to create thread pools, then Camel will by default take care of
+ * shutting down those created pools when {@link org.apache.camel.CamelContext} is shutting down.
  *
  * @version $Revision$
  */
 public interface ExecutorServiceStrategy extends ShutdownableService {
+
+    /**
+     * Gets the default thread pool profile
+     *
+     * @return the default profile
+     */
+    ThreadPoolProfile getDefaultThreadPoolProfile();
+
+    /**
+     * Sets the default thread pool profile
+     *
+     * @param defaultThreadPoolProfile the new default thread pool profile
+     */
+    void setDefaultThreadPoolProfile(ThreadPoolProfile defaultThreadPoolProfile);
 
     /**
      * Creates a full thread name
@@ -76,11 +93,20 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
     ExecutorService lookup(Object source, String executorServiceRef);
 
     /**
+     * Creates a new thread pool using the default thread pool profile.
+     *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
+     * @return the created thread pool
+     */
+    ExecutorService newDefaultThreadPool(Object source, String name);
+
+    /**
      * Creates a new cached thread pool.
      *
      * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name        name which is appended to the thread name
-     * @return the thread pool
+     * @return the created thread pool
      */
     ExecutorService newCachedThreadPool(Object source, String name);
 
@@ -90,7 +116,7 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
      * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name        name which is appended to the thread name
      * @param poolSize    the core pool size
-     * @return the thread pool
+     * @return the created thread pool
      */
     ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize);
 
@@ -100,7 +126,7 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
      * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name        name which is appended to the thread name
      * @param poolSize    the core pool size
-     * @return the thread pool
+     * @return the created thread pool
      */
     ExecutorService newFixedThreadPool(Object source, String name, int poolSize);
 
@@ -109,7 +135,7 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
      *
      * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name        name which is appended to the thread name
-     * @return the thread pool
+     * @return the created thread pool
      */
     ExecutorService newSingleThreadExecutor(Object source, String name);
 
@@ -122,7 +148,7 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
      * @param name          name which is appended to the thread name
      * @param corePoolSize  the core pool size
      * @param maxPoolSize   the maximum pool size
-     * @return the thread pool
+     * @return the created thread pool
      */
     ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize);
 
@@ -135,11 +161,12 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
      * @param maxPoolSize   the maximum pool size
      * @param keepAliveTime keep alive time for idle threads
      * @param timeUnit      time unit for keep alive time
+     * @param maxQueueSize  the maximum number of tasks in the queue, use <tt>Integer.MAX_INT</tt> or <tt>-1</tt> to indicate unbounded
      * @param daemon        whether or not the created threads is daemon or not
-     * @return the thread pool
+     * @return the created thread pool
      */
     ExecutorService newThreadPool(Object source, final String name, int corePoolSize, int maxPoolSize,
-                                  long keepAliveTime, TimeUnit timeUnit, boolean daemon);
+                                  long keepAliveTime, TimeUnit timeUnit, int maxQueueSize, boolean daemon);
 
     /**
      * Shutdown the given executor service.

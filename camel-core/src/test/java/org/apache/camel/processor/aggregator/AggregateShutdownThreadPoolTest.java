@@ -94,7 +94,7 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                myPool = context.getExecutorServiceStrategy().newCachedThreadPool(this, "myPool");
+                myPool = context.getExecutorServiceStrategy().newDefaultThreadPool(this, "myPool");
 
                 from("direct:foo").routeId("foo")
                     .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3)

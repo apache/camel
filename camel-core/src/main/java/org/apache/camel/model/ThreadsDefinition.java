@@ -44,20 +44,20 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
 
     @XmlTransient
     private ExecutorService executorService;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Integer poolSize;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Integer maxPoolSize;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Integer keepAliveTime = 60;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     private TimeUnit units = TimeUnit.SECONDS;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String threadName;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
 
     @Override
@@ -69,12 +69,12 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
             String name = getThreadName() != null ? getThreadName() : "Threads";
             if (poolSize == null || poolSize <= 0) {
                 // use the cached thread pool
-                executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, name);
+                executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, name);
             } else {
                 // use a custom pool based on the settings
                 int max = getMaxPoolSize() != null ? getMaxPoolSize() : poolSize;
                 executorService = routeContext.getCamelContext().getExecutorServiceStrategy()
-                                        .newThreadPool(this, name, poolSize, max, getKeepAliveTime(), getUnits(), true);
+                                        .newThreadPool(this, name, poolSize, max, getKeepAliveTime(), getUnits(), -1, true);
             }
         }
         Processor childProcessor = routeContext.createProcessor(this);

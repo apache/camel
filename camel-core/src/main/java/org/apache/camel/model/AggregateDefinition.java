@@ -154,7 +154,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (executorService == null) {
             if (isParallelProcessing()) {
                 // we are running in parallel so create a cached thread pool which grows/shrinks automatic
-                executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "Aggregator");
+                executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "Aggregator");
             } else {
                 // use a single threaded if we are not running in parallel
                 executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newSingleThreadExecutor(this, "Aggregator");

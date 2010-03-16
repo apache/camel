@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util.concurrent;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -132,7 +133,7 @@ public final class ExecutorServiceHelper {
     }
 
     /**
-     * Creates a new cached thread pool which should be the most commonly used.
+     * Creates a new cached thread pool
      *
      * @param pattern  pattern of the thread name
      * @param name     ${name} in the pattern name
@@ -150,7 +151,7 @@ public final class ExecutorServiceHelper {
     }
 
     /**
-     * Creates a new custom thread pool using 60 seconds as keep alive
+     * Creates a new custom thread pool using 60 seconds as keep alive and with an unbounded queue.
      *
      * @param pattern       pattern of the thread name
      * @param name          ${name} in the pattern name
@@ -159,7 +160,7 @@ public final class ExecutorServiceHelper {
      * @return the created pool
      */
     public static ExecutorService newThreadPool(final String pattern, final String name, int corePoolSize, int maxPoolSize) {
-        return ExecutorServiceHelper.newThreadPool(pattern, name, corePoolSize, maxPoolSize, 60, TimeUnit.SECONDS, true);
+        return ExecutorServiceHelper.newThreadPool(pattern, name, corePoolSize, maxPoolSize, 60, TimeUnit.SECONDS, -1, true);
     }
 
     /**
@@ -171,20 +172,30 @@ public final class ExecutorServiceHelper {
      * @param maxPoolSize   the maximum pool size
      * @param keepAliveTime keep alive
      * @param timeUnit      keep alive time unit
+     * @param maxQueueSize  the maximum number of tasks in the queue, use <tt>Integer.MAX_VALUE</tt> or <tt>-1</tt> to indicate unbounded
      * @param daemon        whether the threads is daemon or not
      * @return the created pool
      * @throws IllegalArgumentException if parameters is not valid
      */
     public static ExecutorService newThreadPool(final String pattern, final String name, int corePoolSize, int maxPoolSize,
-                                                long keepAliveTime, TimeUnit timeUnit, final boolean daemon) {
+                                                long keepAliveTime, TimeUnit timeUnit, int maxQueueSize, final boolean daemon) {
 
         // validate max >= core
         if (maxPoolSize < corePoolSize) {
             throw new IllegalArgumentException("MaxPoolSize must be >= corePoolSize, was " + maxPoolSize + " >= " + corePoolSize);
         }
 
-        ThreadPoolExecutor answer = new ThreadPoolExecutor(corePoolSize, maxPoolSize,
-                                                           keepAliveTime, timeUnit, new LinkedBlockingQueue<Runnable>());
+        if (maxQueueSize == 0) {
+            throw new IllegalArgumentException("MaxQueueSize cannot be 0.");
+        }
+
+        BlockingQueue<Runnable> queue;
+        if (maxQueueSize < 0) {
+            queue = new LinkedBlockingQueue<Runnable>();
+        } else {
+            queue = new LinkedBlockingQueue<Runnable>(maxQueueSize);
+        }
+        ThreadPoolExecutor answer = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, queue);
         answer.setThreadFactory(new ThreadFactory() {
             public Thread newThread(Runnable r) {
                 Thread answer = new Thread(r, getThreadName(pattern, name));

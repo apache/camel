@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ExecutorServiceStrategy;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,9 +38,26 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     private final List<ExecutorService> executorServices = new ArrayList<ExecutorService>();
     private final CamelContext camelContext;
     private String threadNamePattern = "Camel Thread ${counter} - ${name}";
+    private ThreadPoolProfile defaultThreadPoolProfile;
 
     public DefaultExecutorServiceStrategy(CamelContext camelContext) {
         this.camelContext = camelContext;
+        this.defaultThreadPoolProfile = new ThreadPoolProfileSupport();
+        this.defaultThreadPoolProfile.setDefaultProfile(true);
+    }
+
+    public ThreadPoolProfile getDefaultThreadPoolProfile() {
+        return defaultThreadPoolProfile;
+    }
+
+    public void setDefaultThreadPoolProfile(ThreadPoolProfile defaultThreadPoolProfile) {
+        // the old is no long default
+        if (this.defaultThreadPoolProfile != null) {
+            this.defaultThreadPoolProfile.setDefaultProfile(false);
+        }
+        // and replace with the new default profile
+        this.defaultThreadPoolProfile = defaultThreadPoolProfile;
+        this.defaultThreadPoolProfile.setDefaultProfile(true);
     }
 
     public String getThreadName(String name) {
@@ -59,6 +77,15 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
             LOG.debug("Looking up ExecutorService with ref: " + executorServiceRef);
         }
         return camelContext.getRegistry().lookup(executorServiceRef, ExecutorService.class);
+    }
+
+    public ExecutorService newDefaultThreadPool(Object source, String name) {
+        ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name,
+            defaultThreadPoolProfile.getPoolSize(), defaultThreadPoolProfile.getMaxPoolSize(),
+            defaultThreadPoolProfile.getKeepAliveTime(), defaultThreadPoolProfile.getTimeUnit(),
+            defaultThreadPoolProfile.getMaxQueueSize(), false);
+        onNewExecutorService(answer);
+        return answer;
     }
 
     public ExecutorService newCachedThreadPool(Object source, String name) {
@@ -91,8 +118,10 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         return answer;
     }
 
-    public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, boolean daemon) {
-        ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize, keepAliveTime, timeUnit, daemon);
+    public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize, long keepAliveTime,
+                                         TimeUnit timeUnit, int maxQueueSize, boolean daemon) {
+        ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize, 
+                                                                     keepAliveTime, timeUnit, maxQueueSize, daemon);
         onNewExecutorService(answer);
         return answer;
     }
