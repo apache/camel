@@ -95,7 +95,7 @@ public class SplitterPojoTest extends ContextTestSupport {
          * @return a list containing each part splitted
          */
         public List<String> splitBody(String body) {
-            // since this is based on an unit test you can of couse
+            // since this is based on an unit test you can of cause
             // use different logic for splitting as Camel have out
             // of the box support for splitting a String based on comma
             // but this is for show and tell, since this is java code

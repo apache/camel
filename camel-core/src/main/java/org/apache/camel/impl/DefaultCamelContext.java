@@ -107,7 +107,7 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultCamelContext extends ServiceSupport implements CamelContext {
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
     private static final String NAME_PREFIX = "camel-";
-    private static int nameSuffix;
+    private static AtomicInteger nameSuffix = new AtomicInteger(0);
     private ClassLoader applicationContextClassLoader;
     private boolean routeDefinitionInitiated;
     private String name;
@@ -162,7 +162,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public DefaultCamelContext() {
         super();
-        name = NAME_PREFIX + ++nameSuffix;
+        name = NAME_PREFIX + nameSuffix.incrementAndGet();
 
         // use WebSphere specific resolver if running on WebSphere
         if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
