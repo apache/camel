@@ -1139,8 +1139,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         getManagementStrategy().start();
 
         // start lifecycle strategies
-        for (LifecycleStrategy strategy : lifecycleStrategies) {
-            strategy.onContextStart(this);
+        Iterator<LifecycleStrategy> it = lifecycleStrategies.iterator();
+        while (it.hasNext()) {
+            LifecycleStrategy strategy = it.next();
+            try {
+                strategy.onContextStart(this);
+            } catch (Exception e) {
+                // not all containers allow access to its MBeanServer (such as OC4j)
+                // so here we remove the troublesome strategy to be able to continue
+                LOG.warn("Cannot start lifecycle strategy: " + strategy + ". This strategy will be removed. Cause: " + e.getMessage(), e);
+                it.remove();
+            }
         }
 
         // must let some bootstrap service be started before we can notify the starting event
