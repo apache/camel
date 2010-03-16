@@ -16,10 +16,7 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.util.EventHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.ShutdownableService;
 
 /**
  * A shared {@link org.apache.camel.impl.DefaultProducerServicePool} which is used by
@@ -27,9 +24,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class SharedProducerServicePool extends DefaultProducerServicePool {
-
-    private static final transient Log LOG = LogFactory.getLog(SharedProducerServicePool.class);
+public class SharedProducerServicePool extends DefaultProducerServicePool implements ShutdownableService {
 
     public SharedProducerServicePool(int capacity) {
         super(capacity);
@@ -41,14 +36,10 @@ public class SharedProducerServicePool extends DefaultProducerServicePool {
         // only be stopped when CamelContext stops
     }
 
-    void shutdown(CamelContext context) throws Exception {
-        try {
-            super.doStop();
-        } catch (Exception e) {
-            LOG.warn("Error occurred while stopping service: " + this + ". This exception will be ignored.");
-            // fire event
-            EventHelper.notifyServiceStopFailure(context, this, e);
-        }
+    @Override
+    protected void doShutdown() throws Exception {
+        // now we are shutting down then stop it, which properly stops the pool
+        super.doStop();
     }
 
 }

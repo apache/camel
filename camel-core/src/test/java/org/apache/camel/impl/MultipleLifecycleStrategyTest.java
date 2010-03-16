@@ -50,8 +50,8 @@ public class MultipleLifecycleStrategyTest extends TestSupport {
 
         context.stop();
 
-        assertEquals(9, dummy1.getEvents().size());
-        assertEquals(9, dummy2.getEvents().size());
+        assertEquals(10, dummy1.getEvents().size());
+        assertEquals(10, dummy2.getEvents().size());
 
         assertEquals("onContextStart", dummy1.getEvents().get(0));
         assertEquals("onContextStart", dummy2.getEvents().get(0));
@@ -63,14 +63,16 @@ public class MultipleLifecycleStrategyTest extends TestSupport {
         assertEquals("onServiceAdd", dummy2.getEvents().get(3));
         assertEquals("onServiceAdd", dummy1.getEvents().get(4));
         assertEquals("onServiceAdd", dummy2.getEvents().get(4));
-        assertEquals("onComponentAdd", dummy1.getEvents().get(5));
-        assertEquals("onComponentAdd", dummy2.getEvents().get(5));
-        assertEquals("onEndpointAdd", dummy1.getEvents().get(6));
-        assertEquals("onEndpointAdd", dummy2.getEvents().get(6));
-        assertEquals("onComponentRemove", dummy1.getEvents().get(7));
-        assertEquals("onComponentRemove", dummy2.getEvents().get(7));
-        assertEquals("onContextStop", dummy1.getEvents().get(8));
-        assertEquals("onContextStop", dummy2.getEvents().get(8));
+        assertEquals("onServiceAdd", dummy1.getEvents().get(5));
+        assertEquals("onServiceAdd", dummy2.getEvents().get(5));
+        assertEquals("onComponentAdd", dummy1.getEvents().get(6));
+        assertEquals("onComponentAdd", dummy2.getEvents().get(6));
+        assertEquals("onEndpointAdd", dummy1.getEvents().get(7));
+        assertEquals("onEndpointAdd", dummy2.getEvents().get(7));
+        assertEquals("onComponentRemove", dummy1.getEvents().get(8));
+        assertEquals("onComponentRemove", dummy2.getEvents().get(8));
+        assertEquals("onContextStop", dummy1.getEvents().get(9));
+        assertEquals("onContextStop", dummy2.getEvents().get(9));
     }
 
 }

@@ -28,9 +28,9 @@ public class ServiceStartupFailureEvent extends EventObject {
 
     private CamelContext context;
     private Object service;
-    private Exception cause;
+    private Throwable cause;
 
-    public ServiceStartupFailureEvent(CamelContext context, Object service, Exception cause) {
+    public ServiceStartupFailureEvent(CamelContext context, Object service, Throwable cause) {
         super(service);
         this.context = context;
         this.service = service;
@@ -45,7 +45,7 @@ public class ServiceStartupFailureEvent extends EventObject {
         return service;
     }
 
-    public Exception getCause() {
+    public Throwable getCause() {
         return cause;
     }
 

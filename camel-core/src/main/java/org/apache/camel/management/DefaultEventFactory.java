@@ -61,19 +61,19 @@ public class DefaultEventFactory implements EventFactory {
         return new CamelContextStoppedEvent(context);
     }
 
-    public EventObject createCamelContextStartupFailureEvent(CamelContext context, Exception cause) {
+    public EventObject createCamelContextStartupFailureEvent(CamelContext context, Throwable cause) {
         return new CamelContextStartupFailureEvent(context, cause);
     }
 
-    public EventObject createCamelContextStopFailureEvent(CamelContext context, Exception cause) {
+    public EventObject createCamelContextStopFailureEvent(CamelContext context, Throwable cause) {
         return new CamelContextStopFailureEvent(context, cause);
     }
 
-    public EventObject createServiceStartupFailureEvent(CamelContext context, Object service, Exception cause) {
+    public EventObject createServiceStartupFailureEvent(CamelContext context, Object service, Throwable cause) {
         return new ServiceStartupFailureEvent(context, service, cause);
     }
 
-    public EventObject createServiceStopFailureEvent(CamelContext context, Object service, Exception cause) {
+    public EventObject createServiceStopFailureEvent(CamelContext context, Object service, Throwable cause) {
         return new ServiceStopFailureEvent(context, service, cause);
     }
 

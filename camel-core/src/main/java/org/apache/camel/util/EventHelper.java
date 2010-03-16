@@ -88,7 +88,7 @@ public final class EventHelper {
         }
     }
 
-    public static void notifyCamelContextStartupFailed(CamelContext context, Exception cause) {
+    public static void notifyCamelContextStartupFailed(CamelContext context, Throwable cause) {
         List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
@@ -157,7 +157,7 @@ public final class EventHelper {
         }
     }
 
-    public static void notifyCamelContextStopFailed(CamelContext context, Exception cause) {
+    public static void notifyCamelContextStopFailed(CamelContext context, Throwable cause) {
         List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
@@ -180,7 +180,7 @@ public final class EventHelper {
         }
     }
 
-    public static void notifyServiceStopFailure(CamelContext context, Object service, Exception cause) {
+    public static void notifyServiceStopFailure(CamelContext context, Object service, Throwable cause) {
         List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
@@ -203,7 +203,7 @@ public final class EventHelper {
         }
     }
 
-    public static void notifyServiceStartupFailure(CamelContext context, Object service, Exception cause) {
+    public static void notifyServiceStartupFailure(CamelContext context, Object service, Throwable cause) {
         List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
@@ -410,7 +410,7 @@ public final class EventHelper {
 
         try {
             notifier.notify(event);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOG.warn("Error notifying event " + event + ". This exception will be ignored. ", e);
         }
     }

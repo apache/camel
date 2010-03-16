@@ -240,7 +240,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                         }
                     }
                 } catch (Exception e) {
-                    throw new RuntimeCamelException("Could not auto create component: " + name, e);
+                    throw new RuntimeCamelException("Cannot auto create component: " + name, e);
                 }
             }
             return component;
@@ -287,7 +287,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                     }
                 } catch (Exception e) {
                     throw new RuntimeCamelException("Factory failed to create the " + componentName
-                            + " component", e);
+                            + " component.", e);
                 }
             }
             return component;
@@ -968,7 +968,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         firstStartDone = true;
 
         if (doNotStart) {
-            LOG.info("Cannot start Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") as it has been configured to not auto start");
+            LOG.info("Cannot start Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") as it has been configured to not auto start");
             return;
         }
 
@@ -1080,12 +1080,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             for (int i = 0; i < getRoutes().size(); i++) {
                 LOG.debug("Route " + i + ": " + getRoutes().get(i));
             }
-            LOG.debug("... Routes started");
         }
 
         LOG.info("Started " + getRoutes().size() + " routes");
 
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started");
         EventHelper.notifyCamelContextStarted(this);
     }
 
@@ -1093,7 +1092,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     // -----------------------------------------------------------------------
 
     protected synchronized void doStart() throws Exception {
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is starting");
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
 
         try {
             doStartCamel();
@@ -1106,12 +1105,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     private void doStartCamel() throws Exception {
-        startServices(producerServicePool);
-
         if (isStreamCaching()) {
             // only add a new stream cache if not already configured
             if (StreamCaching.getStreamCaching(this) == null) {
-                LOG.info("StreamCaching is enabled on CamelContext" + getName());
+                LOG.info("StreamCaching is enabled on CamelContext: " + getName());
                 addInterceptStrategy(new StreamCaching());
             }
         }
@@ -1124,7 +1121,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         if (isHandleFault()) {
             // only add a new handle fault if not already configured
             if (HandleFault.getHandleFault(this) == null) {
-                LOG.info("HandleFault is enabled on CamelContext" + getName());
+                LOG.info("HandleFault is enabled on CamelContext: " + getName());
                 addInterceptStrategy(new HandleFault());
             }
         }
@@ -1133,7 +1130,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             // only add a new delayer if not already configured
             if (Delayer.getDelayer(this) == null) {
                 long millis = getDelayer();
-                LOG.info("Delayer is enabled with: " + millis + " ms. on CamelContext" + getName());
+                LOG.info("Delayer is enabled with: " + millis + " ms. on CamelContext: " + getName());
                 addInterceptStrategy(new Delayer(millis));
             }
         }
@@ -1141,17 +1138,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // start management strategy before lifecycles are started
         getManagementStrategy().start();
 
-        Iterator<LifecycleStrategy> it = lifecycleStrategies.iterator();
-        while (it.hasNext()) {
-            LifecycleStrategy strategy = it.next();
-            try {
-                strategy.onContextStart(this);
-            } catch (Exception e) {
-                // not all containers allow access to its MBeanServer (such as OC4j)
-                // so here we remove the troublesome strategy to be able to continue
-                LOG.warn("Cannot start lifecycle strategy: " + strategy + ". This strategy will be removed. Cause " + e.getMessage(), e);
-                it.remove();
-            }
+        // start lifecycle strategies
+        for (LifecycleStrategy strategy : lifecycleStrategies) {
+            strategy.onContextStart(this);
         }
 
         // must let some bootstrap service be started before we can notify the starting event
@@ -1159,6 +1148,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         forceLazyInitialization();
         addService(executorServiceStrategy);
+        addService(producerServicePool);
         addService(inflightRepository);
         addService(shutdownStrategy);
 
@@ -1192,23 +1182,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         shutdownServices(components.values());
         components.clear();
 
-        // special shutdown of a shared producer service pool as it should only be shutdown by camel context
-        if (producerServicePool instanceof SharedProducerServicePool) {
-            ((SharedProducerServicePool) producerServicePool).shutdown(this);
-        } else {
-            shutdownServices(producerServicePool);
-        }
-
-        shutdownServices(servicesToClose);
-        servicesToClose.clear();
-
         try {
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onContextStop(this);
             }
-        } catch (Exception e) {
-            LOG.warn("Cannot stop lifecycle strategies: " + e.getMessage());
+        } catch (Throwable e) {
+            LOG.warn("Error occurred while stopping lifecycle strategies. This exception will be ignored.", e);
         }
+
+        // shutdown services as late as possible
+        shutdownServices(servicesToClose);
+        servicesToClose.clear();
 
         // must notify that we are stopped before stopping the management strategy
         EventHelper.notifyCamelContextStopped(this);
@@ -1216,37 +1200,28 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // shutdown management as the last one
         shutdownServices(managementStrategy);
 
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is shutdown");
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown");
     }
 
-    private void stopServices(Object service) throws Exception {
-        // allow us to do custom work before delegating to service helper
-        try {
-            ServiceHelper.stopService(service);
-        } catch (Exception e) {
-            LOG.warn("Error occurred while stopping service: " + service + ". This exception will be ignored.");
-            // fire event
-            EventHelper.notifyServiceStopFailure(this, service, e);
-        }
-    }
+    private void shutdownServices(Object service) {
+        // do not rethrow exception as we want to keep shutting down in case of problems
 
-    private void shutdownServices(Object service) throws Exception {
         // allow us to do custom work before delegating to service helper
         try {
             ServiceHelper.stopAndShutdownService(service);
-        } catch (Exception e) {
-            LOG.warn("Error occurred while shutting down service: " + service + ". This exception will be ignored.");
+        } catch (Throwable e) {
+            LOG.warn("Error occurred while shutting down service: " + service + ". This exception will be ignored.", e);
             // fire event
             EventHelper.notifyServiceStopFailure(this, service, e);
         }
     }
 
-    private void shutdownServices(Collection<?> services) throws Exception {
+    private void shutdownServices(Collection<?> services) {
         // reverse stopping by default
         shutdownServices(services, true);
     }
 
-    private void shutdownServices(Collection<?> services, boolean reverse) throws Exception {
+    private void shutdownServices(Collection<?> services, boolean reverse) {
         Collection<Object> list = CastUtils.cast(services);
         if (reverse) {
             ArrayList<Object> reverseList = new ArrayList<Object>(services);
@@ -1261,6 +1236,18 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     private void startServices(Object service) throws Exception {
         ServiceHelper.startService(service);
+    }
+
+    private void stopServices(Object service) throws Exception {
+        // allow us to do custom work before delegating to service helper
+        try {
+            ServiceHelper.stopService(service);
+        } catch (Exception e) {
+            // fire event
+            EventHelper.notifyServiceStopFailure(this, service, e);
+            // rethrow to signal error with stopping
+            throw e;
+        }
     }
 
     protected void startRouteDefinitions(Collection<RouteDefinition> list) throws Exception {
@@ -1575,7 +1562,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             answer = new DefaultManagementStrategy();
         } else {
             try {
-                LOG.info("JMX enabled. Using DefaultManagedLifecycleStrategy.");
+                LOG.info("JMX enabled. Using ManagedManagementStrategy.");
                 answer = new ManagedManagementStrategy(new DefaultManagementAgent(this));
                 // prefer to have it at first strategy
                 lifecycleStrategies.add(0, new DefaultManagementLifecycleStrategy(this));
@@ -1587,12 +1574,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                         + " (spring-jmx.jar using Spring 2.0.x)."
                         + " NoClassDefFoundError: " + e.getMessage());
             } catch (Exception e) {
-                LOG.warn("Could not create JMX lifecycle strategy, caused by: " + e.getMessage());
+                LOG.warn("Cannot create JMX lifecycle strategy. Will fallback to use non JMX and this exception will be ignored.", e);
             }
         }
 
         if (answer == null) {
-            LOG.warn("Cannot use JMX. Fallback to using DefaultManagementStrategy.");
+            LOG.warn("Cannot use JMX. Fallback to using DefaultManagementStrategy (non JMX).");
             answer = new DefaultManagementStrategy();
         }
 

@@ -56,7 +56,7 @@ public interface EventFactory {
      * @param cause the cause exception
      * @return the created event
      */
-    EventObject createCamelContextStartupFailureEvent(CamelContext context, Exception cause);
+    EventObject createCamelContextStartupFailureEvent(CamelContext context, Throwable cause);
 
     /**
      * Creates an {@link EventObject} for Camel failing to stop cleanly
@@ -65,7 +65,7 @@ public interface EventFactory {
      * @param cause the cause exception
      * @return the created event
      */
-    EventObject createCamelContextStopFailureEvent(CamelContext context, Exception cause);
+    EventObject createCamelContextStopFailureEvent(CamelContext context, Throwable cause);
 
     /**
      * Creates an {@link EventObject} for Camel is stopping.
@@ -91,7 +91,7 @@ public interface EventFactory {
      * @param cause the cause exception
      * @return the created event
      */
-    EventObject createServiceStartupFailureEvent(CamelContext context, Object service, Exception cause);
+    EventObject createServiceStartupFailureEvent(CamelContext context, Object service, Throwable cause);
 
     /**
      * Creates an {@link EventObject} for a Service failed to stop cleanly
@@ -101,7 +101,7 @@ public interface EventFactory {
      * @param cause the cause exception
      * @return the created event
      */
-    EventObject createServiceStopFailureEvent(CamelContext context, Object service, Exception cause);
+    EventObject createServiceStopFailureEvent(CamelContext context, Object service, Throwable cause);
 
     /**
      * Creates an {@link EventObject} for {@link Route} has been started successfully.

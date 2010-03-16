@@ -27,9 +27,9 @@ public class CamelContextStartupFailureEvent extends EventObject {
     private static final long serialVersionUID = -4271899927507894567L;
 
     private CamelContext context;
-    private Exception cause;
+    private Throwable cause;
 
-    public CamelContextStartupFailureEvent(CamelContext context, Exception cause) {
+    public CamelContextStartupFailureEvent(CamelContext context, Throwable cause) {
         super(context);
         this.context = context;
         this.cause = cause;
@@ -39,7 +39,7 @@ public class CamelContextStartupFailureEvent extends EventObject {
         return context;
     }
 
-    public Exception getCause() {
+    public Throwable getCause() {
         return cause;
     }
 

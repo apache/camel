@@ -101,20 +101,30 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         if (executorService.isShutdown()) {
             return;
         }
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Shutting down ExecutorService: " + executorService);
+            LOG.debug("Shutdown ExecutorService: " + executorService);
         }
         executorService.shutdown();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Shutdown ExecutorService: " + executorService + " complete.");
+        }
     }
 
     public List<Runnable> shutdownNow(ExecutorService executorService) {
         if (executorService.isShutdown()) {
             return null;
         }
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Shutting down now ExecutorService: " + executorService);
+            LOG.debug("ShutdownNow ExecutorService: " + executorService);
         }
-        return executorService.shutdownNow();
+        List<Runnable> answer = executorService.shutdownNow();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("ShutdownNow ExecutorService: " + executorService + " complete.");
+        }
+
+        return answer;
     }
 
     /**
@@ -146,7 +156,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
             // only log if something goes wrong as we want to shutdown them all
             try {
                 shutdownNow(executorService);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 LOG.warn("Error occurred during shutdown of ExecutorService: "
                         + executorService + ". This exception will be ignored.", e);
             }
