@@ -32,7 +32,7 @@ public class CafeRouteSpringTest extends CafeRouteBuilderTest {
     
     @Before
     public void setUp() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("META-INF/spring/camel-context.xml");
+        applicationContext = new ClassPathXmlApplicationContext("META-INF/camel-routes.xml");
         setUseRouteBuilder(false);
         super.setUp();
         waiter = (TestWaiter) applicationContext.getBean("waiter");

@@ -22,45 +22,9 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
  
-  <import resource="classpath:META-INF/beans.xml"/>
+  <import resource="classpath:META-INF/camel-routes.xml"/>
   
+  <!-- The customer beans which send the cafe order every 60 seconds -->
   <bean id="customer" class="org.apache.camel.example.cafe.Customer"/>
- 
-  <camelContext id="camel"
-                xmlns="http://camel.apache.org/schema/spring">
-     <route>
-         <from uri="direct:cafe"/>
-         <split>
-            <method bean="orderSplitter"/>
-            <to uri="direct:drink"/>
-        </split>
-     </route>
-     <route>
-         <from uri="direct:drink" />
-         <recipientList>
-            <method bean="drinkRouter"/>
-         </recipientList>
-     </route>
-     <route>
-         <from uri="seda:coldDrinks?concurrentConsumers=2"/>
-         <to uri="bean:barista?method=prepareColdDrink"/>
-         <to uri="direct:deliveries"/>
-     </route>
-     <route>
-         <from uri="seda:hotDrinks?concurrentConsumers=3"/>
-         <to uri="bean:barista?method=prepareHotDrink"/>
-         <to uri="direct:deliveries"/>
-     </route>
-     <route>
-         <from uri="direct:deliveries"/>
-         <aggregate strategyRef="aggregatorStrategy" completionTimeout="5000">
-             <correlationExpression>  
-                 <method bean="waiter" method="checkOrder" />
-             </correlationExpression>  
-      	     <to uri="bean:waiter?method=prepareDelivery"/>
-      	     <to uri="bean:waiter?method=deliverCafes"/>
-         </aggregate>
-     </route>
-  </camelContext>
-
+  
 </beans>
