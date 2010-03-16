@@ -137,6 +137,4 @@ public interface ThreadPoolProfile {
      */
     void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy);
 
-
-
 }

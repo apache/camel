@@ -17,8 +17,10 @@
 package org.apache.camel.spring;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -73,6 +75,7 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -311,6 +314,25 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                     LOG.info("Using custom LifecycleStrategy with id: " + id + " and implementation: " + strategy);
                     getContext().addLifecycleStrategy(strategy);
                 }
+            }
+        }
+
+        // set the default thread pool profile if defined
+        Map<String, ThreadPoolProfile> threadPoolProfiles = getContext().getRegistry().lookupByType(ThreadPoolProfile.class);
+        if (threadPoolProfiles != null && !threadPoolProfiles.isEmpty()) {
+            Set<String> ids = new HashSet<String>();
+            for (String id : threadPoolProfiles.keySet()) {
+                ThreadPoolProfile profile = threadPoolProfiles.get(id);
+                // do not add if already added, for instance a tracer that is also an InterceptStrategy class
+                if (profile.isDefaultProfile()) {
+                    LOG.info("Using custom default ThreadPoolProfile with id: " + id + " and implementation: " + profile);
+                    getContext().getExecutorServiceStrategy().setDefaultThreadPoolProfile(profile);
+                    ids.add(id);
+                }
+            }
+            // validate at most one is defined
+            if (ids.size() > 1) {
+                throw new IllegalArgumentException("Only exactly one default ThreadPoolProfile is allowed, was " + ids.size() + " ids: " + ids);
             }
         }
 

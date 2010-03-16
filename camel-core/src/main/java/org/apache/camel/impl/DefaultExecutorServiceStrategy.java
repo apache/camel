@@ -52,6 +52,8 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     }
 
     public void setDefaultThreadPoolProfile(ThreadPoolProfile defaultThreadPoolProfile) {
+        LOG.info("Using custom DefaultThreadPoolProfile: " + defaultThreadPoolProfile);
+
         // the old is no longer default
         if (this.defaultThreadPoolProfile != null) {
             this.defaultThreadPoolProfile.setDefaultProfile(false);
@@ -81,41 +83,65 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     }
 
     public ExecutorService newDefaultThreadPool(Object source, String name) {
-        ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name,
+        return newThreadPool(source, name,
             defaultThreadPoolProfile.getPoolSize(), defaultThreadPoolProfile.getMaxPoolSize(),
             defaultThreadPoolProfile.getKeepAliveTime(), defaultThreadPoolProfile.getTimeUnit(),
             defaultThreadPoolProfile.getMaxQueueSize(), defaultThreadPoolProfile.getRejectedExecutionHandler(), false);
-        onNewExecutorService(answer);
-        return answer;
     }
 
     public ExecutorService newCachedThreadPool(Object source, String name) {
         ExecutorService answer = ExecutorServiceHelper.newCachedThreadPool(threadNamePattern, name, true);
+        executorServices.add(answer);
         onNewExecutorService(answer);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created new cached thread pool for source: " + source + " with name: " + name + ". -> " + answer);
+        }
         return answer;
     }
 
     public ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize) {
         ScheduledExecutorService answer = ExecutorServiceHelper.newScheduledThreadPool(poolSize, threadNamePattern, name, true);
+        executorServices.add(answer);
         onNewExecutorService(answer);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created new scheduled thread pool for source: " + source + " with name: " + name + ". [poolSize=" + poolSize + "]. -> " + answer);
+        }
         return answer;
     }
 
     public ExecutorService newFixedThreadPool(Object source, String name, int poolSize) {
         ExecutorService answer = ExecutorServiceHelper.newFixedThreadPool(poolSize, threadNamePattern, name, true);
+        executorServices.add(answer);
         onNewExecutorService(answer);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created new fixed thread pool for source: " + source + " with name: " + name + ". [poolSize=" + poolSize + "]. -> " + answer);
+        }
         return answer;
     }
 
     public ExecutorService newSingleThreadExecutor(Object source, String name) {
         ExecutorService answer = ExecutorServiceHelper.newSingleThreadExecutor(threadNamePattern, name, true);
+        executorServices.add(answer);
         onNewExecutorService(answer);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created new single thread pool for source: " + source + " with name: " + name + ". -> " + answer);
+        }
         return answer;
     }
 
     public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize) {
         ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize);
+        executorServices.add(answer);
         onNewExecutorService(answer);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created new thread pool for source: " + source + " with name: " + name + ". [poolSize=" + corePoolSize
+                    + ", maxPoolSize=" + maxPoolSize + "] -> " + answer);
+        }
         return answer;
     }
 
@@ -124,7 +150,15 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
                                          boolean daemon) {
         ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize, keepAliveTime,
                                                                      timeUnit, maxQueueSize, rejectedExecutionHandler, daemon);
+        executorServices.add(answer);
         onNewExecutorService(answer);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created new thread pool for source: " + source + " with name: " + name + ". [poolSize=" + corePoolSize
+                    + ", maxPoolSize=" + maxPoolSize + ", keepAliveTime=" + keepAliveTime + " " + timeUnit
+                    + ", maxQueueSize=" + maxQueueSize + ", rejectedExecutionHandler=" + rejectedExecutionHandler
+                    + ", daemon=" + daemon + "] -> " + answer);
+        }
         return answer;
     }
 
@@ -159,15 +193,12 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     }
 
     /**
-     * Callback when a new {@link java.util.concurrent.ExecutorService} have been created.
+     * Strategy callback when a new {@link java.util.concurrent.ExecutorService} have been created.
      *
      * @param executorService the created {@link java.util.concurrent.ExecutorService} 
      */
     protected void onNewExecutorService(ExecutorService executorService) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new ExecutorService: " + executorService);
-        }
-        executorServices.add(executorService);
+        // noop
     }
 
     @Override

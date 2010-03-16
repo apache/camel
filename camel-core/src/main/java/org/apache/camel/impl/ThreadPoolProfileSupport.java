@@ -36,7 +36,7 @@ public class ThreadPoolProfileSupport implements ThreadPoolProfile {
     private ThreadPoolRejectedPolicy rejectedPolicy;
 
     public Boolean isDefaultProfile() {
-        return defaultProfile;
+        return defaultProfile != null && defaultProfile;
     }
 
     public void setDefaultProfile(Boolean defaultProfile) {
@@ -96,5 +96,11 @@ public class ThreadPoolProfileSupport implements ThreadPoolProfile {
 
     public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
+    }
+
+    @Override
+    public String toString() {
+        return "ThreadPoolProfile[" + defaultProfile + ", " + poolSize + ", " + maxPoolSize + ", " + keepAliveTime
+                + " " + timeUnit + ", " + maxPoolSize + ", " + rejectedPolicy + "]";
     }
 }

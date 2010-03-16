@@ -96,7 +96,7 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition im
     }
 
     public Boolean isDefaultProfile() {
-        return defaultProfile;
+        return defaultProfile != null && defaultProfile;
     }
 
     public void setDefaultProfile(Boolean defaultProfile) {

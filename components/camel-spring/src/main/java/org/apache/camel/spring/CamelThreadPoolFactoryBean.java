@@ -52,7 +52,7 @@ public class CamelThreadPoolFactoryBean extends IdentifiedType implements Factor
     @XmlAttribute
     private Integer maxPoolSize;
     @XmlAttribute
-    private Integer keepAliveTime = 60;
+    private Long keepAliveTime = 60L;
     @XmlAttribute
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     private TimeUnit units = TimeUnit.SECONDS;
@@ -120,11 +120,11 @@ public class CamelThreadPoolFactoryBean extends IdentifiedType implements Factor
         this.maxPoolSize = maxPoolSize;
     }
 
-    public Integer getKeepAliveTime() {
+    public Long getKeepAliveTime() {
         return keepAliveTime;
     }
 
-    public void setKeepAliveTime(Integer keepAliveTime) {
+    public void setKeepAliveTime(Long keepAliveTime) {
         this.keepAliveTime = keepAliveTime;
     }
 
