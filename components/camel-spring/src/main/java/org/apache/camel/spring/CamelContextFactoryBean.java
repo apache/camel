@@ -55,6 +55,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
@@ -141,6 +142,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private List beans;    
     @XmlElement(name = "routeBuilder", required = false)
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
+    @XmlElement(name = "threadPoolProfile", required = false)
+    private List<ThreadPoolProfileDefinition> threadPoolProfiles;
     @XmlElement(name = "threadPool", required = false)
     private List<CamelThreadPoolFactoryBean> threadPools;
     @XmlElement(name = "endpoint", required = false)
@@ -318,23 +321,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
 
         // set the default thread pool profile if defined
-        Map<String, ThreadPoolProfile> threadPoolProfiles = getContext().getRegistry().lookupByType(ThreadPoolProfile.class);
-        if (threadPoolProfiles != null && !threadPoolProfiles.isEmpty()) {
-            Set<String> ids = new HashSet<String>();
-            for (String id : threadPoolProfiles.keySet()) {
-                ThreadPoolProfile profile = threadPoolProfiles.get(id);
-                // do not add if already added, for instance a tracer that is also an InterceptStrategy class
-                if (profile.isDefaultProfile()) {
-                    LOG.info("Using custom default ThreadPoolProfile with id: " + id + " and implementation: " + profile);
-                    getContext().getExecutorServiceStrategy().setDefaultThreadPoolProfile(profile);
-                    ids.add(id);
-                }
-            }
-            // validate at most one is defined
-            if (ids.size() > 1) {
-                throw new IllegalArgumentException("Only exactly one default ThreadPoolProfile is allowed, was " + ids.size() + " ids: " + ids);
-            }
-        }
+        initDefaultThreadPoolProfile(getContext());
 
         // Set the application context and camelContext for the beanPostProcessor
         if (beanPostProcessor != null) {
@@ -949,6 +936,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.shutdownRunningTask = shutdownRunningTask;
     }
 
+    public List<ThreadPoolProfileDefinition> getThreadPoolProfiles() {
+        return threadPoolProfiles;
+    }
+
+    public void setThreadPoolProfiles(List<ThreadPoolProfileDefinition> threadPoolProfiles) {
+        this.threadPoolProfiles = threadPoolProfiles;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -964,7 +959,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     /**
      * Initializes the context
      * 
-     * @param ctx the contxt
+     * @param ctx the context
      * @throws Exception is thrown if error occurred
      */
     protected void initSpringCamelContext(SpringCamelContext ctx) throws Exception {
@@ -996,6 +991,40 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     
     protected SpringCamelContext newCamelContext() {
         return new SpringCamelContext(getApplicationContext());
+    }
+
+    private void initDefaultThreadPoolProfile(CamelContext context) {
+        Set<String> ids = new HashSet<String>();
+
+        // lookup and use custom profiles from the registry
+        Map<String, ThreadPoolProfile> profiles = context.getRegistry().lookupByType(ThreadPoolProfile.class);
+        if (profiles != null && !profiles.isEmpty()) {
+            for (String id : profiles.keySet()) {
+                ThreadPoolProfile profile = profiles.get(id);
+                // do not add if already added, for instance a tracer that is also an InterceptStrategy class
+                if (profile.isDefaultProfile()) {
+                    LOG.info("Using custom default ThreadPoolProfile with id: " + id + " and implementation: " + profile);
+                    context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(profile);
+                    ids.add(id);
+                }
+            }
+        }
+
+        // use custom profiles defined in the CamelContext
+        if (threadPoolProfiles != null && !threadPoolProfiles.isEmpty()) {
+            for (ThreadPoolProfileDefinition profile : threadPoolProfiles) {
+                if (profile.isDefaultProfile()) {
+                    LOG.info("Using custom default ThreadPoolProfile with id: " + profile.getId() + " and implementation: " + profile);
+                    context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(profile);
+                    ids.add(profile.getId());
+                }
+            }
+        }
+
+        // validate at most one is defined
+        if (ids.size() > 1) {
+            throw new IllegalArgumentException("Only exactly one default ThreadPoolProfile is allowed, was " + ids.size() + " ids: " + ids);
+        }
     }
 
     /**

@@ -23,11 +23,18 @@
     ">
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+        <!-- define the default thread pool profile to be used in Camel -->
+        <threadPoolProfile id="myDefaultProfile"
+                           defaultProfile="true"
+                           poolSize="5" keepAliveTime="25" maxPoolSize="15" maxQueueSize="250" rejectedPolicy="Abort"/>
+
         <route>
             <from uri="direct:start"/>
-            <threads poolSize="5" maxPoolSize="10" keepAliveTime="10" timeUnit="SECONDS">
-                <to uri="mock:result"/>
-            </threads>
+            <threads/>
+            <to uri="mock:result"/>
         </route>
+
     </camelContext>
+
 </beans>

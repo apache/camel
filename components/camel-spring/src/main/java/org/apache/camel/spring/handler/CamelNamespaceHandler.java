@@ -231,6 +231,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 }
                 builder.addPropertyValue("camelPropertyPlaceholder", factoryBean.getCamelPropertyPlaceholder());
                 builder.addPropertyValue("camelJMXAgent", factoryBean.getCamelJMXAgent());
+                builder.addPropertyValue("threadPoolProfiles", factoryBean.getThreadPoolProfiles());
             }
 
             boolean createdBeanPostProcessor = false;
