@@ -23,6 +23,8 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
  
   <import resource="classpath:META-INF/beans.xml"/>
+  
+  <bean id="customer" class="org.apache.camel.example.cafe.Customer"/>
  
   <camelContext id="camel"
                 xmlns="http://camel.apache.org/schema/spring">
