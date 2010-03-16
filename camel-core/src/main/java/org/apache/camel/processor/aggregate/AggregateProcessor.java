@@ -487,10 +487,4 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
     }
 
-    @Override
-    protected void doShutdown() throws Exception {
-        // only shutdown thread pool when we are shutting down
-        camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
-    }
-
 }

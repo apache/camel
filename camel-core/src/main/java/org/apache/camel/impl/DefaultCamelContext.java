@@ -1158,9 +1158,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         EventHelper.notifyCamelContextStarting(this);
 
         forceLazyInitialization();
-        startServices(components.values());
+        addService(executorServiceStrategy);
         addService(inflightRepository);
         addService(shutdownStrategy);
+
+        startServices(components.values());
 
         // To avoid initiating the routeDefinitions after stopping the camel context
         if (!routeDefinitionInitiated) {
@@ -1184,9 +1186,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         // the stop order is important
 
-        shutdownServices(servicesToClose);
-        servicesToClose.clear();
-
         shutdownServices(endpoints.values());
         endpoints.clear();
 
@@ -1199,7 +1198,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         } else {
             shutdownServices(producerServicePool);
         }
-        shutdownServices(inflightRepository);
+
+        shutdownServices(servicesToClose);
+        servicesToClose.clear();
 
         try {
             for (LifecycleStrategy strategy : lifecycleStrategies) {
@@ -1213,7 +1214,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         EventHelper.notifyCamelContextStopped(this);
 
         // shutdown management as the last one
-        shutdownServices(getManagementStrategy());
+        shutdownServices(managementStrategy);
 
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is shutdown");
     }

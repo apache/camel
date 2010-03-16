@@ -61,15 +61,6 @@ public class WireTapProcessor extends SendProcessor {
     }
 
     @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        // only shutdown thread pool on shutdown
-        if (executorService != null) {
-            camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
-        }
-    }
-
-    @Override
     public String toString() {
         return "WireTap[" + destination.getEndpointUri() + "]";
     }

@@ -101,15 +101,6 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
         };
     }
 
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        // only shutdown thread pool on shutdown
-        if (executorService != null) {
-            camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
-        }
-    }
-
     public String toString() {
         return "Threads";
     }

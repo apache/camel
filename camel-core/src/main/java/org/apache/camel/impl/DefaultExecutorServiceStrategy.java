@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,12 +25,16 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ExecutorServiceStrategy;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
-public class DefaultExecutorServiceStrategy implements ExecutorServiceStrategy {
+public class DefaultExecutorServiceStrategy extends ServiceSupport implements ExecutorServiceStrategy {
 
+    private static final Log LOG = LogFactory.getLog(DefaultExecutorServiceStrategy.class);
+    private final List<ExecutorService> executorServices = new ArrayList<ExecutorService>();
     private final CamelContext camelContext;
     private String threadNamePattern = "Camel Thread ${counter} - ${name}";
 
@@ -50,39 +55,103 @@ public class DefaultExecutorServiceStrategy implements ExecutorServiceStrategy {
     }
 
     public ExecutorService lookup(Object source, String executorServiceRef) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Looking up ExecutorService with ref: " + executorServiceRef);
+        }
         return camelContext.getRegistry().lookup(executorServiceRef, ExecutorService.class);
     }
 
     public ExecutorService newCachedThreadPool(Object source, String name) {
-        return ExecutorServiceHelper.newCachedThreadPool(threadNamePattern, name, true);
+        ExecutorService answer = ExecutorServiceHelper.newCachedThreadPool(threadNamePattern, name, true);
+        onNewExecutorService(answer);
+        return answer;
     }
 
     public ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize) {
-        return ExecutorServiceHelper.newScheduledThreadPool(poolSize, threadNamePattern, name, true);
+        ScheduledExecutorService answer = ExecutorServiceHelper.newScheduledThreadPool(poolSize, threadNamePattern, name, true);
+        onNewExecutorService(answer);
+        return answer;
     }
 
     public ExecutorService newFixedThreadPool(Object source, String name, int poolSize) {
-        return ExecutorServiceHelper.newFixedThreadPool(poolSize, threadNamePattern, name, true);
+        ExecutorService answer = ExecutorServiceHelper.newFixedThreadPool(poolSize, threadNamePattern, name, true);
+        onNewExecutorService(answer);
+        return answer;
     }
 
     public ExecutorService newSingleThreadExecutor(Object source, String name) {
-        return ExecutorServiceHelper.newSingleThreadExecutor(threadNamePattern, name, true);
+        ExecutorService answer = ExecutorServiceHelper.newSingleThreadExecutor(threadNamePattern, name, true);
+        onNewExecutorService(answer);
+        return answer;
     }
 
     public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize) {
-        return ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize);
+        ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize);
+        onNewExecutorService(answer);
+        return answer;
     }
 
     public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, boolean daemon) {
-        return ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize, keepAliveTime, timeUnit, daemon);
+        ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize, keepAliveTime, timeUnit, daemon);
+        onNewExecutorService(answer);
+        return answer;
     }
 
     public void shutdown(ExecutorService executorService) {
+        if (executorService.isShutdown()) {
+            return;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Shutting down ExecutorService: " + executorService);
+        }
         executorService.shutdown();
     }
 
     public List<Runnable> shutdownNow(ExecutorService executorService) {
+        if (executorService.isShutdown()) {
+            return null;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Shutting down now ExecutorService: " + executorService);
+        }
         return executorService.shutdownNow();
     }
-    
+
+    /**
+     * Callback when a new {@link java.util.concurrent.ExecutorService} have been created.
+     *
+     * @param executorService the created {@link java.util.concurrent.ExecutorService} 
+     */
+    protected void onNewExecutorService(ExecutorService executorService) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created new ExecutorService: " + executorService);
+        }
+        executorServices.add(executorService);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // shutdown all executor services
+        for (ExecutorService executorService : executorServices) {
+            // only log if something goes wrong as we want to shutdown them all
+            try {
+                shutdownNow(executorService);
+            } catch (Exception e) {
+                LOG.warn("Error occurred during shutdown of ExecutorService: "
+                        + executorService + ". This exception will be ignored.", e);
+            }
+        }
+        executorServices.clear();
+    }
+
 }

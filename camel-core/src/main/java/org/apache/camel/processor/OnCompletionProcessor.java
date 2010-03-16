@@ -69,14 +69,6 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
         ServiceHelper.stopService(processor);
     }
 
-    @Override
-    protected void doShutdown() throws Exception {
-        // only shutdown thread pool on shutdown
-        if (executorService != null) {
-            camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
-        }
-    }
-
     public void process(Exchange exchange) throws Exception {
         if (processor == null) {
             return;

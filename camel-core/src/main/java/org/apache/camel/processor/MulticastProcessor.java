@@ -363,14 +363,6 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         ServiceHelper.stopServices(processors);
     }
 
-    @Override
-    protected void doShutdown() throws Exception {
-        // only shutdown thread pool on shutdown
-        if (executorService != null) {
-            camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
-        }
-    }
-
     private static void setToEndpoint(Exchange exchange, Processor processor) {
         if (processor instanceof Producer) {
             Producer producer = (Producer) processor;

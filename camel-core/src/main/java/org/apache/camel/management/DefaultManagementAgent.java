@@ -263,7 +263,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             try {
                 cs.stop();
             } catch (IOException e) {
-                // ignore
+                LOG.debug("Error occurred during stopping JMXConnectorService: "
+                        + cs + ". This exception will be ignored.");
             }
             cs = null;
         }
@@ -276,11 +277,11 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         ObjectName[] mBeans = mbeansRegistered.toArray(new ObjectName[mbeansRegistered.size()]);
         int caught = 0;
         for (ObjectName name : mBeans) {
-            mbeansRegistered.remove(name);
             try {
+                mbeansRegistered.remove(name);
                 unregister(name);
-            } catch (JMException jmex) {
-                LOG.info("Exception unregistering MBean", jmex);
+            } catch (Exception e) {
+                LOG.info("Exception unregistering MBean with name " + name, e);
                 caught++;
             }
         }

@@ -21,6 +21,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.ShutdownableService;
+
 /**
  * Strategy to create thread pools.
  * <p/>
@@ -34,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @version $Revision$
  */
-public interface ExecutorServiceStrategy {
+public interface ExecutorServiceStrategy extends ShutdownableService {
 
     /**
      * Creates a full thread name

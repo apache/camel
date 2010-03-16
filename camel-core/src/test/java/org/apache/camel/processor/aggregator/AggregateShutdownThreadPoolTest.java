@@ -21,14 +21,13 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * @version $Revision$
  */
 public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
 
-    private ExecutorService myPool = ExecutorServiceHelper.newCachedThreadPool(null, "myPool", true);
+    private ExecutorService myPool;
 
     public void testAggregateShutdownDefaultThreadPoolTest() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
@@ -95,6 +94,8 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                myPool = context.getExecutorServiceStrategy().newCachedThreadPool(this, "myPool");
+
                 from("direct:foo").routeId("foo")
                     .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3)
                         .to("mock:aggregated");
