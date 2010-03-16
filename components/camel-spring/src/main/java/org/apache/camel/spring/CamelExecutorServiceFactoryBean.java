@@ -45,19 +45,21 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelExecutorServiceFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware, ApplicationContextAware {
 
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Integer poolSize;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Integer maxPoolSize;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Integer keepAliveTime = 60;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     private TimeUnit units = TimeUnit.SECONDS;
-    @XmlAttribute(required = false)
+    @XmlAttribute
+    private Integer maxQueueSize = -1;
+    @XmlAttribute
     private String threadName;
     @XmlAttribute
-    private Boolean deamon = Boolean.TRUE;
+    private Boolean daemon = Boolean.TRUE;
     @XmlAttribute
     private String camelContextId;
     @XmlTransient
@@ -75,13 +77,13 @@ public class CamelExecutorServiceFactoryBean extends IdentifiedType implements F
 
         ExecutorService answer;
         if (getPoolSize() == null || getPoolSize() <= 0) {
-            // use the cached thread pool
-            answer = camelContext.getExecutorServiceStrategy().newCachedThreadPool(getId(), name);
+            // use the default profile
+            answer = camelContext.getExecutorServiceStrategy().newDefaultThreadPool(getId(), name);
         } else {
             // use a custom pool based on the settings
             int max = getMaxPoolSize() != null ? getMaxPoolSize() : getPoolSize();
             answer = camelContext.getExecutorServiceStrategy()
-                        .newThreadPool(getId(), name, getPoolSize(), max, getKeepAliveTime(), getUnits(), isDeamon());
+                        .newThreadPool(getId(), name, getPoolSize(), max, getKeepAliveTime(), getUnits(), getMaxQueueSize(), isDaemon());
         }
         return answer;
     }
@@ -126,6 +128,14 @@ public class CamelExecutorServiceFactoryBean extends IdentifiedType implements F
         this.units = units;
     }
 
+    public Integer getMaxQueueSize() {
+        return maxQueueSize;
+    }
+
+    public void setMaxQueueSize(Integer maxQueueSize) {
+        this.maxQueueSize = maxQueueSize;
+    }
+
     public String getThreadName() {
         return threadName;
     }
@@ -134,12 +144,12 @@ public class CamelExecutorServiceFactoryBean extends IdentifiedType implements F
         this.threadName = threadName;
     }
 
-    public Boolean isDeamon() {
-        return deamon;
+    public Boolean isDaemon() {
+        return daemon;
     }
 
-    public void setDeamon(Boolean deamon) {
-        this.deamon = deamon;
+    public void setDaemon(Boolean daemon) {
+        this.daemon = daemon;
     }
 
     public String getCamelContextId() {

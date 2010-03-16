@@ -51,7 +51,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     }
 
     public void setDefaultThreadPoolProfile(ThreadPoolProfile defaultThreadPoolProfile) {
-        // the old is no long default
+        // the old is no longer default
         if (this.defaultThreadPoolProfile != null) {
             this.defaultThreadPoolProfile.setDefaultProfile(false);
         }
