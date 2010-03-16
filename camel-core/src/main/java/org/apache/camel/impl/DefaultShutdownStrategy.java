@@ -252,6 +252,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     protected void doShutdown() throws Exception {
         if (executor != null) {
             camelContext.getExecutorServiceStrategy().shutdownNow(executor);
+            // should clear executor so we can restart by creating a new thread pool
+            executor = null;
         }
     }
 
