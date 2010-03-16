@@ -271,18 +271,13 @@ public class FileOperations implements GenericFileOperations<File> {
             int size = endpoint.getBufferSize();
             byte[] buffer = new byte[size];
             ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
-            while (true) {
-                int count = in.read(buffer);
-                if (count <= 0) {
-                    break;
-                } else if (count < size) {
-                    byteBuffer = ByteBuffer.wrap(buffer, 0, count);
-                    out.write(byteBuffer);
-                    break;
-                } else {
-                    out.write(byteBuffer);
-                    byteBuffer.clear();
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                if (bytesRead < size) {
+                    byteBuffer.limit(bytesRead);
                 }
+                out.write(byteBuffer);
+                byteBuffer.clear();
             }
         } finally {
             ObjectHelper.close(in, target.getName(), LOG);
