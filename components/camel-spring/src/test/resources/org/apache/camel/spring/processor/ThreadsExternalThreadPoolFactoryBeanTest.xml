@@ -30,6 +30,7 @@
                 maxQueueSize="2000"
                 threadName="myPool"
                 keepAliveTime="30"
+                rejectedPolicy="DiscardOldest"
                 units="SECONDS"
                 daemon="true"
                 xmlns="http://camel.apache.org/schema/spring"/>

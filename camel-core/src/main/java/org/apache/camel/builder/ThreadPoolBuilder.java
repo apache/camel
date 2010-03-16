@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 
 /**
@@ -63,6 +64,11 @@ public final class ThreadPoolBuilder {
         return this;
     }
 
+    public ThreadPoolBuilder rejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+        threadPoolDefinition.rejectedPolicy(rejectedPolicy);
+        return this;
+    }
+
     /**
      * Lookup a {@link java.util.concurrent.ExecutorService} from the {@link org.apache.camel.spi.Registry}.
      *
@@ -95,7 +101,7 @@ public final class ThreadPoolBuilder {
         ExecutorService answer = camelContext.getExecutorServiceStrategy().newThreadPool(source, name,
                 threadPoolDefinition.getPoolSize(), threadPoolDefinition.getMaxPoolSize(),
                 threadPoolDefinition.getKeepAliveTime(), threadPoolDefinition.getTimeUnit(),
-                threadPoolDefinition.getMaxQueueSize(), false);
+                threadPoolDefinition.getMaxQueueSize(), threadPoolDefinition.getRejectedExecutionHandler(), false);
 
         return answer;
     }

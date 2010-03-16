@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -143,6 +144,7 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
      * Creates a new custom thread pool.
      * <p/>
      * Will by default use 60 seconds for keep alive time for idle threads.
+     * And use {@link java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy CallerRunsPolicy} as rejection handler
      *
      * @param source        the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name          name which is appended to the thread name
@@ -155,18 +157,21 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
     /**
      * Creates a new custom thread pool.
      *
-     * @param source        the source object, usually it should be <tt>this</tt> passed in as parameter
-     * @param name          name which is appended to the thread name
-     * @param corePoolSize  the core pool size
-     * @param maxPoolSize   the maximum pool size
-     * @param keepAliveTime keep alive time for idle threads
-     * @param timeUnit      time unit for keep alive time
-     * @param maxQueueSize  the maximum number of tasks in the queue, use <tt>Integer.MAX_INT</tt> or <tt>-1</tt> to indicate unbounded
-     * @param daemon        whether or not the created threads is daemon or not
+     * @param source                     the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name                       name which is appended to the thread name
+     * @param corePoolSize               the core pool size
+     * @param maxPoolSize                the maximum pool size
+     * @param keepAliveTime              keep alive time for idle threads
+     * @param timeUnit                   time unit for keep alive time
+     * @param maxQueueSize               the maximum number of tasks in the queue, use <tt>Integer.MAX_INT</tt> or <tt>-1</tt> to indicate unbounded
+     * @param rejectedExecutionHandler   the handler for tasks which cannot be executed by the thread pool.
+     *                                   If <tt>null</tt> is provided then {@link java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy CallerRunsPolicy} is used.
+     * @param daemon                     whether or not the created threads is daemon or not
      * @return the created thread pool
      */
     ExecutorService newThreadPool(Object source, final String name, int corePoolSize, int maxPoolSize,
-                                  long keepAliveTime, TimeUnit timeUnit, int maxQueueSize, boolean daemon);
+                                  long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
+                                  RejectedExecutionHandler rejectedExecutionHandler, boolean daemon);
 
     /**
      * Shutdown the given executor service.

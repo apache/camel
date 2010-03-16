@@ -16,8 +16,10 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
@@ -31,6 +33,7 @@ public class ThreadPoolProfileSupport implements ThreadPoolProfile {
     private Long keepAliveTime = 60L;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private Integer maxQueueSize = -1;
+    private ThreadPoolRejectedPolicy rejectedPolicy;
 
     public Boolean isDefaultProfile() {
         return defaultProfile;
@@ -78,5 +81,20 @@ public class ThreadPoolProfileSupport implements ThreadPoolProfile {
 
     public void setMaxQueueSize(Integer maxQueueSize) {
         this.maxQueueSize = maxQueueSize;
+    }
+
+    public ThreadPoolRejectedPolicy getRejectedPolicy() {
+        return rejectedPolicy;
+    }
+
+    public RejectedExecutionHandler getRejectedExecutionHandler() {
+        if (rejectedPolicy != null) {
+            return rejectedPolicy.asRejectedExecutionHandler();
+        }
+        return null;
+    }
+
+    public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+        this.rejectedPolicy = rejectedPolicy;
     }
 }

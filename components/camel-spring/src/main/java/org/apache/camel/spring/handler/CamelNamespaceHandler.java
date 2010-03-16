@@ -39,7 +39,7 @@ import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelConsumerTemplateFactoryBean;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.CamelEndpointFactoryBean;
-import org.apache.camel.spring.CamelExecutorServiceFactoryBean;
+import org.apache.camel.spring.CamelThreadPoolFactoryBean;
 import org.apache.camel.spring.CamelJMXAgentDefinition;
 import org.apache.camel.spring.CamelProducerTemplateFactoryBean;
 import org.apache.camel.spring.CamelPropertyPlaceholderDefinition;
@@ -94,7 +94,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class, true);
         addBeanDefinitionParser("export", CamelServiceExporter.class, true);
         addBeanDefinitionParser("endpoint", CamelEndpointFactoryBean.class, true);
-        addBeanDefinitionParser("threadPool", CamelExecutorServiceFactoryBean.class, true);
+        addBeanDefinitionParser("threadPool", CamelThreadPoolFactoryBean.class, true);
 
         // jmx agent and property placeholder cannot be used outside of the camel context
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false);

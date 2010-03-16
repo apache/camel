@@ -17,6 +17,7 @@
 package org.apache.camel.spring;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,6 +28,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
@@ -43,7 +45,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 @XmlRootElement(name = "threadPool")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelExecutorServiceFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware, ApplicationContextAware {
+public class CamelThreadPoolFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware, ApplicationContextAware {
 
     @XmlAttribute
     private Integer poolSize;
@@ -56,6 +58,8 @@ public class CamelExecutorServiceFactoryBean extends IdentifiedType implements F
     private TimeUnit units = TimeUnit.SECONDS;
     @XmlAttribute
     private Integer maxQueueSize = -1;
+    @XmlAttribute
+    private ThreadPoolRejectedPolicy rejectedPolicy;
     @XmlAttribute
     private String threadName;
     @XmlAttribute
@@ -82,8 +86,12 @@ public class CamelExecutorServiceFactoryBean extends IdentifiedType implements F
         } else {
             // use a custom pool based on the settings
             int max = getMaxPoolSize() != null ? getMaxPoolSize() : getPoolSize();
-            answer = camelContext.getExecutorServiceStrategy()
-                        .newThreadPool(getId(), name, getPoolSize(), max, getKeepAliveTime(), getUnits(), getMaxQueueSize(), isDaemon());
+            RejectedExecutionHandler rejected = null;
+            if (rejectedPolicy != null) {
+                rejected = rejectedPolicy.asRejectedExecutionHandler();
+            }
+            answer = camelContext.getExecutorServiceStrategy().newThreadPool(getId(), name, getPoolSize(), max,
+                    getKeepAliveTime(), getUnits(), getMaxQueueSize(), rejected, isDaemon());
         }
         return answer;
     }
@@ -134,6 +142,14 @@ public class CamelExecutorServiceFactoryBean extends IdentifiedType implements F
 
     public void setMaxQueueSize(Integer maxQueueSize) {
         this.maxQueueSize = maxQueueSize;
+    }
+
+    public ThreadPoolRejectedPolicy getRejectedPolicy() {
+        return rejectedPolicy;
+    }
+
+    public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+        this.rejectedPolicy = rejectedPolicy;
     }
 
     public String getThreadName() {

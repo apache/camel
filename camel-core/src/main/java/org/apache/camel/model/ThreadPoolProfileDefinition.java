@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.spi.ThreadPoolProfile;
 
@@ -47,6 +49,8 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition im
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     @XmlAttribute()
     private Integer maxQueueSize = -1;
+    @XmlAttribute()
+    private ThreadPoolRejectedPolicy rejectedPolicy;
 
     public ThreadPoolProfileDefinition() {
     }
@@ -58,6 +62,7 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition im
         setKeepAliveTime(threadPoolProfile.getKeepAliveTime());
         setTimeUnit(threadPoolProfile.getTimeUnit());
         setMaxQueueSize(threadPoolProfile.getMaxQueueSize());
+        setRejectedPolicy(threadPoolProfile.getRejectedPolicy());
     }
 
     public ThreadPoolProfileDefinition poolSize(int poolSize) {
@@ -82,6 +87,11 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition im
 
     public ThreadPoolProfileDefinition maxQueueSize(int maxQueueSize) {
         setMaxQueueSize(maxQueueSize);
+        return this;
+    }
+
+    public ThreadPoolProfileDefinition rejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+        setRejectedPolicy(rejectedPolicy);
         return this;
     }
 
@@ -131,5 +141,20 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition im
 
     public void setMaxQueueSize(Integer maxQueueSize) {
         this.maxQueueSize = maxQueueSize;
+    }
+
+    public ThreadPoolRejectedPolicy getRejectedPolicy() {
+        return rejectedPolicy;
+    }
+
+    public RejectedExecutionHandler getRejectedExecutionHandler() {
+        if (rejectedPolicy != null) {
+            return rejectedPolicy.asRejectedExecutionHandler();
+        }
+        return null;
+    }
+
+    public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+        this.rejectedPolicy = rejectedPolicy;
     }
 }

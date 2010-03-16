@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
@@ -110,7 +111,9 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
     public void testThreadPoolBuilderAll() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ExecutorService executor = builder.poolSize(50).maxPoolSize(100).maxQueueSize(2000)
-                .keepAliveTime(20000).timeUnit(TimeUnit.MILLISECONDS).build(this, "myPool");
+                .keepAliveTime(20000).timeUnit(TimeUnit.MILLISECONDS)
+                .rejectedPolicy(ThreadPoolRejectedPolicy.DiscardOldest)
+                .build(this, "myPool");
         assertNotNull(executor);
 
         assertEquals(false, executor.isShutdown());

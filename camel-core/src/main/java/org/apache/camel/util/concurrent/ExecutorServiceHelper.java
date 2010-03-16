@@ -20,6 +20,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -59,7 +60,7 @@ public final class ExecutorServiceHelper {
      * Creates a new thread name with the given prefix
      *
      * @param pattern the pattern
-     * @param name the name
+     * @param name    the name
      * @return the thread name, which is unique
      */
     public static String getThreadName(String pattern, String name) {
@@ -67,7 +68,7 @@ public final class ExecutorServiceHelper {
             pattern = DEFAULT_PATTERN;
         }
 
-        String answer = pattern.replaceFirst("\\$\\{counter\\}", ""  + nextThreadCounter());
+        String answer = pattern.replaceFirst("\\$\\{counter\\}", "" + nextThreadCounter());
         answer = answer.replaceFirst("\\$\\{name\\}", name);
         if (answer.indexOf("$") > -1 || answer.indexOf("${") > -1 || answer.indexOf("}") > -1) {
             throw new IllegalArgumentException("Pattern is invalid: " + pattern);
@@ -117,9 +118,9 @@ public final class ExecutorServiceHelper {
     /**
      * Creates a new single thread pool (usually for background tasks)
      *
-     * @param pattern  pattern of the thread name
-     * @param name     ${name} in the pattern name
-     * @param daemon   whether the threads is daemon or not
+     * @param pattern pattern of the thread name
+     * @param name    ${name} in the pattern name
+     * @param daemon  whether the threads is daemon or not
      * @return the created pool
      */
     public static ExecutorService newSingleThreadExecutor(final String pattern, final String name, final boolean daemon) {
@@ -135,9 +136,9 @@ public final class ExecutorServiceHelper {
     /**
      * Creates a new cached thread pool
      *
-     * @param pattern  pattern of the thread name
-     * @param name     ${name} in the pattern name
-     * @param daemon   whether the threads is daemon or not
+     * @param pattern pattern of the thread name
+     * @param name    ${name} in the pattern name
+     * @param daemon  whether the threads is daemon or not
      * @return the created pool
      */
     public static ExecutorService newCachedThreadPool(final String pattern, final String name, final boolean daemon) {
@@ -153,32 +154,36 @@ public final class ExecutorServiceHelper {
     /**
      * Creates a new custom thread pool using 60 seconds as keep alive and with an unbounded queue.
      *
-     * @param pattern       pattern of the thread name
-     * @param name          ${name} in the pattern name
-     * @param corePoolSize  the core size
-     * @param maxPoolSize   the maximum pool size
+     * @param pattern      pattern of the thread name
+     * @param name         ${name} in the pattern name
+     * @param corePoolSize the core size
+     * @param maxPoolSize  the maximum pool size
      * @return the created pool
      */
     public static ExecutorService newThreadPool(final String pattern, final String name, int corePoolSize, int maxPoolSize) {
-        return ExecutorServiceHelper.newThreadPool(pattern, name, corePoolSize, maxPoolSize, 60, TimeUnit.SECONDS, -1, true);
+        return ExecutorServiceHelper.newThreadPool(pattern, name, corePoolSize, maxPoolSize, 60,
+                TimeUnit.SECONDS, -1, new ThreadPoolExecutor.CallerRunsPolicy(), true);
     }
 
     /**
      * Creates a new custom thread pool
      *
-     * @param pattern       pattern of the thread name
-     * @param name          ${name} in the pattern name
-     * @param corePoolSize  the core size
-     * @param maxPoolSize   the maximum pool size
-     * @param keepAliveTime keep alive
-     * @param timeUnit      keep alive time unit
-     * @param maxQueueSize  the maximum number of tasks in the queue, use <tt>Integer.MAX_VALUE</tt> or <tt>-1</tt> to indicate unbounded
-     * @param daemon        whether the threads is daemon or not
+     * @param pattern                  pattern of the thread name
+     * @param name                     ${name} in the pattern name
+     * @param corePoolSize             the core size
+     * @param maxPoolSize              the maximum pool size
+     * @param keepAliveTime            keep alive time
+     * @param timeUnit                 keep alive time unit
+     * @param maxQueueSize             the maximum number of tasks in the queue, use <tt>Integer.MAX_VALUE</tt> or <tt>-1</tt> to indicate unbounded
+     * @param rejectedExecutionHandler the handler for tasks which cannot be executed by the thread pool.
+     *                                 If <tt>null</tt> is provided then {@link java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy CallerRunsPolicy} is used.
+     * @param daemon                   whether the threads is daemon or not
      * @return the created pool
      * @throws IllegalArgumentException if parameters is not valid
      */
     public static ExecutorService newThreadPool(final String pattern, final String name, int corePoolSize, int maxPoolSize,
-                                                long keepAliveTime, TimeUnit timeUnit, int maxQueueSize, final boolean daemon) {
+                                                long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
+                                                RejectedExecutionHandler rejectedExecutionHandler, final boolean daemon) {
 
         // validate max >= core
         if (maxPoolSize < corePoolSize) {
@@ -203,6 +208,10 @@ public final class ExecutorServiceHelper {
                 return answer;
             }
         });
+        if (rejectedExecutionHandler == null) {
+            rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+        }
+        answer.setRejectedExecutionHandler(rejectedExecutionHandler);
         return answer;
     }
 
@@ -211,14 +220,14 @@ public final class ExecutorServiceHelper {
      * <p/>
      * This method will lookup for configured thread pool in the following order
      * <ul>
-     *   <li>from the definition if any explicit configured executor service.</li>
-     *   <li>if none found, then <tt>null</tt> is returned.</li>
+     * <li>from the definition if any explicit configured executor service.</li>
+     * <li>if none found, then <tt>null</tt> is returned.</li>
      * </ul>
      * The various {@link ExecutorServiceAwareDefinition} should use this helper method to ensure they support
      * configured executor services in the same coherent way.
      *
-     * @param routeContext  the rout context
-     * @param definition    the node definition which may leverage executor service.
+     * @param routeContext the rout context
+     * @param definition   the node definition which may leverage executor service.
      * @return the configured executor service, or <tt>null</tt> if none was configured.
      * @throws IllegalArgumentException is thrown if lookup of executor service in {@link org.apache.camel.spi.Registry} was not found
      */

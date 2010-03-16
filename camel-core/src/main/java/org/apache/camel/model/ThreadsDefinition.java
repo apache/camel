@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.Processor;
+import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.processor.ThreadsProcessor;
@@ -56,7 +58,12 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     private TimeUnit units = TimeUnit.SECONDS;
     @XmlAttribute
+    private Integer maxQueueSize = -1;
+    @XmlTransient()
     private String threadName;
+    @XmlAttribute
+    private ThreadPoolRejectedPolicy rejectedPolicy;
+
     @XmlAttribute
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
 
@@ -73,8 +80,13 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
             } else {
                 // use a custom pool based on the settings
                 int max = getMaxPoolSize() != null ? getMaxPoolSize() : poolSize;
+                RejectedExecutionHandler rejected = null;
+                if (rejectedPolicy != null) {
+                    rejected = rejectedPolicy.asRejectedExecutionHandler();
+                }
                 executorService = routeContext.getCamelContext().getExecutorServiceStrategy()
-                                        .newThreadPool(this, name, poolSize, max, getKeepAliveTime(), getUnits(), -1, true);
+                                        .newThreadPool(this, name, poolSize, max, getKeepAliveTime(), getUnits(),
+                                                       getMaxQueueSize(), rejected, true);
             }
         }
         Processor childProcessor = routeContext.createProcessor(this);
@@ -158,6 +170,30 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
     }
 
     /**
+     * Sets the maximum number of tasks in the work queue.
+     * <p/>
+     * Use <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt> for an unbounded queue
+     *
+     * @param maxQueueSize the max queue size
+     * @return the builder
+     */
+    public ThreadsDefinition maxQueueSize(int maxQueueSize) {
+        setMaxQueueSize(maxQueueSize);
+        return this;
+    }
+
+    /**
+     * Sets the handler for tasks which cannot be executed by the thread pool.
+     *
+     * @param rejectedPolicy  the policy for the handler
+     * @return the builder
+     */
+    public ThreadsDefinition rejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+        setRejectedPolicy(rejectedPolicy);
+        return this;
+    }
+
+    /**
      * Sets the thread name to use.
      *
      * @param threadName the thread name
@@ -237,11 +273,27 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
         this.units = units;
     }
 
+    public Integer getMaxQueueSize() {
+        return maxQueueSize;
+    }
+
+    public void setMaxQueueSize(Integer maxQueueSize) {
+        this.maxQueueSize = maxQueueSize;
+    }
+
     public String getThreadName() {
         return threadName;
     }
 
     public void setThreadName(String threadName) {
         this.threadName = threadName;
+    }
+
+    public ThreadPoolRejectedPolicy getRejectedPolicy() {
+        return rejectedPolicy;
+    }
+
+    public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+        this.rejectedPolicy = rejectedPolicy;
     }
 }

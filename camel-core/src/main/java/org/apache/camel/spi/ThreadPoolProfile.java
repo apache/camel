@@ -16,7 +16,10 @@
  */
 package org.apache.camel.spi;
 
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.ThreadPoolRejectedPolicy;
 
 /**
  * A profile which defines thread pool settings.
@@ -112,4 +115,28 @@ public interface ThreadPoolProfile {
      * @param maxQueueSize the max queue size
      */
     void setMaxQueueSize(Integer maxQueueSize);
+
+    /**
+     * Gets the handler for tasks which cannot be executed by the thread pool.
+     *
+     * @return the policy for the handler
+     */
+    ThreadPoolRejectedPolicy getRejectedPolicy();
+
+    /**
+     * Gets the handler for tasks which cannot be executed by the thread pool.
+     *
+     * @return the handler, or <tt>null</tt> if none defined
+     */
+    RejectedExecutionHandler getRejectedExecutionHandler();
+
+    /**
+     * Sets the handler for tasks which cannot be executed by the thread pool.
+     *
+     * @param rejectedPolicy  the policy for the handler
+     */
+    void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy);
+
+
+
 }

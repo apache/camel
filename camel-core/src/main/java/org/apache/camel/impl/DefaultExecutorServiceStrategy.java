@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -83,7 +84,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name,
             defaultThreadPoolProfile.getPoolSize(), defaultThreadPoolProfile.getMaxPoolSize(),
             defaultThreadPoolProfile.getKeepAliveTime(), defaultThreadPoolProfile.getTimeUnit(),
-            defaultThreadPoolProfile.getMaxQueueSize(), false);
+            defaultThreadPoolProfile.getMaxQueueSize(), defaultThreadPoolProfile.getRejectedExecutionHandler(), false);
         onNewExecutorService(answer);
         return answer;
     }
@@ -119,9 +120,10 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     }
 
     public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize, long keepAliveTime,
-                                         TimeUnit timeUnit, int maxQueueSize, boolean daemon) {
-        ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize, 
-                                                                     keepAliveTime, timeUnit, maxQueueSize, daemon);
+                                         TimeUnit timeUnit, int maxQueueSize, RejectedExecutionHandler rejectedExecutionHandler,
+                                         boolean daemon) {
+        ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize, keepAliveTime,
+                                                                     timeUnit, maxQueueSize, rejectedExecutionHandler, daemon);
         onNewExecutorService(answer);
         return answer;
     }
