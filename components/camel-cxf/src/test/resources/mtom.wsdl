@@ -20,6 +20,7 @@ under the License.
 <wsdl:definitions xmlns:types="http://apache.org/camel/cxf/mtom_feature/types" 
 		  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 		  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+          xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
 		  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
 		  xmlns:tns="http://apache.org/camel/cxf/mtom_feature" 
 		  name="jaxws mtom feature"
@@ -95,11 +96,40 @@ under the License.
 	</wsdl:operation>
 
     </wsdl:binding>
+    
+    <wsdl:binding name="HelloBinding12" type="tns:Hello">
+        <soap12:binding transport="http://www.w3.org/2003/05/soap/bindings/HTTP/" style="document" /> 
+	    <wsdl:operation name="echoData">
+	        <soap12:operation soapAction="echoDataAction"/>
+	        <wsdl:input>
+		        <soap12:body use="literal"/>
+	        </wsdl:input>
+	        <wsdl:output>
+		        <soap12:body use="literal"/>
+	        </wsdl:output>
+	    </wsdl:operation>
+
+	    <wsdl:operation name="Detail">
+	        <soap12:operation soapAction="DetailAction"/>
+	        <wsdl:input>
+		        <soap12:body use="literal"/>
+	        </wsdl:input>
+	        <wsdl:output>
+		        <soap12:body use="literal"/>
+	        </wsdl:output>
+	    </wsdl:operation>
+    </wsdl:binding>
 
     <wsdl:service name="HelloService">
 	<wsdl:port name="HelloPort" binding="tns:HelloBinding">
 	    <soap:address location="http://localhost:9091/jaxws-mtom/hello"></soap:address>
 	</wsdl:port>
+    </wsdl:service>
+    
+    <wsdl:service name="HelloService12">
+	    <wsdl:port name="HelloPort" binding="tns:HelloBinding12">
+	        <soap12:address location="http://localhost:9091/jaxws-mtom/hello"/>
+	    </wsdl:port>
     </wsdl:service>
 
 </wsdl:definitions>

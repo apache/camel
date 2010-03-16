@@ -21,7 +21,6 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
-import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
@@ -48,16 +47,14 @@ import static org.junit.Assert.assertNotNull;
  */
 @ContextConfiguration
 public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTests {
-    
-    protected final QName serviceName = new QName("http://apache.org/camel/cxf/mtom_feature", "HelloService");
-    
+        
     @Autowired
     protected CamelContext context;
     private Endpoint endpoint;
 
     @Before
     public void setUp() throws Exception {
-        endpoint = Endpoint.publish("http://localhost:9092/jaxws-mtom/hello", new HelloImpl());
+        endpoint = Endpoint.publish("http://localhost:9092/jaxws-mtom/hello", getImpl());
         SOAPBinding binding = (SOAPBinding)endpoint.getBinding();
         binding.setMTOMEnabled(true);
         
@@ -98,17 +95,22 @@ public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTes
         
     }
     
-    private Hello getPort() {
+    protected Hello getPort() {
         URL wsdl = getClass().getResource("/mtom.wsdl");
         assertNotNull("WSDL is null", wsdl);
 
-        HelloService service = new HelloService(wsdl, serviceName);
+        HelloService service = new HelloService(wsdl, HelloService.SERVICE);
         assertNotNull("Service is null ", service);
         return service.getHelloPort();
     }
     
     private Image getImage(String name) throws Exception {
         return ImageIO.read(getClass().getResource(name));
+    }
+    
+    
+    protected Object getImpl() {
+        return new HelloImpl();
     }
     
 
