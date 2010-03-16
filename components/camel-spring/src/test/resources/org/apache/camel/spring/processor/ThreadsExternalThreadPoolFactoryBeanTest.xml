@@ -27,10 +27,11 @@
     <threadPool id="myPool"
                 poolSize="2"
                 maxPoolSize="4"
+                maxQueueSize="2000"
                 threadName="myPool"
                 keepAliveTime="30"
                 units="SECONDS"
-                deamon="true"
+                daemon="true"
                 xmlns="http://camel.apache.org/schema/spring"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
