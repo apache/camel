@@ -60,32 +60,31 @@ public final class UnsafeUriCharactersEncoder {
             return s;
         }
 
-        try {
-            // First check whether we actually need to encode
-            byte[] bytes = s.getBytes("UTF8");
-            for (int i = 0;;) {
-                if (unsafeCharacters.get(bytes[i])) {
+        // First check whether we actually need to encode
+        char chars[] = s.toCharArray();
+        for (int i = 0;;) {
+            // just deal with the ascii character
+            if (chars[i] > 0 && chars[i] < 128) {
+                if (unsafeCharacters.get(chars[i])) {
                     break;
                 }
-                if (++i >= bytes.length) {
-                    return s;
-                }
             }
-
-            // okay there are some unsafe characters so we do need to encode
-            StringBuffer sb = new StringBuffer();
-            for (byte b : bytes) {
-                if (unsafeCharacters.get(b)) {
-                    appendEscape(sb, b);
-                } else {
-                    sb.append((char)b);
-                }
+            if (++i >= chars.length) {
+                return s;
             }
-            return sb.toString();
-        } catch (UnsupportedEncodingException e) {
-            LOG.error("Can't encoding the uri: ", e);
-            return null;
         }
+
+        // okay there are some unsafe characters so we do need to encode
+        StringBuffer sb = new StringBuffer();
+        for (char ch : chars) {
+            if (ch > 0 && ch < 128 && unsafeCharacters.get(ch)) {
+                appendEscape(sb, (byte)ch);
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+
     }
 
     private static void appendEscape(StringBuffer sb, byte b) {
