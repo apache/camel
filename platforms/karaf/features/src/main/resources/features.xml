@@ -110,6 +110,7 @@
     <bundle>mvn:org.eclipse.jetty/jetty-server/${jetty-bundle-version}</bundle>
     <bundle>mvn:org.eclipse.jetty/jetty-security/${jetty-bundle-version}</bundle>
     <bundle>mvn:org.eclipse.jetty/jetty-servlet/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-servlets/${jetty-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <feature version='${pom.version}'>camel-http</feature>
     <bundle>mvn:org.apache.camel/camel-jetty/${pom.version}</bundle>
