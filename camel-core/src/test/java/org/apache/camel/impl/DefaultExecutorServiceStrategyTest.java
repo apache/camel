@@ -82,6 +82,27 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
         assertEquals(10, executor.getCorePoolSize());
         assertEquals(20, executor.getMaximumPoolSize());
         assertEquals(60, executor.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(1000, executor.getQueue().remainingCapacity());
+
+        context.stop();
+        assertEquals(true, myPool.isShutdown());
+    }
+
+    public void testDefaultUnboundedQueueThreadPool() throws Exception {
+        ThreadPoolProfileSupport custom = new ThreadPoolProfileSupport();
+        custom.setMaxQueueSize(-1);
+
+        context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(custom);
+        assertEquals(true, custom.isDefaultProfile().booleanValue());
+
+        ExecutorService myPool = context.getExecutorServiceStrategy().newDefaultThreadPool(this, "myPool");
+        assertEquals(false, myPool.isShutdown());
+
+        // should use default settings
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
+        assertEquals(10, executor.getCorePoolSize());
+        assertEquals(20, executor.getMaximumPoolSize());
+        assertEquals(60, executor.getKeepAliveTime(TimeUnit.SECONDS));
         assertEquals(Integer.MAX_VALUE, executor.getQueue().remainingCapacity());
 
         context.stop();

@@ -32,7 +32,7 @@ public class ThreadPoolProfileSupport implements ThreadPoolProfile {
     private Integer maxPoolSize = 20;
     private Long keepAliveTime = 60L;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
-    private Integer maxQueueSize = -1;
+    private Integer maxQueueSize = 1000;
     private ThreadPoolRejectedPolicy rejectedPolicy;
 
     public Boolean isDefaultProfile() {

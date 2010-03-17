@@ -101,7 +101,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     private final CamelContext camelContext;
     private Collection<Processor> processors;
     private final AggregationStrategy aggregationStrategy;
-    private final boolean isParallelProcessing;
+    private final boolean parallelProcessing;
     private final boolean streaming;
     private final boolean stopOnException;
     private final ExecutorService executorService;
@@ -121,10 +121,11 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         this.camelContext = camelContext;
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
-        this.isParallelProcessing = parallelProcessing;
         this.executorService = executorService;
         this.streaming = streaming;
         this.stopOnException = stopOnException;
+        // must enable parallel if executor service is provided
+        this.parallelProcessing = parallelProcessing || executorService != null;
     }
 
     @Override
@@ -403,7 +404,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     }
 
     public boolean isParallelProcessing() {
-        return isParallelProcessing;
+        return parallelProcessing;
     }
 
     public List<Processor> next() {
