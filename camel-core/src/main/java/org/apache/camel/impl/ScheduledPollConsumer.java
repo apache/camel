@@ -34,7 +34,6 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService {
-    private static final int DEFAULT_THREADPOOL_SIZE = 10;
     private static final transient Log LOG = LogFactory.getLog(ScheduledPollConsumer.class);
 
     private final ScheduledExecutorService executor;
@@ -51,9 +50,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     public ScheduledPollConsumer(DefaultEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
 
-        // TODO: this executor should also be shutdown when CamelContext stops
+        // we only need one thread in the pool to schedule this task
         this.executor = endpoint.getCamelContext().getExecutorServiceStrategy()
-                            .newScheduledThreadPool(this, endpoint.getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
+                            .newScheduledThreadPool(this, endpoint.getEndpointUri(), 1);
         ObjectHelper.notNull(executor, "executor");
     }
 

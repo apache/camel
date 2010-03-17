@@ -19,8 +19,6 @@ package org.apache.camel.impl;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -37,12 +35,9 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
-    private static final int DEFAULT_THREADPOOL_SIZE = 10;
-
     private String endpointUri;
     private CamelContext camelContext;
     private Component component;
-    private ExecutorService executorService;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
 
     protected DefaultEndpoint(String endpointUri, Component component) {
@@ -119,25 +114,6 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         this.camelContext = camelContext;
     }
 
-    /**
-     * @deprecated will be removed in Camel 2.4
-     */
-    @Deprecated
-    public synchronized ExecutorService getExecutorService() {
-        if (executorService == null) {
-            executorService = createScheduledExecutorService();
-        }
-        return executorService;
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.4
-     */
-    @Deprecated
-    public synchronized void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
     public PollingConsumer createPollingConsumer() throws Exception {
         return new EventDrivenPollingConsumer(this);
     }
@@ -185,14 +161,6 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
 
     public void setExchangePattern(ExchangePattern exchangePattern) {
         this.exchangePattern = exchangePattern;
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.4
-     */
-    @Deprecated
-    protected ScheduledExecutorService createScheduledExecutorService() {
-        return getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this, getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
     }
 
     public void configureProperties(Map<String, Object> options) {

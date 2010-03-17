@@ -42,16 +42,13 @@ import org.apache.camel.util.ExchangeHelper;
  * @version $Revision$
  */
 public class SendAsyncProcessor extends SendProcessor implements Runnable, Navigate<Processor> {
-
-    private static final int DEFAULT_THREADPOOL_SIZE = 10;
     private final CamelContext camelContext;
     private final Processor target;
     private final BlockingQueue<Exchange> completedTasks = new LinkedBlockingQueue<Exchange>();
     private ExecutorService executorService;
     private ExecutorService producerExecutorService;
-    private int poolSize = DEFAULT_THREADPOOL_SIZE;
+    private int poolSize = 10;
     private ExceptionHandler exceptionHandler;
-
 
     public SendAsyncProcessor(Endpoint destination, Processor target) {
         super(destination);
@@ -168,10 +165,6 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
     }
 
     public ExecutorService getExecutorService() {
-        if (executorService == null) {
-            executorService = destination.getCamelContext().getExecutorServiceStrategy()
-                                .newThreadPool(this, "SendAsyncProcessor-Consumer", poolSize, poolSize);
-        }
         return executorService;
     }
 
@@ -184,9 +177,9 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
         this.executorService = executorService;
     }
 
-    public ExecutorService getProducerExecutorService() {
+    public synchronized ExecutorService getProducerExecutorService() {
         if (producerExecutorService == null) {
-            // use a cached pool for the producers which can grow/schrink itself
+            // use a default pool for the producers which can grow/schrink itself
             producerExecutorService = destination.getCamelContext().getExecutorServiceStrategy()
                                         .newDefaultThreadPool(this, "SendAsyncProcessor-Producer");
         }
@@ -262,7 +255,8 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
                         LOG.debug("Async reply received now routing the Exchange: " + exchange);
                     }
                     target.process(exchange);
-                } catch (Exception e) {
+                } catch (Throwable e) {
+                    // must catch throwable to avoid existing this method and thus the thread terminates
                     getExceptionHandler().handleException(e);
                 }
             }
@@ -272,23 +266,33 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
     protected void doStart() throws Exception {
         super.doStart();
 
+        if (poolSize <= 0) {
+            throw new IllegalArgumentException("PoolSize must be a positive number");
+        }
+
         for (int i = 0; i < poolSize; i++) {
-            getExecutorService().execute(this);
+            if (executorService == null) {
+                executorService = destination.getCamelContext().getExecutorServiceStrategy()
+                                    .newFixedThreadPool(this, "SendAsyncProcessor-Consumer", poolSize);
+            }
+            executorService.execute(this);
         }
     }
 
     protected void doStop() throws Exception {
         super.doStop();
 
-        // must shutdown thread pools on stop as we are consumers
-        if (producerExecutorService != null) {
-            camelContext.getExecutorServiceStrategy().shutdownNow(producerExecutorService);
-            producerExecutorService = null;
-        }
+        // must shutdown executor service as its used for concurrent consumers
         if (executorService != null) {
             camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
             executorService = null;
         }
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        // clear the completed tasks when we shutdown
         completedTasks.clear();
     }
 
