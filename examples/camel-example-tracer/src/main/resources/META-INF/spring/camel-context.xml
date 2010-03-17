@@ -45,11 +45,15 @@
                 <!-- now we need to find the best quote, so we aggregate all the splitted words
                      we use our own strategy how to aggregate -->
                 <aggregate strategyRef="myAggregateStrategy">
-                    <!-- coorelate everything using constant true, as they are all from the same source -->
+                    <!-- correlate everything using constant true, as they are all from the same source -->
                     <correlationExpression>
                         <constant>true</constant>
                     </correlationExpression>
-                    <!-- send the result to strem out so we can see the respone in the console -->
+                    <!-- complete after 1 sec on inactivity -->
+                    <completionTimeout>
+                        <constant>1000</constant>
+                    </completionTimeout>
+                    <!-- send the result to stream out so we can see the response in the console -->
                     <to uri="stream:out"/>
                 </aggregate>
             </split>

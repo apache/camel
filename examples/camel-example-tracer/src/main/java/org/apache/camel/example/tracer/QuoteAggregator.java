@@ -35,7 +35,7 @@ public class QuoteAggregator implements AggregationStrategy {
 
     public void setCoolWords(List<String> coolWords) {
         for (String s : coolWords) {
-            // use lower case to be incase sensitive
+            // use lower case to be case insensitive
             this.coolWords.add(s.toLowerCase());
         }
         // reverse order so indexOf returning -1 will be the last instead
@@ -43,16 +43,21 @@ public class QuoteAggregator implements AggregationStrategy {
     }
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        if (oldExchange == null) {
+            // the first time then just return the new exchange
+            return newExchange;
+        }
+
         // here we aggregate
         // oldExchange is the current "winner"
         // newExchange is the new candidate
 
         // we get the quotes of the two exchanges
-        String oldQute = oldExchange.getIn().getBody(String.class);
-        String newQute = newExchange.getIn().getBody(String.class);
+        String oldQuote = oldExchange.getIn().getBody(String.class);
+        String newQuote = newExchange.getIn().getBody(String.class);
 
         // now we compare the two and get a result indicate the best one
-        int result = new QuoteComparator().compare(oldQute, newQute);
+        int result = new QuoteComparator().compare(oldQuote, newQuote);
 
         // we return the winner
         return result > 0 ? newExchange : oldExchange;

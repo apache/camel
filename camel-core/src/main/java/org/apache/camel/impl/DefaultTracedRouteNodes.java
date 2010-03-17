@@ -32,9 +32,8 @@ import org.apache.camel.spi.TracedRouteNodes;
  * @version $Revision$
  */
 public class DefaultTracedRouteNodes implements TracedRouteNodes {
-
-    private Stack<List<RouteNode>> routeNodes = new Stack<List<RouteNode>>();
-    private Map<ProcessorDefinition<?>, AtomicInteger> nodeCounter = new HashMap<ProcessorDefinition<?>, AtomicInteger>();
+    private final Stack<List<RouteNode>> routeNodes = new Stack<List<RouteNode>>();
+    private final Map<ProcessorDefinition<?>, AtomicInteger> nodeCounter = new HashMap<ProcessorDefinition<?>, AtomicInteger>();
 
     public DefaultTracedRouteNodes() {
         // create an empty list to start with
@@ -42,7 +41,7 @@ public class DefaultTracedRouteNodes implements TracedRouteNodes {
     }
 
     public void addTraced(RouteNode entry) {
-        List<RouteNode> list = routeNodes.peek();
+        List<RouteNode> list = routeNodes.isEmpty() ? null : routeNodes.peek();
         if (list == null) {
             list = new ArrayList<RouteNode>();
             routeNodes.push(list);
@@ -51,7 +50,7 @@ public class DefaultTracedRouteNodes implements TracedRouteNodes {
     }
 
     public RouteNode getLastNode() {
-        List<RouteNode> list = routeNodes.peek();
+        List<RouteNode> list = routeNodes.isEmpty() ? null : routeNodes.peek();
         if (list == null || list.isEmpty()) {
             return null;
         }
@@ -59,7 +58,7 @@ public class DefaultTracedRouteNodes implements TracedRouteNodes {
     }
 
     public RouteNode getSecondLastNode() {
-        List<RouteNode> list = routeNodes.peek();
+        List<RouteNode> list = routeNodes.isEmpty() ? null : routeNodes.peek();
         if (list == null || list.isEmpty() || list.size() == 1) {
             return null;
         }
@@ -99,4 +98,5 @@ public class DefaultTracedRouteNodes implements TracedRouteNodes {
         }
         return count.getAndIncrement();
     }
+
 }
