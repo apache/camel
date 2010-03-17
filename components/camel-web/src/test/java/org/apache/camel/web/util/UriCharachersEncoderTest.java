@@ -21,10 +21,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 
-
-/**
- *
- */
 public class UriCharachersEncoderTest extends Assert {
     @Test
     public void testEncoder() {
@@ -37,7 +33,8 @@ public class UriCharachersEncoderTest extends Assert {
 
     @Test
     public void testNoEncoding() {
-        String noEncoding = "direct:start";
+        String noEncoding = "direct:start\uFD04";
+        System.out.println(noEncoding.length());
         String result = UriCharactersEncoder.encode(noEncoding);
         assertEquals("Get the wrong encoding result", noEncoding, result);
     }
