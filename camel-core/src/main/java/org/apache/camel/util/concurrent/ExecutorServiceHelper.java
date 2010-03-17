@@ -190,12 +190,8 @@ public final class ExecutorServiceHelper {
             throw new IllegalArgumentException("MaxPoolSize must be >= corePoolSize, was " + maxPoolSize + " >= " + corePoolSize);
         }
 
-        if (maxQueueSize == 0) {
-            throw new IllegalArgumentException("MaxQueueSize cannot be 0.");
-        }
-
         BlockingQueue<Runnable> queue;
-        if (maxQueueSize < 0) {
+        if (maxQueueSize <= 0) {
             queue = new LinkedBlockingQueue<Runnable>();
         } else {
             queue = new LinkedBlockingQueue<Runnable>(maxQueueSize);

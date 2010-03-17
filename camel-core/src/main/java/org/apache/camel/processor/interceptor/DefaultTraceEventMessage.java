@@ -30,7 +30,7 @@ import org.apache.camel.util.MessageHelper;
  * Default {@link TraceEventMessage}.
  */
 public final class DefaultTraceEventMessage implements Serializable, TraceEventMessage {
-    private static final long serialVersionUID = -4549012920528941202L;
+    private static final long serialVersionUID = -4549012920528941203L;
 
     private Date timestamp;
     private String fromEndpointUri;
@@ -47,6 +47,7 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
     private String outBody;
     private String outBodyType;
     private String causedByException;
+    private final transient Exchange tracedExchange;
 
     /**
      * Creates a {@link DefaultTraceEventMessage} based on the given node it was traced while processing
@@ -56,6 +57,7 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
      * @param exchange the current {@link Exchange}
      */
     public DefaultTraceEventMessage(final Date timestamp, final ProcessorDefinition<?> toNode, final Exchange exchange) {
+        this.tracedExchange = exchange;
         Message in = exchange.getIn();
 
         // need to use defensive copies to avoid Exchange altering after the point of interception
@@ -225,6 +227,10 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
 
     public void setCausedByException(String causedByException) {
         this.causedByException = causedByException;
+    }
+
+    public Exchange getTracedExchange() {
+        return tracedExchange;
     }
 
     @Override

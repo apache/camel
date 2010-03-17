@@ -21,7 +21,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.processor.interceptor.TraceEventMessage;
 
 /**
@@ -182,6 +184,11 @@ public class JpaTraceEventMessage implements TraceEventMessage {
 
     public void setCausedByException(String causedByException) {
         this.causedByException = causedByException;
+    }
+
+    @Transient
+    public Exchange getTracedExchange() {
+        return null;
     }
 
     @Override

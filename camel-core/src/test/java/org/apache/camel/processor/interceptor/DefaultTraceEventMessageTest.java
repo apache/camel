@@ -116,6 +116,8 @@ public class DefaultTraceEventMessageTest extends ContextTestSupport {
 
         em.setShortExchangeId("123");
         assertEquals("123", em.getShortExchangeId());
+
+        assertSame(exchange, em.getTracedExchange());
     }
 
     @Override

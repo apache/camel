@@ -18,10 +18,16 @@ package org.apache.camel.processor.interceptor;
 
 import java.util.Date;
 
+import org.apache.camel.Exchange;
+
 /**
  * A trace event message that contains decomposed information about the traced
  * {@link org.apache.camel.Exchange} at the point of interception. The information is stored as snapshot copies
  * using String types.
+ * <p/>
+ * Notice not all implementations may provide direct access to the traced {@link Exchange} using
+ * the {@link #getTracedExchange()} method, and thus this method may return <tt>null</tt>.
+ * For example the JPA implementation will return <tt>null</tt>.
  */
 public interface TraceEventMessage {
 
@@ -75,4 +81,14 @@ public interface TraceEventMessage {
      * Gets the caused by exception (ie {@link org.apache.camel.Exchange#getException() Exchange#getException()}.
      */
     String getCausedByException();
+
+    /**
+     * Gets the traced {@link Exchange}.
+     * <p/>
+     * Not all implementations may provide direct access to the traced {@link Exchange} and thus this
+     * method may return <tt>null</tt>. For example the JPA implementation will return <tt>null</tt>.
+     *
+     * @return the traced {@link Exchange}, however it can be <tt>null</tt> in some implementations.
+     */
+    Exchange getTracedExchange();
 }
