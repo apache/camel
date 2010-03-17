@@ -19,17 +19,24 @@ package org.apache.camel.util;
 import junit.framework.TestCase;
 
 public class UnsafeCharactersEncoderTest extends TestCase {
+    private void testEncoding(String before, String after) {
+        String result = UnsafeUriCharactersEncoder.encode(before);
+        assertEquals("Get the wrong encoding result", result, after);
+    }
+    
     public void testQnameEncoder() {
         String afterEncoding = "%7Bhttp://www.example.com/test%7DServiceName";
         String beforeEncoding = "{http://www.example.com/test}ServiceName";
-
-        String result = UnsafeUriCharactersEncoder.encode(beforeEncoding);
-        assertEquals("Get the wrong encoding result", result, afterEncoding);
+        testEncoding(beforeEncoding, afterEncoding);
     }
 
     public void testNoEncoding() {
         String noEncoding = "http://www.example.com";
-        String result = UnsafeUriCharactersEncoder.encode(noEncoding);
-        assertEquals("Get the wrong encoding result", result, noEncoding);
+        testEncoding(noEncoding, noEncoding);
+    }
+    
+    public void testUnicodes() {
+        String noEncoding = "http://test.com/\uFD04";
+        testEncoding(noEncoding, noEncoding);
     }
 }
