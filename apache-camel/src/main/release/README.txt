@@ -1,29 +1,39 @@
 Welcome to Apache Camel
 =============================================================================== 
 
-Apache Camel is a powerful Spring based Integration Framework.
+Apache Camel is a powerful open source integration framework based on
+known Enterprise Integration Patterns with powerful Bean Integration.
 
-Camel implements the Enterprise Integration Patterns allowing you to configure
-routing and mediation rules in either a Java based Domain Specific Language
-(or Fluent API) or via Spring based XML Configuration files. Either approaches
-mean you get smart completion of routing rules in your IDE whether in your
-Java or XML editor.
+Camel lets you create the Enterprise Integration Patterns to implement routing
+and mediation rules in either a Java based Domain Specific Language
+(or Fluent API), via Spring based Xml Configuration files or via the Scala DSL.
+This means you get smart completion of routing rules in your IDE whether in
+your Java, Scala or XML editor.
 
 Apache Camel uses URIs so that it can easily work directly with any kind of
-transport or messaging model such as HTTP, ActiveMQ, JMS, JBI, SCA, MINA
-or CXF Bus API together with and working with pluggable Data Format options.
+Transport or messaging model such as HTTP, ActiveMQ, JMS, JBI, SCA, MINA
+or CXF Bus API together with working with pluggable Data Format options.
 Apache Camel is a small library which has minimal dependencies for easy
-embedding in any Java application.
+embedding in any Java application. Apache Camel lets you work with the same
+API regardless which kind of Transport used, so learn the API once and you
+will be able to interact with all the Components that is provided
+out-of-the-box.
+
+Apache Camel has powerful Bean Binding and integrated seamless with popular
+frameworks such as Spring and Guice.
+
+Apache Camel has extensive Testing support allowing you to easily
+unit test your routes.
 
 Apache Camel can be used as a routing and mediation engine for the
 following projects:
 
+    * Apache ServiceMix which is the most popular and powerful distributed
+      open source ESB, JBI and OSGi container
     * Apache ActiveMQ which is the most popular and powerful open
       source message broker
     * Apache CXF which is a smart web services suite (JAX-WS and JAX-RS)
     * Apache MINA a networking framework
-    * Apache ServiceMix which is the most popular and powerful distributed
-      open source ESB, JBI and OSGi container
 
 
 Getting Started
