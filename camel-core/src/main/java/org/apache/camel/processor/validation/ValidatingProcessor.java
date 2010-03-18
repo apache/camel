@@ -52,9 +52,16 @@ public class ValidatingProcessor implements Processor {
     private File schemaFile;
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
     private boolean useDom;
+    private boolean useSharedSchema = true;
 
     public void process(Exchange exchange) throws Exception {
-        Schema schema = getSchema();
+        Schema schema;
+        if (isUseSharedSchema()) {
+            schema = getSchema();
+        } else {
+            schema = createSchema();
+        }
+
         Validator validator = schema.newValidator();
 
         Source source;
@@ -88,7 +95,7 @@ public class ValidatingProcessor implements Processor {
     // Properties
     // -----------------------------------------------------------------------
 
-    public Schema getSchema() throws IOException, SAXException {
+    public synchronized Schema getSchema() throws IOException, SAXException {
         if (schema == null) {
             schema = createSchema();
         }
@@ -107,7 +114,7 @@ public class ValidatingProcessor implements Processor {
         this.schemaLanguage = schemaLanguage;
     }
 
-    public Source getSchemaSource() throws IOException {
+    public synchronized Source getSchemaSource() throws IOException {
         if (schemaSource == null) {
             schemaSource = createSchemaSource();
         }
@@ -134,7 +141,7 @@ public class ValidatingProcessor implements Processor {
         this.schemaFile = schemaFile;
     }
 
-    public SchemaFactory getSchemaFactory() {
+    public synchronized SchemaFactory getSchemaFactory() {
         if (schemaFactory == null) {
             schemaFactory = createSchemaFactory();
         }
@@ -165,6 +172,14 @@ public class ValidatingProcessor implements Processor {
      */
     public void setUseDom(boolean useDom) {
         this.useDom = useDom;
+    }
+
+    public boolean isUseSharedSchema() {
+        return useSharedSchema;
+    }
+
+    public void setUseSharedSchema(boolean useSharedSchema) {
+        this.useSharedSchema = useSharedSchema;
     }
 
     // Implementation methods

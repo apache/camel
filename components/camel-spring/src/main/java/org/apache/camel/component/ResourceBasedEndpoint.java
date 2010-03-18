@@ -106,7 +106,7 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
     }
 
     /**
-     * Sets wether to use resource content cache or not - default is <tt>false</tt>.
+     * Sets whether to use resource content cache or not - default is <tt>false</tt>.
      *
      * @see #getResourceAsInputStream()
      */

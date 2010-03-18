@@ -30,7 +30,7 @@ import org.apache.camel.processor.validation.ValidatingProcessor;
 /**
  * Unit test of ValidatingProcessor.
  */
-public class ValidatingProcessorTest extends ContextTestSupport {
+public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSupport {
 
     protected ValidatingProcessor validating;
 
@@ -38,6 +38,7 @@ public class ValidatingProcessorTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         validating = new ValidatingProcessor();
         validating.setSchemaFile(new File("src/test/resources/org/apache/camel/processor/ValidatingProcessor.xsd").getAbsoluteFile());
+        validating.setUseSharedSchema(false);
 
         super.setUp();
     }
@@ -137,4 +138,5 @@ public class ValidatingProcessorTest extends ContextTestSupport {
             }
         };
     }
+
 }
