@@ -136,7 +136,7 @@ public abstract class FtpServerTestSupport extends CamelTestSupport {
 
     protected FtpServerFactory createFtpServerFactory() throws Exception {
         assertTrue(USERS_FILE.exists());
-        assertTrue("Port number is not initialized in an expected range: " + port, port > 21000);
+        assertTrue("Port number is not initialized in an expected range: " + port, port >= 21000);
 
         NativeFileSystemFactory fsf = new NativeFileSystemFactory();
         fsf.setCreateHome(true);
