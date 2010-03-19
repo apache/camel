@@ -36,6 +36,10 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+/**
+ * Checks for interoperability between a CXF client that is attached using 
+ * the Camel transport for CXF and the SOAP data format
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class SoapCxfClientTest extends RouteBuilder {
@@ -71,7 +75,7 @@ public class SoapCxfClientTest extends RouteBuilder {
         String jaxbPackage = GetCustomersByName.class.getPackage().getName();
         ElementNameStrategy elNameStrat = new TypeNameStrategy();
         SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(jaxbPackage, elNameStrat);
-        CustomerServerBean serverBean = new CustomerServerBean();
+        CustomerServiceImpl serverBean = new CustomerServiceImpl();
         from("direct:cxfclient").onException(Exception.class) // 
                 .handled(true) //
                 .marshal(soapDataFormat) //

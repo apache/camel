@@ -16,30 +16,46 @@
  */
 package org.apache.camel.dataformat.soap;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Service;
-import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import java.io.IOException;
 
-public class SoapSpringRoundtripTest extends SoapRoundtripTest {
+import junit.framework.Assert;
+
+import com.example.customerservice.GetCustomersByName;
+
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+/**
+ * Works like SoapRoundTripTest but uses a spring configuration instead of the java dsl
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration
+public class SoapSpringRoundtripTest {
     
-    protected CamelContext createCamelContext() throws Exception {
-        setUseRouteBuilder(false);
+    @EndpointInject(uri = "mock:result")
+    protected MockEndpoint resultEndpoint;
 
-        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/dataformat/soap/SoapSpringRoundtripContext.xml");
-        setCamelContextService(new Service() {
-            public void start() throws Exception {
-                applicationContext.start();
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate producer;
 
-            }
-
-            public void stop() throws Exception {
-                applicationContext.stop();
-            }
-        });
-
-        return SpringCamelContext.springCamelContext(applicationContext);        
+    @Test
+    public void testRoundTrip() throws IOException, InterruptedException {
+        resultEndpoint.expectedMessageCount(1);
+        GetCustomersByName request = new GetCustomersByName();
+        request.setName("Müller");
+        producer.sendBody(request);
+        resultEndpoint.assertIsSatisfied();
+        Exchange exchange = resultEndpoint.getExchanges().get(0);
+        GetCustomersByName received = exchange.getIn().getBody(
+                GetCustomersByName.class);
+        Assert.assertNotNull(received);
+        Assert.assertEquals("Müller", received.getName());
     }
-
 }

@@ -143,7 +143,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         }
         final JAXBElement<?> content;
         if (exception != null) {
-            content = createFaultFromException(exception, soapAction);
+            content = createFaultFromException(exception);
         } else {
             content = createBodyContentFromObject(inputObject, soapAction);
         }
@@ -192,11 +192,10 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * the throwable if present
      * 
      * @param exception
-     * @param soapAction
      * @return SOAP fault from given Throwable
      */
     @SuppressWarnings("unchecked")
-    private JAXBElement<Fault> createFaultFromException(final Throwable exception, String soapAction) {
+    private JAXBElement<Fault> createFaultFromException(final Throwable exception) {
         WebFault webFault = exception.getClass().getAnnotation(WebFault.class);
         if (webFault == null || webFault.targetNamespace() == null) {
             throw new RuntimeException("The exception " + exception.getClass().getName()

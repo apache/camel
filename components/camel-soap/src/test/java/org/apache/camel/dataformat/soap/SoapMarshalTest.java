@@ -31,8 +31,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
+/**
+ * 
+ */
 public class SoapMarshalTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
@@ -47,6 +51,7 @@ public class SoapMarshalTest extends CamelTestSupport {
      * @throws IOException
      * @throws InterruptedException
      */
+    @Test
     public void testMarshalNormalObject() throws IOException, InterruptedException {
         InputStream in = this.getClass().getResourceAsStream("SoapMarshalTestExpectedResult.xml");
         resultEndpoint.expectedMessageCount(1);
@@ -65,6 +70,7 @@ public class SoapMarshalTest extends CamelTestSupport {
      * @throws IOException
      * @throws InterruptedException
      */
+    @Test
     public void testMarshalException() throws IOException, InterruptedException {
         InputStream in = this.getClass().getResourceAsStream("SoapMarshalTestExpectedFault.xml");
         resultEndpoint.expectedMessageCount(1);
@@ -76,6 +82,9 @@ public class SoapMarshalTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    /**
+     * Create data format by using the constructor
+     */
     protected SoapJaxbDataFormat createDataFormat() {
         String jaxbPackage = GetCustomersByName.class.getPackage().getName();
         ElementNameStrategy elStrat = new TypeNameStrategy();

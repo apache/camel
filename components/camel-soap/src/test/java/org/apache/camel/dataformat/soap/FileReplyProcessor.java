@@ -16,24 +16,19 @@
  */
 package org.apache.camel.dataformat.soap;
 
-import com.example.customerservice.GetCustomersByName;
+import java.io.InputStream;
 
-/**
- * Works like SoapMarshalTest but the data format is initialized by using the setters
- * instead of the constructor
- */
-public class SoapMarshalSetterTest extends SoapMarshalTest {
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
-    /**
-     * Create Dataformat by using the setters
-     */
-    @Override
-    protected SoapJaxbDataFormat createDataFormat() {
-        String jaxbPackage = GetCustomersByName.class.getPackage().getName();
-        SoapJaxbDataFormat dataFormat = new SoapJaxbDataFormat();
-        dataFormat.setContextPath(jaxbPackage);
-        dataFormat.setElementNameStrategy(null);
-        return dataFormat;
+final class FileReplyProcessor implements Processor {
+    private final InputStream in;
+
+    FileReplyProcessor(InputStream in) {
+        this.in = in;
     }
-    
+
+    public void process(Exchange exchange) throws Exception {
+        exchange.getIn().setBody(in);
+    }
 }

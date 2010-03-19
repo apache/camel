@@ -30,7 +30,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 public class SoapRoundtripTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:result")
@@ -39,6 +40,7 @@ public class SoapRoundtripTest extends CamelTestSupport {
     @Produce(uri = "direct:start")
     protected ProducerTemplate producer;
 
+    @Test
     public void testRoundTrip() throws IOException, InterruptedException {
         resultEndpoint.expectedMessageCount(1);
         GetCustomersByName request = new GetCustomersByName();

@@ -23,8 +23,16 @@ import com.example.customerservice.GetCustomersByNameResponse;
 import com.example.customerservice.NoSuchCustomer;
 import com.example.customerservice.NoSuchCustomerException;
 
-public class CustomerServerBean implements CustomerService {
+/**
+ * Simple implementation of CustomerService that supports
+ * returning a customer or a NoSuchCustomerException depending on input
+ */
+public class CustomerServiceImpl implements CustomerService {
 
+    /**
+     * If the request.name is "none" a NoSuchCustomerException is thrown in any other case
+     * a dummy customer is returned that has the same name as the request
+     */
     public GetCustomersByNameResponse getCustomersByName(GetCustomersByName request)
         throws NoSuchCustomerException {
         if ("none".equals(request.getName())) {

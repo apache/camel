@@ -28,17 +28,24 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
+/*
+ * Checks the soap data format by using fixed request and expected response
+ * messages that are run against an implementation of the CustomerService
+ */
 public class SoapServerTest extends CamelTestSupport {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate producer;
 
+    @Test
     public void testSuccess() throws IOException, InterruptedException {
         sendAndCheckReply("request.xml", "response.xml");
     }
 
+    @Test
     public void testFault() throws IOException, InterruptedException {
         sendAndCheckReply("requestFault.xml", "responseFault.xml");
     }
@@ -61,7 +68,7 @@ public class SoapServerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 ElementNameStrategy elNameStrat = new TypeNameStrategy();
                 SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(jaxbPackage, elNameStrat);
-                CustomerServerBean serverBean = new CustomerServerBean();
+                CustomerServiceImpl serverBean = new CustomerServiceImpl();
                 from("direct:start").onException(Exception.class) // 
                         .handled(true) //
                         .marshal(soapDataFormat) //

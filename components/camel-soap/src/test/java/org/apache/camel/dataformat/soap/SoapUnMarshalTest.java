@@ -31,6 +31,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.CamelTestSupport;
 
+/**
+ * Checks that a static soap request is unmarshalled to the correct java
+ * objects
+ */
 public class SoapUnMarshalTest extends CamelTestSupport {
     private static final String SERVICE_PACKAGE = GetCustomersByName.class
             .getPackage().getName();

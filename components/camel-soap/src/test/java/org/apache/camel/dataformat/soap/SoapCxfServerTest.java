@@ -25,32 +25,25 @@ import com.example.customerservice.GetCustomersByNameResponse;
 import com.example.customerservice.NoSuchCustomer;
 import com.example.customerservice.NoSuchCustomerException;
 
-import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.bean.ProxyHelper;
-import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+/**
+ * Checks for interoperability between a CXF server that is attached using 
+ * the Camel transport for CXF and a dynamic proxy using the SOAP data format
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class SoapCxfServerTest extends RouteBuilder {
-    protected CustomerService customerServiceProxy;
-
-    @EndpointInject(uri = "direct:camelClient")
-    protected DirectEndpoint clientEndpoint;
-
-    @SuppressWarnings("unchecked")
-    @Before
-    public void init() throws Exception {
-        customerServiceProxy = ProxyHelper.createProxy(clientEndpoint, CustomerService.class);
-    }
+    @Produce(uri = "direct:camelClient")
+    CustomerService customerServiceProxy;
 
     @Test
     public void testSuccess() throws NoSuchCustomerException {

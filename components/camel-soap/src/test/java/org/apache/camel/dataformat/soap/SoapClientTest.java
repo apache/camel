@@ -25,44 +25,27 @@ import com.example.customerservice.CustomerService;
 import com.example.customerservice.GetCustomersByName;
 import com.example.customerservice.GetCustomersByNameResponse;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
+/**
+ * Test that uses a dynamic proxy for CustomerService to send a request as SOAP and
+ * work with a static return SOAP message. 
+ */
 public class SoapClientTest extends CamelTestSupport {
-    private final class FileReplyProcessor implements Processor {
-        private final InputStream in;
-
-        private FileReplyProcessor(InputStream in) {
-            this.in = in;
-        }
-
-        public void process(Exchange exchange) throws Exception {
-            exchange.getIn().setBody(in);
-        }
-    }
-
-    protected CustomerService proxy;
 
     @Produce(uri = "direct:start")
-    protected ProducerTemplate producer;
+    CustomerService customerService;
 
-    @SuppressWarnings("unchecked")
+    @Test
     public void testRoundTrip() throws Exception {
-        context.setTracing(true);
-        Endpoint startEndpoint = context.getEndpoint("direct:start");
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        proxy = ProxyHelper.createProxy(startEndpoint, classLoader, CustomerService.class);
-
-        GetCustomersByNameResponse response = proxy
+        GetCustomersByNameResponse response = customerService
                 .getCustomersByName(new GetCustomersByName());
+
         Assert.assertEquals(1, response.getReturn().size());
         Customer firstCustomer = response.getReturn().get(0);
         Assert.assertEquals(100000.0, firstCustomer.getRevenue());
