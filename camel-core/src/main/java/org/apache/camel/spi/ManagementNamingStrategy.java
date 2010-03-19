@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import java.util.concurrent.ThreadPoolExecutor;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
@@ -56,4 +57,7 @@ public interface ManagementNamingStrategy {
     ObjectName getObjectNameForTracer(CamelContext context, InterceptStrategy tracer) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForService(CamelContext context, Service service) throws MalformedObjectNameException;
+
+    ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool) throws MalformedObjectNameException;
+
 }

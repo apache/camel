@@ -29,6 +29,7 @@ import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedService;
+import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ManagementAgent;
@@ -110,6 +111,9 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
         } else if (managedObject instanceof ManagedTracer) {
             ManagedTracer mt = (ManagedTracer) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForTracer(mt.getCamelContext(), mt.getTracer());
+        } else if (managedObject instanceof ManagedThreadPool) {
+            ManagedThreadPool mes = (ManagedThreadPool) managedObject;
+            objectName = getManagementNamingStrategy().getObjectNameForThreadPool(mes.getCamelContext(), mes.getThreadPool());
         } else if (managedObject instanceof ManagedService) {
             // check for managed service should be last
             ManagedService ms = (ManagedService) managedObject;

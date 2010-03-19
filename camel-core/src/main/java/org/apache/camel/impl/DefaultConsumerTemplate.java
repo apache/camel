@@ -54,8 +54,8 @@ public class DefaultConsumerTemplate implements ConsumerTemplate {
         return consumerCache.receive(endpoint);
     }
 
-    public Exchange receive(Endpoint endpoinit) {
-        return receive(endpoinit.getEndpointUri());
+    public Exchange receive(Endpoint endpoint) {
+        return receive(endpoint.getEndpointUri());
     }
 
     public Exchange receive(String endpointUri, long timeout) {
@@ -137,7 +137,7 @@ public class DefaultConsumerTemplate implements ConsumerTemplate {
     /**
      * Extracts the body from the given result.
      * <p/>
-     * If the exchange pattern is provided it will try to honor it and retrive the body
+     * If the exchange pattern is provided it will try to honor it and retrieve the body
      * from either IN or OUT according to the pattern.
      *
      * @param result   the result

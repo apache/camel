@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
 import javax.management.JMException;
 
 import org.apache.camel.CamelContext;
@@ -50,6 +51,7 @@ import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedService;
+import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedTracer;
@@ -434,7 +436,31 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         try {
             getManagementStrategy().manageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not register error handler builder: " + errorHandlerBuilder + " as ErrorHandlerMBean.", e);
+            LOG.warn("Could not register error handler builder: " + errorHandlerBuilder + " as ErrorHandler MBean.", e);
+        }
+    }
+
+    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool) {
+        // the agent hasn't been started
+        if (!initialized) {
+            return;
+        }
+
+        ManagedThreadPool mtp = new ManagedThreadPool(camelContext, threadPool);
+        mtp.init(getManagementStrategy());
+
+        // skip already managed services, for example if a route has been restarted
+        if (getManagementStrategy().isManaged(mtp, null)) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("The thread pool is already managed: " + threadPool);
+            }
+            return;
+        }
+
+        try {
+            getManagementStrategy().manageObject(mtp);
+        } catch (Exception e) {
+            LOG.warn("Could not register thread pool: " + threadPool + " as ThreadPool MBean.", e);
         }
     }
 

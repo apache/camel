@@ -40,7 +40,7 @@ public class ManagedTracerOptionsTest extends ContextTestSupport {
         return context;
     }
 
-    public void testManagedErrorHandlerOptions() throws Exception {
+    public void testManagedTracerOptions() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=tracer,*"), null);

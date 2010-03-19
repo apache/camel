@@ -17,6 +17,7 @@
 package org.apache.camel.spring;
 
 import java.util.Collection;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -69,5 +70,8 @@ public class DummyLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onRoutesAdd(Collection<Route> routes) {
+    }
+
+    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool) {
     }
 }

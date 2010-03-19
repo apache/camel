@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import java.util.Collection;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -122,5 +123,13 @@ public interface LifecycleStrategy {
      * @param errorHandlerBuilder the error handler builder
      */
     void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder errorHandlerBuilder);
+
+    /**
+     * Notification on adding a thread pool.
+     *
+     * @param camelContext  the camel context
+     * @param threadPool    the thread pool
+     */
+    void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool);
 
 }

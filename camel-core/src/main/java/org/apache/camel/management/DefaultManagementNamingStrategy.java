@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.ThreadPoolExecutor;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
@@ -54,6 +55,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public static final String TYPE_COMPONENT = "components";
     public static final String TYPE_TRACER = "tracer";
     public static final String TYPE_ERRORHANDLER = "errorhandlers";
+    public static final String TYPE_THREAD_POOL = "threadpools";
     public static final String TYPE_SERVICE = "services";
 
     protected String domainName;
@@ -225,6 +227,17 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_NAME + "=")
             .append(service.getClass().getSimpleName())
             .append("(").append(ObjectHelper.getIdentityHashCode(service)).append(")");
+        return createObjectName(buffer);
+    }
+
+    public ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool) throws MalformedObjectNameException {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
+        buffer.append(KEY_TYPE + "=" + TYPE_THREAD_POOL + ",");
+        buffer.append(KEY_NAME + "=")
+            .append(threadPool.getClass().getSimpleName())
+            .append("(").append(ObjectHelper.getIdentityHashCode(threadPool)).append(")");
         return createObjectName(buffer);
     }
 

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -129,4 +130,9 @@ public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
     public void onErrorHandlerAdd(RouteContext routeContext, Processor processor, ErrorHandlerBuilder errorHandlerBuilder) {
         // Do nothing here
     }
+
+    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool) {
+        // Do nothing here
+    }
+
 }

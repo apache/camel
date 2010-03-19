@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ExecutorServiceStrategy;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
@@ -91,8 +93,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
 
     public ExecutorService newCachedThreadPool(Object source, String name) {
         ExecutorService answer = ExecutorServiceHelper.newCachedThreadPool(threadNamePattern, name, true);
-        executorServices.add(answer);
-        onNewExecutorService(answer);
+        onThreadPoolCreated(answer);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created new cached thread pool for source: " + source + " with name: " + name + ". -> " + answer);
@@ -102,8 +103,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
 
     public ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize) {
         ScheduledExecutorService answer = ExecutorServiceHelper.newScheduledThreadPool(poolSize, threadNamePattern, name, true);
-        executorServices.add(answer);
-        onNewExecutorService(answer);
+        onThreadPoolCreated(answer);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created new scheduled thread pool for source: " + source + " with name: " + name + ". [poolSize=" + poolSize + "]. -> " + answer);
@@ -113,8 +113,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
 
     public ExecutorService newFixedThreadPool(Object source, String name, int poolSize) {
         ExecutorService answer = ExecutorServiceHelper.newFixedThreadPool(poolSize, threadNamePattern, name, true);
-        executorServices.add(answer);
-        onNewExecutorService(answer);
+        onThreadPoolCreated(answer);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created new fixed thread pool for source: " + source + " with name: " + name + ". [poolSize=" + poolSize + "]. -> " + answer);
@@ -124,8 +123,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
 
     public ExecutorService newSingleThreadExecutor(Object source, String name) {
         ExecutorService answer = ExecutorServiceHelper.newSingleThreadExecutor(threadNamePattern, name, true);
-        executorServices.add(answer);
-        onNewExecutorService(answer);
+        onThreadPoolCreated(answer);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created new single thread pool for source: " + source + " with name: " + name + ". -> " + answer);
@@ -135,8 +133,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
 
     public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize) {
         ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize);
-        executorServices.add(answer);
-        onNewExecutorService(answer);
+        onThreadPoolCreated(answer);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created new thread pool for source: " + source + " with name: " + name + ". [poolSize=" + corePoolSize
@@ -150,8 +147,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
                                          boolean daemon) {
         ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize, keepAliveTime,
                                                                      timeUnit, maxQueueSize, rejectedExecutionHandler, daemon);
-        executorServices.add(answer);
-        onNewExecutorService(answer);
+        onThreadPoolCreated(answer);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created new thread pool for source: " + source + " with name: " + name + ". [poolSize=" + corePoolSize
@@ -190,6 +186,22 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         }
 
         return answer;
+    }
+
+    private void onThreadPoolCreated(ExecutorService executorService) {
+        // add to internal list of thread pools
+        executorServices.add(executorService);
+
+        // let lifecycle strategy be notified as well which can let it be managed in JMX as well
+        if (executorService instanceof ThreadPoolExecutor) {
+            ThreadPoolExecutor threadPool = (ThreadPoolExecutor) executorService;
+            for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
+                lifecycle.onThreadPoolAdd(camelContext, threadPool);
+            }
+        }
+
+        // now call strategy to allow custom logic
+        onNewExecutorService(executorService);
     }
 
     /**

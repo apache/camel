@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -83,6 +84,10 @@ public class DummyLifecycleStrategy implements LifecycleStrategy {
 
     public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder errorHandlerBuilder) {
         events.add("onErrorHandlerAdd");
+    }
+
+    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool) {
+        events.add("onThreadPoolAdd");
     }
 
     public List<String> getEvents() {

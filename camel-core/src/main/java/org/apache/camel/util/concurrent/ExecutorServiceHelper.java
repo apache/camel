@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -191,9 +192,14 @@ public final class ExecutorServiceHelper {
         }
 
         BlockingQueue<Runnable> queue;
-        if (maxQueueSize <= 0) {
+        if (corePoolSize == 0 && maxQueueSize <= 0) {
+            // use a synchronous so we can act like the cached thread pool
+            queue = new SynchronousQueue<Runnable>();
+        } else if (maxQueueSize <= 0) {
+            // unbounded task queue
             queue = new LinkedBlockingQueue<Runnable>();
         } else {
+            // bounded task queue
             queue = new LinkedBlockingQueue<Runnable>(maxQueueSize);
         }
         ThreadPoolExecutor answer = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, queue);
