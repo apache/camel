@@ -34,8 +34,8 @@
         <feature version="${pom.version}">camel</feature>
         <feature version="${pom.version}">camel-cxf</feature>
         <feature version="${pom.version}">camel-jetty</feature>
-        <feature version="${pom.version}">activemq-feature</feature>
-        <bundle>mvn:org.apache.camel/camel-example-cafe/${pom.version}</bundle>
+        <!-- don't need to install the activemq-feature if we have  -->
+        <bundle>mvn:org.apache.camel/camel-example-cxf/${pom.version}</bundle>
     </feature>
 
 </features>
