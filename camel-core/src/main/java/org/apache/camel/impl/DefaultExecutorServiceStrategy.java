@@ -28,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ExecutorServiceStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -145,6 +146,10 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize, long keepAliveTime,
                                          TimeUnit timeUnit, int maxQueueSize, RejectedExecutionHandler rejectedExecutionHandler,
                                          boolean daemon) {
+
+        // the thread name must not be null
+        ObjectHelper.notNull(name, "ThreadName");
+
         ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize, keepAliveTime,
                                                                      timeUnit, maxQueueSize, rejectedExecutionHandler, daemon);
         onThreadPoolCreated(answer);

@@ -60,7 +60,7 @@ public class CamelThreadPoolFactoryBean extends IdentifiedType implements Factor
     private Integer maxQueueSize = -1;
     @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy = ThreadPoolRejectedPolicy.CallerRuns;
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String threadName;
     @XmlAttribute
     private Boolean daemon = Boolean.TRUE;
@@ -81,15 +81,13 @@ public class CamelThreadPoolFactoryBean extends IdentifiedType implements Factor
             throw new IllegalArgumentException("PoolSize must be a positive number");
         }
 
-        String name = getThreadName() != null ? getThreadName() : getId();
-
         int max = getMaxPoolSize() != null ? getMaxPoolSize() : getPoolSize();
         RejectedExecutionHandler rejected = null;
         if (rejectedPolicy != null) {
             rejected = rejectedPolicy.asRejectedExecutionHandler();
         }
 
-        ExecutorService answer = camelContext.getExecutorServiceStrategy().newThreadPool(getId(), name, getPoolSize(), max,
+        ExecutorService answer = camelContext.getExecutorServiceStrategy().newThreadPool(getId(), getThreadName(), getPoolSize(), max,
                     getKeepAliveTime(), getTimeUnit(), getMaxQueueSize(), rejected, isDaemon());
         return answer;
     }
