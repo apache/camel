@@ -38,7 +38,7 @@ public final class CamelClient {
     public static void main(final String[] args) throws Exception {
         System.out.println("Notice this client requires that the CamelServer is already running!");
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring/camel-client.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/camel-client.xml");
 
         // get the camel template for Spring template style sending of messages (= producer)
         final ProducerTemplate producer = (ProducerTemplate) context.getBean("camelTemplate");
