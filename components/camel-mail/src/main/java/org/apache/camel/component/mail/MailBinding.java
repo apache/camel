@@ -127,23 +127,12 @@ public class MailBinding {
         // fix content type to include a space after semi colon if missing
         if (contentType != null && contentType.contains(";")) {
             String before = ObjectHelper.before(contentType, ";");
-            String after = ObjectHelper.after(contentType, ";");
+            String charset = determineCharSet(configuration, exchange);
 
-            // after is the charset lets see if its given and a valid charset
-            if (after != null) {
-                String charset = ObjectHelper.after(after, "=");
-                charset = determineCharSet(configuration, charset);
-                if (charset != null) {
-                    after = "charset=" + charset;
-                } else {
-                    after = null;
-                }
-            }
-
-            if (before != null && after == null) {
+            if (before != null && charset == null) {
                 contentType = before.trim();
-            } else if (before != null && after != null) {
-                contentType = before.trim() + "; " + after;
+            } else if (before != null && charset != null) {
+                contentType = before.trim() + "; charset=" + charset;
             }
         }
 
@@ -154,26 +143,42 @@ public class MailBinding {
         return contentType;
     }
 
-    protected String determineCharSet(MailConfiguration configuration, String charset) {
-        if (charset == null) {
-            return null;
+    protected String determineCharSet(MailConfiguration configuration, Exchange exchange) {
+
+         // see if we got any content type set
+        String contentType = configuration.getContentType();
+        if (exchange.getIn().getHeader("contentType") != null) {
+            contentType = exchange.getIn().getHeader("contentType", String.class);
+        } else if (exchange.getIn().getHeader(Exchange.CONTENT_TYPE) != null) {
+            contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
         }
 
-        boolean supported;
-        try {
-            supported = Charset.isSupported(charset);
-        } catch (IllegalCharsetNameException e) {
-            supported = false;
-        }
+        // fix content type to include a space after semi colon if missing
+        if (contentType != null && contentType.contains(";")) {
+            String after = ObjectHelper.after(contentType, ";");
 
-        if (supported) {
-            return charset;
-        } else if (configuration.isIgnoreUnsupportedCharset()) {
-            LOG.warn("Charset: " + charset + " is not supported, will fallback to use platform default instead.");
-            return null;
+            // after is the charset lets see if its given and a valid charset
+            if (after != null) {
+                String charset = ObjectHelper.after(after, "=");
+                if (charset != null) {
+                    boolean supported;
+                    try {
+                        supported = Charset.isSupported(charset);
+                    } catch (IllegalCharsetNameException e) {
+                        supported = false;
+                    }
+                    if (supported) {
+                        return charset;
+                    } else if (!configuration.isIgnoreUnsupportedCharset()) {
+                        return charset;
+                    } else if (configuration.isIgnoreUnsupportedCharset()) {
+                        LOG.warn("Charset: " + charset + " is not supported, will fallback to use platform default instead.");
+                        return null;
+                    }
+                }
+            }
         }
-
-        return charset;
+        return null;
     }
 
     protected String populateContentOnMimeMessage(MimeMessage part, MailConfiguration configuration, Exchange exchange)
@@ -469,8 +474,8 @@ public class MailBinding {
         MimeMultipart multipartAlternative = new MimeMultipart("alternative");
         mimeMessage.setContent(multipartAlternative);
 
-        BodyPart plainText = new MimeBodyPart();
-        plainText.setText(getAlternativeBody(configuration, exchange));
+        MimeBodyPart plainText = new MimeBodyPart();
+        plainText.setText(getAlternativeBody(configuration, exchange), determineCharSet(configuration, exchange));
         // remove the header with the alternative mail now that we got it
         // otherwise it might end up twice in the mail reader
         exchange.getIn().removeHeader(configuration.getAlternativeBodyHeader());
