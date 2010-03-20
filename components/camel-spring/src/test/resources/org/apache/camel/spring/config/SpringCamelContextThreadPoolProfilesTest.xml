@@ -24,15 +24,22 @@
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
-        <!-- define the default thread profile settings -->
-        <threadPoolProfile id="customDefault" defaultProfile="true"
-                           poolSize="5" maxPoolSize="15" keepAliveTime="25" maxQueueSize="250" rejectedPolicy="Abort"/>
+        <!-- define a low profile -->
+        <threadPoolProfile id="low"
+                           poolSize="1"
+                           maxPoolSize="5"/>
+
+        <!-- define a big profile with many threads -->
+        <threadPoolProfile id="big"
+                           poolSize="50"
+                           maxPoolSize="100" rejectedPolicy="DiscardOldest"/>
 
         <route>
             <from uri="direct:start"/>
             <threads/>
             <to uri="mock:result"/>
         </route>
+
     </camelContext>
 
 </beans>

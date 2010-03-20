@@ -31,7 +31,7 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camel = super.createCamelContext();
 
-        ThreadPoolProfile profile = new ThreadPoolProfileSupport();
+        ThreadPoolProfile profile = new ThreadPoolProfileSupport("custom");
         profile.setPoolSize(5);
         profile.setMaxPoolSize(15);
         profile.setKeepAliveTime(25L);

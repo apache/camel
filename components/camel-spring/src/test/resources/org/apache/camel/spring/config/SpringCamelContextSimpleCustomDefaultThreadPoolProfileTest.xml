@@ -25,8 +25,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
         <!-- define the default thread profile settings -->
-        <threadPoolProfile id="customDefault" defaultProfile="true"
-                           poolSize="5" maxPoolSize="15" keepAliveTime="25" maxQueueSize="250" rejectedPolicy="Abort"/>
+        <threadPoolProfile id="customDefault" defaultProfile="true" maxPoolSize="25"/>
 
         <route>
             <from uri="direct:start"/>

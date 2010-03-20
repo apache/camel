@@ -27,13 +27,22 @@ import org.apache.camel.spi.ThreadPoolProfile;
  */
 public class ThreadPoolProfileSupport implements ThreadPoolProfile {
 
+    private final String id;
     private Boolean defaultProfile;
-    private Integer poolSize = 10;
-    private Integer maxPoolSize = 20;
-    private Long keepAliveTime = 60L;
+    private Integer poolSize;
+    private Integer maxPoolSize;
+    private Long keepAliveTime;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
-    private Integer maxQueueSize = 1000;
+    private Integer maxQueueSize;
     private ThreadPoolRejectedPolicy rejectedPolicy;
+
+    public ThreadPoolProfileSupport(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
 
     public Boolean isDefaultProfile() {
         return defaultProfile != null && defaultProfile;
@@ -100,7 +109,7 @@ public class ThreadPoolProfileSupport implements ThreadPoolProfile {
 
     @Override
     public String toString() {
-        return "ThreadPoolProfile[" + defaultProfile + ", " + poolSize + ", " + maxPoolSize + ", " + keepAliveTime
-                + " " + timeUnit + ", " + maxPoolSize + ", " + rejectedPolicy + "]";
+        return "ThreadPoolProfile[" + id + ", " + defaultProfile + ", " + poolSize + ", " + maxPoolSize + ", "
+                + keepAliveTime + " " + timeUnit + ", " + maxPoolSize + ", " + rejectedPolicy + "]";
     }
 }

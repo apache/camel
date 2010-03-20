@@ -321,7 +321,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
 
         // set the default thread pool profile if defined
-        initDefaultThreadPoolProfile(getContext());
+        initThreadPoolProfiles(getContext());
 
         // Set the application context and camelContext for the beanPostProcessor
         if (beanPostProcessor != null) {
@@ -993,8 +993,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         return new SpringCamelContext(getApplicationContext());
     }
 
-    private void initDefaultThreadPoolProfile(CamelContext context) {
-        Set<String> ids = new HashSet<String>();
+    private void initThreadPoolProfiles(CamelContext context) {
+        Set<String> defaultIds = new HashSet<String>();
 
         // lookup and use custom profiles from the registry
         Map<String, ThreadPoolProfile> profiles = context.getRegistry().lookupByType(ThreadPoolProfile.class);
@@ -1005,7 +1005,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 if (profile.isDefaultProfile()) {
                     LOG.info("Using custom default ThreadPoolProfile with id: " + id + " and implementation: " + profile);
                     context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(profile);
-                    ids.add(id);
+                    defaultIds.add(id);
+                } else {
+                    context.getExecutorServiceStrategy().registerThreadPoolProfile(profile);
                 }
             }
         }
@@ -1016,14 +1018,16 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 if (profile.isDefaultProfile()) {
                     LOG.info("Using custom default ThreadPoolProfile with id: " + profile.getId() + " and implementation: " + profile);
                     context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(profile);
-                    ids.add(profile.getId());
+                    defaultIds.add(profile.getId());
+                } else {
+                    context.getExecutorServiceStrategy().registerThreadPoolProfile(profile);
                 }
             }
         }
 
         // validate at most one is defined
-        if (ids.size() > 1) {
-            throw new IllegalArgumentException("Only exactly one default ThreadPoolProfile is allowed, was " + ids.size() + " ids: " + ids);
+        if (defaultIds.size() > 1) {
+            throw new IllegalArgumentException("Only exactly one default ThreadPoolProfile is allowed, was " + defaultIds.size() + " ids: " + defaultIds);
         }
     }
 

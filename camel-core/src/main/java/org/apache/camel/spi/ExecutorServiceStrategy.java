@@ -43,9 +43,24 @@ import org.apache.camel.ShutdownableService;
 public interface ExecutorServiceStrategy extends ShutdownableService {
 
     /**
+     * Registers the given thread pool profile
+     *
+     * @param profile the profile
+     */
+    void registerThreadPoolProfile(ThreadPoolProfile profile);
+
+    /**
+     * Gets the thread pool profile by the given id
+     *
+     * @param id  id of the thread pool profile to get
+     * @return the found profile, or <tt>null</tt> if not found
+     */
+    ThreadPoolProfile getThreadPoolProfile(String id);
+
+    /**
      * Gets the default thread pool profile
      *
-     * @return the default profile
+     * @return the default profile which are newer <tt>null</tt>
      */
     ThreadPoolProfile getDefaultThreadPoolProfile();
 
@@ -101,6 +116,16 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
      * @return the created thread pool
      */
     ExecutorService newDefaultThreadPool(Object source, String name);
+
+    /**
+     * Creates a new thread pool using based on the given profile id.
+     *
+     * @param source                the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name                  name which is appended to the thread name
+     * @param threadPoolProfileId   id of the thread pool profile to use for creating the thread pool
+     * @return the created thread pool, or <tt>null</tt> if the was no thread pool profile with that given id.
+     */
+    ExecutorService newThreadPool(Object source, String name, String threadPoolProfileId);
 
     /**
      * Creates a new cached thread pool.

@@ -43,6 +43,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 /**

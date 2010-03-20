@@ -29,6 +29,13 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
 public interface ThreadPoolProfile {
 
     /**
+     * Gets the id of this profile
+     *
+     * @return the id of this profile
+     */
+    String getId();
+
+    /**
      * Whether this profile is the default profile (there can only be one).
      *
      * @return <tt>true</tt> if its the default profile, <tt>false</tt> otherwise

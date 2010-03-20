@@ -40,15 +40,15 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition im
     @XmlAttribute()
     private Boolean defaultProfile = false;
     @XmlAttribute()
-    private Integer poolSize = 10;
+    private Integer poolSize;
     @XmlAttribute()
-    private Integer maxPoolSize = 20;
+    private Integer maxPoolSize;
     @XmlAttribute()
-    private Long keepAliveTime = 60L;
+    private Long keepAliveTime;
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
-    private TimeUnit timeUnit = TimeUnit.SECONDS;
+    private TimeUnit timeUnit;
     @XmlAttribute()
-    private Integer maxQueueSize = -1;
+    private Integer maxQueueSize;
     @XmlAttribute()
     private ThreadPoolRejectedPolicy rejectedPolicy;
 
