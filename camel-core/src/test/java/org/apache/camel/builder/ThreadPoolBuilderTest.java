@@ -37,17 +37,6 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         return jndi;
     }
 
-    public void testThreadPoolBuilderLookup() throws Exception {
-        ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
-        ExecutorService executor = builder.lookup(this, "someonesPool");
-        assertNotNull(executor);
-
-        assertEquals(false, executor.isShutdown());
-        context.stop();
-        // you need to manage this pool yourself
-        assertEquals(false, executor.isShutdown());
-    }
-
     public void testThreadPoolBuilderDefault() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ExecutorService executor = builder.build(this, "myPool");

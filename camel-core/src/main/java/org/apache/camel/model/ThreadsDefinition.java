@@ -70,11 +70,13 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
+        // The threads name
+        String name = getThreadName() != null ? getThreadName() : "Threads";
+
         // prefer any explicit configured executor service
-        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, name, this);
         if (executorService == null) {
             // none was configured so create an executor based on the other parameters
-            String name = getThreadName() != null ? getThreadName() : "Threads";
             if (poolSize == null || poolSize <= 0) {
                 // use the cached thread pool
                 executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, name);
@@ -92,8 +94,7 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
                 }
 
                 executorService = routeContext.getCamelContext().getExecutorServiceStrategy()
-                                        .newThreadPool(this, name, poolSize, max, keepAlive, tu,
-                                                       maxQueue, rejected, true);
+                                        .newThreadPool(this, name, poolSize, max, keepAlive, tu, maxQueue, rejected, true);
             }
         }
         Processor childProcessor = routeContext.createProcessor(this);

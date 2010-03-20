@@ -70,17 +70,6 @@ public final class ThreadPoolBuilder {
     }
 
     /**
-     * Lookup a {@link java.util.concurrent.ExecutorService} from the {@link org.apache.camel.spi.Registry}.
-     *
-     * @param source             the source object, usually it should be <tt>this</tt> passed in as parameter
-     * @param executorServiceRef reference to lookup
-     * @return the {@link java.util.concurrent.ExecutorService} or <tt>null</tt> if not found
-     */
-    public ExecutorService lookup(Object source, String executorServiceRef) {
-        return camelContext.getExecutorServiceStrategy().lookup(source, executorServiceRef);
-    }
-
-    /**
      * Builds the new thread pool
      *
      * @param name name which is appended to the thread name

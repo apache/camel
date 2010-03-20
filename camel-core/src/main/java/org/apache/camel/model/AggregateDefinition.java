@@ -150,7 +150,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
         // executor service is mandatory for the Aggregator
-        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "Aggregator", this);
         if (executorService == null) {
             if (isParallelProcessing()) {
                 // we are running in parallel so create a cached thread pool which grows/shrinks automatic

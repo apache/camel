@@ -267,4 +267,33 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
         assertTrue(tp.isShutdown());
     }
 
+    public void testLookupThreadPoolProfile() throws Exception {
+        ExecutorService pool = context.getExecutorServiceStrategy().lookup(this, "Cool", "fooProfile");
+        // does not exists yet
+        assertNull(pool);
+
+        assertNull(context.getExecutorServiceStrategy().getThreadPoolProfile("fooProfile"));
+
+        ThreadPoolProfileSupport foo = new ThreadPoolProfileSupport("fooProfile");
+        foo.setKeepAliveTime(20L);
+        foo.setMaxPoolSize(40);
+        foo.setPoolSize(5);
+        foo.setMaxQueueSize(2000);
+
+        context.getExecutorServiceStrategy().registerThreadPoolProfile(foo);
+
+        pool = context.getExecutorServiceStrategy().lookup(this, "Cool", "fooProfile");
+        assertNotNull(pool);
+
+        ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
+        assertEquals(20, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(40, tp.getMaximumPoolSize());
+        assertEquals(5, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
 }

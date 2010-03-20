@@ -67,7 +67,7 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Endpoint endpoint = resolveEndpoint(routeContext);
 
-        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "WireTap", this);
         if (executorService == null) {
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "WireTap");
         }

@@ -505,6 +505,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         };
 
+        if (executor == null) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
         return executor.submit(task);
     }
 
@@ -515,6 +518,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         };
 
+        if (executor == null) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
         return executor.submit(task);
     }
 
@@ -526,6 +532,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         };
 
+        if (executor == null) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
         return executor.submit(task);
     }
 
@@ -537,6 +546,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         };
 
+        if (executor == null) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
         return executor.submit(task);
     }
 
@@ -549,6 +561,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         };
 
+        if (executor == null) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
         return executor.submit(task);
     }
 
@@ -560,6 +575,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         };
 
+        if (executor == null) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
         return executor.submit(task);
     }
 
@@ -570,6 +588,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         };
 
+        if (executor == null) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
         return executor.submit(task);
     }
 
@@ -580,6 +601,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         };
 
+        if (executor == null) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
         return executor.submit(task);
     }
 
@@ -592,6 +616,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         };
 
+        if (executor == null) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
         return executor.submit(task);
     }
    
@@ -620,6 +647,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         };
 
+        if (executor == null) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
         return executor.submit(task);
     }
 
@@ -641,6 +671,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         };
 
+        if (executor == null) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
         return executor.submit(task);
     }
 
@@ -662,6 +695,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         };
 
+        if (executor == null) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
         return executor.submit(task);
     }
 

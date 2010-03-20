@@ -95,7 +95,7 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
             answer.setStopOnException(isStopOnException());
         }
 
-        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "RecipientList", this);
         if (isParallelProcessing() && executorService == null) {
             // we are running in parallel so create a cached thread pool which grows/shrinks automatic
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "RecipientList");

@@ -100,13 +100,15 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
     void setThreadNamePattern(String pattern) throws IllegalArgumentException;
 
     /**
-     * Lookup a {@link java.util.concurrent.ExecutorService} from the {@link org.apache.camel.spi.Registry}.
+     * Lookup a {@link java.util.concurrent.ExecutorService} from the {@link org.apache.camel.spi.Registry}
+     * and from known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.
      *
      * @param source               the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name                 name which is appended to the thread name
      * @param executorServiceRef   reference to lookup
      * @return the {@link java.util.concurrent.ExecutorService} or <tt>null</tt> if not found
      */
-    ExecutorService lookup(Object source, String executorServiceRef);
+    ExecutorService lookup(Object source, String name, String executorServiceRef);
 
     /**
      * Creates a new thread pool using the default thread pool profile.

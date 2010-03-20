@@ -43,7 +43,6 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
-import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
@@ -461,7 +460,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     List<String> getLanguageNames();
 
     /**
-     * Creates a new ProducerTemplate.
+     * Creates a new {@link ProducerTemplate} which is <b>not</b> started.
+     * <p/>
+     * You <b>must</b> start the template before its being used.
      * <p/>
      * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a>
@@ -471,7 +472,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     ProducerTemplate createProducerTemplate();
 
     /**
-     * Creates a new ConsumerTemplate.
+     * Creates a new {@link ConsumerTemplate} which is <b>not</b> started.
+     * <p/>
+     * You <b>must</b> start the template before its being used.
      * <p/>
      * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a> as it also applies for ConsumerTemplate.

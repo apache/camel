@@ -97,7 +97,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
             when = onWhen.getExpression().createPredicate(routeContext);
         }
 
-        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "OnCompletion", this);
         if (executorService == null) {
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "OnCompletion");
         }

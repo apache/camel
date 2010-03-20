@@ -103,7 +103,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Execut
 
         SendAsyncProcessor async = new SendAsyncProcessor(endpoint, getPattern(), uow);
 
-        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "ToAsync", this);
         if (executorService != null) {
             async.setExecutorService(executorService);
         }

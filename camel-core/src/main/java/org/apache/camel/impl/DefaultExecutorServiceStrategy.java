@@ -134,11 +134,24 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         this.threadNamePattern = threadNamePattern;
     }
 
-    public ExecutorService lookup(Object source, String executorServiceRef) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Looking up ExecutorService with ref: " + executorServiceRef);
+    public ExecutorService lookup(Object source, String name, String executorServiceRef) {
+        ExecutorService answer = camelContext.getRegistry().lookup(executorServiceRef, ExecutorService.class);
+        if (answer != null && LOG.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Looking up ExecutorService with ref: " + executorServiceRef + " and found it from Registry: " + answer);
+            }
         }
-        return camelContext.getRegistry().lookup(executorServiceRef, ExecutorService.class);
+
+        if (answer == null) {
+            // try to see if we got a thread pool profile with that id
+            answer = newThreadPool(source, name, executorServiceRef);
+            if (answer != null && LOG.isDebugEnabled()) {
+                LOG.debug("Looking up ExecutorService with ref: " + executorServiceRef
+                        + " and found a matching ThreadPoolProfile to create the ExecutorService: " + answer);
+            }
+        }
+
+        return answer;
     }
 
     public ExecutorService newDefaultThreadPool(Object source, String name) {
