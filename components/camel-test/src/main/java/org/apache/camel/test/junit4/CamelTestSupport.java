@@ -88,7 +88,9 @@ public abstract class CamelTestSupport extends TestSupport {
         context.getShutdownStrategy().setTimeout(10);
 
         template = context.createProducerTemplate();
+        template.start();
         consumer = context.createConsumerTemplate();
+        consumer.start();
 
         postProcessTest();
         
