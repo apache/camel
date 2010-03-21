@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -156,7 +157,7 @@ public final class IntrospectionSupport {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(property, "property");
 
-        property = property.substring(0, 1).toUpperCase() + property.substring(1);
+        property = property.substring(0, 1).toUpperCase(Locale.ENGLISH) + property.substring(1);
 
         Class<?> clazz = target.getClass();
         Method method = getPropertyGetter(clazz, property);

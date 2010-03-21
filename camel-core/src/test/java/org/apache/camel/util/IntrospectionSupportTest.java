@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
@@ -125,6 +126,28 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
         Object name = IntrospectionSupport.getProperty(bean, "name");
         assertEquals("Claus", name);
+    }
+    
+    public void testGetPropertyLocaleIndependend() throws Exception {
+        Locale oldLocale = Locale.getDefault();
+        Locale.setDefault(new Locale("tr", "TR"));
+        
+        try {
+            ExampleBean bean = new ExampleBean();
+            bean.setName("Claus");
+            bean.setPrice(10.0);
+            bean.setId("1");
+    
+            Object name = IntrospectionSupport.getProperty(bean, "name");
+            Object id = IntrospectionSupport.getProperty(bean, "id");
+            Object price = IntrospectionSupport.getProperty(bean, "price");
+            
+            assertEquals("Claus", name);
+            assertEquals(10.0, price);
+            assertEquals("1", id);
+        } finally {
+            Locale.setDefault(oldLocale);
+        }
     }
 
     public void testGetPropertyGetter() throws Exception {

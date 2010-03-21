@@ -20,11 +20,12 @@ package org.apache.camel.util.jndi;
  * @version $Revision$
  */
 public class ExampleBean {
+    private String id;
     private String name;
     private double price;
 
     public String toString() {
-        return "ExampleBean[name: " + name + " price: " + price + "]";
+        return "ExampleBean[name: " + name + " price: " + price + " id: " + id + "]";
     }
 
     public String getName() {
@@ -41,5 +42,13 @@ public class ExampleBean {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+    
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
