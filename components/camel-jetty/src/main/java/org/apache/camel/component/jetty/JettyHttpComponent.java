@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.CamelServlet;
+import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
@@ -103,37 +104,60 @@ public class JettyHttpComponent extends HttpComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         uri = uri.startsWith("jetty:") ? remaining : uri;
 
+        // must extract well known parameters before we create the endpoint
         List<Handler> handlerList = resolveAndRemoveReferenceListParameter(parameters, "handlers", Handler.class);
-        
-        // configure regular parameters
-        configureParameters(parameters);
-
-        JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, null);
-        if (httpBinding != null) {
-            result.setBinding(httpBinding);
-        }
-        setEndpointHeaderFilterStrategy(result);
-        if (handlerList.size() > 0) {
-            result.setHandlers(handlerList);
-        }
-        setProperties(result, parameters);
+        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
+        Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
+        Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
+        Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
 
         // configure http client if we have url configuration for it
+        // http client is only used for jetty http producer (hence not very commonly used)
+        HttpClient client = null;
         if (IntrospectionSupport.hasProperties(parameters, "httpClient.")) {
-            // configure Jetty http client
-            result.setClient(getHttpClient());
             // set additional parameters on http client
-            IntrospectionSupport.setProperties(getHttpClient(), parameters, "httpClient.");
+            // only create client when needed
+            client = getHttpClient();
+            IntrospectionSupport.setProperties(client, parameters, "httpClient.");
             // validate that we could resolve all httpClient. parameters as this component is lenient
             validateParameters(uri, parameters, "httpClient.");
         }
 
-        // create the http uri after we have configured all the parameters on the camel objects
-        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), 
-                CastUtils.cast(parameters));
-        result.setHttpUri(httpUri);
+        // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
+        URI httpUri = URISupport.createRemainingURI(new URI(uri), CastUtils.cast(parameters));
+        uri = httpUri.toString();
 
-        return result;
+        // create endpoint after all known parameters have been extracted from parameters
+        JettyHttpEndpoint endpoint = new JettyHttpEndpoint(this, uri, httpUri);
+        setEndpointHeaderFilterStrategy(endpoint);
+
+        if (client != null) {
+            endpoint.setClient(client);
+        }
+        if (handlerList.size() > 0) {
+            endpoint.setHandlers(handlerList);
+        }
+        // prefer to use endpoint configured over component configured
+        if (binding == null) {
+            // fallback to component configured
+            binding = getHttpBinding();
+        }
+        if (binding != null) {
+            endpoint.setBinding(binding);
+        }
+        // should we use an exception for failed error codes?
+        if (throwExceptionOnFailure != null) {
+            endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
+        }
+        if (bridgeEndpoint != null) {
+            endpoint.setBridgeEndpoint(bridgeEndpoint);
+        }
+        if (matchOnUriPrefix != null) {
+            endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
+        }
+
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     /**

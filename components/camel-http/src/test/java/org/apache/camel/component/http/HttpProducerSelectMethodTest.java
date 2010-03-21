@@ -34,8 +34,8 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void noDataDefaultIsGet() throws Exception {
         localServer.register("/", new BasicValidationHandler("GET", null, null, getExpectedContent()));
 
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+        
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://" + getHostName() + ":" + getPort());
         HttpProducer producer = new HttpProducer(endpoiont);
         Exchange exchange = producer.createExchange();
@@ -51,8 +51,8 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void dataDefaultIsPost() throws Exception {
         localServer.register("/", new BasicValidationHandler("POST", null, null, getExpectedContent()));
 
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://" + getHostName() + ":" + getPort());
         HttpProducer producer = new HttpProducer(endpoiont);
 
@@ -69,8 +69,8 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void withMethodPostInHeader() throws Exception {
         localServer.register("/", new BasicValidationHandler("POST", null, null, getExpectedContent()));
 
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://" + getHostName() + ":" + getPort());
         HttpProducer producer = new HttpProducer(endpoiont);
 
@@ -86,8 +86,8 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void withMethodGetInHeader() throws Exception {
         localServer.register("/", new BasicValidationHandler("GET", null, null, getExpectedContent()));
 
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://" + getHostName() + ":" + getPort());
         HttpProducer producer = new HttpProducer(endpoiont);
 
@@ -103,8 +103,8 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void withEndpointQuery() throws Exception {
         localServer.register("/", new BasicValidationHandler("GET", "q=Camel", null, getExpectedContent()));
 
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://" + getHostName() + ":" + getPort() + "?q=Camel");
         HttpProducer producer = new HttpProducer(endpoiont);
 
@@ -119,8 +119,8 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void withQueryInHeader() throws Exception {
         localServer.register("/", new BasicValidationHandler("GET", "q=Camel", null, getExpectedContent()));
 
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://" + getHostName() + ":" + getPort());
         HttpProducer producer = new HttpProducer(endpoiont);
 
@@ -136,8 +136,8 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void withQueryInHeaderOverrideEndpoint() throws Exception {
         localServer.register("/", new BasicValidationHandler("GET", "q=Camel", null, getExpectedContent()));
 
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://" + getHostName() + ":" + getPort() + "?q=Donkey");
         HttpProducer producer = new HttpProducer(endpoiont);
 

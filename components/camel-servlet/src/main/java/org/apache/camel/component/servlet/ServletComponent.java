@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.http.CamelServlet;
+import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
@@ -59,21 +60,31 @@ public class ServletComponent extends HttpComponent {
 
         HttpParams clientParams = configureHttpParams(parameters);
 
-        // configure regular parameters
-        configureParameters(parameters);
+        // must extract well known parameters before we create the endpoint
+        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
+        Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), 
-                CastUtils.cast(parameters));
+        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), CastUtils.cast(parameters));
         uri = httpUri.toString();
 
-        ServletEndpoint result = createServletEndpoint(uri, this, httpUri, clientParams, getClientConnectionManager(), httpClientConfigurer);
-        if (httpBinding != null) {
-            result.setBinding(httpBinding);
+        ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri, clientParams, getClientConnectionManager(), httpClientConfigurer);
+        setEndpointHeaderFilterStrategy(endpoint);
+
+        // prefer to use endpoint configured over component configured
+        if (binding == null) {
+            // fallback to component configured
+            binding = getHttpBinding();
         }
-        setEndpointHeaderFilterStrategy(result);        
-        setProperties(result, parameters);
-        return result;
+        if (binding != null) {
+            endpoint.setBinding(binding);
+        }
+        if (matchOnUriPrefix != null) {
+            endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
+        }
+
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     protected ServletEndpoint createServletEndpoint(String endpointUri,

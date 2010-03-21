@@ -18,36 +18,26 @@ package org.apache.camel.component.http;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version $Revision: 905992 $
  */
 public class HttpClientConfigurerTest extends CamelTestSupport {
-    protected String expectedText = "activemq";
+    private HttpClientConfigurer configurer;
     
     @Test
     public void testHttpClientConfigurer() throws Exception {
-        HttpClientConfigurer configurer = getMandatoryEndpoint("http://www.google.com/search", HttpEndpoint.class).getHttpClientConfigurer();
-
-        assertNotNull("Client configurer should not be null!", configurer);
-
+        HttpClientConfigurer gotConfigurer = getMandatoryEndpoint("http://www.google.com/search", HttpEndpoint.class).getHttpClientConfigurer();
+        assertSame(configurer, gotConfigurer);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-
-                ProxyHttpClientConfigurer configurer = new ProxyHttpClientConfigurer(
-                        "proxyhost",
-                        80,
-                        "user",
-                        "password",
-                        null,
-                        null);
-
+                // add configurer to http component
+                configurer = new ProxyHttpClientConfigurer("proxyhost", 80, "user", "password", null, null);
                 getContext().getComponent("http", HttpComponent.class).setHttpClientConfigurer(configurer);
 
                 from("direct:start")
