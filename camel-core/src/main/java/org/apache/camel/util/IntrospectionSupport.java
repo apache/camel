@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -99,7 +100,7 @@ public final class IntrospectionSupport {
         if (prop == null) {
             throw new IllegalArgumentException("prop was null.");
         }
-        prop = prop.substring(0, 1).toUpperCase() + prop.substring(1);
+        prop = prop.substring(0, 1).toUpperCase(Locale.ENGLISH) + prop.substring(1);
 
         Class clazz = target.getClass();
         Method method = getPropertyGetter(clazz, prop);

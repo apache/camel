@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.util.Locale;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.jndi.ExampleBean;
 
@@ -45,6 +47,29 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         IntrospectionSupport.setProperty(context.getTypeConverter(), overloadedBean, "bean", value);
         assertEquals("Willem", overloadedBean.getName());
     }
+
+    public void testGetPropertyLocaleIndependend() throws Exception {
+        Locale oldLocale = Locale.getDefault();
+        Locale.setDefault(new Locale("tr", "TR"));
+
+        try {
+            ExampleBean bean = new ExampleBean();
+            bean.setName("Claus");
+            bean.setPrice(10.0);
+            bean.setId("1");
+
+            Object name = IntrospectionSupport.getProperty(bean, "name");
+            Object id = IntrospectionSupport.getProperty(bean, "id");
+            Object price = IntrospectionSupport.getProperty(bean, "price");
+
+            assertEquals("Claus", name);
+            assertEquals(10.0, price);
+            assertEquals("1", id);
+        } finally {
+            Locale.setDefault(oldLocale);
+        }
+    }
+
 
     public class MyOverloadedBean {
         private ExampleBean bean;
