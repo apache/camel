@@ -33,6 +33,11 @@ import org.apache.camel.impl.RoutePolicySupport;
  */
 public class ManagedSuspendedServiceTest extends ContextTestSupport {
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     public void testConsumeSuspendAndResumeFile() throws Exception {
         deleteDirectory("target/suspended");
 

@@ -27,6 +27,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class PublishEventNotifierTest extends ContextTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(createRegistry());
 

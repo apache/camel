@@ -30,6 +30,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedThreadPoolTest extends ContextTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
@@ -42,7 +47,6 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
-        assertEquals(1, set.size());
         ObjectName on = set.iterator().next();
 
         Boolean shutdown = (Boolean) mbeanServer.getAttribute(on, "Shutdown");

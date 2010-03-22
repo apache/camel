@@ -27,6 +27,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class LoggingEventNotifierTest extends ContextTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         LoggingEventNotifier notifier = new LoggingEventNotifier();
         notifier.setLogName("org.apache.camel.EventLog");

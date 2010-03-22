@@ -32,6 +32,11 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
     protected static final String JMXSERVICEURL = "service:jmx:rmi:///jndi/rmi://localhost:2123/jmxrmi/camel";
     protected JMXConnector clientConnector;
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     protected boolean canRunOnThisPlatform() {
         String os = System.getProperty("os.name");
         // Does not work on AIX and the problem is hard to identify, could be issues not allowing to use a custom port

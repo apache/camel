@@ -34,6 +34,11 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
     private static List<EventObject> events = new ArrayList<EventObject>();
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     public void setUp() throws Exception {
         events.clear();
         super.setUp();

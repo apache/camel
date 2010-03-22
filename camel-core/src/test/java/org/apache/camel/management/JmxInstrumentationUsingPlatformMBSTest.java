@@ -32,6 +32,11 @@ import javax.management.ObjectName;
 public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUsingPropertiesTest {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected void setUp() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "False");
         super.setUp();

@@ -38,6 +38,11 @@ public class ManagedErrorHandlerOptionsTest extends ContextTestSupport {
     private static int counter;
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();

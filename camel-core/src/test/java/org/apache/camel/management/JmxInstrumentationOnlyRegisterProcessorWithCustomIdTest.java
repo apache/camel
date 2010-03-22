@@ -34,6 +34,11 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
     protected String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;
     protected MBeanServer server;
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     public void testCustomId() throws Exception {
         Set s = server.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 2 endpoints: " + s, 6, s.size());

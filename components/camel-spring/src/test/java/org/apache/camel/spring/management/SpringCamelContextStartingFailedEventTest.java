@@ -27,6 +27,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringCamelContextStartingFailedEventTest extends SpringTestSupport {
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     protected AbstractXmlApplicationContext createApplicationContext() {
         AbstractXmlApplicationContext answer = null;
         try {

@@ -26,6 +26,11 @@ import javax.management.ObjectName;
 public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsingDefaultsTest {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected void setUp() throws Exception {
         domainName = "org.apache.camel-properties";
         System.setProperty(JmxSystemPropertyKeys.DOMAIN, domainName);

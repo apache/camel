@@ -29,6 +29,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedDelayerTest extends ContextTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();

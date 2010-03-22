@@ -34,6 +34,11 @@ import org.apache.camel.processor.interceptor.Tracer;
 public class ManagedCamelContextTracerTest extends ContextTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();

@@ -34,6 +34,11 @@ import org.apache.camel.util.CastUtils;
  */
 public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDefaultsTest {
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 

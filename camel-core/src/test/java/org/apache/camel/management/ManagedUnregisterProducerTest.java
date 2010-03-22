@@ -33,6 +33,11 @@ import org.apache.camel.impl.DefaultCamelContext;
  */
 public class ManagedUnregisterProducerTest extends ContextTestSupport {
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext();
         DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();

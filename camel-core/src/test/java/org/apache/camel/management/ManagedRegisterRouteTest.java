@@ -29,6 +29,11 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedRegisterRouteTest extends ContextTestSupport {
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     public void testRoutes() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

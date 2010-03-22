@@ -44,6 +44,11 @@ public class MultipleEventNotifierEventsTest extends ContextTestSupport {
     private static List<EventObject> events2 = new ArrayList<EventObject>();
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     public void setUp() throws Exception {
         events.clear();
         events2.clear();

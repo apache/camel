@@ -33,6 +33,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class DualCamelContextManagedTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected int getExpectedRouteCount() {
         return 0;
     }

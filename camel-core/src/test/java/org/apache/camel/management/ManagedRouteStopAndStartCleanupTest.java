@@ -31,6 +31,11 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStartTest {
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     @SuppressWarnings("unchecked")
     public void testStopAndStartRoute() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();

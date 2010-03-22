@@ -31,15 +31,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingPropertiesTest {
 
     @Override
-    protected void setUp() throws Exception {
-        System.setProperty(JmxSystemPropertyKeys.DISABLED, "True");
-        super.setUp();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        System.clearProperty(JmxSystemPropertyKeys.DISABLED);
-        super.tearDown();
+    protected boolean useJmx() {
+        return false;
     }
 
     @Override

@@ -29,6 +29,11 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedRouteStopTest extends ContextTestSupport {
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     public void testStopRoute() throws Exception {
         // fire a message to get it running
         getMockEndpoint("mock:result").expectedMessageCount(1);

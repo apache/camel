@@ -24,6 +24,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     public void testJmxConfiguration() throws Exception {
         ManagementAgent agent = getMandatoryBean(DefaultManagementAgent.class, "agent");
         assertNotNull("SpringInstrumentationAgent must be configured for JMX support", agent);

@@ -34,6 +34,11 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
     private MockEndpoint d;
     private MockEndpoint e;
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     protected void setUp() throws Exception {
         super.setUp();
         a = getMockEndpoint("mock:a");

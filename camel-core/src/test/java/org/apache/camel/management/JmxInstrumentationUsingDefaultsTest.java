@@ -42,6 +42,11 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     protected MBeanServerConnection mbsc;
     protected long sleepForConnection;
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     protected boolean canRunOnThisPlatform() {
         return true;
     }

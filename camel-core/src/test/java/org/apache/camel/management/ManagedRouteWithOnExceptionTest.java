@@ -26,6 +26,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedRouteWithOnExceptionTest extends ContextTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected void setUp() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
         super.setUp();

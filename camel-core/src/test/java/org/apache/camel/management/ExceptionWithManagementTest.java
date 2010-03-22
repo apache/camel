@@ -30,6 +30,11 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ExceptionWithManagementTest extends ContextTestSupport {
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     public void testExceptionHandler() throws Exception {
         MockEndpoint error = this.resolveMandatoryEndpoint("mock:error", MockEndpoint.class);
         error.expectedMessageCount(1);

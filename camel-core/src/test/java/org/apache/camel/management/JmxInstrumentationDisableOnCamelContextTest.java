@@ -31,6 +31,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class JmxInstrumentationDisableOnCamelContextTest extends JmxInstrumentationUsingPropertiesTest {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camel = super.createCamelContext();
         camel.disableJMX();

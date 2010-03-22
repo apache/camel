@@ -32,6 +32,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ManagedRouteStopAndStartTest extends ContextTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/managed");
         super.setUp();

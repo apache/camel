@@ -38,6 +38,11 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
     private static String stopOrder;
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
