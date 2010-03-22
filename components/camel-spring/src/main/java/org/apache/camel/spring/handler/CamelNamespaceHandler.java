@@ -39,10 +39,10 @@ import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelConsumerTemplateFactoryBean;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.CamelEndpointFactoryBean;
-import org.apache.camel.spring.CamelThreadPoolFactoryBean;
 import org.apache.camel.spring.CamelJMXAgentDefinition;
 import org.apache.camel.spring.CamelProducerTemplateFactoryBean;
 import org.apache.camel.spring.CamelPropertyPlaceholderDefinition;
+import org.apache.camel.spring.CamelThreadPoolFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
@@ -56,6 +56,7 @@ import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
+
 
 /**
  * Camel namespace for the spring XML configuration file.
