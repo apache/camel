@@ -103,7 +103,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 // force the routes to shutdown now
                 shutdownRoutesNow(routes);
             } else {
-                LOG.warn("Timeout occurred. Will ignore shutting down the remainder route input consumers.");
+                LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes.");
             }
         } catch (ExecutionException e) {
             // unwrap execution exception
@@ -196,8 +196,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         // allow us to do custom work before delegating to service helper
         try {
             ServiceHelper.stopService(consumer);
-        } catch (Exception e) {
-            LOG.warn("Error occurred while shutting down route: " + consumer + ". This exception will be ignored.");
+        } catch (Throwable e) {
+            LOG.warn("Error occurred while shutting down route: " + consumer + ". This exception will be ignored.", e);
             // fire event
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
         }
@@ -220,8 +220,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
         try {
             service.suspend();
-        } catch (Exception e) {
-            LOG.warn("Error occurred while suspending route: " + consumer + ". This exception will be ignored.");
+        } catch (Throwable e) {
+            LOG.warn("Error occurred while suspending route: " + consumer + ". This exception will be ignored.", e);
             // fire event
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
         }
