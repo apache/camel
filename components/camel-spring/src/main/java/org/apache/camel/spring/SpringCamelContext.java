@@ -39,6 +39,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStoppedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
@@ -121,6 +122,12 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
                 maybeStart();
             } catch (RuntimeException e) {
                 throw e;
+            } catch (Exception e) {
+                throw wrapRuntimeCamelException(e);
+            }
+        } else if (event instanceof ContextStoppedEvent) {
+            try {
+                maybeStop();
             } catch (Exception e) {
                 throw wrapRuntimeCamelException(e);
             }
@@ -214,6 +221,15 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public boolean getShouldStartContext() {
         return shouldStartContext;
+    }
+
+    private void maybeStop() throws Exception {
+        if (!isStopping() && !isStopped()) {
+            stop();
+        } else {
+            // ignore as Camel is already stopped
+            LOG.trace("Ignoring maybeStop() as Apache Camel is already stopped");
+        }
     }
 
     @Override
