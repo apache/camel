@@ -35,8 +35,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.impl.LoggingExceptionHandler;
+import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision$
@@ -83,31 +85,44 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
     public Exchange doProcess(Exchange exchange) throws Exception {
         // now we are done, we should have a API callback for this
         // send the exchange to the destination using a producer
-        Exchange answer = getProducerCache(exchange).doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
-            public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
-                exchange = configureExchange(exchange, pattern);
+        final ProducerCache cache = getProducerCache(exchange);
+        // acquire the producer from the service pool
+        final Producer producer = cache.acquireProducer(destination);
+        ObjectHelper.notNull(producer, "producer");
 
-                // pass in the callback that adds the exchange to the completed list of tasks
-                final AsyncCallback callback = new AsyncCallback() {
-                    public void onTaskCompleted(Exchange exchange) {
-                        completedTasks.add(exchange);
-                    }
-                };
-
-                if (producer instanceof AsyncProcessor) {
-                    // producer is async capable so let it process it directly
-                    doAsyncProcess((AsyncProcessor) producer, exchange, callback);
-                } else {
-                    // producer is a regular processor so simulate async behaviour
-                    doSimulateAsyncProcess(producer, exchange, callback);
+        // pass in the callback that adds the exchange to the completed list of tasks
+        final AsyncCallback callback = new AsyncCallback() {
+            public void onTaskCompleted(Exchange exchange) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("onTaskCompleted " + exchange);
                 }
-
-                // and return the exchange
-                return exchange;
+                try {
+                    completedTasks.add(exchange);
+                } finally {
+                    // must return the producer to service pool when we are done
+                    try {
+                        cache.releaseProducer(destination, producer);
+                    } catch (Exception e) {
+                        LOG.warn("Error releasing producer: " + producer + ". This exception will be ignored.", e);
+                    }
+                }
             }
-        });
+        };
 
-        return answer;
+        // prepare exchange for async processing
+        exchange = configureExchange(exchange, pattern);
+
+        // process the exchange async
+        if (producer instanceof AsyncProcessor) {
+            // producer is async capable so let it process it directly
+            doAsyncProcess((AsyncProcessor) producer, exchange, callback);
+        } else {
+            // producer is a regular processor so simulate async behaviour
+            doSimulateAsyncProcess(producer, exchange, callback);
+        }
+
+        // and return the exchange
+        return exchange;
     }
 
     /**
