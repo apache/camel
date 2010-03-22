@@ -41,7 +41,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RecipientListDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<RecipientListDefinition> {
+public class RecipientListDefinition<Type extends ProcessorDefinition> extends ExpressionNode implements ExecutorServiceAwareDefinition<RecipientListDefinition> {
 
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
@@ -131,12 +131,20 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
     // Fluent API
     // -------------------------------------------------------------------------
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public Type end() {
+        // allow end() to return to previous type so you can continue in the DSL
+        return (Type) super.end();
+    }
+
     /**
      * Set the aggregationStrategy
      *
+     * @param aggregationStrategy the strategy
      * @return the builder
      */
-    public RecipientListDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
+    public RecipientListDefinition<Type> aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
         return this;
     }
@@ -147,7 +155,7 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
      * @param aggregationStrategyRef a reference to a strategy to lookup
      * @return the builder
      */
-    public RecipientListDefinition aggregationStrategyRef(String aggregationStrategyRef) {
+    public RecipientListDefinition<Type> aggregationStrategyRef(String aggregationStrategyRef) {
         setStrategyRef(aggregationStrategyRef);
         return this;
     }
@@ -157,7 +165,7 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
      *
      * @return the builder
      */
-    public RecipientListDefinition parallelProcessing() {
+    public RecipientListDefinition<Type> parallelProcessing() {
         setParallelProcessing(true);
         return this;
     }
@@ -170,19 +178,19 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
      *
      * @return the builder
      */
-    public RecipientListDefinition stopOnException() {
+    public RecipientListDefinition<Type> stopOnException() {
         setStopOnException(true);
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    public RecipientListDefinition executorService(ExecutorService executorService) {
+    public RecipientListDefinition<Type> executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    public RecipientListDefinition executorServiceRef(String executorServiceRef) {
+    public RecipientListDefinition<Type> executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
     }

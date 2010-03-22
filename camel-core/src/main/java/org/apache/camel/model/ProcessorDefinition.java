@@ -821,8 +821,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other.
      *
-     * @param aggregationStrategy the strategy used to aggregate responses for
-     *          every part
+     * @param aggregationStrategy the strategy used to aggregate responses for every part
      * @return the builder
      */
     public MulticastDefinition multicast(AggregationStrategy aggregationStrategy) {
@@ -1179,8 +1178,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public RecipientListDefinition recipientList(Expression recipients) {
-        RecipientListDefinition answer = new RecipientListDefinition(recipients);
+    public RecipientListDefinition<Type> recipientList(Expression recipients) {
+        RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>(recipients);
         addOutput(answer);
         return answer;
     }
@@ -1194,8 +1193,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public RecipientListDefinition recipientList(Expression recipients, String delimiter) {
-        RecipientListDefinition answer = new RecipientListDefinition(recipients);
+    public RecipientListDefinition<Type> recipientList(Expression recipients, String delimiter) {
+        RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>(recipients);
         answer.setDelimiter(delimiter);
         addOutput(answer);
         return answer;
@@ -1207,8 +1206,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @return the expression clause to configure the expression to decide the destinations
      */
-    public ExpressionClause<RecipientListDefinition> recipientList() {
-        RecipientListDefinition answer = new RecipientListDefinition();
+    public ExpressionClause<RecipientListDefinition<Type>> recipientList() {
+        RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>();
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
     }
