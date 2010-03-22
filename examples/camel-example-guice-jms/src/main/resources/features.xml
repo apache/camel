@@ -18,17 +18,18 @@
 <features>
     <repository>mvn:org.apache.camel.karaf/apache-camel/${pom.version}/xml/features</repository>
     
-    <feature name='activemq-feature' version='${pom.version}'>
+   <feature name='activemq-feature' version='${pom.version}'>
        <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
        <bundle>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
        <bundle>mvn:org.apache.geronimo.specs/geronimo-j2ee-management_1.1_spec/1.0.1</bundle>
        <bundle>mvn:org.apache.geronimo.specs/geronimo-j2ee-connector_1.5_spec/2.0.0</bundle>
        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool/1.5.4_1</bundle>
        <bundle>mvn:org.apache.xbean/xbean-spring/3.4.3</bundle>
-       <bundle>mvn:org.apache.activemq/kahadb/5.3.0</bundle>
-       <bundle>mvn:org.apache.activemq/activemq-core/5.3.0</bundle>
-       <bundle>mvn:org.apache.activemq/activemq-ra/5.3.0</bundle>
-       <bundle>mvn:org.apache.activemq/activemq-pool/5.3.0</bundle>
+       <bundle>mvn:org.apache.activemq/kahadb/${activemq-version}</bundle>
+       <bundle>mvn:org.apache.activemq/activemq-core/${activemq-version}</bundle>
+       <bundle>mvn:org.apache.activemq/activemq-ra/${activemq-version}</bundle>
+       <bundle>mvn:org.apache.activemq/activemq-pool/${activemq-version}</bundle>
+       <bundle>mvn:org.apache.activemq/activemq-camel/${activemq-version}</bundle>
     </feature>
     
     <feature name='camel-example-guice-jms' version='${pom.version}'>

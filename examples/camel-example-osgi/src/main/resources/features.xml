@@ -18,10 +18,9 @@
 <features>
     <repository>mvn:org.apache.camel.karaf/apache-camel/${pom.version}/xml/features</repository>
     
-    <feature name='camel-example-cxf-async' version='${pom.version}'>
+    <feature name='camel-example-osgi' version='${pom.version}'>
         <feature version="${pom.version}">camel</feature>
-        <feature version="${pom.version}">camel-cxf</feature>
-        <bundle>mvn:org.apache.camel/camel-example-cxf-async/${pom.version}</bundle>
+        <bundle>mvn:org.apache.camel/camel-example-osgi/${pom.version}</bundle>
     </feature>
 
 </features>

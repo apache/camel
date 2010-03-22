@@ -3,6 +3,7 @@ Spring Java Config Example
 
 This example shows how to work with files and JMS, using Spring Java Config 
 to boot up Camel and configure the routes. It can be run using Maven or Ant.
+NOTE: It's need Spring 3.0.x.
 
 The example consumes messages from a queue and writes them to the file
 system.
