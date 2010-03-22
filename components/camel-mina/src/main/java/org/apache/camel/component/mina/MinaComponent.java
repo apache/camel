@@ -242,7 +242,7 @@ public class MinaComponent extends DefaultComponent {
                         + charset + " line delimiter: " + configuration.getTextlineDelimiter()
                         + "(" + delimiter + ")");
                 LOG.debug("Encoder maximum line length: " + codecFactory.getEncoderMaxLineLength()
-                        + "Decoder maximum line length: " + codecFactory.getDecoderMaxLineLength());
+                        + ". Decoder maximum line length: " + codecFactory.getDecoderMaxLineLength());
             }
         } else {
             ObjectSerializationCodecFactory codecFactory = new ObjectSerializationCodecFactory();

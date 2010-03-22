@@ -108,8 +108,8 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
         if (sync) {
             // wait for response, consider timeout
             LOG.debug("Waiting for response");
-            latch.await(timeout, TimeUnit.MILLISECONDS);
-            if (latch.getCount() == 1) {
+            boolean done = latch.await(timeout, TimeUnit.MILLISECONDS);
+            if (!done) {
                 throw new ExchangeTimedOutException(exchange, timeout);
             }
 
