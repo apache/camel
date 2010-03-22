@@ -32,12 +32,10 @@ import org.apache.camel.spi.UnitOfWork;
 public interface Exchange {
 
     String ACCEPT_CONTENT_TYPE = "CamelAcceptContentType";
-
     @Deprecated
     String AGGREGATED_INDEX = "CamelAggregatedIndex";
     String AGGREGATED_SIZE  = "CamelAggregatedSize";
     String AGGREGATED_COMPLETED_BY = "CamelAggregatedCompletedBy";
-
     String ASYNC_WAIT = "CamelAsyncWait";
 
     String BATCH_INDEX    = "CamelBatchIndex";
@@ -82,6 +80,8 @@ public interface Exchange {
     String HTTP_URI                = "CamelHttpUri";
     String HTTP_URL                = "CamelHttpUrl";
     String HTTP_CHUNKED            = "CamelHttpChunked";
+    String HTTP_SERVLET_REQUEST = "CamelHttpServletRequest";
+    String HTTP_SERVLET_RESPONSE = "CamelHttpServletResponse";
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
     String TO_ENDPOINT          = "CamelToEndpoint";
@@ -102,25 +102,21 @@ public interface Exchange {
     String ROLLBACK_ONLY      = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST = "CamelRollbackOnlyLast";
 
+    String SOAP_ACTION = "CamelSoapAction";
     String SPLIT_INDEX = "CamelSplitIndex";
     String SPLIT_SIZE  = "CamelSplitSize";
+
+    String TRANSACTED        = "CamelTransacted";
+    String TRANSFER_ENCODING = "Transfer-Encoding";
+    String TRACE_EVENT           = "CamelTraceEvent";
+    String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
+    String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
+    String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
 
     String TIMER_FIRED_TIME = "CamelTimerFiredTime";
     String TIMER_NAME       = "CamelTimerName";
     String TIMER_PERIOD     = "CamelTimerPeriod";
     String TIMER_TIME       = "CamelTimerTime";
-
-    String TRANSACTED = "CamelTransacted";
-
-    String TRACE_EVENT           = "CamelTraceEvent";
-    String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
-    String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
-    String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
-    
-    String SOAP_ACTION = "CamelSoapAction";
-    
-    String HTTP_SERVLET_REQUEST = "CamelHttpServletRequest";
-    String HTTP_SERVLET_RESPONSE = "CamelHttpServletResponse";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
