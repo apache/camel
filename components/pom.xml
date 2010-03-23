@@ -40,6 +40,7 @@
     <module>camel-cometd</module>
     <module>camel-cache</module>
     <module>camel-castor</module>
+    <module>camel-crypto</module>
     <module>camel-csv</module>
     <module>camel-cxf</module>
     <module>camel-dozer</module>

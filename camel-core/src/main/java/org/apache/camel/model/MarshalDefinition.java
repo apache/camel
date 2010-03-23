@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Processor;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.CastorDataFormat;
+import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
@@ -58,6 +59,7 @@ public class MarshalDefinition extends OutputDefinition<ProcessorDefinition> {
     @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
     @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
     @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
+    @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
     @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
     @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
     @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
@@ -66,7 +68,7 @@ public class MarshalDefinition extends OutputDefinition<ProcessorDefinition> {
     @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
     @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
     @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
-    @XmlElement(required = false, name = "string", type = StringDataFormat.class), 
+    @XmlElement(required = false, name = "string", type = StringDataFormat.class),
     @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
     @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
     @XmlElement(required = false, name = "zip", type = ZipDataFormat.class)}

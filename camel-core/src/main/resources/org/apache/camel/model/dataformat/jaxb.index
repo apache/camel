@@ -18,6 +18,7 @@ BindyDataFormat
 BindyType
 CastorDataFormat
 CsvDataFormat
+CryptoDataFormat
 DataFormatsDefinition
 FlatpackDataFormat
 GzipDataFormat

@@ -39,6 +39,7 @@ public class DataFormatsDefinition {
     @XmlElements({
         @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
         @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
+        @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
         @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
         @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
@@ -50,7 +51,7 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
         @XmlElement(required = false, name = "soapjaxb", type = SoapJaxbDataFormat.class),
         @XmlElement(required = false, name = "string", type = StringDataFormat.class),
-        @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),        
+        @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
         @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
         @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
         @XmlElement(required = false, name = "zip", type = ZipDataFormat.class)}
