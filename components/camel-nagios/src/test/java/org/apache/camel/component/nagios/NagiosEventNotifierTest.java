@@ -34,6 +34,11 @@ public class NagiosEventNotifierTest extends CamelTestSupport {
 
     private NagiosNscaStub nagios;
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     @Before
     @Override
     public void setUp() throws Exception {

@@ -81,6 +81,12 @@ public abstract class CamelTestSupport extends TestSupport {
 
     @Before
     public void setUp() throws Exception {
+        if (!useJmx()) {
+            disableJMX();
+        } else {
+            enableJMX();
+        }
+
         context = createCamelContext();
         assertValidContext(context);
 
@@ -118,6 +124,15 @@ public abstract class CamelTestSupport extends TestSupport {
             template.stop();
         }
         stopCamelContext();
+    }
+
+    /**
+     * Whether or not JMX should be used during testing.
+     *
+     * @return <tt>false</tt> by default.
+     */
+    protected boolean useJmx() {
+        return false;
     }
 
     /**

@@ -79,6 +79,12 @@ public abstract class CamelTestSupport extends TestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        if (!useJmx()) {
+            disableJMX();
+        } else {
+            enableJMX();
+        }
+
         context = createCamelContext();
         assertValidContext(context);
 
@@ -116,6 +122,15 @@ public abstract class CamelTestSupport extends TestSupport {
         stopCamelContext();
     }
     
+    /**
+     * Whether or not JMX should be used during testing.
+     *
+     * @return <tt>false</tt> by default.
+     */
+    protected boolean useJmx() {
+        return false;
+    }
+
     /**
      * Lets post process this test instance to process any Camel annotations.
      * Note that using Spring Test or Guice is a more powerful approach.
