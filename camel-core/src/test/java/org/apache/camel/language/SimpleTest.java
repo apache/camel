@@ -48,6 +48,12 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("headers.foo", "abc");
     }
 
+    public void testSimpleThreadName() throws Exception {
+        String name = Thread.currentThread().getName();
+        assertExpression("threadName", name);
+        assertExpression("The name is ${threadName}", "The name is " + name);
+    }
+
     public void testSimpleOutExpressions() throws Exception {
         exchange.getOut().setBody("Bye World");
         exchange.getOut().setHeader("quote", "Camel rocks");

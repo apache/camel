@@ -571,6 +571,22 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the current thread name
+     */
+    public static Expression threadNameExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return Thread.currentThread().getName();
+            }
+
+            @Override
+            public String toString() {
+                return "threadName";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the exchanges inbound message body converted
      * to the given type.
      * <p/>

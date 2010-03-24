@@ -41,6 +41,7 @@ import org.apache.camel.util.OgnlHelper;
  * <li>sys.foo to access the system property called 'foo'</li>
  * <li>sysenv.foo to access the system environment called 'foo'</li>
  * <li>exception.messsage to access the exception message</li>
+ * <li>threadName to access the current thread name</li>
  * <li>date:&lt;command&gt;:&lt;pattern&gt; for date formatting using the {@link java.text.SimpleDateFormat} patterns.
  *     Supported commands are: <tt>now</tt> for current timestamp,
  *     <tt>in.header.xxx</tt> or <tt>header.xxx</tt> to use the Date object in the in header.
@@ -101,6 +102,8 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             return ExpressionBuilder.exchangeIdExpression();
         } else if (ObjectHelper.equal(expression, "exception.message")) {
             return ExpressionBuilder.exchangeExceptionMessageExpression();
+        } else if (ObjectHelper.equal(expression, "threadName")) {
+            return ExpressionBuilder.threadNameExpression();
         }
 
         // bodyAs
