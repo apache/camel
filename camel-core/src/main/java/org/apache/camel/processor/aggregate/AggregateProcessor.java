@@ -289,9 +289,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         return aggregationStrategy.aggregate(oldExchange, newExchange);
     }
 
-    protected void onCompletion(Object key, final Exchange exchange, boolean fromTimeout) {
+    protected void onCompletion(final Object key, final Exchange exchange, boolean fromTimeout) {
+        // store the correlation key as property
+        exchange.setProperty(Exchange.AGGREGATED_CORRELATION_KEY, key);
         // remove from repository as its completed
-        aggregationRepository.remove(exchange.getContext(), key);
+        aggregationRepository.remove(exchange.getContext(), key, exchange);
         if (!fromTimeout && timeoutMap != null) {
             // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
             timeoutMap.remove(key);
@@ -302,6 +304,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             closedCorrelationKeys.put(key, key);
         }
 
+        onSubmitCompletion(key, exchange);
+    }
+
+    private void onSubmitCompletion(final Object key, final Exchange exchange) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Aggregation complete for correlation key " + key + " sending aggregated exchange: " + exchange);
         }
@@ -316,6 +322,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 } catch (Throwable t) {
                     // must catch throwable so we will handle all exceptions as the executor service will by default ignore them
                     exchange.setException(new CamelExchangeException("Error processing aggregated exchange", exchange, t));
+                } finally {
+                    aggregationRepository.confirm(exchange.getContext(), exchange.getExchangeId());
                 }
 
                 // if there was an exception then let the exception handler handle it

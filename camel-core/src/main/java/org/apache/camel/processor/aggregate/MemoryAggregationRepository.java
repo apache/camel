@@ -41,8 +41,12 @@ public class MemoryAggregationRepository extends ServiceSupport implements Aggre
         return cache.get(key);
     }
 
-    public void remove(CamelContext camelContext, Object key) {
+    public void remove(CamelContext camelContext, Object key, Exchange exchange) {
         cache.remove(key);
+    }
+
+    public void confirm(CamelContext camelContext, String exchangeId) {
+        // noop
     }
 
     @Override

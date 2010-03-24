@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * As opposed to normal usage where only the body part of the exchange is transferred over the wire,
  * this holder object serializes the following fields over the wire:
  * <ul>
+ * <li>exchangeId</li>
  * <li>in body</li>
  * <li>out body</li>
  * <li>in headers</li>
@@ -46,9 +47,10 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultExchangeHolder implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     private static final transient Log LOG = LogFactory.getLog(DefaultExchangeHolder.class);
 
+    private String exchangeId;
     private Object inBody;
     private Object outBody;
     private Boolean outFaultFlag = Boolean.FALSE;
@@ -79,6 +81,7 @@ public class DefaultExchangeHolder implements Serializable {
     public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties) {
         DefaultExchangeHolder payload = new DefaultExchangeHolder();
 
+        payload.exchangeId = exchange.getExchangeId();
         payload.inBody = checkSerializableObject("in body", exchange, exchange.getIn().getBody());
         payload.safeSetInHeaders(exchange);
         if (exchange.hasOut()) {
@@ -101,6 +104,7 @@ public class DefaultExchangeHolder implements Serializable {
      * @param payload  the payload with the values
      */
     public static void unmarshal(Exchange exchange, DefaultExchangeHolder payload) {
+        exchange.setExchangeId(payload.exchangeId);
         exchange.getIn().setBody(payload.inBody);
         if (payload.inHeaders != null) {
             exchange.getIn().setHeaders(payload.inHeaders);
@@ -141,7 +145,7 @@ public class DefaultExchangeHolder implements Serializable {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder("DefaultExchangeHolder[");
+        StringBuilder sb = new StringBuilder("DefaultExchangeHolder[exchangeId=").append(exchangeId);
         sb.append("inBody=").append(inBody).append(", outBody=").append(outBody);
         sb.append(", inHeaders=").append(inHeaders).append(", outHeaders=").append(outHeaders);
         sb.append(", properties=").append(properties).append(", exception=").append(exception);

@@ -69,6 +69,8 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
                         starting.set(false);
                         stopping.set(false);
                         stopped.set(false);
+                        shutdown.set(false);
+                        shuttingdown.set(false);
                     }
                 }
             }
@@ -94,6 +96,8 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
                 stopping.set(false);
                 starting.set(false);
                 started.set(false);
+                shutdown.set(false);
+                shuttingdown.set(false);
             }
         }
     }
@@ -118,6 +122,7 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
                     }
                 }
             } finally {
+                // shutdown is also stopped so only set shutdown flags
                 shutdown.set(true);
                 shuttingdown.set(false);
             }

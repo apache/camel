@@ -20,10 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.util.ObjectHelper;
@@ -33,10 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.fusesource.hawtdb.api.Index;
 import org.fusesource.hawtdb.api.Transaction;
 import org.fusesource.hawtdb.util.buffer.Buffer;
-import org.fusesource.hawtdb.util.buffer.DataByteArrayInputStream;
-import org.fusesource.hawtdb.util.buffer.DataByteArrayOutputStream;
-import org.fusesource.hawtdb.util.marshaller.Marshaller;
-import org.fusesource.hawtdb.util.marshaller.ObjectMarshaller;
 
 /**
  * An instance of AggregationRepository which is backed by a HawtDB.
@@ -50,8 +43,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
     private Integer bufferSize;
     private boolean sync;
     private boolean returnOldExchange;
-    private Marshaller<K> keyMarshaller = new ObjectMarshaller<K>();
-    private Marshaller<DefaultExchangeHolder> exchangeMarshaller = new ObjectMarshaller<DefaultExchangeHolder>();
+    private HawtDBCamelMarshaller<K> marshaller = new HawtDBCamelMarshaller<K>();
 
     /**
      * Creates an aggregation repository
@@ -96,7 +88,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         this.repositoryName = repositoryName;
     }
 
-    public Exchange add(CamelContext camelContext, final K key, Exchange exchange) {
+    public Exchange add(final CamelContext camelContext, final K key, final Exchange exchange) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding key   [" + key + "] -> " + exchange);
         }
@@ -106,8 +98,8 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
             // HawtDB could then eliminate the need to marshal and un-marshal  
             // in some cases.  But since we can.. we are going to force
             // early marshaling.
-            final Buffer keyBuffer = marshallKey(key);
-            final Buffer exchangeBuffer = marshallExchange(camelContext, exchange);
+            final Buffer keyBuffer = marshaller.marshallKey(key);
+            final Buffer exchangeBuffer = marshaller.marshallExchange(camelContext, exchange);
             Buffer rc = hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
                     Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName);
@@ -125,7 +117,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
 
             // only return old exchange if enabled
             if (isReturnOldExchange()) {
-                return unmarshallExchange(camelContext, rc);
+                return marshaller.unmarshallExchange(camelContext, rc);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error adding to repository " + repositoryName + " with key " + key, e);
@@ -134,11 +126,10 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         return null;
     }
 
-
-    public Exchange get(CamelContext camelContext, final K key) {
+    public Exchange get(final CamelContext camelContext, final K key) {
         Exchange answer = null;
         try {
-            final Buffer keyBuffer = marshallKey(key);
+            final Buffer keyBuffer = marshaller.marshallKey(key);
             Buffer rc = hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
                     Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName);
@@ -151,7 +142,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
                 }
             });
             if (rc != null) {
-                answer = unmarshallExchange(camelContext, rc);
+                answer = marshaller.unmarshallExchange(camelContext, rc);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error getting key " + key + " from repository " + repositoryName, e);
@@ -163,16 +154,24 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         return answer;
     }
 
-    public void remove(CamelContext camelContext, final K key) {
+    public void remove(final CamelContext camelContext, final K key, final Exchange exchange) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Removing key [" + key + "]");
         }
         try {
-            final Buffer keyBuffer = marshallKey(key);
+            final Buffer keyBuffer = marshaller.marshallKey(key);
+            final Buffer confirmKeyBuffer = marshaller.marshallConfirmKey(exchange.getExchangeId());
+            final Buffer exchangeBuffer = marshaller.marshallExchange(camelContext, exchange);
             hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
                     Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName);
-                    return index.remove(keyBuffer);
+                    // remove from the in progress index
+                    index.remove(keyBuffer);
+
+                    // and add it to the confirmed index
+                    Index<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted());
+                    indexCompleted.put(confirmKeyBuffer, exchangeBuffer);
+                    return null;
                 }
 
                 @Override
@@ -180,45 +179,33 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
                     return "Removing key [" + key + "]";
                 }
             });
+
         } catch (IOException e) {
             throw new RuntimeException("Error removing key " + key + " from repository " + repositoryName, e);
         }
     }
 
-    protected Buffer marshallKey(K key) throws IOException {
-        DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
-        keyMarshaller.writePayload(key, baos);
-        return baos.toBuffer();
-    }
-
-    protected Buffer marshallExchange(CamelContext camelContext, Exchange exchange) throws IOException {
-        DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
-        // use DefaultExchangeHolder to marshal to a serialized object
-        DefaultExchangeHolder pe = DefaultExchangeHolder.marshal(exchange, false);
-        // add the aggregated size property as the only property we want to retain
-        DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_SIZE, exchange.getProperty(Exchange.AGGREGATED_SIZE, Integer.class));
-        // persist the from endpoint as well
-        if (exchange.getFromEndpoint() != null) {
-            DefaultExchangeHolder.addProperty(pe, "CamelAggregatedFromEndpoint", exchange.getFromEndpoint().getEndpointUri());
+    public void confirm(final CamelContext camelContext, final String exchangeId) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Confirming exchangeId [" + exchangeId + "]");
         }
-        exchangeMarshaller.writePayload(pe, baos);
-        return baos.toBuffer();
-    }
+        try {
+            final Buffer confirmKeyBuffer = marshaller.marshallConfirmKey(exchangeId);
+            hawtDBFile.execute(new Work<Buffer>() {
+                public Buffer execute(Transaction tx) {
+                    Index<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted());
+                    return indexCompleted.remove(confirmKeyBuffer);
+                }
 
-    protected Exchange unmarshallExchange(CamelContext camelContext, Buffer buffer) throws IOException {
-        DataByteArrayInputStream bais = new DataByteArrayInputStream(buffer);
-        DefaultExchangeHolder pe = exchangeMarshaller.readPayload(bais);
-        Exchange answer = new DefaultExchange(camelContext);
-        DefaultExchangeHolder.unmarshal(answer, pe);
-        // restore the from endpoint
-        String fromEndpointUri = (String) answer.removeProperty("CamelAggregatedFromEndpoint");
-        if (fromEndpointUri != null) {
-            Endpoint fromEndpoint = camelContext.hasEndpoint(fromEndpointUri);
-            if (fromEndpoint != null) {
-                answer.setFromEndpoint(fromEndpoint);
-            }
+                @Override
+                public String toString() {
+                    return "Confirming exchangeId [" + exchangeId + "]";
+                }
+            });
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error confirming exchangeId " + exchangeId + " from repository " + repositoryName, e);
         }
-        return answer;
     }
 
     public HawtDBFile getHawtDBFile() {
@@ -231,6 +218,10 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
 
     public String getRepositoryName() {
         return repositoryName;
+    }
+
+    private String getRepositoryNameCompleted() {
+        return repositoryName + "-completed";
     }
 
     public void setRepositoryName(String repositoryName) {

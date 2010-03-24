@@ -31,12 +31,13 @@ import org.apache.camel.spi.UnitOfWork;
  */
 public interface Exchange {
 
-    String ACCEPT_CONTENT_TYPE = "CamelAcceptContentType";
+    String ACCEPT_CONTENT_TYPE        = "CamelAcceptContentType";
     @Deprecated
-    String AGGREGATED_INDEX = "CamelAggregatedIndex";
-    String AGGREGATED_SIZE  = "CamelAggregatedSize";
-    String AGGREGATED_COMPLETED_BY = "CamelAggregatedCompletedBy";
-    String ASYNC_WAIT = "CamelAsyncWait";
+    String AGGREGATED_INDEX           = "CamelAggregatedIndex";
+    String AGGREGATED_SIZE            = "CamelAggregatedSize";
+    String AGGREGATED_COMPLETED_BY    = "CamelAggregatedCompletedBy";
+    String AGGREGATED_CORRELATION_KEY = "CamelAggregatedCorrelationKey";
+    String ASYNC_WAIT                 = "CamelAsyncWait";
 
     String BATCH_INDEX    = "CamelBatchIndex";
     String BATCH_SIZE     = "CamelBatchSize";
@@ -80,8 +81,8 @@ public interface Exchange {
     String HTTP_URI                = "CamelHttpUri";
     String HTTP_URL                = "CamelHttpUrl";
     String HTTP_CHUNKED            = "CamelHttpChunked";
-    String HTTP_SERVLET_REQUEST = "CamelHttpServletRequest";
-    String HTTP_SERVLET_RESPONSE = "CamelHttpServletResponse";
+    String HTTP_SERVLET_REQUEST   = "CamelHttpServletRequest";
+    String HTTP_SERVLET_RESPONSE  = "CamelHttpServletResponse";
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
     String TO_ENDPOINT          = "CamelToEndpoint";
@@ -95,19 +96,19 @@ public interface Exchange {
 
     String ON_COMPLETION = "CamelOnCompletion";
 
-    String ROUTE_STOP         = "CamelRouteStop";
-    String REDELIVERED        = "CamelRedelivered";
-    String REDELIVERY_COUNTER = "CamelRedeliveryCounter";
+    String ROUTE_STOP           = "CamelRouteStop";
+    String REDELIVERED          = "CamelRedelivered";
+    String REDELIVERY_COUNTER   = "CamelRedeliveryCounter";
     String REDELIVERY_EXHAUSTED = "CamelRedeliveryExhausted";
-    String ROLLBACK_ONLY      = "CamelRollbackOnly";
-    String ROLLBACK_ONLY_LAST = "CamelRollbackOnlyLast";
+    String ROLLBACK_ONLY        = "CamelRollbackOnly";
+    String ROLLBACK_ONLY_LAST   = "CamelRollbackOnlyLast";
 
     String SOAP_ACTION = "CamelSoapAction";
     String SPLIT_INDEX = "CamelSplitIndex";
     String SPLIT_SIZE  = "CamelSplitSize";
 
-    String TRANSACTED        = "CamelTransacted";
-    String TRANSFER_ENCODING = "Transfer-Encoding";
+    String TRANSACTED            = "CamelTransacted";
+    String TRANSFER_ENCODING     = "Transfer-Encoding";
     String TRACE_EVENT           = "CamelTraceEvent";
     String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";

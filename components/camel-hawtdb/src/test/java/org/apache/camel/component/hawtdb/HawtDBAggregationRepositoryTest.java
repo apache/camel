@@ -76,7 +76,7 @@ public class HawtDBAggregationRepositoryTest extends CamelTestSupport {
         assertEquals("counter:2", actual.getIn().getBody());
 
         // now remove it
-        repo.remove(context, "foo");
+        repo.remove(context, "foo", actual);
         actual = repo.get(context, "foo");
         assertEquals(null, actual);
 

@@ -24,6 +24,8 @@ import org.apache.camel.Exchange;
  */
 public class DefaultExchangeHolderTest extends ContextTestSupport {
 
+    private String id;
+
     public void testMarshal() throws Exception {
         DefaultExchangeHolder holder = createHolder();
         assertNotNull(holder);
@@ -31,6 +33,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
     }
 
     public void testUnmarshal() throws Exception {
+        id = null;
         Exchange exchange = new DefaultExchange(context);
 
         DefaultExchangeHolder.unmarshal(exchange, createHolder());
@@ -38,10 +41,12 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertEquals("Bye World", exchange.getOut().getBody());
         assertEquals(123, exchange.getIn().getHeader("foo"));
         assertEquals(444, exchange.getProperty("bar"));
+        assertEquals(id, exchange.getExchangeId());
     }
 
     private DefaultExchangeHolder createHolder() {
         Exchange exchange = new DefaultExchange(context);
+        id = exchange.getExchangeId();
         exchange.getIn().setBody("Hello World");
         exchange.getIn().setHeader("foo", 123);
         exchange.setProperty("bar", 444);

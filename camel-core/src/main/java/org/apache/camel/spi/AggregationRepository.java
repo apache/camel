@@ -31,9 +31,9 @@ public interface AggregationRepository<K> {
      * <p/>
      * Will replace any existing exchange.
      *
-     * @param camelContext the current CamelContext
-     * @param key  the correlation key
-     * @param exchange the aggregated exchange
+     * @param camelContext   the current CamelContext
+     * @param key            the correlation key
+     * @param exchange       the aggregated exchange
      * @return the old exchange if any existed
      */
     Exchange add(CamelContext camelContext, K key, Exchange exchange);
@@ -41,18 +41,28 @@ public interface AggregationRepository<K> {
     /**
      * Gets the given exchange with the correlation key
      *
-     * @param camelContext the current CamelContext
-     * @param key the correlation key
+     * @param camelContext   the current CamelContext
+     * @param key            the correlation key
      * @return the exchange, or <tt>null</tt> if no exchange was previously added
      */
     Exchange get(CamelContext camelContext, K key);
 
     /**
-     * Removes the exchange with the given correlation key
+     * Removes the exchange with the given correlation key, which should happen
+     * when an {@link Exchange} is completed
      *
-     * @param camelContext the current CamelContext
-     * @param key the correlation key
+     * @param camelContext   the current CamelContext
+     * @param key            the correlation key
+     * @param exchange       the exchange to remove
      */
-    void remove(CamelContext camelContext, K key);
+    void remove(CamelContext camelContext, K key, Exchange exchange);
+
+    /**
+     * Confirms the completion of the {@link Exchange}.
+     *
+     * @param camelContext  the current CamelContext
+     * @param exchangeId    exchange id to confirm
+     */
+    void confirm(CamelContext camelContext, String exchangeId);
 
 }
