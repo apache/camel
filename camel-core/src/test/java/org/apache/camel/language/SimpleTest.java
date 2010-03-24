@@ -38,6 +38,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testSimpleExpressions() throws Exception {
+        assertExpression("exchangeId", exchange.getExchangeId());
         assertExpression("id", exchange.getIn().getMessageId());
         assertExpression("body", "<hello id='m123'>world!</hello>");
         assertExpression("in.body", "<hello id='m123'>world!</hello>");

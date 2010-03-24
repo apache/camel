@@ -27,6 +27,7 @@ import org.apache.camel.util.OgnlHelper;
  * which maps simple property style notations to access headers and bodies.
  * Examples of supported expressions are:
  * <ul>
+ * <li>exchangeId to access the exchange id</li>
  * <li>id to access the inbound message id</li>
  * <li>in.body or body to access the inbound body</li>
  * <li>in.body.OGNL or body.OGNL to access the inbound body using an OGNL expression</li>
@@ -96,6 +97,8 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             return ExpressionBuilder.outBodyExpression();
         } else if (ObjectHelper.equal(expression, "id")) {
             return ExpressionBuilder.messageIdExpression();
+        } else if (ObjectHelper.equal(expression, "exchangeId")) {
+            return ExpressionBuilder.exchangeIdExpression();
         } else if (ObjectHelper.equal(expression, "exception.message")) {
             return ExpressionBuilder.exchangeExceptionMessageExpression();
         }
