@@ -37,6 +37,8 @@ public class LogFormatterTest extends ContextTestSupport {
     @SuppressWarnings("unchecked")
     public void testSendMessageToLogSingleOptions() throws Exception {
         template.sendBody("log:org.apache.camel.TEST?showExchangeId=true", "Hello World");
+        template.sendBody("log:org.apache.camel.TEST?showExchangePattern=true", "Hello World");
+        template.sendBody("log:org.apache.camel.TEST?showExchangePattern=false", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showProperties=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showHeaders=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showBodyType=true", "Hello World");

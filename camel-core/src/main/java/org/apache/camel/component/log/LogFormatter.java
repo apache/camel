@@ -32,6 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 public class LogFormatter implements ExchangeFormatter {
 
     private boolean showExchangeId;
+    private boolean showExchangePattern = true;
     private boolean showProperties;
     private boolean showHeaders;
     private boolean showBodyType = true;
@@ -55,6 +56,13 @@ public class LogFormatter implements ExchangeFormatter {
             }
             sb.append(", Id:").append(exchange.getExchangeId());
         }
+        if (showAll || showExchangePattern) {
+            if (multiline) {
+                sb.append('\n');
+            }
+            sb.append(", ExchangePattern:").append(exchange.getPattern());
+        }
+
         if (showAll || showProperties) {
             if (multiline) {
                 sb.append('\n');
@@ -275,6 +283,13 @@ public class LogFormatter implements ExchangeFormatter {
         this.showFuture = showFuture;
     }
 
+    public boolean isShowExchangePattern() {
+        return showExchangePattern;
+    }
+
+    public void setShowExchangePattern(boolean showExchangePattern) {
+        this.showExchangePattern = showExchangePattern;
+    }
 
     // Implementation methods
     //-------------------------------------------------------------------------
