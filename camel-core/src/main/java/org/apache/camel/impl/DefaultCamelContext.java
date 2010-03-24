@@ -1058,7 +1058,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                         throw new FailedToStartRouteException(routeService.getId(),
                             "Multiple consumers for the same endpoint is not allowed: " + endpoint);
                     } else {
-                        // start the
+                        // start the consumer on the route
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Starting consumer (order: " + order + ") on route: " + route.getId());
                         }
@@ -1076,8 +1076,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
         }
 
-        if (LOG.isDebugEnabled()) {
-            for (int i = 0; i < getRoutes().size(); i++) {
+        for (int i = 0; i < getRoutes().size(); i++) {
+            Route route = getRoutes().get(i);
+            LOG.info("Route: " + route.getId() + " started and consuming from: " + route.getEndpoint());
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("Route " + i + ": " + getRoutes().get(i));
             }
         }
