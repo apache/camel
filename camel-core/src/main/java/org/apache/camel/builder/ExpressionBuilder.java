@@ -992,6 +992,22 @@ public final class ExpressionBuilder {
         };
     }
 
+    /**
+     * Returns an Expression for the exchange id
+     */
+    public static Expression exchangeIdExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getExchangeId();
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeId";
+            }
+        };
+    }
+
     public static Expression dateExpression(final String command, final String pattern) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
