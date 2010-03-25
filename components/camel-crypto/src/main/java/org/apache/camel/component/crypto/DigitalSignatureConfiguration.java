@@ -51,6 +51,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private String keystoreName;
     private String randomName;
     private boolean clearHeaders;
+    private String operation;
 
     public DigitalSignatureConfiguration copy() {
         try {
@@ -399,4 +400,20 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
         this.clearHeaders = clearHeaders;
     }
 
+    /**
+     * Set the Crypto operation from that supplied after the crypto scheme in the
+     * endpoint uri e.g. crypto:sign sets sign as the operation.
+     *
+     * @param operation the operation supplied after the crypto scheme
+     */
+    public void setCryptoOperation(String operation) {
+        this.operation = operation;
+    }
+
+    /**
+     * Gets the Crypto operation that was supplied in the the crypto scheme in the endpoint uri
+     */
+    public String getCryptoOperation() {
+        return operation;
+    }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.crypto;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -44,7 +46,12 @@ public class DigitalSignatureComponent extends DefaultComponent {
         DigitalSignatureConfiguration config = getConfiguration().copy();
         setProperties(config, parameters);
         config.setCamelContext(getCamelContext());
-
+        try {
+            config.setCryptoOperation(new URI(remaining).getScheme());
+        } catch (Exception e) {
+            throw new MalformedURLException(String.format("An invalid crypto uri was provided '%s'."
+                    + " Check the uri matches the format crypto:sign or crypto:verify", uri));
+        }
         return new DigitalSignatureEndpoint(uri, this, config);
     }
 

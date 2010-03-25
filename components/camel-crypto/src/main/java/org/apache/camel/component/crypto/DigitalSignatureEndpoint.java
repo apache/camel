@@ -41,7 +41,7 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return getEndpointUri().startsWith("sign")
+        return "sign".equals(configuration.getCryptoOperation())
             ? new DigitalSignatureProducer(this, new SigningProcessor(configuration)) : new DigitalSignatureProducer(this, new VerifyingProcessor(configuration));
     }
 

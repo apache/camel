@@ -26,8 +26,8 @@
         <!-- START SNIPPET: basic -->
         <route>
             <from uri="direct:keypair"/>
-            <to uri="sign://basic?privateKey=myPrivateKey" />
-            <to uri="verify://basic?publicKey=myPublicKey" />
+            <to uri="crypto:sign://basic?privateKey=#myPrivateKey" />
+            <to uri="crypto:verify://basic?publicKey=#myPublicKey" />
             <to uri="mock:result"/>
         </route>
         <!-- END SNIPPET: basic -->
@@ -35,8 +35,8 @@
         <!-- START SNIPPET: algorithm -->
         <route>
             <from uri="direct:algorithm"/>
-            <to uri="sign://rsa?algorithm=MD5withRSA&amp;privateKey=rsaPrivateKey" />
-            <to uri="verify://rsa?algorithm=MD5withRSA&amp;publicKey=rsaPublicKey" />
+            <to uri="crypto:sign://rsa?algorithm=MD5withRSA&amp;privateKey=#rsaPrivateKey" />
+            <to uri="crypto:verify://rsa?algorithm=MD5withRSA&amp;publicKey=#rsaPublicKey" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: algorithm -->
@@ -44,8 +44,8 @@
         <!-- START SNIPPET: buffersize -->
         <route>
             <from uri="direct:buffersize" />
-            <to uri="sign://buffer?privateKey=myPrivateKey&amp;buffersize=1024" />
-            <to uri="verify://buffer?publicKey=myPublicKey&amp;buffersize=1024" />
+            <to uri="crypto:sign://buffer?privateKey=#myPrivateKey&amp;buffersize=1024" />
+            <to uri="crypto:verify://buffer?publicKey=#myPublicKey&amp;buffersize=1024" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: buffersize -->
@@ -53,8 +53,8 @@
         <!-- START SNIPPET: random -->
         <route>
             <from uri="direct:random" />
-            <to uri="sign://random?privateKey=myPrivateKey&amp;secureRandom=someRandom" />
-            <to uri="verify://random?publicKey=myPublicKey" />
+            <to uri="crypto:sign://random?privateKey=#myPrivateKey&amp;secureRandom=#someRandom" />
+            <to uri="crypto:verify://random?publicKey=#myPublicKey" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: random -->
@@ -62,8 +62,8 @@
         <!-- START SNIPPET: provider -->
         <route>
             <from uri="direct:provider"/>
-            <to uri="sign://provider?privateKey=myPrivateKey&amp;provider=SUN" />
-            <to uri="verify://provider?publicKey=myPublicKey&amp;provider=SUN" />
+            <to uri="crypto:sign://provider?privateKey=#myPrivateKey&amp;provider=SUN" />
+            <to uri="crypto:verify://provider?publicKey=#myPublicKey&amp;provider=SUN" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: provider -->
@@ -71,8 +71,8 @@
         <!-- START SNIPPET: certificate -->
         <route>
             <from uri="direct:certificate"/>
-            <to uri="sign://withcert?privateKey=myPrivateKey" />
-            <to uri="verify://withcert?certificate=myCert" />
+            <to uri="crypto:sign://withcert?privateKey=#myPrivateKey" />
+            <to uri="crypto:verify://withcert?certificate=#myCert" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: certificate -->
@@ -80,8 +80,8 @@
         <!-- START SNIPPET: keystore -->
         <route>
             <from uri="direct:keystore"/>
-            <to uri="sign://keystore?keystore=keystore&amp;alias=bob&amp;password=letmein" />
-            <to uri="verify://keystore?keystore=keystore&amp;alias=bob" />
+            <to uri="crypto:sign://keystore?keystore=#keystore&amp;alias=bob&amp;password=letmein" />
+            <to uri="crypto:verify://keystore?keystore=#keystore&amp;alias=bob" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: keystore -->
@@ -89,8 +89,8 @@
          <!-- START SNIPPET: signature-header -->
         <route>
             <from uri="direct:signature-header"/>
-            <to uri="sign://another?privateKey=myPrivateKey&amp;signatureHeader=AnotherDigitalSignature" />
-            <to uri="verify://another?publicKey=myPublicKey&amp;signatureHeader=AnotherDigitalSignature" />
+            <to uri="crypto:sign://another?privateKey=#myPrivateKey&amp;signatureHeader=AnotherDigitalSignature" />
+            <to uri="crypto:verify://another?publicKey=#myPublicKey&amp;signatureHeader=AnotherDigitalSignature" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: signature-header -->
@@ -98,11 +98,11 @@
         <!-- START SNIPPET: alias -->
         <route>
             <from uri="direct:alias-sign"/>
-            <to uri="sign://alias?keystore=keystore" />
+            <to uri="crypto:sign://alias?keystore=#keystore" />
         </route>       
         <route>
             <from uri="direct:alias-verify"/>
-            <to uri="verify://alias?keystore=keystore" />
+            <to uri="crypto:verify://alias?keystore=#keystore" />
             <to uri="mock:result"/>
         </route>    
         <!-- END SNIPPET: alias -->
@@ -110,11 +110,11 @@
         <!-- START SNIPPET: headerkey -->
         <route>
             <from uri="direct:headerkey-sign"/>
-            <to uri="sign://headerkey" />
+            <to uri="crypto:sign://headerkey" />
         </route>       
         <route>
             <from uri="direct:headerkey-verify"/>
-            <to uri="verify://headerkey" />
+            <to uri="crypto:verify://headerkey" />
             <to uri="mock:result"/>
         </route>    
         <!-- END SNIPPET: headerkey -->
