@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.example.cafe.test;
 
 import java.util.List;
@@ -26,23 +25,25 @@ import org.apache.camel.example.cafe.stuff.Waiter;
 public class TestWaiter extends Waiter {
     protected List<Drink> expectDrinks;
     protected List<Drink> deliveredDrinks;
-    
+
     public void setVerfiyDrinks(List<Drink> drinks) {
         this.expectDrinks = drinks;
     }
-    
+
     public void deliverCafes(Delivery delivery) {
         super.deliverCafes(delivery);
         deliveredDrinks = delivery.getDeliveredDrinks();
     }
-   
+
     public void verifyDrinks() {
-        if (expectDrinks.size() != deliveredDrinks.size()) {
-            throw new AssertionError("Can't get expect size of drinks");
+        if (deliveredDrinks == null || expectDrinks.size() != deliveredDrinks.size()) {
+            throw new AssertionError("Did not deliver expected number of drinks " + expectDrinks.size() + " was "
+                    + (deliveredDrinks != null ? deliveredDrinks.size() : "null"));
         }
+
         for (Drink drink : expectDrinks) {
             if (!deliveredDrinks.contains(drink)) {
-                throw new AssertionError("Can't find drink " + drink + " in the deliveredDrinks");
+                throw new AssertionError("Cannot find expected drink " + drink + " in the delivered drinks");
             }
         }
     }

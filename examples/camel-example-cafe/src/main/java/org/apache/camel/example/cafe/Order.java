@@ -15,13 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.example.cafe;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Mark Fisher
- * @author Marius Bogoevici
- */
 public class Order {
 
     private List<OrderItem> orderItems = new ArrayList<OrderItem>();

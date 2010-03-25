@@ -25,8 +25,8 @@
   <import resource="classpath:META-INF/beans.xml"/>
   
   <!-- START SNIPPET: e1 --> 
-  <camelContext id="camel"
-                xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
      <route>
          <from uri="direct:cafe"/>
          <split>
@@ -34,22 +34,26 @@
             <to uri="direct:drink"/>
         </split>
      </route>
+
      <route>
          <from uri="direct:drink" />
          <recipientList>
             <method bean="drinkRouter"/>
          </recipientList>
      </route>
+
      <route>
          <from uri="seda:coldDrinks?concurrentConsumers=2"/>
          <to uri="bean:barista?method=prepareColdDrink"/>
          <to uri="direct:deliveries"/>
      </route>
+
      <route>
          <from uri="seda:hotDrinks?concurrentConsumers=3"/>
          <to uri="bean:barista?method=prepareHotDrink"/>
          <to uri="direct:deliveries"/>
      </route>
+
      <route>
          <from uri="direct:deliveries"/>
          <aggregate strategyRef="aggregatorStrategy" completionTimeout="5000">
@@ -60,6 +64,7 @@
       	     <to uri="bean:waiter?method=deliverCafes"/>
          </aggregate>
      </route>
+
   </camelContext>
   <!-- END SNIPPET: e1 -->
 

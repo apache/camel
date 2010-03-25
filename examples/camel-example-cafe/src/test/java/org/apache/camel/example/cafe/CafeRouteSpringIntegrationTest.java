@@ -38,12 +38,10 @@ public class CafeRouteSpringIntegrationTest extends Assert {
         applicationContext = new ClassPathXmlApplicationContext("META-INF/spring/camel-context.xml");
         CamelContext camelContext = getCamelContext();
         template = camelContext.createProducerTemplate();
-        
     }
     
     @Test
     public void testCafeRoute() throws Exception {
-        
         Order order = new Order(2);
         order.addItem(DrinkType.ESPRESSO, 2, true);
         order.addItem(DrinkType.CAPPUCCINO, 4, false);
@@ -52,7 +50,7 @@ public class CafeRouteSpringIntegrationTest extends Assert {
         
         template.sendBody("direct:cafe", order);
         
-        Thread.sleep(6000);
+        Thread.sleep(7000);
     }
     
     @After
@@ -64,7 +62,6 @@ public class CafeRouteSpringIntegrationTest extends Assert {
     
     protected CamelContext getCamelContext() throws Exception {
         return (DefaultCamelContext) applicationContext.getBean("camel");
-        
     }
 
 }

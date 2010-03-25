@@ -63,7 +63,6 @@ public class CafeRouteBuilderTest extends CamelTestSupport {
         template.sendBody("direct:cafe", order);
         
         assertMockEndpointsSatisfied();
-        
     }
     
     @Test
@@ -84,16 +83,15 @@ public class CafeRouteBuilderTest extends CamelTestSupport {
         waiter.setVerfiyDrinks(drinks);
         
         template.sendBody("direct:cafe", order);
-        
-        Thread.sleep(6000);
+
+        // wait enough time to let the aggregate complete
+        Thread.sleep(10000);
         
         waiter.verifyDrinks();
-        
     }
     
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new CafeRouteBuilder();
     }
 
-    
 }

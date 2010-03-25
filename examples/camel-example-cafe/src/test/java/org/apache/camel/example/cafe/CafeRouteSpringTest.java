@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.example.cafe.test.TestDrinkRouter;
 import org.apache.camel.example.cafe.test.TestWaiter;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -48,8 +47,7 @@ public class CafeRouteSpringTest extends CafeRouteBuilderTest {
     }
     
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext camelcontext = (DefaultCamelContext) applicationContext.getBean("camel");
-        return camelcontext;
+        return (CamelContext) applicationContext.getBean("camel");
     }
 
 }
