@@ -367,7 +367,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     // -------------------------------------------------------------------------
     @Deprecated
     public long getRedeliverDelay() {
-        return getRedeliverDelay();
+        return getRedeliveryDelay();
     }
     
     @Deprecated
