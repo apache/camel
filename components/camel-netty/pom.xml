@@ -39,7 +39,7 @@
 
 	<repositories>
 		<repository>
-			<id>repository.jboss.org</id>
+			<id>jboss</id>
 			<url>http://repository.jboss.org/maven2</url>
 			<snapshots>
 				<enabled>false</enabled>
