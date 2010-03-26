@@ -26,14 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupport {
 
-    private String base;
-
-    @Override
-    protected void setUp() throws Exception {
-        base = "/temp";
-        deleteDirectory(base);
-        super.setUp();
-    }
+    private String base = "/tmp/mytemp";
 
     public void testDummy() {
         // noop
@@ -41,6 +34,10 @@ public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupp
 
     // TODO: Enable to test locally
     public void xxxTestConsumeFromAbsolutePath() throws Exception {
+        deleteDirectory(base);
+
+        context.startRoute("foo");
+
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");
         mock.expectedFileExists(base + "/.camel/paris.txt");
@@ -53,7 +50,8 @@ public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupp
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:" + base).convertBodyTo(String.class).to("mock:report");
+                from("file:" + base).routeId("foo").noAutoStartup()
+                    .convertBodyTo(String.class).to("mock:report");
             }
         };
     }
