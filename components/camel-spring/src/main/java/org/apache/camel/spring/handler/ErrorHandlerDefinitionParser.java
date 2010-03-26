@@ -29,6 +29,8 @@ import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spring.CamelEndpointFactoryBean;
+import org.apache.camel.spring.ErrorHandlerType;
+import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,20 +55,23 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
     }
 
     protected Class getBeanClass(Element element) {
-        String type = element.getAttribute("type");
+        ErrorHandlerType type = ErrorHandlerType.valueOf(element.getAttribute("type"));
         Class clazz = null;
-        if (type.equals("NoErrorHandler")) {
+        if (type.equals(ErrorHandlerType.NoErrorHandler)) {
             clazz = NoErrorHandlerBuilder.class;
         }
-        if (type.equals("DeadLetterChannel")) {
+        if (type.equals(ErrorHandlerType.DeadLetterChannel)) {
             clazz = DeadLetterChannelBuilder.class;
             
         }
-        if (type.equals("LoggingErrorHandler")) {
+        if (type.equals(ErrorHandlerType.LoggingErrorHandler)) {
             clazz = LoggingErrorHandlerBuilder.class;
         }
-        if (type.equals("DefaultErrorHandler")) {
+        if (type.equals(ErrorHandlerType.DefaultErrorHandler)) {
             clazz = DefaultErrorHandlerBuilder.class;
+        }
+        if (type.equals(ErrorHandlerType.TransactionErrorHandler)) {
+            clazz = TransactionErrorHandlerBuilder.class;
         }
         if (clazz == null) {
             throw new IllegalArgumentException("Cannot find the ErrorHandle with type " + type);
@@ -83,12 +88,14 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-        String type = element.getAttribute("type");
-        if (type.equals("NoErrorHandler") || type.equals("LoggingErrorHandler")) {
+        ErrorHandlerType type = ErrorHandlerType.valueOf(element.getAttribute("type"));
+        if (type.equals(ErrorHandlerType.NoErrorHandler) || type.equals(ErrorHandlerType.LoggingErrorHandler)) {
             // don't need to parser other stuff
             return;
         }
-        if (type.equals("DefaultErrorHandler") || type.equals("DeadLetterChannel")) {
+        if (type.equals(ErrorHandlerType.DefaultErrorHandler) 
+            || type.equals(ErrorHandlerType.DeadLetterChannel) 
+            || type.equals(ErrorHandlerType.TransactionErrorHandler)) {
             NodeList list = element.getChildNodes();
             int size = list.getLength();
             for (int i = 0; i < size; i++) {

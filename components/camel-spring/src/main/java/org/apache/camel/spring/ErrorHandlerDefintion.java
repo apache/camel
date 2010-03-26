@@ -38,7 +38,7 @@ import org.apache.camel.model.config.PropertiesDefinition;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorHandlerDefintion extends IdentifiedType {
     @XmlAttribute(required = true)
-    private String type;
+    private ErrorHandlerType type;
     @XmlAttribute(required = false)
     private String deadLetterUri;
     @XmlAttribute(required = false)
@@ -53,6 +53,7 @@ public class ErrorHandlerDefintion extends IdentifiedType {
         @XmlElement(name = "exceptionPolicyStrategy",  required = false),
         @XmlElement(name = "onRedelivery", required = false),
         @XmlElement(name = "failureProcessor", required = false),
+        @XmlElement(name = "transactionTemplate", required = false),
         @XmlElement(name = "deadLetter", required = false)})
     private List beans; 
 
