@@ -50,6 +50,6 @@
     </route>
    </camelContext>
 
-   <bean id="noErrorHandler" class="org.apache.camel.builder.NoErrorHandlerBuilder"/>
+   <errorHandler id="noErrorHandler" type="NoErrorHandler" xmlns="http://camel.apache.org/schema/spring" />
 
 </beans>

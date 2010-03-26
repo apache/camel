@@ -63,7 +63,7 @@
 
     <bean id="myRedeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
         <property name="maximumRedeliveries" value="5"/>
-        <property name="redeliverDelay" value="0"/>
+        <property name="redeliveryDelay" value="0"/>
     </bean>
 
    <camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">

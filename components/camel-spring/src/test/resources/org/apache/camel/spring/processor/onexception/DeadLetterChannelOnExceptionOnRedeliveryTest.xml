@@ -37,7 +37,7 @@
     <bean id="redeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
         <property name="maximumRedeliveries" value="5"/>
         <!-- go fast since its a unit test -->
-        <property name="redeliverDelay" value="0"/>
+        <property name="redeliveryDelay" value="0"/>
     </bean>
 
 

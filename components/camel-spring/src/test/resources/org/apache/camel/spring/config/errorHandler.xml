@@ -42,7 +42,7 @@
 
     <bean id="rsRedeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
         <property name="maximumRedeliveries" value="1"/>
-        <property name="redeliverDelay" value="30000"/>
+        <property name="redeliveryDelay" value="30000"/>
         <property name="useExponentialBackOff" value="true"/>
     </bean>
 
