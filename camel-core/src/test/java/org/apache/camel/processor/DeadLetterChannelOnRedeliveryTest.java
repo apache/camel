@@ -66,7 +66,7 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5)
                         .onRedelivery(new MyRedeliverPrcessor())
                         // setting delay to zero is just to make unit teting faster
-                        .redeliverDelay(0L));
+                        .redeliveryDelay(0L));
                 // END SNIPPET: e1
 
 

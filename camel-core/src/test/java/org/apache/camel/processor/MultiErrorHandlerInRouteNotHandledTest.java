@@ -86,12 +86,12 @@ public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).handled(false).redeliverDelay(0))
+                    .errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).handled(false).redeliveryDelay(0))
                     .process(outer)
                     .to("direct:outer");
 
                 from("direct:outer")
-                    .errorHandler(deadLetterChannel("mock:inner").maximumRedeliveries(2).handled(false).redeliverDelay(0))
+                    .errorHandler(deadLetterChannel("mock:inner").maximumRedeliveries(2).handled(false).redeliveryDelay(0))
                     .process(inner)
                     .to("mock:end");
             }

@@ -46,7 +46,7 @@ public class InheritErrorHandlerTrueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliverDelay(0));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0));
 
                 from("direct:start")
                     .process(new MyProcessor()).inheritErrorHandler(true)

@@ -44,7 +44,7 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // as its based on a unit test we do not have any delays between and do not log the stack trace
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliverDelay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0).logStackTrace(false));
 
                 // START SNIPPET: e1
                 // we want to use a predicate for retries so we can determine in our bean

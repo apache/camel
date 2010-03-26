@@ -57,7 +57,7 @@ public class ErrorHandlerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliverDelay(0))
+                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);

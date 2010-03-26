@@ -75,7 +75,7 @@ public class RomeksExceptionTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0));
+                errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0));
 
                 onException(IllegalArgumentException.class).to("mock:exception");
 

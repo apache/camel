@@ -71,7 +71,7 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
                 context.setStreamCaching(true);
 
                 // 0 delay for faster unit test
-                errorHandler(deadLetterChannel("direct:errorHandler").maximumRedeliveries(3).redeliverDelay(0));
+                errorHandler(deadLetterChannel("direct:errorHandler").maximumRedeliveries(3).redeliveryDelay(0));
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

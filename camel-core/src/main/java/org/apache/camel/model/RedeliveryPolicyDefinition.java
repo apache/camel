@@ -165,7 +165,7 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets the fixed delay between redeliveries
+     * Sets the initial redelivery delay
      *
      * @param delay  delay in millis
      * @return the builder

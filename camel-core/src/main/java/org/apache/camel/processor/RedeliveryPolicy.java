@@ -26,8 +26,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-// Code taken from the ActiveMQ codebase
-
 /**
  * The policy used to decide how many times to redeliver and the time between
  * the redeliveries before being sent to a <a
@@ -37,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * The default values are:
  * <ul>
  *   <li>maximumRedeliveries = 0</li>
- *   <li>redeliverDelay = 1000L (the initial delay)</li>
+ *   <li>redeliveryDelay = 1000L (the initial delay)</li>
  *   <li>maximumRedeliveryDelay = 60 * 1000L</li>
  *   <li>backOffMultiplier = 2</li>
  *   <li>useExponentialBackOff = false</li>
@@ -230,10 +228,20 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     // -------------------------------------------------------------------------
 
     /**
-     * Sets the delay in milliseconds
+     * Sets the initial redelivery delay in milliseconds
+     *
+     * @deprecated use redeliveryDelay instead
      */
+    @Deprecated
     public RedeliveryPolicy redeliverDelay(long delay) {
-        setRedeliverDelay(delay);
+        return redeliveryDelay(delay);
+    }
+
+    /**
+     * Sets the initial redelivery delay in milliseconds
+     */
+    public RedeliveryPolicy redeliveryDelay(long delay) {
+        setRedeliveryDelay(delay);
         return this;
     }
 
@@ -380,7 +388,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets the delay in milliseconds
+     * Sets the initial redelivery delay in milliseconds
      */
     public void setRedeliveryDelay(long redeliverDelay) {
         this.redeliveryDelay = redeliverDelay;

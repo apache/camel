@@ -65,7 +65,7 @@ public class DefaultExceptionPolicyStrategyUsingOnlyWhenTest extends ContextTest
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel(ERROR_QUEUE).maximumRedeliveries(0).redeliverDelay(100));
+                errorHandler(deadLetterChannel(ERROR_QUEUE).maximumRedeliveries(0).redeliveryDelay(100));
 
                 onException(MyUserException.class).onWhen(header("user").isNotNull())
                     .maximumRedeliveries(1).backOffMultiplier(2).redeliverDelay(0)

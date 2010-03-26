@@ -111,7 +111,7 @@ public class OnExceptionRouteTest extends ContextTestSupport {
                 // START SNIPPET: e1
 
                 // default should errors go to mock:error
-                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0));
+                errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0));
                 
                 // if a MyTechnicalException is thrown we will not try to redeliver and we mark it as handled
                 // so the caller does not get a failure

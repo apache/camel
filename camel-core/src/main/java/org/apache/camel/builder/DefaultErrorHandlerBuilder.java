@@ -76,8 +76,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    @Deprecated
     public DefaultErrorHandlerBuilder redeliverDelay(long delay) {
-        getRedeliveryPolicy().redeliverDelay(delay);
+        getRedeliveryPolicy().redeliveryDelay(delay);
+        return this;
+    }
+
+    public DefaultErrorHandlerBuilder redeliveryDelay(long delay) {
+        getRedeliveryPolicy().redeliveryDelay(delay);
         return this;
     }
 

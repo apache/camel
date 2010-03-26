@@ -49,7 +49,7 @@ public class DeadLetterChannelRedeliveringWhileShutdownTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliverDelay(3000));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(3000));
 
                 from("direct:start").delay(500).to("mock:result");
 

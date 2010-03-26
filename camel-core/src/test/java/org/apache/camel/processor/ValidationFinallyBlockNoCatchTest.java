@@ -70,7 +70,7 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // use dead letter channel that supports redeliveries
-                errorHandler(deadLetterChannel("mock:dead").redeliverDelay(0).maximumRedeliveries(3).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0).maximumRedeliveries(3).logStackTrace(false));
 
                 from("direct:start")
                     .doTry()

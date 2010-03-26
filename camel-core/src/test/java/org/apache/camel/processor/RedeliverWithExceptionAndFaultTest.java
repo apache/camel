@@ -73,7 +73,7 @@ public class RedeliverWithExceptionAndFaultTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliverDelay(0));
+                errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(0));
 
                 from("direct:start")
                     .process(new Processor() {

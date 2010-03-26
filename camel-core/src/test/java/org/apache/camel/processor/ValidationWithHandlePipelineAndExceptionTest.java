@@ -26,7 +26,7 @@ public class ValidationWithHandlePipelineAndExceptionTest extends ValidationTest
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0).maximumRedeliveries(3));
+                errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
                 onException(ValidationException.class).to("mock:outer");
 

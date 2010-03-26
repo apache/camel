@@ -155,7 +155,7 @@ public class ManagedErrorHandler {
         }
 
         RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
-        return redelivery.getRedeliveryPolicy().getRedeliverDelay();
+        return redelivery.getRedeliveryPolicy().getRedeliveryDelay();
     }
 
     @ManagedAttribute(description = "RedeliveryPolicy for redelivery delay")
@@ -165,10 +165,10 @@ public class ManagedErrorHandler {
         }
 
         RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
-        redelivery.getRedeliveryPolicy().setRedeliverDelay(delay);
+        redelivery.getRedeliveryPolicy().setRedeliveryDelay(delay);
     }
 
-    @ManagedAttribute(description = "RedeliveryPolicy for backoff multipler")
+    @ManagedAttribute(description = "RedeliveryPolicy for backoff multiplier")
     public Double getBackOffMultiplier() {
         if (!isSupportRedelivery()) {
             return null;
@@ -178,7 +178,7 @@ public class ManagedErrorHandler {
         return redelivery.getRedeliveryPolicy().getBackOffMultiplier();
     }
 
-    @ManagedAttribute(description = "RedeliveryPolicy for backoff multipler")
+    @ManagedAttribute(description = "RedeliveryPolicy for backoff multiplier")
     public void setBackOffMultiplier(Double multiplier) {
         if (!isSupportRedelivery()) {
             throw new IllegalArgumentException("This error handler does not support redelivery");

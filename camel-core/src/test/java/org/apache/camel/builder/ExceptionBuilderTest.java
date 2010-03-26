@@ -162,7 +162,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @SuppressWarnings("unchecked")
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0).maximumRedeliveries(3));
+                errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
                 // START SNIPPET: exceptionBuilder1
                 onException(NullPointerException.class)

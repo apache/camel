@@ -89,7 +89,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").errorHandler(
                     deadLetterChannel("mock:failed").maximumRedeliveries(2)
-                        .redeliverDelay(50)
+                        .redeliveryDelay(50)
                         .loggingLevel(LoggingLevel.DEBUG)
 
                 ).process(processor).to("mock:success");

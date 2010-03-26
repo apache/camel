@@ -52,7 +52,7 @@ public class FailOverLoadBalanceWithRedeliveryTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                errorHandler(defaultErrorHandler().maximumRedeliveries(2).redeliverDelay(0));
+                errorHandler(defaultErrorHandler().maximumRedeliveries(2).redeliveryDelay(0));
 
                 from("direct:start")
                     .loadBalance().failover().to("direct:a", "direct:b");
