@@ -349,7 +349,8 @@
                                 <fileset dir="${basedir}/src/main/java">
                                   <include name="org/apache/camel/spring/Camel*.java" />
                                   <include name="org/apache/camel/spring/Endpoint*.java" />
-                                  <include name="org/apache/camel/spring/package-info.java" />
+				  <include name="org/apache/camel/spring/ErrorHandler*.java"/>
+				  <include name="org/apache/camel/spring/package-info.java" />
                                 </fileset>
                                 <fileset dir="${basedir}/../../camel-core/src/main/java">
                                   <include name="org/apache/camel/model/**/*.java" />

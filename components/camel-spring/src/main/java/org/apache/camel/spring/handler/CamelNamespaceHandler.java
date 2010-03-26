@@ -100,6 +100,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         // jmx agent and property placeholder cannot be used outside of the camel context
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false);
         addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false);
+        // errorhandler should not be the sub element of camelContext
+        registerParser("errorHandler", new ErrorHandlerDefinitionParser());
 
         // camel context
         boolean osgi = false;

@@ -36,11 +36,11 @@ import org.springframework.util.StringUtils;
 // with the name "xmlns:"
 public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
     private Class type;
-
+    
     public BeanDefinitionParser(Class type) {
         this.type = type;
     }
-
+   
     protected Class getBeanClass(Element element) {
         return type;
     }
