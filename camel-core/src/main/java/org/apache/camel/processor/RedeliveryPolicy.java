@@ -79,7 +79,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     private static final long serialVersionUID = -338222777701473252L;
     private static final transient Log LOG = LogFactory.getLog(RedeliveryPolicy.class);
 
-    protected long redeliverDelay = 1000L;
+    protected long redeliveryDelay = 1000L;
     protected int maximumRedeliveries;
     protected long maximumRedeliveryDelay = 60 * 1000L;
     protected double backOffMultiplier = 2;
@@ -102,7 +102,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     @Override
     public String toString() {
         return "RedeliveryPolicy[maximumRedeliveries=" + maximumRedeliveries
-            + ", redeliverDelay=" + redeliverDelay
+            + ", redeliveryDelay=" + redeliveryDelay
             + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
             + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
             + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
@@ -177,13 +177,13 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         }
 
         // calculate the delay using the conventional parameters
-        long redeliveryDelay;
+        long redeliveryDelayResult;
         if (previousDelay == 0) {
-            redeliveryDelay = redeliverDelay;
+            redeliveryDelayResult = redeliveryDelay;
         } else if (useExponentialBackOff && backOffMultiplier > 1) {
-            redeliveryDelay = Math.round(backOffMultiplier * previousDelay);
+            redeliveryDelayResult = Math.round(backOffMultiplier * previousDelay);
         } else {
-            redeliveryDelay = previousDelay;
+            redeliveryDelayResult = previousDelay;
         }
 
         if (useCollisionAvoidance) {
@@ -195,14 +195,14 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             Random random = getRandomNumberGenerator();
             double variance = (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor)
                               * random.nextDouble();
-            redeliveryDelay += redeliveryDelay * variance;
+            redeliveryDelayResult += redeliveryDelayResult * variance;
         }
 
         if (maximumRedeliveryDelay > 0 && redeliveryDelay > maximumRedeliveryDelay) {
-            redeliveryDelay = maximumRedeliveryDelay;
+            redeliveryDelayResult = maximumRedeliveryDelay;
         }
 
-        return redeliveryDelay;
+        return redeliveryDelayResult;
     }
 
     /**
@@ -365,16 +365,25 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
     // Properties
     // -------------------------------------------------------------------------
-
+    @Deprecated
     public long getRedeliverDelay() {
-        return redeliverDelay;
+        return getRedeliverDelay();
+    }
+    
+    @Deprecated
+    public void setRedeliverDelay(long redeliveryDelay) {
+        setRedeliveryDelay(redeliveryDelay);
+    }
+    
+    public long getRedeliveryDelay() {
+        return redeliveryDelay;
     }
 
     /**
      * Sets the delay in milliseconds
      */
-    public void setRedeliverDelay(long redeliverDelay) {
-        this.redeliverDelay = redeliverDelay;
+    public void setRedeliveryDelay(long redeliverDelay) {
+        this.redeliveryDelay = redeliverDelay;
         // if max enabled then also set max to this value in case max was too low
         if (maximumRedeliveryDelay > 0 && redeliverDelay > maximumRedeliveryDelay) {
             this.maximumRedeliveryDelay = redeliverDelay;
