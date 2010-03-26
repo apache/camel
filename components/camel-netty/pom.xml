@@ -33,12 +33,21 @@
 
 	<properties>
 		<camel.osgi.export.pkg>
-			org.apache.camel.component.netty.*,
+			org.apache.camel.component.netty.*
 		</camel.osgi.export.pkg>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>repository.jboss.org</id>
+			<url>http://repository.jboss.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<dependencies>
-		
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
