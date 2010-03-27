@@ -44,7 +44,7 @@ public class ErrorHandlerDefintion extends IdentifiedType {
     @XmlAttribute(required = false)
     private LoggingLevel level;
     @XmlAttribute(required = false)
-    private Boolean handled;
+    private Boolean handled = true;
     @XmlAttribute(required = false)
     private Boolean useOriginalMessage;
     @XmlElement(name = "redeliveryPolicy", required = false)
