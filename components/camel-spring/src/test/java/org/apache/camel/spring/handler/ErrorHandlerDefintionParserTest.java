@@ -27,6 +27,7 @@ import org.apache.camel.processor.DefaultErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -82,6 +83,12 @@ public class ErrorHandlerDefintionParserTest extends TestCase {
         assertEquals("Wrong maximumRedeliveries", 2, policy.getMaximumRedeliveries());
         assertEquals("Wrong redeliveryDelay", 1000, policy.getRedeliveryDelay());
         assertEquals("Wrong logStackTrace", true, policy.isLogHandled());
+    }
+    
+    public void testErrorHandlerInsideCamelContext() {
+        CamelContextFactoryBean factoryBean = (CamelContextFactoryBean)ctx.getBean("&camel");
+        assertNotNull(factoryBean);
+        assertEquals("Wrong ErrorHandlerRef", "noErrorHandler", factoryBean.getErrorHandlerRef());
     }
 
 }

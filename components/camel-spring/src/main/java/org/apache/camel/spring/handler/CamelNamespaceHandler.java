@@ -100,8 +100,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         // jmx agent and property placeholder cannot be used outside of the camel context
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false);
         addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false);
-        // errorhandler should not be the sub element of camelContext
-        registerParser("errorHandler", new ErrorHandlerDefinitionParser());
+        // errorhandler could be the sub element of camelContext
+        BeanDefinitionParser parser = new ErrorHandlerDefinitionParser();
+        registerParser("errorHandler", parser);
+        parserMap.put("errorHandler", parser);
 
         // camel context
         boolean osgi = false;
@@ -262,7 +264,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                                     || localName.equals("proxy") || localName.equals("export")) {
                                     // set the camel context
                                     definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
-                                }   
+                                }
+                                if (localName.equals("errorHandler")) {
+                                    builder.addPropertyValue("errorHandlerRef", id);
+                                }
                             }
                         }
                     }

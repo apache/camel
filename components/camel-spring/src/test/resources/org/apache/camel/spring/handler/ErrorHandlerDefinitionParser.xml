@@ -71,9 +71,14 @@
     <bean id="PROPAGATION_REQUIRED" class="org.springframework.transaction.support.TransactionTemplate">
         <property name="transactionManager" ref="txManager"/>
     </bean>
+    
+    
         
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    	<camel:errorHandler id="noErrorHandler" type="NoErrorHandler"/>
     </camelContext>
+    
+    
 
    
     <!-- END SNIPPET: example -->
