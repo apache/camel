@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -54,6 +55,9 @@ import org.apache.commons.logging.LogFactory;
  * This ensures that when shutting down Camel it at some point eventually will shutdown.
  * This behavior can of course be configured using the {@link #setTimeout(long)} and
  * {@link #setShutdownNowOnTimeout(boolean)} methods.
+ * <p/>
+ * Routes will by default be shutdown in the reverse order of which they where started.
+ * You can customize this using the {@link #setShutdownRoutesInReverseOrder(boolean)} method.
  *
  * @version $Revision$
  */
@@ -65,6 +69,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     private long timeout = 5 * 60;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private boolean shutdownNowOnTimeout = true;
+    private boolean shutdownRoutesInReverseOrder = true;
 
     public DefaultShutdownStrategy() {
     }
@@ -80,14 +85,20 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     public void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
         long start = System.currentTimeMillis();
 
+        // should the order of routes be reversed?
+        List<RouteStartupOrder> routesOrdered = new ArrayList<RouteStartupOrder>(routes);
+        if (shutdownRoutesInReverseOrder) {
+            Collections.reverse(routesOrdered);
+        }
+
         if (timeout > 0) {
-            LOG.info("Starting to graceful shutdown " + routes.size() + " routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase() + ")");
+            LOG.info("Starting to graceful shutdown " + routesOrdered.size() + " routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase() + ")");
         } else {
-            LOG.info("Starting to graceful shutdown " + routes.size() + " routes (no timeout)");
+            LOG.info("Starting to graceful shutdown " + routesOrdered.size() + " routes (no timeout)");
         }
 
         // use another thread to perform the shutdowns so we can support timeout
-        Future future = getExecutorService().submit(new ShutdownTask(context, routes));
+        Future future = getExecutorService().submit(new ShutdownTask(context, routesOrdered));
         try {
             if (timeout > 0) {
                 future.get(timeout, timeUnit);
@@ -101,7 +112,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             if (shutdownNowOnTimeout) {
                 LOG.warn("Timeout occurred. Now forcing the routes to be shutdown now.");
                 // force the routes to shutdown now
-                shutdownRoutesNow(routes);
+                shutdownRoutesNow(routesOrdered);
             } else {
                 LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes.");
             }
@@ -114,7 +125,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         // convert to seconds as its easier to read than a big milli seconds number
         long seconds = TimeUnit.SECONDS.convert(delta, TimeUnit.MILLISECONDS);
 
-        LOG.info("Graceful shutdown of " + routes.size() + " routes completed in " + seconds + " seconds");
+        LOG.info("Graceful shutdown of " + routesOrdered.size() + " routes completed in " + seconds + " seconds");
     }
 
     public void setTimeout(long timeout) {
@@ -139,6 +150,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     public boolean isShutdownNowOnTimeout() {
         return shutdownNowOnTimeout;
+    }
+
+    public boolean isShutdownRoutesInReverseOrder() {
+        return shutdownRoutesInReverseOrder;
+    }
+
+    public void setShutdownRoutesInReverseOrder(boolean shutdownRoutesInReverseOrder) {
+        this.shutdownRoutesInReverseOrder = shutdownRoutesInReverseOrder;
     }
 
     public CamelContext getCamelContext() {
@@ -340,10 +359,12 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         suspendNow((SuspendableService) consumer, consumer);
                         // add it to the deferred list so the route will be shutdown later
                         deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
-                        LOG.info("Route: " + order.getRoute().getId() + " suspended and shutdown deferred.");
+                        LOG.info("Route: " + order.getRoute().getId() + " suspended and shutdown deferred, was consuming from: "
+                                + order.getRoute().getEndpoint());
                     } else if (shutdown) {
                         shutdownNow(consumer);
-                        LOG.info("Route: " + order.getRoute().getId() + " shutdown complete.");
+                        LOG.info("Route: " + order.getRoute().getId() + " shutdown complete, was consuming from: "
+                                + order.getRoute().getEndpoint());
                     } else {
                         // we will stop it later, but for now it must run to be able to help all inflight messages
                         // be safely completed

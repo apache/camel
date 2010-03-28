@@ -105,9 +105,26 @@ public interface ShutdownStrategy extends Service {
     void setShutdownNowOnTimeout(boolean shutdownNowOnTimeout);
 
     /**
-     * whether to force shutdown of all consumers when a timeout occurred.
+     * Whether to force shutdown of all consumers when a timeout occurred.
      *
      * @return force shutdown or not
      */
     boolean isShutdownNowOnTimeout();
+
+    /**
+     * Sets whether routes should be shutdown in reverse or the same order as they where started.
+     *
+     * @param shutdownRoutesInReverseOrder <tt>true</tt> to shutdown in reverse order
+     */
+    void setShutdownRoutesInReverseOrder(boolean shutdownRoutesInReverseOrder);
+
+    /**
+     * Whether to shutdown routes in reverse order than they where started.
+     * <p/>
+     * This option is by default set to <tt>true</tt>.
+     *
+     * @return <tt>true</tt> if routes should be shutdown in reverse order.
+     */
+    boolean isShutdownRoutesInReverseOrder();
+
 }
