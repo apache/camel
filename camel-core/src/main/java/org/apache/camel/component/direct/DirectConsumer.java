@@ -18,14 +18,16 @@ package org.apache.camel.component.direct;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.spi.ShutdownAware;
 
 /**
  * The direct consumer.
  *
  * @version $Revision$
  */
-public class DirectConsumer extends DefaultConsumer {
+public class DirectConsumer extends DefaultConsumer implements ShutdownAware {
 
     private DirectEndpoint endpoint;
 
@@ -52,4 +54,15 @@ public class DirectConsumer extends DefaultConsumer {
         endpoint.getConsumers().remove(this);
     }
 
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        // deny stopping on shutdown as we want direct consumers to run in case some other queues
+        // depend on this consumer to run, so it can complete its exchanges
+        return true;
+    }
+
+    public int getPendingExchangesSize() {
+        // return 0 as we do not have an internal memory queue with a variable size
+        // of inflight messages. 
+        return 0;
+    }
 }
