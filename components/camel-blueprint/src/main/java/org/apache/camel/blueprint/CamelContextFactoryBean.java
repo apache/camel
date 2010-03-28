@@ -53,6 +53,13 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.osgi.OsgiCamelContextHelper;
+import org.apache.camel.osgi.OsgiClassResolver;
+import org.apache.camel.osgi.OsgiComponentResolver;
+import org.apache.camel.osgi.OsgiFactoryFinderResolver;
+import org.apache.camel.osgi.OsgiLanguageResolver;
+import org.apache.camel.osgi.OsgiPackageScanClassResolver;
+import org.apache.camel.osgi.OsgiServiceRegistry;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
@@ -72,6 +79,8 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * A bean to create and initialize a {@link BlueprintCamelContext}
@@ -245,7 +254,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         EventNotifier eventNotifier = getBeanForType(EventNotifier.class);
         if (eventNotifier != null) {
             LOG.info("Using custom EventNotifier: " + eventNotifier);
-            getContext().getManagementStrategy().setEventNotifier(eventNotifier);
+            List notifiers = getContext().getManagementStrategy().getEventNotifiers();
+            notifiers.add(eventNotifier);
+            getContext().getManagementStrategy().setEventNotifiers(notifiers);
         }
 
         // add global interceptors
@@ -472,7 +483,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().addLifecycleStrategy(new DefaultManagementLifecycleStrategy(getContext()));
             // set additional configuration from camelJMXAgent
             getContext().getManagementStrategy().onlyManageProcessorWithCustomId(camelJMXAgent.getOnlyRegisterProcessorWithCustomId());
-            getContext().getManagementStrategy().setSatisticsLevel(camelJMXAgent.getStatisticsLevel());
+            getContext().getManagementStrategy().setStatisticsLevel(camelJMXAgent.getStatisticsLevel());
         }
     }
 
@@ -772,6 +783,21 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (shouldStartContext != null) {
             ctx.setShouldStartContext(shouldStartContext);
         }
+
+        // Adding discovery to this from camel-osgi
+
+        BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+
+        OsgiServiceRegistry registry = new OsgiServiceRegistry(bundleContext);
+        ctx.setRegistry(registry);
+
+        OsgiCamelContextHelper.updateRegistry(ctx, bundleContext);
+
+        ctx.setClassResolver(new OsgiClassResolver(bundleContext));
+        ctx.setFactoryFinderResolver(new OsgiFactoryFinderResolver());
+        ctx.setPackageScanClassResolver(new OsgiPackageScanClassResolver(bundleContext));
+        ctx.setComponentResolver(new OsgiComponentResolver());
+        ctx.setLanguageResolver(new OsgiLanguageResolver());
 
         return ctx;
     }
