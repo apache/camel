@@ -21,6 +21,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.builder.xml.ResultHandlerFactory;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.component.ResourceBasedComponent;
@@ -102,6 +103,16 @@ public class XsltComponent extends ResourceBasedComponent {
         }
         // set resolver before input stream as resolver is used when loading the input stream
         xslt.setUriResolver(resolver);
+
+        ResultHandlerFactory resultHandlerFactory = resolveAndRemoveReferenceParameter(parameters, "resultHandlerFactory", ResultHandlerFactory.class);
+        if (resultHandlerFactory != null) {
+            xslt.setResultHandlerFactory(resultHandlerFactory);
+        }
+
+        Boolean failOnNullBody = getAndRemoveParameter(parameters, "failOnNullBody", Boolean.class);
+        if (failOnNullBody != null) {
+            xslt.setFailOnNullBody(failOnNullBody);
+        }
 
         xslt.setTransformerInputStream(resource.getInputStream());
         configureXslt(xslt, uri, remaining, parameters);
