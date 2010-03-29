@@ -119,6 +119,8 @@ public interface Exchange {
     String TIMER_PERIOD     = "CamelTimerPeriod";
     String TIMER_TIME       = "CamelTimerTime";
 
+    String XSLT_FILE_NAME = "CamelXsltFileName";
+
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
      *

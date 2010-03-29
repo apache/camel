@@ -27,6 +27,7 @@ import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.core.io.Resource;
 
 /**
@@ -113,6 +114,8 @@ public class XsltComponent extends ResourceBasedComponent {
         if (failOnNullBody != null) {
             xslt.setFailOnNullBody(failOnNullBody);
         }
+        String output = getAndRemoveParameter(parameters, "output", String.class);
+        configureOutput(xslt, output);
 
         xslt.setTransformerInputStream(resource.getInputStream());
         configureXslt(xslt, uri, remaining, parameters);
@@ -122,4 +125,23 @@ public class XsltComponent extends ResourceBasedComponent {
     protected void configureXslt(XsltBuilder xslt, String uri, String remaining, Map<String, Object> parameters) throws Exception {
         setProperties(xslt, parameters);
     }
+
+    protected void configureOutput(XsltBuilder xslt, String output) throws Exception {
+        if (ObjectHelper.isEmpty(output)) {
+            return;
+        }
+
+        if ("string".equalsIgnoreCase(output)) {
+            xslt.outputString();
+        } else if ("bytes".equalsIgnoreCase(output)) {
+            xslt.outputBytes();
+        } else if ("DOM".equalsIgnoreCase(output)) {
+            xslt.outputDOM();
+        } else if ("file".equalsIgnoreCase(output)) {
+            xslt.outputFile();
+        } else {
+            throw new IllegalArgumentException("Unknown output type: " + output);
+        }
+    }
+
 }

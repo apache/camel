@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.apache.camel.Exchange;
+
 /**
  * Factory for {@link StringResultHandler}
  *
@@ -23,7 +25,7 @@ package org.apache.camel.builder.xml;
  */
 public class StringResultHandlerFactory implements ResultHandlerFactory {
 
-    public ResultHandler createResult() {
+    public ResultHandler createResult(Exchange exchange) throws Exception {
         return new StringResultHandler();
     }
 }

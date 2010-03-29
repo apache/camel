@@ -191,6 +191,29 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertEquals("<goodbye>world!</goodbye>", exchange.getOut().getBody(String.class));
     }
 
+    public void testXsltOutputFile() throws Exception {
+        // directory must exists
+        deleteDirectory("target/xslt");
+        createDirectory("target/xslt");
+
+        URL styleSheet = getClass().getResource("example.xsl");
+
+        XsltBuilder builder = XsltBuilder.xslt(styleSheet).outputFile();
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("<hello>world!</hello>");
+        exchange.getIn().setHeader(Exchange.XSLT_FILE_NAME, "target/xslt/xsltout.xml");
+
+        builder.process(exchange);
+        assertIsInstanceOf(File.class, exchange.getOut().getBody());
+
+        File file = new File("target/xslt/xsltout.xml").getAbsoluteFile();
+        assertTrue("Output file should exist", file.exists());
+
+        String body = exchange.getOut().getBody(String.class);
+        assertTrue(body.endsWith("<goodbye>world!</goodbye>"));
+    }
+
     public void testXsltSetConverter() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 

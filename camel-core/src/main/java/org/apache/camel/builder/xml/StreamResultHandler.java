@@ -29,8 +29,8 @@ import org.apache.camel.Message;
  * @version $Revision$
  */
 public class StreamResultHandler implements ResultHandler {
-    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    StreamResult result = new StreamResult(buffer);
+    private ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    private StreamResult result = new StreamResult(buffer);
 
     public Result getResult() {
         return result;

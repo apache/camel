@@ -44,7 +44,10 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Creates a <a href="http://camel.apache.org/processor.html">Processor</a>
- * which performs an XSLT transformation of the IN message body
+ * which performs an XSLT transformation of the IN message body.
+ * <p/>
+ * Will by defult output the result as a String. You can chose which kind of output
+ * you want using the <tt>outputXXX</tt> methods.
  *
  * @version $Revision$
  */
@@ -74,7 +77,7 @@ public class XsltBuilder implements Processor {
         Transformer transformer = getTemplate().newTransformer();
         configureTransformer(transformer, exchange);
         Source source = getSource(exchange);
-        ResultHandler resultHandler = resultHandlerFactory.createResult();
+        ResultHandler resultHandler = resultHandlerFactory.createResult(exchange);
         Result result = resultHandler.getResult();
 
         // lets copy the headers before we invoke the transform in case they modify them
@@ -150,6 +153,15 @@ public class XsltBuilder implements Processor {
      */
     public XsltBuilder outputDOM() {
         setResultHandlerFactory(new DomResultHandlerFactory());
+        return this;
+    }
+
+    /**
+     * Sets the output as being a File where the filename
+     * must be provided in the {@link Exchange#XSLT_FILE_NAME} header.
+     */
+    public XsltBuilder outputFile() {
+        setResultHandlerFactory(new FileResultHandlerFactory());
         return this;
     }
 

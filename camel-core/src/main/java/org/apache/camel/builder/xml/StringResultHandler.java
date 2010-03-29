@@ -29,8 +29,8 @@ import org.apache.camel.Message;
  * @version $Revision$
  */
 public class StringResultHandler implements ResultHandler {
-    StringWriter buffer = new StringWriter();
-    StreamResult result = new StreamResult(buffer);
+    private StringWriter buffer = new StringWriter();
+    private StreamResult result = new StreamResult(buffer);
 
     public Result getResult() {
         return result;

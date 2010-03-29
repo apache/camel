@@ -16,16 +16,36 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.apache.camel.Exchange;
+import java.io.File;
+import javax.xml.transform.Result;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.camel.Message;
 
 /**
- * Factory for {@link StreamResultHandler}
+ * Use file to handle the result of XSLT transformation.
+ * <p/>
+ * For example when transforming big files you can stream directly to a file output
+ * to avoid consuming to much memory.
  *
  * @version $Revision$
  */
-public class StreamResultHandlerFactory implements ResultHandlerFactory {
+public class FileResultHandler implements ResultHandler {
 
-    public ResultHandler createResult(Exchange exchange) throws Exception {
-        return new StreamResultHandler();
+    private final File file;
+    private final StreamResult result;
+
+    public FileResultHandler(File file) {
+        this.file = file;
+        this.result = new StreamResult(file);
     }
+
+    public Result getResult() {
+        return result;
+    }
+
+    public void setBody(Message in) {
+        in.setBody(file);
+    }
+
 }

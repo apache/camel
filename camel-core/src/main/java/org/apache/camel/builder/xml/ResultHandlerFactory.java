@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.apache.camel.Exchange;
+
 /**
  * Factory for {@link org.apache.camel.builder.xml.ResultHandler}
  *
@@ -23,5 +25,11 @@ package org.apache.camel.builder.xml;
  */
 public interface ResultHandlerFactory {
 
-    ResultHandler createResult();
+    /**
+     * Creates the {@link ResultHandler} to use
+     *
+     * @param exchange the current exchange
+     * @return the result handler
+     */
+    ResultHandler createResult(Exchange exchange) throws Exception;
 }

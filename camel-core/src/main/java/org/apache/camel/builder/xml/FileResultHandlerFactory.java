@@ -16,16 +16,20 @@
  */
 package org.apache.camel.builder.xml;
 
+import java.io.File;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.util.ExchangeHelper;
 
 /**
- * Factory for {@link StreamResultHandler}
+ * Factory for {@link javax.xml.transform.stream.StreamResult} which is streamed to file.
  *
  * @version $Revision$
  */
-public class StreamResultHandlerFactory implements ResultHandlerFactory {
+public class FileResultHandlerFactory implements ResultHandlerFactory {
 
     public ResultHandler createResult(Exchange exchange) throws Exception {
-        return new StreamResultHandler();
+        String fileName = ExchangeHelper.getMandatoryHeader(exchange, Exchange.XSLT_FILE_NAME, String.class);
+        return new FileResultHandler(new File(fileName));
     }
 }
