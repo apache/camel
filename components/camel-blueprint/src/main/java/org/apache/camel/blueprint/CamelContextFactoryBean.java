@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -53,6 +52,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.osgi.OsgiAnnotationTypeConverterLoader;
 import org.apache.camel.osgi.OsgiCamelContextHelper;
 import org.apache.camel.osgi.OsgiClassResolver;
 import org.apache.camel.osgi.OsgiComponentResolver;
@@ -798,6 +798,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         ctx.setPackageScanClassResolver(new OsgiPackageScanClassResolver(bundleContext));
         ctx.setComponentResolver(new OsgiComponentResolver());
         ctx.setLanguageResolver(new OsgiLanguageResolver());
+
+        OsgiAnnotationTypeConverterLoader typeConverterLoader = new OsgiAnnotationTypeConverterLoader(new OsgiPackageScanClassResolver(bundleContext));
+        try {
+            typeConverterLoader.load(ctx.getTypeConverterRegistry());
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
 
         return ctx;
     }
