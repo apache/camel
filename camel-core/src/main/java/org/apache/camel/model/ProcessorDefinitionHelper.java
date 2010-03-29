@@ -82,6 +82,29 @@ public final class ProcessorDefinitionHelper {
     }
 
     /**
+     * Is the given node parent(s) of the given type
+     * @param parentType   the parent type
+     * @param node         the current node
+     * @param recursive    whether or not to check grand parent(s) as well
+     * @return <tt>true</tt> if parent(s) is of given type, <tt>false</tt> otherwise
+     */
+    public static boolean isParentOfType(Class<?> parentType, ProcessorDefinition<?> node, boolean recursive) {
+        if (node == null || node.getParent() == null) {
+            return false;
+        }
+
+        if (parentType.isAssignableFrom(node.getParent().getClass())) {
+            return true;
+        } else if (recursive) {
+            // recursive up the tree of parents
+            return isParentOfType(parentType, node.getParent(), true);
+        } else {
+            // no match
+            return false;
+        }
+    }
+
+    /**
      * Gets the route definition the given node belongs to.
      *
      * @param node the node
