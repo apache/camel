@@ -24,7 +24,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <camel:errorHandler id="myDLC" type="DeadLetterChannel" deadLetterUri="mock:dead" handled="true">
+    <camel:errorHandler id="myDLC" type="DeadLetterChannel" deadLetterUri="mock:dead">
        <camel:redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0" logStackTrace="false" />
     </camel:errorHandler>
 

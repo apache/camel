@@ -19,7 +19,9 @@ package org.apache.camel.spring.handler;
 
 import java.lang.reflect.Method;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -42,6 +44,8 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * The DefinitionParser to deal with the ErrorHandler
@@ -57,7 +61,11 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
     }
 
     protected Class getBeanClass(Element element) {
-        ErrorHandlerType type = ErrorHandlerType.valueOf(element.getAttribute("type"));
+        ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
+        
+        if (ObjectHelper.isNotEmpty(element.getAttribute("type"))) {
+            type = ErrorHandlerType.valueOf(element.getAttribute("type"));
+        }
         Class clazz = null;
         if (type.equals(ErrorHandlerType.NoErrorHandler)) {
             clazz = NoErrorHandlerBuilder.class;
@@ -84,13 +92,18 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
     protected boolean isEligibleAttribute(String attributeName) {
         return attributeName != null && !ID_ATTRIBUTE.equals(attributeName)
                 && !attributeName.equals("xmlns") && !attributeName.startsWith("xmlns:")
-                && !attributeName.equals("type");
+                && !attributeName.equals("type") && !attributeName.equals("onRedeliveryRef")
+                && !attributeName.equals("transactionTemplateRef");
     }
+   
     
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-        ErrorHandlerType type = ErrorHandlerType.valueOf(element.getAttribute("type"));
+        ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
+        if (ObjectHelper.isNotEmpty(element.getAttribute("type"))) {
+            type = ErrorHandlerType.valueOf(element.getAttribute("type"));
+        }
         if (type.equals(ErrorHandlerType.NoErrorHandler) || type.equals(ErrorHandlerType.LoggingErrorHandler)) {
             // don't need to parser other stuff
             return;
@@ -110,65 +123,28 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
                         BeanDefinition redeliveryPolicyDefinition = redeliveryPolicyParser.parse(childElement, parserContext);
                         builder.addPropertyValue(localName, redeliveryPolicyDefinition);
                     }
-                    if (localName.equals("exceptionPolicyStrategy") || localName.equals("onRedelivery")
-                        || localName.equals("failureProcessor") || localName.equals("deadLetter")
-                        || localName.equals("transactionTemplate")) {
-                        // only deal with the first subElement
-                        setFirstChildAsProperty(childElement, parserContext, builder, localName);
-                    }
                 }
             }
+            // deal with onRedeliveryRef
+            parserRefAttribute(element, "onRedeliveryRef", "onRedelivery", builder);
+        }
+        if (type.equals(ErrorHandlerType.TransactionErrorHandler)) {
+            // deal with transactionTemplateRef
+            parserRefAttribute(element, "transactionTemplateRef", "transactionTemplate", builder);
         }
     }
-    
-    protected void setFirstChildAsProperty(Element element, ParserContext ctx, BeanDefinitionBuilder bean,
-                                           String propertyName) {
 
-        Element first = getFirstElement(element);
-
-        if (first == null) {
-            throw new IllegalStateException(propertyName + " property must have child elements!");
-        }
-
-        String id;
-        BeanDefinition child;
-        if (first.getNamespaceURI().equals(BeanDefinitionParserDelegate.BEANS_NAMESPACE_URI)) {
-            String name = first.getLocalName();
-            if ("ref".equals(name)) {
-                id = first.getAttribute("bean");
-                if (id == null) {
-                    throw new IllegalStateException("<ref> elements must have a \"bean\" attribute!");
-                }
-                bean.addPropertyReference(propertyName, id);
-                return;
-            } else if ("bean".equals(name)) {
-                BeanDefinitionHolder bdh = ctx.getDelegate().parseBeanDefinitionElement(first);
-                child = bdh.getBeanDefinition();
-                bean.addPropertyValue(propertyName, child);
-                return;
-            } else {
-                throw new UnsupportedOperationException("Elements with the name " + name
-                                                        + " are not currently "
-                                                        + "supported as sub elements of "
-                                                        + element.getLocalName());
+    private void parserRefAttribute(Element element, String attributeName, String propertyName, BeanDefinitionBuilder builder) {
+        NamedNodeMap attributes = element.getAttributes();
+        for (int x = 0; x < attributes.getLength(); x++) {
+            Attr attribute = (Attr) attributes.item(x);
+            String name = attribute.getLocalName();
+            if (name.equals(attributeName)) {
+                Assert.state(StringUtils.hasText(propertyName),
+                        "Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
+                builder.addPropertyReference(propertyName, attribute.getValue());
             }
         }
-        child = ctx.getDelegate().parseCustomElement(first, bean.getBeanDefinition());
-        bean.addPropertyValue(propertyName, child);
-    }
-    
-    /**
-     * Get the first direct child with a given type
-     */
-    public static Element getFirstElement(Node parent) {
-        Node n = parent.getFirstChild();
-        while (n != null && Node.ELEMENT_NODE != n.getNodeType()) {
-            n = n.getNextSibling();
-        }
-        if (n == null) {
-            return null;
-        }
-        return (Element)n;
     }
     
     class RedeliveryPolicyDefinitionParser extends BeanDefinitionParser {

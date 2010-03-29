@@ -64,12 +64,8 @@
     </bean>
 
     <!-- the transaction error handle we refer to from the route -->
-    <camel:errorHandler id="transactionErrorHandler" type="TransactionErrorHandler">
-        <camel:transactionTemplate>
-         	<ref bean="PROPAGATION_REQUIRED"/>
-        </camel:transactionTemplate>
-    </camel:errorHandler>
-
+    <camel:errorHandler id="transactionErrorHandler" type="TransactionErrorHandler" transactionTemplateRef="PROPAGATION_REQUIRED" />
+ 
     <!-- the no error handler -->
     <camel:errorHandler id="noErrorHandler" type="NoErrorHandler"/>
     <!-- END SNIPPET: e2 -->

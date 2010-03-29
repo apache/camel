@@ -36,25 +36,20 @@ import org.apache.camel.model.config.PropertiesDefinition;
  */
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ErrorHandlerDefintion extends IdentifiedType {
-    @XmlAttribute(required = true)
+public class ErrorHandlerDefinition extends IdentifiedType {
+    @XmlAttribute(required = false)
     private ErrorHandlerType type;
     @XmlAttribute(required = false)
     private String deadLetterUri;
     @XmlAttribute(required = false)
     private LoggingLevel level;
     @XmlAttribute(required = false)
-    private Boolean handled;
-    @XmlAttribute(required = false)
     private Boolean useOriginalMessage;
+    @XmlAttribute(required = false)
+    private String transactionTemplateRef;
+    @XmlAttribute(required = false)
+    private String onRedeliveryRef;
     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyDefinition redeliveryPolicy;
-    @XmlElements({
-        @XmlElement(name = "exceptionPolicyStrategy",  required = false),
-        @XmlElement(name = "onRedelivery", required = false),
-        @XmlElement(name = "failureProcessor", required = false),
-        @XmlElement(name = "transactionTemplate", required = false),
-        @XmlElement(name = "deadLetter", required = false)})
-    private List beans; 
-
+   
 }

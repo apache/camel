@@ -139,7 +139,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
         @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false),
-        @XmlElement(name = "errorHandler", type = ErrorHandlerDefintion.class, required = false)})
+        @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class, required = false)})
     private List beans;    
     @XmlElement(name = "routeBuilder", required = false)
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();

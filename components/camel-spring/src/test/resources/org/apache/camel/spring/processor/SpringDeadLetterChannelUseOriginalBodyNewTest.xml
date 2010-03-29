@@ -23,13 +23,13 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <errorHandler id="a" type="DeadLetterChannel" deadLetterUri="mock:a" handled="true"
+    <errorHandler id="a" type="DeadLetterChannel" deadLetterUri="mock:a"
        useOriginalMessage="true" xmlns="http://camel.apache.org/schema/spring">
        <redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0" logStackTrace="false" />
     </errorHandler>
     <!-- END SNIPPET: e1 -->
 
-     <errorHandler id="b" type="DeadLetterChannel" deadLetterUri="mock:b" handled="true"
+     <errorHandler id="b" type="DeadLetterChannel" deadLetterUri="mock:b"
        useOriginalMessage="false" xmlns="http://camel.apache.org/schema/spring">
        <redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0" logStackTrace="false" />
     </errorHandler>

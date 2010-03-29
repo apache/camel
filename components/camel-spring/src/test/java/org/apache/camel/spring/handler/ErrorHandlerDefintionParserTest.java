@@ -52,17 +52,15 @@ public class ErrorHandlerDefintionParserTest extends TestCase {
     public void testDefaultErrorHandler() {
         DefaultErrorHandlerBuilder errorHandler = (DefaultErrorHandlerBuilder) ctx.getBean("defaultErrorHandler");
         assertNotNull(errorHandler);
-        Processor processor = errorHandler.getFailureProcessor();
-        assertNotNull(processor);
-        assertTrue("It should be MyErrorProcessor", processor instanceof MyErrorProcessor);
-        ExceptionPolicyStrategy strategy = errorHandler.getExceptionPolicyStrategy();
-        assertNotNull(strategy);
-        assertTrue("It should be DefaultExceptionPolicyStrategy", strategy instanceof DefaultExceptionPolicyStrategy);
         RedeliveryPolicy policy = errorHandler.getRedeliveryPolicy();
         assertNotNull(policy);
         assertEquals("Wrong maximumRedeliveries", 2, policy.getMaximumRedeliveries());
         assertEquals("Wrong redeliveryDelay", 0, policy.getRedeliveryDelay());
         assertEquals("Wrong logStackTrace", false, policy.isLogStackTrace());
+        
+        errorHandler = (DefaultErrorHandlerBuilder) ctx.getBean("errorHandler");
+        assertNotNull(errorHandler);
+        
     }
     
     public void testTransactionErrorHandler() {
@@ -76,8 +74,7 @@ public class ErrorHandlerDefintionParserTest extends TestCase {
     public void testDeadLetterErrorHandler() {
         DeadLetterChannelBuilder errorHandler = (DeadLetterChannelBuilder) ctx.getBean("deadLetterErrorHandler");
         assertNotNull(errorHandler);
-        assertNotNull(errorHandler.getDeadLetter());
-        assertTrue("It should be a direct endpoint", errorHandler.getDeadLetter() instanceof DirectEndpoint);
+        assertEquals("get worng deadletteruri ", "log:dead", errorHandler.getDeadLetterUri());
         RedeliveryPolicy policy = errorHandler.getRedeliveryPolicy();
         assertNotNull(policy);
         assertEquals("Wrong maximumRedeliveries", 2, policy.getMaximumRedeliveries());

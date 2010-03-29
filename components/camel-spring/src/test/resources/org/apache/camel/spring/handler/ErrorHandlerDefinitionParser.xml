@@ -25,36 +25,20 @@
 
     <errorHandler id="loggingErrorHandler" xmlns="http://camel.apache.org/schema/spring" type="LoggingErrorHandler" level="INFO" />
     
-     <camel:errorHandler id="defaultErrorHandler" type="DefaultErrorHandler">
+    <errorHandler id="errorHandler" xmlns="http://camel.apache.org/schema/spring" />
+    
+    <camel:errorHandler id="defaultErrorHandler" type="DefaultErrorHandler">
        <camel:redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0" logStackTrace="false" />
-       <camel:failureProcessor>
-          <bean class="org.apache.camel.spring.handler.MyErrorProcessor"/>
-       </camel:failureProcessor>
-       <camel:exceptionPolicyStrategy>
-          <bean class="org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy"/>
-       </camel:exceptionPolicyStrategy>
     </camel:errorHandler>
     
-    <camel:errorHandler id="deadLetterErrorHandler" type="DeadLetterChannel" handled="true">
+    <camel:errorHandler id="deadLetterErrorHandler" type="DeadLetterChannel" deadLetterUri="log:dead">
        <camel:redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="1000" logHandled="true" />
-       <camel:deadLetter>
-           <bean class="org.apache.camel.component.direct.DirectEndpoint">
-               <constructor-arg>
-                  <value>direct:start</value>
-               </constructor-arg>
-           </bean>
-       </camel:deadLetter>
-       
     </camel:errorHandler>
     
-    <camel:errorHandler id="transactionErrorHandler" type="TransactionErrorHandler">
-    	<camel:transactionTemplate>
-         	<ref bean="PROPAGATION_REQUIRED"/>
-        </camel:transactionTemplate>
-        <camel:onRedelivery>
-            <bean class="org.apache.camel.spring.handler.MyErrorProcessor"/>
-        </camel:onRedelivery>
-    </camel:errorHandler>
+    <bean id="myErrorProcessor" class="org.apache.camel.spring.handler.MyErrorProcessor"/>
+    
+    <camel:errorHandler id="transactionErrorHandler" type="TransactionErrorHandler" transactionTemplateRef="PROPAGATION_REQUIRED" onRedeliveryRef="myErrorProcessor" />
+    
     
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
@@ -71,15 +55,10 @@
     <bean id="PROPAGATION_REQUIRED" class="org.springframework.transaction.support.TransactionTemplate">
         <property name="transactionManager" ref="txManager"/>
     </bean>
-    
-    
         
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     	<camel:errorHandler id="noErrorHandler" type="NoErrorHandler"/>
     </camelContext>
-    
-    
-
    
     <!-- END SNIPPET: example -->
 
