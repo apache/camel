@@ -28,7 +28,7 @@
     ">
   <!-- Defined the real JAXRS back end service  -->
   <jaxrs:server id="restService"
-		        address="http://localhost:9002" 
+		        address="http://localhost:9002/rest" 
 		        staticSubresourceResolution="true">
     <jaxrs:serviceBeans>
       <ref bean="customerService"/>
@@ -40,11 +40,11 @@
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
    
   <!-- Defined the server endpoint to create the cxf-rs consumer --> 
-  <cxf:rsServer id="rsServer" address="http://localhost:9000"
+  <cxf:rsServer id="rsServer" address="http://localhost:9000/route"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
 
   <!-- Defined the client endpoint to create the cxf-rs consumer -->
-  <cxf:rsClient id="rsClient" address="http://localhost:9002"
+  <cxf:rsClient id="rsClient" address="http://localhost:9002/rest"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
   
   <!-- The camel route context -->

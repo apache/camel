@@ -89,10 +89,18 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         // TODO use header filter strategy and cxfToCamelHeaderMap
         
         copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.REQUEST_URI, Exchange.HTTP_URI);
-        
+       
         copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.HTTP_REQUEST_METHOD, Exchange.HTTP_METHOD);
         
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.PATH_INFO, Exchange.HTTP_PATH);
+        // We need remove the BASE_PATH from the PATH_INFO
+        String pathInfo = (String)cxfMessage.get(org.apache.cxf.message.Message.PATH_INFO);
+        String basePath = (String)cxfMessage.get(org.apache.cxf.message.Message.BASE_PATH);
+        if (pathInfo != null && basePath != null && pathInfo.startsWith(basePath)) {
+            pathInfo = pathInfo.substring(basePath.length());
+        }
+        if (pathInfo != null) {
+            camelMessage.setHeader(Exchange.HTTP_PATH, pathInfo);
+        }
         
         copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.CONTENT_TYPE, Exchange.CONTENT_TYPE);
         
