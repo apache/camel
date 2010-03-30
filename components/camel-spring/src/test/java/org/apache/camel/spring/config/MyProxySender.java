@@ -16,11 +16,17 @@
  */
 package org.apache.camel.spring.config;
 
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Pattern;
+
 /**
  * @version $Revision$
  */
 public interface MyProxySender {
 
     String hello(String name);
+    
+    @Pattern(value = ExchangePattern.InOnly)
+    void greeting(String message);
 
 }

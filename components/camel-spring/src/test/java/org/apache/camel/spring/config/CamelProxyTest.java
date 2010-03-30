@@ -17,6 +17,9 @@
 package org.apache.camel.spring.config;
 
 import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
+import org.apache.camel.TestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,6 +35,16 @@ public class CamelProxyTest extends TestCase {
         String reply = sender.hello("World");
 
         assertEquals("Hello World", reply);
+        
+        // test sending inOnly message
+        MyProxySender anotherSender = (MyProxySender) ac.getBean("myAnotherProxySender");
+        CamelContext context = (CamelContext) ac.getBean("myCamel");
+        MockEndpoint result = TestSupport.resolveMandatoryEndpoint(context, "mock:result", MockEndpoint.class);
+        result.expectedBodiesReceived("Hello my friends!");
+        
+        anotherSender.greeting("Hello my friends!");
+        result.assertIsSatisfied();
+        
     }
-
+    
 }
