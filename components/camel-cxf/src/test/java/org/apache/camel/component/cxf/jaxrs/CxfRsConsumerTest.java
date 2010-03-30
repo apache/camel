@@ -32,11 +32,18 @@ import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 
 public class CxfRsConsumerTest extends CamelTestSupport {
-    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:9000?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+    private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
+    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:9000/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
     
     // START SNIPPET: example
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -49,22 +56,32 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                         Message inMessage = exchange.getIn();                        
                         // Get the operation name from in message
                         String operationName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);
-                        // The parameter of the invocation is stored in the body of in message
-                        String id = (String) inMessage.getBody(Object[].class)[0];
                         if ("getCustomer".equals(operationName)) {
                             String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
                             assertEquals("Get a wrong http method", "GET", httpMethod);
-                            String uri = inMessage.getHeader(Exchange.HTTP_URI, String.class);
-                            if ("/customerservice/customers/126".equals(uri)) {                            
+                            String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
+                            // The parameter of the invocation is stored in the body of in message
+                            String id = (String) inMessage.getBody(String.class);
+                            if ("/customerservice/customers/126".equals(path)) {                            
                                 Customer customer = new Customer();
                                 customer.setId(Long.parseLong(id));
                                 customer.setName("Willem");
                                 // We just put the response Object into the out message body
                                 exchange.getOut().setBody(customer);
                             } else {
-                                Response r = Response.status(404).entity("Can't found the customer with uri " + uri).build();
+                                Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
                                 throw new WebApplicationException(r);
                             }
+                        }
+                        if ("updateCustomer".equals(operationName)) {
+                            String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
+                            assertEquals("Get a wrong http method", "PUT", httpMethod);
+                            Customer customer = inMessage.getBody(Customer.class);
+                            assertNotNull("The customer should not be null.", customer);
+                            // Now you can do what you want on the customer object
+                            assertEquals("Get a wrong customer name.", "Mary", customer.getName());
+                            // set the response back
+                            exchange.getOut().setBody(Response.ok().build());
                         }
                     }
                     
@@ -76,7 +93,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     
     @Test
     public void testGetCustomer() throws Exception {
-        URL url = new URL("http://localhost:9000/customerservice/customers/126");
+        URL url = new URL("http://localhost:9000/rest/customerservice/customers/126");
 
         InputStream in = url.openStream();
         assertEquals("{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}", CxfUtils.getStringFromInputStream(in));
@@ -85,7 +102,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     
     @Test
     public void testGetWrongCustomer() throws Exception {
-        URL url = new URL("http://localhost:9000/customerservice/customers/456");
+        URL url = new URL("http://localhost:9000/rest/customerservice/customers/456");
         try {
             url.openStream();
             fail("Expect to get exception here");
@@ -93,7 +110,23 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             // do nothing here
         }
         
-        
+    }
+    
+    @Test
+    public void testPutConsumer() throws Exception {
+        HttpPut put = new HttpPut("http://localhost:9000/rest/customerservice/customers");
+        StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
+        entity.setContentType("text/xml; charset=ISO-8859-1");
+        put.setEntity(entity);
+        HttpClient httpclient = new DefaultHttpClient();
+
+        try {
+            HttpResponse response = httpclient.execute(put);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("", EntityUtils.toString(response.getEntity()));
+        } finally {
+            httpclient.getConnectionManager().shutdown();
+        }
     }
         
 

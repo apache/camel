@@ -118,7 +118,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         
         camelMessage.setHeader(CxfConstants.OPERATION_NAME, method.getName());
         
-        camelMessage.setBody(paramArray);        
+        camelMessage.setBody(new MessageContentsList(paramArray));        
     }
 
     
