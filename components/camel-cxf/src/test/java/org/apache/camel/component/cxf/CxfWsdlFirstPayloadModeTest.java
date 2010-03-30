@@ -85,7 +85,8 @@ public class CxfWsdlFirstPayloadModeTest extends CxfWsdlFirstTest {
     protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) { 
         assertEquals(1, fromHandler.getFaultCount());
         assertEquals(5, fromHandler.getMessageCount());
-        assertEquals(8, toHandler.getGetHeadersCount());
+      //From CXF 2.2.7 the soap handler's getHeader() method will not be called if the SOAP message don't have headers
+        //assertEquals(8, toHandler.getGetHeadersCount());
         assertEquals(10, toHandler.getMessageCount());
         assertEquals(6, toHandler.getFaultCount());
     }

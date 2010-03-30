@@ -29,6 +29,8 @@
    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
    <import resource="classpath:META-INF/cxf/cxf-extension-http.xml" />
    
+   <!-- You can set the timeout and other client http transport configuration here -->
+   
    <http-conf:conduit name="*.http-conduit">
 		<http-conf:client ReceiveTimeout="100" />
    </http-conf:conduit>

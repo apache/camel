@@ -102,7 +102,8 @@ public class CxfWsdlFirstTest extends CamelSpringTestSupport {
     protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) {
         assertEquals(2, fromHandler.getFaultCount());
         assertEquals(4, fromHandler.getMessageCount());
-        assertEquals(7, toHandler.getGetHeadersCount());
+        //From CXF 2.2.7 the soap handler's getHeader() method will not be called if the SOAP message don't have headers
+        //assertEquals(7, toHandler.getGetHeadersCount());
         assertEquals(8, toHandler.getMessageCount());
         assertEquals(6, toHandler.getFaultCount());
     }
