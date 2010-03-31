@@ -326,6 +326,10 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         boolean sync = afp.process(exchange, new AsyncCallback() {
             public void done(boolean sync) {
                 restoreExceptionOnExchange(exchange, data.handledPredicate);
+
+                // if the fault was handled asynchronously, this should be reflected in the callback as well
+                data.sync &= sync;
+
                 callback.done(data.sync);
             }
         });
