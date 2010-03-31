@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.gae.task;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,10 @@ public class MockQueue implements Queue {
         return add(null, taskOptions);
     }
 
+    public List<TaskHandle> add(Iterable<TaskOptions> taskOptionsIterable) {
+        return add(null, taskOptionsIterable);
+    }
+
     public TaskHandle add(Transaction transaction, TaskOptions taskOptions) {
         TaskOptionsAccessor accessor = new TaskOptionsAccessor(taskOptions);
         try {
@@ -72,6 +77,14 @@ public class MockQueue implements Queue {
             Assert.fail(e.getMessage());
         }
         return null;
+    }
+
+    public List<TaskHandle> add(Transaction transaction, Iterable<TaskOptions> taskOptionsIterable) {
+        ArrayList<TaskHandle> handles = new ArrayList<TaskHandle>();
+        for (TaskOptions taskOptions : taskOptionsIterable) {
+            handles.add(add(transaction, taskOptions));
+        }
+        return handles;
     }
 
     public String getQueueName() {

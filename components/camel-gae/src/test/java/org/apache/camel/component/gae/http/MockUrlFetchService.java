@@ -18,6 +18,7 @@ package org.apache.camel.component.gae.http;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.Future;
 
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPRequest;
@@ -41,6 +42,14 @@ public class MockUrlFetchService implements URLFetchService {
             response.addHeader(header.getName(), header.getValue());
         }
         return response;
+    }
+
+    public Future<HTTPResponse> fetchAsync(URL url) {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    public Future<HTTPResponse> fetchAsync(HTTPRequest httpRequest) {
+        throw new UnsupportedOperationException("not implemented");
     }
 
 }
