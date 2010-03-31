@@ -73,6 +73,10 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // message size (e.g. with attachment) is large and response content length 
         // is bigger than request content length.)
         getOutFilter().add("Content-Length");
+        
+        // Filter Content-Length as it will cause some trouble when the message 
+        // is passed to the other endpoint
+        getInFilter().add("Content-Length");
 
         // initialize message header filter map with default SOAP filter
         messageHeaderFiltersMap = new HashMap<String, MessageHeaderFilter>();

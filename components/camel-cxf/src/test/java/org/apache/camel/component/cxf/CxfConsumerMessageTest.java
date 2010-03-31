@@ -40,6 +40,9 @@ public class CxfConsumerMessageTest extends CxfConsumerTest {
                 from(SIMPLE_ENDPOINT_URI + "&dataFormat=MESSAGE").process(new Processor() {
                     public void process(final Exchange exchange) {
                         Message in = exchange.getIn();
+                        // check the content-length header is filtered 
+                        Object value = in.getHeader("Content-Length");
+                        assertNull("The Content-Length header should be removed", value);
                         // Get the request message
                         String request = in.getBody(String.class);
                         // Send the response message back
