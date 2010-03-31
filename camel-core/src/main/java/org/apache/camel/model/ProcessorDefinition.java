@@ -519,11 +519,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * Sends the exchange to the given endpoint using synchronous mode.
+     * Sends the exchange to the given endpoint using asynchronous mode.
      *
      * @param uri  the endpoint to send to
      * @return the builder
-     * @see org.apache.camel.AsyncProcessor
+     * @see org.apache.camel.SendAsyncProcessor
      */
     public ToDefinition toAsync(String uri) {
         ToDefinition answer = new ToDefinition(uri);
@@ -536,12 +536,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * Sends the exchange to the given endpoint using synchronous mode.
+     * Sends the exchange to the given endpoint using asynchronous mode.
      *
      * @param uri  the endpoint to send to
      * @param poolSize the core pool size
      * @return the builder
-     * @see org.apache.camel.AsyncProcessor
+     * @see org.apache.camel.SendAsyncProcessor
      */
     public ToDefinition toAsync(String uri, int poolSize) {
         ToDefinition answer = new ToDefinition(uri);
@@ -555,11 +555,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * Sends the exchange to the given endpoint using synchronous mode.
+     * Sends the exchange to the given endpoint using asynchronous mode.
      *
      * @param endpoint  the endpoint to send to
      * @return the builder
-     * @see org.apache.camel.AsyncProcessor
+     * @see org.apache.camel.SendAsyncProcessor
      */
     public ToDefinition toAsync(Endpoint endpoint) {
         ToDefinition answer = new ToDefinition(endpoint);
@@ -572,12 +572,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * Sends the exchange to the given endpoint using synchronous mode.
+     * Sends the exchange to the given endpoint using asynchronous mode.
      *
      * @param endpoint  the endpoint to send to
      * @param poolSize the core pool size
      * @return the builder
-     * @see org.apache.camel.AsyncProcessor
+     * @see org.apache.camel.SendAsyncProcessor
      */
     public ToDefinition toAsync(Endpoint endpoint, int poolSize) {
         ToDefinition answer = new ToDefinition(endpoint);
