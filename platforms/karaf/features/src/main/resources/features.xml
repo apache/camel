@@ -353,6 +353,11 @@
     <feature version='${pom.version}'>camel-core</feature>	
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsendnsca-core/${jsendnsca-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-nagios/${pom.version}</bundle>
+  </feature>
+  <feature name='camel-netty' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>wrap:http://repository.jboss.org/maven2/org/jboss/netty/netty/3.1.5.GA/netty-3.1.5.GA.jar</bundle>
+    <bundle>mvn:org.apache.camel/camel-netty/${pom.version}</bundle>
   </feature>	  
   <feature name='camel-ognl' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
