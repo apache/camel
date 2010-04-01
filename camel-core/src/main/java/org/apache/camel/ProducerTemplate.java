@@ -704,10 +704,7 @@ public interface ProducerTemplate extends Service {
     // -----------------------------------------------------------------------
 
     /**
-     * Sets the executor service to use for async messaging.
-     * <p/>
-     * If none provided Camel will default use a {@link java.util.concurrent.ScheduledExecutorService}
-     * with a pool of 5 threads.
+     * Sets a custom executor service to use for async messaging.
      *
      * @param executorService  the executor service.
      */

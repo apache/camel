@@ -1374,6 +1374,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return isStarted() && !isStarting();
     }
 
+    protected void resetFirstStartDone() {
+        // to prevent issue with Spring 3.0 calling ContextRefreshedEvent twice instead of only once
+        firstStartDone = false;
+    }
+
     public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {
         this.dataFormats = dataFormats;
     }

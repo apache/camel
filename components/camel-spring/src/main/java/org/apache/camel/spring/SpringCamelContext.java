@@ -99,6 +99,9 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             // now lets start the CamelContext so that all its possible
             // dependencies are initialized
             try {
+                // must reset the first start to handle Spring 3.0 sending
+                // this event twice per camel context instead of only once as in 2.x
+                resetFirstStartDone();
                 maybeStart();
             } catch (Exception e) {
                 throw wrapRuntimeCamelException(e);
