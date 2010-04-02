@@ -34,7 +34,7 @@
     <name>Camel :: Platforms :: Apache Karaf</name>
 
     <properties>
-      <karaf-version>1.2.0</karaf-version>
+      <karaf-version>1.4.0</karaf-version>
     </properties>
 
     <modules>
@@ -89,7 +89,18 @@
           <enabled>false</enabled>
         </snapshots>
       </repository>
-
+      <!-- Jboss maven repo -->
+      <repository>
+        <id>jboss</id>
+          <name>Jboss Repository</name>
+	  <url>http://repository.jboss.org/maven2</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+      </repository>
       <!-- Spring milestone repo -->
       <repository>
         <id>spring-milestone</id>
