@@ -53,7 +53,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * @version $Revision$
  */
 public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean,
-        ApplicationContextAware, ApplicationListener {
+        ApplicationContextAware {
 
     private static final transient Log LOG = LogFactory.getLog(SpringCamelContext.class);
     private ApplicationContext applicationContext;

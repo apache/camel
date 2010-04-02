@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -636,6 +637,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     public void onApplicationEvent(ApplicationEvent event) {
+        // From Spring 3.0.1, The BeanFactory applicationEventListener 
+        // and Bean's applicationEventListener will be called,
+        // So we just delegate the onApplicationEvent call here.
+        
         if (context != null) {
             // let the spring camel context handle the events
             context.onApplicationEvent(event);
