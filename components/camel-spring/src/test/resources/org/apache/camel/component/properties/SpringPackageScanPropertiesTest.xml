@@ -25,8 +25,8 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties" location="org/apache/camel/component/properties/myprop.properties"/>
         <packageScan>
-            <package>org.apache.camel.#{routescan}</package>
-            <includes>#{routeincludes}</includes>
+            <package>org.apache.camel.{{routescan}}</package>
+            <includes>{{routeincludes}}</includes>
         </packageScan>
         <jmxAgent id="agent"/>
     </camelContext>

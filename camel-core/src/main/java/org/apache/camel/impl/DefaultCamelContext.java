@@ -727,7 +727,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public String resolvePropertyPlaceholders(String uri) throws Exception {
         // do not parse uris that are designated for the properties component as it will handle that itself
-        if (uri != null && !uri.startsWith("properties:") && uri.contains("#{")) {
+        if (uri != null && !uri.startsWith("properties:") && uri.contains(PropertiesComponent.PREFIX_TOKEN)) {
             // the uri contains property placeholders so lookup mandatory properties component and let it parse it
             Component component = hasComponent("properties");
             if (component == null) {

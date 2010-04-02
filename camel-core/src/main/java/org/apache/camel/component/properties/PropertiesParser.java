@@ -27,9 +27,6 @@ import java.util.Properties;
  */
 public final class PropertiesParser {
 
-    private static final String PREFIX_TOKEN = "#{";
-    private static final String SUFFIX_TOKEN = "}";
-
     private PropertiesParser() {
     }
 
@@ -38,10 +35,12 @@ public final class PropertiesParser {
      *
      * @param uri the uri
      * @param properties the properties
+     * @param prefixToken the prefix token
+     * @param suffixToken the suffix token
      * @return the uri with replaced placeholders
      * @throws IllegalArgumentException if uri syntax is not valid or a property is not found
      */
-    public static String parseUri(String uri, Properties properties) throws IllegalArgumentException {
+    public static String parseUri(String uri, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
         String answer = uri;
         boolean done = false;
 
@@ -50,7 +49,7 @@ public final class PropertiesParser {
         List<String> visited = new ArrayList<String>();
         while (!done) {
             List<String> replaced = new ArrayList<String>();
-            answer = doParseUri(answer, properties, replaced);
+            answer = doParseUri(answer, properties, replaced, prefixToken, suffixToken);
 
             // check the replaced with the visited to avoid circular reference
             for (String replace : replaced) {
@@ -62,18 +61,18 @@ public final class PropertiesParser {
             visited.addAll(replaced);
 
             // are we done yet
-            done = !answer.contains(PREFIX_TOKEN);
+            done = !answer.contains(prefixToken);
         }
         return answer;
     }
 
-    private static String doParseUri(String uri, Properties properties, List<String> replaced) {
+    private static String doParseUri(String uri, Properties properties, List<String> replaced, String prefixToken, String suffixToken) {
         StringBuilder sb = new StringBuilder();
 
         int pivot = 0;
         int size = uri.length();
         while (pivot < size) {
-            int idx = uri.indexOf(PREFIX_TOKEN, pivot);
+            int idx = uri.indexOf(prefixToken, pivot);
             if (idx < 0) {
                 sb.append(createConstantPart(uri, pivot, size));
                 break;
@@ -81,10 +80,10 @@ public final class PropertiesParser {
                 if (pivot < idx) {
                     sb.append(createConstantPart(uri, pivot, idx));
                 }
-                pivot = idx + PREFIX_TOKEN.length();
-                int endIdx = uri.indexOf(SUFFIX_TOKEN, pivot);
+                pivot = idx + prefixToken.length();
+                int endIdx = uri.indexOf(suffixToken, pivot);
                 if (endIdx < 0) {
-                    throw new IllegalArgumentException("Expecting " + SUFFIX_TOKEN + " but found end of string for uri: " + uri);
+                    throw new IllegalArgumentException("Expecting " + suffixToken + " but found end of string for uri: " + uri);
                 }
                 String key = uri.substring(pivot, endIdx);
 
@@ -93,7 +92,7 @@ public final class PropertiesParser {
                     throw new IllegalArgumentException("Property with key [" + key + "] not found in properties for uri: " + uri);
                 }
                 sb.append(part);
-                pivot = endIdx + SUFFIX_TOKEN.length();
+                pivot = endIdx + suffixToken.length();
             }
         }
         return sb.toString();

@@ -32,7 +32,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <to uri="properties:#{foo}"/>
+            <to uri="properties:foo"/>
         </route>
     </camelContext>
 

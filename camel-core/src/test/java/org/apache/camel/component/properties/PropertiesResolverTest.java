@@ -43,7 +43,7 @@ public class PropertiesResolverTest extends ContextTestSupport {
                 context.addRoutes(new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {
-                        from("direct:start").to("properties:#{foo}");
+                        from("direct:start").to("properties:foo");
                     }
                 });
             }

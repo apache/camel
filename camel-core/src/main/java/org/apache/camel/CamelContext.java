@@ -444,7 +444,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     Language resolveLanguage(String language);
 
     /**
-     * Parses the given text and resolve any property placeholders - using #{key}.
+     * Parses the given text and resolve any property placeholders - using {{key}}.
      *
      * @param text the text such as an endpoint uri or the likes
      * @return the text with resolved property placeholders

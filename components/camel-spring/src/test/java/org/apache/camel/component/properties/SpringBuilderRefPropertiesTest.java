@@ -31,7 +31,7 @@ public class SpringBuilderRefPropertiesTest extends SpringTestSupport {
     }
 
     public void testSpringBuilderRefProperties() throws Exception {
-        getMockEndpoint("#{result}").expectedMessageCount(1);
+        getMockEndpoint("{{result}}").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
 

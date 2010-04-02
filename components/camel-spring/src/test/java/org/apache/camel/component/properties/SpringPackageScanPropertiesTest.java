@@ -31,7 +31,7 @@ public class SpringPackageScanPropertiesTest extends SpringTestSupport {
     }
 
     public void testSpringPackageProperties() throws Exception {
-        getMockEndpoint("#{result}").expectedMessageCount(1);
+        getMockEndpoint("{{result}}").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
 

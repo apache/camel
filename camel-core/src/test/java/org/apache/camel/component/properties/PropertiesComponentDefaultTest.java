@@ -32,7 +32,7 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("properties:#{bar.end}?locations=org/apache/camel/component/properties/bar.properties");
+                from("direct:start").to("properties:bar.end?locations=org/apache/camel/component/properties/bar.properties");
             }
         });
         context.start();
@@ -48,7 +48,7 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("properties:#{bar.end}?locations=org/apache/camel/component/properties/unknown.properties");
+                from("direct:start").to("properties:bar.end?locations=org/apache/camel/component/properties/unknown.properties");
             }
         });
         try {

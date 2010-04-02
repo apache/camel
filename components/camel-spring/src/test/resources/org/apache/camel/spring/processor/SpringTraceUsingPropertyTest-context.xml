@@ -23,14 +23,14 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <camelContext trace="#{foo.trace}" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext trace="{{foo.trace}}" xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties" location="org/apache/camel/spring/processor/myprop.properties"/>
 
-        <template id="camelTemplate" defaultEndpoint="#{foo.cool}"/>
+        <template id="camelTemplate" defaultEndpoint="{{foo.cool}}"/>
 
         <route>
             <from uri="direct:start"/>
-            <setHeader headerName="#{foo.header}">
+            <setHeader headerName="{{foo.header}}">
                 <simple>${in.body} World!</simple>
             </setHeader>
             <to uri="mock:result"/>

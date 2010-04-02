@@ -36,7 +36,7 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:#{cool.result}");
+                from("direct:start").to("mock:{{cool.result}}");
             }
         });
         context.start();
@@ -52,16 +52,16 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("#{cool.start}")
-                    .to("log:#{cool.start}?showBodyType=false&showExchangeId=#{cool.showid}")
-                    .to("mock:#{cool.result}");
+                from("{{cool.start}}")
+                    .to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}")
+                    .to("mock:{{cool.result}}");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:#{cool.result}").expectedMessageCount(1);
+        getMockEndpoint("mock:{{cool.result}}").expectedMessageCount(1);
 
-        template.sendBody("#{cool.start}", "Hello World");
+        template.sendBody("{{cool.start}}", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -72,9 +72,9 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("#{cool.start}")
-                        .to("log:#{cool.start}?showBodyType=false&showExchangeId=#{cool.showid}")
-                        .to("mock:#{cool.result}");
+                    from("{{cool.start}}")
+                        .to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}")
+                        .to("mock:{{cool.result}}");
                 }
             });
             context.start();

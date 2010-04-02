@@ -25,7 +25,7 @@ public class SpringSimpleRoute extends SpringRouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:start").to("#{result}");
+        from("direct:start").to("{{result}}");
     }
 
 }

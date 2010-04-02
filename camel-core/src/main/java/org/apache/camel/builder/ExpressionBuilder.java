@@ -1313,9 +1313,9 @@ public final class ExpressionBuilder {
                         Component component = exchange.getContext().getComponent("properties");
                         PropertiesComponent pc = exchange.getContext().getTypeConverter()
                                 .mandatoryConvertTo(PropertiesComponent.class, component);
-                        // enclose key with #{ } to force parsing
+                        // enclose key with {{ }} to force parsing
                         String[] paths = locations.split(",");
-                        return pc.parseUri("#{" + key + "}", paths);
+                        return pc.parseUri(PropertiesComponent.PREFIX_TOKEN + key + PropertiesComponent.SUFFIX_TOKEN, paths);
                     } else {
                         // the properties component is mandatory if no locations provided
                         Component component = exchange.getContext().hasComponent("properties");
@@ -1325,8 +1325,8 @@ public final class ExpressionBuilder {
                         }
                         PropertiesComponent pc = exchange.getContext().getTypeConverter()
                                 .mandatoryConvertTo(PropertiesComponent.class, component);
-                        // enclose key with #{ } to force parsing
-                        return pc.parseUri("#{" + key + "}");
+                        // enclose key with {{ }} to force parsing
+                        return pc.parseUri(PropertiesComponent.PREFIX_TOKEN + key + PropertiesComponent.SUFFIX_TOKEN);
                     }
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);

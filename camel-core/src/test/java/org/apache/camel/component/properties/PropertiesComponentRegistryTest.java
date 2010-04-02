@@ -70,30 +70,30 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
     public void testPropertiesComponentRegistryLookupName() throws Exception {
         context.start();
 
-        assertSame(foo, context.getRegistry().lookup("#{bean.foo}"));
-        assertSame(bar, context.getRegistry().lookup("#{bean.bar}"));
+        assertSame(foo, context.getRegistry().lookup("{{bean.foo}}"));
+        assertSame(bar, context.getRegistry().lookup("{{bean.bar}}"));
 
         try {
-            context.getRegistry().lookup("#{bean.unknown}");
+            context.getRegistry().lookup("{{bean.unknown}}");
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Property with key [bean.unknown] not found in properties for uri: #{bean.unknown}", cause.getMessage());
+            assertEquals("Property with key [bean.unknown] not found in properties for uri: {{bean.unknown}}", cause.getMessage());
         }
     }
 
     public void testPropertiesComponentRegistryLookupNameAndType() throws Exception {
         context.start();
 
-        assertSame(foo, context.getRegistry().lookup("#{bean.foo}", MyFooBean.class));
-        assertSame(bar, context.getRegistry().lookup("#{bean.bar}", MyDummyBean.class));
+        assertSame(foo, context.getRegistry().lookup("{{bean.foo}}", MyFooBean.class));
+        assertSame(bar, context.getRegistry().lookup("{{bean.bar}}", MyDummyBean.class));
 
         try {
-            context.getRegistry().lookup("#{bean.unknown}", MyDummyBean.class);
+            context.getRegistry().lookup("{{bean.unknown}}", MyDummyBean.class);
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Property with key [bean.unknown] not found in properties for uri: #{bean.unknown}", cause.getMessage());
+            assertEquals("Property with key [bean.unknown] not found in properties for uri: {{bean.unknown}}", cause.getMessage());
         }
     }
 

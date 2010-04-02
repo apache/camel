@@ -36,7 +36,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("properties:#{cool.end}");
+                from("direct:start").to("properties:{{cool.end}}");
             }
         });
         context.start();
@@ -52,7 +52,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("properties:mock:#{cool.result}");
+                from("direct:start").to("properties:mock:{{cool.result}}");
             }
         });
         context.start();
@@ -68,7 +68,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("properties:#{cool.mock}:#{cool.mock}");
+                from("direct:start").to("properties:{{cool.mock}}:{{cool.mock}}");
             }
         });
         context.start();
@@ -84,7 +84,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("properties:#{cool.concat}");
+                from("direct:start").to("properties:cool.concat");
             }
         });
         context.start();
@@ -100,7 +100,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("properties:#{bar.end}?locations=org/apache/camel/component/properties/bar.properties");
+                from("direct:start").to("properties:{{bar.end}}?locations=org/apache/camel/component/properties/bar.properties");
             }
         });
         context.start();
@@ -116,8 +116,8 @@ public class PropertiesComponentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("properties:#{bar.end}?locations=org/apache/camel/component/properties/bar.properties");
-                from("direct:cheese").to("properties:#{cheese.end}?locations=org/apache/camel/component/properties/bar.properties,"
+                from("direct:start").to("properties:bar.end?locations=org/apache/camel/component/properties/bar.properties");
+                from("direct:cheese").to("properties:cheese.end?locations=org/apache/camel/component/properties/bar.properties,"
                         + "classpath:org/apache/camel/component/properties/cheese.properties");
             }
         });
@@ -136,7 +136,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("properties:#{foo.unknown}");
+                from("direct:start").to("properties:{{foo.unknown}}");
             }
         });
         try {
@@ -145,7 +145,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         } catch (FailedToCreateRouteException e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("Property with key [foo.unknown] not found in properties for uri: #{foo.unknown}", iae.getMessage());
+            assertEquals("Property with key [foo.unknown] not found in properties for uri: {{foo.unknown}}", iae.getMessage());
         }
     }
 
@@ -153,7 +153,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("properties:#{cool.a}");
+                from("direct:start").to("properties:cool.a");
             }
         });
         try {
@@ -162,7 +162,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         } catch (FailedToCreateRouteException e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("Circular reference detected with key [cool.a] in uri #{cool.a}", iae.getMessage());
+            assertEquals("Circular reference detected with key [cool.a] in uri {{cool.a}}", iae.getMessage());
         }
     }
 
@@ -170,8 +170,9 @@ public class PropertiesComponentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("properties:#{cool.end}");
-                from("direct:foo").to("properties:mock:#{cool.result}");
+                // properties component can also have {{ }} around but its not needed
+                from("direct:start").to("properties:{{cool.end}}");
+                from("direct:foo").to("properties:mock:{{cool.result}}");
             }
         });
         context.start();
@@ -191,8 +192,8 @@ public class PropertiesComponentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("properties:#{cool.end}");
-                from("direct:foo").to("properties:mock:#{cool.result}");
+                from("direct:start").to("properties:cool.end");
+                from("direct:foo").to("properties:mock:{{cool.result}}");
             }
         });
         context.start();

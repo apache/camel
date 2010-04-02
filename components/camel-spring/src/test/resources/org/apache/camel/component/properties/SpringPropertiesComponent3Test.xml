@@ -29,22 +29,22 @@
 
         <route>
             <from uri="direct:start"/>
-            <to uri="properties:#{cool.end}"/>
+            <to uri="properties:{{cool.end}}"/>
         </route>
 
         <route>
             <from uri="direct:bar"/>
-            <to uri="properties:mock:#{cool.bar}"/>
+            <to uri="properties:mock:{{cool.bar}}"/>
         </route>
 
         <route>
             <from uri="direct:start2"/>
-            <to uri="#{cool.end}"/>
+            <to uri="{{cool.end}}"/>
         </route>
 
         <route>
             <from uri="direct:bar2"/>
-            <to uri="mock:#{cool.bar}"/>
+            <to uri="mock:{{cool.bar}}"/>
         </route>
     </camelContext>
 

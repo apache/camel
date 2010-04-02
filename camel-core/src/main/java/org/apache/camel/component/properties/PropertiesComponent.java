@@ -33,6 +33,9 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PropertiesComponent extends DefaultComponent {
 
+    public static final String PREFIX_TOKEN = "{{";
+    public static final String SUFFIX_TOKEN = "}}";
+
     private static final transient Log LOG = LogFactory.getLog(PropertiesComponent.class);
     private final Map<String[], Properties> cacheMap = new LRUCache<String[], Properties>(1000);
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
@@ -75,10 +78,18 @@ public class PropertiesComponent extends DefaultComponent {
             }
         }
 
+        // enclose tokens if missing
+        if (!uri.contains(PREFIX_TOKEN) && !uri.startsWith(PREFIX_TOKEN)) {
+            uri = PREFIX_TOKEN + uri;
+        }
+        if (!uri.contains(SUFFIX_TOKEN) && !uri.endsWith(SUFFIX_TOKEN)) {
+            uri = uri + SUFFIX_TOKEN;
+        }
+
         if (LOG.isTraceEnabled()) {
             LOG.trace("Parsing uri " + uri + " with properties: " + prop);
         }
-        return PropertiesParser.parseUri(uri, prop);
+        return PropertiesParser.parseUri(uri, prop, PREFIX_TOKEN, SUFFIX_TOKEN);
     }
 
     public String[] getLocations() {
