@@ -27,6 +27,9 @@ import java.util.Properties;
  */
 public final class PropertiesParser {
 
+    private static final String PREFIX_TOKEN = "#{";
+    private static final String SUFFIX_TOKEN = "}";
+
     private PropertiesParser() {
     }
 
@@ -59,7 +62,7 @@ public final class PropertiesParser {
             visited.addAll(replaced);
 
             // are we done yet
-            done = !answer.contains("#{");
+            done = !answer.contains(PREFIX_TOKEN);
         }
         return answer;
     }
@@ -70,7 +73,7 @@ public final class PropertiesParser {
         int pivot = 0;
         int size = uri.length();
         while (pivot < size) {
-            int idx = uri.indexOf("#{", pivot);
+            int idx = uri.indexOf(PREFIX_TOKEN, pivot);
             if (idx < 0) {
                 sb.append(createConstantPart(uri, pivot, size));
                 break;
@@ -78,10 +81,10 @@ public final class PropertiesParser {
                 if (pivot < idx) {
                     sb.append(createConstantPart(uri, pivot, idx));
                 }
-                pivot = idx + 2;
-                int endIdx = uri.indexOf('}', pivot);
+                pivot = idx + PREFIX_TOKEN.length();
+                int endIdx = uri.indexOf(SUFFIX_TOKEN, pivot);
                 if (endIdx < 0) {
-                    throw new IllegalArgumentException("Expecting } but found end of string for uri: " + uri);
+                    throw new IllegalArgumentException("Expecting " + SUFFIX_TOKEN + " but found end of string for uri: " + uri);
                 }
                 String key = uri.substring(pivot, endIdx);
 
@@ -90,7 +93,7 @@ public final class PropertiesParser {
                     throw new IllegalArgumentException("Property with key [" + key + "] not found in properties for uri: " + uri);
                 }
                 sb.append(part);
-                pivot = endIdx + 1;
+                pivot = endIdx + SUFFIX_TOKEN.length();
             }
         }
         return sb.toString();
