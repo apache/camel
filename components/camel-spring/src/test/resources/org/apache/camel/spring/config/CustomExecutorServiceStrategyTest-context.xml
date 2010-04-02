@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="myCustomPoolStrategy" class="org.apache.camel.spring.config.CustomExecutorServiceStrategy">
+    <bean id="myCustomPoolStrategy" depends-on="camel" class="org.apache.camel.spring.config.CustomExecutorServiceStrategy">
         <constructor-arg index="0" ref="camel"/>
     </bean>
 

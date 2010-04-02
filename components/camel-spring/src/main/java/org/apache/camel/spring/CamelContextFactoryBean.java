@@ -197,6 +197,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
     
     public void afterPropertiesSet() throws Exception {
+        if (ObjectHelper.isEmpty(getId())) {
+            throw new IllegalArgumentException("Id must be set");
+        }
+
         if (properties != null) {
             getContext().setProperties(properties.asMap());
         }

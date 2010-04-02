@@ -27,6 +27,8 @@
   <!-- START SNIPPET: example1 -->
   <bean id="camel" class="org.apache.camel.spring.CamelContextFactoryBean">
     <property name="packages" value="org.apache.camel.spring.example"/>
+      <!-- must have an id explicit set (it cannot inherit the id from the bean tag) -->
+      <property name="id" value="camel"/>
   </bean>
   <!-- END SNIPPET: example1 -->
 

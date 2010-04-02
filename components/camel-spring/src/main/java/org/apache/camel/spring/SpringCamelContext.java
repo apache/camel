@@ -34,7 +34,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStoppedEvent;
@@ -99,9 +98,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             // now lets start the CamelContext so that all its possible
             // dependencies are initialized
             try {
-                // must reset the first start to handle Spring 3.0 sending
-                // this event twice per camel context instead of only once as in 2.x
-                resetFirstStartDone();
                 maybeStart();
             } catch (Exception e) {
                 throw wrapRuntimeCamelException(e);
