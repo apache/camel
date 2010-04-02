@@ -24,7 +24,7 @@ public class GMailOutboundRouteBuilder extends RouteBuilder {
     public void configure() throws Exception {
 
         from("direct:input1")
-            .to("gmail:test1@example.org?to=test2@example.org&subject=testSubject&mailServiceRef=#mockMailService");
+            .to("gmail:test1@example.org?to=test2@example.org&subject=testSubject");
         
     }
 

@@ -29,7 +29,6 @@ public final class GMailTestUtils {
 
     static {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("mockMailService", new MockMailService());
         registry.put("customBinding", new GMailBinding() { });  // subclass
         context = new DefaultCamelContext(registry);
         component = new GMailComponent();

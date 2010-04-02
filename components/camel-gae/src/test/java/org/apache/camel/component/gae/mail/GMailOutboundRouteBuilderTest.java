@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.gae.mail;
 
+import com.google.appengine.api.mail.dev.LocalMailService;
+import com.google.appengine.tools.development.testing.LocalMailServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,54 +39,61 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(locations = {"/org/apache/camel/component/gae/mail/context-outbound.xml"})
 public class GMailOutboundRouteBuilderTest {
 
-    
-    
     @Autowired
     private ProducerTemplate producerTemplate;
     
-    @Autowired
-    private MockMailService mailService;
-    
+    private final LocalMailServiceTestConfig config = new LocalMailServiceTestConfig();
+    private final LocalServiceTestHelper helper = new LocalServiceTestHelper(config);
+
+    private LocalMailService service;
+
+    @Before
+    public void setUp() {
+        helper.setUp();
+        service = LocalMailServiceTestConfig.getLocalMailService();
+    }
+
     @After
-    public void tearDown() throws Exception {
-        mailService.reset();
+    public void tearDown() {
+        helper.tearDown();
     }
 
     @Test
     public void testSendDefault() {
-        producerTemplate.sendBody("direct:input1", "testBody"); 
-        assertEquals("testSubject", mailService.getFirstMessage().getSubject());
-        assertEquals("testBody", mailService.getFirstMessage().getTextBody());
-        assertEquals("test1@example.org", mailService.getFirstMessage().getSender());
-        assertEquals("test2@example.org", mailService.getFirstMessage().getTo().iterator().next());
+        producerTemplate.sendBody("direct:input1", "testBody");
+        assertEquals(1, service.getSentMessages().size());
+        assertEquals("testSubject", service.getSentMessages().get(0).getSubject());
+        assertEquals("testBody", service.getSentMessages().get(0).getTextBody());
+        assertEquals("test1@example.org",  service.getSentMessages().get(0).getSender());
+        assertEquals("test2@example.org",  service.getSentMessages().get(0).getTo(0));
     }
 
     @Test
     public void testSendCustomTo() {
         producerTemplate.send("direct:input1", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("testBody");
+                exchange.getIn().setBody("fooBody");
                 exchange.getIn().setHeader(GMAIL_TO, "test3@example.org");
             }
         });
-        assertEquals("testSubject", mailService.getFirstMessage().getSubject());
-        assertEquals("testBody", mailService.getFirstMessage().getTextBody());
-        assertEquals("test1@example.org", mailService.getFirstMessage().getSender());
-        assertEquals("test3@example.org", mailService.getFirstMessage().getTo().iterator().next());
+        assertEquals("testSubject", service.getSentMessages().get(0).getSubject());
+        assertEquals("fooBody", service.getSentMessages().get(0).getTextBody());
+        assertEquals("test1@example.org", service.getSentMessages().get(0).getSender());
+        assertEquals("test3@example.org", service.getSentMessages().get(0).getTo(0));
     }
     
     @Test
     public void testSendCustomSubject() {
         producerTemplate.send("direct:input1", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("testBody");
+                exchange.getIn().setBody("fooBody");
                 exchange.getIn().setHeader(GMAIL_SUBJECT, "anotherSubject");
             }
         });
-        assertEquals("anotherSubject", mailService.getFirstMessage().getSubject());
-        assertEquals("testBody", mailService.getFirstMessage().getTextBody());
-        assertEquals("test1@example.org", mailService.getFirstMessage().getSender());
-        assertEquals("test2@example.org", mailService.getFirstMessage().getTo().iterator().next());
+        assertEquals("anotherSubject", service.getSentMessages().get(0).getSubject());
+        assertEquals("fooBody", service.getSentMessages().get(0).getTextBody());
+        assertEquals("test1@example.org", service.getSentMessages().get(0).getSender());
+        assertEquals("test2@example.org", service.getSentMessages().get(0).getTo(0));
     }
     
 }

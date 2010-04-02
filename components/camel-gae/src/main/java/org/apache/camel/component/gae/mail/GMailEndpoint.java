@@ -19,6 +19,7 @@ package org.apache.camel.component.gae.mail;
 import com.google.appengine.api.mail.MailService;
 import com.google.appengine.api.mail.MailService.Message;
 
+import com.google.appengine.api.mail.MailServiceFactory;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -48,6 +49,7 @@ public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSup
     public GMailEndpoint(String endpointUri, String sender) {
         super(endpointUri);
         this.sender = sender;
+        this.mailService = MailServiceFactory.getMailService();
     }
     
     public OutboundBinding<GMailEndpoint, Message, Void> getOutboundBinding() {
@@ -58,18 +60,14 @@ public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSup
         this.outboundBinding = outboundBinding;
     }
     
-    public String getSender() {
-        return sender;
-    }
-    
     public MailService getMailService() {
         return mailService;
     }
 
-    public void setMailService(MailService mailService) {
-        this.mailService = mailService;
+    public String getSender() {
+        return sender;
     }
-
+    
     public String getSubject() {
         return subject;
     }
