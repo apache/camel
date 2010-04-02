@@ -25,7 +25,7 @@ import org.fusesource.hawtdb.api.Transaction;
 interface Work<T> {
 
     /**
-     * Executs the work within the bounds of the given transaction
+     * Executes the work within the bounds of the given transaction
      *
      * @param transaction the transaction
      * @return result of the work, can be <tt>null</tt> if no result to return.

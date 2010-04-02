@@ -18,11 +18,17 @@ package org.apache.camel.component.hawtdb;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.AggregationRepository;
+import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -34,7 +40,7 @@ import org.fusesource.hawtdb.util.buffer.Buffer;
 /**
  * An instance of AggregationRepository which is backed by a HawtDB.
  */
-public class HawtDBAggregationRepository<K> extends ServiceSupport implements AggregationRepository<K> {
+public class HawtDBAggregationRepository<K> extends ServiceSupport implements AggregationRepository<K>, RecoverableAggregationRepository<K> {
 
     private static final transient Log LOG = LogFactory.getLog(HawtDBAggregationRepository.class);
     private HawtDBFile hawtDBFile;
@@ -44,6 +50,8 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
     private boolean sync;
     private boolean returnOldExchange;
     private HawtDBCamelMarshaller<K> marshaller = new HawtDBCamelMarshaller<K>();
+    private long interval = 5000;
+    private boolean useRecovery = false;
 
     /**
      * Creates an aggregation repository
@@ -208,6 +216,78 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         }
     }
 
+    public Set<String> scan(CamelContext camelContext) {
+        final Set<String> answer = new LinkedHashSet<String>();
+        hawtDBFile.execute(new Work<Buffer>() {
+            public Buffer execute(Transaction tx) {
+                // scan could potentially be running while we are shutting down so check for that
+                if (!isRunAllowed()) {
+                    return null;
+                }
+
+                Index<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted());
+
+                Iterator<Map.Entry<Buffer, Buffer>> it = indexCompleted.iterator();
+                // scan could potentially be running while we are shutting down so check for that
+                while (it.hasNext() && isRunAllowed()) {
+                    Map.Entry<Buffer, Buffer> entry = it.next();
+                    Buffer keyBuffer = entry.getKey();
+
+                    String exchangeId;
+                    try {
+                        exchangeId = marshaller.unmarshallConfirmKey(keyBuffer);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Error unmarshalling confirm key: " + keyBuffer, e);
+                    }
+                    if (exchangeId != null) {
+                        answer.add(exchangeId);
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "Scan";
+            }
+        });
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Scanned and found " + answer.size() + " exchanges to recover.");
+        }
+        return answer;
+
+    }
+
+    public Exchange recover(CamelContext camelContext, final String exchangeId) {
+        Exchange answer = null;
+        try {
+            final Buffer confirmKeyBuffer = marshaller.marshallConfirmKey(exchangeId);
+            Buffer rc = hawtDBFile.execute(new Work<Buffer>() {
+                public Buffer execute(Transaction tx) {
+                    Index<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted());
+                    return indexCompleted.get(confirmKeyBuffer);
+                }
+
+                @Override
+                public String toString() {
+                    return "Recovering exchangeId [" + exchangeId + "]";
+                }
+            });
+            if (rc != null) {
+                answer = marshaller.unmarshallExchange(camelContext, rc);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error recovering exchangeId " + exchangeId + " from repository " + repositoryName, e);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Recovering exchangeId  [" + exchangeId + "] -> " + answer);
+        }
+        return answer;
+    }
+
+
     public HawtDBFile getHawtDBFile() {
         return hawtDBFile;
     }
@@ -258,6 +338,22 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
 
     public void setReturnOldExchange(boolean returnOldExchange) {
         this.returnOldExchange = returnOldExchange;
+    }
+
+    public void setCheckInterval(long interval, TimeUnit timeUnit) {
+        this.interval = timeUnit.toMillis(interval);
+    }
+
+    public long getCheckIntervalInMillis() {
+        return interval;
+    }
+
+    public boolean isUseRecovery() {
+        return useRecovery;
+    }
+
+    public void setUseRecovery(boolean useRecovery) {
+        this.useRecovery = useRecovery;
     }
 
     @Override

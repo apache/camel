@@ -69,6 +69,7 @@ public class HawtDBAggregateConcurrentSameGroupTest extends CamelTestSupport {
 
     private void doSendMessages(int files, int poolSize) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
+        mock.setResultWaitTime(20 * 1000L);
         mock.expectedMessageCount(1);
         // match number of expected numbers
         mock.message(0).body(String.class).regex("[0-9]{" + files + "}");

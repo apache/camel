@@ -52,6 +52,12 @@ public final class HawtDBCamelMarshaller<K> {
         return baos.toBuffer();
     }
 
+    public String unmarshallConfirmKey(Buffer buffer) throws IOException {
+        DataByteArrayInputStream bais = new DataByteArrayInputStream(buffer);
+        String key = confirmKeyMarshaller.readPayload(bais);
+        return key;
+    }
+
     public Buffer marshallExchange(CamelContext camelContext, Exchange exchange) throws IOException {
         DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
         // use DefaultExchangeHolder to marshal to a serialized object

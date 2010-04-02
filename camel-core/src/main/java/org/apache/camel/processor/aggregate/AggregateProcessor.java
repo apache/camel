@@ -18,10 +18,13 @@ package org.apache.camel.processor.aggregate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
@@ -36,6 +39,7 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.Traceable;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.util.DefaultTimeoutMap;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.LRUCache;
@@ -71,10 +75,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private final AggregationStrategy aggregationStrategy;
     private final Expression correlationExpression;
     private final ExecutorService executorService;
+    private ScheduledExecutorService recoverService;
     private TimeoutMap<Object, Exchange> timeoutMap;
     private ExceptionHandler exceptionHandler;
     private AggregationRepository<Object> aggregationRepository = new MemoryAggregationRepository();
     private Map<Object, Object> closedCorrelationKeys;
+    private final Set<String> inProgressCompleteExchanges = new HashSet<String>();
 
     // options
     private boolean ignoreBadCorrelationKeys;
@@ -157,7 +163,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * This method <b>must</b> be run synchronized as we cannot aggregate the same correlation key
      * in parallel.
      *
-     * @param key the correlation key
+     * @param key      the correlation key
      * @param exchange the exchange
      * @return the aggregated exchange
      */
@@ -312,6 +318,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             LOG.debug("Aggregation complete for correlation key " + key + " sending aggregated exchange: " + exchange);
         }
 
+        // add this as in progress
+        inProgressCompleteExchanges.add(exchange.getExchangeId());
+
         // send this exchange
         executorService.submit(new Runnable() {
             public void run() {
@@ -322,13 +331,20 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 } catch (Throwable t) {
                     // must catch throwable so we will handle all exceptions as the executor service will by default ignore them
                     exchange.setException(new CamelExchangeException("Error processing aggregated exchange", exchange, t));
-                } finally {
-                    aggregationRepository.confirm(exchange.getContext(), exchange.getExchangeId());
                 }
 
-                // if there was an exception then let the exception handler handle it
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing aggregated exchange", exchange, exchange.getException());
+                try {
+                    // was it good or bad?
+                    if (exchange.getException() == null) {
+                        // only confirm if we processed without a problem
+                        aggregationRepository.confirm(exchange.getContext(), exchange.getExchangeId());
+                    } else {
+                        // if there was an exception then let the exception handler handle it
+                        getExceptionHandler().handleException("Error processing aggregated exchange", exchange, exchange.getException());
+                    }
+                } finally {
+                    // must remember to remove when we are done
+                    inProgressCompleteExchanges.remove(exchange.getExchangeId());
                 }
             }
         });
@@ -434,7 +450,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     }
 
     /**
-     * Background tasks that looks for aggregated exchanges which is triggered by completion timeouts.
+     * Background task that looks for aggregated exchanges which is triggered by completion timeouts.
      */
     private final class AggregationTimeoutMap extends DefaultTimeoutMap<Object, Exchange> {
 
@@ -451,6 +467,54 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
             onCompletion(key, exchange, true);
         }
+    }
+
+    /**
+     * Background task that looks for aggregated exchanges to recover.
+     */
+    private final class RecoverTask implements Runnable {
+        private final RecoverableAggregationRepository<Object> recoverable;
+
+        private RecoverTask(RecoverableAggregationRepository<Object> recoverable) {
+            this.recoverable = recoverable;
+        }
+
+        public void run() {
+            AggregateProcessor.this.doRecover(recoverable);
+        }
+
+    }
+
+    private void doRecover(RecoverableAggregationRepository<Object> recoverable) {
+        LOG.trace("Starting recover check");
+
+        Set<String> exchangeIds = recoverable.scan(camelContext);
+        for (String exchangeId : exchangeIds) {
+
+            // we may shutdown while doing recovery
+            if (!isRunAllowed()) {
+                LOG.info("We are shutting down so stop recovering");
+                return;
+            }
+
+            boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
+            if (inProgress) {
+                LOG.debug("Aggregated exchange with id " + exchangeId + " is already in progress");
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Recovering aggregated exchange with id " + exchangeId);
+                }
+                Exchange exchange = recoverable.recover(camelContext, exchangeId);
+                if (exchange != null) {
+                    // get the correlation key
+                    String key = exchange.getProperty(Exchange.AGGREGATED_CORRELATION_KEY, String.class);
+                    // resubmit the recovered exchange
+                    onSubmitCompletion(key, exchange);
+                }
+            }
+        }
+
+        LOG.trace("Recover check complete");
     }
 
     @Override
@@ -475,6 +539,25 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         ServiceHelper.startService(aggregationRepository);
 
+        // should we use recover checker
+        if (aggregationRepository instanceof RecoverableAggregationRepository) {
+            RecoverableAggregationRepository<Object> recoverable = (RecoverableAggregationRepository<Object>) aggregationRepository;
+            if (recoverable.isUseRecovery()) {
+                long interval = recoverable.getCheckIntervalInMillis();
+                if (interval > 0) {
+                    // create a background recover thread to check once ev
+                    recoverService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateRecoverChecker", 1);
+                    Runnable recoverTask = new RecoverTask(recoverable);
+                    LOG.info("Scheduling recover checker to run every " + interval + " millis.");
+                    recoverService.scheduleAtFixedRate(recoverTask, 1000L, interval, TimeUnit.MILLISECONDS);
+                } else {
+                    // its a one shot recover during startup
+                    LOG.info("Running recover checker once at startup to recover existing aggregated exchanges");
+                    doRecover(recoverable);
+                }
+            }
+        }
+
         // start timeout service if its in use
         if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
             ScheduledExecutorService scheduler = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateTimeoutChecker", 1);
@@ -487,6 +570,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(timeoutMap);
+        ServiceHelper.stopService(recoverService);
 
         ServiceHelper.stopService(aggregationRepository);
 
