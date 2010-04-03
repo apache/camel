@@ -1430,7 +1430,7 @@
     <profile>
       <id>spring-3.x</id>
       <properties>
-         <spring-version>3.0.1.RELEASE</spring-version>
+         <spring-version>3.0.2.RELEASE</spring-version>
          <junit-version>4.8.1</junit-version> 
       </properties>
       <!--repositories>
