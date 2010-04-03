@@ -29,6 +29,7 @@ import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 
+import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.gae.bind.HttpBindingInvocationHandler;
@@ -66,6 +67,7 @@ public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSup
             ClientConnectionManager httpConnectionManager,
             HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endpointUri, component, httpUri, params, httpConnectionManager, clientConfigurer);
+        urlFetchService = URLFetchServiceFactory.getURLFetchService();
     }
 
     /**

@@ -25,11 +25,11 @@ public class GHttpCombinedRouteBuilder extends RouteBuilder {
     public void configure() throws Exception {
         
         from("ghttp:///test1")
-            .to("ghttp://somewhere.com/test?urlFetchServiceRef=#mockUrlFetchService");
+            .to("ghttp://localhost:7441/test");
         
         from("ghttp:///test2")
-            .setHeader(Exchange.HTTP_URI).constant("http://another.org:1234/abc")
-            .to("ghttp://somewhere.com/test?bridgeEndpoint=false&urlFetchServiceRef=#mockUrlFetchService");
+            .setHeader(Exchange.HTTP_URI).constant("ghttp://localhost:7441/blah")
+            .to("ghttp://localhost:7441/test?bridgeEndpoint=false");
     }
 
 }

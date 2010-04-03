@@ -17,7 +17,6 @@
 package org.apache.camel.component.gae.mail;
 
 import com.google.appengine.api.mail.MailService.Message;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;

@@ -18,9 +18,6 @@ package org.apache.camel.component.gae.mail;
 
 import java.util.Map;
 
-import com.google.appengine.api.mail.MailService;
-import com.google.appengine.api.mail.MailServiceFactory;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.OutboundBinding;
 import org.apache.camel.impl.DefaultComponent;

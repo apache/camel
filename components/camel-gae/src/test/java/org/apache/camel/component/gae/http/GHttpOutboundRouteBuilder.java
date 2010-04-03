@@ -23,7 +23,7 @@ public class GHttpOutboundRouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        from("direct:input1").to("ghttp://somewhere.com/test?a=b&urlFetchServiceRef=#mockUrlFetchService");
+        from("direct:input1").to("ghttp://localhost:7441/test?a=b");
         
     }
 

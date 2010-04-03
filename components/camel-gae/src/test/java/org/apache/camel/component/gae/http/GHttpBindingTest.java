@@ -16,14 +16,19 @@
  */
 package org.apache.camel.component.gae.http;
 
-import java.io.InputStream;
-
+import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
-import com.google.appengine.api.urlfetch.MockHttpResponse;
-
+import com.google.appengine.api.urlfetch.HTTPResponse;
+import com.google.appengine.api.urlfetch.URLFetchService;
+import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalURLFetchServiceTestConfig;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
+import org.eclipse.jetty.server.Server;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,23 +38,42 @@ import static org.apache.camel.component.gae.http.GHttpTestUtils.createRequest;
 import static org.apache.camel.component.gae.http.GHttpTestUtils.getCamelContext;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class GHttpBindingTest {
 
+    private static Server testServer;
     private static GHttpBinding binding;
+
+    private final LocalURLFetchServiceTestConfig config = new LocalURLFetchServiceTestConfig();
+    private final LocalServiceTestHelper helper = new LocalServiceTestHelper(config);
+
+    private URLFetchService service;
 
     private Exchange exchange;
     
     
     @BeforeClass
-    public static void setUpClass() {
+    public static void setUpClass() throws Exception {
         binding = new GHttpBinding();
+        testServer = GHttpTestUtils.createTestServer(7441);
+        testServer.start();
     }
     
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception  {
+        testServer.stop();
+    }
+
     @Before
     public void setUp() throws Exception {
+        helper.setUp();
+        service = URLFetchServiceFactory.getURLFetchService();
         exchange = new DefaultExchange(getCamelContext());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        helper.tearDown();
     }
 
     @Test
@@ -126,46 +150,44 @@ public class GHttpBindingTest {
     
     @Test
     public void testReadResponseHeaders() throws Exception {
-        GHttpEndpoint endpoint = createEndpoint("ghttp://somewhere.com:9090/path");
-        MockHttpResponse response = new MockHttpResponse(200);
-        response.addHeader("test", "abc");
-        response.addHeader("content-type", "text/plain");
+        GHttpEndpoint endpoint = createEndpoint("ghttp://localhost:7441/test");
+        HTTPRequest request = new HTTPRequest(endpoint.getEndpointUrl());
+        request.addHeader(new HTTPHeader("test", "abc"));
+        request.addHeader(new HTTPHeader("content-type", "text/plain"));
+        HTTPResponse response = service.fetch(request);
         binding.readResponseHeaders(endpoint, exchange, response);
         assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("abc", exchange.getOut().getHeader("test"));
         assertEquals("text/plain", exchange.getOut().getHeader("content-type"));
     }
-    
+
     @Test
     public void testReadResponseBody() throws Exception {
-        MockHttpResponse response = new MockHttpResponse(200);
-        response.setContent("abc".getBytes());
+        GHttpEndpoint endpoint = createEndpoint("ghttp://localhost:7441/test");
+        HTTPRequest request = new HTTPRequest(endpoint.getEndpointUrl(), HTTPMethod.POST);
+        request.setPayload("abc".getBytes());
+        HTTPResponse response = service.fetch(request);
         binding.readResponseBody(null, exchange, response);
-        InputStream stream = exchange.getOut().getBody(InputStream.class);
-        assertEquals("abc".getBytes()[0], stream.read());
-    }
-    
-    @Test
-    public void testReadNullResponseBody() throws Exception {
-        MockHttpResponse response = new MockHttpResponse(200);
-        binding.readResponseBody(null, exchange, response);
-        InputStream stream = exchange.getOut().getBody(InputStream.class);
-        assertNull(stream);
+        assertEquals("abc", exchange.getOut().getBody(String.class));
     }
     
     @Test(expected = GHttpException.class)
     public void testFailureException() throws Exception {
-        GHttpEndpoint endpoint = createEndpoint("ghttp://somewhere.com:9090/path");
-        MockHttpResponse response = new MockHttpResponse(500);
+        GHttpEndpoint endpoint = createEndpoint("ghttp://localhost:7441/test");
+        HTTPRequest request = new HTTPRequest(endpoint.getEndpointUrl());
+        request.addHeader(new HTTPHeader("code", "500"));
+        HTTPResponse response = service.fetch(request);
         binding.readResponse(endpoint, exchange, response);
     }
     
     @Test
     public void testFailureNoException() throws Exception {
-        GHttpEndpoint endpoint = createEndpoint("ghttp://somewhere.com:9090/path?throwExceptionOnFailure=false");
-        MockHttpResponse response = new MockHttpResponse(500);
+        GHttpEndpoint endpoint = createEndpoint("ghttp://localhost:7441/test?throwExceptionOnFailure=false");
+        HTTPRequest request = new HTTPRequest(endpoint.getEndpointUrl());
+        request.addHeader(new HTTPHeader("code", "500"));
+        HTTPResponse response = service.fetch(request);
         binding.readResponse(endpoint, exchange, response);
         assertEquals(500, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
-    
+
 }

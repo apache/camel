@@ -19,10 +19,12 @@ package org.apache.camel.component.gae.http;
 import java.net.URL;
 
 import com.google.appengine.api.urlfetch.HTTPRequest;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 
 public final class GHttpTestUtils {
 
@@ -31,7 +33,6 @@ public final class GHttpTestUtils {
 
     static {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("mockUrlFetchService", new MockUrlFetchService());
         registry.put("customBinding", new GHttpBinding() { }); // subclass
         context = new DefaultCamelContext(registry);
         component = new GHttpComponent();
@@ -44,7 +45,16 @@ public final class GHttpTestUtils {
     public static CamelContext getCamelContext() {
         return context;
     }
-    
+
+    public static Server createTestServer(int port) {
+        ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+        handler.addServlet(new ServletHolder(new GHttpTestServlet()), "/*");
+        handler.setContextPath("/");
+        Server server = new Server(port);
+        server.setHandler(handler);
+        return server;
+    }
+
     public static GHttpEndpoint createEndpoint(String endpointUri) throws Exception {
         return (GHttpEndpoint)component.createEndpoint(endpointUri);
     }

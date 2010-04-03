@@ -25,7 +25,6 @@ import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
-
 import org.apache.camel.component.gae.support.ServletTestSupport;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,6 +36,7 @@ public class GHttpInboundRouteBuilderTest extends ServletTestSupport {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        // Start servlet container for running the CamelHttpTransportServlet
         String webxml = "org/apache/camel/component/gae/http/web-inbound.xml";
         InputStream is = new ClassPathResource(webxml).getInputStream();
         servletRunner = new ServletRunner(is, CTX_PATH);

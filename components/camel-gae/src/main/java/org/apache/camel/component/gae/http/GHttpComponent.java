@@ -19,9 +19,6 @@ package org.apache.camel.component.gae.http;
 import java.net.URI;
 import java.util.Map;
 
-import com.google.appengine.api.urlfetch.URLFetchService;
-import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.InboundBinding;
 import org.apache.camel.component.gae.bind.OutboundBinding;
@@ -50,14 +47,11 @@ public class GHttpComponent extends ServletComponent {
                 parameters, "outboundBindingRef", OutboundBinding.class, new GHttpBinding());
         InboundBinding inboundBinding = resolveAndRemoveReferenceParameter(
                 parameters, "inboundBindingRef", InboundBinding.class, new GHttpBinding());
-        URLFetchService service = resolveAndRemoveReferenceParameter(
-                parameters, "urlFetchServiceRef", URLFetchService.class, URLFetchServiceFactory.getURLFetchService());
         GHttpEndpoint endpoint = (GHttpEndpoint)super.createEndpoint(uri, remaining, parameters);
         endpoint.setThrowExceptionOnFailure(throwException);
         endpoint.setBridgeEndpoint(bridgeEndpoint);
         endpoint.setOutboundBinding(outboundBinding);
         endpoint.setInboundBinding(inboundBinding);
-        endpoint.setUrlFetchService(service);
         return endpoint;
     }
 

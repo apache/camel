@@ -18,6 +18,8 @@ package org.apache.camel.component.gae.http;
 
 import java.io.InputStream;
 
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalURLFetchServiceTestConfig;
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.HttpUnitOptions;
 import com.meterware.httpunit.PostMethodWebRequest;
@@ -25,25 +27,59 @@ import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
-
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.gae.support.ServletTestSupport;
+import org.eclipse.jetty.server.Server;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
 import static org.junit.Assert.assertEquals;
 
 public class GHttpCombinedRouteBuilderTest extends ServletTestSupport {
 
+    private static Server testServer = GHttpTestUtils.createTestServer(7441);
+
+    private final LocalURLFetchServiceTestConfig config = new LocalURLFetchServiceTestConfig();
+    private final LocalServiceTestHelper helper = new LocalServiceTestHelper(config);
+
+    @Autowired
+    private ProducerTemplate producerTemplate;
+
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpBeforeClass() throws Exception {
+        // Start servlet container for running the CamelHttpTransportServlet
         String webxml = "org/apache/camel/component/gae/http/web-combined.xml";
         InputStream is = new ClassPathResource(webxml).getInputStream();
         servletRunner = new ServletRunner(is, CTX_PATH);
         HttpUnitOptions.setExceptionsThrownOnErrorStatus(true);
         is.close();
+
+        // Start servlet container for running the GHttpTestServlet
+        testServer.start();
     }
-    
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception  {
+        testServer.stop();
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        helper.setUp();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        helper.tearDown();
+        super.tearDown();
+    }
+
     @Test
     public void testGet() throws Exception {
         WebRequest req = new GetMethodWebRequest(createUrl("/test1?test=input1"));
@@ -66,7 +102,7 @@ public class GHttpCombinedRouteBuilderTest extends ServletTestSupport {
         WebRequest req = new GetMethodWebRequest(createUrl("/test2"));
         ServletUnitClient client = newClient();
         WebResponse response = client.getResponse(req);
-        assertEquals("http://another.org:1234/abc", response.getHeaderField("testUrl"));
+        assertEquals("http://localhost:7441/blah", response.getHeaderField("testUrl"));
     }
     
 }

@@ -38,7 +38,7 @@ public abstract class ServletTestSupport {
     }
     
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
         // ...
     }
     

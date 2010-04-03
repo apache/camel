@@ -16,10 +16,16 @@
  */
 package org.apache.camel.component.gae.http;
 
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalURLFetchServiceTestConfig;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.eclipse.jetty.server.Server;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +33,37 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/org/apache/camel/component/gae/http/context-outbound.xml"})
 public class GHttpOutboundRouteBuilderTest {
 
+    private static Server testServer = GHttpTestUtils.createTestServer(7441);
+
+    private final LocalURLFetchServiceTestConfig config = new LocalURLFetchServiceTestConfig();
+    private final LocalServiceTestHelper helper = new LocalServiceTestHelper(config);
+
     @Autowired
     private ProducerTemplate producerTemplate;
 
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        testServer.start();
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception  {
+        testServer.stop();
+    }
+
     @Before
     public void setUp() throws Exception {
+        helper.setUp();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        helper.tearDown();
     }
 
     @Test
@@ -62,7 +88,6 @@ public class GHttpOutboundRouteBuilderTest {
                 exchange.getIn().setHeader("test", "testHeader1");
             }
         });
-        assertNull(result.getOut().getBody());
         assertEquals("testHeader1", result.getOut().getHeader("test"));
         assertEquals("a=b", result.getOut().getHeader("testQuery"));
         assertEquals("GET", result.getOut().getHeader("testMethod"));

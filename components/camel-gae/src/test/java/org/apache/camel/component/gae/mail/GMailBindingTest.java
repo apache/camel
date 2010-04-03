@@ -17,16 +17,13 @@
 package org.apache.camel.component.gae.mail;
 
 import com.google.appengine.api.mail.MailService.Message;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.apache.camel.component.gae.mail.GMailTestUtils.createEndpoint;
-import static org.apache.camel.component.gae.mail.GMailTestUtils.createMessage;
-import static org.apache.camel.component.gae.mail.GMailTestUtils.getCamelContext;
+import static org.apache.camel.component.gae.mail.GMailTestUtils.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

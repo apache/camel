@@ -47,7 +47,6 @@ public class GHttpEndpointTest {
     public void testPropertiesDefault() throws Exception {
         GHttpEndpoint endpoint = createEndpoint("ghttp://somewhere.com/path?a=b");
         assertTrue(endpoint.getOutboundBinding().getClass().equals(GHttpBinding.class));
-        assertFalse(endpoint.getUrlFetchService() instanceof MockUrlFetchService);
     }
     
     @Test
@@ -55,13 +54,11 @@ public class GHttpEndpointTest {
         StringBuffer buffer = new StringBuffer("ghttp://somewhere.com/path")
             .append("?").append("a=b")
             .append(AMP).append("bridgeEndpoint=false")
-            .append(AMP).append("urlFetchServiceRef=#mockUrlFetchService")
             .append(AMP).append("outboundBindingRef=#customBinding")
             .append(AMP).append("throwExceptionOnFailure=false");
         GHttpEndpoint endpoint = createEndpoint(buffer.toString());
         assertFalse(endpoint.getOutboundBinding().getClass().equals(GHttpBinding.class));
         assertTrue(endpoint.getOutboundBinding() instanceof GHttpBinding);
-        assertTrue(endpoint.getUrlFetchService() instanceof MockUrlFetchService);
         assertEquals("ghttp://somewhere.com/path?a=b", endpoint.getEndpointUri());
     }
     

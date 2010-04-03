@@ -19,7 +19,6 @@ package org.apache.camel.component.gae.mail;
 import com.google.appengine.api.mail.dev.LocalMailService;
 import com.google.appengine.tools.development.testing.LocalMailServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
