@@ -209,7 +209,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
 
             // now lets parse the routes with JAXB
-            Binder<Node> binder = null;
+            Binder<Node> binder;
             try {
                 binder = getJaxbContext().createBinder();
             } catch (JAXBException e) {
@@ -237,6 +237,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("camelPropertyPlaceholder", factoryBean.getCamelPropertyPlaceholder());
                 builder.addPropertyValue("camelJMXAgent", factoryBean.getCamelJMXAgent());
                 builder.addPropertyValue("threadPoolProfiles", factoryBean.getThreadPoolProfiles());
+                // add any depends-on
+                addDependsOn(factoryBean, builder);
             }
 
             boolean createdBeanPostProcessor = false;
@@ -291,6 +293,25 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
         }
 
+    }
+
+    protected void addDependsOn(CamelContextFactoryBean factoryBean, BeanDefinitionBuilder builder) {
+        String dependsOn = factoryBean.getDependsOn();
+        if (ObjectHelper.isNotEmpty(dependsOn)) {
+            // comma, whitespace and semi colon is valid separators in Spring depends-on
+            String[] depends = dependsOn.split(",|;|\\s");
+            if (depends == null) {
+                throw new IllegalArgumentException("Cannot separate depends-on, was: " + dependsOn);
+            } else {
+                for (String depend : depends) {
+                    depend = depend.trim();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Adding dependsOn " + depend + " to CamelContext(" + factoryBean.getId() + ")");
+                    }
+                    builder.addDependsOn(depend);
+                }
+            }
+        }
     }
 
     protected void injectNamespaces(Element element, Binder<Node> binder) {

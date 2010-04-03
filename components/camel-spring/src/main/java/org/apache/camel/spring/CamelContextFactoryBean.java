@@ -108,6 +108,8 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class CamelContextFactoryBean extends IdentifiedType implements RouteContainer, FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
     private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
 
+    @XmlAttribute(name = "depends-on", required = false)
+    private String dependsOn;
     @XmlAttribute(required = false)
     private String trace;
     @XmlAttribute(required = false)
@@ -952,6 +954,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public void setThreadPoolProfiles(List<ThreadPoolProfileDefinition> threadPoolProfiles) {
         this.threadPoolProfiles = threadPoolProfiles;
+    }
+
+    public String getDependsOn() {
+        return dependsOn;
+    }
+
+    public void setDependsOn(String dependsOn) {
+        this.dependsOn = dependsOn;
     }
 
     // Implementation methods
