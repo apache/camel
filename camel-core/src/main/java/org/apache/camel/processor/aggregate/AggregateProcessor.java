@@ -480,41 +480,48 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         public void run() {
-            AggregateProcessor.this.doRecover(recoverable);
-        }
-
-    }
-
-    private void doRecover(RecoverableAggregationRepository<Object> recoverable) {
-        LOG.trace("Starting recover check");
-
-        Set<String> exchangeIds = recoverable.scan(camelContext);
-        for (String exchangeId : exchangeIds) {
-
-            // we may shutdown while doing recovery
-            if (!isRunAllowed()) {
-                LOG.info("We are shutting down so stop recovering");
+            // only run if CamelContext has been fully started
+            if (!camelContext.getStatus().isStarted()) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Recover check cannot start due CamelContext(" + camelContext.getName() + ") has not been started yet");
+                }
                 return;
             }
 
-            boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
-            if (inProgress) {
-                LOG.debug("Aggregated exchange with id " + exchangeId + " is already in progress");
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Recovering aggregated exchange with id " + exchangeId);
+            LOG.trace("Starting recover check");
+
+            Set<String> exchangeIds = recoverable.scan(camelContext);
+            for (String exchangeId : exchangeIds) {
+
+                // we may shutdown while doing recovery
+                if (!isRunAllowed()) {
+                    LOG.info("We are shutting down so stop recovering");
+                    return;
                 }
-                Exchange exchange = recoverable.recover(camelContext, exchangeId);
-                if (exchange != null) {
-                    // get the correlation key
-                    String key = exchange.getProperty(Exchange.AGGREGATED_CORRELATION_KEY, String.class);
-                    // resubmit the recovered exchange
-                    onSubmitCompletion(key, exchange);
+
+                boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
+                if (inProgress) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Aggregated exchange with id " + exchangeId + " is already in progress.");
+                    }
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Recovering aggregated exchange with id " + exchangeId);
+                    }
+                    Exchange exchange = recoverable.recover(camelContext, exchangeId);
+                    if (exchange != null) {
+                        // get the correlation key
+                        String key = exchange.getProperty(Exchange.AGGREGATED_CORRELATION_KEY, String.class);
+                        // and mark it as redelivered
+                        exchange.getIn().setHeader(Exchange.REDELIVERED, Boolean.TRUE);
+                        // resubmit the recovered exchange
+                        onSubmitCompletion(key, exchange);
+                    }
                 }
             }
-        }
 
-        LOG.trace("Recover check complete");
+            LOG.trace("Recover check complete");
+        }
     }
 
     @Override
@@ -544,17 +551,15 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             RecoverableAggregationRepository<Object> recoverable = (RecoverableAggregationRepository<Object>) aggregationRepository;
             if (recoverable.isUseRecovery()) {
                 long interval = recoverable.getCheckIntervalInMillis();
-                if (interval > 0) {
-                    // create a background recover thread to check once ev
-                    recoverService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateRecoverChecker", 1);
-                    Runnable recoverTask = new RecoverTask(recoverable);
-                    LOG.info("Scheduling recover checker to run every " + interval + " millis.");
-                    recoverService.scheduleAtFixedRate(recoverTask, 1000L, interval, TimeUnit.MILLISECONDS);
-                } else {
-                    // its a one shot recover during startup
-                    LOG.info("Running recover checker once at startup to recover existing aggregated exchanges");
-                    doRecover(recoverable);
+                if (interval <= 0) {
+                    throw new IllegalArgumentException("AggregationRepository has recovery enabled and the CheckInterval option must be a positive number, was: " + interval);
                 }
+
+                // create a background recover thread to check every interval
+                recoverService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateRecoverChecker", 1);
+                Runnable recoverTask = new RecoverTask(recoverable);
+                LOG.info("Using RecoverableAggregationRepository by scheduling recover checker to run every " + interval + " millis.");
+                recoverService.scheduleAtFixedRate(recoverTask, 1000L, interval, TimeUnit.MILLISECONDS);
             }
         }
 

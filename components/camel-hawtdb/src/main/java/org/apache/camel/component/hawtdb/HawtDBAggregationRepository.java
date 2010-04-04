@@ -252,8 +252,12 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
             }
         });
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Scanned and found " + answer.size() + " exchanges to recover.");
+        if (answer.size() == 0) {
+            LOG.trace("Scanned and found no exchange to recover.");
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Scanned and found " + answer.size() + " exchange(s) to recover (note some of them may already be in progress).");
+            }
         }
         return answer;
 
@@ -282,7 +286,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Recovering exchangeId  [" + exchangeId + "] -> " + answer);
+            LOG.debug("Recovering exchangeId [" + exchangeId + "] -> " + answer);
         }
         return answer;
     }

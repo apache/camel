@@ -31,7 +31,7 @@ import org.apache.camel.Exchange;
 public interface RecoverableAggregationRepository<K> extends AggregationRepository<K> {
 
     /**
-     * Scans the repository for exchanges to be recovered
+     * Scans the repository for {@link Exchange}s to be recovered
      * 
      * @param camelContext   the current CamelContext
      * @return the exchange ids for to be recovered

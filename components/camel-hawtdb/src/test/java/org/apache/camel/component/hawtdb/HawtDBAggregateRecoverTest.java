@@ -47,6 +47,7 @@ public class HawtDBAggregateRecoverTest extends CamelTestSupport {
         // should fail the first 2 times and then recover
         getMockEndpoint("mock:aggregated").expectedMessageCount(3);
         getMockEndpoint("mock:result").expectedBodiesReceived("ABCDE");
+        getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
