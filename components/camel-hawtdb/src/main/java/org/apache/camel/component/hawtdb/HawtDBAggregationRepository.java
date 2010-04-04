@@ -50,7 +50,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
     private boolean sync;
     private boolean returnOldExchange;
     private HawtDBCamelMarshaller<K> marshaller = new HawtDBCamelMarshaller<K>();
-    private long interval = 5000;
+    private long recoveryInterval = 5000;
     private boolean useRecovery = true;
 
     /**
@@ -344,16 +344,16 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         this.returnOldExchange = returnOldExchange;
     }
 
-    public void setCheckInterval(long interval, TimeUnit timeUnit) {
-        this.interval = timeUnit.toMillis(interval);
+    public void setRecoveryInterval(long interval, TimeUnit timeUnit) {
+        this.recoveryInterval = timeUnit.toMillis(interval);
     }
 
-    public void setCheckInterval(long interval) {
-        this.interval = interval;
+    public void setRecoveryInterval(long interval) {
+        this.recoveryInterval = interval;
     }
 
-    public long getCheckIntervalInMillis() {
-        return interval;
+    public long getRecoveryIntervalInMillis() {
+        return recoveryInterval;
     }
 
     public boolean isUseRecovery() {

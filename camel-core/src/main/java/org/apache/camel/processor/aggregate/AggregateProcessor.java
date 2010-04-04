@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +37,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.processor.Traceable;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
@@ -80,7 +82,15 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private ExceptionHandler exceptionHandler;
     private AggregationRepository<Object> aggregationRepository = new MemoryAggregationRepository();
     private Map<Object, Object> closedCorrelationKeys;
+    private final AggregateOnCompletion aggregateOnCompletion = new AggregateOnCompletion();
     private final Set<String> inProgressCompleteExchanges = new HashSet<String>();
+    private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<String, RedeliveryData>();
+
+    // keep booking about redelivery
+    private class RedeliveryData {
+        int redeliveryCounter;
+        long redeliveryDelay;
+    }
 
     // options
     private boolean ignoreBadCorrelationKeys;
@@ -324,6 +334,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // send this exchange
         executorService.submit(new Runnable() {
             public void run() {
+
+                // add on completion task so we remember to update the inProgressCompleteExchanges
+                exchange.addOnCompletion(aggregateOnCompletion);
+
                 try {
                     processor.process(exchange);
                 } catch (Exception e) {
@@ -333,18 +347,13 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                     exchange.setException(new CamelExchangeException("Error processing aggregated exchange", exchange, t));
                 }
 
-                try {
-                    // was it good or bad?
-                    if (exchange.getException() == null) {
-                        // only confirm if we processed without a problem
-                        aggregationRepository.confirm(exchange.getContext(), exchange.getExchangeId());
-                    } else {
-                        // if there was an exception then let the exception handler handle it
-                        getExceptionHandler().handleException("Error processing aggregated exchange", exchange, exchange.getException());
-                    }
-                } finally {
-                    // must remember to remove when we are done
-                    inProgressCompleteExchanges.remove(exchange.getExchangeId());
+                // was it good or bad?
+                if (exchange.getException() == null) {
+                    // only confirm if we processed without a problem
+                    aggregationRepository.confirm(exchange.getContext(), exchange.getExchangeId());
+                } else {
+                    // if there was an exception then let the exception handler handle it
+                    getExceptionHandler().handleException("Error processing aggregated exchange", exchange, exchange.getException());
                 }
             }
         });
@@ -450,6 +459,29 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     }
 
     /**
+     * On completion task which keeps the booking of the in progress up to date
+     */
+    private class AggregateOnCompletion extends SynchronizationAdapter {
+
+        @Override
+        public void onDone(Exchange exchange) {
+            // must remember to remove when we are done (done = success or failure)
+            inProgressCompleteExchanges.remove(exchange.getExchangeId());
+        }
+
+        @Override
+        public void onComplete(Exchange exchange) {
+            // remove redelivery state when it was processed successfully
+            redeliveryState.remove(exchange.getExchangeId());
+        }
+
+        @Override
+        public String toString() {
+            return "AggregateOnCompletion";
+        }
+    }
+
+    /**
      * Background task that looks for aggregated exchanges which is triggered by completion timeouts.
      */
     private final class AggregationTimeoutMap extends DefaultTimeoutMap<Object, Exchange> {
@@ -501,8 +533,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
                 boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
                 if (inProgress) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Aggregated exchange with id " + exchangeId + " is already in progress.");
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Aggregated exchange with id " + exchangeId + " is already in progress.");
                     }
                 } else {
                     if (LOG.isDebugEnabled()) {
@@ -514,6 +546,22 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                         String key = exchange.getProperty(Exchange.AGGREGATED_CORRELATION_KEY, String.class);
                         // and mark it as redelivered
                         exchange.getIn().setHeader(Exchange.REDELIVERED, Boolean.TRUE);
+
+                        // update current redelivery state
+                        RedeliveryData data = redeliveryState.get(exchange.getExchangeId());
+                        if (data == null) {
+                            // create new data
+                            data = new RedeliveryData();
+                            redeliveryState.put(exchange.getExchangeId(), data);
+                        }
+                        data.redeliveryCounter++;
+
+                        // TODO: support delay and have a DelayQueue to avoid blocking
+                        // if so we need to pre add in progress so we wont add again to delay queue
+
+                        // set redelivery counter
+                        exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
+
                         // resubmit the recovered exchange
                         onSubmitCompletion(key, exchange);
                     }
@@ -550,7 +598,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         if (aggregationRepository instanceof RecoverableAggregationRepository) {
             RecoverableAggregationRepository<Object> recoverable = (RecoverableAggregationRepository<Object>) aggregationRepository;
             if (recoverable.isUseRecovery()) {
-                long interval = recoverable.getCheckIntervalInMillis();
+                long interval = recoverable.getRecoveryIntervalInMillis();
                 if (interval <= 0) {
                     throw new IllegalArgumentException("AggregationRepository has recovery enabled and the CheckInterval option must be a positive number, was: " + interval);
                 }
@@ -574,14 +622,18 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(timeoutMap);
-        ServiceHelper.stopService(recoverService);
-
-        ServiceHelper.stopService(aggregationRepository);
+        ServiceHelper.stopServices(timeoutMap, recoverService, aggregationRepository);
 
         if (closedCorrelationKeys != null) {
             closedCorrelationKeys.clear();
         }
+        redeliveryState.clear();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // cleanup when shutting down
+        inProgressCompleteExchanges.clear();
     }
 
 }

@@ -38,7 +38,7 @@ public class HawtDBAggregateRecoverTest extends CamelTestSupport {
         // enable recovery
         repo.setUseRecovery(true);
         // check faster
-        repo.setCheckInterval(1, TimeUnit.SECONDS);
+        repo.setRecoveryInterval(1, TimeUnit.SECONDS);
         super.setUp();
     }
 
@@ -47,7 +47,10 @@ public class HawtDBAggregateRecoverTest extends CamelTestSupport {
         // should fail the first 2 times and then recover
         getMockEndpoint("mock:aggregated").expectedMessageCount(3);
         getMockEndpoint("mock:result").expectedBodiesReceived("ABCDE");
+        // should be marked as redelivered
         getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
+        // on the 2nd redelivery attempt we success
+        getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);

@@ -48,26 +48,26 @@ public interface RecoverableAggregationRepository<K> extends AggregationReposito
     Exchange recover(CamelContext camelContext, String exchangeId);
 
     /**
-     * Sets the interval between scans
+     * Sets the interval between recovery scans
      *
      * @param interval  the interval
      * @param timeUnit  the time unit
      */
-    void setCheckInterval(long interval, TimeUnit timeUnit);
+    void setRecoveryInterval(long interval, TimeUnit timeUnit);
 
     /**
-     * Sets the interval between scans
+     * Sets the interval between recovery scans
      *
      * @param interval  the interval in millis
      */
-    void setCheckInterval(long interval);
+    void setRecoveryInterval(long interval);
 
     /**
-     * Gets the interval between scans in millis.
+     * Gets the interval between recovery scans in millis.
      *
      * @return the interval in millis
      */
-    long getCheckIntervalInMillis();
+    long getRecoveryIntervalInMillis();
 
     /**
      * Whether or not recovery is enabled or not

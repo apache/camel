@@ -70,7 +70,7 @@ public class HawtDBAggregateConcurrentDifferentGroupsTest extends CamelTestSuppo
     private void doSendMessages(int files, int poolSize) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedMessageCount(2);
-        mock.setResultWaitTime(20 * 1000L);
+        mock.setResultWaitTime(30 * 1000L);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {

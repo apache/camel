@@ -27,7 +27,9 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A useful base class for any processor which provides some kind of throttling
- * or delayed processing
+ * or delayed processing.
+ * <p/>
+ * This implementation will block while waiting.
  * 
  * @version $Revision$
  */
