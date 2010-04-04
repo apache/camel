@@ -66,6 +66,8 @@ public class RedeliveryPolicyDefinition {
     private Boolean logExhausted;
     @XmlAttribute
     private Boolean disableRedelivery;
+    @XmlAttribute
+    private String delayPattern;
 
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
         if (ref != null) {
@@ -73,14 +75,19 @@ public class RedeliveryPolicyDefinition {
             return CamelContextHelper.mandatoryLookup(context, ref, RedeliveryPolicy.class);
         }
 
-        RedeliveryPolicy answer = parentPolicy.copy();
+        RedeliveryPolicy answer;
+        if (parentPolicy != null) {
+            answer = parentPolicy.copy();
+        } else {
+            answer = new RedeliveryPolicy();
+        }
 
         // copy across the properties - if they are set
         if (maximumRedeliveries != null) {
             answer.setMaximumRedeliveries(maximumRedeliveries);
         }
         if (redeliveryDelay != null) {
-            answer.setRedeliverDelay(redeliveryDelay);
+            answer.setRedeliveryDelay(redeliveryDelay);
         }
         if (retriesExhaustedLogLevel != null) {
             answer.setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
@@ -120,6 +127,9 @@ public class RedeliveryPolicyDefinition {
         }
         if (disableRedelivery != null && disableRedelivery) {
             answer.setMaximumRedeliveries(0);
+        }
+        if (delayPattern != null) {
+            answer.setDelayPattern(delayPattern);
         }
 
         return answer;
@@ -260,7 +270,7 @@ public class RedeliveryPolicyDefinition {
     /**
      * Sets the maximum redeliveries
      * <ul>
-     *   <li>5 = default value</li>
+     *   <li>x = redeliver at most x times</li>
      *   <li>0 = no redeliveries</li>
      *   <li>-1 = redeliver forever</li>
      * </ul>
@@ -312,6 +322,17 @@ public class RedeliveryPolicyDefinition {
      */
     public RedeliveryPolicyDefinition ref(String ref) {
         setRef(ref);
+        return this;
+    }
+
+    /**
+     * Sets the delay pattern with delay intervals.
+     *
+     * @param delayPattern the delay pattern
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition delayPattern(String delayPattern) {
+        setDelayPattern(delayPattern);
         return this;
     }
 
@@ -444,5 +465,13 @@ public class RedeliveryPolicyDefinition {
 
     public void setLogExhausted(Boolean logExhausted) {
         this.logExhausted = logExhausted;
+    }
+
+    public String getDelayPattern() {
+        return delayPattern;
+    }
+
+    public void setDelayPattern(String delayPattern) {
+        this.delayPattern = delayPattern;
     }
 }

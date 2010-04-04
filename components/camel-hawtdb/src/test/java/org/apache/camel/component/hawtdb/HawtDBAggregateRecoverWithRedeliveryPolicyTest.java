@@ -16,30 +16,44 @@
  */
 package org.apache.camel.component.hawtdb;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.fusesource.hawtdb.api.Index;
-import org.fusesource.hawtdb.api.Transaction;
-import org.fusesource.hawtdb.util.buffer.Buffer;
 import org.junit.Test;
 
-public class HawtDBAggregateNotLostTest extends CamelTestSupport {
+public class HawtDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSupport {
 
     private HawtDBAggregationRepository<String> repo;
+    private static AtomicInteger counter = new AtomicInteger(0);
 
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
         repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
+        // enable recovery
+        repo.setUseRecovery(true);
+        // check faster
+        repo.setRecoveryInterval(1, TimeUnit.SECONDS);
         super.setUp();
     }
 
     @Test
-    public void testHawtDBAggregateNotLost() throws Exception {
-        getMockEndpoint("mock:aggregated").expectedBodiesReceived("ABCDE");
-        getMockEndpoint("mock:result").expectedMessageCount(0);
+    public void testHawtDBAggregateRecover() throws Exception {
+        getMockEndpoint("mock:aggregated").setResultWaitTime(20000);
+        getMockEndpoint("mock:result").setResultWaitTime(20000);
+        
+        // should fail the first 3 times and then recover
+        getMockEndpoint("mock:aggregated").expectedMessageCount(4);
+        getMockEndpoint("mock:result").expectedBodiesReceived("ABCDE");
+        // should be marked as redelivered
+        getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
+        // on the 2nd redelivery attempt we success
+        getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
@@ -48,34 +62,6 @@ public class HawtDBAggregateNotLostTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
         assertMockEndpointsSatisfied();
-
-        // sleep a bit since the completed signal is done async
-        Thread.sleep(2000);
-
-        String exchangeId = getMockEndpoint("mock:aggregated").getReceivedExchanges().get(0).getExchangeId();
-
-        // the exchange should be in the completed repo where we should be able to find it
-        final HawtDBFile hawtDBFile = repo.getHawtDBFile();
-        final HawtDBCamelMarshaller<Object> marshaller = new HawtDBCamelMarshaller<Object>();
-        final Buffer confirmKeyBuffer = marshaller.marshallConfirmKey(exchangeId);
-        Buffer bf = hawtDBFile.execute(new Work<Buffer>() {
-            public Buffer execute(Transaction tx) {
-                Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, "repo1-completed");
-                return index.get(confirmKeyBuffer);
-            }
-        });
-
-        // assert the exchange was not lost and we got all the information still
-        assertNotNull(bf);
-        Exchange completed = marshaller.unmarshallExchange(context, bf);
-        assertNotNull(completed);
-        // should retain the exchange id
-        assertEquals(exchangeId, completed.getExchangeId());
-        assertEquals("ABCDE", completed.getIn().getBody());
-        assertEquals(123, completed.getIn().getHeader("id"));
-        assertEquals("size", completed.getProperty(Exchange.AGGREGATED_COMPLETED_BY));
-        assertEquals(5, completed.getProperty(Exchange.AGGREGATED_SIZE));
-        assertEquals(123, completed.getProperty(Exchange.AGGREGATED_CORRELATION_KEY));
     }
 
     @Override
@@ -86,10 +72,18 @@ public class HawtDBAggregateNotLostTest extends CamelTestSupport {
                 from("direct:start")
                     .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)
+                        // this is the output from the aggregator
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
-                        // throw an exception to fail, which we then will loose this message
-                        .throwException(new IllegalArgumentException("Damn"))
+                        // simulate errors the first three times
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                int count = counter.incrementAndGet();
+                                if (count <= 3) {
+                                    throw new IllegalArgumentException("Damn");
+                                }
+                            }
+                        })
                         .to("mock:result")
                     .end();
             }

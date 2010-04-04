@@ -102,7 +102,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     public String toString() {
         return "OnException[" + getExceptionClasses() + (onWhen != null ? " " + onWhen : "") + " -> " + getOutputs() + "]";
     }
-    
+
     @Override
     public boolean isAbstract() {
         return true;
@@ -110,10 +110,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
 
     /**
      * Allows an exception handler to create a new redelivery policy for this exception type
-     * @param context the camel context
+     *
+     * @param context      the camel context
      * @param parentPolicy the current redelivery policy
      * @return a newly created redelivery policy, or return the original policy if no customization is required
-     * for this exception handler.
+     *         for this exception handler.
      */
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
         if (redeliveryPolicy != null) {
@@ -171,29 +172,29 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     /**
      * Sets whether the exchange should be marked as handled or not.
      *
-     * @param handled  handled or not
+     * @param handled handled or not
      * @return the builder
      */
     public OnExceptionDefinition handled(boolean handled) {
         Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
         return handled(expression);
     }
-    
+
     /**
      * Sets whether the exchange should be marked as handled or not.
      *
-     * @param handled  predicate that determines true or false
+     * @param handled predicate that determines true or false
      * @return the builder
      */
     public OnExceptionDefinition handled(Predicate handled) {
         setHandledPolicy(handled);
         return this;
     }
-    
+
     /**
      * Sets whether the exchange should be marked as handled or not.
      *
-     * @param handled  expression that determines true or false
+     * @param handled expression that determines true or false
      * @return the builder
      */
     public OnExceptionDefinition handled(Expression handled) {
@@ -207,7 +208,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
      * To be used for fine grained controlling whether a thrown exception should be intercepted
      * by this exception type or not.
      *
-     * @param predicate  predicate that determines true or false
+     * @param predicate predicate that determines true or false
      * @return the builder
      */
     public OnExceptionDefinition onWhen(Predicate predicate) {
@@ -254,11 +255,13 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     }
 
     /**
-     * Sets the delay
+     * Sets the initial redelivery delay
      *
-     * @param delay  the redeliver delay
+     * @param delay the initial redelivery delay
      * @return the builder
+     * @deprecated
      */
+    @Deprecated
     public OnExceptionDefinition redeliverDelay(long delay) {
         getOrCreateRedeliveryPolicy().redeliveryDelay(delay);
         return this;
@@ -267,7 +270,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     /**
      * Sets the back off multiplier
      *
-     * @param backOffMultiplier  the back off multiplier
+     * @param backOffMultiplier the back off multiplier
      * @return the builder
      */
     public OnExceptionDefinition backOffMultiplier(double backOffMultiplier) {
@@ -278,7 +281,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     /**
      * Sets the collision avoidance factor
      *
-     * @param collisionAvoidanceFactor  the factor
+     * @param collisionAvoidanceFactor the factor
      * @return the builder
      */
     public OnExceptionDefinition collisionAvoidanceFactor(double collisionAvoidanceFactor) {
@@ -289,7 +292,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     /**
      * Sets the collision avoidance percentage
      *
-     * @param collisionAvoidancePercent  the percentage
+     * @param collisionAvoidancePercent the percentage
      * @return the builder
      */
     public OnExceptionDefinition collisionAvoidancePercent(double collisionAvoidancePercent) {
@@ -298,9 +301,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     }
 
     /**
-     * Sets the fixed delay between redeliveries
+     * Sets the initial redelivery delay
      *
-     * @param delay  delay in millis
+     * @param delay delay in millis
      * @return the builder
      */
     public OnExceptionDefinition redeliveryDelay(long delay) {
@@ -311,7 +314,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     /**
      * Sets the logging level to use when retries has exhausted
      *
-     * @param retriesExhaustedLogLevel  the logging level
+     * @param retriesExhaustedLogLevel the logging level
      * @return the builder
      */
     public OnExceptionDefinition retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
@@ -322,7 +325,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     /**
      * Sets the logging level to use for logging retry attempts
      *
-     * @param retryAttemptedLogLevel  the logging level
+     * @param retryAttemptedLogLevel the logging level
      * @return the builder
      */
     public OnExceptionDefinition retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
@@ -373,12 +376,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     /**
      * Sets the maximum redeliveries
      * <ul>
-     *   <li>5 = default value</li>
-     *   <li>0 = no redeliveries</li>
-     *   <li>-1 = redeliver forever</li>
+     * <li>5 = default value</li>
+     * <li>0 = no redeliveries</li>
+     * <li>-1 = redeliver forever</li>
      * </ul>
      *
-     * @param maximumRedeliveries  the value
+     * @param maximumRedeliveries the value
      * @return the builder
      */
     public OnExceptionDefinition maximumRedeliveries(int maximumRedeliveries) {
@@ -409,11 +412,33 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     /**
      * Sets the maximum delay between redelivery
      *
-     * @param maximumRedeliveryDelay  the delay in millis
+     * @param maximumRedeliveryDelay the delay in millis
      * @return the builder
      */
     public OnExceptionDefinition maximumRedeliveryDelay(long maximumRedeliveryDelay) {
         getOrCreateRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
+        return this;
+    }
+
+    /**
+     * Sets a reference to a {@link RedeliveryPolicy} to lookup in the {@link org.apache.camel.spi.Registry} to be used.
+     *
+     * @param redeliveryPolicyRef reference to use for lookup
+     * @return the builder
+     */
+    public OnExceptionDefinition redeliveryPolicyRef(String redeliveryPolicyRef) {
+        getOrCreateRedeliveryPolicy().setRef(redeliveryPolicyRef);
+        return this;
+    }
+
+    /**
+     * Sets the delay pattern with delay intervals.
+     *
+     * @param delayPattern the delay pattern
+     * @return the builder
+     */
+    public OnExceptionDefinition delayPattern(String delayPattern) {
+        getOrCreateRedeliveryPolicy().setDelayPattern(delayPattern);
         return this;
     }
 
@@ -438,7 +463,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     }
 
     /**
-     * Sets a processor that should be processed <b>before</b> a redelivey attempt.
+     * Sets a processor that should be processed <b>before</b> a redelivery attempt.
      * <p/>
      * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
      */
@@ -449,6 +474,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
 
     // Properties
     //-------------------------------------------------------------------------
+
     public List<ProcessorDefinition> getOutputs() {
         return outputs;
     }
@@ -498,7 +524,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
 
     public ExpressionSubElementDefinition getHandled() {
         return handled;
-    }    
+    }
 
     public void setHandledPolicy(Predicate handledPolicy) {
         this.handledPolicy = handledPolicy;
@@ -554,6 +580,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
 
     // Implementation methods
     //-------------------------------------------------------------------------
+
     protected RedeliveryPolicyDefinition getOrCreateRedeliveryPolicy() {
         if (redeliveryPolicy == null) {
             redeliveryPolicy = new RedeliveryPolicyDefinition();

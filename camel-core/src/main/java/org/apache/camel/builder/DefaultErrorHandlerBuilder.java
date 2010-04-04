@@ -387,7 +387,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     protected RedeliveryPolicy createRedeliveryPolicy() {
         RedeliveryPolicy policy = new RedeliveryPolicy();
         policy.disableRedelivery();
-        policy.setRedeliverDelay(0);
+        policy.setRedeliveryDelay(0);
         return policy;
     }
 

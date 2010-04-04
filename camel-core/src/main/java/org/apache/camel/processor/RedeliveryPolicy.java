@@ -149,7 +149,9 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
 
     /**
-     * Calculates the new redelivery delay based on the last one then sleeps for the necessary amount of time
+     * Calculates the new redelivery delay based on the last one and then <b>sleeps</b> for the necessary amount of time.
+     * <p/>
+     * This implementation will block while sleeping.
      *
      * @param redeliveryDelay  previous redelivery delay
      * @param redeliveryCounter  number of previous redelivery attempts
@@ -168,7 +170,14 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         return redeliveryDelay;
     }
 
-    protected long calculateRedeliveryDelay(long previousDelay, int redeliveryCounter) {
+    /**
+     * Calculates the new redelivery delay based on the last one
+     *
+     * @param previousDelay  previous redelivery delay
+     * @param redeliveryCounter  number of previous redelivery attempts
+     * @return the calculate delay
+     */
+    public long calculateRedeliveryDelay(long previousDelay, int redeliveryCounter) {
         if (ObjectHelper.isNotEmpty(delayPattern)) {
             // calculate delay using the pattern
             return calculateRedeliverDelayUsingPattern(delayPattern, redeliveryCounter);

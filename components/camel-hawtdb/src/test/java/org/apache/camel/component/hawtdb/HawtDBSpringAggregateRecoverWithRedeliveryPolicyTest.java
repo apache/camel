@@ -16,29 +16,43 @@
  */
 package org.apache.camel.component.hawtdb;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Processor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.fusesource.hawtdb.api.Index;
-import org.fusesource.hawtdb.api.Transaction;
-import org.fusesource.hawtdb.util.buffer.Buffer;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class HawtDBAggregateNotLostRemovedWhenConfirmedTest extends CamelTestSupport {
+public class HawtDBSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelSpringTestSupport {
 
-    private HawtDBAggregationRepository<String> repo;
+    private static AtomicInteger counter = new AtomicInteger(0);
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/hawtdb/HawtDBSpringAggregateRecoverWithRedeliveryPolicyTest.xml");
+    }
 
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
-        repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
         super.setUp();
     }
 
     @Test
-    public void testHawtDBAggregateNotLostRemovedWhenConfirmed() throws Exception {
+    public void testHawtDBAggregateRecover() throws Exception {
+        getMockEndpoint("mock:aggregated").setResultWaitTime(20000);
+        getMockEndpoint("mock:result").setResultWaitTime(20000);
+
+        // should fail the first 3 times and then recover
+        getMockEndpoint("mock:aggregated").expectedMessageCount(4);
         getMockEndpoint("mock:result").expectedBodiesReceived("ABCDE");
+        // should be marked as redelivered
+        getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
+        // on the 2nd redelivery attempt we success
+        getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
@@ -47,40 +61,16 @@ public class HawtDBAggregateNotLostRemovedWhenConfirmedTest extends CamelTestSup
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
         assertMockEndpointsSatisfied();
-
-        // sleep a bit since the completed signal is done async
-        Thread.sleep(2000);
-
-        String exchangeId = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getExchangeId();
-
-        // the exchange should NOT be in the completed repo as it was confirmed
-        final HawtDBFile hawtDBFile = repo.getHawtDBFile();
-        final HawtDBCamelMarshaller<Object> marshaller = new HawtDBCamelMarshaller<Object>();
-        final Buffer confirmKeyBuffer = marshaller.marshallConfirmKey(exchangeId);
-        Buffer bf = hawtDBFile.execute(new Work<Buffer>() {
-            public Buffer execute(Transaction tx) {
-                Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, "repo1-completed");
-                return index.get(confirmKeyBuffer);
-            }
-        });
-
-        // assert the exchange was deleted
-        assertNull(bf);
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionSize(5).aggregationRepository(repo)
-                        .log("aggregated exchange id ${exchangeId} with ${body}")
-                        .to("mock:result")
-                    .end();
+    public static class MyFailProcessor implements Processor {
+
+        public void process(Exchange exchange) throws Exception {
+            int count = counter.incrementAndGet();
+            if (count <= 3) {
+                throw new IllegalArgumentException("Damn");
             }
-        };
+        }
     }
 
     public static class MyAggregationStrategy implements AggregationStrategy {

@@ -37,11 +37,12 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.impl.SynchronizationAdapter;
+import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.Traceable;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.RecoverableAggregationRepository;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.DefaultTimeoutMap;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.LRUCache;
@@ -328,7 +329,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             LOG.debug("Aggregation complete for correlation key " + key + " sending aggregated exchange: " + exchange);
         }
 
-        // add this as in progress
+        // add this as in progress before we submit the task
         inProgressCompleteExchanges.add(exchange.getExchangeId());
 
         // send this exchange
@@ -461,17 +462,18 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     /**
      * On completion task which keeps the booking of the in progress up to date
      */
-    private class AggregateOnCompletion extends SynchronizationAdapter {
+    private class AggregateOnCompletion implements Synchronization {
 
-        @Override
-        public void onDone(Exchange exchange) {
-            // must remember to remove when we are done (done = success or failure)
+        public void onFailure(Exchange exchange) {
+            // must remember to remove in progress when we failed
             inProgressCompleteExchanges.remove(exchange.getExchangeId());
+            // do not remove redelivery state as we need it when we redeliver again later
         }
 
-        @Override
         public void onComplete(Exchange exchange) {
-            // remove redelivery state when it was processed successfully
+            // must remember to remove in progress when we are complete
+            inProgressCompleteExchanges.remove(exchange.getExchangeId());
+            // and remove redelivery state as well
             redeliveryState.remove(exchange.getExchangeId());
         }
 
@@ -555,9 +557,6 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                             redeliveryState.put(exchange.getExchangeId(), data);
                         }
                         data.redeliveryCounter++;
-
-                        // TODO: support delay and have a DelayQueue to avoid blocking
-                        // if so we need to pre add in progress so we wont add again to delay queue
 
                         // set redelivery counter
                         exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
