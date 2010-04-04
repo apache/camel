@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.hawtdb;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -28,10 +29,10 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
+public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
 
-    private static final char[] KEYS = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
-    private static final int SIZE = 5000;
+    private static final int SIZE = 1000;
+    private static final AtomicInteger counter = new AtomicInteger();
 
     @Before
     @Override
@@ -41,30 +42,33 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testLoadTestHawtDBAggregate() throws Exception {
+    public void testLoadAndRecoverHawtDBAggregate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(9);
+        mock.expectedMessageCount(SIZE / 10);
         mock.setResultWaitTime(30 * 1000);
-
-        ExecutorService executor = Executors.newFixedThreadPool(10);
 
         System.out.println("Staring to send " + SIZE + " messages.");
 
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
-            final int key = i % 10;
-            executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
-                    char id = KEYS[key];
-                    template.sendBodyAndHeader("seda:start?size=" + SIZE, value, "id", "" + id);
-                    return null;
-                }
-            });
+            char id = 'A';
+            Map headers = new HashMap();
+            headers.put("id", id);
+            headers.put("seq", i);
+            template.sendBodyAndHeaders("seda:start?size=" + SIZE, value, headers);
         }
 
         System.out.println("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
 
         assertMockEndpointsSatisfied();
+
+        int recovered = 0;
+        for (Exchange exchange : mock.getReceivedExchanges()) {
+            if (exchange.getIn().getHeader(Exchange.REDELIVERED) != null) {
+                recovered++;
+            }
+        }
+        assertEquals("There should be 5 recovered", 5, recovered);
     }
 
     @Override
@@ -73,13 +77,23 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
+                repo.setUseRecovery(true);
 
                 from("seda:start?size=" + SIZE)
                     .to("log:input?groupSize=500")
                     .aggregate(header("id"), new MyAggregationStrategy())
                         .aggregationRepository(repo)
-                        .completionSize(SIZE / 10)
+                        .completionSize(10)
                         .to("log:output?showHeaders=true")
+                        // have every 20th exchange fail which should then be recovered
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                int num = counter.incrementAndGet();
+                                if (num % 20 == 0) {
+                                    throw new IllegalStateException("Failed for num " + num);
+                                }
+                            }
+                        })
                         .to("mock:result")
                     .end();
             }
@@ -101,4 +115,5 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
             return oldExchange;
         }
     }
+
 }

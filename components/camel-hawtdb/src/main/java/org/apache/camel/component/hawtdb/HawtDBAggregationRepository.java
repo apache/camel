@@ -51,7 +51,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
     private boolean returnOldExchange;
     private HawtDBCamelMarshaller<K> marshaller = new HawtDBCamelMarshaller<K>();
     private long interval = 5000;
-    private boolean useRecovery = false;
+    private boolean useRecovery = true;
 
     /**
      * Creates an aggregation repository
@@ -346,6 +346,10 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
 
     public void setCheckInterval(long interval, TimeUnit timeUnit) {
         this.interval = timeUnit.toMillis(interval);
+    }
+
+    public void setCheckInterval(long interval) {
+        this.interval = interval;
     }
 
     public long getCheckIntervalInMillis() {

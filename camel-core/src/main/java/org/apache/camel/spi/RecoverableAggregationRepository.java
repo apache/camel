@@ -56,6 +56,13 @@ public interface RecoverableAggregationRepository<K> extends AggregationReposito
     void setCheckInterval(long interval, TimeUnit timeUnit);
 
     /**
+     * Sets the interval between scans
+     *
+     * @param interval  the interval in millis
+     */
+    void setCheckInterval(long interval);
+
+    /**
      * Gets the interval between scans in millis.
      *
      * @return the interval in millis
