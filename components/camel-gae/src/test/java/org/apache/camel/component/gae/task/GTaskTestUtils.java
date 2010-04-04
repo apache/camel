@@ -16,12 +16,19 @@
  */
 package org.apache.camel.component.gae.task;
 
-import com.google.appengine.api.labs.taskqueue.TaskOptions;
-import com.google.appengine.api.labs.taskqueue.TaskOptionsAccessor;
+import java.io.File;
 
+import com.google.appengine.tools.development.LocalServerEnvironment;
+import com.google.appengine.tools.development.testing.LocalServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.gae.TestConfig;
+import org.apache.camel.component.servlet.CamelHttpTransportServlet;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 
 public final class GTaskTestUtils {
 
@@ -30,7 +37,6 @@ public final class GTaskTestUtils {
 
     static {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("mockQueue", new MockQueue());
         registry.put("customBinding", new GTaskBinding() { });  // subclass
         context = new DefaultCamelContext(registry);
         component = new GTaskComponent();
@@ -44,12 +50,49 @@ public final class GTaskTestUtils {
         return context;
     }
     
+    public static Server createTestServer() {
+        ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+        handler.addServlet(new ServletHolder(new CamelHttpTransportServlet()), "/camel/*");
+        handler.setContextPath("/");
+        Server server = new Server(TestConfig.getPort());
+        server.setHandler(handler);
+        return server;
+    }
+
     public static GTaskEndpoint createEndpoint(String endpointUri) throws Exception {
         return (GTaskEndpoint)component.createEndpoint(endpointUri);
     }
     
-    public static TaskOptionsAccessor createTaskOptionsAccessor() throws Exception {
-        return new TaskOptionsAccessor(TaskOptions.Builder.withDefaults());
+    public static LocalServiceTestHelper newLocalServiceTestHelper(LocalServiceTestConfig... configs) {
+        return new QueueServiceTestHelper(configs);
     }
-    
+
+    private static class QueueServiceTestHelper extends LocalServiceTestHelper {
+
+        public QueueServiceTestHelper(LocalServiceTestConfig... configs) {
+            super(configs);
+        }
+
+        @Override
+        protected LocalServerEnvironment newLocalServerEnvironment() {
+            return new LocalServerEnvironment() {
+
+                public File getAppDir() {
+                    return new File(".");
+                }
+
+                public String getAddress() {
+                    return "localhost";
+                }
+
+                public int getPort() {
+                    return TestConfig.getPort();
+                }
+
+                public void waitForServerToStart() {
+                }
+            };
+        }
+    }
+
 }

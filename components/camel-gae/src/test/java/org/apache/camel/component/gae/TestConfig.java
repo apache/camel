@@ -14,16 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.gae.task;
+package org.apache.camel.component.gae;
 
-import org.apache.camel.builder.RouteBuilder;
+public final class TestConfig {
 
-public class GTaskCombinedRouteBuilder extends RouteBuilder {
+    private TestConfig() {
+    }
 
-    @Override
-    public void configure() throws Exception {
-        from("direct:input").to("gtask:default?workerRoot=camel");
-        from("gtask:default").convertBodyTo(String.class).to("mock:mock");
+    public static String getBaseUri() {
+        return getBaseUri("http");
+    }
+
+    public static String getBaseUri(String scheme) {
+        return scheme + "://localhost:" + getPort();
+    }
+
+    public static int getPort() {
+        return 7441;
     }
 
 }

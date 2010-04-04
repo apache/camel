@@ -19,7 +19,9 @@ package org.apache.camel.component.gae.login;
 import org.junit.Test;
 
 import static org.apache.camel.component.gae.login.GLoginTestUtils.createEndpoint;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class GLoginEndpointTest {
 

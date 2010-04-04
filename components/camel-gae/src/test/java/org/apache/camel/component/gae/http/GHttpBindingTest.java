@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static org.apache.camel.component.gae.TestConfig.getBaseUri;
 import static org.apache.camel.component.gae.http.GHttpTestUtils.createEndpoint;
 import static org.apache.camel.component.gae.http.GHttpTestUtils.createRequest;
 import static org.apache.camel.component.gae.http.GHttpTestUtils.getCamelContext;
@@ -55,7 +56,7 @@ public class GHttpBindingTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         binding = new GHttpBinding();
-        testServer = GHttpTestUtils.createTestServer(7441);
+        testServer = GHttpTestUtils.createTestServer();
         testServer.start();
     }
     
@@ -150,7 +151,7 @@ public class GHttpBindingTest {
     
     @Test
     public void testReadResponseHeaders() throws Exception {
-        GHttpEndpoint endpoint = createEndpoint("ghttp://localhost:7441/test");
+        GHttpEndpoint endpoint = createEndpoint(getBaseUri("ghttp") + "/test");
         HTTPRequest request = new HTTPRequest(endpoint.getEndpointUrl());
         request.addHeader(new HTTPHeader("test", "abc"));
         request.addHeader(new HTTPHeader("content-type", "text/plain"));
@@ -163,7 +164,7 @@ public class GHttpBindingTest {
 
     @Test
     public void testReadResponseBody() throws Exception {
-        GHttpEndpoint endpoint = createEndpoint("ghttp://localhost:7441/test");
+        GHttpEndpoint endpoint = createEndpoint(getBaseUri("ghttp") + "/test");
         HTTPRequest request = new HTTPRequest(endpoint.getEndpointUrl(), HTTPMethod.POST);
         request.setPayload("abc".getBytes());
         HTTPResponse response = service.fetch(request);
@@ -173,7 +174,7 @@ public class GHttpBindingTest {
     
     @Test(expected = GHttpException.class)
     public void testFailureException() throws Exception {
-        GHttpEndpoint endpoint = createEndpoint("ghttp://localhost:7441/test");
+        GHttpEndpoint endpoint = createEndpoint(getBaseUri("ghttp") + "/test");
         HTTPRequest request = new HTTPRequest(endpoint.getEndpointUrl());
         request.addHeader(new HTTPHeader("code", "500"));
         HTTPResponse response = service.fetch(request);
@@ -182,7 +183,7 @@ public class GHttpBindingTest {
     
     @Test
     public void testFailureNoException() throws Exception {
-        GHttpEndpoint endpoint = createEndpoint("ghttp://localhost:7441/test?throwExceptionOnFailure=false");
+        GHttpEndpoint endpoint = createEndpoint(getBaseUri("ghttp") + "/test?throwExceptionOnFailure=false");
         HTTPRequest request = new HTTPRequest(endpoint.getEndpointUrl());
         request.addHeader(new HTTPHeader("code", "500"));
         HTTPResponse response = service.fetch(request);

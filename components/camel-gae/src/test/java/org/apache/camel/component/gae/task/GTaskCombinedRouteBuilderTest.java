@@ -16,76 +16,74 @@
  */
 package org.apache.camel.component.gae.task;
 
-import java.io.InputStream;
-
-import com.meterware.httpunit.HttpUnitOptions;
-import com.meterware.servletunit.ServletRunner;
-
-import org.apache.camel.CamelContext;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.gae.support.ServletTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.eclipse.jetty.server.Server;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.apache.camel.component.gae.task.GTaskTestUtils.newLocalServiceTestHelper;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/org/apache/camel/component/gae/task/context-combined.xml" })
 public class GTaskCombinedRouteBuilderTest extends ServletTestSupport {
 
+    private static Server server = GTaskTestUtils.createTestServer();
+
+    private final LocalTaskQueueTestConfig config = new LocalTaskQueueTestConfig();
+    private final LocalServiceTestHelper helper = newLocalServiceTestHelper(config.setDisableAutoTaskExecution(false));
+
     @Autowired
-    private CamelContext camelContext;
-    
-    @Autowired
-    private ProducerTemplate producerTemplate; 
-    
-    @Autowired
-    private MockQueue mockQueue;
-    
+    private ProducerTemplate producerTemplate;
+
+    @EndpointInject(uri = "mock:mock")
+    private MockEndpoint mock;
+
     @BeforeClass
     public static void setUpClass() throws Exception {
-        String webxml = "org/apache/camel/component/gae/task/web-combined.xml";
-        InputStream is = new ClassPathResource(webxml).getInputStream();
-        servletRunner = new ServletRunner(is, CTX_PATH);
-        HttpUnitOptions.setExceptionsThrownOnErrorStatus(true);
-        // Servlet needs to be initialized explicitly because 
-        // route creation is not bound to servlet lifecycle.
-        initServlet(); 
-        is.close();
+        server.start();
     }
-    
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        server.stop();
+    }
+
     @Before
-    public void setUp() {
-        mockQueue.setServletUnitClient(newClient());
+    public void setUp() throws Exception {
+        super.setUp();
+        helper.setUp();
     }
 
     @After
-    public void tearDown() {
-        getMockEndpoint().reset();
+    public void tearDown() throws Exception {
+        mock.reset();
+        helper.tearDown();
+        super.tearDown();
     }
-    
+
     @Test
     public void testDefault() throws Exception {
-        getMockEndpoint().expectedBodiesReceived("test1");
-        getMockEndpoint().expectedHeaderReceived("test", "test2");
+        mock.expectedBodiesReceived("test1");
+        mock.expectedHeaderReceived("test", "test2");
         producerTemplate.sendBodyAndHeader("direct:input", "test1", "test", "test2");
-        getMockEndpoint().assertIsSatisfied();
-        Message received = getMockEndpoint().getExchanges().get(0).getIn();
+        mock.assertIsSatisfied();
+        Message received = mock.getExchanges().get(0).getIn();
         assertEquals("default", received.getHeader(GTaskBinding.GTASK_QUEUE_NAME));
         assertEquals(0, received.getHeader(GTaskBinding.GTASK_RETRY_COUNT));
-    }
-    
-    private MockEndpoint getMockEndpoint() {
-        return (MockEndpoint)camelContext.getEndpoint("mock:mock");
     }
     
 }

@@ -17,7 +17,6 @@
 package org.apache.camel.component.gae.auth;
 
 import com.google.gdata.client.authn.oauth.GoogleOAuthParameters;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;

@@ -16,32 +16,44 @@
  */
 package org.apache.camel.component.gae.task;
 
-import com.google.appengine.api.labs.taskqueue.TaskOptionsAccessor;
+import java.util.List;
 
+import com.google.appengine.api.labs.taskqueue.Queue;
+import com.google.appengine.api.labs.taskqueue.QueueFactory;
+import com.google.appengine.api.labs.taskqueue.TaskOptions;
+import com.google.appengine.api.labs.taskqueue.dev.LocalTaskQueue;
+import com.google.appengine.api.labs.taskqueue.dev.QueueStateInfo.HeaderWrapper;
+import com.google.appengine.api.labs.taskqueue.dev.QueueStateInfo.TaskStateInfo;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import static com.google.appengine.api.labs.taskqueue.TaskOptions.Builder.withDefaults;
 import static org.apache.camel.component.gae.http.GHttpTestUtils.getCamelContext;
 import static org.apache.camel.component.gae.task.GTaskTestUtils.createEndpoint;
-import static org.apache.camel.component.gae.task.GTaskTestUtils.createTaskOptionsAccessor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 public class GTaskBindingTest {
 
     private static GTaskBinding binding;
 
     private DefaultExchange exchange;
-
     private GTaskEndpoint endpoint;
     
-    private TaskOptionsAccessor accessor;
-    
+    private LocalTaskQueueTestConfig config = new LocalTaskQueueTestConfig();
+    private LocalServiceTestHelper helper = new LocalServiceTestHelper(config);
+    private Queue queue;
+
+
     @BeforeClass
     public static void setUpClass() {
         binding = new GTaskBinding();
@@ -49,37 +61,59 @@ public class GTaskBindingTest {
     
     @Before
     public void setUp() throws Exception {
+        helper.setUp();
+        queue = QueueFactory.getDefaultQueue();
         exchange = new DefaultExchange(getCamelContext());
-        accessor = createTaskOptionsAccessor();
         endpoint = createEndpoint("test");
+    }
+
+    @After
+    public void tearDown() {
+        helper.tearDown();
     }
 
     @Test
     public void testWriteRequestHeaders() throws Exception {
         exchange.getIn().setHeader("test", "abc");
         exchange.getIn().setHeader(Exchange.HTTP_QUERY, "x=y");
-        binding.writeRequestHeaders(endpoint, exchange, accessor.getTaskOptions());
-        assertEquals(1, accessor.getHeaders().size());
-        assertEquals("abc", accessor.getHeaders().get("test").get(0));
+        TaskOptions options = withDefaults();
+        binding.writeRequestHeaders(endpoint, exchange, options);
+        queue.add(options);
+        TaskStateInfo info = getTaskStateInfos().get(0);
+        assertEquals("abc", getHeader(info, "test"));
+        assertNull(getHeader(info, Exchange.HTTP_QUERY));
     }
     
     @Test
     public void testWriteRequestBody() {
         exchange.getIn().setBody("test");
-        binding.writeRequestBody(endpoint, exchange, accessor.getTaskOptions());
-        assertEquals("test", exchange.getContext().getTypeConverter().convertTo(String.class, accessor.getPayload()));
+        TaskOptions options = withDefaults();
+        binding.writeRequestBody(endpoint, exchange, options);
+        queue.add(options);
+        TaskStateInfo info = getTaskStateInfos().get(0);
+        assertEquals("test", info.getBody());
+        assertNull("application/octet-stream", getHeader(info , Exchange.CONTENT_TYPE));
     }
     
     @Test
-    public void testWriteRequest() throws Exception {
-        GTaskEndpoint custom = createEndpoint("test?workerRoot=lazy");
+    public void testWriteRequestWithDefaultWorkerRoot() throws Exception {
         exchange.getIn().setBody("anything");
-        accessor = new TaskOptionsAccessor(binding.writeRequest(endpoint, exchange, null));
-        assertEquals("/worker/test", accessor.getPath());
-        accessor = new TaskOptionsAccessor(binding.writeRequest(custom, exchange, null));
-        assertEquals("/lazy/test", accessor.getPath());
+        TaskOptions options = binding.writeRequest(endpoint, exchange, null);
+        queue.add(options);
+        TaskStateInfo info = getTaskStateInfos().get(0);
+        assertEquals("/worker/test", info.getUrl());
     }
     
+    @Test
+    public void testWriteRequestWithCustomWorkerRoot() throws Exception {
+        GTaskEndpoint custom = createEndpoint("test?workerRoot=lazy");
+        exchange.getIn().setBody("anything");
+        TaskOptions options = binding.writeRequest(custom, exchange, null);
+        queue.add(options);
+        TaskStateInfo info = getTaskStateInfos().get(0);
+        assertEquals("/lazy/test", info.getUrl());
+    }
+
     @Test
     public void testReadRequest() {
         exchange.setFromEndpoint(endpoint);
@@ -96,6 +130,20 @@ public class GTaskBindingTest {
         assertFalse(message.getHeaders().containsKey(GTaskBinding.GAE_QUEUE_NAME));
         assertFalse(message.getHeaders().containsKey(GTaskBinding.GAE_TASK_NAME));
         assertFalse(message.getHeaders().containsKey(GTaskBinding.GAE_RETRY_COUNT));
+    }
+    
+    private List<TaskStateInfo> getTaskStateInfos() {
+        LocalTaskQueue queue = LocalTaskQueueTestConfig.getLocalTaskQueue();
+        return queue.getQueueStateInfo().get("default").getTaskInfo();
+    }
+
+    private String getHeader(TaskStateInfo info, String name) {
+        for (HeaderWrapper header : info.getHeaders()) {
+            if (name.equals(header.getKey())) {
+                return header.getValue();
+            }
+        }
+        return null;
     }
     
 }

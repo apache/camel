@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(locations = {"/org/apache/camel/component/gae/http/context-outbound.xml"})
 public class GHttpOutboundRouteBuilderTest {
 
-    private static Server testServer = GHttpTestUtils.createTestServer(7441);
+    private static Server testServer = GHttpTestUtils.createTestServer();
 
     private final LocalURLFetchServiceTestConfig config = new LocalURLFetchServiceTestConfig();
     private final LocalServiceTestHelper helper = new LocalServiceTestHelper(config);

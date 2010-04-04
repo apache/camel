@@ -38,11 +38,12 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
+import static org.apache.camel.component.gae.TestConfig.getBaseUri;
 import static org.junit.Assert.assertEquals;
 
 public class GHttpCombinedRouteBuilderTest extends ServletTestSupport {
 
-    private static Server testServer = GHttpTestUtils.createTestServer(7441);
+    private static Server testServer = GHttpTestUtils.createTestServer();
 
     private final LocalURLFetchServiceTestConfig config = new LocalURLFetchServiceTestConfig();
     private final LocalServiceTestHelper helper = new LocalServiceTestHelper(config);
@@ -102,7 +103,7 @@ public class GHttpCombinedRouteBuilderTest extends ServletTestSupport {
         WebRequest req = new GetMethodWebRequest(createUrl("/test2"));
         ServletUnitClient client = newClient();
         WebResponse response = client.getResponse(req);
-        assertEquals("http://localhost:7441/blah", response.getHeaderField("testUrl"));
+        assertEquals(getBaseUri() + "/blah", response.getHeaderField("testUrl"));
     }
     
 }

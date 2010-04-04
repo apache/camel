@@ -18,12 +18,14 @@ package org.apache.camel.component.gae.http;
 
 import org.apache.camel.builder.RouteBuilder;
 
+import static org.apache.camel.component.gae.TestConfig.getBaseUri;
+
 public class GHttpOutboundRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
 
-        from("direct:input1").to("ghttp://localhost:7441/test?a=b");
+        from("direct:input1").to(getBaseUri("ghttp") + "/test?a=b");
         
     }
 

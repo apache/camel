@@ -37,21 +37,18 @@ public class GTaskEndpointTest {
         GTaskEndpoint endpoint = createEndpoint("gtask:myqueue");
         assertEquals("worker", endpoint.getWorkerRoot());
         assertTrue(endpoint.getOutboundBinding().getClass().equals(GTaskBinding.class));
-        assertFalse(endpoint.getQueue() instanceof MockQueue);
     }
     
     @Test
     public void testPropertiesCustom() throws Exception {
         StringBuffer buffer = new StringBuffer("gtask:myqueue")
-            .append("?").append("queueRef=#mockQueue")
-            .append(AMP).append("outboundBindingRef=#customBinding")
+            .append("?").append("outboundBindingRef=#customBinding")
             .append(AMP).append("inboundBindingRef=#customBinding")
             .append(AMP).append("workerRoot=test");
         GTaskEndpoint endpoint = createEndpoint(buffer.toString());
         assertEquals("test", endpoint.getWorkerRoot());
         assertFalse(endpoint.getOutboundBinding().getClass().equals(GTaskBinding.class));
         assertTrue(endpoint.getOutboundBinding() instanceof GTaskBinding);
-        assertTrue(endpoint.getQueue() instanceof MockQueue);
         assertEquals("gtask:/myqueue", endpoint.getEndpointUri());
     }
 

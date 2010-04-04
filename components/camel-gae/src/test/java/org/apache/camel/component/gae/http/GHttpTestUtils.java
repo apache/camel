@@ -20,6 +20,7 @@ import java.net.URL;
 
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.gae.TestConfig;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.eclipse.jetty.server.Server;
@@ -46,11 +47,11 @@ public final class GHttpTestUtils {
         return context;
     }
 
-    public static Server createTestServer(int port) {
+    public static Server createTestServer() {
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         handler.addServlet(new ServletHolder(new GHttpTestServlet()), "/*");
         handler.setContextPath("/");
-        Server server = new Server(port);
+        Server server = new Server(TestConfig.getPort());
         server.setHandler(handler);
         return server;
     }

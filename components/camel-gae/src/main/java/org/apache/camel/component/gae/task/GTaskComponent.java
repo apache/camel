@@ -50,8 +50,6 @@ public class GTaskComponent extends ServletComponent {
                 parameters, "outboundBindingRef", OutboundBinding.class, new GTaskBinding());
         InboundBinding inboundBinding = resolveAndRemoveReferenceParameter(
                 parameters, "inboundBindingRef", InboundBinding.class, new GTaskBinding());
-        Queue queue = resolveAndRemoveReferenceParameter(
-                parameters, "queueRef", Queue.class, QueueFactory.getQueue(remaining));
         GTaskEndpointInfo info = new GTaskEndpointInfo(uri, remaining);
         GTaskEndpoint endpoint = (GTaskEndpoint)super.createEndpoint(
             info.getCanonicalUri(),
@@ -60,7 +58,7 @@ public class GTaskComponent extends ServletComponent {
         endpoint.setWorkerRoot(workerRoot);
         endpoint.setOutboundBinding(outboundBinding);
         endpoint.setInboundBinding(inboundBinding);
-        endpoint.setQueue(queue);        
+        endpoint.setQueue(QueueFactory.getQueue(remaining));
         return endpoint;
     }
 

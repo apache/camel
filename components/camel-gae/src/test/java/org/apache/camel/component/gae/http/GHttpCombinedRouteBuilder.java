@@ -19,17 +19,19 @@ package org.apache.camel.component.gae.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
+import static org.apache.camel.component.gae.TestConfig.getBaseUri;
+
 public class GHttpCombinedRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
         
         from("ghttp:///test1")
-            .to("ghttp://localhost:7441/test");
+            .to(getBaseUri("ghttp") + "/test");
         
         from("ghttp:///test2")
-            .setHeader(Exchange.HTTP_URI).constant("ghttp://localhost:7441/blah")
-            .to("ghttp://localhost:7441/test?bridgeEndpoint=false");
+            .setHeader(Exchange.HTTP_URI).constant(getBaseUri() + "/blah")
+            .to(getBaseUri("ghttp") + "/test?bridgeEndpoint=false");
     }
 
 }

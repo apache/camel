@@ -21,7 +21,6 @@ import java.io.InputStream;
 
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
-
 import org.junit.After;
 import org.junit.Before;
 
