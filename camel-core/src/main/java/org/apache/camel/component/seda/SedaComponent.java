@@ -24,8 +24,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * An implementation of the <a href="http://camel.apache.org/seda.html">SEDA components</a>
@@ -34,8 +32,6 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class SedaComponent extends DefaultComponent {
-
-    private static final transient Log LOG = LogFactory.getLog(SedaComponent.class);
     private final Map<String, BlockingQueue<Exchange>> queues = new HashMap<String, BlockingQueue<Exchange>>();
     private final int maxConcurrentConsumers = 500;
     
@@ -64,7 +60,8 @@ public class SedaComponent extends DefaultComponent {
         int consumers = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, 1);
         boolean limitConcurrentConsumers = getAndRemoveParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
         if ((limitConcurrentConsumers) && (consumers >  maxConcurrentConsumers)) {
-            throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. Concurrent Consumers cannot be set at a value greater than " + maxConcurrentConsumers);
+            throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
+                    + maxConcurrentConsumers + " was " + consumers);
         }
         SedaEndpoint answer = new SedaEndpoint(uri, this, createQueue(uri, parameters), consumers);
         answer.configureProperties(parameters);
