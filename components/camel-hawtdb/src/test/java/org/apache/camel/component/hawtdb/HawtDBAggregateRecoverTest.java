@@ -28,8 +28,8 @@ import org.junit.Test;
 
 public class HawtDBAggregateRecoverTest extends CamelTestSupport {
 
-    private HawtDBAggregationRepository<String> repo;
     private static AtomicInteger counter = new AtomicInteger(0);
+    private HawtDBAggregationRepository<String> repo;
 
     @Override
     public void setUp() throws Exception {
@@ -38,7 +38,7 @@ public class HawtDBAggregateRecoverTest extends CamelTestSupport {
         // enable recovery
         repo.setUseRecovery(true);
         // check faster
-        repo.setRecoveryInterval(1, TimeUnit.SECONDS);
+        repo.setRecoveryInterval(500, TimeUnit.MILLISECONDS);
         super.setUp();
     }
 
@@ -71,7 +71,7 @@ public class HawtDBAggregateRecoverTest extends CamelTestSupport {
                         .completionSize(5).aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
-                        .delay(2000)
+                        .delay(1000)
                         // simulate errors the first two times
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

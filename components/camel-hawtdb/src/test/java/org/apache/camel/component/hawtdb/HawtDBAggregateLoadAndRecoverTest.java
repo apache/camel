@@ -32,7 +32,7 @@ import org.junit.Test;
 public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
 
     private static final int SIZE = 1000;
-    private static final AtomicInteger counter = new AtomicInteger();
+    private static AtomicInteger counter = new AtomicInteger();
 
     @Before
     @Override

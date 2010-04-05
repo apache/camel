@@ -523,7 +523,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @param uri  the endpoint to send to
      * @return the builder
-     * @see org.apache.camel.SendAsyncProcessor
+     * @see org.apache.camel.processor.SendAsyncProcessor
      */
     public ToDefinition toAsync(String uri) {
         ToDefinition answer = new ToDefinition(uri);
@@ -541,7 +541,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param uri  the endpoint to send to
      * @param poolSize the core pool size
      * @return the builder
-     * @see org.apache.camel.SendAsyncProcessor
+     * @see org.apache.camel.processor.SendAsyncProcessor
      */
     public ToDefinition toAsync(String uri, int poolSize) {
         ToDefinition answer = new ToDefinition(uri);
@@ -559,7 +559,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @param endpoint  the endpoint to send to
      * @return the builder
-     * @see org.apache.camel.SendAsyncProcessor
+     * @see org.apache.camel.processor.SendAsyncProcessor
      */
     public ToDefinition toAsync(Endpoint endpoint) {
         ToDefinition answer = new ToDefinition(endpoint);
@@ -577,7 +577,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param endpoint  the endpoint to send to
      * @param poolSize the core pool size
      * @return the builder
-     * @see org.apache.camel.SendAsyncProcessor
+     * @see org.apache.camel.processor.SendAsyncProcessor
      */
     public ToDefinition toAsync(Endpoint endpoint, int poolSize) {
         ToDefinition answer = new ToDefinition(endpoint);

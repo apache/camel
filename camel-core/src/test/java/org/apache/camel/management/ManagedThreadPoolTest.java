@@ -68,6 +68,9 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
+        // wait a bit to ensure JMX have updated values
+        Thread.sleep(2000);
+
         poolSize = (Integer) mbeanServer.getAttribute(on, "PoolSize");
         assertEquals(1, poolSize.intValue());
 

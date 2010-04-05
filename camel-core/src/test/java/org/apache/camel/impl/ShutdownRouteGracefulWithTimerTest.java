@@ -29,6 +29,9 @@ public class ShutdownRouteGracefulWithTimerTest extends ContextTestSupport {
     private static String foo = "";
 
     public void testShutdownRouteGraceful() throws Exception {
+        // use a bit longer timer
+        context.getShutdownStrategy().setTimeout(20);
+
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         // should be stopped before it fires the first one
         getMockEndpoint("mock:timer").expectedMessageCount(0);

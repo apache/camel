@@ -59,7 +59,7 @@ public class SedaComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         int consumers = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, 1);
         boolean limitConcurrentConsumers = getAndRemoveParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
-        if ((limitConcurrentConsumers) && (consumers >  maxConcurrentConsumers)) {
+        if (limitConcurrentConsumers && consumers >  maxConcurrentConsumers) {
             throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
                     + maxConcurrentConsumers + " was " + consumers);
         }

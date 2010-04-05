@@ -49,8 +49,7 @@ public class SedaDefaultUnboundedQueueSizeTest extends ContextTestSupport {
             template.sendBody("seda:foo", "Message overflow");
             fail("Should thrown an exception");
         } catch (Exception e) {
-            IllegalStateException ise = assertIsInstanceOf(IllegalStateException.class, e.getCause());
-            assertEquals("Queue full", ise.getMessage());
+            assertIsInstanceOf(IllegalStateException.class, e.getCause());
         }
     }
 

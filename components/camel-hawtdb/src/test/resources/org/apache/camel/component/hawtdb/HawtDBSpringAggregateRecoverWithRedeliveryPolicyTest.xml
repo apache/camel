@@ -30,8 +30,8 @@
         <property name="persistentFileName" value="target/data/hawtdb.dat"/>
         <!-- and use repo2 as the repository name -->
         <property name="repositoryName" value="repo2"/>
-        <!-- scan every second -->
-        <property name="recoveryInterval" value="1000"/>
+        <!-- scan 2 times per second -->
+        <property name="recoveryInterval" value="500"/>
         <!-- enable recovery -->
         <property name="useRecovery" value="true"/>
     </bean>

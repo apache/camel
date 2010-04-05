@@ -26,7 +26,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HawtDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSupport {
+public class HawtDBAggregateRecoverWithSedaTest extends CamelTestSupport {
 
     private static AtomicInteger counter = new AtomicInteger(0);
     private HawtDBAggregationRepository<String> repo;
@@ -43,17 +43,14 @@ public class HawtDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSup
     }
 
     @Test
-    public void testHawtDBAggregateRecover() throws Exception {
-        getMockEndpoint("mock:aggregated").setResultWaitTime(20000);
-        getMockEndpoint("mock:result").setResultWaitTime(20000);
-        
-        // should fail the first 3 times and then recover
-        getMockEndpoint("mock:aggregated").expectedMessageCount(4);
+    public void testHawtDBAggregateRecoverWithSeda() throws Exception {
+        // should fail the first 2 times and then recover
+        getMockEndpoint("mock:aggregated").expectedMessageCount(3);
         getMockEndpoint("mock:result").expectedBodiesReceived("ABCDE");
         // should be marked as redelivered
         getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
         // on the 2nd redelivery attempt we success
-        getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
+        getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
@@ -72,20 +69,25 @@ public class HawtDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSup
                 from("direct:start")
                     .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)
-                        // this is the output from the aggregator
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
-                        // simulate errors the first three times
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                int count = counter.incrementAndGet();
-                                if (count <= 3) {
-                                    throw new IllegalArgumentException("Damn");
-                                }
-                            }
-                        })
-                        .to("mock:result")
+                        .to("seda:foo")
                     .end();
+
+                // should be able to recover when we send over SEDA as its a OnCompletion
+                // which confirms the exchange when its complete.
+                from("seda:foo")
+                    .delay(1000)
+                    // simulate errors the first two times
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            int count = counter.incrementAndGet();
+                            if (count <= 2) {
+                                throw new IllegalArgumentException("Damn");
+                            }
+                        }
+                    })
+                    .to("mock:result");
             }
         };
     }

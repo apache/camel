@@ -83,7 +83,7 @@ public class ManagedThrottlerTest extends ContextTestSupport {
 
         Long total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should take at most 1.5 sec: was " + total, total < 1500);
+        assertTrue("Should take at most 2.0 sec: was " + total, total < 2000);
 
         // change the throttler using JMX
         mbeanServer.setAttribute(throttlerName, new Attribute("MaximumRequestsPerPeriod", (long) 2));
