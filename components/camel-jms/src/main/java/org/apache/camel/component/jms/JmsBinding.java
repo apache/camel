@@ -438,7 +438,7 @@ public class JmsBinding {
             // force a specific type from the endpoint configuration
             type = endpoint.getConfiguration().getJmsMessageType();
         } else {
-            // let body deterime the type
+            // let body determine the type
             if (body instanceof Node || body instanceof String) {
                 type = Text;
             } else if (body instanceof byte[] || body instanceof GenericFile || body instanceof File || body instanceof Reader
@@ -492,11 +492,11 @@ public class JmsBinding {
             }
         }
 
-        // TODO: should we throw an exception instead?
-        if (LOG.isWarnEnabled()) {
+        // warn if the body could not be mapped
+        if (body != null && LOG.isWarnEnabled()) {
             LOG.warn("Cannot determine specific JmsMessage type to use from body class."
                     + " Will use generic JmsMessage."
-                    + (body != null ? (" Body class: " + body.getClass().getCanonicalName()) : " Body is null")
+                    + " Body class: " + ObjectHelper.classCanonicalName(body)
                     + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
                     + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.");
         }
