@@ -127,23 +127,27 @@ public final class CamelContextHelper {
     /**
      * Evaluates the @EndpointInject annotation using the given context
      */
-    public static Endpoint getEndpointInjection(CamelContext camelContext, String uri, String name, String injectionPointName, boolean mandatory) {
+    public static Endpoint getEndpointInjection(CamelContext camelContext, String uri, String ref, String injectionPointName, boolean mandatory) {
+        if (ObjectHelper.isNotEmpty(uri) && ObjectHelper.isNotEmpty(ref)) {
+            throw new IllegalArgumentException("Both uri and name is provided, only either one is allowed: uri=" + uri + ", ref=" + ref);
+        }
+
         Endpoint endpoint;
         if (isNotEmpty(uri)) {
             endpoint = camelContext.getEndpoint(uri);
         } else {
-            // if a name is given then it should be possible to lookup
+            // if a ref is given then it should be possible to lookup
             // otherwise we do not catch situations where there is a typo etc
-            if (isNotEmpty(name)) {
-                endpoint = mandatoryLookup(camelContext, name, Endpoint.class);
+            if (isNotEmpty(ref)) {
+                endpoint = mandatoryLookup(camelContext, ref, Endpoint.class);
             } else {
-                if (isEmpty(name)) {
-                    name = injectionPointName;
+                if (isEmpty(ref)) {
+                    ref = injectionPointName;
                 }
                 if (mandatory) {
-                    endpoint = mandatoryLookup(camelContext, name, Endpoint.class);
+                    endpoint = mandatoryLookup(camelContext, ref, Endpoint.class);
                 } else {
-                    endpoint = lookup(camelContext, name, Endpoint.class);
+                    endpoint = lookup(camelContext, ref, Endpoint.class);
                 }
             }
         }

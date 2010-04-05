@@ -948,9 +948,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return errorHandlerBuilder;
     }
 
-    /**
-     * Sets the default error handler builder which is inherited by the routes
-     */
     public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
         this.errorHandlerBuilder = errorHandlerBuilder;
     }

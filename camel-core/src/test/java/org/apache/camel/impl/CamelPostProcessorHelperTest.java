@@ -74,7 +74,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         MyEndpointInjectBeanProducerTemplate bean = new MyEndpointInjectBeanProducerTemplate();
         Method method = bean.getClass().getMethod("setProducer", ProducerTemplate.class);
-        
+
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class type : parameterTypes) {
@@ -97,7 +97,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         MyEndpointBeanProducer bean = new MyEndpointBeanProducer();
         Method method = bean.getClass().getMethod("setProducer", Producer.class);
-        
+
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class type : parameterTypes) {
@@ -230,6 +230,24 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
+    public void testEndpointInjectBothUriAndRef() throws Exception {
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyEndpointBothUriAndRef bean = new MyEndpointBothUriAndRef();
+        Field field = bean.getClass().getField("producer");
+
+        EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+        Class<?> type = field.getType();
+        String propertyName = "producer";
+
+        try {
+            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName);
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Both uri and name is provided, only either one is allowed: uri=seda:foo, ref=myEndpoint", e.getMessage());
+        }
+    }
+
     public class MyConsumeBean {
 
         @Consume(uri = "seda:foo")
@@ -331,6 +349,17 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     public class MyEndpointInjectProducerTemplateUrlUnknown {
 
         @EndpointInject(uri = "xxx:foo")
+        public ProducerTemplate producer;
+
+        public void send(Exchange exchange) throws Exception {
+            producer.send(exchange);
+        }
+
+    }
+
+    public class MyEndpointBothUriAndRef {
+
+        @EndpointInject(uri = "seda:foo", ref = "myEndpoint")
         public ProducerTemplate producer;
 
         public void send(Exchange exchange) throws Exception {
