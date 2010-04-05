@@ -33,6 +33,7 @@ public class MethodInfoCache {
     private final CamelContext camelContext;
     private Map<Method, MethodInfo> methodCache;
     private Map<Class<?>, BeanInfo> classCache;
+    private boolean voidAsInOnly;
 
     public MethodInfoCache(CamelContext camelContext) {
         this(camelContext, 1000, 10000);
@@ -74,7 +75,7 @@ public class MethodInfoCache {
     }
 
     protected BeanInfo createBeanInfo(Class<?> declaringClass) {
-        return new BeanInfo(camelContext, declaringClass);
+        return new BeanInfo(camelContext, declaringClass, voidAsInOnly);
     }
 
     protected static Map<Object, Object> createLruCache(int size) {
@@ -87,5 +88,13 @@ public class MethodInfoCache {
 
     private static Map<Method, MethodInfo> createMethodCache(int size) {
         return CastUtils.cast(createLruCache(size));
+    }
+
+    public boolean isVoidAsInOnly() {
+        return voidAsInOnly;
+    }
+
+    public void setVoidAsInOnly(boolean voidAsInOnly) {
+        this.voidAsInOnly = voidAsInOnly;
     }
 }

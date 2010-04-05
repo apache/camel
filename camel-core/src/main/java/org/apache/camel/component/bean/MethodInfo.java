@@ -61,7 +61,7 @@ public class MethodInfo {
     private RecipientList recipientList;
 
     public MethodInfo(CamelContext camelContext, Class<?> type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
-                      boolean hasCustomAnnotation, boolean hasHandlerAnnotation) {
+                      boolean hasCustomAnnotation, boolean hasHandlerAnnotation, boolean voidAsInOnly) {
         this.camelContext = camelContext;
         this.type = type;
         this.method = method;
@@ -71,10 +71,14 @@ public class MethodInfo {
         this.hasHandlerAnnotation = hasHandlerAnnotation;
         this.parametersExpression = createParametersExpression();
 
+        // prefer annotations
         Pattern oneway = findOneWayAnnotation(method);
         if (oneway != null) {
             pattern = oneway.value();
-        }
+        } else if (voidAsInOnly && isReturnTypeVoid()) {
+            // okay its a void method and we are configured to let that be InOnly
+            pattern = ExchangePattern.InOnly;
+        } 
 
         if (method.getAnnotation(org.apache.camel.RecipientList.class) != null
                 && matchContext(method.getAnnotation(org.apache.camel.RecipientList.class).context())) {
@@ -114,8 +118,6 @@ public class MethodInfo {
         }
         return true;
     }
-
-
 
     public String toString() {
         return method.toString();

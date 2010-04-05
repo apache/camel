@@ -21,6 +21,7 @@ import org.w3c.dom.Document;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.builder.ProxyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
@@ -83,6 +84,7 @@ public class BeanProxyTest extends ContextTestSupport {
     }
 
     // TODO: Does not pass on JDK6
+
     public void disabledtestBeanProxyFailureNullBody() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, OrderService.class);
@@ -132,12 +134,66 @@ public class BeanProxyTest extends ContextTestSupport {
         assertEquals("Hello World", reply);
     }
 
+    // START SNIPPET: e4
+    public void testProxyBuilderProxyCallAnotherBean() throws Exception {
+        // use ProxyBuilder to easily create the proxy
+        OrderService service = new ProxyBuilder(context).endpoint("direct:bean").build(OrderService.class);
+
+        String reply = service.submitOrderStringReturnString("World");
+        assertEquals("Hello World", reply);
+    }
+    // END SNIPPET: e4
+
     public void testBeanProxyCallAnotherBeanWithNoArgs() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:bean");
         OrderService service = ProxyHelper.createProxy(endpoint, OrderService.class);
 
         String reply = service.doAbsolutelyNothing();
         assertEquals("Hi nobody", reply);
+    }
+
+    public void testProxyBuilderProxyCallAnotherBeanWithNoArgs() throws Exception {
+        Endpoint endpoint = context.getEndpoint("direct:bean");
+        OrderService service = new ProxyBuilder(context).endpoint(endpoint).build(OrderService.class);
+
+        String reply = service.doAbsolutelyNothing();
+        assertEquals("Hi nobody", reply);
+    }
+
+    public void testBeanProxyVoidAsInOut() throws Exception {
+        Endpoint endpoint = context.getEndpoint("seda:delay");
+        // will by default let all exchanges be InOut
+        OrderService service = ProxyHelper.createProxy(endpoint, OrderService.class);
+
+        getMockEndpoint("mock:delay").expectedBodiesReceived("Hello World", "Bye World");
+        service.doNothing("Hello World");
+        template.sendBody("mock:delay", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testProxyBuilderVoidAsInOut() throws Exception {
+        // will by default let all exchanges be InOut
+        OrderService service = new ProxyBuilder(context).endpoint("seda:delay").build(OrderService.class);
+
+        getMockEndpoint("mock:delay").expectedBodiesReceived("Hello World", "Bye World");
+        service.doNothing("Hello World");
+        template.sendBody("mock:delay", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testBeanProxyVoidAsInOnly() throws Exception {
+        // let void be InOnly which is a fire and forget method
+        OrderService service = new ProxyBuilder(context).endpoint("seda:delay").voidAsInOnly().build(OrderService.class);
+
+        getMockEndpoint("mock:delay").expectedBodiesReceived("Bye World", "Hello World");
+        service.doNothing("Hello World");
+        // since its a fire and forget it should return faster so we can send
+        // a Bye World message to the mock which arrives before the Hello World msg
+        template.sendBody("mock:delay", "Bye World");
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -147,10 +203,10 @@ public class BeanProxyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .choice()
+                        .choice()
                         .when(xpath("/order/@type = 'book'")).to("direct:book")
                         .otherwise().to("direct:other")
-                    .end();
+                        .end();
 
                 from("direct:book").transform(constant("<order id=\"123\">OK</order>"));
 
@@ -158,7 +214,11 @@ public class BeanProxyTest extends ContextTestSupport {
                 // END SNIPPET: e1
 
                 from("direct:bean")
-                    .bean(MyFooBean.class, "hello");
+                        .bean(MyFooBean.class, "hello");
+
+                from("seda:delay")
+                        .delay(1000)
+                        .to("mock:delay");
             }
         };
     }

@@ -41,6 +41,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
     private Endpoint endpoint;
     private Object serviceProxy;
     private Producer producer;
+    private boolean voidAsInOnly;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -73,7 +74,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
         try {
             this.producer = endpoint.createProducer();
             this.producer.start();
-            this.serviceProxy = ProxyHelper.createProxy(endpoint, producer, getServiceInterface());
+            this.serviceProxy = ProxyHelper.createProxy(endpoint, producer, voidAsInOnly, getServiceInterface());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(endpoint, e);
         }
@@ -133,4 +134,11 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
         this.applicationContext = applicationContext;
     }
 
+    public boolean isVoidAsInOnly() {
+        return voidAsInOnly;
+    }
+
+    public void setVoidAsInOnly(boolean voidAsInOnly) {
+        this.voidAsInOnly = voidAsInOnly;
+    }
 }

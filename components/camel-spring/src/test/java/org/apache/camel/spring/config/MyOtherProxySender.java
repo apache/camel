@@ -14,29 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.camel.model.IdentifiedType;
+package org.apache.camel.spring.config;
 
 /**
- * The &lt;proxy&gt; tag element.
- *
  * @version $Revision$
  */
-@XmlRootElement(name = "proxy")
-public class CamelProxyFactoryDefinition extends IdentifiedType {
-    @XmlAttribute
-    private String serviceUrl;
-    @XmlAttribute
-    private String serviceRef;
-    @XmlAttribute
-    private Class serviceInterface;
-    @XmlAttribute
-    private String camelContextId;
-    @XmlAttribute
-    private Boolean voidAsInOnly = Boolean.FALSE;
+public interface MyOtherProxySender {
+
+    String hello(String name);
+
+    void greeting(String message);
 
 }
