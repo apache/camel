@@ -82,6 +82,7 @@ public class GAuthAuthorizeBinding implements OutboundBinding<GAuthEndpoint, Goo
      */
     public Exchange readResponse(GAuthEndpoint endpoint, Exchange exchange, GoogleOAuthParameters response) throws Exception {
         String authrUrl = endpoint.newOAuthHelper().createUserAuthorizationUrl(response);
+        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
         exchange.getOut().setHeader("Location", authrUrl);
 

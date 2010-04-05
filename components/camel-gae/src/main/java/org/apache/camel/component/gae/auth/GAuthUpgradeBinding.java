@@ -89,6 +89,7 @@ public class GAuthUpgradeBinding implements OutboundBinding<GAuthEndpoint, Googl
      * @see #GAUTH_ACCESS_TOKEN_SECRET
      */
     public Exchange readResponse(GAuthEndpoint endpoint, Exchange exchange, GoogleOAuthParameters response) throws IOException {
+        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
         exchange.getOut().setHeader(GAUTH_ACCESS_TOKEN, response.getOAuthToken());
         exchange.getOut().setHeader(GAUTH_ACCESS_TOKEN_SECRET, response.getOAuthTokenSecret());
         return exchange;
