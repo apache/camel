@@ -18,9 +18,9 @@ package org.apache.camel.component.gae.mail;
 
 import com.google.appengine.api.mail.MailService;
 import com.google.appengine.api.mail.MailService.Message;
-
 import com.google.appengine.api.mail.MailServiceFactory;
-import org.apache.camel.CamelContext;
+
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -47,8 +47,8 @@ public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSup
     
     private String bcc;
     
-    public GMailEndpoint(String endpointUri, CamelContext camelContext, String sender) {
-        super(endpointUri, camelContext);
+    public GMailEndpoint(String endpointUri, Component component, String sender) {
+        super(endpointUri, component);
         this.sender = sender;
         this.mailService = MailServiceFactory.getMailService();
     }
