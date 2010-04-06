@@ -34,7 +34,7 @@ public class GMailComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         OutboundBinding binding = resolveAndRemoveReferenceParameter(
                 parameters, "outboundBindingRef", OutboundBinding.class, new GMailBinding());
-        GMailEndpoint endpoint = new GMailEndpoint(uri, remaining);
+        GMailEndpoint endpoint = new GMailEndpoint(uri, getCamelContext(), remaining);
         endpoint.setOutboundBinding(binding);
         return endpoint;
     }
