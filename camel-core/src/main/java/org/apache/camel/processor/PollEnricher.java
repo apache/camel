@@ -63,6 +63,7 @@ public class PollEnricher extends ServiceSupport implements Processor {
      *
      * @param aggregationStrategy  aggregation strategy to aggregate input data and additional data.
      * @param consumer consumer to resource endpoint.
+     * @param timeout timeout in millis
      */
     public PollEnricher(AggregationStrategy aggregationStrategy, PollingConsumer consumer, long timeout) {
         this.aggregationStrategy = aggregationStrategy;
@@ -171,7 +172,8 @@ public class PollEnricher extends ServiceSupport implements Processor {
         if (consumer instanceof EventDrivenPollingConsumer) {
             EventDrivenPollingConsumer edpc = (EventDrivenPollingConsumer) consumer;
             boolean fileBasedConsumer = edpc.getEndpoint().getEndpointKey().startsWith("file") || edpc.getEndpoint().getEndpointKey().startsWith("ftp");
-            boolean fileBasedExchange = exchange.getFromEndpoint().getEndpointUri().startsWith("file") || exchange.getFromEndpoint().getEndpointUri().startsWith("ftp");
+            boolean fileBasedExchange = exchange.getFromEndpoint() != null
+                    && (exchange.getFromEndpoint().getEndpointUri().startsWith("file") || exchange.getFromEndpoint().getEndpointUri().startsWith("ftp"));
             if (fileBasedConsumer && fileBasedExchange) {
                 throw new IllegalArgumentException("Camel currently does not support pollEnrich from a file/ftp endpoint"
                         + " when the route also started from a file/ftp endpoint."
