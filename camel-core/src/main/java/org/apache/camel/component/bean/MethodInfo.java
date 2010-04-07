@@ -61,8 +61,6 @@ public class MethodInfo {
     private ExchangePattern pattern = ExchangePattern.InOut;
     private RecipientList recipientList;
 
-    // TODO: This class should extends ServiceSupport so we can cleanup recipientList when stopping
-
     public MethodInfo(CamelContext camelContext, Class<?> type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
                       boolean hasCustomAnnotation, boolean hasHandlerAnnotation, boolean voidAsInOnly) {
         this.camelContext = camelContext;
@@ -106,6 +104,13 @@ public class MethodInfo {
             if (ObjectHelper.isNotEmpty(annotation.strategyRef())) {
                 AggregationStrategy strategy = CamelContextHelper.mandatoryLookup(camelContext, annotation.strategyRef(), AggregationStrategy.class);
                 recipientList.setAggregationStrategy(strategy);
+            }
+
+            // add created recipientList as a service so we have its lifecycle managed
+            try {
+                camelContext.addService(recipientList);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         }
     }

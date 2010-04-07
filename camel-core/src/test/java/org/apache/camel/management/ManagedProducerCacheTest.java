@@ -1,0 +1,91 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.management;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+
+/**
+ * @version $Revision$
+ */
+public class ManagedProducerCacheTest extends ContextTestSupport {
+
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
+        naming.setHostName("localhost");
+        naming.setDomainName("org.apache.camel");
+        return context;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testManageProducerCache() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // get the stats for the route
+        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=services,*"), null);
+        assertEquals(6, set.size());
+        List<ObjectName> list = new ArrayList<ObjectName>(set);
+        ObjectName on = null;
+        for (ObjectName name : list) {
+            if (name.getCanonicalName().contains("ProducerCache")) {
+                on = name;
+                break;
+            }
+        }
+
+        assertNotNull("Should have found ProducerCache", on);
+
+        Integer max = (Integer) mbeanServer.getAttribute(on, "MaximumCacheSize");
+        assertEquals(1000, max.intValue());
+
+        Integer current = (Integer) mbeanServer.getAttribute(on, "Size");
+        assertEquals(1, current.intValue());
+
+        String source = (String) mbeanServer.getAttribute(on, "Source");
+        assertEquals("sendTo(Endpoint[mock://result])", source);
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("mock:result");
+            }
+        };
+    }
+
+}

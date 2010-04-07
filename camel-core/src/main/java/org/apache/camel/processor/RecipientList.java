@@ -140,7 +140,7 @@ public class RecipientList extends ServiceSupport implements Processor {
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new ProducerCache(camelContext);
+            producerCache = new ProducerCache(this, camelContext);
             // add it as a service so we can manage it
             camelContext.addService(producerCache);
         }

@@ -45,26 +45,33 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class ProducerCache extends ServiceSupport {
     private static final transient Log LOG = LogFactory.getLog(ProducerCache.class);
 
-    // TODO: Expose this cache for management in JMX (also ConsumerCache)
-    // TODO: Add source information so we know who uses this cache
-    // TODO: Add purge operation to purge the cache
-
     private final CamelContext camelContext;
     private final ServicePool<Endpoint, Producer> pool;
     private final Map<String, Producer> producers;
+    private final Object source;
 
-    public ProducerCache(CamelContext camelContext) {
-        this(camelContext, CamelContextHelper.getMaximumCachePoolSize(camelContext));
+    public ProducerCache(Object source, CamelContext camelContext) {
+        this(source, camelContext, CamelContextHelper.getMaximumCachePoolSize(camelContext));
     }
 
-    public ProducerCache(CamelContext camelContext, int cacheSize) {
-        this(camelContext, camelContext.getProducerServicePool(), new LRUCache<String, Producer>(cacheSize));
+    public ProducerCache(Object source, CamelContext camelContext, int cacheSize) {
+        this(source, camelContext, camelContext.getProducerServicePool(), new LRUCache<String, Producer>(cacheSize));
     }
 
-    public ProducerCache(CamelContext camelContext, ServicePool<Endpoint, Producer> producerServicePool, Map<String, Producer> cache) {
+    public ProducerCache(Object source, CamelContext camelContext, ServicePool<Endpoint, Producer> producerServicePool, Map<String, Producer> cache) {
+        this.source = source;
         this.camelContext = camelContext;
         this.pool = producerServicePool;
         this.producers = cache;
+    }
+
+    /**
+     * Gets the source which uses this cache
+     *
+     * @return the source
+     */
+    public Object getSource() {
+        return source;
     }
 
     /**
@@ -275,10 +282,34 @@ public class ProducerCache extends ServiceSupport {
      *
      * @return the current size
      */
-    int size() {
+    public int size() {
         int size = producers.size();
         size += pool.size();
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("size = " + size);
+        }
         return size;
     }
 
+    /**
+     * Gets the maximum cache size (capacity).
+     * <p/>
+     * Will return -1 if it cannot determine this if a custom cache was used.
+     *
+     * @return the capacity
+     */
+    public int getCapacity() {
+        int capacity = -1;
+        if (producers instanceof LRUCache) {
+            LRUCache cache = (LRUCache) producers;
+            capacity = cache.getMaxCacheSize();
+        }
+        return capacity;
+    }
+
+    @Override
+    public String toString() {
+        return "ProducerCache for source: " + source;
+    }
 }

@@ -26,7 +26,7 @@ import org.apache.camel.Producer;
 public class DefaultProducerCacheTest extends ContextTestSupport {
 
     public void testCacheProducerAcquireAndRelease() throws Exception {
-        ProducerCache cache = new ProducerCache(context);
+        ProducerCache cache = new ProducerCache(this, context);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());

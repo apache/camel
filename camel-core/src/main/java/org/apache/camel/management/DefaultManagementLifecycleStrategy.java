@@ -35,6 +35,7 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
@@ -47,6 +48,7 @@ import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
+import org.apache.camel.management.mbean.ManagedProducerCache;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
@@ -304,6 +306,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return getManagedObjectForProcessor(context, (Processor) service, route);
         } else if (service instanceof ThrottlingInflightRoutePolicy) {
             answer = new ManagedThrottlingInflightRoutePolicy(context, (ThrottlingInflightRoutePolicy) service);
+        } else if (service instanceof ProducerCache) {
+            answer = new ManagedProducerCache(context, (ProducerCache) service);
         } else if (service != null) {
             // fallback as generic service
             answer = new ManagedService(context, service);

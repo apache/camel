@@ -721,9 +721,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     protected void doStart() throws Exception {
         if (producerCache == null) {
             if (maximumCacheSize > 0) {
-                producerCache = new ProducerCache(context, maximumCacheSize);
+                producerCache = new ProducerCache(this, context, maximumCacheSize);
             } else {
-                producerCache = new ProducerCache(context);
+                producerCache = new ProducerCache(this, context);
             }
         }
         ServiceHelper.startService(producerCache);
