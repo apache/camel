@@ -85,7 +85,6 @@ public class Main extends MainSupport {
         return instance;
     }
 
-
     // Properties
     // -------------------------------------------------------------------------
     protected void setInjector(Injector injector) {
@@ -129,7 +128,7 @@ public class Main extends MainSupport {
         }
     }
 
-    protected ProducerTemplate findOrCreateCamelTemplate() throws Exception {
+    protected ProducerTemplate findOrCreateCamelTemplate() {
         if (injector != null) {
             Set<ProducerTemplate> set = Injectors.getInstancesOf(injector, ProducerTemplate.class);
             if (!set.isEmpty()) {

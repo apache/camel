@@ -186,7 +186,7 @@ public class Main extends MainSupport {
         }
     }
 
-    protected ProducerTemplate findOrCreateCamelTemplate() throws Exception {
+    protected ProducerTemplate findOrCreateCamelTemplate() {
         String[] names = getApplicationContext().getBeanNamesForType(ProducerTemplate.class);
         if (names != null && names.length > 0) {
             return (ProducerTemplate) getApplicationContext().getBean(names[0], ProducerTemplate.class);

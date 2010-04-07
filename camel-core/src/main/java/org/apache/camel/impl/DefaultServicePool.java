@@ -35,14 +35,20 @@ import org.apache.commons.logging.LogFactory;
 public abstract class DefaultServicePool<Key, Service> extends ServiceSupport implements ServicePool<Key, Service> {
     protected final Log log = LogFactory.getLog(getClass());
     protected final ConcurrentHashMap<Key, BlockingQueue<Service>> pool = new ConcurrentHashMap<Key, BlockingQueue<Service>>();
-    protected final int capacity;
+    protected int capacity = 100;
 
-    /**
-     * The capacity, note this is per key.
-     *
-     * @param capacity the capacity per key.
-     */
+    protected DefaultServicePool() {
+    }
+
     public DefaultServicePool(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
 

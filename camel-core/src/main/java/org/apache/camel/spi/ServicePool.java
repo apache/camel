@@ -24,10 +24,26 @@ package org.apache.camel.spi;
  * <p/>
  * Notice the capacity is <b>per key</b> which means that each key can contain at most
  * (the capacity) services. The pool can contain an unbounded number of keys.
+ * <p/>
+ * By default the capacity is set to 100.
  *
  * @version $Revision$
  */
 public interface ServicePool<Key, Service> {
+
+    /**
+     * Sets the capacity, which is capacity <b>per key</b>.
+     *
+     * @param capacity the capacity per key
+     */
+    void setCapacity(int capacity);
+
+    /**
+     * Gets the capacity per key.
+     *
+     * @return the capacity per key
+     */
+    int getCapacity();
 
     /**
      * Adds the given service to the pool and acquires it.
@@ -35,6 +51,7 @@ public interface ServicePool<Key, Service> {
      * @param key     the key
      * @param service the service
      * @return the acquired service, is newer <tt>null</tt>
+     * @throws IllegalStateException if the queue is full (capacity has been reached)
      */
     Service addAndAcquire(Key key, Service service);
 

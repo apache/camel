@@ -149,12 +149,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private ClassResolver classResolver = new DefaultClassResolver();
     private PackageScanClassResolver packageScanClassResolver;
     // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
-    // so if we have 6 endpoints in the pool, we have 6 x 100 producers in total
+    // so if we have 6 endpoints in the pool, we can have 6 x 100 producers in total
     private ServicePool<Endpoint, Producer> producerServicePool = new SharedProducerServicePool(100);
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
     private Tracer defaultTracer;
     private InflightRepository inflightRepository = new DefaultInflightRepository();
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<RouteStartupOrder>();
+    // start auto assigning route ids using numbering 1000 and upwards
     private int defaultRouteStartupOrder = 1000;
     private ShutdownStrategy shutdownStrategy = new DefaultShutdownStrategy(this);
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
@@ -937,29 +938,37 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         this.delay = delay;
     }
 
-    public ProducerTemplate createProducerTemplate() throws Exception {
+    public ProducerTemplate createProducerTemplate() {
         int size = CamelContextHelper.getMaximumCachePoolSize(this);
         return createProducerTemplate(size);
     }
 
-    public ProducerTemplate createProducerTemplate(int maximumCacheSize) throws Exception {
+    public ProducerTemplate createProducerTemplate(int maximumCacheSize) {
         DefaultProducerTemplate answer = new DefaultProducerTemplate(this);
         answer.setMaximumCacheSize(maximumCacheSize);
         // start it so its ready to use
-        answer.start();
+        try {
+            answer.start();
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
         return answer;
     }
 
-    public ConsumerTemplate createConsumerTemplate() throws Exception {
+    public ConsumerTemplate createConsumerTemplate() {
         int size = CamelContextHelper.getMaximumCachePoolSize(this);
         return createConsumerTemplate(size);
     }
 
-    public ConsumerTemplate createConsumerTemplate(int maximumCacheSize) throws Exception {
+    public ConsumerTemplate createConsumerTemplate(int maximumCacheSize) {
         DefaultConsumerTemplate answer = new DefaultConsumerTemplate(this);
         answer.setMaximumCacheSize(maximumCacheSize);
         // start it so its ready to use
-        answer.start();
+        try {
+            answer.start();
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
         return answer;
     }
 

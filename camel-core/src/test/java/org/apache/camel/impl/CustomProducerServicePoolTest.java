@@ -76,6 +76,13 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
 
         private Producer producer;
 
+        public void setCapacity(int capacity) {
+        }
+
+        public int getCapacity() {
+            return 0;
+        }
+
         public Producer addAndAcquire(Endpoint endpoint, Producer producer) {
             if (endpoint instanceof MyEndpoint) {
                 return producer;

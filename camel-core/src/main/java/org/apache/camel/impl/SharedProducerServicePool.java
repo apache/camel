@@ -26,6 +26,9 @@ import org.apache.camel.ShutdownableService;
  */
 public class SharedProducerServicePool extends DefaultProducerServicePool implements ShutdownableService {
 
+    public SharedProducerServicePool() {
+    }
+
     public SharedProducerServicePool(int capacity) {
         super(capacity);
     }

@@ -330,7 +330,7 @@ public abstract class MainSupport extends ServiceSupport {
         return camelTemplate;
     }
 
-    protected abstract ProducerTemplate findOrCreateCamelTemplate() throws Exception;
+    protected abstract ProducerTemplate findOrCreateCamelTemplate();
 
     protected abstract Map<String, CamelContext> getCamelContextMap();
 

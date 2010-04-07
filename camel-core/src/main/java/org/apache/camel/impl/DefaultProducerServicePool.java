@@ -29,6 +29,9 @@ import org.apache.camel.Producer;
  */
 public class DefaultProducerServicePool extends DefaultServicePool<Endpoint, Producer> {
 
+    public DefaultProducerServicePool() {
+    }
+
     public DefaultProducerServicePool(int capacity) {
         super(capacity);
     }

@@ -473,9 +473,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * before starting the template.
      *
      * @return the template
-     * @throws Exception is thrown if error starting the template
+     * @throws RuntimeCamelException is thrown if error starting the template
      */
-    ProducerTemplate createProducerTemplate() throws Exception;
+    ProducerTemplate createProducerTemplate();
 
     /**
      * Creates a new {@link ProducerTemplate} which is <b>started</b> and therefore ready to use right away.
@@ -487,9 +487,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @param maximumCacheSize the maximum cache size
      * @return the template
-     * @throws Exception is thrown if error starting the template
+     * @throws RuntimeCamelException is thrown if error starting the template
      */
-    ProducerTemplate createProducerTemplate(int maximumCacheSize) throws Exception;
+    ProducerTemplate createProducerTemplate(int maximumCacheSize);
 
     /**
      * Creates a new {@link ConsumerTemplate} which is <b>started</b> and therefore ready to use right away.
@@ -503,9 +503,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * before starting the template.
      *
      * @return the template
-     * @throws Exception is thrown if error starting the template
+     * @throws RuntimeCamelException is thrown if error starting the template
      */
-    ConsumerTemplate createConsumerTemplate() throws Exception;
+    ConsumerTemplate createConsumerTemplate();
 
     /**
      * Creates a new {@link ConsumerTemplate} which is <b>started</b> and therefore ready to use right away.
@@ -515,9 +515,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @param maximumCacheSize the maximum cache size
      * @return the template
-     * @throws Exception is thrown if error starting the template
+     * @throws RuntimeCamelException is thrown if error starting the template
      */
-    ConsumerTemplate createConsumerTemplate(int maximumCacheSize) throws Exception;
+    ConsumerTemplate createConsumerTemplate(int maximumCacheSize);
 
     /**
      * Adds the given interceptor strategy
