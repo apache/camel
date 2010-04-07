@@ -598,7 +598,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         }
 
-        ServiceHelper.startService(aggregationRepository);
+        ServiceHelper.startServices(processor, aggregationRepository);
 
         // should we use recover checker
         if (aggregationRepository instanceof RecoverableAggregationRepository) {
@@ -629,7 +629,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(timeoutMap, recoverService, aggregationRepository);
+        ServiceHelper.stopServices(timeoutMap, recoverService, aggregationRepository, processor);
 
         if (closedCorrelationKeys != null) {
             closedCorrelationKeys.clear();

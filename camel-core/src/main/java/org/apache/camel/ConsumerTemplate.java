@@ -46,6 +46,33 @@ package org.apache.camel;
  */
 public interface ConsumerTemplate extends Service {
 
+    // Configuration methods
+    // -----------------------------------------------------------------------
+
+    /**
+     * Gets the maximum cache size used.
+     *
+     * @return the maximum cache size
+     */
+    int getMaximumCacheSize();
+
+    /**
+     * Sets a custom maximum cache size.
+     *
+     * @param maximumCacheSize the custom maximum cache size
+     */
+    void setMaximumCacheSize(int maximumCacheSize);
+
+    /**
+     * Gets an approximated size of the current cached resources in the backing cache pools.
+     *
+     * @return the size of current cached resources
+     */
+    int getCurrentCacheSize();
+
+    // Synchronous methods
+    // -----------------------------------------------------------------------
+
     /**
      * Receives from the endpoint, waiting until there is a response
      *

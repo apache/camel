@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.concurrent.BlockingQueue;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 
@@ -33,14 +31,6 @@ public class DefaultProducerServicePool extends DefaultServicePool<Endpoint, Pro
 
     public DefaultProducerServicePool(int capacity) {
         super(capacity);
-    }
-
-    public synchronized int size() {
-        int size = 0;
-        for (BlockingQueue<Producer> queue : pool.values()) {
-            size += queue.size();
-        }
-        return size;
     }
 
 }

@@ -31,7 +31,13 @@ public class SpringComponentScanWithDeprecatedPackagesTest extends ContextTestSu
         ApplicationContext c = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScanWithPackages.xml");
         context = (CamelContext)c.getBean("camelContext");
         template = context.createProducerTemplate();
+        template.start();
+    }
 
+    @Override
+    protected void tearDown() throws Exception {
+        template.stop();
+        super.tearDown();
     }
 
     public void testSpringComponentScanFeature() throws InterruptedException {

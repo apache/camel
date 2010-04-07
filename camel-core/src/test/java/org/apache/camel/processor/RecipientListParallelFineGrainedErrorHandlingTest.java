@@ -141,7 +141,7 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
 
     public static class MyRecipientBean {
 
-        @org.apache.camel.RecipientList(stopOnException = true, parallelProcessoing = true)
+        @org.apache.camel.RecipientList(stopOnException = true, parallelProcessing = true)
         public String sendSomewhere(Exchange exchange) {
             return "mock:foo,mock:bar,bean:fail,mock:baz";
         }

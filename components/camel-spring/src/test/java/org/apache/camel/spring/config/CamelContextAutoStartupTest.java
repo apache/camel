@@ -17,6 +17,7 @@
 package org.apache.camel.spring.config;
 
 import junit.framework.TestCase;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.commons.logging.Log;
@@ -55,7 +56,10 @@ public class CamelContextAutoStartupTest extends TestCase {
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
 
-        camel.createProducerTemplate().sendBody("direct:start", "Hello World");
+        ProducerTemplate template = camel.createProducerTemplate();
+        template.start();
+        template.sendBody("direct:start", "Hello World");
+        template.stop();
 
         mock.assertIsSatisfied();
     }
@@ -73,7 +77,10 @@ public class CamelContextAutoStartupTest extends TestCase {
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
 
-        camel.createProducerTemplate().sendBody("direct:start", "Hello World");
+        ProducerTemplate template = camel.createProducerTemplate();
+        template.start();
+        template.sendBody("direct:start", "Hello World");
+        template.stop();
 
         mock.assertIsSatisfied();
     }

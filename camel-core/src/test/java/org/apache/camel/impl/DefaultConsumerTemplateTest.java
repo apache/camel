@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -289,6 +290,44 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         String out = consumer.receiveBody("seda:foo", String.class);
         assertEquals("Bye World", out);
+    }
+
+    public void testCacheConsumers() throws Exception {
+        ConsumerTemplate template = new DefaultConsumerTemplate(context);
+        template.setMaximumCacheSize(500);
+        template.start();
+
+        assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
+
+        // test that we cache at most 500 consumers to avoid it eating to much memory
+        for (int i = 0; i < 503; i++) {
+            Endpoint e = context.getEndpoint("direct:queue:" + i);
+            Exchange ex = template.receiveNoWait(e);
+        }
+
+        assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
+        template.stop();
+
+        // should be 0
+        assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
+    }
+
+    public void testCacheConsumersFromContext() throws Exception {
+        ConsumerTemplate template = context.createConsumerTemplate(500);
+
+        assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
+
+        // test that we cache at most 500 consumers to avoid it eating to much memory
+        for (int i = 0; i < 503; i++) {
+            Endpoint e = context.getEndpoint("direct:queue:" + i);
+            Exchange ex = template.receiveNoWait(e);
+        }
+
+        assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
+        template.stop();
+
+        // should be 0
+        assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
     }
 
 }

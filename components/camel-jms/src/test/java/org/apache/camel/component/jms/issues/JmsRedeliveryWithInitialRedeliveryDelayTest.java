@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
- * Unit test to verify DLC and JSM based on user reporting
+ * Unit test to verify DLC and JMS based on user reporting
  */
 @ContextConfiguration
 public class JmsRedeliveryWithInitialRedeliveryDelayTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     protected CamelContext context;
+
+    @Autowired
+    protected ProducerTemplate template;
 
     @Test
     public void testDLCSpringConfiguredRedeliveryPolicy() throws Exception {
@@ -43,7 +47,7 @@ public class JmsRedeliveryWithInitialRedeliveryDelayTest extends AbstractJUnit4S
         dead.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(4);
         result.expectedMessageCount(0);
 
-        context.createProducerTemplate().sendBody("activemq:in", "Hello World");
+        template.sendBody("activemq:in", "Hello World");
 
         result.assertIsSatisfied();
         dead.assertIsSatisfied();

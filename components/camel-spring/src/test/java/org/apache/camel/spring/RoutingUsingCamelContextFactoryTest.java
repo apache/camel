@@ -46,6 +46,7 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
 
         // now lets send a message
         ProducerTemplate template = context.createProducerTemplate();
+        template.start();
         template.send("seda:start", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -53,6 +54,7 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
                 in.setBody(body);
             }
         });
+        template.stop();
 
         resultEndpoint.assertIsSatisfied();
     }

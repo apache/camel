@@ -21,15 +21,18 @@ package org.apache.camel.spi;
  * <p/>
  * Services that is capable of being pooled should implement the marker interface
  * {@link org.apache.camel.ServicePoolAware}.
+ * <p/>
+ * Notice the capacity is <b>per key</b> which means that each key can contain at most
+ * (the capacity) services. The pool can contain an unbounded number of keys.
  *
  * @version $Revision$
  */
-public interface ServicePool<Key, Service> extends org.apache.camel.Service {
+public interface ServicePool<Key, Service> {
 
     /**
      * Adds the given service to the pool and acquires it.
      *
-     * @param key the key
+     * @param key     the key
      * @param service the service
      * @return the acquired service, is newer <tt>null</tt>
      */
@@ -37,7 +40,7 @@ public interface ServicePool<Key, Service> extends org.apache.camel.Service {
 
     /**
      * Tries to acquire the service with the given key
-     * 
+     *
      * @param key the key
      * @return the acquired service, or <tt>null</tt> if no free in pool
      */
@@ -46,9 +49,16 @@ public interface ServicePool<Key, Service> extends org.apache.camel.Service {
     /**
      * Releases the service back to the pool
      *
-     * @param key  the key
+     * @param key     the key
      * @param service the service
      */
     void release(Key key, Service service);
+
+    /**
+     * Returns the current size of the pool
+     *
+     * @return the current size of the pool
+     */
+    int size();
 
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -26,6 +27,7 @@ import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,6 +38,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SendProcessor extends ServiceSupport implements Processor, Traceable {
     protected static final transient Log LOG = LogFactory.getLog(SendProcessor.class);
+    protected final CamelContext camelContext;
     protected ProducerCache producerCache;
     protected Endpoint destination;
     protected ExchangePattern pattern;
@@ -44,6 +47,8 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
     public SendProcessor(Endpoint destination) {
         ObjectHelper.notNull(destination, "destination");
         this.destination = destination;
+        this.camelContext = destination.getCamelContext();
+        ObjectHelper.notNull(this.camelContext, "camelContext");
     }
 
     public SendProcessor(Endpoint destination, ExchangePattern pattern) {
@@ -90,23 +95,18 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
      * @return the exchange that was processed
      */
     public Exchange doProcess(final Exchange exchange) throws Exception {
+        if (!isStarted()) {
+            throw new IllegalStateException("SendProcessor has not been started: " + this);
+        }
+
         // send the exchange to the destination using a producer
-        return getProducerCache(exchange).doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
+        return producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 exchange = configureExchange(exchange, pattern);
                 producer.process(exchange);
                 return exchange;
             }
         });
-    }
-
-    protected ProducerCache getProducerCache(Exchange exchange) throws Exception {
-        // setup producer cache as we need to use the pluggable service pool defined on camel context
-        if (producerCache == null) {
-            producerCache = new ProducerCache(exchange.getContext());
-            producerCache.start();
-        }
-        return producerCache;
     }
 
     public Endpoint getDestination() {
@@ -127,15 +127,16 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
     }
 
     protected void doStart() throws Exception {
-        if (producerCache != null) {
-            producerCache.start();
+        if (producerCache == null) {
+            producerCache = new ProducerCache(camelContext);
+            // add it as a service so we can manage it
+            camelContext.addService(producerCache);
         }
+        ServiceHelper.startService(producerCache);
     }
 
     protected void doStop() throws Exception {
-        if (producerCache != null) {
-            producerCache.stop();
-        }
+        ServiceHelper.stopService(producerCache);
     }
 
 }

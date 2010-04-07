@@ -60,7 +60,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     String camelDestinationUri;
 
     private ProducerTemplate camelTemplate;
-    private Endpoint distinationEndpoint;
+    private Endpoint destinationEndpoint;
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean checkException;
 
@@ -107,8 +107,8 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
         try {
             getLogger().log(Level.FINE, "establishing Camel connection");
-            distinationEndpoint = getCamelContext().getEndpoint(camelDestinationUri);
-            consumer = distinationEndpoint.createConsumer(new ConsumerProcessor());
+            destinationEndpoint = getCamelContext().getEndpoint(camelDestinationUri);
+            consumer = destinationEndpoint.createConsumer(new ConsumerProcessor());
             consumer.start();
 
         } catch (Exception ex) {
@@ -131,7 +131,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         this.deactivate();
     }
 
-    public ProducerTemplate getCamelTemplate() {
+    public ProducerTemplate getCamelTemplate() throws Exception {
         if (camelTemplate == null) {            
             camelTemplate = getCamelContext().createProducerTemplate();
         }

@@ -18,6 +18,7 @@ package org.apache.camel.util;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchEndpointException;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
@@ -152,6 +153,30 @@ public final class CamelContextHelper {
             }
         }
         return endpoint;
+    }
+
+    /**
+     * Gets the maximum cache pool size.
+     * <p/>
+     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_CACHE_POOL_SIZE}.
+     * If no property has been set, then it will fallback to return a size of 1000.
+     *
+     * @param camelContext the camel context
+     * @return the maximum cache size
+     * @throws IllegalArgumentException is thrown if the property is illegal
+     */
+    public static int getMaximumCachePoolSize(CamelContext camelContext) throws IllegalArgumentException {
+        String s = camelContext.getProperties().get(Exchange.MAXIMUM_CACHE_POOL_SIZE);
+        if (s != null) {
+            Integer size = camelContext.getTypeConverter().convertTo(Integer.class, s);
+            if (size == null || size <= 0) {
+                throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_CACHE_POOL_SIZE + " must be a positive number, was: " + s);
+            }
+            return size;
+        }
+
+        // 1000 is the default fallback
+        return 1000;
     }
 
 }

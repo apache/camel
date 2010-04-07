@@ -24,7 +24,6 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.AggregateDefinition;
@@ -64,7 +63,6 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedBodiesReceived(allBrothers);
 
-        ProducerTemplate template = context.createProducerTemplate();
         template.sendBody("direct:start", allNames);
 
         assertMockEndpointsSatisfied();

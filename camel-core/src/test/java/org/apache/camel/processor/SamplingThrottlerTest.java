@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -76,7 +77,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
                 public void run() {
                     try {
                         sendExchangesThroughDroppingThrottler(sentExchanges, 35);
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                         // ignore
                     }
                 }
@@ -86,15 +87,21 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
-    private void sendExchangesThroughDroppingThrottler(List<Exchange> sentExchanges, int messages) throws InterruptedException {
+    private void sendExchangesThroughDroppingThrottler(List<Exchange> sentExchanges, int messages) throws Exception {
+        ProducerTemplate myTemplate = context.createProducerTemplate();
+
         DirectEndpoint targetEndpoint = resolveMandatoryEndpoint("direct:sample", DirectEndpoint.class);
         for (int i = 0; i < messages; i++) {
             Exchange e = targetEndpoint.createExchange();
             e.getIn().setBody("<message>" + i + "</message>");
-            template.send(targetEndpoint, e);
-            sentExchanges.add(e);
-            Thread.sleep(100);
+            // only send if we are still started
+            if (context.getStatus().isStarted()) {
+                myTemplate.send(targetEndpoint, e);
+                sentExchanges.add(e);
+                Thread.sleep(100);
+            }
         }
+        myTemplate.stop();
     }
 
     private void validateDroppedExchanges(List<Exchange> sentExchanges, int expectedNotDroppedCount) {

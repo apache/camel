@@ -48,7 +48,7 @@ import static org.apache.camel.util.ServiceHelper.stopServices;
 public class JpaTest extends Assert {
     private static final transient Log LOG = LogFactory.getLog(JpaTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
-    protected ProducerTemplate template = camelContext.createProducerTemplate();
+    protected ProducerTemplate template;
     protected JpaEndpoint endpoint;
     protected TransactionStrategy transactionStrategy;
     protected JpaTemplate jpaTemplate;
@@ -108,7 +108,7 @@ public class JpaTest extends Assert {
 
     @Before
     public void setUp() throws Exception {
-        
+        template = camelContext.createProducerTemplate();
         startServices(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
@@ -126,8 +126,6 @@ public class JpaTest extends Assert {
 
     @After
     public void tearDown() throws Exception {
-
         stopServices(consumer, template, camelContext);
-        
     }
 }

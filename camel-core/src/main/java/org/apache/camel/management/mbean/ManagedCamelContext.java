@@ -135,15 +135,22 @@ public class ManagedCamelContext {
     @ManagedOperation(description = "Send body (in only)")
     public void sendBody(String endpointUri, String body) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
-        template.sendBody(endpointUri, body);
-        template.stop();
+        try {
+            template.sendBody(endpointUri, body);
+        } finally {
+            template.stop();
+        }
     }
 
     @ManagedOperation(description = "Request body (in out)")
     public Object requestBody(String endpointUri, String body) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
-        Object answer = template.requestBody(endpointUri, body);
-        template.stop();
+        Object answer = null;
+        try {
+            answer = template.requestBody(endpointUri, body);
+        } finally {
+            template.stop();
+        }
         return answer;
     }
 

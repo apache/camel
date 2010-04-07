@@ -30,7 +30,7 @@ import org.apache.camel.util.ServiceHelper;
 public class VmRouteTest extends TestSupport {
     private CamelContext context1 = new DefaultCamelContext();
     private CamelContext context2 = new DefaultCamelContext();
-    private ProducerTemplate template = context1.createProducerTemplate();
+    private ProducerTemplate template;
     private Object expectedBody = "<hello>world!</hello>";
 
     public void testSedaQueue() throws Exception {
@@ -59,11 +59,13 @@ public class VmRouteTest extends TestSupport {
         });
 
         ServiceHelper.startServices(context1, context2);
+
+        template = context1.createProducerTemplate();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        ServiceHelper.stopServices(context2, context1);
+        ServiceHelper.stopServices(context2, context1, template);
         super.tearDown();
     }
 }

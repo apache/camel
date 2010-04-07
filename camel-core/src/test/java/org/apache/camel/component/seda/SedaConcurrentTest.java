@@ -97,6 +97,8 @@ public class SedaConcurrentTest extends ContextTestSupport {
 
         // use our own template that has a higher thread pool than default camel that uses 5
         ProducerTemplate pt = new DefaultProducerTemplate(context, Executors.newFixedThreadPool(10));
+        // must start the template
+        pt.start();
 
         List<Future> replies = new ArrayList<Future>(20);
         for (int i = 0; i < 20; i++) {

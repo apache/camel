@@ -69,7 +69,7 @@ public class VelocityDynamicTemplateTest extends CamelTestSupport {
         ProducerTemplate template;
         boolean useLetter2;
         
-        public void sendToNewTemplate(Exchange exchange) {
+        public void sendToNewTemplate(Exchange exchange) throws Exception {
             if (template == null) {
                 template = exchange.getContext().createProducerTemplate();
             }

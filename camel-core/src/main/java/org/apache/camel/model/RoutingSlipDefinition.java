@@ -69,7 +69,7 @@ public class RoutingSlipDefinition extends ProcessorDefinition<ProcessorDefiniti
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notEmpty(getHeaderName(), "headerName", this);
         ObjectHelper.notEmpty(getUriDelimiter(), "uriDelimiter", this);
-        return new RoutingSlip(getHeaderName(), getUriDelimiter());
+        return new RoutingSlip(routeContext.getCamelContext(), getHeaderName(), getUriDelimiter());
     }
 
     @Override

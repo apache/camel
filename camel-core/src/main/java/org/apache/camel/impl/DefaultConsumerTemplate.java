@@ -16,42 +16,50 @@
  */
 package org.apache.camel.impl;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ServiceHelper;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * @version $Revision$
  */
-public class DefaultConsumerTemplate implements ConsumerTemplate {
+public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerTemplate {
 
     private final CamelContext context;
-    private final ConsumerCache consumerCache = new ConsumerCache();
+    private ConsumerCache consumerCache;
+    private int maximumCacheSize;
 
     public DefaultConsumerTemplate(CamelContext context) {
         this.context = context;
     }
 
-    public void start() throws Exception {
-        consumerCache.start();
+    public int getMaximumCacheSize() {
+        return maximumCacheSize;
     }
 
-    public void stop() throws Exception {
-        consumerCache.stop();
+    public void setMaximumCacheSize(int maximumCacheSize) {
+        this.maximumCacheSize = maximumCacheSize;
     }
-    
+
+    public int getCurrentCacheSize() {
+        if (consumerCache == null) {
+            return 0;
+        }
+        return consumerCache.size();
+    }
+
     public CamelContext getCamelContext() {
         return context;
     }
 
     public Exchange receive(String endpointUri) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        return consumerCache.receive(endpoint);
+        return getConsumerCache().receive(endpoint);
     }
 
     public Exchange receive(Endpoint endpoint) {
@@ -60,7 +68,7 @@ public class DefaultConsumerTemplate implements ConsumerTemplate {
 
     public Exchange receive(String endpointUri, long timeout) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        return consumerCache.receive(endpoint, timeout);
+        return getConsumerCache().receive(endpoint, timeout);
     }
 
     public Exchange receive(Endpoint endpoint, long timeout) {
@@ -69,7 +77,7 @@ public class DefaultConsumerTemplate implements ConsumerTemplate {
 
     public Exchange receiveNoWait(String endpointUri) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        return consumerCache.receiveNoWait(endpoint);
+        return getConsumerCache().receiveNoWait(endpoint);
     }
 
     public Exchange receiveNoWait(Endpoint endpoint) {
@@ -162,4 +170,28 @@ public class DefaultConsumerTemplate implements ConsumerTemplate {
         }
         return answer;
     }
+
+    private ConsumerCache getConsumerCache() {
+        if (!isStarted()) {
+            throw new IllegalStateException("ConsumerTemplate has not been started");
+        }
+        return consumerCache;
+    }
+
+    protected void doStart() throws Exception {
+        if (consumerCache == null) {
+            if (maximumCacheSize > 0) {
+                consumerCache = new ConsumerCache(context, maximumCacheSize);
+            } else {
+                consumerCache = new ConsumerCache(context);
+            }
+        }
+        ServiceHelper.startService(consumerCache);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(consumerCache);
+        consumerCache = null;
+    }
+
 }

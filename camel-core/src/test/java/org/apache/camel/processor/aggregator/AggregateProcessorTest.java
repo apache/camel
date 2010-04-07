@@ -467,7 +467,9 @@ public class AggregateProcessorTest extends ContextTestSupport {
                     throw new IllegalArgumentException("Damn");
                 }
                 // else send it further along
-                new SendProcessor(context.getEndpoint("mock:result")).process(exchange);
+                SendProcessor send = new SendProcessor(context.getEndpoint("mock:result"));
+                send.start();
+                send.process(exchange);
             }
         };
                 

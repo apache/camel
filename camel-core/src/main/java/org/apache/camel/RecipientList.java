@@ -45,7 +45,7 @@ import java.lang.annotation.Target;
 public @interface RecipientList {
     String context() default "";
     String delimiter() default ",";
-    boolean parallelProcessoing() default false;
+    boolean parallelProcessing() default false;
     boolean stopOnException() default false;
     String strategyRef() default "";
     String executorServiceRef() default "";

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -34,6 +35,9 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a dynamic <a
@@ -44,6 +48,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class RecipientList extends ServiceSupport implements Processor {
+    private final CamelContext camelContext;
     private ProducerCache producerCache;
     private Expression expression;
     private final String delimiter;
@@ -52,23 +57,28 @@ public class RecipientList extends ServiceSupport implements Processor {
     private ExecutorService executorService;
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
 
-    public RecipientList() {
+    public RecipientList(CamelContext camelContext) {
         // use comma by default as delimiter
-        this.delimiter = ",";
+        this(camelContext, ",");
     }
 
-    public RecipientList(String delimiter) {
+    public RecipientList(CamelContext camelContext, String delimiter) {
+        notNull(camelContext, "camelContext");
+        ObjectHelper.notEmpty(delimiter, "delimiter");
+        this.camelContext = camelContext;
         this.delimiter = delimiter;
     }
 
-    public RecipientList(Expression expression) {
+    public RecipientList(CamelContext camelContext, Expression expression) {
         // use comma by default as delimiter
-        this(expression, ",");
+        this(camelContext, expression, ",");
     }
 
-    public RecipientList(Expression expression, String delimiter) {
+    public RecipientList(CamelContext camelContext, Expression expression, String delimiter) {
+        notNull(camelContext, "camelContext");
         ObjectHelper.notNull(expression, "expression");
         ObjectHelper.notEmpty(delimiter, "delimiter");
+        this.camelContext = camelContext;
         this.expression = expression;
         this.delimiter = delimiter;
     }
@@ -79,6 +89,10 @@ public class RecipientList extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
+        if (!isStarted()) {
+            throw new IllegalStateException("RecipientList has not been started: " + this);
+        }
+
         Object receipientList = expression.evaluate(exchange, Object.class);
         sendToRecipientList(exchange, receipientList);
     }
@@ -91,7 +105,6 @@ public class RecipientList extends ServiceSupport implements Processor {
 
         // we should acquire and release the producers we need so we can leverage the producer
         // cache to the fullest
-        ProducerCache cache = getProducerCache(exchange);
         Map<Endpoint, Producer> producers = new LinkedHashMap<Endpoint, Producer>();
         try {
             List<Processor> processors = new ArrayList<Processor>();
@@ -99,7 +112,7 @@ public class RecipientList extends ServiceSupport implements Processor {
                 Object recipient = iter.next();
                 Endpoint endpoint = resolveEndpoint(exchange, recipient);
                 // acquire producer which we then release later
-                Producer producer = cache.acquireProducer(endpoint);
+                Producer producer = producerCache.acquireProducer(endpoint);
                 processors.add(producer);
                 producers.put(endpoint, producer);
             }
@@ -112,18 +125,9 @@ public class RecipientList extends ServiceSupport implements Processor {
         } finally {
             // and release the producers back to the producer cache
             for (Map.Entry<Endpoint, Producer> entry : producers.entrySet()) {
-                cache.releaseProducer(entry.getKey(), entry.getValue());
+                producerCache.releaseProducer(entry.getKey(), entry.getValue());
             }
         }
-    }
-
-    protected ProducerCache getProducerCache(Exchange exchange) throws Exception {
-        // setup producer cache as we need to use the pluggable service pool defined on camel context
-        if (producerCache == null) {
-            this.producerCache = new ProducerCache(exchange.getContext());
-            this.producerCache.start();
-        }
-        return this.producerCache;
     }
 
     protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
@@ -135,15 +139,16 @@ public class RecipientList extends ServiceSupport implements Processor {
     }
 
     protected void doStart() throws Exception {
-        if (producerCache != null) {
-            producerCache.start();
+        if (producerCache == null) {
+            producerCache = new ProducerCache(camelContext);
+            // add it as a service so we can manage it
+            camelContext.addService(producerCache);
         }
+        ServiceHelper.startService(producerCache);
     }
 
     protected void doStop() throws Exception {
-        if (producerCache != null) {
-            producerCache.stop();
-        }
+        ServiceHelper.stopService(producerCache);
     }
 
     public boolean isParallelProcessing() {

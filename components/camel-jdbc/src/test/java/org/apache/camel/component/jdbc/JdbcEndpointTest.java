@@ -27,6 +27,7 @@ public class JdbcEndpointTest extends JdbcRouteTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 JdbcEndpoint jdbc = new JdbcEndpoint();
+                jdbc.setCamelContext(context);
                 jdbc.setDataSource(ds);
                 context.addEndpoint("foo", jdbc);
 

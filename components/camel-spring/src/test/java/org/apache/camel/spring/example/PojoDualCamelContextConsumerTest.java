@@ -17,6 +17,7 @@
 package org.apache.camel.spring.example;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.context.ApplicationContext;
@@ -36,7 +37,10 @@ public class PojoDualCamelContextConsumerTest extends TestSupport {
         MockEndpoint result = camel1.getEndpoint("mock:result", MockEndpoint.class);
         result.expectedBodiesReceived(body);
 
-        camel1.createProducerTemplate().sendBody("direct:start", body);
+        ProducerTemplate template = camel1.createProducerTemplate();
+        template.start();
+        template.sendBody("direct:start", body);
+        template.stop();
 
         result.assertIsSatisfied();
     }
@@ -47,7 +51,10 @@ public class PojoDualCamelContextConsumerTest extends TestSupport {
         MockEndpoint result = camel2.getEndpoint("mock:result", MockEndpoint.class);
         result.expectedBodiesReceived(body);
 
-        camel2.createProducerTemplate().sendBody("direct:start", body);
+        ProducerTemplate template = camel2.createProducerTemplate();
+        template.start();
+        template.sendBody("direct:start", body);
+        template.stop();
 
         result.assertIsSatisfied();
     }
@@ -59,7 +66,10 @@ public class PojoDualCamelContextConsumerTest extends TestSupport {
         MockEndpoint result = camel1.getEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(0);
 
-        camel1.createProducerTemplate().sendBody("direct:foo", body);
+        ProducerTemplate template = camel1.createProducerTemplate();
+        template.start();
+        template.sendBody("direct:foo", body);
+        template.stop();
 
         Thread.sleep(200);
         
@@ -75,7 +85,10 @@ public class PojoDualCamelContextConsumerTest extends TestSupport {
         MockEndpoint foo = camel2.getEndpoint("mock:foo", MockEndpoint.class);
         foo.expectedBodiesReceived(body);
 
-        camel2.createProducerTemplate().sendBody("direct:foo", body);
+        ProducerTemplate template = camel2.createProducerTemplate();
+        template.start();
+        template.sendBody("direct:foo", body);
+        template.stop();
 
         result.assertIsSatisfied();
         foo.assertIsSatisfied();

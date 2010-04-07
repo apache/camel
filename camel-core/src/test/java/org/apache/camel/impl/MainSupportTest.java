@@ -31,7 +31,7 @@ public class MainSupportTest extends ContextTestSupport {
 
     private class MyMainSupport extends MainSupport {
 
-        protected ProducerTemplate findOrCreateCamelTemplate() {
+        protected ProducerTemplate findOrCreateCamelTemplate() throws Exception {
             return context.createProducerTemplate();
         }
 

@@ -92,7 +92,8 @@ public interface Exchange {
     String LOOP_INDEX               = "CamelLoopIndex";
     String LOOP_SIZE                = "CamelLoopSize";
 
-    String MULTICAST_INDEX = "CamelMulticastIndex";
+    String MAXIMUM_CACHE_POOL_SIZE = "CamelMaximumCachePoolSize";
+    String MULTICAST_INDEX         = "CamelMulticastIndex";
 
     String ON_COMPLETION = "CamelOnCompletion";
 

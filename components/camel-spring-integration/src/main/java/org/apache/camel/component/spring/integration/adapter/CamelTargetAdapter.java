@@ -30,10 +30,9 @@ import org.springframework.integration.core.MessageChannel;
 import org.springframework.integration.core.MessageHeaders;
 import org.springframework.integration.message.MessageDeliveryException;
 import org.springframework.integration.message.MessageHandler;
-import org.springframework.integration.message.MessageRejectedException;
 
 /**
- * CamelTargeAdapter will redirect the Spring Integration message to the Camel context.
+ * CamelTargetAdapter will redirect the Spring Integration message to the Camel context.
  * When we inject the camel context into it, we need also specify the Camel endpoint url
  * we will route the Spring Integration message to the Camel context
  *
@@ -54,7 +53,7 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageH
         return replyChannel;
     }
 
-    public ProducerTemplate getCamelTemplate() {
+    public ProducerTemplate getCamelTemplate() throws Exception {
         if (camelTemplate == null) {
             CamelContext ctx = getCamelContext();
             if (ctx == null) {
@@ -65,7 +64,7 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageH
         return camelTemplate;
     }
 
-    public boolean send(Message<?> message) throws MessageRejectedException, MessageDeliveryException {
+    public boolean send(Message<?> message) throws Exception {
         ExchangePattern pattern;
         boolean result = false;
         if (isExpectReply()) {
@@ -73,7 +72,7 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageH
         } else {
             pattern = ExchangePattern.InOnly;
         }
-        Exchange inExchange = new DefaultExchange(getCamelContext(), pattern);        
+        Exchange inExchange = new DefaultExchange(getCamelContext(), pattern);
         SpringIntegrationBinding.storeToCamelMessage(message, inExchange.getIn());
         Exchange outExchange = getCamelTemplate().send(getCamelEndpointUri(), inExchange);
         if (outExchange.getOut() != null && outExchange.getOut().isFault()) {
@@ -97,8 +96,12 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageH
         return result;
     }
 
-    public void handleMessage(Message<?> message) {
-        send(message);        
+    public void handleMessage(Message<?> message) throws MessageDeliveryException {
+        try {
+            send(message);
+        } catch (Exception e) {
+            throw new MessageDeliveryException(message, "Cannot send message", e);
+        }
     }
 
 }

@@ -89,6 +89,7 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;
@@ -501,7 +502,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     /**
      * Strategy to add the given endpoint to the internal endpoint registry
      *
-     * @param uri  uri of endpoint
+     * @param uri      uri of endpoint
      * @param endpoint the endpoint to add
      * @return the added endpoint
      */
@@ -936,12 +937,30 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         this.delay = delay;
     }
 
-    public ProducerTemplate createProducerTemplate() {
-        return new DefaultProducerTemplate(this);
+    public ProducerTemplate createProducerTemplate() throws Exception {
+        int size = CamelContextHelper.getMaximumCachePoolSize(this);
+        return createProducerTemplate(size);
     }
 
-    public ConsumerTemplate createConsumerTemplate() {
-        return new DefaultConsumerTemplate(this);
+    public ProducerTemplate createProducerTemplate(int maximumCacheSize) throws Exception {
+        DefaultProducerTemplate answer = new DefaultProducerTemplate(this);
+        answer.setMaximumCacheSize(maximumCacheSize);
+        // start it so its ready to use
+        answer.start();
+        return answer;
+    }
+
+    public ConsumerTemplate createConsumerTemplate() throws Exception {
+        int size = CamelContextHelper.getMaximumCachePoolSize(this);
+        return createConsumerTemplate(size);
+    }
+
+    public ConsumerTemplate createConsumerTemplate(int maximumCacheSize) throws Exception {
+        DefaultConsumerTemplate answer = new DefaultConsumerTemplate(this);
+        answer.setMaximumCacheSize(maximumCacheSize);
+        // start it so its ready to use
+        answer.start();
+        return answer;
     }
 
     public ErrorHandlerBuilder getErrorHandlerBuilder() {

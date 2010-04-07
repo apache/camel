@@ -48,7 +48,7 @@ public class OnExceptionProcessorInspectCausedExceptionWithDefaultErrorHandlerTe
 
                 // START SNIPPET: e1
                 // here we register exception cause for MyFunctionException
-                // when this exception occur we want it to be processed by our proceesor
+                // when this exception occur we want it to be processed by our processor
                 onException(MyFunctionalException.class).process(new MyFunctionFailureHandler());
                 // END SNIPPET: e1
 

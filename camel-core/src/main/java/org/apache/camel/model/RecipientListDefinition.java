@@ -85,9 +85,9 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends E
 
         RecipientList answer;
         if (delimiter != null) {
-            answer = new RecipientList(expression, delimiter);
+            answer = new RecipientList(routeContext.getCamelContext(), expression, delimiter);
         } else {
-            answer = new RecipientList(expression);
+            answer = new RecipientList(routeContext.getCamelContext(), expression);
         }
         answer.setAggregationStrategy(createAggregationStrategy(routeContext));
         answer.setParallelProcessing(isParallelProcessing());

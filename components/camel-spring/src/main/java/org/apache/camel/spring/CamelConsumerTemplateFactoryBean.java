@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.impl.DefaultConsumerTemplate;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
@@ -45,9 +46,11 @@ public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements 
     @XmlAttribute
     private String camelContextId;
     @XmlTransient
-    private CamelContext camelContext;    
+    private CamelContext camelContext;
     @XmlTransient
     private ApplicationContext applicationContext;
+    @XmlAttribute
+    private Integer maximumCacheSize;
 
     public void afterPropertiesSet() throws Exception {
         if (camelContext == null && camelContextId != null) {
@@ -59,7 +62,16 @@ public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements 
     }
 
     public Object getObject() throws Exception {
-        return new DefaultConsumerTemplate(getCamelContext());
+        ConsumerTemplate answer = new DefaultConsumerTemplate(camelContext);
+
+        // set custom cache size if provided
+        if (maximumCacheSize != null) {
+            answer.setMaximumCacheSize(maximumCacheSize);
+        }
+
+        // must start it so its ready to use
+        answer.start();
+        return answer;
     }
 
     public Class getObjectType() {
@@ -72,6 +84,7 @@ public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements 
 
     // Properties
     // -------------------------------------------------------------------------
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -88,4 +101,11 @@ public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements 
         this.camelContextId = camelContextId;
     }
 
+    public Integer getMaximumCacheSize() {
+        return maximumCacheSize;
+    }
+
+    public void setMaximumCacheSize(Integer maximumCacheSize) {
+        this.maximumCacheSize = maximumCacheSize;
+    }
 }

@@ -38,26 +38,21 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * A client helper object (named like Spring's TransactionTemplate & JmsTemplate
- * et al) for working with Camel and sending {@link org.apache.camel.Message} instances in an
- * {@link org.apache.camel.Exchange} to an {@link org.apache.camel.Endpoint}.
- *
  * @version $Revision$
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
     private final CamelContext context;
-    private final ProducerCache producerCache;
+    private ProducerCache producerCache;
     private Endpoint defaultEndpoint;
     private ExecutorService executor;
+    private int maximumCacheSize;
 
     public DefaultProducerTemplate(CamelContext context) {
         this.context = context;
-        this.producerCache = new ProducerCache(context);
     }
 
     public DefaultProducerTemplate(CamelContext context, ExecutorService executor) {
         this.context = context;
-        this.producerCache = new ProducerCache(context);
         this.executor = executor;
     }
 
@@ -69,6 +64,21 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public static DefaultProducerTemplate newInstance(CamelContext camelContext, String defaultEndpointUri) {
         Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(camelContext, defaultEndpointUri);
         return new DefaultProducerTemplate(camelContext, endpoint);
+    }
+
+    public int getMaximumCacheSize() {
+        return maximumCacheSize;
+    }
+
+    public void setMaximumCacheSize(int maximumCacheSize) {
+        this.maximumCacheSize = maximumCacheSize;
+    }
+
+    public int getCurrentCacheSize() {
+        if (producerCache == null) {
+            return 0;
+        }
+        return producerCache.size();
     }
 
     public Exchange send(String endpointUri, Exchange exchange) {
@@ -87,16 +97,16 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public Exchange send(Endpoint endpoint, Exchange exchange) {
-        producerCache.send(endpoint, exchange);
+        getProducerCache().send(endpoint, exchange);
         return exchange;
     }
 
     public Exchange send(Endpoint endpoint, Processor processor) {
-        return producerCache.send(endpoint, processor);
+        return getProducerCache().send(endpoint, processor);
     }
 
     public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor) {
-        return producerCache.send(endpoint, pattern, processor);
+        return getProducerCache().send(endpoint, pattern, processor);
     }
 
     public Object sendBody(Endpoint endpoint, ExchangePattern pattern, Object body) {
@@ -680,7 +690,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public Future<Exchange> asyncCallback(final Endpoint endpoint, final Processor processor, final Synchronization onCompletion) {
         Callable<Exchange> task = new Callable<Exchange>() {
             public Exchange call() throws Exception {
-                Exchange answer = producerCache.send(endpoint, processor);
+                Exchange answer = getProducerCache().send(endpoint, processor);
 
                 // invoke callback before returning answer
                 // as it allows callback to be used without UnitOfWorkProcessor invoking it
@@ -701,7 +711,21 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return executor.submit(task);
     }
 
+    private ProducerCache getProducerCache() {
+        if (!isStarted()) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
+        return producerCache;
+    }
+
     protected void doStart() throws Exception {
+        if (producerCache == null) {
+            if (maximumCacheSize > 0) {
+                producerCache = new ProducerCache(context, maximumCacheSize);
+            } else {
+                producerCache = new ProducerCache(context);
+            }
+        }
         ServiceHelper.startService(producerCache);
         if (executor == null) {
             executor = context.getExecutorServiceStrategy().newDefaultThreadPool(this, "ProducerTemplate");
@@ -710,6 +734,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
+        producerCache = null;
+
         if (executor != null) {
             context.getExecutorServiceStrategy().shutdownNow(executor);
             executor = null;

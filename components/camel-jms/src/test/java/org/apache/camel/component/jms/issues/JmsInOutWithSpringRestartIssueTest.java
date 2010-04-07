@@ -42,6 +42,7 @@ public class JmsInOutWithSpringRestartIssueTest extends CamelSpringTestSupport {
         context.start();
 
         ProducerTemplate producer = context.createProducerTemplate();
+        producer.start();
 
         Object out = producer.requestBody("activemq:queue:foo", "Foo");
         assertEquals("Bye Foo", out);
@@ -50,12 +51,12 @@ public class JmsInOutWithSpringRestartIssueTest extends CamelSpringTestSupport {
         //producer.stop();
         context.stop();
 
-        Thread.sleep(2000);
-
         // TODO: Does not work properly with AMQ 5.3.1
+        // Thread.sleep(2000);
         // context.start();
 
         //producer = context.createProducerTemplate();
+        //producer.start();
 
         // out = producer.requestBody("activemq:queue:foo", "Bar");
         //assertEquals("Bye Bar", out);

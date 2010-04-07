@@ -21,7 +21,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -39,12 +38,8 @@ public class JmsResequencerTest extends AbstractJUnit4SpringContextTests {
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
 
+    @Autowired
     protected ProducerTemplate template;
-    
-    @Before
-    public void setUp() {
-        template = context.createProducerTemplate();
-    }
     
     @After
     public void tearDown() {

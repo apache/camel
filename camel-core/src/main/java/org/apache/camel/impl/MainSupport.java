@@ -323,14 +323,14 @@ public abstract class MainSupport extends ServiceSupport {
      * Returns a {@link org.apache.camel.ProducerTemplate} from the Spring {@link org.springframework.context.ApplicationContext} instances
      * or lazily creates a new one dynamically
      */
-    public ProducerTemplate getCamelTemplate() {
+    public ProducerTemplate getCamelTemplate() throws Exception {
         if (camelTemplate == null) {
             camelTemplate = findOrCreateCamelTemplate();
         }
         return camelTemplate;
     }
 
-    protected abstract ProducerTemplate findOrCreateCamelTemplate();
+    protected abstract ProducerTemplate findOrCreateCamelTemplate() throws Exception;
 
     protected abstract Map<String, CamelContext> getCamelContextMap();
 

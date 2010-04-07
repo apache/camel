@@ -36,6 +36,7 @@ import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -59,6 +60,8 @@ public class MethodInfo {
     private Expression parametersExpression;
     private ExchangePattern pattern = ExchangePattern.InOut;
     private RecipientList recipientList;
+
+    // TODO: This class should extends ServiceSupport so we can cleanup recipientList when stopping
 
     public MethodInfo(CamelContext camelContext, Class<?> type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
                       boolean hasCustomAnnotation, boolean hasHandlerAnnotation, boolean voidAsInOnly) {
@@ -85,16 +88,16 @@ public class MethodInfo {
 
             org.apache.camel.RecipientList annotation = method.getAnnotation(org.apache.camel.RecipientList.class);
 
-            recipientList = new RecipientList(annotation.delimiter());
+            recipientList = new RecipientList(camelContext, annotation.delimiter());
             recipientList.setStopOnException(annotation.stopOnException());
-            recipientList.setParallelProcessing(annotation.parallelProcessoing());
+            recipientList.setParallelProcessing(annotation.parallelProcessing());
 
             if (ObjectHelper.isNotEmpty(annotation.executorServiceRef())) {
                 ExecutorService executor = CamelContextHelper.mandatoryLookup(camelContext, annotation.executorServiceRef(), ExecutorService.class);
                 recipientList.setExecutorService(executor);
             }
 
-            if (annotation.parallelProcessoing() && recipientList.getExecutorService() == null) {
+            if (annotation.parallelProcessing() && recipientList.getExecutorService() == null) {
                 // we are running in parallel so we need a thread pool
                 ExecutorService executor = camelContext.getExecutorServiceStrategy().newDefaultThreadPool(this, "@RecipientList");
                 recipientList.setExecutorService(executor);
@@ -140,6 +143,10 @@ public class MethodInfo {
                 }
                 Object result = invoke(method, pojo, arguments, exchange);
                 if (recipientList != null) {
+                    // ensure its started
+                    if (!recipientList.isStarted()) {
+                        ServiceHelper.startService(recipientList);
+                    }
                     recipientList.sendToRecipientList(exchange, result);
                     // we don't want to return the list of endpoints
                     // return Void to indicate to BeanProcessor that there is no reply

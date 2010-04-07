@@ -16,9 +16,12 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -28,15 +31,15 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
 
-    private static volatile boolean failed;
+    private static AtomicBoolean failed = new AtomicBoolean();
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
-    public void testOneProcesssor() throws Exception {
-        failed = false;
+    public void testOneProcessor() throws Exception {
+        failed.set(false);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -55,7 +58,7 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
                     })
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertFalse("Should not have out", failed);
+                                assertFalse("Should not have out", failed.get());
                                 String s = exchange.getIn().getBody(String.class);
                                 exchange.getIn().setBody("Hi " + s);
                                 context.createProducerTemplate().send("mock:foo", exchange);
@@ -77,8 +80,8 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testThreeProcesssors() throws Exception {
-        failed = false;
+    public void testThreeProcessors() throws Exception {
+        failed.set(false);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -99,7 +102,7 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
                         .to("log:foo")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertFalse("Should not have out", failed);
+                                assertFalse("Should not have out", failed.get());
                                 String s = exchange.getIn().getBody(String.class);
                                 exchange.getIn().setBody("Hi " + s);
                                 context.createProducerTemplate().send("mock:foo", exchange);

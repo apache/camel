@@ -30,7 +30,7 @@ import org.apache.camel.spi.Synchronization;
  * {@link Exchange} to an {@link Endpoint}.
  * <p/>
  * <b>All</b> methods throws {@link RuntimeCamelException} if processing of
- * the {@link Exchange} failed and an Exception occured. The <tt>getCause</tt>
+ * the {@link Exchange} failed and an Exception occurred. The <tt>getCause</tt>
  * method on {@link RuntimeCamelException} returns the wrapper original caused
  * exception.
  * <p/>
@@ -49,6 +49,30 @@ import org.apache.camel.spi.Synchronization;
  * @version $Revision$
  */
 public interface ProducerTemplate extends Service {
+
+    // Configuration methods
+    // -----------------------------------------------------------------------
+
+    /**
+     * Gets the maximum cache size used in the backing cache pools.
+     *
+     * @return the maximum cache size
+     */
+    int getMaximumCacheSize();
+
+    /**
+     * Sets a custom maximum cache size to use in the backing cache pools.
+     *
+     * @param maximumCacheSize the custom maximum cache size
+     */
+    void setMaximumCacheSize(int maximumCacheSize);
+
+    /**
+     * Gets an approximated size of the current cached resources in the backing cache pools.
+     *
+     * @return the size of current cached resources
+     */
+    int getCurrentCacheSize();
 
     // Synchronous methods
     // -----------------------------------------------------------------------

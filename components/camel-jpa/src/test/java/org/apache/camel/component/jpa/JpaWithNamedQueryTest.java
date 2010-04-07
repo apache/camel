@@ -47,7 +47,7 @@ import org.springframework.orm.jpa.JpaTemplate;
 public class JpaWithNamedQueryTest extends Assert {
     private static final transient Log LOG = LogFactory.getLog(JpaWithNamedQueryTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
-    protected ProducerTemplate template = camelContext.createProducerTemplate();
+    protected ProducerTemplate template;
     protected JpaEndpoint endpoint;
     protected TransactionStrategy transactionStrategy;
     protected JpaTemplate jpaTemplate;
@@ -140,7 +140,7 @@ public class JpaWithNamedQueryTest extends Assert {
 
     @Before
     public void setUp() throws Exception {
-        
+        template = camelContext.createProducerTemplate();
         ServiceHelper.startServices(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
@@ -158,8 +158,6 @@ public class JpaWithNamedQueryTest extends Assert {
 
     @After
     public void tearDown() throws Exception {
-
         ServiceHelper.stopServices(consumer, template, camelContext);
-
     }
 }

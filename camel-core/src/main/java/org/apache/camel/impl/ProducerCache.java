@@ -28,11 +28,13 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.spi.ServicePool;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
@@ -43,22 +45,24 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class ProducerCache extends ServiceSupport {
     private static final transient Log LOG = LogFactory.getLog(ProducerCache.class);
 
-    private final Map<String, Producer> producers;
+    // TODO: Expose this cache for management in JMX (also ConsumerCache)
+    // TODO: Add source information so we know who uses this cache
+    // TODO: Add purge operation to purge the cache
+
+    private final CamelContext camelContext;
     private final ServicePool<Endpoint, Producer> pool;
-    private final CamelContext context;
+    private final Map<String, Producer> producers;
 
-    // TODO: Have easy configuration of pooling in Camel
-
-    public ProducerCache(CamelContext context) {
-        this(context, context.getProducerServicePool());
+    public ProducerCache(CamelContext camelContext) {
+        this(camelContext, CamelContextHelper.getMaximumCachePoolSize(camelContext));
     }
 
-    public ProducerCache(CamelContext context, ServicePool<Endpoint, Producer> producerServicePool) {
-        this(context, producerServicePool, new LRUCache<String, Producer>(1000));
+    public ProducerCache(CamelContext camelContext, int cacheSize) {
+        this(camelContext, camelContext.getProducerServicePool(), new LRUCache<String, Producer>(cacheSize));
     }
 
-    public ProducerCache(CamelContext context, ServicePool<Endpoint, Producer> producerServicePool, Map<String, Producer> cache) {
-        this.context = context;
+    public ProducerCache(CamelContext camelContext, ServicePool<Endpoint, Producer> producerServicePool, Map<String, Producer> cache) {
+        this.camelContext = camelContext;
         this.pool = producerServicePool;
         this.producers = cache;
     }
@@ -258,23 +262,23 @@ public class ProducerCache extends ServiceSupport {
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(producers);
+        ServiceHelper.stopServices(producers, pool);
         producers.clear();
-
-        ServiceHelper.stopServices(pool);
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(pool);
+        ServiceHelper.startServices(pool, producers);
     }
 
     /**
-     * Returns the current size of the producer cache
+     * Returns the current size of the cache
      *
      * @return the current size
      */
     int size() {
-        return producers.size();
+        int size = producers.size();
+        size += pool.size();
+        return size;
     }
 
 }

@@ -81,7 +81,7 @@ public class ServicePoolTest extends ContextTestSupport {
         assertEquals("Should have stopped the produers", true, cleanup);
     }
 
-    public void testSingleEnry() throws Exception {
+    public void testSingleEntry() throws Exception {
         Endpoint endpoint = context.getEndpoint("mock:foo");
 
         assertNull(pool.acquire(endpoint));
@@ -102,7 +102,7 @@ public class ServicePoolTest extends ContextTestSupport {
         assertEquals(1, pool.size());
     }
 
-    public void testTwoEnries() throws Exception {
+    public void testTwoEntries() throws Exception {
         Endpoint endpoint = context.getEndpoint("mock:foo");
 
         Producer producer1 = new MyProducer(endpoint);
@@ -149,7 +149,7 @@ public class ServicePoolTest extends ContextTestSupport {
             pool.release(endpoint, producer);
         }
     }
-    
+
     public void testAcquireAdd() throws Exception {
         Endpoint endpoint = context.getEndpoint("mock:foo");
         List<Producer> producers = new ArrayList<Producer>();
@@ -191,11 +191,11 @@ public class ServicePoolTest extends ContextTestSupport {
     public void testConcurrent() throws Exception {
         final Endpoint endpoint = context.getEndpoint("mock:foo");
 
-        ExecutorService exectur = Executors.newFixedThreadPool(5);
+        ExecutorService executor = Executors.newFixedThreadPool(5);
         List<Future> response = new ArrayList<Future>();
         for (int i = 0; i < 5; i++) {
             final int index = i;
-            Future out = exectur.submit(new Callable<Object>() {
+            Future out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     Producer producer = pool.acquire(endpoint);
                     if (producer == null) {
@@ -218,11 +218,11 @@ public class ServicePoolTest extends ContextTestSupport {
     public void testConcurrentStress() throws Exception {
         final Endpoint endpoint = context.getEndpoint("mock:foo");
 
-        ExecutorService exectur = Executors.newFixedThreadPool(5);
+        ExecutorService executor = Executors.newFixedThreadPool(5);
         List<Future> response = new ArrayList<Future>();
         for (int i = 0; i < 5; i++) {
             final int index = i;
-            Future out = exectur.submit(new Callable<Object>() {
+            Future out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     for (int j = 0; j < 100; j++) {
                         Producer producer = pool.acquire(endpoint);

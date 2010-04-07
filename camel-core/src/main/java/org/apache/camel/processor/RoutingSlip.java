@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -28,6 +29,7 @@ import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,15 +45,18 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
     private ProducerCache producerCache;
     private final String header;
     private final String uriDelimiter;
+    private final CamelContext camelContext;
 
-    public RoutingSlip(String header) {
-        this(header, RoutingSlipDefinition.DEFAULT_DELIMITER);
+    public RoutingSlip(CamelContext camelContext, String header) {
+        this(camelContext, header, RoutingSlipDefinition.DEFAULT_DELIMITER);
     }
 
-    public RoutingSlip(String header, String uriDelimiter) {
+    public RoutingSlip(CamelContext camelContext, String header, String uriDelimiter) {
+        notNull(camelContext, "camelContext");
         notNull(header, "header");
         notNull(uriDelimiter, "uriDelimiter");
 
+        this.camelContext = camelContext;
         this.header = header;
         this.uriDelimiter = uriDelimiter;
     }
@@ -66,6 +71,10 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
     }
 
     public void process(Exchange exchange) throws Exception {
+        if (!isStarted()) {
+            throw new IllegalStateException("RoutingSlip has not been started: " + this);
+        }
+
         Message message = exchange.getIn();
         String[] recipients = recipients(message);
         Exchange current = exchange;
@@ -78,7 +87,7 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
             copyOutToIn(copy, current);
 
             try {                
-                getProducerCache(exchange).doInProducer(endpoint, copy, null, new ProducerCallback<Object>() {
+                producerCache.doInProducer(endpoint, copy, null, new ProducerCallback<Object>() {
                     public Object doInProducer(Producer producer, Exchange exchange, ExchangePattern exchangePattern) throws Exception {
                         // set property which endpoint we send to
                         exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
@@ -125,29 +134,21 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
         return Boolean.TRUE.equals(nextExchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
     }
     
-    protected ProducerCache getProducerCache(Exchange exchange) throws Exception {
-        // setup producer cache as we need to use the pluggable service pool defined on camel context
-        if (producerCache == null) {
-            this.producerCache = new ProducerCache(exchange.getContext());
-            this.producerCache.start();
-        }
-        return this.producerCache;
-    }
-
     protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
         return ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 
     protected void doStart() throws Exception {
-        if (producerCache != null) {
-            producerCache.start();
+        if (producerCache == null) {
+            producerCache = new ProducerCache(camelContext);
+            // add it as a service so we can manage it
+            camelContext.addService(producerCache);
         }
+        ServiceHelper.startService(producerCache);
     }
 
     protected void doStop() throws Exception {
-        if (producerCache != null) {
-            producerCache.stop();
-        }
+        ServiceHelper.stopService(producerCache);
     }
 
     private void updateRoutingSlip(Exchange current) {

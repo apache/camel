@@ -85,9 +85,8 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
     public Exchange doProcess(Exchange exchange) throws Exception {
         // now we are done, we should have a API callback for this
         // send the exchange to the destination using a producer
-        final ProducerCache cache = getProducerCache(exchange);
         // acquire the producer from the service pool
-        final Producer producer = cache.acquireProducer(destination);
+        final Producer producer = producerCache.acquireProducer(destination);
         ObjectHelper.notNull(producer, "producer");
 
         // pass in the callback that adds the exchange to the completed list of tasks
@@ -101,7 +100,7 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
                 } finally {
                     // must return the producer to service pool when we are done
                     try {
-                        cache.releaseProducer(destination, producer);
+                        producerCache.releaseProducer(destination, producer);
                     } catch (Exception e) {
                         LOG.warn("Error releasing producer: " + producer + ". This exception will be ignored.", e);
                     }
@@ -282,7 +281,7 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
         super.doStart();
 
         if (poolSize <= 0) {
-            throw new IllegalArgumentException("PoolSize must be a positive number");
+            throw new IllegalArgumentException("PoolSize must be a positive number, was: " + poolSize);
         }
 
         for (int i = 0; i < poolSize; i++) {

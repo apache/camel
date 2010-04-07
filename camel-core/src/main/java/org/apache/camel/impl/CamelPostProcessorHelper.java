@@ -165,14 +165,28 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     protected ProducerTemplate createInjectionProducerTemplate(String endpointUri, String endpointRef, String injectionPointName) {
         // endpoint is optional for this injection point
         Endpoint endpoint = getEndpointInjection(endpointUri, endpointRef, injectionPointName, false);
-        return new DefaultProducerTemplate(getCamelContext(), endpoint);
+        ProducerTemplate answer = new DefaultProducerTemplate(getCamelContext(), endpoint);
+        // start the template so its ready to use
+        try {
+            answer.start();
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+        return answer;
     }
 
     /**
      * Factory method to create a {@link org.apache.camel.ConsumerTemplate} to be injected into a POJO
      */
     protected ConsumerTemplate createInjectionConsumerTemplate(String endpointUri, String endpointRef, String injectionPointName) {
-        return new DefaultConsumerTemplate(getCamelContext());
+        ConsumerTemplate answer = new DefaultConsumerTemplate(getCamelContext());
+        // start the template so its ready to use
+        try {
+            answer.start();
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+        return answer;
     }
 
     /**

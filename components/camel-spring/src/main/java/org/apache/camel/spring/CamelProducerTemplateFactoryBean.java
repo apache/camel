@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
@@ -51,6 +52,8 @@ public class CamelProducerTemplateFactoryBean extends IdentifiedType implements 
     private CamelContext camelContext;
     @XmlTransient
     private ApplicationContext applicationContext;
+    @XmlAttribute
+    private Integer maximumCacheSize;
 
     public void afterPropertiesSet() throws Exception {
         if (camelContext == null && camelContextId != null) {
@@ -62,16 +65,28 @@ public class CamelProducerTemplateFactoryBean extends IdentifiedType implements 
     }
 
     public Object getObject() throws Exception {
+        ProducerTemplate answer;
+
         CamelContext context = getCamelContext();
         if (defaultEndpoint != null) {
             Endpoint endpoint = context.getEndpoint(defaultEndpoint);
             if (endpoint == null) {
                 throw new IllegalArgumentException("No endpoint found for URI: " + defaultEndpoint);
             } else {
-                return new DefaultProducerTemplate(context, endpoint);
+                answer = new DefaultProducerTemplate(context, endpoint);
             }
+        } else {
+            answer = new DefaultProducerTemplate(context);
         }
-        return new DefaultProducerTemplate(context);
+
+        // set custom cache size if provided
+        if (maximumCacheSize != null) {
+            answer.setMaximumCacheSize(maximumCacheSize);
+        }
+
+        // must start it so its ready to use
+        answer.start();
+        return answer;
     }
 
     public Class getObjectType() {
@@ -106,5 +121,12 @@ public class CamelProducerTemplateFactoryBean extends IdentifiedType implements 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
-    
+
+    public Integer getMaximumCacheSize() {
+        return maximumCacheSize;
+    }
+
+    public void setMaximumCacheSize(Integer maximumCacheSize) {
+        this.maximumCacheSize = maximumCacheSize;
+    }
 }

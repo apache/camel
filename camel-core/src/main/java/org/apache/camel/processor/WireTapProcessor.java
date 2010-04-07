@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -37,8 +36,6 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class WireTapProcessor extends SendProcessor {
-
-    private final CamelContext camelContext;
     private final ExecutorService executorService;
 
     // expression or processor used for populating a new exchange to send
@@ -50,14 +47,12 @@ public class WireTapProcessor extends SendProcessor {
         super(destination);
         ObjectHelper.notNull(executorService, "executorService");
         this.executorService = executorService;
-        this.camelContext = destination.getCamelContext();
     }
 
     public WireTapProcessor(Endpoint destination, ExchangePattern pattern, ExecutorService executorService) {
         super(destination, pattern);
         ObjectHelper.notNull(executorService, "executorService");
         this.executorService = executorService;
-        this.camelContext = destination.getCamelContext();
     }
 
     @Override
@@ -71,7 +66,7 @@ public class WireTapProcessor extends SendProcessor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        getProducerCache(exchange).doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
+        producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 Exchange wireTapExchange = configureExchange(exchange, pattern);
                 processWireTap(producer, wireTapExchange);

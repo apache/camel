@@ -49,7 +49,7 @@ public class CamelJBIClientProxyTest {
     }
     
     @Test
-    public void testCallFromCamel() {
+    public void testCallFromCamel() throws Exception {
         // get camel context
         CamelContext context = (CamelContext) applicationContext.getBean("conduit_context");
         ProducerTemplate producer = context.createProducerTemplate();

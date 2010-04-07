@@ -18,11 +18,13 @@ package org.apache.camel.impl;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -35,14 +37,19 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ConsumerCache extends ServiceSupport {
     private static final transient Log LOG = LogFactory.getLog(ConsumerCache.class);
-
+    private final CamelContext camelContext;
     private final Map<String, PollingConsumer> consumers;
 
-    public ConsumerCache() {
-        this.consumers = new LRUCache<String, PollingConsumer>(1000);
+    public ConsumerCache(CamelContext camelContext) {
+        this(camelContext, CamelContextHelper.getMaximumCachePoolSize(camelContext));
     }
 
-    public ConsumerCache(Map<String, PollingConsumer> cache) {
+    public ConsumerCache(CamelContext camelContext, int maximumCacheSize) {
+        this(camelContext, new LRUCache<String, PollingConsumer>(maximumCacheSize));
+    }
+
+    public ConsumerCache(CamelContext camelContext, Map<String, PollingConsumer> cache) {
+        this.camelContext = camelContext;
         this.consumers = cache;
     }
 
@@ -59,7 +66,7 @@ public class ConsumerCache extends ServiceSupport {
 
             boolean singleton = true;
             if (answer instanceof IsSingleton) {
-                singleton = ((IsSingleton)answer).isSingleton();
+                singleton = ((IsSingleton) answer).isSingleton();
             }
 
             if (singleton) {
@@ -103,12 +110,13 @@ public class ConsumerCache extends ServiceSupport {
         return consumer.receiveNoWait();
     }
 
-    protected void doStop() throws Exception {
-        ServiceHelper.stopServices(consumers.values());
-        consumers.clear();
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(consumers);
     }
 
-    protected void doStart() throws Exception {
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(consumers);
+        consumers.clear();
     }
 
     /**

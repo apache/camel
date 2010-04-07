@@ -108,6 +108,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
 
     public void testRequestUsingDefaultEndpoint() throws Exception {
         ProducerTemplate producer = new DefaultProducerTemplate(context, context.getEndpoint("direct:out"));
+        producer.start();
 
         Object out = producer.requestBody("Hello");
         assertEquals("Bye Bye World", out);
@@ -118,10 +119,13 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         Map<String, Object> headers = new HashMap<String, Object>();
         out = producer.requestBodyAndHeaders("Hello", headers);
         assertEquals("Bye Bye World", out);
+
+        producer.stop();
     }
 
     public void testSendUsingDefaultEndpoint() throws Exception {
         ProducerTemplate producer = new DefaultProducerTemplate(context, context.getEndpoint("direct:in"));
+        producer.start();
 
         getMockEndpoint("mock:result").expectedMessageCount(3);
 
@@ -131,6 +135,8 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         producer.sendBodyAndHeaders("Hello", headers);
 
         assertMockEndpointsSatisfied();
+
+        producer.stop();
     }
 
     @Override
@@ -169,4 +175,43 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
             }
         };
     }
+
+    public void testCacheProducers() throws Exception {
+        ProducerTemplate template = new DefaultProducerTemplate(context);
+        template.setMaximumCacheSize(500);
+        template.start();
+
+        assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
+
+        // test that we cache at most 500 producers to avoid it eating to much memory
+        for (int i = 0; i < 503; i++) {
+            Endpoint e = context.getEndpoint("direct:queue:" + i);
+            template.sendBody(e, "Hello");
+        }
+
+        assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
+        template.stop();
+
+        // should be 0
+        assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
+    }
+
+    public void testCacheProducersFromContext() throws Exception {
+        ProducerTemplate template = context.createProducerTemplate(500);
+
+        assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
+
+        // test that we cache at most 500 producers to avoid it eating to much memory
+        for (int i = 0; i < 503; i++) {
+            Endpoint e = context.getEndpoint("direct:queue:" + i);
+            template.sendBody(e, "Hello");
+        }
+
+        assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
+        template.stop();
+
+        // should be 0
+        assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
+    }
+
 }

@@ -46,6 +46,14 @@ public abstract class DefaultServicePool<Key, Service> extends ServiceSupport im
         this.capacity = capacity;
     }
 
+    public synchronized int size() {
+        int size = 0;
+        for (BlockingQueue<Service> entry : pool.values()) {
+            size += entry.size();
+        }
+        return size;
+    }
+
     public synchronized Service addAndAcquire(Key key, Service service) {
         BlockingQueue<Service> entry = pool.get(key);
         if (entry == null) {

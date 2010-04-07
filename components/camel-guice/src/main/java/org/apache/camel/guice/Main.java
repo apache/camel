@@ -52,8 +52,6 @@ public class Main extends MainSupport {
     private String jndiProperties;
  
     public Main() {
-
-
         addOption(new ParameterOption("j", "jndiProperties",
                 "Sets the classpath based jndi properties file location", "jndiProperties") {
             @Override
@@ -62,7 +60,6 @@ public class Main extends MainSupport {
                 
             }
         });
-
     }
     
     public void setJndiProperties(String properties) {
@@ -125,15 +122,14 @@ public class Main extends MainSupport {
     }
 
     protected void doStop() throws Exception {
-        LOG.info("Apache Camel terminating");
-
+        LOG.info("Apache Camel stopping");
 
         if (injector != null) {
             Injectors.close(injector);
         }
     }
 
-    protected ProducerTemplate findOrCreateCamelTemplate() {
+    protected ProducerTemplate findOrCreateCamelTemplate() throws Exception {
         if (injector != null) {
             Set<ProducerTemplate> set = Injectors.getInstancesOf(injector, ProducerTemplate.class);
             if (!set.isEmpty()) {

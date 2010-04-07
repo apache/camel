@@ -56,7 +56,9 @@ public class ContainerWideInterceptorTest extends TestSupport {
         result.expectedBodiesReceived("Hello World");
 
         ProducerTemplate template = camel1.createProducerTemplate();
+        template.start();
         template.sendBody("direct:one", "Hello World");
+        template.stop();
 
         result.assertIsSatisfied();
 
@@ -72,7 +74,9 @@ public class ContainerWideInterceptorTest extends TestSupport {
         result.expectedBodiesReceived("Bye World");
 
         ProducerTemplate template = camel2.createProducerTemplate();
+        template.start();
         template.sendBody("direct:two", "Bye World");
+        template.stop();
 
         result.assertIsSatisfied();
 

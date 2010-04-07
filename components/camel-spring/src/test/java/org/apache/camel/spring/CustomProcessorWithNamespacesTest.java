@@ -43,6 +43,7 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
 
         // now lets send a message
         ProducerTemplate template = context.createProducerTemplate();
+        template.start();
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -50,6 +51,7 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
                 in.setBody(body);
             }
         });
+        template.stop();
 
         List list = MyProcessor.getExchanges();
         assertEquals("Should have received a single exchange: " + list, 1, list.size());

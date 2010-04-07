@@ -79,6 +79,8 @@ public interface CamelContext extends Service, RuntimeConfiguration {
 
     /**
      * Adds a service, starting it so that it will be stopped with this context
+     * <p/>
+     * The added service will also be enlisted in JMX for management (if JMX is enabled)
      *
      * @param object the service
      * @throws Exception can be thrown when starting the service
@@ -460,28 +462,62 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     List<String> getLanguageNames();
 
     /**
-     * Creates a new {@link ProducerTemplate} which is <b>not</b> started.
+     * Creates a new {@link ProducerTemplate} which is <b>started</b> and therefore ready to use right away.
+     * <p/>
+     * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
+     * Why does Camel use too many threads with ProducerTemplate?</a>
+     * <p/>
+     * Will use cache size defined in Camel property with key {@link Exchange#MAXIMUM_CACHE_POOL_SIZE}.
+     * If no key was defined then it will fallback to a default size of 1000.
+     * You can also use the {@link org.apache.camel.ProducerTemplate#setMaximumCacheSize(int)} method to use a custom value
+     * before starting the template.
+     *
+     * @return the template
+     * @throws Exception is thrown if error starting the template
+     */
+    ProducerTemplate createProducerTemplate() throws Exception;
+
+    /**
+     * Creates a new {@link ProducerTemplate} which is <b>started</b> and therefore ready to use right away.
      * <p/>
      * You <b>must</b> start the template before its being used.
      * <p/>
      * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a>
      *
+     * @param maximumCacheSize the maximum cache size
      * @return the template
+     * @throws Exception is thrown if error starting the template
      */
-    ProducerTemplate createProducerTemplate();
+    ProducerTemplate createProducerTemplate(int maximumCacheSize) throws Exception;
 
     /**
-     * Creates a new {@link ConsumerTemplate} which is <b>not</b> started.
+     * Creates a new {@link ConsumerTemplate} which is <b>started</b> and therefore ready to use right away.
      * <p/>
-     * You <b>must</b> start the template before its being used.
+     * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
+     * Why does Camel use too many threads with ProducerTemplate?</a> as it also applies for ConsumerTemplate.
+     * <p/>
+     * Will use cache size defined in Camel property with key {@link Exchange#MAXIMUM_CACHE_POOL_SIZE}.
+     * If no key was defined then it will fallback to a default size of 1000.
+     * You can also use the {@link org.apache.camel.ConsumerTemplate#setMaximumCacheSize(int)} method to use a custom value
+     * before starting the template.
+     *
+     * @return the template
+     * @throws Exception is thrown if error starting the template
+     */
+    ConsumerTemplate createConsumerTemplate() throws Exception;
+
+    /**
+     * Creates a new {@link ConsumerTemplate} which is <b>started</b> and therefore ready to use right away.
      * <p/>
      * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a> as it also applies for ConsumerTemplate.
      *
+     * @param maximumCacheSize the maximum cache size
      * @return the template
+     * @throws Exception is thrown if error starting the template
      */
-    ConsumerTemplate createConsumerTemplate();
+    ConsumerTemplate createConsumerTemplate(int maximumCacheSize) throws Exception;
 
     /**
      * Adds the given interceptor strategy

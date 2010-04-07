@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -37,6 +38,10 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
     private static int counter;
 
     private class MyEndpoint extends DefaultEndpoint {
+
+        private MyEndpoint(String endpointUri, CamelContext camelContext) {
+            super(endpointUri, camelContext);
+        }
 
         public Producer createProducer() throws Exception {
             return new MyProducer(this);
@@ -70,14 +75,6 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
     private class MyPool implements ServicePool<Endpoint, Producer> {
 
         private Producer producer;
-
-        public void setCapacity(int capacity) {
-            // noop
-        }
-
-        public int getCapacity() {
-            return 0;
-        }
 
         public Producer addAndAcquire(Endpoint endpoint, Producer producer) {
             if (endpoint instanceof MyEndpoint) {
@@ -122,7 +119,7 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
         pool.start();
         context.setProducerServicePool(pool);
 
-        context.addEndpoint("my", new MyEndpoint());
+        context.addEndpoint("my", new MyEndpoint("my", context));
 
         Endpoint endpoint = context.getEndpoint("my");
 
@@ -147,7 +144,7 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
     }
 
     public void testCustomProducerServicePoolInRoute() throws Exception {
-        context.addEndpoint("my", new MyEndpoint());
+        context.addEndpoint("my", new MyEndpoint("my", context));
 
         MyPool pool = new MyPool();
         pool.start();

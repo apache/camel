@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class TransactionErrorHandlerRedeliveryDelayTest extends AbstractJUnit4Sp
     @Autowired
     protected CamelContext context;
 
+    @Autowired
+    protected ProducerTemplate producer;
+
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
 
@@ -47,7 +51,7 @@ public class TransactionErrorHandlerRedeliveryDelayTest extends AbstractJUnit4Sp
         result.expectedMessageCount(1);
         result.expectedBodiesReceived("Bye World");
 
-        context.createProducerTemplate().sendBody("activemq:queue:in", "Hello World");
+        producer.sendBody("activemq:queue:in", "Hello World");
 
         result.assertIsSatisfied();
     }
