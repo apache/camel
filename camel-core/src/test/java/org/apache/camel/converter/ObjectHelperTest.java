@@ -18,7 +18,11 @@ package org.apache.camel.converter;
 
 import java.util.Iterator;
 
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import junit.framework.TestCase;
+
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -82,6 +86,33 @@ public class ObjectHelperTest extends TestCase {
 
         it = ObjectHelper.createIterator(null);
         assertEquals(false, it.hasNext());
+    }
+
+    public void testIteratorIdempotentNext() {
+        Iterator<Object> it = ObjectHelper.createIterator("a");
+        assertTrue(it.hasNext());
+        assertTrue(it.hasNext());
+        it.next();
+        assertFalse(it.hasNext());
+    }
+
+    public void testIteratorIdempotentNextWithNodeList() {
+        NodeList nodeList = new NodeList() {
+
+            public Node item(int index) {
+                return null;
+            }
+
+            public int getLength() {
+                return 1;
+            }
+        };
+
+        Iterator<Object> it = ObjectHelper.createIterator(nodeList);
+        assertTrue(it.hasNext());
+        assertTrue(it.hasNext());
+        it.next();
+        assertFalse(it.hasNext());
     }
 
 }

@@ -467,15 +467,16 @@ public final class ObjectHelper {
             return list.iterator();
         } else if (value instanceof NodeList) {
             // lets iterate through DOM results after performing XPaths
-            final NodeList nodeList = (NodeList)value;
+            final NodeList nodeList = (NodeList) value;
             return CastUtils.cast(new Iterator<Node>() {
                 int idx = -1;
 
                 public boolean hasNext() {
-                    return ++idx < nodeList.getLength();
+                    return (idx + 1) < nodeList.getLength();
                 }
 
                 public Node next() {
+                    idx++;
                     return nodeList.item(idx);
                 }
 
@@ -500,10 +501,11 @@ public final class ObjectHelper {
 
                     public boolean hasNext() {
                         // empty string should not be regarded as having next
-                        return ++idx == 0 && ObjectHelper.isNotEmpty(s);
+                        return idx + 1 == 0 && ObjectHelper.isNotEmpty(s);
                     }
 
                     public String next() {
+                        idx++;
                         return s;
                     }
 
