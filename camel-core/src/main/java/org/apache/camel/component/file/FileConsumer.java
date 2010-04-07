@@ -36,8 +36,11 @@ public class FileConsumer extends GenericFileConsumer<File> {
     }
 
     protected void pollDirectory(String fileName, List<GenericFile<File>> fileList) {
-        File directory = new File(fileName);
+        if (log.isTraceEnabled()) {
+            log.trace("pollDirectory from fileName: " + fileName);
+        }
 
+        File directory = new File(fileName);
         if (!directory.exists() || !directory.isDirectory()) {
             if (log.isDebugEnabled()) {
                 log.debug("Cannot poll as directory does not exists or its not a directory: " + directory);
@@ -49,12 +52,26 @@ public class FileConsumer extends GenericFileConsumer<File> {
             log.trace("Polling directory: " + directory.getPath());
         }
         File[] files = directory.listFiles();
-
         if (files == null || files.length == 0) {
             // no files in this directory to poll
+            if (log.isTraceEnabled()) {
+                log.trace("No files found in directory: " + directory.getPath());
+            }
             return;
+        } else {
+            // we found some files
+            if (log.isTraceEnabled()) {
+                log.trace("Found " + files.length + " in directory: " + directory.getPath());
+            }
         }
+
         for (File file : files) {
+            // trace log as Windows/Unix can have different views what the file is?
+            if (log.isTraceEnabled()) {
+                log.trace("Found file: " + file + " [isAbsolute: " + file.isAbsolute() + ", isDirectory: "
+                        + file.isDirectory() + ", isFile: " + file.isFile() + ", isHidden: " + file.isHidden() + "]");
+            }
+
             // creates a generic file
             GenericFile<File> gf = asGenericFile(endpointPath, file);
 
@@ -72,6 +89,9 @@ public class FileConsumer extends GenericFileConsumer<File> {
                             log.trace("Skipping as file is already in progress: " + gf.getFileName());
                         }
                     } else {
+                        if (log.isTraceEnabled()) {
+                            log.trace("Adding valid file: " + file);
+                        }
                         // matched file so add
                         fileList.add(gf);
                     }
