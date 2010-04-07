@@ -75,6 +75,7 @@ public class SqlEndpointTest extends CamelTestSupport {
                 ds = new SingleConnectionDataSource(url, user, password, true);
 
                 SqlEndpoint sql = new SqlEndpoint();
+                sql.setCamelContext(context);
                 sql.setJdbcTemplate(new JdbcTemplate(ds));
                 sql.setQuery("select * from projects");
 
