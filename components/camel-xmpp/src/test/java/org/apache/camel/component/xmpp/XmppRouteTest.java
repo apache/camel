@@ -110,7 +110,7 @@ public class XmppRouteTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        client = new ProducerCache(container, 10);
+        client = new ProducerCache(this, container, 10);
 
         if (isXmppServerPresent()) {
             String uriPrefix = getUriPrefix();
