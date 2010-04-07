@@ -29,7 +29,6 @@ public final class ProxyBuilder {
 
     private final CamelContext camelContext;
     private Endpoint endpoint;
-    private boolean voidAsInOnly;
 
     public ProxyBuilder(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -58,16 +57,6 @@ public final class ProxyBuilder {
     }
 
     /**
-     * Let methods which return <tt>void</tt> be regarded as <tt>InOnly</tt> methods (eg Fire and forget).
-     *
-     * @return the builder
-     */
-    public ProxyBuilder voidAsInOnly() {
-        voidAsInOnly = true;
-        return this;
-    }
-
-    /**
      * Builds the proxy.
      *
      * @param interfaceClasses  the service interface(s)
@@ -75,7 +64,7 @@ public final class ProxyBuilder {
      * @throws Exception is thrown if error creating the proxy
      */
     public <T> T build(Class<T>... interfaceClasses) throws Exception {
-        return ProxyHelper.createProxy(endpoint, voidAsInOnly, interfaceClasses);
+        return ProxyHelper.createProxy(endpoint, interfaceClasses);
     }
 
 }

@@ -72,25 +72,15 @@ public class BeanInfo {
     private final Map<Method, MethodInfo> methodMap = new ConcurrentHashMap<Method, MethodInfo>();
     private MethodInfo defaultMethod;
     private BeanInfo superBeanInfo;
-    private final boolean voidAsInOnly;
 
     public BeanInfo(CamelContext camelContext, Class<?> type) {
-        this(camelContext, type, false);
-    }
-
-    public BeanInfo(CamelContext camelContext, Class<?> type, boolean voidAsInOnly) {
-        this(camelContext, type, createParameterMappingStrategy(camelContext), voidAsInOnly);
+        this(camelContext, type, createParameterMappingStrategy(camelContext));
     }
 
     public BeanInfo(CamelContext camelContext, Class<?> type, ParameterMappingStrategy strategy) {
-        this(camelContext, type, strategy, false);
-    }
-
-    public BeanInfo(CamelContext camelContext, Class<?> type, ParameterMappingStrategy strategy, boolean voidAsInOnly) {
         this.camelContext = camelContext;
         this.type = type;
         this.strategy = strategy;
-        this.voidAsInOnly = voidAsInOnly;
 
         // configure the default excludes methods
         synchronized (EXCLUDED_METHODS) {
@@ -350,7 +340,7 @@ public class BeanInfo {
         }
 
         // now lets add the method to the repository
-        return new MethodInfo(camelContext, clazz, method, parameters, bodyParameters, hasCustomAnnotation, hasHandlerAnnotation, voidAsInOnly);
+        return new MethodInfo(camelContext, clazz, method, parameters, bodyParameters, hasCustomAnnotation, hasHandlerAnnotation);
     }
 
     /**

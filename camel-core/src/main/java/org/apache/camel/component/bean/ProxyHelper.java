@@ -59,13 +59,6 @@ public final class ProxyHelper {
         return (T) createProxy(endpoint, cl, interfaceClasses, createMethodInfoCache(endpoint));
     }
 
-    /**
-     * Creates a Proxy which sends PojoExchange to the endpoint.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, boolean voidAsInOnly, ClassLoader cl, Class<T>... interfaceClasses) throws Exception {
-        return (T) createProxy(endpoint, cl, interfaceClasses, createMethodInfoCache(endpoint, voidAsInOnly));
-    }
 
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
@@ -79,24 +72,8 @@ public final class ProxyHelper {
      * Creates a Proxy which sends PojoExchange to the endpoint.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, boolean voidAsInOnly, Class<T>... interfaceClasses) throws Exception {
-        return (T) createProxy(endpoint, voidAsInOnly, getClassLoader(interfaceClasses), interfaceClasses);
-    }
-
-    /**
-     * Creates a Proxy which sends PojoExchange to the endpoint.
-     */
-    @SuppressWarnings("unchecked")
     public static <T> T createProxy(Endpoint endpoint, Producer producer, Class<T>... interfaceClasses) throws Exception {
         return (T) createProxyObject(endpoint, producer, getClassLoader(interfaceClasses), interfaceClasses, createMethodInfoCache(endpoint));
-    }
-
-    /**
-     * Creates a Proxy which sends PojoExchange to the endpoint.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, Producer producer, boolean voidAsInOnly, Class<T>... interfaceClasses) throws Exception {
-        return (T) createProxyObject(endpoint, producer, getClassLoader(interfaceClasses), interfaceClasses, createMethodInfoCache(endpoint, voidAsInOnly));
     }
 
     /**
@@ -111,11 +88,5 @@ public final class ProxyHelper {
 
     protected static MethodInfoCache createMethodInfoCache(Endpoint endpoint) {
         return new MethodInfoCache(endpoint.getCamelContext());
-    }
-
-    protected static MethodInfoCache createMethodInfoCache(Endpoint endpoint, boolean voidAsInOnly) {
-        MethodInfoCache cache = new MethodInfoCache(endpoint.getCamelContext());
-        cache.setVoidAsInOnly(voidAsInOnly);
-        return cache;
     }
 }

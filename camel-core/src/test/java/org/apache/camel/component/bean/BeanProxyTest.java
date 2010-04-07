@@ -183,19 +183,6 @@ public class BeanProxyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testBeanProxyVoidAsInOnly() throws Exception {
-        // let void be InOnly which is a fire and forget method
-        OrderService service = new ProxyBuilder(context).endpoint("seda:delay").voidAsInOnly().build(OrderService.class);
-
-        getMockEndpoint("mock:delay").expectedBodiesReceived("Bye World", "Hello World");
-        service.doNothing("Hello World");
-        // since its a fire and forget it should return faster so we can send
-        // a Bye World message to the mock which arrives before the Hello World msg
-        template.sendBody("mock:delay", "Bye World");
-
-        assertMockEndpointsSatisfied();
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

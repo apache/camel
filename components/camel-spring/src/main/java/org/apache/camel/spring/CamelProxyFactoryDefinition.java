@@ -25,7 +25,7 @@ import org.apache.camel.model.IdentifiedType;
  * The &lt;proxy&gt; tag element.
  *
  * @version $Revision$
- */
+*/ // to fudge the XSD generation
 @XmlRootElement(name = "proxy")
 public class CamelProxyFactoryDefinition extends IdentifiedType {
     @XmlAttribute
@@ -36,7 +36,5 @@ public class CamelProxyFactoryDefinition extends IdentifiedType {
     private Class serviceInterface;
     @XmlAttribute
     private String camelContextId;
-    @XmlAttribute
-    private Boolean voidAsInOnly = Boolean.FALSE;
 
 }
