@@ -64,7 +64,8 @@ public class FileConsumer extends GenericFileConsumer<File> {
                     String subDirectory = fileName + File.separator + file.getName();
                     pollDirectory(subDirectory, fileList);
                 }
-            } else if (file.isFile()) {
+            } else {
+                // Windows can report false to a file on a share so regard it always as a file (if its not a directory)
                 if (isValidFile(gf, false)) {
                     if (isInProgress(gf)) {
                         if (log.isTraceEnabled()) {
@@ -75,8 +76,6 @@ public class FileConsumer extends GenericFileConsumer<File> {
                         fileList.add(gf);
                     }
                 }
-            } else {
-                log.debug("Ignoring unsupported file type for file: " + file);
             }
         }
     }
