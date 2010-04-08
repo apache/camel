@@ -21,11 +21,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 public class HawtDBAggregateLoadTest extends CamelTestSupport {
 
+    private static final Log LOG = LogFactory.getLog(HawtDBAggregateLoadTest.class);
     private static final int SIZE = 5000;
 
     @Before
@@ -41,15 +44,18 @@ public class HawtDBAggregateLoadTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
         mock.setResultWaitTime(30 * 1000);
 
-        System.out.println("Staring to send " + SIZE + " messages.");
+        LOG.info("Staring to send " + SIZE + " messages.");
 
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
             char id = 'A';
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending " + value + " with id " + id);
+            }
             template.sendBodyAndHeader("seda:start?size=" + SIZE, value, "id", "" + id);
         }
 
-        System.out.println("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
+        LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
 
         assertMockEndpointsSatisfied();
     }

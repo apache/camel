@@ -26,11 +26,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
 
+    private static final Log LOG = LogFactory.getLog(HawtDBAggregateLoadAndRecoverTest.class);
     private static final int SIZE = 1000;
     private static AtomicInteger counter = new AtomicInteger();
 
@@ -47,7 +50,7 @@ public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
         mock.expectedMessageCount(SIZE / 10);
         mock.setResultWaitTime(30 * 1000);
 
-        System.out.println("Staring to send " + SIZE + " messages.");
+        LOG.info("Staring to send " + SIZE + " messages.");
 
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
@@ -55,10 +58,13 @@ public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
             Map headers = new HashMap();
             headers.put("id", id);
             headers.put("seq", i);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending " + value + " with id " + id);
+            }
             template.sendBodyAndHeaders("seda:start?size=" + SIZE, value, headers);
         }
 
-        System.out.println("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
+        LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
 
         assertMockEndpointsSatisfied();
 

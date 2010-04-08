@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.processor.aggregator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.MyAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
@@ -108,8 +109,6 @@ public class AggregatorTest extends ContextTestSupport {
         for (int i = 1; i <= messageCount; i++) {
             String body = "message:" + i;
             template.sendBodyAndHeader(endpointUri, body, "cheese", 123);
-            // need a little sleep when sending large batches
-            Thread.sleep(3);
         }
 
         resultEndpoint.assertIsSatisfied();

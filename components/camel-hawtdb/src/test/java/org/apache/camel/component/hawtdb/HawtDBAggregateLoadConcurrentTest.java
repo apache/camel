@@ -25,11 +25,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
 
+    private static final Log LOG = LogFactory.getLog(HawtDBAggregateLoadConcurrentTest.class);
     private static final char[] KEYS = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
     private static final int SIZE = 5000;
 
@@ -48,7 +51,7 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
 
-        System.out.println("Staring to send " + SIZE + " messages.");
+        LOG.info("Staring to send " + SIZE + " messages.");
 
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
@@ -56,13 +59,16 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
             executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     char id = KEYS[key];
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Sending " + value + " with id " + id);
+                    }
                     template.sendBodyAndHeader("seda:start?size=" + SIZE, value, "id", "" + id);
                     return null;
                 }
             });
         }
 
-        System.out.println("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
+        LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
 
         assertMockEndpointsSatisfied();
     }

@@ -71,16 +71,13 @@ public class HawtDBAggregateConcurrentSameGroupTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.setResultWaitTime(30 * 1000L);
         mock.expectedMessageCount(1);
-        // match number of expected numbers
-        mock.message(0).body(String.class).regex("[0-9]{" + files + "}");
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
             final int index = i;
             executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    int idx = index % 10;
-                    template.sendBodyAndHeader("direct:start", idx, "id", 123);
+                    template.sendBodyAndHeader("direct:start", index, "id", 123);
                     return null;
                 }
             });
@@ -99,7 +96,7 @@ public class HawtDBAggregateConcurrentSameGroupTest extends CamelTestSupport {
 
                 from("direct:start")
                     .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionTimeout(3000).aggregationRepository(repo)
+                        .completionTimeout(1000).aggregationRepository(repo)
                         .to("mock:aggregated");
             }
         };

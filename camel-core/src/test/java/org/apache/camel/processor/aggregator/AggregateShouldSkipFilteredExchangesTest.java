@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,7 +28,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  *
  * @version $Revision$
  */
-public class AggregateShouldSkipFilteredExchanges extends ContextTestSupport {
+public class AggregateShouldSkipFilteredExchangesTest extends ContextTestSupport {
 
     public void testAggregateWithFilter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -54,10 +54,12 @@ public class AggregateShouldSkipFilteredExchanges extends ContextTestSupport {
 
                 from("direct:start")
                     .filter(goodWord)
-                    .to("mock:filtered")
-                    .aggregate(header("id"), new MyAggregationStrategy())
-                        .to("mock:result")
+                        .to("mock:filtered")
+                        .aggregate(header("id"), new MyAggregationStrategy()).completionTimeout(1000)
+                            .to("mock:result")
+                        .end()
                     .end();
+
             }
         };
     }
@@ -65,12 +67,11 @@ public class AggregateShouldSkipFilteredExchanges extends ContextTestSupport {
     private class MyAggregationStrategy implements AggregationStrategy {
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            String newBody = newExchange.getIn().getBody(String.class);
-
             if (oldExchange == null) {
                 return newExchange;
             }
 
+            String newBody = newExchange.getIn().getBody(String.class);
             String body = oldExchange.getIn().getBody(String.class);
             body = body + "," + newBody;
             oldExchange.getIn().setBody(body);

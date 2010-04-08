@@ -77,9 +77,8 @@ public class HawtDBAggregateConcurrentDifferentGroupsTest extends CamelTestSuppo
             final int index = i;
             executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    int idx = index % 10;
                     String id = index % 2 == 0 ? "A" : "B";
-                    template.sendBodyAndHeader("direct:start", idx, "id", id);
+                    template.sendBodyAndHeader("direct:start", index, "id", id);
                     return null;
                 }
             });
@@ -98,7 +97,7 @@ public class HawtDBAggregateConcurrentDifferentGroupsTest extends CamelTestSuppo
 
                 from("direct:start")
                     .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionTimeout(3000).aggregationRepository(repo)
+                        .completionTimeout(1000).aggregationRepository(repo)
                         .to("mock:aggregated");
             }
         };

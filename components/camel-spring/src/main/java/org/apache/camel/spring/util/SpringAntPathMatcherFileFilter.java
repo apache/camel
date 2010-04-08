@@ -47,7 +47,7 @@ public class SpringAntPathMatcherFileFilter implements FileFilter {
      * @return <tt>true</tt> if accepted, <tt>false</tt> if not
      */
     public boolean acceptPathName(String path) {
-        // must use single / as path seperators
+        // must use single / as path separators
         path = StringUtils.replace(path, File.separator, "/");
 
         if (LOG.isTraceEnabled()) {

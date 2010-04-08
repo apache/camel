@@ -75,7 +75,6 @@ public class AggregateCompletionPredicateTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "C", "id", "foo");
         template.sendBodyAndHeader("direct:start", "3", "id", "bar");
         template.sendBodyAndHeader("direct:start", "END", "id", "foo");
-
         template.sendBodyAndHeader("direct:start", "4", "id", "bar");
         template.sendBodyAndHeader("direct:start", "END", "id", "bar");
 

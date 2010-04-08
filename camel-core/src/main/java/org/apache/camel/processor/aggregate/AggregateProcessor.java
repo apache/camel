@@ -27,6 +27,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
@@ -37,7 +39,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.Traceable;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
@@ -73,6 +74,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     private static final Log LOG = LogFactory.getLog(AggregateProcessor.class);
 
+    private final Lock lock = new ReentrantLock();
     private final CamelContext camelContext;
     private final Processor processor;
     private final AggregationStrategy aggregationStrategy;
@@ -164,7 +166,15 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             throw new ClosedCorrelationKeyException(key, exchange);
         }
 
-        doAggregation(key, exchange);
+        // when memory based then its fast using synchronized, but if the aggregation repository is IO
+        // bound such as JPA etc then concurrent aggregation per correlation key could
+        // improve performance as we can run aggregation repository get/add in parallel
+        try {
+            lock.lock();
+            doAggregation(key, exchange);
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -177,11 +187,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * @param exchange the exchange
      * @return the aggregated exchange
      */
-    private synchronized Exchange doAggregation(Object key, Exchange exchange) {
-        // when memory based then its fast using synchronized, but if the aggregation repository is IO
-        // bound such as JPA etc then concurrent aggregation per correlation key could
-        // improve performance as we can run aggregation repository get/add in parallel
-
+    private Exchange doAggregation(Object key, Exchange exchange) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("onAggregation +++ start +++ with correlation key: " + key);
         }
@@ -209,12 +215,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // prepare the exchanges for aggregation and aggregate it
         ExchangeHelper.prepareAggregation(oldExchange, newExchange);
         answer = onAggregation(oldExchange, exchange);
+        // update the aggregated size
         answer.setProperty(Exchange.AGGREGATED_SIZE, size);
 
         // maybe we should check completion after the aggregation
         if (!isEagerCheckCompletion()) {
-            // put the current aggregated size on the exchange so its avail during completion check
-            answer.setProperty(Exchange.AGGREGATED_SIZE, size);
             complete = isCompleted(key, answer);
         }
 
@@ -506,7 +511,13 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             }
 
             exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
-            onCompletion(key, exchange, true);
+
+            try {
+                lock.lock();
+                onCompletion(key, exchange, true);
+            } finally {
+                lock.unlock();
+            }
         }
     }
 
@@ -569,7 +580,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                         exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
 
                         // resubmit the recovered exchange
-                        onSubmitCompletion(key, exchange);
+                        try {
+                            lock.lock();
+                            onSubmitCompletion(key, exchange);
+                        } finally {
+                            lock.unlock();
+                        }
                     }
                 }
             }
