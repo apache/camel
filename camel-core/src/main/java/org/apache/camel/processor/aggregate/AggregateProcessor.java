@@ -81,7 +81,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private final Expression correlationExpression;
     private final ExecutorService executorService;
     private ScheduledExecutorService recoverService;
-    private TimeoutMap<Object, Exchange> timeoutMap;
+    // store correlation key -> exchange id in timeout map
+    private TimeoutMap<Object, String> timeoutMap;
     private ExceptionHandler exceptionHandler = new LoggingExceptionHandler(getClass());
     private AggregationRepository<Object> aggregationRepository = new MemoryAggregationRepository();
     private Map<Object, Object> closedCorrelationKeys;
@@ -203,7 +204,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         // check if we are complete
-        boolean complete = false;
+        String complete = null;
         if (isEagerCheckCompletion()) {
             // put the current aggregated size on the exchange so its avail during completion check
             newExchange.setProperty(Exchange.AGGREGATED_SIZE, size);
@@ -224,14 +225,13 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         // only need to update aggregation repository if we are not complete
-        if (!complete) {
+        if (complete == null) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("In progress aggregated exchange: " + answer + " with correlation key:" + key);
             }
             aggregationRepository.add(exchange.getContext(), key, answer);
-        }
-
-        if (complete) {
+        } else {
+            answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
             onCompletion(key, answer, false);
         }
 
@@ -242,12 +242,18 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         return answer;
     }
 
-    protected boolean isCompleted(Object key, Exchange exchange) {
+    /**
+     * Tests whether the given exchange is complete or not
+     *
+     * @param key       the correlation key
+     * @param exchange  the incoming exchange
+     * @return <tt>null</tt> if not completed, otherwise a String with the type that triggered the completion
+     */
+    protected String isCompleted(Object key, Exchange exchange) {
         if (getCompletionPredicate() != null) {
             boolean answer = getCompletionPredicate().matches(exchange);
             if (answer) {
-                exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "predicate");
-                return true;
+                return "predicate";
             }
         }
 
@@ -256,16 +262,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             if (value != null && value > 0) {
                 int size = exchange.getProperty(Exchange.AGGREGATED_SIZE, 1, Integer.class);
                 if (size >= value) {
-                    exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "size");
-                    return true;
+                    return "size";
                 }
             }
         }
         if (getCompletionSize() > 0) {
             int size = exchange.getProperty(Exchange.AGGREGATED_SIZE, 1, Integer.class);
             if (size >= getCompletionSize()) {
-                exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "size");
-                return true;
+                return "size";
             }
         }
 
@@ -279,7 +283,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                     LOG.trace("Updating correlation key " + key + " to timeout after "
                             + value + " ms. as exchange received: " + exchange);
                 }
-                timeoutMap.put(key, exchange, value);
+                timeoutMap.put(key, exchange.getExchangeId(), value);
                 timeoutSet = true;
             }
         }
@@ -289,7 +293,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 LOG.trace("Updating correlation key " + key + " to timeout after "
                         + getCompletionTimeout() + " ms. as exchange received: " + exchange);
             }
-            timeoutMap.put(key, exchange, getCompletionTimeout());
+            timeoutMap.put(key, exchange.getExchangeId(), getCompletionTimeout());
         }
 
         if (isCompletionFromBatchConsumer()) {
@@ -298,12 +302,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             if (size > 0 && batchConsumerCounter.intValue() >= size) {
                 // batch consumer is complete then reset the counter
                 batchConsumerCounter.set(0);
-                exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "consumer");
-                return true;
+                return "consumer";
             }
         }
 
-        return false;
+        // not complete
+        return null;
     }
 
     protected Exchange onAggregation(Exchange oldExchange, Exchange newExchange) {
@@ -498,23 +502,27 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     /**
      * Background task that looks for aggregated exchanges which is triggered by completion timeouts.
      */
-    private final class AggregationTimeoutMap extends DefaultTimeoutMap<Object, Exchange> {
+    private final class AggregationTimeoutMap extends DefaultTimeoutMap<Object, String> {
 
         private AggregationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
             super(executor, requestMapPollTimeMillis);
         }
 
         @Override
-        public void onEviction(Object key, Exchange exchange) {
+        public void onEviction(Object key, String exchangeId) {
             if (log.isDebugEnabled()) {
                 log.debug("Completion timeout triggered for correlation key: " + key);
             }
 
-            exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
+            // get the aggregated exchange
+            Exchange answer = aggregationRepository.get(camelContext, key);
+
+            // indicate it was completed by timeout
+            answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
 
             try {
                 lock.lock();
-                onCompletion(key, exchange, true);
+                onCompletion(key, answer, true);
             } finally {
                 lock.unlock();
             }
@@ -580,12 +588,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                         exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
 
                         // resubmit the recovered exchange
-                        try {
-                            lock.lock();
-                            onSubmitCompletion(key, exchange);
-                        } finally {
-                            lock.unlock();
-                        }
+                        onSubmitCompletion(key, exchange);
                     }
                 }
             }
