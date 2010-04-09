@@ -28,6 +28,7 @@ import static org.apache.camel.component.gae.auth.GAuthTokenSecret.COOKIE_NAME;
 import static org.apache.camel.component.gae.auth.GAuthUpgradeBinding.GAUTH_ACCESS_TOKEN;
 import static org.apache.camel.component.gae.auth.GAuthUpgradeBinding.GAUTH_ACCESS_TOKEN_SECRET;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class GAuthUpgradeBindingTest {
 
@@ -81,4 +82,12 @@ public class GAuthUpgradeBindingTest {
         assertEquals("tokenSecret2", exchange.getOut().getHeader(GAUTH_ACCESS_TOKEN_SECRET));
     }
     
+    @Test
+    public void testReadResponseNoToken() throws Exception {
+        GoogleOAuthParameters params = new GoogleOAuthParameters();
+        binding.readResponse(endpoint, exchange, params);
+        assertNull(exchange.getOut().getHeader(GAUTH_ACCESS_TOKEN));
+        assertNull(exchange.getOut().getHeader(GAUTH_ACCESS_TOKEN_SECRET));
+    }
+
 }

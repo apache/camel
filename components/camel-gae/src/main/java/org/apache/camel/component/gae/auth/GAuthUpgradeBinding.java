@@ -40,6 +40,11 @@ public class GAuthUpgradeBinding implements OutboundBinding<GAuthEndpoint, Googl
     public static final String GAUTH_ACCESS_TOKEN_SECRET = "CamelGauthAccessTokenSecret";
 
     /**
+     * Default value for access token and access token secret in GoogleOAuthParameters
+     */
+    private static final String EMPTY_TOKEN = "";
+
+    /**
      * Creates a {@link GoogleOAuthParameters} object from endpoint and
      * <code>exchange.getIn()</code> data. The created parameter object is used
      * to upgrade an authorized request token to an access token. If the
@@ -90,9 +95,19 @@ public class GAuthUpgradeBinding implements OutboundBinding<GAuthEndpoint, Googl
      */
     public Exchange readResponse(GAuthEndpoint endpoint, Exchange exchange, GoogleOAuthParameters response) throws IOException {
         exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-        exchange.getOut().setHeader(GAUTH_ACCESS_TOKEN, response.getOAuthToken());
-        exchange.getOut().setHeader(GAUTH_ACCESS_TOKEN_SECRET, response.getOAuthTokenSecret());
+        exchange.getOut().setHeader(GAUTH_ACCESS_TOKEN, canonicalizeToken(response.getOAuthToken()));
+        exchange.getOut().setHeader(GAUTH_ACCESS_TOKEN_SECRET, canonicalizeToken(response.getOAuthTokenSecret()));
         return exchange;
+    }
+
+    private static String canonicalizeToken(String token) {
+        if (token == null) {
+            return null;
+        } else if (EMPTY_TOKEN.equals(token)) {
+            return null;
+        } else {
+            return token;
+        }
     }
 
 }
