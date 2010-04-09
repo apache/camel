@@ -18,7 +18,7 @@
 -->
 
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
-	<application>ipfcloud</application>
+	<application>replaceme</application>
 	<version>1</version>
 	
 	<system-properties>
