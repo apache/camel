@@ -38,6 +38,7 @@ http://camel.apache.org/schema/spring/camel-spring.xsd">
     
     <bean id="tutorialRouteBuilder" 
         class="org.apache.camel.example.gauth.TutorialRouteBuilder">
+        <property name="application" value="${application.name}" />
     </bean>
     
     <bean id="gauth" class="org.apache.camel.component.gae.auth.GAuthComponent">

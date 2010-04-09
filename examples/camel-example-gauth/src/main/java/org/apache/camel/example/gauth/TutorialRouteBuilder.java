@@ -22,10 +22,16 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class TutorialRouteBuilder extends RouteBuilder {
 
+    private String application;
+
+    public void setApplication(String application) {
+        this.application = application;
+    }
+
     @Override
     public void configure() throws Exception {
 
-        String encodedCallback = URLEncoder.encode("https://ipfcloud.appspot.com/camel/handler", "UTF-8");
+        String encodedCallback = URLEncoder.encode(String.format("https://%s.appspot.com/camel/handler", application), "UTF-8");
         String encodedScope = URLEncoder.encode("http://www.google.com/calendar/feeds/", "UTF-8");
 
         from("ghttp:///authorize")

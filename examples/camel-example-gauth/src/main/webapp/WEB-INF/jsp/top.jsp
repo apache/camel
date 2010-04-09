@@ -7,8 +7,8 @@
 
 <html>
 <head>
-<title>Apache Camel OAuth Tutorial</title>
+<title>Apache Camel OAuth Demo</title>
 </head>
 <body>
 <img src="/images/camel.png" />
-<h1>OAuth Tutorial</h1>
+<h1>OAuth Demo</h1>

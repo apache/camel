@@ -15,6 +15,12 @@
     <packaging>war</packaging>
 
     <properties>
+        <!-- application properties -->
+        <gae.application.name>replaceme</gae.application.name>
+        <gae.consumer.key>replaceme</gae.consumer.key>
+        <gae.consumer.secret>replaceme</gae.consumer.secret>
+
+        <!-- dependency versions -->
         <gdata-version>1.41.1</gdata-version>
     </properties>
 
@@ -66,7 +72,50 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webResources>
+                        <!--
+                           Copied from root pom.xml because it is not combined
+                           with custom resource configuration below.
+                        -->
+                        <resource>
+                            <directory>${project.build.outputDirectory}</directory>
+                            <includes>
+                                <include>META-INF/LICENSE*</include>
+                                <include>META-INF/NOTICE*</include>
+                                <include>META-INF/DEPENDENCIES*</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>appengine-web.xml</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>appengine-web.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
+
     <repositories>
         <repository>
             <id>camel.internal.maven.repository</id>
