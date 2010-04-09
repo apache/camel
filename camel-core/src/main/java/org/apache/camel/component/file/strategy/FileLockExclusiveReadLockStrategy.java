@@ -30,6 +30,7 @@ import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -57,13 +58,13 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
             // try to acquire rw lock on the file before we can consume it
             FileChannel channel = new RandomAccessFile(target, "rw").getChannel();
 
-            long start = System.currentTimeMillis();
             boolean exclusive = false;
+            StopWatch watch = new StopWatch();
 
             while (!exclusive) {
                 // timeout check
                 if (timeout > 0) {
-                    long delta = System.currentTimeMillis() - start;
+                    long delta = watch.taken();
                     if (delta > timeout) {
                         LOG.warn("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + target);
                         // we could not get the lock within the timeout period, so return false

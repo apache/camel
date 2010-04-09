@@ -38,6 +38,7 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -83,7 +84,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     public void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
 
         // should the order of routes be reversed?
         List<RouteStartupOrder> routesOrdered = new ArrayList<RouteStartupOrder>(routes);
@@ -121,9 +122,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
         }
 
-        long delta = System.currentTimeMillis() - start;
         // convert to seconds as its easier to read than a big milli seconds number
-        long seconds = TimeUnit.SECONDS.convert(delta, TimeUnit.MILLISECONDS);
+        long seconds = TimeUnit.SECONDS.convert(watch.stop(), TimeUnit.MILLISECONDS);
 
         LOG.info("Graceful shutdown of " + routesOrdered.size() + " routes completed in " + seconds + " seconds");
     }

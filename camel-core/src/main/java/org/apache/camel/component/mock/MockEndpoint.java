@@ -47,6 +47,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExpressionComparator;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -884,10 +885,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             fail("Should have a latch!");
         }
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         waitForCompleteLatch(resultWaitTime);
-        long delta = System.currentTimeMillis() - start;
-        LOG.debug("Took " + delta + " millis to complete latch");
+        long delta = watch.stop();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Took " + delta + " millis to complete latch");
+        }
 
         if (resultMinimumWaitTime > 0 && delta < resultMinimumWaitTime) {
             fail("Expected minimum " + resultMinimumWaitTime

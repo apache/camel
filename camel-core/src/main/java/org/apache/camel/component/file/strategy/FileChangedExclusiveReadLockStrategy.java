@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,13 +51,12 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
         try {
             long lastModified = Long.MIN_VALUE;
             long length = Long.MIN_VALUE;
-
-            long start = System.currentTimeMillis();
+            StopWatch watch = new StopWatch();
 
             while (!exclusive) {
                 // timeout check
                 if (timeout > 0) {
-                    long delta = System.currentTimeMillis() - start;
+                    long delta = watch.taken();
                     if (delta > timeout) {
                         LOG.warn("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
                         // we could not get the lock within the timeout period, so return false

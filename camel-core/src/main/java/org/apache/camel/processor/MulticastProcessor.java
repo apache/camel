@@ -44,6 +44,7 @@ import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.AtomicExchange;
 import org.apache.camel.util.concurrent.SubmitOrderedCompletionService;
 import org.apache.commons.logging.Log;
@@ -258,9 +259,9 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
 
         // compute time taken if sending to another endpoint
-        long start = 0;
+        StopWatch watch = null;
         if (processor instanceof Producer) {
-            start = System.currentTimeMillis();
+            watch = new StopWatch();
         }
 
         try {
@@ -279,7 +280,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                 traced.popBlock();
             }
             if (processor instanceof Producer) {
-                long timeTaken = System.currentTimeMillis() - start;
+                long timeTaken = watch.stop();
                 Endpoint endpoint = ((Producer) processor).getEndpoint();
                 // emit event that the exchange was sent to the endpoint
                 EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);

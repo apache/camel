@@ -38,6 +38,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -354,10 +355,10 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
      * Checks if the registry is loaded and if not lazily load it
      */
     protected void loadTypeConverters() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Loading type converters ...");
-        }
-        for (TypeConverterLoader typeConverterLoader : typeConverterLoaders) {
+        StopWatch watch = new StopWatch();
+
+        LOG.debug("Loading type converters ...");
+        for (TypeConverterLoader typeConverterLoader : getTypeConverterLoaders()) {
             typeConverterLoader.load(this);
         }
 
@@ -367,9 +368,10 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
         } catch (NoFactoryAvailableException e) {
             // ignore its fine to have none
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Loading type converters done");
-        }
+        LOG.debug("Loading type converters done");
+
+        // report how long time it took to load
+        LOG.info("Loaded " + typeMappings.size() + " type converters in " + watch.stop() + " millis");
     }
 
     protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
@@ -386,6 +388,8 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
 
     @Override
     protected void doStop() throws Exception {
+        typeMappings.clear();
+        misses.clear();
     }
 
     /**

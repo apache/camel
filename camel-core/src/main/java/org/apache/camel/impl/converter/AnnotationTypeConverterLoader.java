@@ -52,6 +52,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     private static final transient Log LOG = LogFactory.getLog(AnnotationTypeConverterLoader.class);
     protected PackageScanClassResolver resolver;
     private Set<Class<?>> visitedClasses = new HashSet<Class<?>>();
+    private Set<URL> visitedURLs = new HashSet<URL>();
 
     public AnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
         this.resolver = resolver;
@@ -61,12 +62,19 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public void load(TypeConverterRegistry registry) throws Exception {
         String[] packageNames = findPackageNames();
         Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packageNames);
+
+        LOG.info("Found " + packageNames.length + " packages with " + classes.size() + " @Converter classes to load");
+
         for (Class type : classes) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Loading converter class: " + ObjectHelper.name(type));
             }
             loadConverterMethods(registry, type);
         }
+
+        // now clear the maps so we do not hold references
+        visitedClasses.clear();
+        visitedURLs.clear();
     }
 
     /**
@@ -90,7 +98,12 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         Enumeration<URL> resources = classLoader.getResources(META_INF_SERVICES);
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
-            if (url != null) {
+            if (url != null && !visitedURLs.contains(url)) {
+                // remember we have visited this url so we wont read it twice
+                visitedURLs.add(url);
+                if (LOG.isDebugEnabled()) {
+                    LOG.info("Loading file " + META_INF_SERVICES + " to retrieve list of packages, from url: " + url);
+                }
                 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
                 try {
                     while (true) {

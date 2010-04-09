@@ -96,6 +96,7 @@ import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -161,6 +162,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private ExecutorServiceStrategy executorServiceStrategy = new DefaultExecutorServiceStrategy(this);
+    private final StopWatch stopWatch = new StopWatch(false);
 
     public DefaultCamelContext() {
         super();
@@ -1111,7 +1113,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         LOG.info("Started " + getRoutes().size() + " routes");
 
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started");
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started in " + stopWatch.stop() + " millis");
         EventHelper.notifyCamelContextStarted(this);
     }
 
@@ -1119,6 +1121,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     // -----------------------------------------------------------------------
 
     protected synchronized void doStart() throws Exception {
+        stopWatch.restart();
         LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
 
         try {
@@ -1200,6 +1203,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     protected synchronized void doStop() throws Exception {
+        stopWatch.restart();
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is shutting down");
         EventHelper.notifyCamelContextStopping(this);
 
@@ -1236,7 +1240,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // shutdown management as the last one
         shutdownServices(managementStrategy);
 
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown");
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + stopWatch.stop() + " millis");
     }
 
     private void shutdownServices(Object service) {

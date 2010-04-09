@@ -32,6 +32,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -173,10 +174,10 @@ public class ProducerCache extends ServiceSupport {
             }
         }
 
-        long start = 0;
+        StopWatch watch = null;
         if (exchange != null) {
             // record timing for sending the exchange using the producer
-            start = System.currentTimeMillis();
+            watch = new StopWatch();
         }
 
         try {
@@ -184,7 +185,7 @@ public class ProducerCache extends ServiceSupport {
             return callback.doInProducer(producer, exchange, pattern);
         } finally {
             if (exchange != null) {
-                long timeTaken = System.currentTimeMillis() - start;
+                long timeTaken = watch.stop();
                 // emit event that the exchange was sent to the endpoint
                 EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
             }
@@ -220,12 +221,12 @@ public class ProducerCache extends ServiceSupport {
                 exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
 
                 // send the exchange using the processor
-                long start = System.currentTimeMillis();
+                StopWatch watch = new StopWatch();
                 try {
                     producer.process(exchange);
                 } finally {
                     // emit event that the exchange was sent to the endpoint
-                    long timeTaken = System.currentTimeMillis() - start;
+                    long timeTaken = watch.stop();
                     EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
                 }
                 return exchange;
