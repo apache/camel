@@ -29,7 +29,7 @@ public class NagiosAsyncSendTest extends NagiosTest {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start").to("nagios:127.0.0.1:5667?password=secret&sendSync=false").to("mock:result");
+                from("direct:start").to("nagios:127.0.0.1:25667?password=secret&sendSync=false").to("mock:result");
                 // END SNIPPET: e1
             }
         };

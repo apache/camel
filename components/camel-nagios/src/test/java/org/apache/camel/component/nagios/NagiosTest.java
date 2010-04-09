@@ -39,7 +39,7 @@ public class NagiosTest extends CamelTestSupport {
     @Before
     @Override
     public void setUp() throws Exception {
-        nagios = new NagiosNscaStub(5667, "secret");
+        nagios = new NagiosNscaStub(25667, "secret");
         nagios.start();
 
         super.setUp();
@@ -176,7 +176,7 @@ public class NagiosTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start").to("nagios:127.0.0.1:5667?password=secret").to("mock:result");
+                from("direct:start").to("nagios:127.0.0.1:25667?password=secret").to("mock:result");
                 // END SNIPPET: e1
             }
         };
