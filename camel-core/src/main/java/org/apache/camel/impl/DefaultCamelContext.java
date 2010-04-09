@@ -153,7 +153,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     // so if we have 6 endpoints in the pool, we can have 6 x 100 producers in total
     private ServicePool<Endpoint, Producer> producerServicePool = new SharedProducerServicePool(100);
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
-    private Tracer defaultTracer;
+    private InterceptStrategy defaultTracer;
     private InflightRepository inflightRepository = new DefaultInflightRepository();
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<RouteStartupOrder>();
     // start auto assigning route ids using numbering 1000 and upwards
@@ -1503,6 +1503,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             defaultTracer = new Tracer();
         }
         return defaultTracer;
+    }
+
+    public void setDefaultTracer(InterceptStrategy defaultTracer) {
+        this.defaultTracer = defaultTracer;
     }
 
     public void disableJMX() {

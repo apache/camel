@@ -58,7 +58,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class TraceInterceptor extends DelegateProcessor implements ExchangeFormatter {
     private static final transient Log LOG = LogFactory.getLog(TraceInterceptor.class);
-    private static final String JPA_TRACE_EVENT_MESSAGE = "org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage";
+
     private Logger logger;
     private Producer traceEventProducer;
     private final ProcessorDefinition node;
@@ -66,6 +66,8 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     private TraceFormatter formatter;
     private Class<?> jpaTraceEventMessageClass;
     private RouteContext routeContext;
+    private TraceEventHandler traceHandler;
+    private String jpaTraceEventMessageClassName;
 
     public TraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer) {
         super(target);
@@ -76,6 +78,8 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         if (tracer.getFormatter() != null) {
             this.formatter = tracer.getFormatter();
         }
+        this.traceHandler = tracer.getTraceHandler();
+        this.jpaTraceEventMessageClassName = tracer.getJpaTraceEventMessageClassName();
     }
 
     @Override
@@ -146,26 +150,39 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             }
 
             // log and trace the processor
+            Object traceState = null;
             if (shouldLog && trace) {
                 logExchange(exchange);
-                traceExchange(exchange);
+                // either call the in or generic trace method depending on OUT has been enabled or not
+                if (tracer.isTraceOutExchanges()) {
+                    traceState = traceExchangeIn(exchange);
+                } else {
+                    traceExchange(exchange);
+                }
             }
 
-            // special for interceptor where we need to keep booking how far we have routed in the intercepted processors
-            if (node.getParent() instanceof InterceptDefinition && exchange.getUnitOfWork() != null) {
-                TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
-                traceIntercept((InterceptDefinition) node.getParent(), traced, exchange);
-            }
+            try {
+                // special for interceptor where we need to keep booking how far we have routed in the intercepted processors
+                if (node.getParent() instanceof InterceptDefinition && exchange.getUnitOfWork() != null) {
+                    TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
+                    traceIntercept((InterceptDefinition) node.getParent(), traced, exchange);
+                }
 
-            // process the exchange
-            super.proceed(exchange);
-
-            // after (trace out)
-            if (shouldLog && tracer.isTraceOutExchanges()) {
-                logExchange(exchange);
-                traceExchange(exchange);
+                // process the exchange
+                try {
+                    super.proceed(exchange);
+                } catch (Exception e) {
+                    exchange.setException(e);
+                }
+            } finally {
+                // after (trace out)
+                if (shouldLog && tracer.isTraceOutExchanges()) {
+                    logExchange(exchange);
+                    traceExchangeOut(exchange, traceState);
+                }
             }
         } catch (Exception e) {
+            // some exception occurred in trace logic
             if (shouldLogException(exchange)) {
                 logException(exchange, e);
             }
@@ -249,15 +266,26 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         return tracer;
     }
 
+    public TraceEventHandler getTraceHandler() {
+        return traceHandler;
+    }
+
+    /*
+     * Note that this should only be set before the route has been started
+     */
+    public void setTraceHandler(TraceEventHandler traceHandler) {
+        this.traceHandler = traceHandler;
+    }
+
     protected void logExchange(Exchange exchange) {
         // process the exchange that formats and logs it
         logger.process(exchange);
     }
 
-    @SuppressWarnings("unchecked")
     protected void traceExchange(Exchange exchange) throws Exception {
-        // should we send a trace event to an optional destination?
-        if (tracer.getDestination() != null || tracer.getDestinationUri() != null) {
+        if (traceHandler != null) {
+            traceHandler.traceExchange(node, processor, this, exchange);
+        } else if (tracer.getDestination() != null || tracer.getDestinationUri() != null) {
 
             // create event exchange and add event information
             Date timestamp = new Date();
@@ -273,7 +301,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
             // should we use ordinary or jpa objects
             if (tracer.isUseJpa()) {
-                LOG.trace("Using class: " + JPA_TRACE_EVENT_MESSAGE + " for tracing event messages");
+                LOG.trace("Using class: " + this.jpaTraceEventMessageClassName + " for tracing event messages");
 
                 // load the jpa event message class
                 loadJpaTraceEventMessageClass(exchange);
@@ -281,7 +309,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
                 Object jpa = ObjectHelper.newInstance(jpaTraceEventMessageClass);
 
                 // copy options from event to jpa
-                Map options = new HashMap();
+                Map<String, Object> options = new HashMap<String, Object>();
                 IntrospectionSupport.getProperties(msg, options, null);
                 IntrospectionSupport.setProperties(jpa, options);
                 // and set the timestamp as its not a String type
@@ -308,11 +336,28 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
     private synchronized void loadJpaTraceEventMessageClass(Exchange exchange) {
         if (jpaTraceEventMessageClass == null) {
-            jpaTraceEventMessageClass = exchange.getContext().getClassResolver().resolveClass(JPA_TRACE_EVENT_MESSAGE);
+            jpaTraceEventMessageClass = exchange.getContext().getClassResolver().resolveClass(jpaTraceEventMessageClassName);
             if (jpaTraceEventMessageClass == null) {
-                throw new IllegalArgumentException("Cannot find class: " + JPA_TRACE_EVENT_MESSAGE
+                throw new IllegalArgumentException("Cannot find class: " + jpaTraceEventMessageClassName
                         + ". Make sure camel-jpa.jar is in the classpath.");
             }
+        }
+    }
+
+    protected Object traceExchangeIn(Exchange exchange) throws Exception {
+        if (traceHandler != null) {
+            return traceHandler.traceExchangeIn(node, processor, this, exchange);
+        } else {
+            traceExchange(exchange);
+        }
+        return null;
+    }
+
+    protected void traceExchangeOut(Exchange exchange, Object traceState) throws Exception {
+        if (traceHandler != null) {
+            traceHandler.traceExchangeOut(node, processor, this, exchange, traceState);
+        } else {
+            traceExchange(exchange);
         }
     }
 
@@ -383,5 +428,4 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             ServiceHelper.stopService(traceEventProducer);
         }
     }
-
 }

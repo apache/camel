@@ -706,6 +706,16 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     InterceptStrategy getDefaultTracer();
 
     /**
+     * Sets a custom tracer to be used as the default tracer.
+     * <p/>
+     * <b>Note:</b> This must be set before any routes are created,
+     * changing the defaultTracer for existing routes is not supported.
+     *
+     * @param tracer the custom tracer to use as default tracer
+     */
+    void setDefaultTracer(InterceptStrategy tracer);
+
+    /**
      * Disables using JMX as {@link org.apache.camel.spi.ManagementStrategy}.
      */
     void disableJMX();

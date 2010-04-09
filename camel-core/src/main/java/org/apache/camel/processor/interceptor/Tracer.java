@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class Tracer implements InterceptStrategy, Service {
+    private static final String JPA_TRACE_EVENT_MESSAGE = "org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage";
 
     private TraceFormatter formatter = new DefaultTraceFormatter();
     private boolean enabled = true;
@@ -50,6 +51,9 @@ public class Tracer implements InterceptStrategy, Service {
     private Endpoint destination;
     private boolean useJpa;
     private Logger logger;
+    private TraceInterceptorFactory traceInterceptorFactory = new DefaultTraceInterceptorFactory();
+    private TraceEventHandler traceHandler;
+    private String jpaTraceEventMessageClassName = JPA_TRACE_EVENT_MESSAGE;
 
     /**
      * Creates a new tracer.
@@ -76,7 +80,7 @@ public class Tracer implements InterceptStrategy, Service {
         List<InterceptStrategy> list = context.getInterceptStrategies();
         for (InterceptStrategy interceptStrategy : list) {
             if (interceptStrategy instanceof Tracer) {
-                return (Tracer)interceptStrategy;
+                return (Tracer) interceptStrategy;
             }
         }
         return null;
@@ -98,11 +102,10 @@ public class Tracer implements InterceptStrategy, Service {
 
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition,
                                                  Processor target, Processor nextTarget) throws Exception {
-
         // Force the creation of an id, otherwise the id is not available when the trace formatter is
         // outputting trace information
         definition.idOrCreate(context.getNodeIdFactory());
-        return new TraceInterceptor(definition, target, formatter, this);
+        return getTraceInterceptorFactory().createTraceInterceptor(definition, target, formatter, this);
     }
 
     public TraceFormatter getFormatter() {
@@ -205,11 +208,11 @@ public class Tracer implements InterceptStrategy, Service {
 
     /**
      * Sets whether exchanges coming out of processors should be traced
-     */    
+     */
     public void setTraceOutExchanges(boolean traceOutExchanges) {
         this.traceOutExchanges = traceOutExchanges;
     }
-    
+
     public boolean isTraceOutExchanges() {
         return traceOutExchanges;
     }
@@ -253,6 +256,54 @@ public class Tracer implements InterceptStrategy, Service {
      */
     public void setUseJpa(boolean useJpa) {
         this.useJpa = useJpa;
+    }
+
+    public TraceInterceptorFactory getTraceInterceptorFactory() {
+        return this.traceInterceptorFactory;
+    }
+
+    /**
+     * Set the factory to be used to create the trace interceptor.
+     * It is expected that the factory will create a subclass of TraceInterceptor.
+     * <p/>
+     * Use this to take complete control of how trace events are handled.
+     * The TraceInterceptorFactory should only be set before any routes are created, hence this
+     * method is not thread safe.
+     */
+    public void setTraceInterceptorFactory(TraceInterceptorFactory traceInterceptorFactory) {
+        this.traceInterceptorFactory = traceInterceptorFactory;
+    }
+
+    public TraceEventHandler getTraceHandler() {
+        return traceHandler;
+    }
+
+    /**
+     * Set the object to be used to perform tracing.
+     * <p/>
+     * Use this to take more control of how trace events are persisted.
+     * Setting the traceHandler provides a simpler mechanism for controlling tracing
+     * than the TraceInterceptorFactory.
+     * The TraceHandler should only be set before any routes are created, hence this
+     * method is not thread safe.
+     */
+    public void setTraceHandler(TraceEventHandler traceHandler) {
+        this.traceHandler = traceHandler;
+    }
+
+    public String getJpaTraceEventMessageClassName() {
+        return jpaTraceEventMessageClassName;
+    }
+
+    /**
+     * Set the fully qualified name of the class to be used by the JPA event tracing.
+     * <p/>
+     * The class must exist in the classpath and be available for dynamic loading.
+     * The class name should only be set before any routes are created, hence this
+     * method is not thread safe.
+     */
+    public void setJpaTraceEventMessageClassName(String jpaTraceEventMessageClassName) {
+        this.jpaTraceEventMessageClassName = jpaTraceEventMessageClassName;
     }
 
     @Override
