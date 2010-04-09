@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>examples</artifactId>
+        <version>2.3-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>camel-example-gauth</artifactId>
+    <name>Camel :: Example :: GAuth</name>
+    <description>Demonstrates how to implement Camel's OAuth support for GAE</description>
+    <packaging>war</packaging>
+
+    <properties>
+        <gdata-version>1.41.1</gdata-version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-gae</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.appengine.orm</groupId>
+            <artifactId>datanucleus-appengine</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gdata</groupId>
+            <artifactId>gdata-core</artifactId>
+            <version>${gdata-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gdata</groupId>
+            <artifactId>gdata-client</artifactId>
+            <version>${gdata-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gdata</groupId>
+            <artifactId>gdata-calendar</artifactId>
+            <version>${gdata-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gdata</groupId>
+            <artifactId>gdata-calendar-meta</artifactId>
+            <version>${gdata-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.common</groupId>
+            <artifactId>google-collect</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+</project>
