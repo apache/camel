@@ -588,7 +588,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                         exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
 
                         // resubmit the recovered exchange
-                        onSubmitCompletion(key, exchange);
+                        try {
+                            lock.lock();
+                            onSubmitCompletion(key, exchange);
+                        } finally {
+                            lock.unlock();
+                        }
                     }
                 }
             }
