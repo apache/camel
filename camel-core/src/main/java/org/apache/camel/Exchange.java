@@ -31,6 +31,7 @@ import org.apache.camel.spi.UnitOfWork;
  */
 public interface Exchange {
 
+    String AUTHENTICATION             = "CamelAuthentication";       
     String ACCEPT_CONTENT_TYPE        = "CamelAcceptContentType";
     @Deprecated
     String AGGREGATED_INDEX           = "CamelAggregatedIndex";
