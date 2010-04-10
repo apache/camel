@@ -133,7 +133,11 @@ public class CryptoDataFormat implements DataFormat {
                     cipherStream.flush();
                     hmac.encryptUpdate(buffer, read);
                 }
-                cipherStream.write(hmac.getCalculatedMac());
+                // only write if there is data to write (IBM JDK throws exception if no data)
+                byte[] mac = hmac.getCalculatedMac();
+                if (mac != null && mac.length > 0) {
+                    cipherStream.write(mac);
+                }
             } finally {
                 ObjectHelper.close(cipherStream, "cipher", LOG);
             }
