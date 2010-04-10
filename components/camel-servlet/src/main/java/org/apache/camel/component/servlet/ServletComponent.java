@@ -26,11 +26,12 @@ import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.params.HttpParams;
+import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.params.HttpClientParams;
 
 public class ServletComponent extends HttpComponent {
     
@@ -58,7 +59,10 @@ public class ServletComponent extends HttpComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         uri = uri.startsWith("servlet:") ? remaining : uri;
 
-        HttpParams clientParams = configureHttpParams(parameters);
+        HttpClientParams params = new HttpClientParams();
+        IntrospectionSupport.setProperties(params, parameters, "httpClient.");
+        // configure regular parameters
+        configureParameters(parameters);
 
         // must extract well known parameters before we create the endpoint
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
@@ -68,7 +72,7 @@ public class ServletComponent extends HttpComponent {
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), CastUtils.cast(parameters));
         uri = httpUri.toString();
 
-        ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri, clientParams, getClientConnectionManager(), httpClientConfigurer);
+        ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), httpClientConfigurer);
         setEndpointHeaderFilterStrategy(endpoint);
 
         // prefer to use endpoint configured over component configured
@@ -88,8 +92,8 @@ public class ServletComponent extends HttpComponent {
     }
 
     protected ServletEndpoint createServletEndpoint(String endpointUri,
-            ServletComponent component, URI httpUri, HttpParams params,
-            ClientConnectionManager httpConnectionManager,
+            ServletComponent component, URI httpUri, HttpClientParams params,
+            HttpConnectionManager httpConnectionManager,
             HttpClientConfigurer clientConfigurer) throws Exception {
         return new ServletEndpoint(endpointUri, component, httpUri, params,
                 httpConnectionManager, clientConfigurer);

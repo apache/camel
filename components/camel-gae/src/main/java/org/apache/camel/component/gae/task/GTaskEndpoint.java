@@ -36,8 +36,8 @@ import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.params.HttpParams;
+import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
  * Represents a <a href="http://camel.apache.org/gtask.html">Google App Engine Task Queueing endpoint</a>.
@@ -52,8 +52,8 @@ public class GTaskEndpoint extends ServletEndpoint implements OutboundBindingSup
     private Queue queue;
     
     public GTaskEndpoint(String endpointUri, ServletComponent component,
-            URI httpUri, HttpParams params,
-            ClientConnectionManager httpConnectionManager,
+            URI httpUri, HttpClientParams params,
+            HttpConnectionManager httpConnectionManager,
             HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endpointUri, component, httpUri, params, httpConnectionManager, clientConfigurer);
     }

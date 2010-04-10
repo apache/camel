@@ -78,9 +78,6 @@ public class GMailBinding implements OutboundBinding<GMailEndpoint, Message, Voi
         return message;
     }
 
-    /**
-     * @throws UnsupportedOperationException.
-     */
     public Exchange readResponse(GMailEndpoint endpoint, Exchange exchange, Void response) {
         throw new UnsupportedOperationException("gmail responses not supported");
     }

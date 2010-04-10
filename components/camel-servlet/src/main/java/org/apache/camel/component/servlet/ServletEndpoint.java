@@ -25,8 +25,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.params.HttpParams;
+import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.params.HttpClientParams;
 
 public class ServletEndpoint extends HttpEndpoint {
     private String servletName;
@@ -35,8 +35,8 @@ public class ServletEndpoint extends HttpEndpoint {
         super();
     }
     
-    public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri, HttpParams params
-                           , ClientConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+    public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri, HttpClientParams params
+                           , HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endPointURI, component, httpUri, params, httpConnectionManager, clientConfigurer);
     }
     

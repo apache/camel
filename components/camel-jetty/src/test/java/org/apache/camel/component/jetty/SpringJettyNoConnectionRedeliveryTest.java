@@ -21,7 +21,6 @@ import java.net.ConnectException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.apache.http.conn.HttpHostConnectException;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -56,8 +55,7 @@ public class SpringJettyNoConnectionRedeliveryTest extends CamelSpringTestSuppor
 
         assertTrue(exchange.isFailed());
 
-        HttpHostConnectException cause = assertIsInstanceOf(HttpHostConnectException.class, exchange.getException());
-        assertIsInstanceOf(ConnectException.class, cause.getCause());
+        assertIsInstanceOf(ConnectException.class, exchange.getException());
 
         assertEquals(true, exchange.getIn().getHeader(Exchange.REDELIVERED));
         assertEquals(4, exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER));

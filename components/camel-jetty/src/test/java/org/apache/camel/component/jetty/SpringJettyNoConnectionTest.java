@@ -20,7 +20,6 @@ import java.net.ConnectException;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.apache.http.conn.HttpHostConnectException;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -51,8 +50,7 @@ public class SpringJettyNoConnectionTest extends CamelSpringTestSupport {
             template.requestBody("direct:start", "Moon", String.class);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            assertIsInstanceOf(HttpHostConnectException.class, e.getCause());
-            assertIsInstanceOf(ConnectException.class, e.getCause().getCause());
+            assertIsInstanceOf(ConnectException.class, e.getCause());
         }
     }
 }

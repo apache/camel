@@ -42,8 +42,8 @@ import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.params.HttpParams;
+import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
  * Represents a <a href="http://camel.apache.org/ghttp.html">Google App Engine
@@ -63,8 +63,8 @@ public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSup
     private InboundBinding<GHttpEndpoint, HttpServletRequest, HttpServletResponse> inboundBinding;
     
     public GHttpEndpoint(String endpointUri, ServletComponent component,
-            URI httpUri, HttpParams params,
-            ClientConnectionManager httpConnectionManager,
+            URI httpUri, HttpClientParams params,
+            HttpConnectionManager httpConnectionManager,
             HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endpointUri, component, httpUri, params, httpConnectionManager, clientConfigurer);
         urlFetchService = URLFetchServiceFactory.getURLFetchService();

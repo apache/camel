@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayInputStream;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -25,16 +26,13 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class HttpBridgeRouteTest extends CamelTestSupport {
+
     @Test
     public void testHttpClient() throws Exception {
-       
-
         String response = template.requestBodyAndHeader("http://localhost:9090/test/hello", new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
-        
-        assertEquals("Get a wrong response", "/", response);
+        assertEquals("Get a wrong response", "/test/hello", response);
         
         response = template.requestBody("http://localhost:9080/hello/world", "hello", String.class);
-        
         assertEquals("Get a wrong response", "/hello/world", response);
         
         try {
@@ -61,8 +59,6 @@ public class HttpBridgeRouteTest extends CamelTestSupport {
                     .to("http://localhost:9080?throwExceptionOnFailure=false&bridgeEndpoint=true");
                 
                 from("jetty://http://localhost:9080?matchOnUriPrefix=true").process(serviceProc);
-                              
-                
             }
         };
     }    
