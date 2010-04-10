@@ -24,7 +24,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <bean id="httpEndpoint" class="org.apache.camel.component.http.HttpEndpoint">
+    <bean id="httpEndpoint" class="org.apache.camel.component.http4.HttpEndpoint">
         <property name="httpUri" value="http://127.0.0.1:18080/"/>
         <property name="clientParams" ref="clientParams"/>
         <property name="clientConnectionManager" ref="clientConnectionManager"/>

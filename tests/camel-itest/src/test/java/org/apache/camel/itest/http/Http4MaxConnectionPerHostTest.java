@@ -38,7 +38,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class HttpEndpointTest extends AbstractJUnit4SpringContextTests {
+public class Http4MaxConnectionPerHostTest extends
+        AbstractJUnit4SpringContextTests {
 
     @Autowired
     protected CamelContext camelContext;
