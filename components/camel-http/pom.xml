@@ -26,13 +26,13 @@
         <version>2.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-http</artifactId>
+    <artifactId>camel-http4</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: HTTP</name>
-    <description>Camel HTTP support</description>
+    <name>Camel :: HTTP4 (HttpClient 4.x)</name>
+    <description>Camel HTTP (Apache HttpClient 4.x) support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.http.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.component.http4.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>
