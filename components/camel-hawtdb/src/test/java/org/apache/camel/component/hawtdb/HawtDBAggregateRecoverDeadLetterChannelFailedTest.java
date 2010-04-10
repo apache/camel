@@ -24,7 +24,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HawtDBAggregateRecoverDeadLetterChannelTest extends CamelTestSupport {
+public class HawtDBAggregateRecoverDeadLetterChannelFailedTest extends CamelTestSupport {
 
     private HawtDBAggregationRepository<String> repo;
 
@@ -37,7 +37,7 @@ public class HawtDBAggregateRecoverDeadLetterChannelTest extends CamelTestSuppor
         // exhaust after at most 3 attempts
         repo.setMaximumRedeliveries(3);
         // and move to this dead letter channel
-        repo.setDeadLetterUri("mock:dead");
+        repo.setDeadLetterUri("direct:dead");
         // check faster
         repo.setRecoveryInterval(500, TimeUnit.MILLISECONDS);
 
@@ -45,13 +45,19 @@ public class HawtDBAggregateRecoverDeadLetterChannelTest extends CamelTestSuppor
     }
 
     @Test
-    public void testHawtDBAggregateRecoverDeadLetterChannel() throws Exception {
+    public void testHawtDBAggregateRecoverDeadLetterChannelFailed() throws Exception {
         // should fail all times
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:aggregated").expectedMessageCount(4);
-        getMockEndpoint("mock:dead").expectedBodiesReceived("ABCDE");
+        // it should keep sending to DLC if it failed, so test for min 3 messages
+        getMockEndpoint("mock:dead").expectedMinimumMessageCount(3);
+        // all the details should be the same about redelivered and redelivered 3 times
         getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
         getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
+        getMockEndpoint("mock:dead").message(1).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
+        getMockEndpoint("mock:dead").message(1).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
+        getMockEndpoint("mock:dead").message(2).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
+        getMockEndpoint("mock:dead").message(2).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
@@ -75,6 +81,10 @@ public class HawtDBAggregateRecoverDeadLetterChannelTest extends CamelTestSuppor
                         .throwException(new IllegalArgumentException("Damn"))
                         .to("mock:result")
                     .end();
+
+                from("direct:dead")
+                    .to("mock:dead")
+                    .throwException(new IllegalArgumentException("We are dead"));
             }
         };
     }

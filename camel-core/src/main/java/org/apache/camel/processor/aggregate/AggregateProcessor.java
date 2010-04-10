@@ -589,30 +589,42 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                         // and mark it as redelivered
                         exchange.getIn().setHeader(Exchange.REDELIVERED, Boolean.TRUE);
 
-                        // update current redelivery state
+                        // get the current redelivery data
                         RedeliveryData data = redeliveryState.get(exchange.getExchangeId());
-                        if (data == null) {
-                            // create new data
-                            data = new RedeliveryData();
-                            redeliveryState.put(exchange.getExchangeId(), data);
-                        }
-                        data.redeliveryCounter++;
-
-                        // set redelivery counter
-                        exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
 
                         // if we are exhausted, then move to dead letter channel
-                        if (recoverable.getMaximumRedeliveries() > 0 && data.redeliveryCounter > recoverable.getMaximumRedeliveries()) {
+                        if (data != null && recoverable.getMaximumRedeliveries() > 0 && data.redeliveryCounter >= recoverable.getMaximumRedeliveries()) {
                             LOG.warn("The recovered exchange is exhausted after " + recoverable.getMaximumRedeliveries()
                                     + " attempts, will now be moved to dead letter channel: " + recoverable.getDeadLetterUri());
+
+                            // send to DLC
                             try {
+                                // set redelivery counter
+                                exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
                                 deadLetterProcessor.process(exchange);
-                                // confirm after it has been moved to dead letter channel
-                                recoverable.confirm(camelContext, exchangeId);
                             } catch (Exception e) {
-                                getExceptionHandler().handleException("Failed to move recovered Exchange to dead letter channel: " + recoverable.getDeadLetterUri(), e);
+                                exchange.setException(e);
+                            }
+
+                            // handle if failed
+                            if (exchange.getException() != null) {
+                                getExceptionHandler().handleException("Failed to move recovered Exchange to dead letter channel: " + recoverable.getDeadLetterUri(), exchange.getException());
+                            } else {
+                                // it was ok, so confirm after it has been moved to dead letter channel, so we wont recover it again
+                                recoverable.confirm(camelContext, exchangeId);
                             }
                         } else {
+                            // update current redelivery state
+                            if (data == null) {
+                                // create new data
+                                data = new RedeliveryData();
+                                redeliveryState.put(exchange.getExchangeId(), data);
+                            }
+                            data.redeliveryCounter++;
+
+                            // set redelivery counter
+                            exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
+
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Delivery attempt: " + data.redeliveryCounter + " to recover aggregated exchange with id: " + exchangeId + "");
                             }
