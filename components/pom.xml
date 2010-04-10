@@ -53,6 +53,7 @@
     <module>camel-groovy</module>
     <module>camel-hawtdb</module>
     <module>camel-http</module>
+    <module>camel-http4</module>
     <module>camel-hl7</module>
     <module>camel-ibatis</module>
     <module>camel-irc</module>
