@@ -29,7 +29,7 @@ public class MarshalWithMappingDomainObjectTest extends CamelTestSupport {
     @Test
     public void testMarshalDomainObject() throws Exception {
         // some platform cannot test using Castor as it uses a SUN dependent Xerces
-        if (isPlatform("aix")) {
+        if (isJavaVendor("IBM")) {
             return;
         }
 
@@ -47,7 +47,7 @@ public class MarshalWithMappingDomainObjectTest extends CamelTestSupport {
     @Test
     public void testUnmarshalDomainObject() throws Exception {
         // some platform cannot test using Castor as it uses a SUN dependent Xerces
-        if (isPlatform("aix")) {
+        if (isJavaVendor("IBM")) {
             return;
         }
 

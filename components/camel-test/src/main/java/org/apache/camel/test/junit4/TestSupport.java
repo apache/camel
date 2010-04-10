@@ -454,7 +454,20 @@ public abstract class TestSupport extends Assert {
      */
     public static boolean isPlatform(String platform) {
         String osName = System.getProperty("os.name").toLowerCase(Locale.US);
-        return osName.indexOf(platform.toLowerCase()) > -1;
+        return osName.indexOf(platform.toLowerCase(Locale.US)) > -1;
+    }
+
+    /**
+     * Is this Java by the given vendor.
+     * <p/>
+     * Uses <tt>java.vendor</tt> from the system properties to determine the vendor.
+     *
+     * @param vendor such as IBM
+     * @return <tt>true</tt> if its that vendor.
+     */
+    public static boolean isJavaVendor(String vendor) {
+        String javaVendor = System.getProperty("java.vendor").toLowerCase(Locale.US);
+        return javaVendor.indexOf(vendor.toLowerCase(Locale.US)) > -1;
     }
 
 }
