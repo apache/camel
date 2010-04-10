@@ -51,10 +51,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <servlet-name>CamelServlet</servlet-name>
         <url-pattern>/camel/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CamelServlet</servlet-name>
-        <url-pattern>/worker/*</url-pattern>
-    </servlet-mapping>
-    
+
 </web-app>
 

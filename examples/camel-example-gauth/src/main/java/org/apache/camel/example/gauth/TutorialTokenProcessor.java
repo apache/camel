@@ -25,6 +25,19 @@ import org.apache.camel.Processor;
 import static org.apache.camel.component.gae.auth.GAuthUpgradeBinding.GAUTH_ACCESS_TOKEN;
 import static org.apache.camel.component.gae.auth.GAuthUpgradeBinding.GAUTH_ACCESS_TOKEN_SECRET;
 
+/**
+ * Reads an OAuth access token plus access token secret from a Camel message and stores them in
+ * cookies. These cookies are needed by {@link org.apache.camel.example.gauth.TutorialController}
+ * for accessing a user's calendar via the Google Calendar API. The cookies are valid for one
+ * hour. Finally, it generates an HTTP 302 response that redirects the user to the application's
+ * main location (/oauth/calendar).
+ * <p>
+ * In production systems it is <em>not</em> recommended to store access tokens in cookies. The 
+ * recommended approach is to store them in a database. The demo application is only doing that
+ * to keep the example as simple as possible. However, an attacker could not use an access token
+ * alone to get access to a user's calendar data because the application's consumer secret is
+ * necessary for that as well. The consumer secret never leaves the demo application.
+ */
 public class TutorialTokenProcessor implements Processor {
 
     private static final int ONE_HOUR = 3600;

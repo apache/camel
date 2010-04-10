@@ -27,14 +27,31 @@ import com.google.gdata.client.calendar.CalendarService;
 import com.google.gdata.data.calendar.CalendarEntry;
 import com.google.gdata.data.calendar.CalendarFeed;
 
+/**
+ * Facade for getting calendar names from the Google Calendar API. The access is made on
+ * behalf of a user by providing an OAuth access token and access token secret.
+ */
 public class TutorialService {
 
     private Properties credentials;
-    
+
+    /**
+     * Sets properties that contains the application's consumer key and consumer secret.
+     *
+     * @param credentials consumer key and consumer secret.
+     */
     public void setCredentials(Properties credentials) {
         this.credentials = credentials;
     }
-    
+
+    /**
+     * Obtains a list of names of a user's public and private calendars from the Google
+     * Calendar API.
+     * 
+     * @param accessToken OAuth access token.
+     * @param accessTokenSecret OAuth access token secret.
+     * @return list of names of a user's public and private calendars.
+     */
     public List<String> getCalendarNames(String accessToken, String accessTokenSecret) throws Exception {
         CalendarService calendarService = new CalendarService("apache-camel-2.3"); 
         OAuthParameters params = getOAuthParams(accessToken, accessTokenSecret);

@@ -29,6 +29,19 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+/**
+ * Single controller for the demo application that handles GET requests. Obtains OAuth access
+ * token and access token secret from cookies and uses them to obtain calendar names from the
+ * Google Calendar API. If the interaction with the calendar API fails due to invalid or non-
+ * existing OAuth tokens an error message is displayed in authorize.jsp. If it succeeds the
+ * calendar names are displayed in calendar.jsp.
+ * <p>
+ * In production systems it is <em>not</em> recommended to store access tokens in cookies. The
+ * recommended approach is to store them in a database. The demo application is only doing that
+ * to keep the example as simple as possible. However, an attacker could not use an access token
+ * alone to get access to a user's calendar data because the application's consumer secret is
+ * necessary for that as well. The consumer secret never leaves the demo application.
+ */
 @Controller
 @RequestMapping("/calendar")
 public class TutorialController {
@@ -44,7 +57,8 @@ public class TutorialController {
             ModelMap model) throws Exception {
 
         List<String> calendarNames = null;
-        
+
+        // Get OAuth tokens from cookies
         String accessToken = getAccessToken(request);
         String accessTokenSecret = getAccessTokenSecret(request);
         
@@ -54,6 +68,7 @@ public class TutorialController {
         }
         
         try {
+            // Get calendar names from Google Calendar API
             calendarNames = service.getCalendarNames(accessToken, accessTokenSecret);
         } catch (AuthenticationException e) {
             model.put("message", "OAuth access token invalid");
