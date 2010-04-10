@@ -70,9 +70,54 @@ public interface RecoverableAggregationRepository<K> extends AggregationReposito
     long getRecoveryIntervalInMillis();
 
     /**
+     * Sets whether or not recovery is enabled
+     *
+     * @param useRecovery whether or not recovery is enabled
+     */
+    void setUseRecovery(boolean useRecovery);
+
+    /**
      * Whether or not recovery is enabled or not
      *
      * @return <tt>true</tt> to use recovery, <tt>false</tt> otherwise.
      */
     boolean isUseRecovery();
+
+    /**
+     * Sets an optional dead letter channel which exhausted recovered {@link Exchange}
+     * should be send to.
+     * <p/>
+     * By default this option is disabled
+     *
+     * @param deadLetterUri  the uri of the dead letter channel
+     */
+    void setDeadLetterUri(String deadLetterUri);
+
+    /**
+     * Gets the dead letter channel
+     *
+     * @return  the uri of the dead letter channel
+     */
+    String getDeadLetterUri();
+
+    /**
+     * Sets an optional limit of the number of redelivery attempt of recovered {@link Exchange}
+     * should be attempted, before its exhausted.
+     * <p/>
+     * When this limit is hit, then the {@link Exchange} is moved to the dead letter channel.
+     * <p/>
+     * By default this option is disabled
+     *
+     * @param maximumRedeliveries the maximum redeliveries
+     */
+    void setMaximumRedeliveries(int maximumRedeliveries);
+
+    /**
+     * Gets the maximum redelivery attempts to do before a recovered {@link Exchange} is doomed
+     * as exhausted and moved to the dead letter channel.
+     *
+     * @return the maximum redeliveries
+     */
+    int getMaximumRedeliveries();
+
 }

@@ -52,6 +52,8 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
     private HawtDBCamelMarshaller<K> marshaller = new HawtDBCamelMarshaller<K>();
     private long recoveryInterval = 5000;
     private boolean useRecovery = true;
+    private int maximumRedeliveries;
+    private String deadLetterUri;
 
     /**
      * Creates an aggregation repository
@@ -362,6 +364,22 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
 
     public void setUseRecovery(boolean useRecovery) {
         this.useRecovery = useRecovery;
+    }
+
+    public int getMaximumRedeliveries() {
+        return maximumRedeliveries;
+    }
+
+    public void setMaximumRedeliveries(int maximumRedeliveries) {
+        this.maximumRedeliveries = maximumRedeliveries;
+    }
+
+    public String getDeadLetterUri() {
+        return deadLetterUri;
+    }
+
+    public void setDeadLetterUri(String deadLetterUri) {
+        this.deadLetterUri = deadLetterUri;
     }
 
     @Override

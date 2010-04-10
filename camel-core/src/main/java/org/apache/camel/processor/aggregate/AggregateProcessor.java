@@ -88,6 +88,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private Map<Object, Object> closedCorrelationKeys;
     private final Set<String> inProgressCompleteExchanges = new HashSet<String>();
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<String, RedeliveryData>();
+    // optional dead letter channel for exhausted recovered exchanges
+    private Processor deadLetterProcessor;
 
     // keep booking about redelivery
     private class RedeliveryData {
@@ -363,6 +365,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 if (exchange.getException() != null) {
                     // if there was an exception then let the exception handler handle it
                     getExceptionHandler().handleException("Error processing aggregated exchange", exchange, exchange.getException());
+                } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Processing aggregated exchange: " + exchange + " complete.");
+                    }
                 }
             }
         });
@@ -476,12 +482,20 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         public void onFailure(Exchange exchange) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Aggregated exchange onFailure: " + exchange);
+            }
+
             // must remember to remove in progress when we failed
             inProgressCompleteExchanges.remove(exchangeId);
             // do not remove redelivery state as we need it when we redeliver again later
         }
 
         public void onComplete(Exchange exchange) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Aggregated exchange onComplete: " + exchange);
+            }
+
             // only confirm if we processed without a problem
             try {
                 aggregationRepository.confirm(exchange.getContext(), exchangeId);
@@ -562,11 +576,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
                 if (inProgress) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Aggregated exchange with id " + exchangeId + " is already in progress.");
+                        LOG.trace("Aggregated exchange with id: " + exchangeId + " is already in progress.");
                     }
                 } else {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Recovering aggregated exchange with id " + exchangeId);
+                        LOG.debug("Loading aggregated exchange with id: " + exchangeId + " to be recovered.");
                     }
                     Exchange exchange = recoverable.recover(camelContext, exchangeId);
                     if (exchange != null) {
@@ -587,12 +601,28 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                         // set redelivery counter
                         exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
 
-                        // resubmit the recovered exchange
-                        try {
-                            lock.lock();
-                            onSubmitCompletion(key, exchange);
-                        } finally {
-                            lock.unlock();
+                        // if we are exhausted, then move to dead letter channel
+                        if (recoverable.getMaximumRedeliveries() > 0 && data.redeliveryCounter > recoverable.getMaximumRedeliveries()) {
+                            LOG.warn("The recovered exchange is exhausted after " + recoverable.getMaximumRedeliveries()
+                                    + " attempts, will now be moved to dead letter channel: " + recoverable.getDeadLetterUri());
+                            try {
+                                deadLetterProcessor.process(exchange);
+                                // confirm after it has been moved to dead letter channel
+                                recoverable.confirm(camelContext, exchangeId);
+                            } catch (Exception e) {
+                                getExceptionHandler().handleException("Failed to move recovered Exchange to dead letter channel: " + recoverable.getDeadLetterUri(), e);
+                            }
+                        } else {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Delivery attempt: " + data.redeliveryCounter + " to recover aggregated exchange with id: " + exchangeId + "");
+                            }
+                            // not exhaust so resubmit the recovered exchange
+                            try {
+                                lock.lock();
+                                onSubmitCompletion(key, exchange);
+                            } finally {
+                                lock.unlock();
+                            }
                         }
                     }
                 }
@@ -639,6 +669,15 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 LOG.info("Using RecoverableAggregationRepository by scheduling recover checker to run every " + interval + " millis.");
                 // use fixed delay so there is X interval between each run
                 recoverService.scheduleWithFixedDelay(recoverTask, 1000L, interval, TimeUnit.MILLISECONDS);
+
+                if (recoverable.getDeadLetterUri() != null) {
+                    int max = recoverable.getMaximumRedeliveries();
+                    if (max <= 0) {
+                        throw new IllegalArgumentException("Option maximumRedeliveries must be a positive number, was: " + max);
+                    }
+                    LOG.info("After " + max + " failed redelivery attempts Exchanges will be moved to deadLetterUri: " + recoverable.getDeadLetterUri());
+                    deadLetterProcessor = camelContext.getEndpoint(recoverable.getDeadLetterUri()).createProducer();
+                }
             }
         }
 
