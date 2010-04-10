@@ -29,7 +29,7 @@ public class StopWatchTest extends TestCase {
         long taken = watch.stop();
 
         assertEquals(taken, watch.taken());
-        assertTrue("Should take approx 200 millis, was: " + taken, taken > 190);
+        assertTrue("Should take approx 200 millis, was: " + taken, taken > 150);
     }
 
     public void testStopWatchNotStarted() throws Exception {
@@ -42,7 +42,7 @@ public class StopWatchTest extends TestCase {
         taken = watch.stop();
 
         assertEquals(taken, watch.taken());
-        assertTrue("Should take approx 200 millis, was: " + taken, taken > 190);
+        assertTrue("Should take approx 200 millis, was: " + taken, taken > 150);
     }
 
     public void testStopWatchRestart() throws Exception {
@@ -51,14 +51,14 @@ public class StopWatchTest extends TestCase {
         long taken = watch.stop();
 
         assertEquals(taken, watch.taken());
-        assertTrue("Should take approx 200 millis, was: " + taken, taken > 190);
+        assertTrue("Should take approx 200 millis, was: " + taken, taken > 150);
 
         watch.restart();
         Thread.sleep(100);
         taken = watch.stop();
 
         assertEquals(taken, watch.taken());
-        assertTrue("Should take approx 100 millis, was: " + taken, taken > 90);
+        assertTrue("Should take approx 100 millis, was: " + taken, taken > 50);
     }
 
     public void testStopWatchTaken() throws Exception {
