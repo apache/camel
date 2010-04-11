@@ -28,6 +28,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -42,6 +43,7 @@ import static org.apache.camel.language.simple.SimpleLanguage.simple;
 public class FileConcurrentTest extends ContextTestSupport {
 
     private static final Log LOG = LogFactory.getLog(FileConcurrentTest.class);
+    private static char[] chars = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -56,7 +58,8 @@ public class FileConcurrentTest extends ContextTestSupport {
         super.setUp();
         // create 10 files
         for (int i = 0; i < 10; i++) {
-            template.sendBodyAndHeader("file://target/concurrent", "Total order: " + 100 * i, Exchange.FILE_NAME, i + ".txt");
+            char ch = chars[i];
+            template.sendBodyAndHeader("file://target/concurrent", "" + ch, Exchange.FILE_NAME, i + ".txt");
         }
     }
 
@@ -71,11 +74,11 @@ public class FileConcurrentTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("file://target/concurrent")
                     .setHeader("id", simple("${file:onlyname.noext}"))
-                    .threads(20)
+                    .threads(10)
                     .beanRef("business")
                     .log("Country is ${in.header.country}")
-                    .aggregate(header("country"), new MyBusinessTotal())
-                        .completionTimeout(4000L)
+                    .aggregate(header("country"), new BodyInAggregatingStrategy())
+                        .completionTimeout(2000L)
                         .to("mock:result");
             }
         });
@@ -84,13 +87,31 @@ public class FileConcurrentTest extends ContextTestSupport {
         long start = System.currentTimeMillis();
 
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceivedInAnyOrder("2000", "2500");
-        result.setResultWaitTime(20000);
+        // can arrive in any order
+        result.expectedMessageCount(2);
 
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
         LOG.debug("Time taken parallel: " + delta);
+
+        for (int i = 0; i < 2; i++) {
+            String body = result.getReceivedExchanges().get(i).getIn().getBody(String.class);
+            LOG.info("Got body: " + body);
+            if (body.contains("A")) {
+                assertTrue("Should contain C, was:" + body, body.contains("C"));
+                assertTrue("Should contain E, was:" + body, body.contains("E"));
+                assertTrue("Should contain G, was:" + body, body.contains("G"));
+                assertTrue("Should contain I, was:" + body, body.contains("I"));
+            } else if (body.contains("B")) {
+                assertTrue("Should contain D, was:" + body, body.contains("D"));
+                assertTrue("Should contain F, was:" + body, body.contains("F"));
+                assertTrue("Should contain H, was:" + body, body.contains("H"));
+                assertTrue("Should contain J, was:" + body, body.contains("J"));
+            } else {
+                fail("Unexpected body, was: " + body);
+            }
+        }
     }
 
     public void testProcessFilesSequentiel() throws Exception {
@@ -100,8 +121,8 @@ public class FileConcurrentTest extends ContextTestSupport {
                 from("file://target/concurrent")
                     .setHeader("id", simple("${file:onlyname.noext}"))
                     .beanRef("business")
-                    .aggregate(header("country"), new MyBusinessTotal())
-                        .completionTimeout(4000L)
+                    .aggregate(header("country"), new BodyInAggregatingStrategy())
+                        .completionTimeout(2000L)
                         .to("mock:result");
             }
         });
@@ -110,8 +131,8 @@ public class FileConcurrentTest extends ContextTestSupport {
         long start = System.currentTimeMillis();
 
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceivedInAnyOrder("2000", "2500");
-        result.setResultWaitTime(20000);
+        // should be ordered
+        result.expectedBodiesReceived("A+C+E+G+I", "B+D+F+H+J");
 
         assertMockEndpointsSatisfied();
 
@@ -123,9 +144,8 @@ public class FileConcurrentTest extends ContextTestSupport {
 
         private Random ran = new Random();
 
-        public Integer processData(@Body String data, @Header(value = "id") int id, @Headers Map headers, TypeConverter converter) {
+        public String processData(@Body String data, @Header(value = "id") int id, @Headers Map headers, TypeConverter converter) {
             // simulate some heavy calculations
-
             int num = 200 + ran.nextInt(500);
             try {
                 Thread.sleep(num);
@@ -133,32 +153,11 @@ public class FileConcurrentTest extends ContextTestSupport {
                 // ignore
             }
 
-            String total = ObjectHelper.after(data, "Total order: ");
             String country = (id % 2 == 0) ? "dk" : "uk";
-
-            LOG.debug("Order sum: " + total + " for country: " + country);
-
+            LOG.debug("Data: " + data + " for country: " + country);
             headers.put("country", country);
-            return converter.convertTo(Integer.class, total);
-        }
-    }
 
-    public static class MyBusinessTotal implements AggregationStrategy {
-
-        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            Exchange answer = newExchange;
-
-            String country = newExchange.getIn().getHeader("country", String.class);
-            Integer current = 0;
-            if (oldExchange != null) {
-                current = oldExchange.getIn().getBody(Integer.class);
-                answer = oldExchange;
-            }
-            Integer add = newExchange.getIn().getBody(Integer.class);
-            int total = current.intValue() + add.intValue();
-            LOG.info("Aggregated sum so far: " + total + " for country: " + country);
-            answer.getIn().setBody(total);
-            return answer;
+            return data;
         }
     }
 

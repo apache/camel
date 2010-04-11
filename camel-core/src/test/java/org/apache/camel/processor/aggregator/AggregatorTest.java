@@ -45,10 +45,6 @@ public class AggregatorTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-    public void testPredicate() throws Exception {
-        testSendALargeBatch("direct:predicate");
-    }
-    
     public void testOneMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 
@@ -101,18 +97,4 @@ public class AggregatorTest extends ContextTestSupport {
         };
     }
     
-    private void testSendALargeBatch(String endpointUri) throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-
-        // have a little slack when large batch
-        resultEndpoint.expectedMinimumMessageCount((messageCount / 5) - 1);
-        // lets send a large batch of messages
-        for (int i = 1; i <= messageCount; i++) {
-            String body = "message:" + i;
-            template.sendBodyAndHeader(endpointUri, body, "cheese", 123);
-        }
-
-        resultEndpoint.assertIsSatisfied();
-        
-    }
 }

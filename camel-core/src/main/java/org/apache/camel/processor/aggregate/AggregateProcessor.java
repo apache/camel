@@ -233,6 +233,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             }
             aggregationRepository.add(exchange.getContext(), key, answer);
         } else {
+            // TODO: if we are completed from batch consumer then they should all complete (trigger that like timeout map)
             answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
             onCompletion(key, answer, false);
         }
