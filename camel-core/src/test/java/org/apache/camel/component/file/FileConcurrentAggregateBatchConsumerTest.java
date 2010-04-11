@@ -32,13 +32,7 @@ public class FileConcurrentAggregateBatchConsumerTest extends FileConcurrentTest
 
     private static final Log LOG = LogFactory.getLog(FileConcurrentAggregateBatchConsumerTest.class);
 
-    // TODO: batchConsumer needs to be reworked
-
-    public void testDummy() {
-        // noop
-    }
-
-    public void xxxTestProcessFilesConcurrently() throws Exception {
+    public void testProcessFilesConcurrently() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -83,7 +77,7 @@ public class FileConcurrentAggregateBatchConsumerTest extends FileConcurrentTest
         }
     }
 
-    public void xxxTestProcessFilesSequentiel() throws Exception {
+    public void testProcessFilesSequentiel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

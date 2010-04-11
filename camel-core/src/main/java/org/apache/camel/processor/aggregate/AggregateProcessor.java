@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -86,6 +87,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private ExceptionHandler exceptionHandler = new LoggingExceptionHandler(getClass());
     private AggregationRepository<Object> aggregationRepository = new MemoryAggregationRepository();
     private Map<Object, Object> closedCorrelationKeys;
+    private Set<Object> batchConsumerCorrelationKeys = new LinkedHashSet<Object>();
     private final Set<String> inProgressCompleteExchanges = new HashSet<String>();
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<String, RedeliveryData>();
     // optional dead letter channel for exhausted recovered exchanges
@@ -233,9 +235,19 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             }
             aggregationRepository.add(exchange.getContext(), key, answer);
         } else {
-            // TODO: if we are completed from batch consumer then they should all complete (trigger that like timeout map)
-            answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
-            onCompletion(key, answer, false);
+            // if batch consumer completion is enabled then we need to complete the group
+            if ("consumer".equals(complete)) {
+                for (Object batchKey : batchConsumerCorrelationKeys) {
+                    Exchange batchAnswer = aggregationRepository.get(camelContext, batchKey);
+                    batchAnswer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
+                    onCompletion(batchKey, batchAnswer, false);
+                }
+                batchConsumerCorrelationKeys.clear();
+            } else {
+                // we are complete for this exchange
+                answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
+                onCompletion(key, answer, false);
+            }
         }
 
         if (LOG.isTraceEnabled()) {
@@ -300,6 +312,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         if (isCompletionFromBatchConsumer()) {
+            batchConsumerCorrelationKeys.add(key);
             batchConsumerCounter.incrementAndGet();
             int size = exchange.getProperty(Exchange.BATCH_SIZE, 0, Integer.class);
             if (size > 0 && batchConsumerCounter.intValue() >= size) {
@@ -710,6 +723,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         if (closedCorrelationKeys != null) {
             closedCorrelationKeys.clear();
         }
+        batchConsumerCorrelationKeys.clear();
         redeliveryState.clear();
     }
 
