@@ -22,11 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.LoggingErrorHandlerBuilder;
-import org.apache.camel.component.direct.DirectEndpoint;
-import org.apache.camel.processor.DefaultErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
-import org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -38,7 +34,6 @@ public class ErrorHandlerDefintionParserTest extends TestCase {
         ctx =  new ClassPathXmlApplicationContext("org/apache/camel/spring/handler/ErrorHandlerDefinitionParser.xml");
     }
 
-    
     public void tearDown() throws Exception {
         ctx.close();        
     }
@@ -60,7 +55,6 @@ public class ErrorHandlerDefintionParserTest extends TestCase {
         
         errorHandler = (DefaultErrorHandlerBuilder) ctx.getBean("errorHandler");
         assertNotNull(errorHandler);
-        
     }
     
     public void testTransactionErrorHandler() {
@@ -71,6 +65,12 @@ public class ErrorHandlerDefintionParserTest extends TestCase {
         assertTrue("It should be MyErrorProcessor", processor instanceof MyErrorProcessor);
     }
     
+    public void testTXErrorHandler() {
+        TransactionErrorHandlerBuilder errorHandler = (TransactionErrorHandlerBuilder) ctx.getBean("txEH");
+        assertNotNull(errorHandler);
+        assertNotNull(errorHandler.getTransactionTemplate());
+    }
+
     public void testDeadLetterErrorHandler() {
         DeadLetterChannelBuilder errorHandler = (DeadLetterChannelBuilder) ctx.getBean("deadLetterErrorHandler");
         assertNotNull(errorHandler);
@@ -83,7 +83,7 @@ public class ErrorHandlerDefintionParserTest extends TestCase {
     }
     
     public void testErrorHandlerInsideCamelContext() {
-        CamelContextFactoryBean factoryBean = (CamelContextFactoryBean)ctx.getBean("&camel");
+        CamelContextFactoryBean factoryBean = (CamelContextFactoryBean) ctx.getBean("&camel");
         assertNotNull(factoryBean);
         assertEquals("Wrong ErrorHandlerRef", "noErrorHandler", factoryBean.getErrorHandlerRef());
     }

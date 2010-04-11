@@ -17,32 +17,18 @@
 
 package org.apache.camel.spring.handler;
 
-import java.lang.reflect.Method;
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.builder.LoggingErrorHandlerBuilder;
-import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.processor.RedeliveryPolicy;
-import org.apache.camel.spring.CamelEndpointFactoryBean;
 import org.apache.camel.spring.ErrorHandlerType;
-import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
-import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -51,42 +37,23 @@ import org.springframework.util.StringUtils;
  * The DefinitionParser to deal with the ErrorHandler
  */
 public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
-    private static final Log LOG = LogFactory.getLog(ErrorHandlerDefinitionParser.class);
+
+    // TODO: use a FactoryBean instead to create a ErrorHandlerBuilder object
+
     protected BeanDefinitionParser redeliveryPolicyParser = new RedeliveryPolicyDefinitionParser(RedeliveryPolicy.class);
     
     public ErrorHandlerDefinitionParser() {
-        // Need to override the default 
+        // need to override the default
         super(null);
-        
     }
 
     protected Class getBeanClass(Element element) {
         ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
-        
+
         if (ObjectHelper.isNotEmpty(element.getAttribute("type"))) {
             type = ErrorHandlerType.valueOf(element.getAttribute("type"));
         }
-        Class clazz = null;
-        if (type.equals(ErrorHandlerType.NoErrorHandler)) {
-            clazz = NoErrorHandlerBuilder.class;
-        }
-        if (type.equals(ErrorHandlerType.DeadLetterChannel)) {
-            clazz = DeadLetterChannelBuilder.class;
-            
-        }
-        if (type.equals(ErrorHandlerType.LoggingErrorHandler)) {
-            clazz = LoggingErrorHandlerBuilder.class;
-        }
-        if (type.equals(ErrorHandlerType.DefaultErrorHandler)) {
-            clazz = DefaultErrorHandlerBuilder.class;
-        }
-        if (type.equals(ErrorHandlerType.TransactionErrorHandler)) {
-            clazz = TransactionErrorHandlerBuilder.class;
-        }
-        if (clazz == null) {
-            throw new IllegalArgumentException("Cannot find the ErrorHandle with type " + type);
-        }
-        return clazz;
+        return type.getTypeAsClass();
     }
     
     protected boolean isEligibleAttribute(String attributeName) {
@@ -95,8 +62,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
                 && !attributeName.equals("type") && !attributeName.equals("onRedeliveryRef")
                 && !attributeName.equals("transactionTemplateRef");
     }
-   
-    
+
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
@@ -131,6 +97,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         if (type.equals(ErrorHandlerType.TransactionErrorHandler)) {
             // deal with transactionTemplateRef
             parserRefAttribute(element, "transactionTemplateRef", "transactionTemplate", builder);
+            parserRefAttribute(element, "transactionManagerRef", "transactionManager", builder);
         }
     }
 

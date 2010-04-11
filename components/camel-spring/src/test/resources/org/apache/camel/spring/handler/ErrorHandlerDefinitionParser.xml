@@ -23,33 +23,36 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-<!-- START SNIPPET: example -->
-    
-    <errorHandler id="loggingErrorHandler" xmlns="http://camel.apache.org/schema/spring" type="LoggingErrorHandler" level="INFO" />
-    
+    <!-- START SNIPPET: example -->
+    <errorHandler id="loggingErrorHandler" type="LoggingErrorHandler" level="INFO" xmlns="http://camel.apache.org/schema/spring"/>
+
     <!-- If don't specify type attribute, the type value will be set to DefaultErrorHandler -->
-    <errorHandler id="errorHandler" xmlns="http://camel.apache.org/schema/spring" />
-    
+    <errorHandler id="errorHandler" xmlns="http://camel.apache.org/schema/spring"/>
+
     <!-- You can define the redeliveryPolicy inside of the errorHandler -->
     <camel:errorHandler id="defaultErrorHandler" type="DefaultErrorHandler">
-       <camel:redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0" logStackTrace="false" />
+        <camel:redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0" logStackTrace="false"/>
     </camel:errorHandler>
-    
+
     <camel:errorHandler id="deadLetterErrorHandler" type="DeadLetterChannel" deadLetterUri="log:dead">
-       <camel:redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="1000" logHandled="true" />
+        <camel:redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="1000" logHandled="true"/>
     </camel:errorHandler>
-    
+
     <bean id="myErrorProcessor" class="org.apache.camel.spring.handler.MyErrorProcessor"/>
-    
-    <camel:errorHandler id="transactionErrorHandler" type="TransactionErrorHandler" transactionTemplateRef="PROPAGATION_REQUIRED" onRedeliveryRef="myErrorProcessor" />
-    
+
+    <!-- TX error handler can be configured using a template -->
+    <camel:errorHandler id="transactionErrorHandler" type="TransactionErrorHandler"
+                        transactionTemplateRef="PROPAGATION_REQUIRED" onRedeliveryRef="myErrorProcessor"/>
+
+    <!-- or using a transaction manager -->
+    <camel:errorHandler id="txEH" type="TransactionErrorHandler" transactionManagerRef="txManager"/>
+
     <!-- You can also define the errorHandler inside the camelContext -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    	<errorHandler id="noErrorHandler" type="NoErrorHandler"/>
+        <errorHandler id="noErrorHandler" type="NoErrorHandler"/>
     </camelContext>
- 
- <!-- END SNIPPET: example -->     
-    
+    <!-- END SNIPPET: example -->
+
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
         <property name="url" value="jdbc:hsqldb:mem:camel"/>
@@ -65,6 +68,5 @@
     <bean id="PROPAGATION_REQUIRED" class="org.springframework.transaction.support.TransactionTemplate">
         <property name="transactionManager" ref="txManager"/>
     </bean>
-
 
 </beans>

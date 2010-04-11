@@ -33,23 +33,26 @@ import org.apache.camel.model.config.PropertiesDefinition;
 /**
  * The &lt;errorHandler&gt; tag element.
  *
+ * @version $Revision$
  */
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorHandlerDefinition extends IdentifiedType {
-    @XmlAttribute(required = false)
-    private ErrorHandlerType type;
-    @XmlAttribute(required = false)
+    @XmlAttribute
+    private ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
+    @XmlAttribute
     private String deadLetterUri;
-    @XmlAttribute(required = false)
-    private LoggingLevel level;
-    @XmlAttribute(required = false)
+    @XmlAttribute
+    private LoggingLevel level = LoggingLevel.ERROR;
+    @XmlAttribute
     private Boolean useOriginalMessage;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String transactionTemplateRef;
-    @XmlAttribute(required = false)
+    @XmlAttribute
+    private String transactionManagerRef;
+    @XmlAttribute
     private String onRedeliveryRef;
-    @XmlElement(name = "redeliveryPolicy", required = false)
+    @XmlElement(name = "redeliveryPolicy")
     private RedeliveryPolicyDefinition redeliveryPolicy;
    
 }

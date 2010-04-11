@@ -125,6 +125,10 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
         this.transactionTemplate = policy.getTransactionTemplate();
     }
 
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionTemplate = new TransactionTemplate(transactionManager);
+    }
+
     // Builder methods
     // -------------------------------------------------------------------------
 
