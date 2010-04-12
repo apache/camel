@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Service;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.EventHelper;
@@ -99,7 +101,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (synchronizations == null) {
             synchronizations = new ArrayList<Synchronization>();
         }
-        // must add to top of list so we run last added first (FILO)
         if (LOG.isTraceEnabled()) {
             LOG.trace("Adding synchronization " + synchronization);
         }
@@ -117,12 +118,29 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             return;
         }
 
-        for (Synchronization synchronization : synchronizations) {
-            target.addOnCompletion(synchronization);
-        }
+        Iterator<Synchronization> it = synchronizations.iterator();
+        while (it.hasNext()) {
+            Synchronization synchronization = it.next();
 
-        // clear this list as its handed over to the other exchange
-        this.synchronizations.clear();
+            boolean handover = true;
+            if (synchronization instanceof SynchronizationVetoable) {
+                SynchronizationVetoable veto = (SynchronizationVetoable) synchronization;
+                handover = veto.allowHandover();
+            }
+
+            if (handover) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Handover synchronization " + synchronization + " to Exchange: " + target);
+                }
+                target.addOnCompletion(synchronization);
+                // remove it if its handed over
+                it.remove();
+            } else {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Handover not allow for synchronization " + synchronization);
+                }
+            }
+        }
     }
 
     public void done(Exchange exchange) {

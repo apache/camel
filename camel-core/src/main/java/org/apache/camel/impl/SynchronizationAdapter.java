@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.SynchronizationVetoable;
 
 /**
  * Simple {@link Synchronization} adapter with empty methods for easier overriding
@@ -25,7 +26,7 @@ import org.apache.camel.spi.Synchronization;
  *
  * @version $Revision$
  */
-public class SynchronizationAdapter implements Synchronization {
+public class SynchronizationAdapter implements SynchronizationVetoable {
 
     public void onComplete(Exchange exchange) {
         onDone(exchange);
@@ -38,4 +39,10 @@ public class SynchronizationAdapter implements Synchronization {
     public void onDone(Exchange exchange) {
         // noop
     }
+
+    public boolean allowHandover() {
+        // allow by default
+        return true;
+    }
+
 }

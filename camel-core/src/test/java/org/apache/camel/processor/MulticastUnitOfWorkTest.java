@@ -41,10 +41,9 @@ public class MulticastUnitOfWorkTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // the UoW is shared for multicast with direct
-        // so B should be the last
-        assertEquals("onCompleteB", sync);
-        assertEquals("onCompleteB", lastOne);
+        // will run B and then A, where A will be the last one
+        assertEquals("onCompleteA", sync);
+        assertEquals("onCompleteA", lastOne);
     }
 
     @Override

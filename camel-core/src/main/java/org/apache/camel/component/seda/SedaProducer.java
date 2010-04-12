@@ -84,6 +84,13 @@ public class SedaProducer extends CollectionProducer {
                 }
 
                 @Override
+                public boolean allowHandover() {
+                    // do not allow handover as we want to seda producer to have its completion triggered
+                    // at this point in the routing (at this leg), instead of at the very last (this ensure timeout is honored)
+                    return false;
+                }
+
+                @Override
                 public String toString() {
                     return "onDone at [" + endpoint.getEndpointUri() + "]";
                 }
@@ -99,6 +106,8 @@ public class SedaProducer extends CollectionProducer {
                 boolean done = latch.await(timeout, TimeUnit.MILLISECONDS);
                 if (!done) {
                     exchange.setException(new ExchangeTimedOutException(exchange, timeout));
+                    // count down to indicate timeout
+                    latch.countDown();
                 }
             } else {
                 if (log.isTraceEnabled()) {
