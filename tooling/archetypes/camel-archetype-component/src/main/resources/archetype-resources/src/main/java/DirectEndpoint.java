@@ -20,28 +20,29 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a direct endpoint that synchronously invokes the consumers of the
  * endpoint when a producer sends a message to it.
- * 
- * @version 
+ *
+ * @version $Revision$
  */
 public class DirectEndpoint extends DefaultEndpoint {
-    private static final Log LOG = LogFactory.getLog(DirectEndpoint.class);
-
     private final CopyOnWriteArrayList<DefaultConsumer> consumers = new CopyOnWriteArrayList<DefaultConsumer>();
-    boolean allowMultipleConsumers = true;
+
+    public DirectEndpoint() {
+    }
 
     public DirectEndpoint(String uri, DirectComponent component) {
         super(uri, component);
+    }
+
+    public DirectEndpoint(String endpointUri) {
+        super(endpointUri);
     }
 
     public Producer createProducer() throws Exception {
@@ -49,31 +50,7 @@ public class DirectEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new DefaultConsumer(this, processor) {
-            @Override
-            public void start() throws Exception {
-                if (!allowMultipleConsumers && !consumers.isEmpty()) {
-                    throw new IllegalStateException("Endpoint " + getEndpointUri() + " only allows 1 active consumer but you attempted to start a 2nd consumer.");
-                }
-
-                consumers.add(this);
-                super.start();
-            }
-
-            @Override
-            public void stop() throws Exception {
-                super.stop();
-                consumers.remove(this);
-            }
-        };
-    }
-
-    public boolean isAllowMultipleConsumers() {
-        return allowMultipleConsumers;
-    }
-
-    public void setAllowMultipleConsumers(boolean allowMutlipleConsumers) {
-        this.allowMultipleConsumers = allowMutlipleConsumers;
+        return new DirectConsumer(this, processor);
     }
 
     public boolean isSingleton() {

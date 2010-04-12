@@ -16,17 +16,16 @@
  */
 package ${packageName};
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultComponent;
-
 import java.util.Map;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Represents the component that manages {@link DirectEndpoint}. It holds the
  * list of named direct endpoints.
  *
- * @version
+ * @version $Revision$
  */
 public class DirectComponent extends DefaultComponent {
 
