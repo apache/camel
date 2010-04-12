@@ -67,8 +67,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      */
     protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters) {
         // prefer to use endpoint configured over component configured
-        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(
-                parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
+        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
+        if (configurer == null) {
+            // try without ref
+            configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
+        }
         if (configurer == null) {
             // fallback to component configured
             configurer = getHttpClientConfigurer();
@@ -110,6 +113,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
         // must extract well known parameters before we create the endpoint
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
+        if (binding == null) {
+            // try without ref
+            binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
+        }
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
