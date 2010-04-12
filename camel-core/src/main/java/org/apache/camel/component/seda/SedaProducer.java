@@ -64,12 +64,28 @@ public class SedaProducer extends CollectionProducer {
             copy.addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange response) {
-                    try {
-                        ExchangeHelper.copyResults(exchange, response);
-                    } finally {
-                        // always ensure latch is triggered
-                        latch.countDown();
+                    // check for timeout, which then already would have invoked the latch
+                    if (latch.getCount() == 0) {
+                        if (log.isTraceEnabled()) {
+                            log.trace(this + ". Timeout occurred so response will be ignored: " + (response.hasOut() ? response.getOut() : response.getIn()));
+                        }
+                        return;
+                    } else {
+                        if (log.isTraceEnabled()) {
+                            log.trace(this + " with response: " + (response.hasOut() ? response.getOut() : response.getIn()));
+                        }
+                        try {
+                            ExchangeHelper.copyResults(exchange, response);
+                        } finally {
+                            // always ensure latch is triggered
+                            latch.countDown();
+                        }
                     }
+                }
+
+                @Override
+                public String toString() {
+                    return "onDone at [" + endpoint.getEndpointUri() + "]";
                 }
             });
 
@@ -77,7 +93,7 @@ public class SedaProducer extends CollectionProducer {
 
             if (timeout > 0) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Waiting for task to complete using timeout (ms): " + timeout);
+                    log.trace("Waiting for task to complete using timeout (ms): " + timeout + " at [" + endpoint.getEndpointUri() + "]");
                 }
                 // lets see if we can get the task done before the timeout
                 boolean done = latch.await(timeout, TimeUnit.MILLISECONDS);
@@ -86,7 +102,7 @@ public class SedaProducer extends CollectionProducer {
                 }
             } else {
                 if (log.isTraceEnabled()) {
-                    log.trace("Waiting for task to complete (blocking)");
+                    log.trace("Waiting for task to complete (blocking) at [" + endpoint.getEndpointUri() + "]");
                 }
                 // no timeout then wait until its done
                 latch.await();

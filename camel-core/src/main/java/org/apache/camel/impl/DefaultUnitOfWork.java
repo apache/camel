@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -98,6 +99,10 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (synchronizations == null) {
             synchronizations = new ArrayList<Synchronization>();
         }
+        // must add to top of list so we run last added first (FILO)
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Adding synchronization " + synchronization);
+        }
         synchronizations.add(synchronization);
     }
 
@@ -136,6 +141,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
 
         if (synchronizations != null && !synchronizations.isEmpty()) {
+            // reverse so we invoke it FILO style instead of FIFO
+            Collections.reverse(synchronizations);
             // invoke synchronization callbacks
             for (Synchronization synchronization : synchronizations) {
                 try {
