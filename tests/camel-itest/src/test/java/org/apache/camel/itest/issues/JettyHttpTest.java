@@ -38,7 +38,7 @@ public class JettyHttpTest extends CamelTestSupport {
     @Test
     public void testGetRootPath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hi! /someservice/myservice");
+        mock.expectedBodiesReceived("Hi! /someservice");
 
         template.sendBody("direct:root", "");
 
@@ -48,7 +48,7 @@ public class JettyHttpTest extends CamelTestSupport {
     @Test
     public void testGetWithRelativePath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hi! /someservice/myservice/relative");
+        mock.expectedBodiesReceived("Hi! /someservice/relative");
         
         template.sendBody("direct:relative", "");
         assertMockEndpointsSatisfied();

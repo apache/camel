@@ -30,7 +30,7 @@ public class HttpBridgeRouteTest extends CamelTestSupport {
     @Test
     public void testHttpClient() throws Exception {
         String response = template.requestBodyAndHeader("http://localhost:9090/test/hello", new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
-        assertEquals("Get a wrong response", "/test/hello", response);
+        assertEquals("Get a wrong response", "/", response);
         
         response = template.requestBody("http://localhost:9080/hello/world", "hello", String.class);
         assertEquals("Get a wrong response", "/hello/world", response);
