@@ -36,7 +36,7 @@ public class FileConcurrentAggregateBatchConsumerTest extends FileConcurrentTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/concurrent")
+                from("file://target/concurrent?sortBy=file:name")
                     .setHeader("id", simple("${file:onlyname.noext}"))
                     .threads(10)
                     .beanRef("business")
@@ -81,7 +81,7 @@ public class FileConcurrentAggregateBatchConsumerTest extends FileConcurrentTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/concurrent")
+                from("file://target/concurrent?sortBy=file:name")
                     .setHeader("id", simple("${file:onlyname.noext}"))
                     .beanRef("business")
                     .aggregate(header("country"), new BodyInAggregatingStrategy())
