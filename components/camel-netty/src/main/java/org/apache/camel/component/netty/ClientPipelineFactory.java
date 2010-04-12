@@ -80,6 +80,8 @@ public class ClientPipelineFactory implements ChannelPipelineFactory {
                 LOG.debug("passphrase is null");
             }
             SSLEngineFactory sslEngineFactory = new SSLEngineFactory(
+                producer.getConfiguration().getKeyStoreFormat(),
+                producer.getConfiguration().getSecurityProvider(),
                 producer.getConfiguration().getKeyStoreFile(), 
                 producer.getConfiguration().getTrustStoreFile(), 
                 producer.getConfiguration().getPassphrase().toCharArray());

@@ -52,6 +52,8 @@ public class NettyConfiguration {
     private long receiveBufferSize;
     private int corePoolSize;
     private int maxPoolSize;
+    private String keyStoreFormat;
+    private String securityProvider;
 
     public NettyConfiguration() {
         setKeepAlive(true);
@@ -80,6 +82,8 @@ public class NettyConfiguration {
      
         sslHandler = component.resolveAndRemoveReferenceParameter(parameters, "sslHandler", SslHandler.class, null);
         passphrase = component.resolveAndRemoveReferenceParameter(parameters, "passphrase", String.class, null);
+        keyStoreFormat = component.getAndRemoveParameter(parameters, "keyStoreFormat", String.class, "JKS");        
+        securityProvider = component.getAndRemoveParameter(parameters, "securityProvider", String.class, "SunX509");
         keyStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "keyStoreFile", File.class, null);
         trustStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "trustStoreFile", File.class, null);
         encoder = component.resolveAndRemoveReferenceParameter(parameters, "encoder", ChannelDownstreamHandler.class, new ObjectEncoder());
@@ -299,6 +303,22 @@ public class NettyConfiguration {
 
     public void setMaxPoolSize(int maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
+    }
+
+    public String getKeyStoreFormat() {
+        return keyStoreFormat;
+    }
+
+    public void setKeyStoreFormat(String keyStoreFormat) {
+        this.keyStoreFormat = keyStoreFormat;
+    }
+
+    public String getSecurityProvider() {
+        return securityProvider;
+    }
+
+    public void setSecurityProvider(String securityProvider) {
+        this.securityProvider = securityProvider;
     }    
 
 }

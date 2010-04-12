@@ -64,10 +64,12 @@ public class ServerPipelineFactory implements ChannelPipelineFactory {
         if (consumer.getConfiguration().getSslHandler() != null) {
             return consumer.getConfiguration().getSslHandler();
         } else {
-            SSLEngineFactory sslEngineFactory = 
-                new SSLEngineFactory(consumer.getConfiguration().getKeyStoreFile(), 
-                        consumer.getConfiguration().getTrustStoreFile(), 
-                        consumer.getConfiguration().getPassphrase().toCharArray());
+            SSLEngineFactory sslEngineFactory = new SSLEngineFactory(
+                consumer.getConfiguration().getKeyStoreFormat(),
+                consumer.getConfiguration().getSecurityProvider(),
+                consumer.getConfiguration().getKeyStoreFile(), 
+                consumer.getConfiguration().getTrustStoreFile(), 
+                consumer.getConfiguration().getPassphrase().toCharArray());
             SSLEngine sslEngine = sslEngineFactory.createServerSSLEngine();
             return new SslHandler(sslEngine);
         }

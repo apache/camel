@@ -31,23 +31,27 @@ public class SSLEngineFactory {
     private static final String SSL_PROTOCOL = "TLS";
     private static SSLContext sslContext;
     
-    public SSLEngineFactory(File keyStoreFile, File trustStoreFile, char[] passphrase) throws Exception {
+    public SSLEngineFactory(String keyStoreFormat, String securityProvider, File keyStoreFile, File trustStoreFile, char[] passphrase) throws Exception {
         super();        
         
-        KeyStore ks = KeyStore.getInstance("JKS");
-        KeyStore ts = KeyStore.getInstance("JKS");
+        KeyStore ks = KeyStore.getInstance(keyStoreFormat);
 
         ks.load(IOConverter.toInputStream(keyStoreFile), passphrase);
-        ts.load(IOConverter.toInputStream(trustStoreFile), passphrase);
 
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(securityProvider);
         kmf.init(ks, passphrase);
 
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
-        tmf.init(ts);
-        
         sslContext = SSLContext.getInstance(SSL_PROTOCOL);
-        sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+        
+        if (trustStoreFile != null) { 
+            KeyStore ts = KeyStore.getInstance(keyStoreFormat); 
+            ts.load(IOConverter.toInputStream(trustStoreFile), passphrase); 
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(securityProvider); 
+            tmf.init(ts); 
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null); 
+        } else { 
+            sslContext.init(kmf.getKeyManagers(), null, null); 
+        }
     }
 
     public SSLEngine createServerSSLEngine() {
