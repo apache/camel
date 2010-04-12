@@ -139,6 +139,9 @@ public class DefaultHttpBinding implements HttpBinding {
             String contentEncoding = request.getHeader(Exchange.CONTENT_ENCODING, String.class);
             response.setHeader(Exchange.CONTENT_ENCODING, contentEncoding);
         }        
+        if (checkChunked(response, response.getExchange())) {
+            response.setHeader(Exchange.TRANSFER_ENCODING, "chunked");
+        }
     }
 
     public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
@@ -189,7 +192,7 @@ public class DefaultHttpBinding implements HttpBinding {
 
     protected void doWriteDirectResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
         InputStream is = null;
-        if (checkChucked(message, exchange)) {
+        if (checkChunked(message, exchange)) {
             is = message.getBody(InputStream.class);
         }
         if (is != null) {
@@ -221,7 +224,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
-    protected boolean checkChucked(Message message, Exchange exchange) {
+    protected boolean checkChunked(Message message, Exchange exchange) {
         boolean answer = true;
         if (message.getHeader(Exchange.HTTP_CHUNKED) == null) {
             // check the endpoint option
