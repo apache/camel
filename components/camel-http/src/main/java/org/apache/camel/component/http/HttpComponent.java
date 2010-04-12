@@ -68,12 +68,16 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      */
     protected void configureParameters(Map<String, Object> parameters) {
         // lookup http binding in registry if provided
-        httpBinding = resolveAndRemoveReferenceParameter(
-                parameters, "httpBindingRef", HttpBinding.class);
+        if ( httpBinding == null ) {
+            httpBinding = resolveAndRemoveReferenceParameter(
+                    parameters, "httpBindingRef", HttpBinding.class);
+        }
         
         // lookup http client front configurer in the registry if provided
-        httpClientConfigurer = resolveAndRemoveReferenceParameter(
-                parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
+        if ( httpClientConfigurer == null ) {
+            httpClientConfigurer = resolveAndRemoveReferenceParameter(
+                    parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
+        }
         
         // check the user name and password for basic authentication
         String username = getAndRemoveParameter(parameters, "username", String.class);
