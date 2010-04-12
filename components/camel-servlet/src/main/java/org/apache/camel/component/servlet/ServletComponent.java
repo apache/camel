@@ -61,8 +61,9 @@ public class ServletComponent extends HttpComponent {
 
         HttpClientParams params = new HttpClientParams();
         IntrospectionSupport.setProperties(params, parameters, "httpClient.");
-        // configure regular parameters
-        configureParameters(parameters);
+        
+        // create the configurer to use for this endpoint
+        HttpClientConfigurer configurer = createHttpClientConfigurer(parameters);
 
         // must extract well known parameters before we create the endpoint
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
@@ -72,7 +73,7 @@ public class ServletComponent extends HttpComponent {
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), CastUtils.cast(parameters));
         uri = httpUri.toString();
 
-        ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), httpClientConfigurer);
+        ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), configurer);
         setEndpointHeaderFilterStrategy(endpoint);
 
         // prefer to use endpoint configured over component configured

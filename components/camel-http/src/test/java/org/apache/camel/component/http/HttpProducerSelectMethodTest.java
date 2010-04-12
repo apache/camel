@@ -33,8 +33,8 @@ public class HttpProducerSelectMethodTest extends CamelTestSupport {
 
     @Test
     public void testNoDataDefaultIsGet() throws Exception {
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+        
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", null);
 
@@ -51,8 +51,8 @@ public class HttpProducerSelectMethodTest extends CamelTestSupport {
 
     @Test
     public void testDataDefaultIsPost() throws Exception {
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "POST", null);
 
@@ -69,8 +69,8 @@ public class HttpProducerSelectMethodTest extends CamelTestSupport {
 
     @Test
     public void testWithMethodPostInHeader() throws Exception {
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "POST", null);
 
@@ -88,8 +88,8 @@ public class HttpProducerSelectMethodTest extends CamelTestSupport {
 
     @Test
     public void testWithMethodGetInHeader() throws Exception {
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", null);
 
@@ -107,8 +107,8 @@ public class HttpProducerSelectMethodTest extends CamelTestSupport {
 
     @Test
     public void testWithEndpointQuery() throws Exception {
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com?q=Camel");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", "q=Camel");
 
@@ -125,8 +125,8 @@ public class HttpProducerSelectMethodTest extends CamelTestSupport {
 
     @Test
     public void testWithQueryInHeader() throws Exception {
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", "q=Camel");
 
@@ -144,8 +144,8 @@ public class HttpProducerSelectMethodTest extends CamelTestSupport {
 
     @Test
     public void testWithQueryInHeaderOverrideEndpoint() throws Exception {
-        HttpComponent component = new HttpComponent();
-        component.setCamelContext(context);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
+
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com?q=Donkey");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", "q=Camel");
 

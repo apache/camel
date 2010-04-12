@@ -44,7 +44,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     /**
      * Connects the URL specified on the endpoint to the specified processor.
      *
-     * @param  consumer the consumer
+     * @param consumer the consumer
      * @throws Exception can be thrown
      */
     public void connect(HttpConsumer consumer) throws Exception {
@@ -53,30 +53,25 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     /**
      * Disconnects the URL specified on the endpoint from the specified processor.
      *
-     * @param  consumer the consumer
+     * @param consumer the consumer
      * @throws Exception can be thrown
      */
     public void disconnect(HttpConsumer consumer) throws Exception {
     }
 
     /** 
-     * Setting http binding and http client configurer according to the parameters
-     * Also setting the BasicAuthenticationHttpClientConfigurer if the username 
-     * and password option are not null.
+     * Creates the HttpClientConfigurer based on the given parameters
      * 
      * @param parameters the map of parameters 
+     * @return the configurer
      */
-    protected void configureParameters(Map<String, Object> parameters) {
-        // lookup http binding in registry if provided
-        if ( httpBinding == null ) {
-            httpBinding = resolveAndRemoveReferenceParameter(
-                    parameters, "httpBindingRef", HttpBinding.class);
-        }
-        
-        // lookup http client front configurer in the registry if provided
-        if ( httpClientConfigurer == null ) {
-            httpClientConfigurer = resolveAndRemoveReferenceParameter(
-                    parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
+    protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters) {
+        // prefer to use endpoint configured over component configured
+        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(
+                parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
+        if (configurer == null) {
+            // fallback to component configured
+            configurer = getHttpClientConfigurer();
         }
         
         // check the user name and password for basic authentication
@@ -85,9 +80,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         String domain = getAndRemoveParameter(parameters, "domain", String.class);
         String host = getAndRemoveParameter(parameters, "host", String.class);
         if (username != null && password != null) {
-            httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
-                httpClientConfigurer, 
-                new BasicAuthenticationHttpClientConfigurer(username, password, domain, host));
+            configurer = CompositeHttpConfigurer.combineConfigurers(
+                    configurer,
+                    new BasicAuthenticationHttpClientConfigurer(username, password, domain, host));
         }
         
         // check the proxy details for proxy configuration
@@ -99,33 +94,34 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             String proxyDomain = getAndRemoveParameter(parameters, "proxyDomain", String.class);
             String proxyNtHost = getAndRemoveParameter(parameters, "proxyNtHost", String.class);
             if (proxyUsername != null && proxyPassword != null) {
-                httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
-                    httpClientConfigurer, new ProxyHttpClientConfigurer(proxyHost, proxyPort, proxyUsername, proxyPassword, proxyDomain, proxyNtHost));
+                configurer = CompositeHttpConfigurer.combineConfigurers(
+                        configurer, new ProxyHttpClientConfigurer(proxyHost, proxyPort, proxyUsername, proxyPassword, proxyDomain, proxyNtHost));
             } else {
-                httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
-                    httpClientConfigurer, new ProxyHttpClientConfigurer(proxyHost, proxyPort));
+                configurer = CompositeHttpConfigurer.combineConfigurers(
+                        configurer, new ProxyHttpClientConfigurer(proxyHost, proxyPort));
             }
         }
-        
+
+        return configurer;
     }
     
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
+        // must extract well known parameters before we create the endpoint
+        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
+        Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
+        Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
+        Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         // http client can be configured from URI options
         HttpClientParams clientParams = new HttpClientParams();
         IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
         // validate that we could resolve all httpClient. parameters as this component is lenient
-        validateParameters(uri, parameters, "httpClient.");
-
-        configureParameters(parameters);
-
-        // should we use an exception for failed error codes?
-        Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
-
-        Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
+        validateParameters(uri, parameters, "httpClient.");       
         
-        Boolean matchOnUriPrefix = Boolean.parseBoolean(getAndRemoveParameter(parameters, "matchOnUriPrefix", String.class));
+        // create the configurer to use for this endpoint
+        HttpClientConfigurer configurer = createHttpClientConfigurer(parameters);
+        
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(uri), CastUtils.cast(parameters));
         uri = httpUri.toString();
@@ -140,11 +136,19 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             }
         }
 
-        HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, clientParams, httpConnectionManager, httpClientConfigurer);
-        if (httpBinding != null) {
-            endpoint.setBinding(httpBinding);
-        }
+        // create the endpoint
+        HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, clientParams, httpConnectionManager, configurer);
         setEndpointHeaderFilterStrategy(endpoint);
+
+        // prefer to use endpoint configured over component configured
+        if (binding == null) {
+            // fallback to component configured
+            binding = getHttpBinding();
+        }
+        if (binding != null) {
+            endpoint.setBinding(binding);
+        }
+        // should we use an exception for failed error codes?
         if (throwExceptionOnFailure != null) {
             endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
         }
@@ -154,10 +158,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (matchOnUriPrefix != null) {
             endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
         }
+
         setProperties(endpoint, parameters);
         return endpoint;
-    }    
    
+    }
+    
     @Override
     protected boolean useIntrospectionOnEndpoint() {
         return false;
@@ -186,5 +192,4 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     public void setHttpBinding(HttpBinding httpBinding) {
         this.httpBinding = httpBinding;
     }
-    
 }
