@@ -35,31 +35,6 @@
         <camel.osgi.export.pkg>org.apache.camel.component.hawtdb.*</camel.osgi.export.pkg>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>hawtdb-release</id>
-            <name>HawtDB Release Repository</name>
-            <url>http://hawtdb.fusesource.org/repo/release</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>hawtdb-snapshot</id>
-            <name>HawtDB Snapshot Repository</name>
-            <url>http://hawtdb.fusesource.org/repo/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
     <dependencies>
 
         <dependency>

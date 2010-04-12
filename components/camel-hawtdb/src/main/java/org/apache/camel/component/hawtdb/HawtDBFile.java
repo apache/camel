@@ -22,8 +22,8 @@ import org.apache.commons.logging.LogFactory;
 import org.fusesource.hawtdb.api.BTreeIndexFactory;
 import org.fusesource.hawtdb.api.Index;
 import org.fusesource.hawtdb.api.Transaction;
-import org.fusesource.hawtdb.internal.page.HawtPageFile;
-import org.fusesource.hawtdb.internal.page.HawtPageFileFactory;
+import org.fusesource.hawtdb.api.TxPageFile;
+import org.fusesource.hawtdb.api.TxPageFileFactory;
 import org.fusesource.hawtdb.util.buffer.Buffer;
 import org.fusesource.hawtdb.util.marshaller.IntegerMarshaller;
 import org.fusesource.hawtdb.util.marshaller.StringMarshaller;
@@ -35,7 +35,7 @@ import org.fusesource.hawtdb.util.marshaller.VariableBufferMarshaller;
  * Will by default not sync writes which allows it to be faster.
  * You can force syncing by setting the sync option to <tt>true</tt>.
  */
-public class HawtDBFile extends HawtPageFileFactory implements Service {
+public class HawtDBFile extends TxPageFileFactory implements Service {
 
     private static final transient Log LOG = LogFactory.getLog(HawtDBFile.class);
 
@@ -44,7 +44,7 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
     // the real indexes where we store persisted data in buffers
     private static final BTreeIndexFactory<Buffer, Buffer> INDEX_FACTORY = new BTreeIndexFactory<Buffer, Buffer>();
 
-    private HawtPageFile pageFile;
+    private TxPageFile pageFile;
 
     static {
         ROOT_INDEXES_FACTORY.setKeyMarshaller(StringMarshaller.INSTANCE);
@@ -68,9 +68,9 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
             LOG.debug("Starting HawtDB using file: " + getFile());
         }
 
-        final boolean initialize = !file.exists();
+        final boolean initialize = !getFile().exists();
         open();
-        pageFile = getHawtPageFile();
+        pageFile = getTxPageFile();
 
         execute(new Work<Boolean>() {
             public Boolean execute(Transaction tx) {
