@@ -74,7 +74,7 @@ public class ErrorHandlerDefinitionParserTest extends TestCase {
     public void testDeadLetterErrorHandler() {
         DeadLetterChannelBuilder errorHandler = (DeadLetterChannelBuilder) ctx.getBean("deadLetterErrorHandler");
         assertNotNull(errorHandler);
-        assertEquals("get worng deadletteruri", "log:dead", errorHandler.getDeadLetterUri());
+        assertEquals("Get wrong deadletteruri", "log:dead", errorHandler.getDeadLetterUri());
         RedeliveryPolicy policy = errorHandler.getRedeliveryPolicy();
         assertNotNull(policy);
         assertEquals("Wrong maximumRedeliveries", 2, policy.getMaximumRedeliveries());
