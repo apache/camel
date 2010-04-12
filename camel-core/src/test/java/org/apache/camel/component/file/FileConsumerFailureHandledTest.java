@@ -34,7 +34,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("target/messages");
+        deleteDirectory("target/messages/input");
         super.setUp();
     }
 
@@ -42,13 +42,13 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader("file:target/messages/input/?delete=true&delay=5000", "Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/messages/input/", "Paris", Exchange.FILE_NAME, "paris.txt");
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail
         Thread.sleep(200);
 
-        asserFiles("paris.txt", true);
+        assertFiles("paris.txt", true);
     }
 
     public void testLondon() throws Exception {
@@ -56,14 +56,14 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("London");
 
-        template.sendBodyAndHeader("file:target/messages/input/?delete=true&delay=5000", "London", Exchange.FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("file:target/messages/input/", "London", Exchange.FILE_NAME, "london.txt");
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail
         Thread.sleep(200);
 
-        // london should be delated as we have failure handled it
-        asserFiles("london.txt", true);
+        // london should be deleted as we have failure handled it
+        assertFiles("london.txt", true);
     }
     
     public void testDublin() throws Exception {
@@ -71,14 +71,14 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("Dublin");
 
-        template.sendBodyAndHeader("file:target/messages/input/?delete=true&delay=5000", "Dublin", Exchange.FILE_NAME, "dublin.txt");
+        template.sendBodyAndHeader("file:target/messages/input/", "Dublin", Exchange.FILE_NAME, "dublin.txt");
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail
         Thread.sleep(200);
 
         // dublin should NOT be deleted, but should be retired on next consumer
-        asserFiles("dublin.txt", false);
+        assertFiles("dublin.txt", false);
     }
 
     public void testMadrid() throws Exception {
@@ -86,18 +86,18 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("Madrid");
 
-        template.sendBodyAndHeader("file:target/messages/input/?delete=true&delay=5000", "Madrid", Exchange.FILE_NAME, "madrid.txt");
+        template.sendBodyAndHeader("file:target/messages/input/", "Madrid", Exchange.FILE_NAME, "madrid.txt");
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail
         Thread.sleep(200);
 
         // madrid should NOT be deleted, but should be retired on next consumer
-        asserFiles("madrid.txt", false);
+        assertFiles("madrid.txt", false);
     }
 
-    private static void asserFiles(String filename, boolean deleted) throws InterruptedException {
-        // file should be deleted as deleted=true in parameter in the route below
+    private static void assertFiles(String filename, boolean deleted) throws InterruptedException {
+        // file should be deleted as delete=true in parameter in the route below
         File file = new File("target/messages/input/" + filename);
         assertEquals("File " + filename + " should be deleted: " + deleted, deleted, !file.exists());
 

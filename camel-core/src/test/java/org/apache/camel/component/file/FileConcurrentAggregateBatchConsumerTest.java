@@ -94,8 +94,8 @@ public class FileConcurrentAggregateBatchConsumerTest extends FileConcurrentTest
         long start = System.currentTimeMillis();
 
         MockEndpoint result = getMockEndpoint("mock:result");
-        // should be ordered
-        result.expectedBodiesReceived("A+C+E+G+I", "B+D+F+H+J");
+        // should be ordered in the body, but the files can be loaded in different order per OS
+        result.expectedBodiesReceivedInAnyOrder("A+C+E+G+I", "B+D+F+H+J");
 
         assertMockEndpointsSatisfied();
 
