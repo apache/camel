@@ -36,7 +36,6 @@ import org.junit.Test;
 public class MultiPartFormTest extends CamelTestSupport {
 
     @Test
-    @Ignore("Fix me later")
     public void testSendMultiPartForm() throws Exception {
         HttpClient httpclient = new HttpClient();
 
@@ -44,8 +43,8 @@ public class MultiPartFormTest extends CamelTestSupport {
 
         PostMethod httppost = new PostMethod("http://localhost:9080/test");
         Part[] parts = {
-                new StringPart("param_name", "NOTICE.txt"),
-                new FilePart(file.getName(), file)
+            new StringPart("comment", "A binary file of some kind"),
+            new FilePart(file.getName(), file)
         };
 
         MultipartRequestEntity reqEntity = new MultipartRequestEntity(parts, httppost.getParams());

@@ -16,11 +16,16 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Map;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.activation.FileTypeMap;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -98,6 +103,17 @@ public class DefaultHttpBinding implements HttpBinding {
         headers.put(Exchange.HTTP_PATH, request.getPathInfo());
         headers.put(Exchange.CONTENT_TYPE, request.getContentType());
         headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
+        
+        // check if there is multipart files, if so will put it into DataHandler
+        names = request.getAttributeNames();
+        while (names.hasMoreElements()) {
+            String name = (String) names.nextElement();
+            Object object = request.getAttribute(name);
+            if (object instanceof File) {
+                String fileName = request.getParameter(name);
+                message.addAttachment(fileName, new DataHandler(new FileDataSource((File)object), FileTypeMap.getDefaultFileTypeMap().getContentType(fileName)));
+            }
+        }
     }
 
     public void writeResponse(Exchange exchange, HttpServletResponse response) throws IOException {
