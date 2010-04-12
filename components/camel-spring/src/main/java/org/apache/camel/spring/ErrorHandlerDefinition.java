@@ -16,19 +16,15 @@
  */
 package org.apache.camel.spring;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
-import org.apache.camel.model.config.PropertiesDefinition;
 
 /**
  * The &lt;errorHandler&gt; tag element.
@@ -52,7 +48,7 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     private String transactionManagerRef;
     @XmlAttribute
     private String onRedeliveryRef;
-    @XmlElement(name = "redeliveryPolicy")
+    @XmlElement
     private RedeliveryPolicyDefinition redeliveryPolicy;
    
 }

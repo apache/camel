@@ -57,7 +57,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
 
-
 /**
  * Camel namespace for the spring XML configuration file.
  */
@@ -70,7 +69,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
     private Map<String, BeanDefinition> autoRegisterMap = new HashMap<String, BeanDefinition>();
-    
 
     public static void renameNamespaceRecursive(Node node) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {

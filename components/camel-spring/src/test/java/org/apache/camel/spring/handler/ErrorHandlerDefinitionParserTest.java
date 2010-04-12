@@ -27,7 +27,7 @@ import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class ErrorHandlerDefintionParserTest extends TestCase {
+public class ErrorHandlerDefinitionParserTest extends TestCase {
     protected ClassPathXmlApplicationContext ctx;
     
     public void setUp() throws Exception {
@@ -74,7 +74,7 @@ public class ErrorHandlerDefintionParserTest extends TestCase {
     public void testDeadLetterErrorHandler() {
         DeadLetterChannelBuilder errorHandler = (DeadLetterChannelBuilder) ctx.getBean("deadLetterErrorHandler");
         assertNotNull(errorHandler);
-        assertEquals("get worng deadletteruri ", "log:dead", errorHandler.getDeadLetterUri());
+        assertEquals("get worng deadletteruri", "log:dead", errorHandler.getDeadLetterUri());
         RedeliveryPolicy policy = errorHandler.getRedeliveryPolicy();
         assertNotNull(policy);
         assertEquals("Wrong maximumRedeliveries", 2, policy.getMaximumRedeliveries());

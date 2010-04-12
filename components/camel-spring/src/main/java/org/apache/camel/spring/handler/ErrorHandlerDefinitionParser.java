@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.spring.handler;
 
 import org.w3c.dom.Attr;
@@ -38,8 +37,6 @@ import org.springframework.util.StringUtils;
  */
 public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
 
-    // TODO: use a FactoryBean instead to create a ErrorHandlerBuilder object
-
     protected BeanDefinitionParser redeliveryPolicyParser = new RedeliveryPolicyDefinitionParser(RedeliveryPolicy.class);
     
     public ErrorHandlerDefinitionParser() {
@@ -57,10 +54,13 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
     }
     
     protected boolean isEligibleAttribute(String attributeName) {
-        return attributeName != null && !ID_ATTRIBUTE.equals(attributeName)
-                && !attributeName.equals("xmlns") && !attributeName.startsWith("xmlns:")
+        if (attributeName == null || ID_ATTRIBUTE.equals(attributeName)) {
+            return false;
+        }
+        return !attributeName.equals("xmlns") && !attributeName.startsWith("xmlns:")
                 && !attributeName.equals("type") && !attributeName.equals("onRedeliveryRef")
-                && !attributeName.equals("transactionTemplateRef");
+                && !attributeName.equals("transactionTemplateRef") 
+                && !attributeName.equals("transactionManagerRef");
     }
 
     @Override
