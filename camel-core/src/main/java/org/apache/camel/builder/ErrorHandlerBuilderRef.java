@@ -102,6 +102,9 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         } else {
             // use specific configured error handler
             answer = routeContext.lookup(ref, ErrorHandlerBuilder.class);
+            if (answer == null) {
+                throw new IllegalArgumentException("ErrorHandlerBuilder with id " + ref + " not found in registry.");
+            }
         }
 
         return answer;
@@ -114,6 +117,9 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
             String otherRef = other.getRef();
             if (isErrorHandlerBuilderConfigured(otherRef)) {
                 answer = camelContext.getRegistry().lookup(otherRef, ErrorHandlerBuilder.class);
+                if (answer == null) {
+                    throw new IllegalArgumentException("ErrorHandlerBuilder with id " + otherRef + " not found in registry.");
+                }
             }
         }
 
