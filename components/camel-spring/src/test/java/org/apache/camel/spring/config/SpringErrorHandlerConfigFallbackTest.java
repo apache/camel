@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring.config;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,26 +28,5 @@ public class SpringErrorHandlerConfigFallbackTest extends SpringErrorHandlerConf
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringErrorHandlerConfigFallbackTest.xml");
     }
-
-    public void testDefaultEH() throws Exception {
-        // TODO: delete me when working
-
-        getMockEndpoint("mock:result").expectedMessageCount(0);
-        getMockEndpoint("mock:dlc").expectedMessageCount(0);
-
-        Exchange exchange = template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Damn");
-            }
-        });
-
-        assertMockEndpointsSatisfied();
-
-        assertTrue(exchange.isFailed());
-        assertEquals("Damn cannot do this", exchange.getException(IllegalArgumentException.class).getMessage());
-        assertEquals(true, exchange.getIn().getHeader(Exchange.REDELIVERED));
-        assertEquals(2, exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER));
-    }
-
 
 }
