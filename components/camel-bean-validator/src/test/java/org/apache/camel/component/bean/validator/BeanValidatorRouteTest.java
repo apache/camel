@@ -140,7 +140,6 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
             
-            System.out.println(e.getMessage());
             BeanValidationException exception = (BeanValidationException) e.getCause();
             Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
             
@@ -177,7 +176,6 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
             
-            System.out.println(e.getMessage());
             BeanValidationException exception = (BeanValidationException) e.getCause();
             Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
             
@@ -200,7 +198,6 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
             
-            System.out.println(e.getMessage());
             BeanValidationException exception = (BeanValidationException) e.getCause();
             Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
             
@@ -250,7 +247,6 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
             
-            System.out.println(e.getMessage());
             BeanValidationException exception = (BeanValidationException) e.getCause();
             Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
             

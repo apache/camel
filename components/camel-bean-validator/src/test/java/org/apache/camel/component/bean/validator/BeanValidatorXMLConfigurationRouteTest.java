@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.bean.validator;
 
-import org.junit.Ignore;
-
-
 /**
  * @version $Revision$
  */
-@Ignore
 public class BeanValidatorXMLConfigurationRouteTest extends BeanValidatorRouteTest {
     
     Car createCar(String manufacturer, String licencePlate) {
