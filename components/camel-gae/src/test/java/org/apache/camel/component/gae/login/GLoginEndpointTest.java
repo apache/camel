@@ -28,7 +28,7 @@ public class GLoginEndpointTest {
     @Test
     public void testEndpointProperties() throws Exception {
         // test internet hostname
-        StringBuffer buffer = new StringBuffer("glogin:test.appspot.com")
+        StringBuilder buffer = new StringBuilder("glogin:test.appspot.com")
             .append("?").append("clientName=testClientName")
             .append("&").append("userName=testUserName")
             .append("&").append("password=testPassword");

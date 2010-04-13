@@ -29,7 +29,7 @@ public class GMailEndpointTest {
     
     @Test
     public void testPropertiesCustom() throws Exception {
-        StringBuffer buffer = new StringBuffer("gmail:user1@gmail.com")
+        StringBuilder buffer = new StringBuilder("gmail:user1@gmail.com")
             .append("?").append("subject=test")
             .append(AMP).append("to=user2@gmail.com")
             .append(AMP).append("cc=user3@gmail.com")

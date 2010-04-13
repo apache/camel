@@ -860,7 +860,7 @@ public final class ObjectHelper {
         if (objects == null) {
             return "null";
         } else {
-            StringBuffer buffer = new StringBuffer("{");
+            StringBuilder buffer = new StringBuilder("{");
             int counter = 0;
             for (Object object : objects) {
                 if (counter++ > 0) {
@@ -1102,7 +1102,7 @@ public final class ObjectHelper {
      * @return normalized classname that can be load by a class loader.
      */
     public static String normalizeClassName(String name) {
-        StringBuffer sb = new StringBuffer(name.length());
+        StringBuilder sb = new StringBuilder(name.length());
         for (char ch : name.toCharArray()) {
             if (ch == '.' || ch == '[' || ch == ']' || ch == '-' || Character.isJavaIdentifierPart(ch)) {
                 sb.append(ch);

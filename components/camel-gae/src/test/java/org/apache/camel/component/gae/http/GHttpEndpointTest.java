@@ -51,7 +51,7 @@ public class GHttpEndpointTest {
     
     @Test
     public void testPropertiesCustom() throws Exception {
-        StringBuffer buffer = new StringBuffer("ghttp://somewhere.com/path")
+        StringBuilder buffer = new StringBuilder("ghttp://somewhere.com/path")
             .append("?").append("a=b")
             .append(AMP).append("bridgeEndpoint=false")
             .append(AMP).append("outboundBindingRef=#customBinding")

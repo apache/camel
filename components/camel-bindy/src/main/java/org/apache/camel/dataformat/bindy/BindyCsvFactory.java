@@ -221,7 +221,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     public String unbind(Map<String, Object> model) throws Exception {
 
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         results = new HashMap<Integer, List>();
 
         // Check if separator exists

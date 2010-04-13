@@ -41,7 +41,7 @@ public class JmsHammerTest extends CamelTestSupport {
     private int size = 10;
 
     public void prepareMessage() throws Exception {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 20000; i++) {
             sb.append("hellothere");
         }

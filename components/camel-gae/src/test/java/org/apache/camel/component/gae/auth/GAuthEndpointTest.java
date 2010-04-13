@@ -42,7 +42,7 @@ public class GAuthEndpointTest {
     @Test
     public void testCustomParams() throws Exception {
         String scope = "http://scope1.example.org,http://scope2.example.org";
-        StringBuffer buffer = new StringBuffer("gauth://authorize")
+        StringBuilder buffer = new StringBuilder("gauth://authorize")
             .append("?").append("scope=" + encode(scope, "UTF-8"))
             .append("&").append("callback=" + encode("http://callback.example.org", "UTF-8"))
             .append("&").append("consumerKey=customConsumerKey")

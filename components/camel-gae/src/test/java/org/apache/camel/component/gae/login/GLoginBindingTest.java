@@ -42,7 +42,7 @@ public class GLoginBindingTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         binding = new GLoginBinding();
-        StringBuffer buffer = new StringBuffer("glogin:test.appspot.com")
+        StringBuilder buffer = new StringBuilder("glogin:test.appspot.com")
             .append("?").append("userName=testUserName")
             .append("&").append("password=testPassword");
         endpoint = createEndpoint(buffer.toString());

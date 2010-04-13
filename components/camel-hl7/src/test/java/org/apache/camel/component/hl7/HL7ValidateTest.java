@@ -78,7 +78,7 @@ public class HL7ValidateTest extends CamelTestSupport {
         String line7 = "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||";
         String line8 = "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||";
 
-        StringBuffer body = new StringBuffer();
+        StringBuilder body = new StringBuilder();
         body.append(line1);
         body.append("\n");
         body.append(line2);

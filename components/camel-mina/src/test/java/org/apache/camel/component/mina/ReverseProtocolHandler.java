@@ -36,7 +36,7 @@ public class ReverseProtocolHandler extends IoHandlerAdapter {
     public void messageReceived(IoSession session, Object message) {
         // Reverse reveiced string
         String str = message.toString();
-        StringBuffer buf = new StringBuffer(str.length());
+        StringBuilder buf = new StringBuilder(str.length());
         for (int i = str.length() - 1; i >= 0; i--) {
             buf.append(str.charAt(i));
         }

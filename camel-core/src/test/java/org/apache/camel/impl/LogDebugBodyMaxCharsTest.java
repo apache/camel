@@ -34,7 +34,7 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
 
     public void testLogBodyMaxLengthTest() throws Exception {
         // create a big body
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 1000; i++) {
             int value = i % 10;
             sb.append(value);

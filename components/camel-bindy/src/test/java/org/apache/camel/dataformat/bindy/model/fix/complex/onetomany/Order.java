@@ -97,7 +97,7 @@ public class Order {
 
     @Override
     public String toString() {
-        StringBuffer temp = new StringBuffer();
+        StringBuilder temp = new StringBuilder();
         temp.append(Order.class.getName() + " --> 1: " + this.account + ", 11: " + this.clOrdId + ", 58: " + this.text);
         temp.append("\r");
 

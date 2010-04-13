@@ -182,7 +182,7 @@ public class HMACAccumulator {
         }
 
         public String show() {
-            StringBuffer b = new StringBuffer(HexUtils.byteArrayToHexString(buffer)).append("\n");
+            StringBuilder b = new StringBuilder(HexUtils.byteArrayToHexString(buffer)).append("\n");
             for (int x = read; --x >= 0;) {
                 b.append("--");
             }

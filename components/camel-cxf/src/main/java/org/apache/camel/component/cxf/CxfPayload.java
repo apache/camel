@@ -50,7 +50,7 @@ public class CxfPayload<T> {
     
     public String toString() {
         XmlConverter converter = new XmlConverter();
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append(getClass().getName());
         buf.append(" headers: " + headers);
         // go through the list of element and turn it into String

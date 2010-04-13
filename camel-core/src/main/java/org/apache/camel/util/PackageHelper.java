@@ -50,7 +50,7 @@ public final class PackageHelper {
                     // lets remove any extra dots in the string...
                     int idx = value.indexOf('.');
                     if (idx >= 0) {
-                        StringBuffer buffer = new StringBuffer(value.substring(0, ++idx));
+                        StringBuilder buffer = new StringBuilder(value.substring(0, ++idx));
                         int i = idx;
                         for (int size = value.length(); i < size; i++) {
                             char ch = value.charAt(i);

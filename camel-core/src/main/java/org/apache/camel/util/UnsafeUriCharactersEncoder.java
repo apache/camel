@@ -16,7 +16,6 @@
  */
 package org.apache.camel.util;
 
-import java.io.UnsupportedEncodingException;
 import java.util.BitSet;
 
 import org.apache.commons.logging.Log;
@@ -75,7 +74,7 @@ public final class UnsafeUriCharactersEncoder {
         }
 
         // okay there are some unsafe characters so we do need to encode
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (char ch : chars) {
             if (ch > 0 && ch < 128 && unsafeCharacters.get(ch)) {
                 appendEscape(sb, (byte)ch);
@@ -87,7 +86,7 @@ public final class UnsafeUriCharactersEncoder {
 
     }
 
-    private static void appendEscape(StringBuffer sb, byte b) {
+    private static void appendEscape(StringBuilder sb, byte b) {
         sb.append('%');
         sb.append(HEX_DIGITS[(b >> 4) & 0x0f]);
         sb.append(HEX_DIGITS[(b >> 0) & 0x0f]);

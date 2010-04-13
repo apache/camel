@@ -27,8 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ResolveEndpointFailedException;
-
 /**
  * URI utilities.
  *
@@ -109,7 +107,7 @@ public final class URISupport {
     public static String createQueryString(Map<Object, Object> options) throws URISyntaxException {
         try {
             if (options.size() > 0) {
-                StringBuffer rc = new StringBuffer();
+                StringBuilder rc = new StringBuilder();
                 boolean first = true;
                 for (Object o : options.keySet()) {
                     if (first) {

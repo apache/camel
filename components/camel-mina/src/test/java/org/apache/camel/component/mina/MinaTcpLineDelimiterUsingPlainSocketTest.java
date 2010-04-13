@@ -106,7 +106,7 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends ContextTestSupport
         }
 
         // convert the buffer to chars
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (byte b : buf) {
             char ch = (char) b;
             if (ch == '\r' || ch == 0) {

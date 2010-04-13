@@ -971,7 +971,7 @@ public final class ExpressionBuilder {
     public static Expression concatExpression(final Collection<Expression> expressions, final String expression) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 for (Expression expression : expressions) {
                     String text = expression.evaluate(exchange, String.class);
                     if (text != null) {

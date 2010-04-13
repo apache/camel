@@ -37,14 +37,14 @@ public final class DomConverter {
 
     @Converter
     public static String toString(NodeList nodeList) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         append(buffer, nodeList);
         return buffer.toString();
     }
 
     @Converter
     public static Integer toInteger(NodeList nodeList) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         append(buffer, nodeList);
         String s = buffer.toString();
         return Integer.valueOf(s);
@@ -52,20 +52,20 @@ public final class DomConverter {
 
     @Converter
     public static Long toLong(NodeList nodeList) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         append(buffer, nodeList);
         String s = buffer.toString();
         return Long.valueOf(s);
     }
 
-    private static void append(StringBuffer buffer, NodeList nodeList) {
+    private static void append(StringBuilder buffer, NodeList nodeList) {
         int size = nodeList.getLength();
         for (int i = 0; i < size; i++) {
             append(buffer, nodeList.item(i));
         }
     }
 
-    private static void append(StringBuffer buffer, Node node) {
+    private static void append(StringBuilder buffer, Node node) {
         if (node instanceof Text) {
             Text text = (Text) node;
             buffer.append(text.getTextContent());

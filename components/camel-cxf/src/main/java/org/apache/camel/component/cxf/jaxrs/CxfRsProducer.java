@@ -204,7 +204,7 @@ public class CxfRsProducer extends DefaultProducer {
     }
     
     private String arrayToString(Object[] array) {
-        StringBuffer buffer = new StringBuffer("[");
+        StringBuilder buffer = new StringBuilder("[");
         for (Object obj : array) {
             if (buffer.length() > 2) {
                 buffer.append(",");

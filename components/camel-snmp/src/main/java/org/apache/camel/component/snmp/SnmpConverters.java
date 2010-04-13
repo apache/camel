@@ -49,7 +49,7 @@ public final class SnmpConverters {
     @Converter
     public static String toString(PDU pdu) {
      // the output buffer
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         // prepare the header
         sb.append(SNMP_TAG_OPEN);

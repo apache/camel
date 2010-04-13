@@ -41,7 +41,7 @@ public class GTaskEndpointTest {
     
     @Test
     public void testPropertiesCustom() throws Exception {
-        StringBuffer buffer = new StringBuffer("gtask:myqueue")
+        StringBuilder buffer = new StringBuilder("gtask:myqueue")
             .append("?").append("outboundBindingRef=#customBinding")
             .append(AMP).append("inboundBindingRef=#customBinding")
             .append(AMP).append("workerRoot=test");

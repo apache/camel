@@ -37,12 +37,12 @@ public class ConverterTest extends Assert {
     public void testToClassesList() throws Exception {
         String classString = "java.lang.String, "
             + "org.apache.camel.component.cxf.converter.ConverterTest ;"
-            + "java.lang.StringBuffer";
+            + "java.lang.StringBuilder";
         List<Class> classList = CxfConverter.toClassList(classString);
         assertEquals("Get the wrong number of classes", classList.size(), 3);
         assertEquals("Get the wrong the class", classList.get(0), String.class);
         assertEquals("Get the wrong the class", classList.get(1), ConverterTest.class);
-        assertEquals("Get the wrong the class", classList.get(2), StringBuffer.class);
+        assertEquals("Get the wrong the class", classList.get(2), StringBuilder.class);
     }
     
     @Test

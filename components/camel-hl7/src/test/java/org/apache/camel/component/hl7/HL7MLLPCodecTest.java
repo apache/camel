@@ -74,7 +74,7 @@ public class HL7MLLPCodecTest extends CamelTestSupport {
         String line1 = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|1234|P|2.4";
         String line2 = "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
 
-        StringBuffer in = new StringBuffer();
+        StringBuilder in = new StringBuilder();
         in.append(line1);
         in.append("\n");
         in.append(line2);

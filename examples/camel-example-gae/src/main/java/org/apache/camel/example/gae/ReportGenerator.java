@@ -41,7 +41,7 @@ public class ReportGenerator implements Processor {
             temp = "<error retrieving current temperature>";
         }
         
-        exchange.getIn().setBody(new StringBuffer()
+        exchange.getIn().setBody(new StringBuilder()
             .append("\n").append("Weather report for:  ").append(city)
             .append("\n").append("Current condition:   ").append(cond)
             .append("\n").append("Current temperature: ").append(temp).append(" (Celsius)").toString());

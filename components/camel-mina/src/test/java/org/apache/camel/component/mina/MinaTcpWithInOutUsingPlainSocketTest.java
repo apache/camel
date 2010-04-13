@@ -105,7 +105,7 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends ContextTestSupport {
         }
 
         // convert the buffer to chars
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (byte b : buf) {
             char ch = (char) b;
             if (ch == '\n' || ch == 0) {

@@ -42,7 +42,7 @@ public class Delivery {
 
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer(SEPARATOR + "\n");
+        StringBuilder buffer = new StringBuilder(SEPARATOR + "\n");
         buffer.append("Order #" + getOrderNumber() + "\n");
         for (Drink drink : getDeliveredDrinks()) {
             buffer.append(drink);

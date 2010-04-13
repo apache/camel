@@ -77,7 +77,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     public ObjectName getObjectNameForCamelContext(CamelContext context) throws MalformedObjectNameException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_CONTEXT + ",");
@@ -86,7 +86,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     public ObjectName getObjectNameForEndpoint(Endpoint endpoint) throws MalformedObjectNameException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(endpoint.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ENDPOINT + ",");
@@ -95,7 +95,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     public ObjectName getObjectNameForComponent(Component component, String name) throws MalformedObjectNameException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(component.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_COMPONENT + ",");
@@ -104,7 +104,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     public ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, ProcessorDefinition<?> definition) throws MalformedObjectNameException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_PROCESSOR).append(",");
@@ -123,7 +123,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     public ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder builder) throws MalformedObjectNameException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(routeContext.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_ERRORHANDLER).append(",");
@@ -165,7 +165,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     public ObjectName getObjectNameForConsumer(CamelContext context, Consumer consumer) throws MalformedObjectNameException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_CONSUMER).append(",");
@@ -181,7 +181,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     public ObjectName getObjectNameForProducer(CamelContext context, Producer producer) throws MalformedObjectNameException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_PRODUCER).append(",");
@@ -197,7 +197,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     public ObjectName getObjectNameForTracer(CamelContext context, InterceptStrategy tracer) throws MalformedObjectNameException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_TRACER + ",");
@@ -211,7 +211,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         Endpoint ep = route.getEndpoint();
         String id = route.getId();
 
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(ep.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ROUTE + ",");
@@ -220,7 +220,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     public ObjectName getObjectNameForService(CamelContext context, Service service) throws MalformedObjectNameException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
@@ -231,7 +231,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     public ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool) throws MalformedObjectNameException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_THREAD_POOL + ",");
@@ -277,7 +277,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     /**
      * Factory method to create an ObjectName escaping any required characters
      */
-    protected ObjectName createObjectName(StringBuffer buffer) throws MalformedObjectNameException {
+    protected ObjectName createObjectName(StringBuilder buffer) throws MalformedObjectNameException {
         String text = buffer.toString();
         try {
             return new ObjectName(text);

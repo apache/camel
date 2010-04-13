@@ -44,7 +44,7 @@ public class GAuthAuthorizeBindingTest {
     public static void setUpClass() throws Exception {
         component = createComponent();
         binding = new GAuthAuthorizeBinding();
-        StringBuffer buffer = new StringBuffer("gauth:authorize")
+        StringBuilder buffer = new StringBuilder("gauth:authorize")
             .append("?").append("scope=" + encode("http://scope.example.org", "UTF-8"))
             .append("&").append("callback=" + encode("http://test.example.org/handler", "UTF-8"));
         endpoint = component.createEndpoint(buffer.toString());

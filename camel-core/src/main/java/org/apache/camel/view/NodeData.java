@@ -180,7 +180,7 @@ public class NodeData {
      */
     public static String insertSpacesBetweenCamelCase(String name) {
         boolean lastCharacterLowerCase = false;
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         int i = 0;
         for (int size = name.length(); i < size; i++) {
             char ch = name.charAt(i);
