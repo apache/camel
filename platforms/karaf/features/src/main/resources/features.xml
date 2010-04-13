@@ -82,7 +82,7 @@
   </feature>
   <feature name='camel-crypto' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-codec/${commons-codec-bundle-version}</bundle>
+    <bundle>mvn:commons-codec/commons-codec/${commons-codec}</bundle>
     <bundle>mvn:org.apache.camel/camel-crypto/${pom.version}</bundle>
   </feature>
   <feature name='camel-dozer' version='${pom.version}'>
@@ -105,7 +105,7 @@
     <bundle>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-http/${pom.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-http4/${pom.version}</bundle>
   </feature>
   <feature name='camel-mina' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
