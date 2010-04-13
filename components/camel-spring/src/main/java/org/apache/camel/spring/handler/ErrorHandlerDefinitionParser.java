@@ -36,7 +36,6 @@ import org.springframework.util.StringUtils;
  * The DefinitionParser to deal with the ErrorHandler
  */
 public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
-
     protected BeanDefinitionParser redeliveryPolicyParser = new RedeliveryPolicyDefinitionParser(RedeliveryPolicy.class);
     
     public ErrorHandlerDefinitionParser() {
@@ -114,7 +113,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         }
     }
     
-    class RedeliveryPolicyDefinitionParser extends BeanDefinitionParser {
+    private final class RedeliveryPolicyDefinitionParser extends BeanDefinitionParser {
         public RedeliveryPolicyDefinitionParser(Class type) {
             super(type);
         }

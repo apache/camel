@@ -265,9 +265,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                                     // set the camel context
                                     definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
                                 }
-                                if (localName.equals("errorHandler")) {
-                                    builder.addPropertyValue("errorHandlerRef", id);
-                                }
                             }
                         }
                     }
