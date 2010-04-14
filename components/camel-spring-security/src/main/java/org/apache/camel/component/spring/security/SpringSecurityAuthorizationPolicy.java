@@ -59,8 +59,14 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
         ConfigAttributeDefinition attributes = accessPolicy.getConfigAttributeDefinition();
         
         try {
+            Authentication authToken = getAuthentication(exchange);
+            if (authToken == null) {
+                CamelAuthorizationException authorizationException =
+                    new CamelAuthorizationException("Cannot find the Authentication instance.", exchange);
+                throw authorizationException;
+            }
             
-            Authentication authenticated = authenticateIfRequired(getAuthentication(exchange));
+            Authentication authenticated = authenticateIfRequired(authToken);
             
             // Attempt authorization with exchange
             try {
@@ -75,7 +81,7 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
             
         } catch (SpringSecurityException exception) {
             CamelAuthorizationException authorizationException =
-                new CamelAuthorizationException("Cannot access the below process", exchange, exception);
+                new CamelAuthorizationException("Cannot access the processor which has been protected.", exchange, exception);
             throw authorizationException;
         }
     }
@@ -88,8 +94,7 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Get the authentication from SecurityContextHolder");
             }
-        }
-        
+        }        
         return answer;
     }
 
@@ -114,7 +119,7 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
     }
     
     private Authentication authenticateIfRequired(Authentication authentication) {
-        
+                    
         if (authentication.isAuthenticated() && !alwaysReauthenticate) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Previously Authenticated: " + authentication);
