@@ -34,6 +34,7 @@ import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationManager;
 import org.springframework.security.ConfigAttributeDefinition;
 import org.springframework.security.SpringSecurityException;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.event.authorization.AuthorizationFailureEvent;
 import org.springframework.security.event.authorization.AuthorizedEvent;
 import org.springframework.util.Assert;
@@ -46,6 +47,7 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
     private SpringSecurityAccessPolicy accessPolicy;
     
     private boolean alwaysReauthenticate;
+    private boolean useThreadSecurityContext = true;
     
 
     public Processor wrap(RouteContext routeContext, Processor processor) {
@@ -57,8 +59,8 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
         ConfigAttributeDefinition attributes = accessPolicy.getConfigAttributeDefinition();
         
         try {
-        
-            Authentication authenticated = authenticateIfRequired(exchange.getProperty(Exchange.AUTHENTICATION, Authentication.class));
+            
+            Authentication authenticated = authenticateIfRequired(getAuthentication(exchange));
             
             // Attempt authorization with exchange
             try {
@@ -78,6 +80,19 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
         }
     }
     
+    protected Authentication getAuthentication(Exchange exchange) {
+        Authentication answer = exchange.getProperty(Exchange.AUTHENTICATION, Authentication.class);
+        // try to get it from thread context as a fallback
+        if (answer == null && useThreadSecurityContext) {
+            answer = SecurityContextHolder.getContext().getAuthentication();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Get the authentication from SecurityContextHolder");
+            }
+        }
+        
+        return answer;
+    }
+
     private class AuthorizeDelegateProcess extends DelegateProcessor {
         
         AuthorizeDelegateProcess(Processor processor) {
@@ -149,6 +164,14 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
     
     public void setAlwaysReauthenticate(boolean alwaysReauthenticate) {
         this.alwaysReauthenticate = alwaysReauthenticate;
+    }
+    
+    public boolean isUseThreadSecurityContext() {
+        return useThreadSecurityContext;
+    }
+    
+    public void setUseThreadSecurityContext(boolean useThreadSecurityContext) {
+        this.useThreadSecurityContext = useThreadSecurityContext;
     }
 
     public void setAuthenticationManager(AuthenticationManager newManager) {
