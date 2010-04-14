@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -53,4 +54,7 @@ public class CompositeHttpConfigurer implements HttpClientConfigurer {
         }
     }
 
+    public List<HttpClientConfigurer> getConfigurers() {
+        return Collections.unmodifiableList(configurers);
+    }
 }

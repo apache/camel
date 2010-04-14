@@ -49,6 +49,8 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private boolean bridgeEndpoint;
     private boolean matchOnUriPrefix;
     private boolean chunked = true;
+    private String proxyHost;
+    private int proxyPort;
 
     public HttpEndpoint() {
     }
@@ -97,6 +99,13 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
                         + host + " port: " + port);
             }
             answer.getHostConfiguration().setProxy(host, port);
+        }
+
+        if (proxyHost != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using proxy: " + proxyHost + ":" + proxyPort);
+            }
+            answer.getHostConfiguration().setProxy(proxyHost, proxyPort);
         }
 
         answer.setHttpConnectionManager(httpConnectionManager);
@@ -242,5 +251,21 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public int getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
     }
 }

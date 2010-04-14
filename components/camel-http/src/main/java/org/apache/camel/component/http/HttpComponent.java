@@ -24,6 +24,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -39,8 +40,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected HttpClientConfigurer httpClientConfigurer;
     protected HttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
     protected HttpBinding httpBinding;
-   
-    
+    protected HttpConfiguration httpConfiguration;
+
     /**
      * Connects the URL specified on the endpoint to the specified processor.
      *
@@ -76,38 +77,98 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             // fallback to component configured
             configurer = getHttpClientConfigurer();
         }
-        
-        // check the user name and password for basic authentication
-        String username = getAndRemoveParameter(parameters, "username", String.class);
-        String password = getAndRemoveParameter(parameters, "password", String.class);
-        String domain = getAndRemoveParameter(parameters, "domain", String.class);
-        String host = getAndRemoveParameter(parameters, "host", String.class);
-        if (username != null && password != null) {
-            configurer = CompositeHttpConfigurer.combineConfigurers(
-                    configurer,
-                    new BasicAuthenticationHttpClientConfigurer(username, password, domain, host));
+
+        // authentication can be endpoint configured
+        String authUsername = getAndRemoveParameter(parameters, "authUsername", String.class);
+        AuthMethod authMethod = getAndRemoveParameter(parameters, "authMethod", AuthMethod.class);
+        // validate that if auth username is given then the auth method is also provided
+        if (authUsername != null && authMethod == null) {
+            throw new IllegalArgumentException("Option authMethod must be provided to use authentication");
         }
-        
-        // check the proxy details for proxy configuration
-        String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
-        Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
-        if (proxyHost != null && proxyPort != null) {
-            String proxyUsername = getAndRemoveParameter(parameters, "proxyUsername", String.class);
-            String proxyPassword = getAndRemoveParameter(parameters, "proxyPassword", String.class);
-            String proxyDomain = getAndRemoveParameter(parameters, "proxyDomain", String.class);
-            String proxyNtHost = getAndRemoveParameter(parameters, "proxyNtHost", String.class);
-            if (proxyUsername != null && proxyPassword != null) {
-                configurer = CompositeHttpConfigurer.combineConfigurers(
-                        configurer, new ProxyHttpClientConfigurer(proxyHost, proxyPort, proxyUsername, proxyPassword, proxyDomain, proxyNtHost));
-            } else {
-                configurer = CompositeHttpConfigurer.combineConfigurers(
-                        configurer, new ProxyHttpClientConfigurer(proxyHost, proxyPort));
-            }
+        if (authMethod != null) {
+            String authPassword = getAndRemoveParameter(parameters, "authPassword", String.class);
+            String authDomain = getAndRemoveParameter(parameters, "authDomain", String.class);
+            String authHost = getAndRemoveParameter(parameters, "authHost", String.class);
+            configurer = configureAuth(configurer, authMethod, authUsername, authPassword, authDomain, authHost);
+        } else if (httpConfiguration != null) {
+            // or fallback to use component configuration
+            configurer = configureAuth(configurer, httpConfiguration.getAuthMethod(), httpConfiguration.getAuthUsername(),
+                    httpConfiguration.getAuthPassword(), httpConfiguration.getAuthDomain(), httpConfiguration.getAuthHost());
+        }
+
+        // proxy authentication can be endpoint configured
+        String proxyAuthUsername = getAndRemoveParameter(parameters, "proxyAuthUsername", String.class);
+        AuthMethod proxyAuthMethod = getAndRemoveParameter(parameters, "proxyAuthMethod", AuthMethod.class);
+        // validate that if proxy auth username is given then the proxy auth method is also provided
+        if (proxyAuthUsername != null && proxyAuthMethod == null) {
+            throw new IllegalArgumentException("Option proxyAuthMethod must be provided to use proxy authentication");
+        }
+        if (proxyAuthMethod != null) {
+            String proxyAuthPassword = getAndRemoveParameter(parameters, "proxyAuthPassword", String.class);
+            String proxyAuthDomain = getAndRemoveParameter(parameters, "proxyAuthDomain", String.class);
+            String proxyAuthHost = getAndRemoveParameter(parameters, "proxyAuthHost", String.class);
+            configurer = configureProxyAuth(configurer, proxyAuthMethod, proxyAuthUsername, proxyAuthPassword, proxyAuthDomain, proxyAuthHost);
+        } else if (httpConfiguration != null) {
+            // or fallback to use component configuration
+            configurer = configureProxyAuth(configurer, httpConfiguration.getProxyAuthMethod(), httpConfiguration.getProxyAuthUsername(),
+                    httpConfiguration.getProxyAuthPassword(), httpConfiguration.getProxyAuthDomain(), httpConfiguration.getProxyAuthHost());
         }
 
         return configurer;
     }
+
+    /**
+     * Configures the authentication method to be used
+     *
+     * @return configurer to used
+     */
+    protected HttpClientConfigurer configureAuth(HttpClientConfigurer configurer, AuthMethod authMethod, String username, String password, String domain, String host) {
+        if (authMethod == null) {
+            return configurer;
+        }
+
+        ObjectHelper.notNull(username, "authUsername");
+        ObjectHelper.notNull(password, "authPassword");
+
+        if (authMethod == AuthMethod.Basic || authMethod == AuthMethod.Digest) {
+            return CompositeHttpConfigurer.combineConfigurers(configurer,
+                    new BasicAuthenticationHttpClientConfigurer(false, username, password));
+        } else if (authMethod == AuthMethod.NTML) {
+            // domain is mandatory for NTML
+            ObjectHelper.notNull(domain, "authDomain");
+            return CompositeHttpConfigurer.combineConfigurers(configurer,
+                    new NTMLAuthenticationHttpClientConfigurer(false, username, password, domain, host));
+        }
+
+        throw new IllegalArgumentException("Unknown authMethod " + authMethod);
+    }
     
+    /**
+     * Configures the proxy authentication method to be used
+     *
+     * @return configurer to used
+     */
+    protected HttpClientConfigurer configureProxyAuth(HttpClientConfigurer configurer, AuthMethod authMethod, String username, String password, String domain, String host) {
+        if (authMethod == null) {
+            return configurer;
+        }
+
+        ObjectHelper.notNull(username, "proxyAuthUsername");
+        ObjectHelper.notNull(password, "proxyAuthPassword");
+
+        if (authMethod == AuthMethod.Basic || authMethod == AuthMethod.Digest) {
+            return CompositeHttpConfigurer.combineConfigurers(configurer,
+                    new BasicAuthenticationHttpClientConfigurer(true, username, password));
+        } else if (authMethod == AuthMethod.NTML) {
+            // domain is mandatory for NTML
+            ObjectHelper.notNull(domain, "proxyAuthDomain");
+            return CompositeHttpConfigurer.combineConfigurers(configurer,
+                    new NTMLAuthenticationHttpClientConfigurer(true, username, password, domain, host));
+        }
+
+        throw new IllegalArgumentException("Unknown proxyAuthMethod " + authMethod);
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
@@ -120,6 +181,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
+        String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
+        Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
         // http client can be configured from URI options
         HttpClientParams clientParams = new HttpClientParams();
         IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
@@ -165,6 +228,13 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (matchOnUriPrefix != null) {
             endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
         }
+        if (proxyHost != null) {
+            endpoint.setProxyHost(proxyHost);
+            endpoint.setProxyPort(proxyPort);
+        } else if (httpConfiguration != null) {
+            endpoint.setProxyHost(httpConfiguration.getProxyHost());
+            endpoint.setProxyPort(httpConfiguration.getProxyPort());
+        }
 
         setProperties(endpoint, parameters);
         return endpoint;
@@ -199,4 +269,13 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     public void setHttpBinding(HttpBinding httpBinding) {
         this.httpBinding = httpBinding;
     }
+
+    public HttpConfiguration getHttpConfiguration() {
+        return httpConfiguration;
+    }
+
+    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
+        this.httpConfiguration = httpConfiguration;
+    }
+
 }

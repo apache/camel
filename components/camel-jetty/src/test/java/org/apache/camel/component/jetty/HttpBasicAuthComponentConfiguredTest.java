@@ -18,14 +18,14 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 import java.security.Principal;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpOperationFailedException;
+import org.apache.camel.component.http.AuthMethod;
+import org.apache.camel.component.http.HttpComponent;
+import org.apache.camel.component.http.HttpConfiguration;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.http.security.Constraint;
@@ -39,7 +39,7 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-public class HttpBasicAuthTest extends CamelTestSupport {
+public class HttpBasicAuthComponentConfiguredTest extends CamelTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -59,7 +59,7 @@ public class HttpBasicAuthTest extends CamelTestSupport {
         ConstraintSecurityHandler sh = new ConstraintSecurityHandler();
         sh.setAuthenticator(new BasicAuthenticator());
         sh.setConstraintMappings(new ConstraintMapping[] {cm});
-        
+
         HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
         sh.setLoginService(loginService);
         sh.setConstraintMappings(new ConstraintMapping[]{cm});
@@ -69,18 +69,8 @@ public class HttpBasicAuthTest extends CamelTestSupport {
 
     @Test
     public void testHttpBaiscAuth() throws Exception {
-        String out = template.requestBody("http://localhost:9080/test?authMethod=Basic&authUsername=donald&authPassword=duck", "Hello World", String.class);
+        String out = template.requestBody("http://localhost:9080/test", "Hello World", String.class);
         assertEquals("Bye World", out);
-    }
-
-    @Test
-    public void testHttpBaiscAuthInvalidPassword() throws Exception {
-        try {
-            template.requestBody("http://localhost:9080/test?authMethod=Basic&authUsername=donald&authPassword=sorry", "Hello World", String.class);
-        } catch (RuntimeCamelException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(401, cause.getStatusCode());
-        }
     }
 
     @Override
@@ -88,6 +78,14 @@ public class HttpBasicAuthTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                HttpConfiguration config = new HttpConfiguration();
+                config.setAuthMethod(AuthMethod.Basic);
+                config.setAuthUsername("donald");
+                config.setAuthPassword("duck");
+
+                HttpComponent http = context.getComponent("http", HttpComponent.class);
+                http.setHttpConfiguration(config);
+
                 from("jetty://http://localhost:9080/test?handlers=myAuthHandler")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

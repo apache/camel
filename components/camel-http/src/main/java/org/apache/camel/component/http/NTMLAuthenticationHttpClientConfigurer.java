@@ -19,48 +19,49 @@ package org.apache.camel.component.http;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NTCredentials;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 
-/**
- * Strategy for configuring the HttpClient with a proxy
- *
- * @version 
- */
-public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
-
-    private final String host;
-    private final Integer port;
-    
+public class NTMLAuthenticationHttpClientConfigurer implements HttpClientConfigurer {
+    private final boolean proxy;
     private final String username;
     private final String password;
     private final String domain;
-    private final String ntHost;
-    
-    public ProxyHttpClientConfigurer(String host, Integer port) {
-        this(host, port, null, null, null, null);
-    }
-    
-    public ProxyHttpClientConfigurer(String host, Integer port, String username, String password, String domain, String ntHost) {
-        this.host = host;
-        this.port = port;
-        this.username = username;
-        this.password = password;
+    private final String host;
+
+    public NTMLAuthenticationHttpClientConfigurer(boolean proxy, String user, String pwd, String domain, String host) {
+        this.proxy = proxy;
+        this.username = user;
+        this.password = pwd;
         this.domain = domain;
-        this.ntHost = ntHost;
+        this.host = host;
     }
 
     public void configureHttpClient(HttpClient client) {
-        client.getHostConfiguration().setProxy(host, port);
-
-        if (username != null && password != null) {
-            Credentials defaultcreds;        
-            if (domain != null) {
-                defaultcreds = new NTCredentials(username, password, ntHost, domain);
-            } else {
-                defaultcreds = new UsernamePasswordCredentials(username, password);
-            }
-            client.getState().setProxyCredentials(AuthScope.ANY, defaultcreds);
+        Credentials credentials = new NTCredentials(username, password, host, domain);
+        if (proxy) {
+            client.getState().setProxyCredentials(AuthScope.ANY, credentials);
+        } else {
+            client.getState().setCredentials(AuthScope.ANY, credentials);
         }
+    }
+
+    public boolean isProxy() {
+        return proxy;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public String getHost() {
+        return host;
     }
 }

@@ -21,24 +21,36 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * @version $Revision: 905992 $
+ * @version $Revision$
  */
-public class HttpClientConfigurerTest extends CamelTestSupport {
-    private HttpClientConfigurer configurer;
-    
+public class HttpProxyAuthDigestTest extends CamelTestSupport {
+
     @Test
-    public void testHttpClientConfigurer() throws Exception {
-        HttpClientConfigurer gotConfigurer = getMandatoryEndpoint("http://www.google.com/search", HttpEndpoint.class).getHttpClientConfigurer();
-        assertSame(configurer, gotConfigurer);
+    public void testProxyAuthDigest() throws Exception {
+        HttpClientConfigurer configurer = getMandatoryEndpoint("http://www.google.com/search", HttpEndpoint.class).getHttpClientConfigurer();
+        assertNotNull(configurer);
+
+        CompositeHttpConfigurer comp = assertIsInstanceOf(CompositeHttpConfigurer.class, configurer);
+        assertEquals(1, comp.getConfigurers().size());
+
+        BasicAuthenticationHttpClientConfigurer basic = assertIsInstanceOf(BasicAuthenticationHttpClientConfigurer.class, comp.getConfigurers().get(0));
+        assertTrue(basic.isProxy());
+        assertEquals("myUser", basic.getUsername());
+        assertEquals("myPassword", basic.getPassword());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                // add configurer to http component
-                configurer = new ProxyHttpClientConfigurer("proxyhost", 80, "user", "password", null, null);
-                getContext().getComponent("http", HttpComponent.class).setHttpClientConfigurer(configurer);
+                // setup proxy details
+                HttpConfiguration config = new HttpConfiguration();
+                config.setProxyAuthMethod(AuthMethod.Digest);
+                config.setProxyAuthUsername("myUser");
+                config.setProxyAuthPassword("myPassword");
+
+                HttpComponent http = context.getComponent("http", HttpComponent.class);
+                http.setHttpConfiguration(config);
 
                 from("direct:start")
                     .to("http://www.google.com/search");
