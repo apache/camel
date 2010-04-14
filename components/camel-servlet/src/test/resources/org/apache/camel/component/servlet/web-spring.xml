@@ -35,7 +35,10 @@
       <param-name>matchOnUriPrefix</param-name> 
       <param-value>true</param-value>
     </init-param>
-    <!-- set the camel context application file location here -->
+    <!-- Set the camel context application file location here. 
+         From Camel 2.3.0, you can specify more than one application context configure file 
+         which is separated by ','.
+    -->
     <init-param>
       <param-name>contextConfigLocation</param-name>
 	  <param-value>/org/apache/camel/component/servlet/camelContext.xml</param-value>

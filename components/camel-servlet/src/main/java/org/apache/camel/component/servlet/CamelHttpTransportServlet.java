@@ -43,7 +43,8 @@ public class CamelHttpTransportServlet extends CamelServlet {
         String contextConfigLocation = config.getInitParameter("contextConfigLocation");
         if (contextConfigLocation != null) {
             //Create a spring application context for it
-            applicationContext = new ClassPathXmlApplicationContext(new String[]{contextConfigLocation});
+            applicationContext = new ClassPathXmlApplicationContext(contextConfigLocation.split(","));
+            LOG.info("Started the application context rightly");
         }
     }
     
