@@ -38,14 +38,14 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     private GenericFileOperations<T> operations;
     private ExceptionHandler exceptionHandler;
     private GenericFile<T> file;
-    private String originalFileName;
+    private String absoluteFileName;
 
     public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations,
-                                   GenericFile<T> file, String originalFileName) {
+                                   GenericFile<T> file, String absoluteFileName) {
         this.endpoint = endpoint;
         this.operations = operations;
         this.file = file;
-        this.originalFileName = originalFileName;
+        this.absoluteFileName = absoluteFileName;
     }
 
     public void onComplete(Exchange exchange) {
@@ -96,7 +96,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
             // remove file from the in progress list as its no longer in progress
             // use the original file name that was used to add it to the repository
             // as the name can be different when using preMove option
-            endpoint.getInProgressRepository().remove(originalFileName);
+            endpoint.getInProgressRepository().remove(absoluteFileName);
         }
     }
 
@@ -111,8 +111,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
                                          Exchange exchange, GenericFile<T> file) {
         if (endpoint.isIdempotent()) {
             // only add to idempotent repository if we could process the file
-            // only use the filename as the key as the file could be moved into a done folder
-            endpoint.getIdempotentRepository().add(file.getFileName());
+            endpoint.getIdempotentRepository().add(absoluteFileName);
         }
 
         try {

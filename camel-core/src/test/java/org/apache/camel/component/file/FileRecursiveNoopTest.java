@@ -14,36 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.stress;
-
-import java.util.Random;
+package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
  */
-public class FileAsyncStressTest extends ContextTestSupport {
-
-    private int files = 150;
+public class FileRecursiveNoopTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        deleteDirectory("target/noop");
         super.setUp();
-        deleteDirectory("target/filestress");
-        for (int i = 0; i < files; i++) {
-            template.sendBodyAndHeader("file:target/filestress", "Hello World", Exchange.FILE_NAME, i + ".txt");
-        }
     }
 
-    public void testAsyncStress() throws Exception {
+    public void testRecursiveNoop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(100);
-        mock.setResultWaitTime(20000);
+        mock.expectedBodiesReceivedInAnyOrder("a", "b", "a2", "c", "b2");
+
+        template.sendBodyAndHeader("file:target/noop", "a", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/noop", "b", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file:target/noop/foo", "a2", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/noop/bar", "c", Exchange.FILE_NAME, "c.txt");
+        template.sendBodyAndHeader("file:target/noop/bar", "b2", Exchange.FILE_NAME, "b.txt");
+
+        assertMockEndpointsSatisfied();
+
+        // reset mock and send in a new file to be picked up only
+        mock.reset();
+        mock.expectedBodiesReceived("c2");
+
+        template.sendBodyAndHeader("file:target/noop", "c2", Exchange.FILE_NAME, "c.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -53,21 +58,10 @@ public class FileAsyncStressTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // leverage the fact that we can limit to max 50 files per poll
-                // this will result in polling again and potentially picking up files
-                // that already are in progress
-                from("file:target/filestress?maxMessagesPerPoll=50")
-                    .threads(10)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // simulate some work with random time to complete
-                            Random ran = new Random();
-                            int delay = ran.nextInt(50) + 10;
-                            Thread.sleep(delay);
-                        }
-                    }).to("mock:result");
+                from("file:target/noop?recursive=true&noop=true")
+                    .convertBodyTo(String.class)
+                    .to("mock:result");
             }
         };
     }
-
 }

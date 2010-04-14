@@ -62,8 +62,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        // before we poll is there anything we need to check ? Such as are we
-        // connected to the FTP Server Still ?
+        // before we poll is there anything we need to check?
+        // such as are we connected to the FTP Server still?
         if (!prePollCheck()) {
             if (log.isDebugEnabled()) {
                 log.debug("Skipping pool as pre poll check returned false");
@@ -141,7 +141,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         while (exchanges.size() > 0) {
             Exchange exchange = (Exchange) exchanges.poll();
             GenericFile<T> file = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
-            String key = file.getFileName();
+            String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
         }
     }
@@ -215,6 +215,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             log.trace("Processing file: " + file);
         }
 
+        // must extract the absolute name before the begin strategy as the file could potentially be pre moved
+        // and then the file name would be changed
+        String absoluteFileName = file.getAbsoluteFilePath();
         try {
             final GenericFileProcessStrategy<T> processStrategy = endpoint.getGenericFileProcessStrategy();
 
@@ -224,7 +227,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
                     log.debug(endpoint + " cannot begin processing file: " + file);
                 }
                 // remove file from the in progress list as its no longer in progress
-                endpoint.getInProgressRepository().remove(file.getFileName());
+                endpoint.getInProgressRepository().remove(absoluteFileName);
                 return;
             }
 
@@ -251,8 +254,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
             // register on completion callback that does the completion strategies
             // (for instance to move the file after we have processed it)
-            String originalFileName = file.getFileName();
-            exchange.addOnCompletion(new GenericFileOnCompletion<T>(endpoint, operations, target, originalFileName));
+            exchange.addOnCompletion(new GenericFileOnCompletion<T>(endpoint, operations, target, absoluteFileName));
 
             // process the exchange
             getProcessor().process(exchange);
@@ -263,10 +265,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     }
 
     /**
-     * Strategy for validating if the given remote file should be included or
-     * not
+     * Strategy for validating if the given remote file should be included or not
      *
-     * @param file        the remote file
+     * @param file        the file
      * @param isDirectory whether the file is a directory or a file
      * @return <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
@@ -277,8 +278,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
                 log.trace("File did not match. Will skip this file: " + file);
             }
             return false;
-        } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getFileName())) {
-            // only use the filename as the key as the file could be moved into a done folder
+        } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getAbsoluteFilePath())) {
             if (log.isTraceEnabled()) {
                 log.trace("This consumer is idempotent and the file has been consumed before. Will skip this file: " + file);
             }
@@ -359,7 +359,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      * @return <tt>true</tt> if the file is already in progress
      */
     protected boolean isInProgress(GenericFile<T> file) {
-        String key = file.getFileName();
+        String key = file.getAbsoluteFilePath();
         return !endpoint.getInProgressRepository().add(key);
     }
 

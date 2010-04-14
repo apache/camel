@@ -23,6 +23,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.util.FileUtil;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class FileConsumerIdempotentTest extends ContextTestSupport {
@@ -43,8 +45,6 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
 
 
     public void testIdempotent() throws Exception {
-        assertFalse(repo.contains("report.txt"));
-
         // send a file
         template.sendBodyAndHeader("file://target/fileidempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");
 
@@ -69,7 +69,9 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
 
         // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
         assertMockEndpointsSatisfied();
-        assertTrue(repo.contains("report.txt"));
+
+        String name = FileUtil.normalizePath(new File("target/fileidempotent/report.txt").getAbsolutePath());
+        assertTrue("Should contain file: " + name, repo.contains(name));
     }
 
 }
