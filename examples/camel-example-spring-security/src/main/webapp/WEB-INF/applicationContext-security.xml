@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Application context containing authentication, channel
+  - security and web URI beans.
+  -
+  - Only used by "filter" artifact.
+  -
+  -->
+
+<b:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:b="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <b:import resource="classpath:org/apache/camel/example/spring/security/common-security.xml"/>
+     
+    <http realm="User Restrict Realm">
+        <intercept-url pattern="/camel/**" access="ROLE_USER"/>
+        <http-basic/>
+        <remember-me/>
+    </http>
+ 
+
+</b:beans>
