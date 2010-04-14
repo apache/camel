@@ -29,6 +29,7 @@ import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationManager;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 
 public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSupport {
@@ -54,9 +55,20 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
         }
         end.assertIsSatisfied();
     }
-
-    private void sendMessageWithAuthentication(String username, String password, String... roles) {
-
+    
+    @Test
+    public void testGetAuthorizationTokenFromSecurityContextHolder() throws Exception {
+        MockEndpoint end = getMockEndpoint("mock:end");
+        end.expectedBodiesReceived("hello world");
+        Authentication authToken = createAuthenticationToken("jim", "jimspassword", "ROLE_USER", "ROLE_ADMIN");
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+        template.sendBody("direct:start", "hello world");
+        end.assertIsSatisfied();
+        SecurityContextHolder.getContext().setAuthentication(null);
+        
+    }
+    
+    private Authentication createAuthenticationToken(String username, String password, String... roles) {
         Authentication authToken;
         if (roles != null && roles.length > 0) {
             GrantedAuthority[] authorities = new GrantedAuthority[roles.length];
@@ -67,7 +79,13 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
         } else {
             authToken = new UsernamePasswordAuthenticationToken(username, password);
         }
+        return authToken;
+    }
 
+    private void sendMessageWithAuthentication(String username, String password, String... roles) {
+
+        Authentication authToken = createAuthenticationToken(username, password, roles);
+        
         Subject subject = new Subject();
         subject.getPrincipals().add(authToken);
 

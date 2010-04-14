@@ -35,6 +35,7 @@
 	  	<xsd:attribute name="access" type="xsd:string" />
 	  	<xsd:attribute name="authenticationManager" type="xsd:string" />
 	  	<xsd:attribute name="accessDecisionManager" type="xsd:string" />
+	  	<xsd:attribute name="useThreadSecurityContext" type="xsd:boolean" default="true"/>
 	  	<xsd:attribute name="alwaysReauthenticate" type="xsd:boolean" default="false"/>
 	  </xsd:complexType>
   </xsd:element>
