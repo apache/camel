@@ -17,7 +17,6 @@
 package org.apache.camel.component.direct;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
@@ -28,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DirectProducer extends DefaultProducer implements Processor {
+public class DirectProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(DirectProducer.class);
     private DirectEndpoint endpoint;
 
