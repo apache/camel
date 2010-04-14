@@ -75,15 +75,15 @@ public class JpaShutdownCompleteAllTasksTest extends CamelTestSupport {
                 from("jpa://" + SendEmail.class.getName()).routeId("route1")
                      // let it complete all tasks
                      .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
-                     .delay(1000).to("seda:foo");
+                     .to("seda:foo");
 
-                from("seda:foo").routeId("route2").to("mock:bar");
+                from("seda:foo").delay(1000).to("mock:bar");
             }
         });
         context.start();
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
-        bar.expectedMinimumMessageCount(1);
+        bar.expectedMinimumMessageCount(2);
 
         assertMockEndpointsSatisfied();
 
