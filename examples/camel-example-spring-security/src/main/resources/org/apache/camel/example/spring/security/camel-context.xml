@@ -15,6 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+<!-- START SNIPPET: example -->
 <beans xmlns="http://www.springframework.org/schema/beans"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:spring-security="http://www.springframework.org/schema/security"
@@ -39,16 +40,18 @@
 			</property>
 		</bean>
 		  
+		<!-- The Policy for checking the authentication role of ADMIN -->
         <authorizationPolicy id="admin" access="ROLE_ADMIN" 
           	authenticationManager="authenticationManager"
           	accessDecisionManager="accessDecisionManager"
           	 xmlns="http://camel.apache.org/schema/spring-security"/>
           	 
+        <!-- The Policy for checking the authentication role of USER -->
         <authorizationPolicy id="user" access="ROLE_USER"
           	 xmlns="http://camel.apache.org/schema/spring-security"/>
           	 
           <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/spring">
-          
+              <!-- Catch the authorization exception and set the Access Denied message back -->
               <onException>
                  <exception>org.apache.camel.CamelAuthorizationException</exception>
                  <handled><constant>true</constant></handled>
@@ -72,5 +75,5 @@
           </camelContext>
           
 </beans>
-                        
+<!-- END SNIPPET: example -->                               
                     
