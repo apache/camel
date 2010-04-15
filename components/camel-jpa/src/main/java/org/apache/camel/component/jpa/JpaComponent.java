@@ -21,7 +21,10 @@ import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * A JPA Component
@@ -29,6 +32,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * @version $Revision$
  */
 public class JpaComponent extends DefaultComponent {
+    private static final Log LOG = LogFactory.getLog(JpaComponent.class);
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
 
@@ -68,5 +72,64 @@ public class JpaComponent extends DefaultComponent {
         }
 
         return endpoint;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // lookup entity manager factory and use it if only one provided
+        if (entityManagerFactory == null) {
+            Map<String, EntityManagerFactory> map = getCamelContext().getRegistry().lookupByType(EntityManagerFactory.class);
+            if (map != null) {
+                if (map.size() == 1) {
+                    entityManagerFactory = map.values().iterator().next();
+                    LOG.info("Using EntityManagerFactory found in registry with id ["
+                            + map.keySet().iterator().next() + "] " + entityManagerFactory);
+                } else {
+                    LOG.debug("Could not find a single EntityManagerFactory in registry as there was " + map.size() + " instances.");
+                }
+            }
+        } else {
+            LOG.info("Using EntityManagerFactory configured: " + entityManagerFactory);
+        }
+
+        // lookup transaction manager and use it if only one provided
+        if (transactionManager == null) {
+            Map<String, PlatformTransactionManager> map = getCamelContext().getRegistry().lookupByType(PlatformTransactionManager.class);
+            if (map != null) {
+                if (map.size() == 1) {
+                    transactionManager = map.values().iterator().next();
+                    LOG.info("Using TransactionManager found in registry with id ["
+                            + map.keySet().iterator().next() + "] " + transactionManager);
+                } else {
+                    LOG.debug("Could not find a single TransactionManager in registry as there was " + map.size() + " instances.");
+                }
+            }
+        } else {
+            LOG.info("Using TransactionManager configured on this component: " + transactionManager);
+        }
+
+        // transaction manager could also be hidden in a template
+        if (transactionManager == null) {
+            Map<String, TransactionTemplate> map = getCamelContext().getRegistry().lookupByType(TransactionTemplate.class);
+            if (map != null) {
+                if (map.size() == 1) {
+                    transactionManager = map.values().iterator().next().getTransactionManager();
+                    LOG.info("Using TransactionManager found in registry with id ["
+                            + map.keySet().iterator().next() + "] " + transactionManager);
+                } else {
+                    LOG.debug("Could not find a single TransactionTemplate in registry as there was " + map.size() + " instances.");
+                }
+            }
+        }
+
+        // warn about missing configuration
+        if (entityManagerFactory == null) {
+            LOG.warn("No EntityManagerFactory has been configured on this JpaComponent. Each JpaEndpoint will auto create their own EntityManagerFactory.");
+        }
+        if (transactionManager == null) {
+            LOG.warn("No TransactionManager has been configured on this JpaComponent. Each JpaEndpoint will auto create their own JpaTransactionManager.");
+        }
+
+        super.doStart();
     }
 }

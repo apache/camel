@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jpa.JpaComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringCamelContext;
@@ -46,6 +47,11 @@ public class JpaRouteTest extends CamelTestSupport {
 
     @Test
     public void testRouteJpa() throws Exception {
+        // should auto setup transaction manager and entity factory
+        JpaComponent jpa = context.getComponent("jpa", JpaComponent.class);
+        assertNotNull("Should have been auto assigned", jpa.getEntityManagerFactory());
+        assertNotNull("Should have been auto assigned", jpa.getTransactionManager());
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
