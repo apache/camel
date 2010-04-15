@@ -21,24 +21,22 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version $Revision: 905992 $
  */
-public class HttpProxyAuthNTLMTest extends CamelTestSupport {
+public class HttpAuthMethodPriorityTest extends CamelTestSupport {
 
     @Test
-    public void testProxyAuthNTLM() throws Exception {
+    public void testAuthMethodPriority() throws Exception {
         HttpClientConfigurer configurer = getMandatoryEndpoint("http://www.google.com/search", HttpEndpoint.class).getHttpClientConfigurer();
         assertNotNull(configurer);
 
         CompositeHttpConfigurer comp = assertIsInstanceOf(CompositeHttpConfigurer.class, configurer);
         assertEquals(1, comp.getConfigurers().size());
 
-        NTLMAuthenticationHttpClientConfigurer ntlm = assertIsInstanceOf(NTLMAuthenticationHttpClientConfigurer.class, comp.getConfigurers().get(0));
-        assertTrue(ntlm.isProxy());
-        assertEquals("myUser", ntlm.getUsername());
-        assertEquals("myPassword", ntlm.getPassword());
-        assertEquals("myDomain", ntlm.getDomain());
-        assertEquals("myHost", ntlm.getHost());
+        BasicAuthenticationHttpClientConfigurer basic = assertIsInstanceOf(BasicAuthenticationHttpClientConfigurer.class, comp.getConfigurers().get(0));
+        assertFalse(basic.isProxy());
+        assertEquals("myUser", basic.getUsername());
+        assertEquals("myPassword", basic.getPassword());
     }
 
     @Override
@@ -47,14 +45,11 @@ public class HttpProxyAuthNTLMTest extends CamelTestSupport {
             public void configure() {
                 // setup proxy details
                 HttpConfiguration config = new HttpConfiguration();
-                config.setProxyHost("myProxyHosy");
-                config.setProxyPort(1234);
-
-                config.setProxyAuthMethod(AuthMethod.NTLM);
-                config.setProxyAuthUsername("myUser");
-                config.setProxyAuthPassword("myPassword");
-                config.setProxyAuthDomain("myDomain");
-                config.setProxyAuthHost("myHost");
+                config.setAuthMethod(AuthMethod.Basic);
+                config.setAuthUsername("myUser");
+                config.setAuthPassword("myPassword");
+                // to avoid NTLM
+                config.setAuthMethodPriority("Basic,Digest");
 
                 HttpComponent http = context.getComponent("http", HttpComponent.class);
                 http.setHttpConfiguration(config);

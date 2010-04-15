@@ -18,6 +18,10 @@ package org.apache.camel.component.http;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
@@ -26,6 +30,7 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,6 +56,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private boolean chunked = true;
     private String proxyHost;
     private int proxyPort;
+    private String authMethodPriority;
 
     public HttpEndpoint() {
     }
@@ -106,6 +112,27 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
                 LOG.debug("Using proxy: " + proxyHost + ":" + proxyPort);
             }
             answer.getHostConfiguration().setProxy(proxyHost, proxyPort);
+        }
+
+        if (authMethodPriority != null) {
+            List<String> authPrefs = new ArrayList<String>();
+            Iterator it = getCamelContext().getTypeConverter().convertTo(Iterator.class, authMethodPriority);
+            int i = 1;
+            while (it.hasNext()) {
+                Object value = it.next();
+                AuthMethod auth = getCamelContext().getTypeConverter().convertTo(AuthMethod.class, value);
+                if (auth == null) {
+                    throw new IllegalArgumentException("Unknown authMethod: " + value + " in authMethodPriority: " + authMethodPriority);
+                }
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using authSchemePriority #" + i + ": " + auth);
+                }
+                authPrefs.add(auth.name());
+                i++;
+            }
+            if (!authPrefs.isEmpty()) {
+                answer.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY, authPrefs);
+            }
         }
 
         answer.setHttpConnectionManager(httpConnectionManager);
@@ -267,5 +294,13 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public void setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public String getAuthMethodPriority() {
+        return authMethodPriority;
+    }
+
+    public void setAuthMethodPriority(String authMethodPriority) {
+        this.authMethodPriority = authMethodPriority;
     }
 }

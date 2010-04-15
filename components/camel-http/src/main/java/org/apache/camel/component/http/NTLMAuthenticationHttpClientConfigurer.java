@@ -21,14 +21,14 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 
-public class NTMLAuthenticationHttpClientConfigurer implements HttpClientConfigurer {
+public class NTLMAuthenticationHttpClientConfigurer implements HttpClientConfigurer {
     private final boolean proxy;
     private final String username;
     private final String password;
     private final String domain;
     private final String host;
 
-    public NTMLAuthenticationHttpClientConfigurer(boolean proxy, String user, String pwd, String domain, String host) {
+    public NTLMAuthenticationHttpClientConfigurer(boolean proxy, String user, String pwd, String domain, String host) {
         this.proxy = proxy;
         this.username = user;
         this.password = pwd;

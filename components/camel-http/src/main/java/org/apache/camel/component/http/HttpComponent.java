@@ -133,11 +133,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (authMethod == AuthMethod.Basic || authMethod == AuthMethod.Digest) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new BasicAuthenticationHttpClientConfigurer(false, username, password));
-        } else if (authMethod == AuthMethod.NTML) {
+        } else if (authMethod == AuthMethod.NTLM) {
             // domain is mandatory for NTML
             ObjectHelper.notNull(domain, "authDomain");
             return CompositeHttpConfigurer.combineConfigurers(configurer,
-                    new NTMLAuthenticationHttpClientConfigurer(false, username, password, domain, host));
+                    new NTLMAuthenticationHttpClientConfigurer(false, username, password, domain, host));
         }
 
         throw new IllegalArgumentException("Unknown authMethod " + authMethod);
@@ -159,11 +159,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (authMethod == AuthMethod.Basic || authMethod == AuthMethod.Digest) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new BasicAuthenticationHttpClientConfigurer(true, username, password));
-        } else if (authMethod == AuthMethod.NTML) {
+        } else if (authMethod == AuthMethod.NTLM) {
             // domain is mandatory for NTML
             ObjectHelper.notNull(domain, "proxyAuthDomain");
             return CompositeHttpConfigurer.combineConfigurers(configurer,
-                    new NTMLAuthenticationHttpClientConfigurer(true, username, password, domain, host));
+                    new NTLMAuthenticationHttpClientConfigurer(true, username, password, domain, host));
         }
 
         throw new IllegalArgumentException("Unknown proxyAuthMethod " + authMethod);
@@ -183,6 +183,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
+        String authMethodPriority = getAndRemoveParameter(parameters, "authMethodPriority", String.class);
         // http client can be configured from URI options
         HttpClientParams clientParams = new HttpClientParams();
         IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
@@ -234,6 +235,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         } else if (httpConfiguration != null) {
             endpoint.setProxyHost(httpConfiguration.getProxyHost());
             endpoint.setProxyPort(httpConfiguration.getProxyPort());
+        }
+        if (authMethodPriority != null) {
+            endpoint.setAuthMethodPriority(authMethodPriority);
+        } else if (httpConfiguration != null) {
+            endpoint.setAuthMethodPriority(httpConfiguration.getAuthMethodPriority());
         }
 
         setProperties(endpoint, parameters);

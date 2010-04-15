@@ -37,6 +37,7 @@ public class HttpConfiguration implements Serializable {
 
     private String proxyHost;
     private int proxyPort;
+    private String authMethodPriority;
 
     public String getAuthUsername() {
         return authUsername;
@@ -132,5 +133,13 @@ public class HttpConfiguration implements Serializable {
 
     public void setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public String getAuthMethodPriority() {
+        return authMethodPriority;
+    }
+
+    public void setAuthMethodPriority(String authMethodPriority) {
+        this.authMethodPriority = authMethodPriority;
     }
 }
