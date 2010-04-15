@@ -97,6 +97,17 @@ public final class IntrospectionSupport {
         return params.length == 1 && type.equals(Void.TYPE);
     }
 
+    /**
+     * Will inspect the target for properties.
+     * <p/>
+     * <b>Notice:</b> only properties which is convertable to String will be selected,
+     * other properties will be skipped.
+     *
+     * @param target         the target bean
+     * @param properties     the map to fill in found properties
+     * @param optionPrefix   an optional prefix to append the property key
+     * @return <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
+     */
     @SuppressWarnings("unchecked")
     public static boolean getProperties(Object target, Map properties, String optionPrefix) {
         ObjectHelper.notNull(target, "target");
@@ -119,6 +130,7 @@ public final class IntrospectionSupport {
                         continue;
                     }
 
+                    // TODO: Why must the found property be convertable to String?
                     String strValue = convertToString(value, type);
                     if (strValue == null) {
                         continue;
@@ -372,6 +384,7 @@ public final class IntrospectionSupport {
     }
 
     private static boolean isSettableType(Class<?> clazz) {
+        // TODO: Why limit to what the JDK property editor can set?
         if (PropertyEditorManager.findEditor(clazz) != null) {
             return true;
         }
