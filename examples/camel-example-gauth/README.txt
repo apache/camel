@@ -1,7 +1,7 @@
 GAuth Example
 =============
 
-Building, deplyoing and running this example is described in detail at
+Building, deploying and running this example is described in detail at
 http://camel.apache.org/tutorial-oauth.html
 
 Please help us make Apache Camel better - we appreciate any feedback you
