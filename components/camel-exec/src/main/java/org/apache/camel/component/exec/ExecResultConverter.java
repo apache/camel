@@ -18,12 +18,14 @@ package org.apache.camel.component.exec;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.w3c.dom.Document;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -47,6 +49,11 @@ public final class ExecResultConverter {
     }
 
     @Converter
+    public static byte[] convertToByteArray(ExecResult result, Exchange exchange) throws FileNotFoundException, IOException {
+        return IOUtils.toByteArray(toInputStream(result));
+    }
+
+    @Converter
     public static String convertToString(ExecResult result, Exchange exchange) throws FileNotFoundException {
         return convertTo(String.class, exchange, result);
     }
@@ -54,11 +61,6 @@ public final class ExecResultConverter {
     @Converter
     public static Document convertToDocument(ExecResult result, Exchange exchange) throws FileNotFoundException {
         return convertTo(Document.class, exchange, result);
-    }
-
-    @Converter
-    public static byte[] convertToByteArray(ExecResult result, Exchange exchange) throws FileNotFoundException {
-        return convertTo(byte[].class, exchange, result);
     }
 
     /**
@@ -86,23 +88,27 @@ public final class ExecResultConverter {
      * If the ExecResult contains out file,
      * <code>InputStream<code> with the output of the <code>execResult</code>.
      * If there is {@link ExecCommand#getOutFile()}, its content is preferred to
-     * {@link ExecResult#getStdout()}
+     * {@link ExecResult#getStdout()}. Returns <code>null</code> if the stdout
+     * is null, or if the <code>execResult</code> is <code>null</code>.
      * 
      * @param execResult ExecResult object.
-     * @return InputStream object
-     * @throws FileNotFoundException if the {@link ExecResult#getOutFile()} is
+     * @return InputStream object if the output of the executable.
+     * @throws FileNotFoundException if the {@link ExecCommand#getOutFile()} is
      *             not <code>null</code>, but can not be found
      */
     public static InputStream toInputStream(ExecResult execResult) throws FileNotFoundException {
         if (execResult == null) {
-            LOG.error("Unable to convert a null exec result!");
+            LOG.warn("Received a null ExecResult instance to convert!");
             return null;
         }
-        InputStream resultVal = execResult.getStdout();
         // prefer generic file conversion
         if (execResult.getCommand().getOutFile() != null) {
-            resultVal = new FileInputStream(execResult.getCommand().getOutFile());
+            return new FileInputStream(execResult.getCommand().getOutFile());
+        } else {
+            if (execResult.getStdout() == null) {
+                LOG.warn("Received null stdout of the ExecResult for conversion!");
+            }
+            return execResult.getStdout();
         }
-        return resultVal;
     }
 }

@@ -17,6 +17,8 @@
 package org.apache.camel.component.exec;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -27,19 +29,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
-
 import org.junit.Test;
 
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_TIMEOUT;
+import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_WORKING_DIR;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_EXIT_VALUE;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_STDERR;
 import static org.apache.camel.component.exec.ExecEndpoint.NO_TIMEOUT;
 import static org.apache.camel.component.exec.ExecTestUtils.buildJavaExecutablePath;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.EXIT_WITH_VALUE_0;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.EXIT_WITH_VALUE_1;
-import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_IN_STDERR;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_IN_STDOUT;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.READ_INPUT_LINES_AND_PRINT_THEM;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.SLEEP_WITH_TIMEOUT;
@@ -106,7 +107,6 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         output.assertIsSatisfied();
         String out = e.getIn().getBody(String.class);
         assertEquals(PRINT_IN_STDOUT, out);
-
     }
 
     @Test
@@ -133,14 +133,19 @@ public class ExecJavaProcessTest extends CamelTestSupport {
     }
 
     @Test
-    public void testResultConverterString() throws Exception {
-        String commandArgument = PRINT_IN_STDERR;
-        output.setExpectedMessageCount(1);
-        output.expectedHeaderReceived(EXEC_STDERR, commandArgument);
-        output.expectedHeaderReceived(EXEC_EXIT_VALUE, 1);
+    public void testInvalidWorkingDir() throws Exception {
+        String commandArgument = PRINT_IN_STDOUT;
+        final List<String> args = buildArgs(commandArgument);
+        final String javaAbsolutePath = buildJavaExecutablePath();
 
-        sendExchange(commandArgument, NO_TIMEOUT);
-        output.assertIsSatisfied();
+        Exchange e = producerTemplate.send(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, javaAbsolutePath);
+                exchange.getIn().setHeader(EXEC_COMMAND_WORKING_DIR, "\\cdd:///invalidWWorkginDir");
+                exchange.getIn().setHeader(EXEC_COMMAND_ARGS, args);
+            }
+        });
+        assertEquals(ExecException.class, e.getException().getClass());
     }
 
     /**
@@ -211,17 +216,27 @@ public class ExecJavaProcessTest extends CamelTestSupport {
     }
 
     protected Exchange sendExchange(final Object commandArgument, final long timeout, final String body) {
-        final String classpath = "\"" + System.getProperty("java.class.path") + "\"";
+        final List<String> args = buildArgs(commandArgument);
         final String javaAbsolutePath = buildJavaExecutablePath();
-
+        
         return producerTemplate.send(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(body);
                 exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, javaAbsolutePath);
                 exchange.getIn().setHeader(EXEC_COMMAND_TIMEOUT, timeout);
-                exchange.getIn().setHeader(EXEC_COMMAND_ARGS, "-cp" + classpath + " " + EXECUTABLE_PROGRAM_ARG + " " + commandArgument.toString());
+                exchange.getIn().setHeader(EXEC_COMMAND_ARGS, args);
             }
         });
+    }
+
+    private List<String> buildArgs(Object commandArgument) {
+        String classpath = System.getProperty("java.class.path");
+        List<String> args = new ArrayList<String>();
+        args.add("-cp");
+        args.add(classpath);
+        args.add(EXECUTABLE_PROGRAM_ARG);
+        args.add(commandArgument.toString());
+        return args;
     }
 
     @Override

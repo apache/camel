@@ -26,7 +26,8 @@ import org.apache.commons.exec.ExecuteException;
 public interface ExecCommandExecutor {
 
     /**
-     * Executes the <code>command</code> and returns its exit value
+     * Executes the <code>command</code> and returns a not-<code>null</code>
+     * {@link ExecResult} instance.
      * 
      * @param execCommand The command object, that describes the executable
      *            application

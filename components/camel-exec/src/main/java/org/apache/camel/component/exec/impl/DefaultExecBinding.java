@@ -37,18 +37,23 @@ import static org.apache.camel.component.exec.impl.ExecParseUtils.splitToWhiteSp
  */
 public class DefaultExecBinding implements ExecBinding {
 
+    @SuppressWarnings("unchecked")
     public ExecCommand readInput(Exchange exchange, ExecEndpoint endpoint) {
         ObjectHelper.notNull(exchange, "exchange");
         ObjectHelper.notNull(endpoint, "endpoint");
 
         String cmd = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_EXECUTABLE, endpoint.getExecutable(), String.class);
-        String args = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_ARGS, endpoint.getArgs(), String.class);
+        List<String> argsList = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_ARGS, null, List.class);
         String dir = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_WORKING_DIR, endpoint.getWorkingDir(), String.class);
         long timeout = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_TIMEOUT, endpoint.getTimeout(), Long.class);
         String outFilePath = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_OUT_FILE, endpoint.getOutFile(), String.class);
         InputStream input = exchange.getIn().getBody(InputStream.class);
 
-        List<String> argsList = splitToWhiteSpaceSeparatedTokens(args);
+        if (argsList == null) {
+            // do the URI parsing, only if the arguments are not set
+            argsList = splitToWhiteSpaceSeparatedTokens(endpoint.getArgs());
+        }
+
         File outFile = outFilePath == null ? null : new File(outFilePath);
         return new ExecCommand(cmd, argsList, dir, timeout, input, outFile);
     }
@@ -89,5 +94,4 @@ public class DefaultExecBinding implements ExecBinding {
         message.removeHeader(headerName);
         return h;
     }
-
 }

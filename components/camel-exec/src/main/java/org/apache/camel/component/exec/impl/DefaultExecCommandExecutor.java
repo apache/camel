@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.apache.camel.component.exec.ExecCommand;
@@ -27,7 +28,6 @@ import org.apache.camel.component.exec.ExecCommandExecutor;
 import org.apache.camel.component.exec.ExecEndpoint;
 import org.apache.camel.component.exec.ExecException;
 import org.apache.camel.component.exec.ExecResult;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
@@ -38,9 +38,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import static org.apache.camel.util.ObjectHelper.notNull;
+
 /**
  * Executes the command utilizing the <a
- * href="http://commons.apache.org/exec/">Apache Commmons exec library</a>. Adds
+ * href="http://commons.apache.org/exec/">Apache Commons exec library</a>. Adds
  * a shutdown hook for every executed process.
  */
 public class DefaultExecCommandExecutor implements ExecCommandExecutor {
@@ -48,12 +50,10 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
     private static final Log LOG = LogFactory.getLog(DefaultExecCommandExecutor.class);
 
     public ExecResult execute(ExecCommand command) {
-        ObjectHelper.notNull(command, "command");
+        notNull(command, "command");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteArrayOutputStream err = new ByteArrayOutputStream();
-
-        ExecResult result = new ExecResult(command);
 
         DefaultExecutor executor = prepareDefaultExecutor(command);
         // handle error and output of the process and write them to the given
@@ -65,10 +65,11 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
 
         try {
             int exitValue = executor.execute(cl);
-
-            result.setExitValue(exitValue);
-            result.setStdout(new ByteArrayInputStream(out.toByteArray()));
-            result.setStderr(new ByteArrayInputStream(err.toByteArray()));
+            // if the size is zero, we have no output, so construct the result
+            // with null (required by ExecResult)
+            InputStream stdout = out.size() == 0 ? null : new ByteArrayInputStream(out.toByteArray());
+            InputStream stderr = err.size() == 0 ? null : new ByteArrayInputStream(err.toByteArray());
+            ExecResult result = new ExecResult(command, stdout, stderr, exitValue);
             return result;
 
         } catch (ExecuteException ee) {
@@ -99,12 +100,14 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
     }
 
     /**
-     * Transforms an exec command to a {@link CommandLine}
+     * Transforms an {@link ExecCommand} to a {@link CommandLine}. No quoting fo
+     * the arguments is used.
      * 
-     * @param execCommand
-     * @return a {@link CommandLine} object
+     * @param execCommand a not-null <code>ExecCommand</code> instance.
+     * @return a {@link CommandLine} object.
      */
     protected CommandLine toCommandLine(ExecCommand execCommand) {
+        notNull(execCommand, "execCommand");
         CommandLine cl = new CommandLine(execCommand.getExecutable());
         List<String> args = execCommand.getArgs();
         for (String arg : args) {

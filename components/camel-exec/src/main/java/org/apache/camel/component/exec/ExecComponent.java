@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Represents the component that manages {@link ExecEndpoint}. With the
- * component it is possible to execute an system command.
+ * component it is possible to execute system commands.
  */
 public class ExecComponent extends DefaultComponent {
 

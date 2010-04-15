@@ -19,7 +19,6 @@ package org.apache.camel.component.exec;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.exec.OS;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ClassPathResource;

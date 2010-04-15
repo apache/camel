@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.exec;
 
+import java.io.InputStream;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.component.exec.impl.ExecParseUtils;
 
 /**
  * Represents the binding of input and output types of a
@@ -30,18 +31,17 @@ public interface ExecBinding {
      * the exec endpoint URI. As executable is considered the remaining of the
      * {@link ExecEndpoint} URI; <br>
      * <br>
-     * e.g. in the URI <i> <code>exec:"C:/Program Files/jdk/java.exe"</code>
-     * </i>, <code>"C:/Program Files/jdk/java.exe"<code> is the executable, escaped by the " character.
+     * e.g. in the URI <i> <code>exec:C:/Program Files/jdk/java.exe</code> </i>,
+     * <code>C:/Program Files/jdk/java.exe<code> is the executable.
      */
     String EXEC_COMMAND_EXECUTABLE = "CamelExecCommandExecutable";
     /**
      * The header value overrides the existing command arguments in the
-     * {@link ExecEndpoint} URI. The arguments may be one or many
-     * whitespace-separated tokens, and can be quoted with <code>"</code>, or with
-     * <code>""</code>.
+     * {@link ExecEndpoint} URI. The arguments may be a
+     * <code>List<String></code>. In this case no parsing of the arguments is
+     * necessary.
      * 
      * @see {@link #EXEC_COMMAND_EXECUTABLE}
-     * @see ExecParseUtils#splitToWhiteSpaceSeparatedTokens(String)
      */
     String EXEC_COMMAND_ARGS = "CamelExecCommandArgs";
 
@@ -62,18 +62,14 @@ public interface ExecBinding {
     String EXEC_COMMAND_WORKING_DIR = "CamelExecCommandWorkingDir";
     /**
      * Specifies the amount of time, in milliseconds, after which the process of
-     * the executable should be terminated.
+     * the executable should be terminated. The default value is
+     * {@link Long#MAX_VALUE}.
      */
     String EXEC_COMMAND_TIMEOUT = "CamelExecCommandTimeout";
 
     /**
-     * The value of this header is a String with the standard output stream of
-     * the executable.
-     */
-    String EXEC_STDOUT = "CamelExecStdout";
-    /**
-     * The value of this header is a String with the standard error stream of
-     * the executable.
+     * The value of this header is a {@link InputStream} with the standard error
+     * stream of the executable.
      */
     String EXEC_STDERR = "CamelExecStderr";
 

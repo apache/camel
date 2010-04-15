@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Exec producer
+ * Exec producer.
  * 
  * @see {link Producer}
  */
@@ -47,26 +47,15 @@ public class ExecProducer extends DefaultProducer {
         }
         ExecResult result = endpoint.getCommandExecutor().execute(execCommand);
         ObjectHelper.notNull(result, "The command executor must return a not-null result");
-        log(result);
+        if (log.isInfoEnabled()) {
+            log.info("The command " + execCommand + " had exit value " + result.getExitValue());
+        } else if (log.isErrorEnabled() && result.getExitValue() != 0) {
+            log.error("The command " + execCommand + " returned exit value " + result.getExitValue());
+        }
         getBinding().writeOutput(exchange, result);
     }
 
     private ExecBinding getBinding() {
         return endpoint.getBinding();
-    }
-
-    private void log(ExecResult result) {
-        String executable = result.getCommand().getExecutable();
-        // 0 means no error, by convention
-        if (result.getExitValue() != 0) {
-            if (log.isErrorEnabled()) {
-                log.error(new StringBuilder(executable).append(" exit value: ").append(result.getExitValue()));
-                log.error(new StringBuilder(executable).append(" stderr: ").append(result.getStderr()));
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(new StringBuilder(executable).append(" stdout: ").append(result.getStdout()));
-        }
-
     }
 }

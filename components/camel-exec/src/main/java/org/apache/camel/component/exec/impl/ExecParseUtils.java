@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * Utility class for parsing, used by the Camel Exec component.
+ * Utility class for parsing, used by the Camel Exec component.<br>
+ * Note: the class should be dropped, when the the commons-exec library
+ * implements similar functionality.
  */
 public final class ExecParseUtils {
 
@@ -35,8 +37,9 @@ public final class ExecParseUtils {
     /**
      * Splits the input line string by {@link #WHITESPACE}. Supports quoting the
      * white-spaces with a {@link #QUOTE_CHAR}. A quote itself can also be
-     * quoted with another #{@link #QUOTE_CHAR}. More than two quotes in a
-     * sequence is not allowed<br>
+     * enclosed within #{@link #QUOTE_CHAR}#{@link #QUOTE_CHAR}. More than two
+     * double-quotes in a sequence is not allowed. Nested quotes are not
+     * allowed.<br>
      * E.g. The string
      * <code>"arg 1"  arg2<code> will return the tokens <code>arg 1</code>,
      * <code>arg2</code><br>
@@ -44,15 +47,15 @@ public final class ExecParseUtils {
      * <code>""arg 1""  "arg2" arg 3<code> will return the tokens <code>"arg 1"</code>
      * , <code>arg2</code>,<code>arg</code> and <code>3</code> <br>
      * 
-     * @param input
-     * @return a list of {@link #WHITESPACE} separated tokens
+     * @param input the input to split.
+     * @return a not-null list of tokens
      */
     public static List<String> splitToWhiteSpaceSeparatedTokens(String input) {
         if (input == null) {
             return new ArrayList<String>();
         }
         StringTokenizer tokenizer = new StringTokenizer(input.trim(), QUOTE_CHAR + WHITESPACE, true);
-        List<String> args = new ArrayList<String>();
+        List<String> tokens = new ArrayList<String>();
 
         StringBuilder quotedText = new StringBuilder();
 
@@ -64,7 +67,7 @@ public final class ExecParseUtils {
                 quotedText.append(QUOTE_CHAR);
                 String buffer = quotedText.toString();
                 if (isSingleQuoted(buffer) || isDoubleQuoted(buffer)) {
-                    args.add(buffer.substring(1, buffer.length() - 1));
+                    tokens.add(buffer.substring(1, buffer.length() - 1));
                     quotedText = new StringBuilder();
                 }
             } else if (WHITESPACE.equals(token)) {
@@ -77,21 +80,21 @@ public final class ExecParseUtils {
                 if (quotedText.length() > 0) {
                     quotedText.append(token);
                 } else {
-                    args.add(token);
+                    tokens.add(token);
                 }
             }
         }
         if (quotedText.length() > 0) {
             throw new IllegalArgumentException("Invalid quoting found in args " + quotedText);
         }
-        return args;
+        return tokens;
     }
 
     /**
      * Tests if the input is enclosed within {@link #QUOTE_CHAR} characters
      * 
      * @param input a not null String
-     * @return
+     * @return true if the regular expression is matched
      */
     protected static boolean isSingleQuoted(String input) {
         if (input == null || input.trim().length() == 0) {

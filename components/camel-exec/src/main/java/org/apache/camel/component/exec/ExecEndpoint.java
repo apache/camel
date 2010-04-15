@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.exec.impl.DefaultExecBinding;
 import org.apache.camel.component.exec.impl.DefaultExecCommandExecutor;
+import org.apache.camel.component.exec.impl.ExecParseUtils;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
@@ -85,9 +86,10 @@ public class ExecEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the executable to be executed
+     * Sets the executable to be executed. The executable must not be empty or
+     * <code>null</code>.
      * 
-     * @param executable must not be empty or <code>null</code>
+     * @param executable Sets the executable to be executed.
      */
     public void setExecutable(String executable) {
         ObjectHelper.notEmpty(executable, "executable");
@@ -95,9 +97,17 @@ public class ExecEndpoint extends DefaultEndpoint {
     }
 
     /**
+     * The arguments may be one or many whitespace-separated tokens, that can be
+     * quoted with ", e.g. <code>args="arg 1" arg2"</code> will use two arguments
+     * <code>arg 1</code> and <code>arg2</code>. To include the quotes use
+     * <code>""</code><br>
+     * , e.g. <code>args=""arg 1"" arg2</code> will use the arguments
+     * <code>"arg 1"</code> and <code>arg2</code>.
+     * 
      * @return the arguments of the executable application, as configured from
-     *         the endpoint URI
+     *         the endpoint URI.
      * @see ExecBinding#EXEC_COMMAND_ARGS
+     * @see ExecParseUtils#splitToWhiteSpaceSeparatedTokens(String)
      */
     public String getArgs() {
         return args;
@@ -108,13 +118,16 @@ public class ExecEndpoint extends DefaultEndpoint {
      * 
      * @param args Returns <code>null</code> value if no arguments are
      *            configured in the endpoint URI
+     * @see #getArgs()
+     * @see ExecBinding#EXEC_COMMAND_ARGS
      */
     public void setArgs(String args) {
         this.args = args;
     }
 
     /**
-     * @return the working directory of the executable, or <code>null</code>
+     * @return the working directory of the executable, or <code>null</code> is
+     *         such is not set.
      * @see ExecBinding#EXEC_COMMAND_WORKING_DIR
      */
     public String getWorkingDir() {
@@ -122,7 +135,7 @@ public class ExecEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the working directory of the executable application
+     * Sets the working directory of the executable.
      * 
      * @param dir the working directory of the executable. <code>null</code>
      *            values indicates that the current working directory will be

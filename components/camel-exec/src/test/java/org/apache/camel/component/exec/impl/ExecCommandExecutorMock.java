@@ -33,9 +33,7 @@ public class ExecCommandExecutorMock implements ExecCommandExecutor {
 
     public ExecResult execute(ExecCommand command) {
 
-        lastCommandResult = new ExecResult(command);
-        lastCommandResult.setStdout(new ByteArrayInputStream(STD_OUT_VALUE.getBytes()));
-        lastCommandResult.setExitValue(0);
+        lastCommandResult = new ExecResult(command, new ByteArrayInputStream(STD_OUT_VALUE.getBytes()), null, 0);
         return lastCommandResult;
     }
 }

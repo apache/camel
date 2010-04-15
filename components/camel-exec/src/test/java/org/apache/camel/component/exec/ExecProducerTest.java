@@ -17,6 +17,7 @@
 package org.apache.camel.component.exec;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -79,22 +80,24 @@ public class ExecProducerTest extends AbstractJUnit4SpringContextTests {
         assertEquals(command, execCommandExecutorMock.lastCommandResult.getCommand().getExecutable());
     }
 
+    /**
+     * Tests that the args are set literally.
+     */
     @Test
     @DirtiesContext
     public void testOverrideArgs() {
-        final String[] args = {"-version", "\"classpath:c:/program files/test/\""};
+        final String[] args = {"-version", "classpath:c:/program files/test/"};
         producerTemplate.send(new Processor() {
 
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("noinput");
-                exchange.getIn().setHeader(EXEC_COMMAND_ARGS, args[0] + " " + args[1]);
+                exchange.getIn().setHeader(EXEC_COMMAND_ARGS, Arrays.asList(args));
             }
         });
         List<String> commandArgs = execCommandExecutorMock.lastCommandResult.getCommand().getArgs();
 
         assertEquals(args[0], commandArgs.get(0));
-        String secondArgEscaped = args[1].substring(1, args[1].length() - 1);
-        assertEquals(secondArgEscaped, commandArgs.get(1));
+        assertEquals(args[1], commandArgs.get(1));
     }
 
     @Test
@@ -133,6 +136,21 @@ public class ExecProducerTest extends AbstractJUnit4SpringContextTests {
 
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(notConvertibleToInputStreamBody);
+            }
+        });
+        ExecResult result = e.getIn().getBody(ExecResult.class);
+        assertNotNull(result);
+        assertNull(result.getCommand().getInput());
+    }
+    
+    @Test
+    @DirtiesContext
+    public void testNullInBody() throws IOException {
+        // Null body must also be supported
+        Exchange e = producerTemplate.send(new Processor() {
+
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(null);
             }
         });
         ExecResult result = e.getIn().getBody(ExecResult.class);

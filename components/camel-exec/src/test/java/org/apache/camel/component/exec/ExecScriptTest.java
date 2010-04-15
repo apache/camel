@@ -33,7 +33,6 @@ import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_TIMEOUT;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_STDERR;
-import static org.apache.camel.component.exec.ExecBinding.EXEC_STDOUT;
 import static org.apache.camel.component.exec.ExecEndpoint.NO_TIMEOUT;
 import static org.apache.camel.component.exec.ExecTestUtils.getClasspathResourceFileOrNull;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_IN_STDOUT;
@@ -67,7 +66,7 @@ public class ExecScriptTest extends AbstractJUnit4SpringContextTests {
             String classpathArg = getClasspathArg();
             Exchange exchange = executeScript(scriptFile, NO_TIMEOUT, classpathArg, PRINT_IN_STDOUT);
             if (exchange != null) {
-                String out = (String)exchange.getIn().getHeader(EXEC_STDOUT);
+                String out = (String)exchange.getIn().getBody(String.class);
                 String err = (String)exchange.getIn().getHeader(EXEC_STDERR);
 
                 assertNotNull(out);

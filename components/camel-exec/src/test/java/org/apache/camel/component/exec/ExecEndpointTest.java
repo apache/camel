@@ -157,7 +157,7 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
     @Test
     @DirtiesContext
     public void testCreateEndpointEscapedCommand() throws Exception {
-        String executable = "\"C:/Program Files/test/text.exe\"";
+        String executable = "C:/Program Files/test/text.exe";
         String uri = "exec:" + executable;
 
         ExecEndpoint endpoint = createExecEndpoint(uri);
