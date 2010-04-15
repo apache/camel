@@ -31,6 +31,7 @@
   <description>Camel FTP support</description>
 
   <properties>
+    <camel.osgi.import.before.defaults>com.jcraft.jsch.*;version="[0.1.40,0.1.50)"</camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.file.remote.*</camel.osgi.export.pkg>
   </properties>
 
@@ -55,9 +56,9 @@
     </dependency>
 
     <dependency>
-      <groupId>jsch</groupId> <!-- com.jcraft -->
+      <groupId>com.jcraft</groupId> 
       <artifactId>jsch</artifactId>
-      <version>0.1.40</version>
+      <version>0.1.42</version>
     </dependency>
     <dependency>
       <groupId>commons-net</groupId>
