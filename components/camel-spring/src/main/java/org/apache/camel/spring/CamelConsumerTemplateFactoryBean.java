@@ -28,7 +28,9 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.impl.DefaultConsumerTemplate;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -42,7 +44,9 @@ import org.springframework.context.ApplicationContextAware;
  */
 @XmlRootElement(name = "consumerTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, CamelContextAware, ApplicationContextAware {
+public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, DisposableBean, CamelContextAware, ApplicationContextAware {
+    @XmlTransient
+    private ConsumerTemplate template;
     @XmlAttribute
     private String camelContextId;
     @XmlTransient
@@ -62,16 +66,16 @@ public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements 
     }
 
     public Object getObject() throws Exception {
-        ConsumerTemplate answer = new DefaultConsumerTemplate(camelContext);
+        template = new DefaultConsumerTemplate(camelContext);
 
         // set custom cache size if provided
         if (maximumCacheSize != null) {
-            answer.setMaximumCacheSize(maximumCacheSize);
+            template.setMaximumCacheSize(maximumCacheSize);
         }
 
         // must start it so its ready to use
-        answer.start();
-        return answer;
+        ServiceHelper.startService(template);
+        return template;
     }
 
     public Class getObjectType() {
@@ -79,7 +83,11 @@ public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements 
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
+    }
+
+    public void destroy() throws Exception {
+        ServiceHelper.stopService(template);
     }
 
     // Properties

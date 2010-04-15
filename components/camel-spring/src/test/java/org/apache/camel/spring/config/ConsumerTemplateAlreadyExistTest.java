@@ -43,4 +43,15 @@ public class ConsumerTemplateAlreadyExistTest extends AbstractJUnit38SpringConte
         ConsumerTemplate lookup2 = context.getRegistry().lookup("consumerTemplate", ConsumerTemplate.class);
         assertNull("Should not be able to lookup consumer template", lookup2);
     }
+
+    public void testShouldBeSingleton() {
+        ConsumerTemplate lookup = context.getRegistry().lookup("myConsumerTemplate", ConsumerTemplate.class);
+        assertNotNull("Should lookup producer template", lookup);
+
+        ConsumerTemplate lookup2 = context.getRegistry().lookup("myConsumerTemplate", ConsumerTemplate.class);
+        assertNotNull("Should lookup producer template", lookup);
+
+        assertSame("Should be same instances (singleton)", lookup, lookup2);
+    }
+
 }

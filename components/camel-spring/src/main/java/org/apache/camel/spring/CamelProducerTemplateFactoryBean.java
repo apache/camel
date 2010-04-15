@@ -29,7 +29,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -43,7 +45,9 @@ import org.springframework.context.ApplicationContextAware;
  */
 @XmlRootElement(name = "template")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelProducerTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, CamelContextAware, ApplicationContextAware {
+public class CamelProducerTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, DisposableBean, CamelContextAware, ApplicationContextAware {
+    @XmlTransient
+    private ProducerTemplate template;
     @XmlAttribute(required = false)
     private String defaultEndpoint;
     @XmlAttribute
@@ -65,28 +69,26 @@ public class CamelProducerTemplateFactoryBean extends IdentifiedType implements 
     }
 
     public Object getObject() throws Exception {
-        ProducerTemplate answer;
-
         CamelContext context = getCamelContext();
         if (defaultEndpoint != null) {
             Endpoint endpoint = context.getEndpoint(defaultEndpoint);
             if (endpoint == null) {
                 throw new IllegalArgumentException("No endpoint found for URI: " + defaultEndpoint);
             } else {
-                answer = new DefaultProducerTemplate(context, endpoint);
+                template = new DefaultProducerTemplate(context, endpoint);
             }
         } else {
-            answer = new DefaultProducerTemplate(context);
+            template = new DefaultProducerTemplate(context);
         }
 
         // set custom cache size if provided
         if (maximumCacheSize != null) {
-            answer.setMaximumCacheSize(maximumCacheSize);
+            template.setMaximumCacheSize(maximumCacheSize);
         }
 
         // must start it so its ready to use
-        answer.start();
-        return answer;
+        ServiceHelper.startService(template);
+        return template;
     }
 
     public Class getObjectType() {
@@ -94,7 +96,11 @@ public class CamelProducerTemplateFactoryBean extends IdentifiedType implements 
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
+    }
+
+    public void destroy() throws Exception {
+        ServiceHelper.stopService(template);
     }
 
     // Properties
@@ -129,4 +135,5 @@ public class CamelProducerTemplateFactoryBean extends IdentifiedType implements 
     public void setMaximumCacheSize(Integer maximumCacheSize) {
         this.maximumCacheSize = maximumCacheSize;
     }
+
 }

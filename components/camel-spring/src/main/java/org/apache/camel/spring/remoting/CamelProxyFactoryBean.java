@@ -23,6 +23,7 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -71,18 +72,16 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
         }
 
         try {
-            this.producer = endpoint.createProducer();
-            this.producer.start();
-            this.serviceProxy = ProxyHelper.createProxy(endpoint, producer, getServiceInterface());
+            producer = endpoint.createProducer();
+            ServiceHelper.startService(producer);
+            serviceProxy = ProxyHelper.createProxy(endpoint, producer, getServiceInterface());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(endpoint, e);
         }
     }
 
     public void destroy() throws Exception {
-        this.producer.stop();
-        this.producer = null;
-        this.serviceProxy = null;
+        ServiceHelper.stopService(producer);
     }
 
     public Class getServiceInterface() {
