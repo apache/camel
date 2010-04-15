@@ -17,7 +17,9 @@ To run the example, you need to start up the server by typing
 
 To stop the server hit ctrl + c
 
-Then you can use the script in the client directory to send the request and check the response.
+Then you can use the script in the client directory to send the request and check the response,
+or use browser to access upper urls with the user/password 
+("jim/jimspassword" with the admin and user role  or "rob/robspassword" with user role).
 
 To use log4j as the logging framework add this to the pom.xml:
     <dependency>
