@@ -41,19 +41,24 @@ public class FileInputStreamCache extends InputStream implements StreamCache {
     @Override
     public void close() {
         try {
-            getInputStream().close();
+            if (isSteamOpened()) {
+                getInputStream().close();
+            }
+            // when close the FileInputStreamCache we should also close the cachedOutputStream
             if (cachedOutputStream != null) {
                 cachedOutputStream.close();
             }
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
-        } 
+        }
     }
 
     @Override
     public void reset() {
         try {
-            getInputStream().close();
+            if (isSteamOpened()) {
+                getInputStream().close();
+            }
             // reset by creating a new stream based on the file
             stream = new FileInputStream(file);
         } catch (Exception e) {
@@ -77,6 +82,14 @@ public class FileInputStreamCache extends InputStream implements StreamCache {
 
     protected InputStream getInputStream() {
         return stream;
+    }
+    
+    private boolean isSteamOpened() {
+        if (stream != null && stream instanceof FileInputStream) {
+            return ((FileInputStream) stream).getChannel().isOpen();            
+        } else {
+            return stream != null;
+        }
     }
 
 }

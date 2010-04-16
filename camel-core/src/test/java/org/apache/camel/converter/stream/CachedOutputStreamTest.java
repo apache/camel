@@ -78,8 +78,6 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         ((InputStream)cache).close();
         assertEquals("Cached a wrong file", temp, TEST_STRING);
 
-        exchange.getUnitOfWork().done(exchange);
-
         try {
             cache.reset();
             // The stream is closed, so the temp file is gone.
@@ -110,7 +108,6 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         temp = toString((InputStream)cache);
         assertEquals("Cached a wrong file", temp, TEST_STRING);
         
-        exchange.getUnitOfWork().done(exchange);
         ((InputStream)cache).close();
         
         files = file.list();
@@ -131,8 +128,6 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertTrue("Should get the InputStreamCache", cache instanceof InputStreamCache);
         String temp = IOConverter.toString((InputStream)cache, null);
         assertEquals("Cached a wrong file", temp, TEST_STRING);
-
-        exchange.getUnitOfWork().done(exchange);
     }
 
     public void testCacheStreamToMemoryAsDiskIsdisabled() throws IOException {

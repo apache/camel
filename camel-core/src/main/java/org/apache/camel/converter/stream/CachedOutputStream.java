@@ -68,37 +68,7 @@ public class CachedOutputStream extends OutputStream {
         if (dir != null) {
             this.outputDir = exchange.getContext().getTypeConverter().convertTo(File.class, dir);
         }
-
-        // add on completion so we can cleanup after the exchange is done such as deleting temporary files
-        exchange.addOnCompletion(new SynchronizationAdapter() {
-            @Override
-            public void onDone(Exchange exchange) {
-                try {
-                    // close the stream and FileInputStreamCache
-                    close();
-                    for (FileInputStreamCache cache : fileInputStreamCaches) {
-                        cache.close();
-                    }
-                    // cleanup temporary file
-                    if (tempFile != null) {
-                        boolean deleted = tempFile.delete();
-                        if (!deleted) {
-                            LOG.warn("Cannot delete temporary cache file: " + tempFile);
-                        } else if (LOG.isTraceEnabled()) {
-                            LOG.trace("Deleted temporary cache file: " + tempFile);
-                        }
-                        tempFile = null;
-                    }
-                } catch (Exception e) {
-                    LOG.warn("Error deleting temporary cache file: " + tempFile, e);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "OnCompletion[CachedOutputStream]";
-            }
-        });
+        
     }
 
     public void flush() throws IOException {
@@ -107,6 +77,20 @@ public class CachedOutputStream extends OutputStream {
 
     public void close() throws IOException {
         currentStream.close();
+        try {
+            // cleanup temporary file
+            if (tempFile != null) {
+                boolean deleted = tempFile.delete();
+                if (!deleted) {
+                    LOG.warn("Cannot delete temporary cache file: " + tempFile);
+                } else if (LOG.isTraceEnabled()) {
+                    LOG.trace("Deleted temporary cache file: " + tempFile);
+                }
+                tempFile = null;
+            }
+        } catch (Exception e) {
+            LOG.warn("Error deleting temporary cache file: " + tempFile, e);
+        }
     }
 
     public boolean equals(Object obj) {
