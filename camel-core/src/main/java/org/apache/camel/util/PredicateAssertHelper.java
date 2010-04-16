@@ -16,7 +16,7 @@
  */
 package org.apache.camel.util;
 
-import org.apache.camel.BinaryEvaluablePredicate;
+import org.apache.camel.BinaryPredicate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 
@@ -32,9 +32,9 @@ public final class PredicateAssertHelper {
     }
 
     public static void assertMatches(Predicate predicate, String text, Exchange exchange) {
-        if (predicate instanceof BinaryEvaluablePredicate) {
+        if (predicate instanceof BinaryPredicate) {
             // special for binary evaluable as we can get more detailed information
-            BinaryEvaluablePredicate eval = (BinaryEvaluablePredicate) predicate;
+            BinaryPredicate eval = (BinaryPredicate) predicate;
             if (!eval.matches(exchange)) {
                 String evalText = eval.getLeftValue() + " " + eval.getOperator() + " " + eval.getRightValue();
                 if (text == null) {

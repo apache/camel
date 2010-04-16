@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.BinaryEvaluablePredicate;
+import org.apache.camel.BinaryPredicate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -28,7 +28,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  *
  * @version $Revision$
  */
-public abstract class BinaryPredicateSupport implements BinaryEvaluablePredicate {
+public abstract class BinaryPredicateSupport implements BinaryPredicate {
 
     private final Expression left;
     private final Expression right;

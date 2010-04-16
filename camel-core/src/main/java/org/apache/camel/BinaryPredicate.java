@@ -28,7 +28,7 @@ package org.apache.camel;
  *
  * @version $Revision$
  */
-public interface BinaryEvaluablePredicate extends Predicate {
+public interface BinaryPredicate extends Predicate {
 
     /**
      * Gets the operator
