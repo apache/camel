@@ -16,20 +16,24 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.BinaryEvaluablePredicate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A useful base class for {@link Predicate} implementations
- * 
+ *
  * @version $Revision$
  */
-public abstract class BinaryPredicateSupport implements Predicate {
+public abstract class BinaryPredicateSupport implements BinaryEvaluablePredicate {
 
     private final Expression left;
     private final Expression right;
+    private Object leftValue;
+    private Object rightValue;
 
     protected BinaryPredicateSupport(Expression left, Expression right) {
         notNull(left, "left");
@@ -45,8 +49,8 @@ public abstract class BinaryPredicateSupport implements Predicate {
     }
 
     public boolean matches(Exchange exchange) {
-        Object leftValue = left.evaluate(exchange, Object.class);
-        Object rightValue = right.evaluate(exchange, Object.class);
+        leftValue = left.evaluate(exchange, Object.class);
+        rightValue = right.evaluate(exchange, Object.class);
         return matches(exchange, leftValue, rightValue);
     }
 
@@ -54,4 +58,23 @@ public abstract class BinaryPredicateSupport implements Predicate {
 
     protected abstract String getOperationText();
 
+    public Expression getRight() {
+        return right;
+    }
+
+    public Expression getLeft() {
+        return left;
+    }
+
+    public String getOperator() {
+        return getOperationText();
+    }
+
+    public Object getRightValue() {
+        return rightValue;
+    }
+
+    public Object getLeftValue() {
+        return leftValue;
+    }
 }

@@ -483,7 +483,7 @@ public class MockEndpointTest extends ContextTestSupport {
         }
     }
 
-    public void testMessageIndex() throws Exception {
+    public void testMessageIndexIsEqualTo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.message(0).header("foo").isEqualTo(123);
@@ -496,7 +496,44 @@ public class MockEndpointTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
             fail("Should have thrown exception");
         } catch (AssertionError e) {
-            assertEquals("Assertion error at index 1 on mock mock://result with predicate: header(bar) == 444 on Exchange[Message: Hello World]", e.getMessage());
+            assertEquals("Assertion error at index 1 on mock mock://result with predicate: header(bar) == 444"
+                    + " evaluated as: 234 == 444 on Exchange[Message: Hello World]", e.getMessage());
+        }
+    }
+
+    public void testPredicateEvaluationIsNull() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.message(0).header("foo").isNotNull();
+        mock.message(1).header("bar").isNull();
+
+        template.sendBodyAndHeader("direct:a", "Hello World", "foo", 123);
+        template.sendBodyAndHeader("direct:a", "Hello World", "bar", 234);
+
+        try {
+            assertMockEndpointsSatisfied();
+            fail("Should have thrown exception");
+        } catch (AssertionError e) {
+            assertEquals("Assertion error at index 1 on mock mock://result with predicate: header(bar) is null"
+                    + " evaluated as: 234 is null on Exchange[Message: Hello World]", e.getMessage());
+        }
+    }
+
+    public void testPredicateEvaluationIsInstanceOf() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.message(0).header("foo").isNotNull();
+        mock.message(1).header("bar").isInstanceOf(String.class);
+
+        template.sendBodyAndHeader("direct:a", "Hello World", "foo", 123);
+        template.sendBodyAndHeader("direct:a", "Hello World", "bar", 234);
+
+        try {
+            assertMockEndpointsSatisfied();
+            fail("Should have thrown exception");
+        } catch (AssertionError e) {
+            assertEquals("Assertion error at index 1 on mock mock://result with predicate: header(bar) instanceof"
+                    + " java.lang.String on Exchange[Message: Hello World]", e.getMessage());
         }
     }
 
