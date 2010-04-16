@@ -111,7 +111,7 @@ public final class ObjectHelper {
     public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
 
         // prefer to NOT coerce to String so use the type which is not String
-        // for example if we are comparing String vs Integer then prefer to coerce to Interger
+        // for example if we are comparing String vs Integer then prefer to coerce to Integer
         // as all types can be converted to String which does not work well for comparison
         // as eg "10" < 6 would return true, where as 10 < 6 will return false.
         // if they are both String then it doesn't matter
@@ -262,7 +262,7 @@ public final class ObjectHelper {
      * Asserts whether the value is <b>not</b> <tt>null</tt>
      *
      * @param value  the value to test
-     * @param on     additional description to indicate where this problem occured (appended as toString())
+     * @param on     additional description to indicate where this problem occurred (appended as toString())
      * @param name   the key that resolved the value
      * @throws IllegalArgumentException is thrown if assertion fails
      */

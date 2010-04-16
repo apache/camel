@@ -483,6 +483,23 @@ public class MockEndpointTest extends ContextTestSupport {
         }
     }
 
+    public void testMessageIndex() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.message(0).header("foo").isEqualTo(123);
+        mock.message(1).header("bar").isEqualTo(444);
+
+        template.sendBodyAndHeader("direct:a", "Hello World", "foo", 123);
+        template.sendBodyAndHeader("direct:a", "Hello World", "bar", 234);
+
+        try {
+            assertMockEndpointsSatisfied();
+            fail("Should have thrown exception");
+        } catch (AssertionError e) {
+            assertEquals("Assertion error at index 1 on mock mock://result with predicate: header(bar) == 444 on Exchange[Message: Hello World]", e.getMessage());
+        }
+    }
+
     protected void sendMessages(int... counters) {
         for (int counter : counters) {
             template.sendBodyAndHeader("direct:a", createTestMessage(counter), "counter", counter);

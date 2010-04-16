@@ -66,7 +66,7 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
      */
     protected void applyAssertionOn(MockEndpoint endpoint, int index, Exchange exchange) {
         for (Predicate predicate : predicates) {
-            PredicateAssertHelper.assertMatches(predicate, endpoint.getEndpointUri() + " ", exchange);
+            PredicateAssertHelper.assertMatches(predicate, "Assertion error at index " + index + " on mock " + endpoint.getEndpointUri() + " with predicate: ", exchange);
         }
     }
 
