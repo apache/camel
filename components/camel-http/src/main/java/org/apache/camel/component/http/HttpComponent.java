@@ -17,12 +17,15 @@
 package org.apache.camel.component.http;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -66,7 +69,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      * @param parameters the map of parameters 
      * @return the configurer
      */
-    protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters) {
+    protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, Set<AuthMethod> authMethods) {
         // prefer to use endpoint configured over component configured
         HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
         if (configurer == null) {
@@ -89,11 +92,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             String authPassword = getAndRemoveParameter(parameters, "authPassword", String.class);
             String authDomain = getAndRemoveParameter(parameters, "authDomain", String.class);
             String authHost = getAndRemoveParameter(parameters, "authHost", String.class);
-            configurer = configureAuth(configurer, authMethod, authUsername, authPassword, authDomain, authHost);
+            configurer = configureAuth(configurer, authMethod, authUsername, authPassword, authDomain, authHost, authMethods);
         } else if (httpConfiguration != null) {
             // or fallback to use component configuration
             configurer = configureAuth(configurer, httpConfiguration.getAuthMethod(), httpConfiguration.getAuthUsername(),
-                    httpConfiguration.getAuthPassword(), httpConfiguration.getAuthDomain(), httpConfiguration.getAuthHost());
+                    httpConfiguration.getAuthPassword(), httpConfiguration.getAuthDomain(), httpConfiguration.getAuthHost(), authMethods);
         }
 
         // proxy authentication can be endpoint configured
@@ -107,11 +110,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             String proxyAuthPassword = getAndRemoveParameter(parameters, "proxyAuthPassword", String.class);
             String proxyAuthDomain = getAndRemoveParameter(parameters, "proxyAuthDomain", String.class);
             String proxyAuthHost = getAndRemoveParameter(parameters, "proxyAuthHost", String.class);
-            configurer = configureProxyAuth(configurer, proxyAuthMethod, proxyAuthUsername, proxyAuthPassword, proxyAuthDomain, proxyAuthHost);
+            configurer = configureProxyAuth(configurer, proxyAuthMethod, proxyAuthUsername, proxyAuthPassword, proxyAuthDomain, proxyAuthHost, authMethods);
         } else if (httpConfiguration != null) {
             // or fallback to use component configuration
             configurer = configureProxyAuth(configurer, httpConfiguration.getProxyAuthMethod(), httpConfiguration.getProxyAuthUsername(),
-                    httpConfiguration.getProxyAuthPassword(), httpConfiguration.getProxyAuthDomain(), httpConfiguration.getProxyAuthHost());
+                    httpConfiguration.getProxyAuthPassword(), httpConfiguration.getProxyAuthDomain(), httpConfiguration.getProxyAuthHost(), authMethods);
         }
 
         return configurer;
@@ -122,10 +125,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      *
      * @return configurer to used
      */
-    protected HttpClientConfigurer configureAuth(HttpClientConfigurer configurer, AuthMethod authMethod, String username, String password, String domain, String host) {
+    protected HttpClientConfigurer configureAuth(HttpClientConfigurer configurer, AuthMethod authMethod, String username,
+                                                 String password, String domain, String host, Set<AuthMethod> authMethods) {
         if (authMethod == null) {
             return configurer;
         }
+        authMethods.add(authMethod);
 
         ObjectHelper.notNull(username, "authUsername");
         ObjectHelper.notNull(password, "authPassword");
@@ -134,7 +139,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new BasicAuthenticationHttpClientConfigurer(false, username, password));
         } else if (authMethod == AuthMethod.NTLM) {
-            // domain is mandatory for NTML
+            // domain is mandatory for NTLM
             ObjectHelper.notNull(domain, "authDomain");
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new NTLMAuthenticationHttpClientConfigurer(false, username, password, domain, host));
@@ -148,10 +153,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      *
      * @return configurer to used
      */
-    protected HttpClientConfigurer configureProxyAuth(HttpClientConfigurer configurer, AuthMethod authMethod, String username, String password, String domain, String host) {
+    protected HttpClientConfigurer configureProxyAuth(HttpClientConfigurer configurer, AuthMethod authMethod, String username,
+                                                      String password, String domain, String host, Set<AuthMethod> authMethods) {
         if (authMethod == null) {
             return configurer;
         }
+        authMethods.add(authMethod);
 
         ObjectHelper.notNull(username, "proxyAuthUsername");
         ObjectHelper.notNull(password, "proxyAuthPassword");
@@ -190,8 +197,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // validate that we could resolve all httpClient. parameters as this component is lenient
         validateParameters(uri, parameters, "httpClient.");       
         
-        // create the configurer to use for this endpoint
-        HttpClientConfigurer configurer = createHttpClientConfigurer(parameters);
+        // create the configurer to use for this endpoint (authMethods contains the used methods created by the configurer)
+        final Set<AuthMethod> authMethods = new HashSet<AuthMethod>();
+        HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
         
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(uri), CastUtils.cast(parameters));
@@ -238,13 +246,19 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         if (authMethodPriority != null) {
             endpoint.setAuthMethodPriority(authMethodPriority);
-        } else if (httpConfiguration != null) {
+        } else if (httpConfiguration != null && httpConfiguration.getAuthMethodPriority() != null) {
             endpoint.setAuthMethodPriority(httpConfiguration.getAuthMethodPriority());
+        } else {
+            // no explicit auth method priority configured, so use convention over configuration
+            // and set priority based on auth method
+            if (!authMethods.isEmpty()) {
+                authMethodPriority = CollectionHelper.collectionAsCommaDelimitedString(authMethods);
+                endpoint.setAuthMethodPriority(authMethodPriority);
+            }
         }
 
         setProperties(endpoint, parameters);
         return endpoint;
-   
     }
     
     @Override

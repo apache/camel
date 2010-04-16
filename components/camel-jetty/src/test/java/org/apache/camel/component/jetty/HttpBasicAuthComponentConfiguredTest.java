@@ -68,7 +68,7 @@ public class HttpBasicAuthComponentConfiguredTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHttpBaiscAuth() throws Exception {
+    public void testHttpBasicAuth() throws Exception {
         String out = template.requestBody("http://localhost:9080/test", "Hello World", String.class);
         assertEquals("Bye World", out);
     }

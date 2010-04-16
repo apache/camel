@@ -74,7 +74,7 @@ public class HttpBasicAuthTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHttpBaiscAuthInvalidPassword() throws Exception {
+    public void testHttpBasicAuthInvalidPassword() throws Exception {
         try {
             template.requestBody("http://localhost:9080/test?authMethod=Basic&authUsername=donald&authPassword=sorry", "Hello World", String.class);
         } catch (RuntimeCamelException e) {
