@@ -542,14 +542,24 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 log.debug("Completion timeout triggered for correlation key: " + key);
             }
 
-            // get the aggregated exchange
-            Exchange answer = aggregationRepository.get(camelContext, key);
-
-            // indicate it was completed by timeout
-            answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
-
             try {
                 lock.lock();
+
+                // double check that its not already in progress
+                boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
+                if (inProgress) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Aggregated exchange with id: " + exchangeId + " is already in progress.");
+                    }
+                    return;
+                }
+
+                // get the aggregated exchange
+                Exchange answer = aggregationRepository.get(camelContext, key);
+
+                // indicate it was completed by timeout
+                answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
+
                 onCompletion(key, answer, true);
             } finally {
                 lock.unlock();

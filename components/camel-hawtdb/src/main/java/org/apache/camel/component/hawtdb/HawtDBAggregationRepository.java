@@ -47,7 +47,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
     private String persistentFileName;
     private String repositoryName;
     private Integer bufferSize;
-    private boolean sync;
+    private boolean sync = true;
     private boolean returnOldExchange;
     private HawtDBCamelMarshaller<K> marshaller = new HawtDBCamelMarshaller<K>();
     private long recoveryInterval = 5000;
