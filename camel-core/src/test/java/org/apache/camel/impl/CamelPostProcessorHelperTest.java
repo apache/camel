@@ -59,7 +59,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         MyConsumeBean my = new MyConsumeBean();
         Method method = my.getClass().getMethod("consumeSomething", String.class);
-        helper.consumerInjection(method, my);
+        helper.consumerInjection(method, my, "foo");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -79,7 +79,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class type : parameterTypes) {
             String propertyName = ObjectHelper.getPropertyName(method);
-            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName);
+            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
 
@@ -102,7 +102,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class type : parameterTypes) {
             String propertyName = ObjectHelper.getPropertyName(method);
-            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName);
+            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
 
@@ -129,7 +129,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class type : parameterTypes) {
             String propertyName = ObjectHelper.getPropertyName(method);
-            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName);
+            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
 
@@ -155,7 +155,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
         Class<?> type = field.getType();
         String propertyName = "producer";
-        Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName);
+        Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
 
         field.set(bean, value);
 
@@ -179,7 +179,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
         Class<?> type = field.getType();
         String propertyName = "producer";
-        Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName);
+        Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
 
         field.set(bean, value);
 
@@ -205,7 +205,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         String propertyName = "producer";
 
         try {
-            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName);
+            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             fail("Should throw exception");
         } catch (IllegalArgumentException e) {
             assertEquals("registry entry called unknown of type org.apache.camel.Endpoint must be specified", e.getMessage());
@@ -223,7 +223,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         String propertyName = "producer";
 
         try {
-            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName);
+            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             fail("Should throw exception");
         } catch (ResolveEndpointFailedException e) {
             assertEquals("Failed to resolve endpoint: xxx://foo due to: No component found with scheme: xxx", e.getMessage());
@@ -241,7 +241,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         String propertyName = "producer";
 
         try {
-            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName);
+            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             fail("Should throw exception");
         } catch (IllegalArgumentException e) {
             assertEquals("Both uri and name is provided, only either one is allowed: uri=seda:foo, ref=myEndpoint", e.getMessage());

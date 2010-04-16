@@ -14,22 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.spring.config;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Produce;
+import org.apache.camel.Producer;
 
 /**
- * Used for defining if a given class is singleton or not.
- * If the class is a Singleton, then a single instance will be shared. Because the class is shared, it
- * should be treated as an immutable and be thread safe.
- *
  * @version $Revision$
  */
-public interface IsSingleton {
+public class MyProduceBean {
 
-    /**
-     * Whether this class supports being singleton or not.
-     *  
-     * @return <tt>true</tt> to be a single shared instance, <tt>false</tt> to create new instances.
-     */
-    boolean isSingleton();
+    @Produce(uri = "direct:start")
+    private Producer producer;
 
+    public void testDoSomething(String body) throws Exception {
+        Exchange exchange = producer.createExchange();
+        exchange.getIn().setBody(body);
+        producer.process(exchange);
+    }
 }

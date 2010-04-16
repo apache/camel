@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.guice.impl;
 
 import java.lang.reflect.Field;
@@ -47,22 +46,22 @@ public class EndpointInjector extends CamelPostProcessorHelper implements
         String injectionPointName = field.getName();
         String uri = inject.uri();
         String endpointRef = inject.ref();
-        return getInjectionValue(type, uri, endpointRef, injectionPointName);
+
+        return getInjectionValue(type, uri, endpointRef, injectionPointName, null, null);
     }
 
-    public Object provide(EndpointInject inject, TypeLiteral<?> typeLiteral, Method method, Class<?> aClass,
-                          int index) {
-
+    public Object provide(EndpointInject inject, TypeLiteral<?> typeLiteral, Method method, Class<?> aClass, int index) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         Class<?> type = parameterTypes[index];
         String injectionPointName = ObjectHelper.getPropertyName(method);
         String endpointRef = inject.ref();
         String uri = inject.uri();
 
-        return getInjectionValue(type, uri, endpointRef, injectionPointName);
+        return getInjectionValue(type, uri, endpointRef, injectionPointName, null, null);
     }
 
-    public boolean isNullParameterAllowed(EndpointInject endpointInject, Method method, Class<?> aClass, int i) {
+    public boolean isNullParameterAllowed(EndpointInject endpointInject, Method method, Class<?> aClass, int index) {
         return false;
     }
+
 }

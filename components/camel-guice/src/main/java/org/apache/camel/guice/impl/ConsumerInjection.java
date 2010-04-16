@@ -31,8 +31,9 @@ import org.guiceyfruit.support.MethodHandler;
  * @version $Revision$
  */
 public class ConsumerInjection<I> extends CamelPostProcessorHelper implements MethodHandler<I, Consume> {
+
     public void afterInjection(I injectee, Consume consume, Method method) throws InvocationTargetException, IllegalAccessException {
-        consumerInjection(method, injectee);
+        consumerInjection(method, injectee, null);
     }
 
     @Override
@@ -47,4 +48,5 @@ public class ConsumerInjection<I> extends CamelPostProcessorHelper implements Me
     public void setCamelContext(CamelContext camelContext) {
         super.setCamelContext(camelContext);
     }
+
 }

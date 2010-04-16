@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.guice.impl;
 
 import java.lang.reflect.Field;
@@ -41,7 +40,7 @@ public class ProduceInjector extends CamelPostProcessorHelper implements Annotat
         super(camelContext);
     }
 
-    public boolean isNullParameterAllowed(Produce produce, Method method, Class<?> aClass, int i) {
+    public boolean isNullParameterAllowed(Produce produce, Method method, Class<?> aClass, int index) {
         return false;
     }
 
@@ -51,17 +50,17 @@ public class ProduceInjector extends CamelPostProcessorHelper implements Annotat
         String endpointRef = inject.ref();
         String uri = inject.uri();
 
-        return getInjectionValue(type, uri, endpointRef, injectionPointName);
+        return getInjectionValue(type, uri, endpointRef, injectionPointName, null, null);
     }
 
-    public Object provide(Produce inject, TypeLiteral<?> typeLiteral, Method method, Class<?> aClass,
-                          int index) {
-
+    public Object provide(Produce inject, TypeLiteral<?> typeLiteral, Method method, Class<?> aClass, int index) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         Class<?> type = parameterTypes[index];
         String injectionPointName = ObjectHelper.getPropertyName(method);
         String endpointRef = inject.ref();
         String uri = inject.uri();
-        return getInjectionValue(type, uri, endpointRef, injectionPointName);
+
+        return getInjectionValue(type, uri, endpointRef, injectionPointName, null, null);
     }
+
 }

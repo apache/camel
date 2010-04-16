@@ -17,7 +17,6 @@
 package org.apache.camel.impl;
 
 import java.lang.reflect.Method;
-
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
@@ -26,6 +25,7 @@ import org.apache.camel.Consume;
 import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -35,6 +35,7 @@ import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -78,15 +79,15 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         return true;
     }
 
-    public void consumerInjection(Method method, Object bean) {
+    public void consumerInjection(Method method, Object bean, String beanName) {
         Consume consume = method.getAnnotation(Consume.class);
         if (consume != null && matchContext(consume.context())) {
             LOG.info("Creating a consumer for: " + consume);
-            subscribeMethod(method, bean, consume.uri(), consume.ref());
+            subscribeMethod(method, bean, beanName, consume.uri(), consume.ref());
         }
     }
 
-    public void subscribeMethod(Method method, Object bean, String endpointUri, String endpointName) {
+    public void subscribeMethod(Method method, Object bean, String beanName, String endpointUri, String endpointName) {
         // lets bind this method to a listener
         String injectionPointName = method.getName();
         Endpoint endpoint = getEndpointInjection(endpointUri, endpointName, injectionPointName, true);
@@ -97,7 +98,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Created processor: " + processor + " for consumer: " + consumer);
                 }
-                startService(consumer);
+                startService(consumer, bean, beanName);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
@@ -107,8 +108,15 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     /**
      * Stats the given service
      */
-    protected void startService(Service service) throws Exception {
-        getCamelContext().addService(service);
+    protected void startService(Service service, Object bean, String beanName) throws Exception {
+        if (isSingleton(bean, beanName)) {
+            getCamelContext().addService(service);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Service is not singleton so you must remember to stop it manually " + service);
+            }
+            ServiceHelper.startService(service);
+        }
     }
 
     /**
@@ -129,7 +137,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      * Creates the object to be injected for an {@link org.apache.camel.EndpointInject} or {@link org.apache.camel.Produce} injection point
      */
     @SuppressWarnings("unchecked")
-    public Object getInjectionValue(Class<?> type, String endpointUri, String endpointRef, String injectionPointName) {
+    public Object getInjectionValue(Class<?> type, String endpointUri, String endpointRef, String injectionPointName,
+                                    Object bean, String beanName) {
         if (type.isAssignableFrom(ProducerTemplate.class)) {
             return createInjectionProducerTemplate(endpointUri, endpointRef, injectionPointName);
         } else if (type.isAssignableFrom(ConsumerTemplate.class)) {
@@ -140,9 +149,9 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                 if (type.isInstance(endpoint)) {
                     return endpoint;
                 } else if (type.isAssignableFrom(Producer.class)) {
-                    return createInjectionProducer(endpoint);
+                    return createInjectionProducer(endpoint, bean, beanName);
                 } else if (type.isAssignableFrom(PollingConsumer.class)) {
-                    return createInjectionPollingConsumer(endpoint);
+                    return createInjectionPollingConsumer(endpoint, bean, beanName);
                 } else if (type.isInterface()) {
                     // lets create a proxy
                     try {
@@ -192,10 +201,10 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     /**
      * Factory method to create a started {@link org.apache.camel.PollingConsumer} to be injected into a POJO
      */
-    protected PollingConsumer createInjectionPollingConsumer(Endpoint endpoint) {
+    protected PollingConsumer createInjectionPollingConsumer(Endpoint endpoint, Object bean, String beanName) {
         try {
             PollingConsumer pollingConsumer = endpoint.createPollingConsumer();
-            startService(pollingConsumer);
+            startService(pollingConsumer, bean, beanName);
             return pollingConsumer;
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -205,10 +214,10 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     /**
      * A Factory method to create a started {@link org.apache.camel.Producer} to be injected into a POJO
      */
-    protected Producer createInjectionProducer(Endpoint endpoint) {
+    protected Producer createInjectionProducer(Endpoint endpoint, Object bean, String beanName) {
         try {
             Producer producer = endpoint.createProducer();
-            startService(producer);
+            startService(producer, bean, beanName);
             return producer;
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -217,5 +226,19 @@ public class CamelPostProcessorHelper implements CamelContextAware {
 
     protected RuntimeException createProxyInstantiationRuntimeException(Class<?> type, Endpoint endpoint, Exception e) {
         return new ProxyInstantiationException(type, endpoint, e);
+    }
+
+    /**
+     * Implementations can override this method to determine if the bean is singleton.
+     *
+     * @param bean the bean
+     * @return <tt>true</tt> if its singleton scoped, for prototype scoped <tt>false</tt> is returned.
+     */
+    protected boolean isSingleton(Object bean, String beanName) {
+        if (bean instanceof IsSingleton) {
+            IsSingleton singleton = (IsSingleton) bean;
+            return singleton.isSingleton();
+        }
+        return true;
     }
 }
