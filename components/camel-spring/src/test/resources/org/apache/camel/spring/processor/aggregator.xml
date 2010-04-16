@@ -55,7 +55,7 @@
                     <simple>header.cheese</simple>
                 </correlationExpression>
                 <completionPredicate>
-                    <simple>${header.aggregated} == 5</simple>
+                    <simple>${header.bar} == 'viper bar'</simple>
                 </completionPredicate>
                 <to uri="mock:result"/>
             </aggregate>

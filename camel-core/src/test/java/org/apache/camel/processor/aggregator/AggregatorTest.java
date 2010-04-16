@@ -51,7 +51,7 @@ public class AggregatorTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(1);
         Map headers = new HashMap();
         headers.put("cheese", 123);
-        headers.put("aggregated", 5);
+        headers.put("bar", "viper bar");
 
         template.sendBodyAndHeaders("direct:predicate", "test", headers);
         resultEndpoint.assertIsSatisfied();
@@ -88,9 +88,8 @@ public class AggregatorTest extends ContextTestSupport {
                         .to("mock:result");
 
                 // in this sample we aggregate using our own strategy with a completion predicate
-                // stating that the aggregated header is equal to 5.
                 from("direct:predicate")
-                    .aggregate(header("cheese"), new MyAggregationStrategy()).completionPredicate(header("aggregated").isEqualTo(5))
+                    .aggregate(header("cheese"), new MyAggregationStrategy()).completionPredicate(header("bar").isEqualTo("viper bar"))
                         .to("mock:result");
                 // END SNIPPET: ex
             }
