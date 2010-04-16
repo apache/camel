@@ -17,7 +17,7 @@
 package org.apache.camel.component.http;
 
 import java.net.URI;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -198,7 +198,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         validateParameters(uri, parameters, "httpClient.");       
         
         // create the configurer to use for this endpoint (authMethods contains the used methods created by the configurer)
-        final Set<AuthMethod> authMethods = new HashSet<AuthMethod>();
+        final Set<AuthMethod> authMethods = new LinkedHashSet<AuthMethod>();
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
         
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options

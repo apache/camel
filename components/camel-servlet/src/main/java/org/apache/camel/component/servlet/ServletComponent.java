@@ -17,9 +17,12 @@
 package org.apache.camel.component.servlet;
 
 import java.net.URI;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.http.AuthMethod;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpClientConfigurer;
@@ -63,7 +66,8 @@ public class ServletComponent extends HttpComponent {
         IntrospectionSupport.setProperties(params, parameters, "httpClient.");
         
         // create the configurer to use for this endpoint
-        HttpClientConfigurer configurer = createHttpClientConfigurer(parameters);
+        final Set<AuthMethod> authMethods = new LinkedHashSet<AuthMethod>();
+        HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
 
         // must extract well known parameters before we create the endpoint
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
