@@ -37,21 +37,13 @@ public class AggregateParallelProcessingTest extends ContextTestSupport {
                 from("direct:start")
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
                         .eagerCheckCompletion().completionPredicate(body().isEqualTo("END")).parallelProcessing()
-                        .to("direct:cool");
-
-                from("direct:cool")
-                    .to("mock:cool")
-                    .choice()
-                        .when(body().contains("Camel")).to("mock:result")
-                        .when(body().contains("Donkey")).delay(2000).to("mock:result");
+                        .to("mock:result");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:cool").expectedBodiesReceivedInAnyOrder("B+Camel+END", "A+Donkey+END");
-        getMockEndpoint("mock:result").expectedBodiesReceived("B+Camel+END", "A+Donkey+END");
+        getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("A+Donkey+END", "B+Camel+END");
 
-        // donkey is maybe first but Camel will arrive first at mock
         template.sendBodyAndHeader("direct:start", "A", "id", 1);
         template.sendBodyAndHeader("direct:start", "Donkey", "id", 1);
         template.sendBodyAndHeader("direct:start", "END", "id", 1);
@@ -70,21 +62,13 @@ public class AggregateParallelProcessingTest extends ContextTestSupport {
                 from("direct:start")
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
                         .eagerCheckCompletion().completionPredicate(body().isEqualTo("END"))
-                        .to("direct:cool");
-
-                from("direct:cool")
-                    .to("mock:cool")
-                    .choice()
-                        .when(body().contains("Camel")).to("mock:result")
-                        .when(body().contains("Donkey")).delay(2000).to("mock:result");
+                        .to("mock:result");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:cool").expectedBodiesReceived("A+Donkey+END", "B+Camel+END");
         getMockEndpoint("mock:result").expectedBodiesReceived("A+Donkey+END", "B+Camel+END");
 
-        // donkey is first as we do NOT run in parallel
         template.sendBodyAndHeader("direct:start", "A", "id", 1);
         template.sendBodyAndHeader("direct:start", "Donkey", "id", 1);
         template.sendBodyAndHeader("direct:start", "END", "id", 1);
