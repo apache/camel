@@ -21,12 +21,15 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
+import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
@@ -36,8 +39,9 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
 public class VelocityTest extends OSGiIntegrationTestSupport {
+    private static final transient Log LOG = LogFactory.getLog(VelocityTest.class);
     @Test
-    public void testReceivesFooResponse() throws Exception {
+    public void testReceivesFooResponse() throws Exception {        
         assertRespondsWith("foo", "<hello>foo</hello>");
     }
 
@@ -78,10 +82,10 @@ public class VelocityTest extends OSGiIntegrationTestSupport {
             
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
-                         artifactId("features").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-osgi", "camel-spring", "camel-test", "camel-velocity"),
+                         artifactId("apache-camel").versionAsInProject().type("xml/features").versionAsInProject().type("xml/features"),                         
+                          "camel-core", "camel-spring-osgi", "camel-test", "camel-velocity"),
             
-            felix());
+            equinox());
         
         return options;
     }

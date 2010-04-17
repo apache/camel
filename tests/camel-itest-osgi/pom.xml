@@ -165,10 +165,10 @@
                   <include>**/*Test.*</include>
               </includes>
               <excludes>
-                  <exclude>**/XXXTest.*</exclude>
+                  <exclude>**/JpaRouteTest.*</exclude>
               </excludes>               
           </configuration>
-      </plugin>
+      </plugin>      
     </plugins>
   </build>
    
