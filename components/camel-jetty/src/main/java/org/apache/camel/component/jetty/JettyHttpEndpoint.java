@@ -37,6 +37,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private List<Handler> handlers;
     private HttpClient client;
     private JettyHttpBinding jettyBinding;
+    private boolean enableJmx;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -97,5 +98,13 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     public void setJettyBinding(JettyHttpBinding jettyBinding) {
         this.jettyBinding = jettyBinding;
+    }
+
+    public boolean isEnableJmx() {
+        return this.enableJmx;
+    }
+
+    public void setEnableJmx(boolean enableJmx) {
+        this.enableJmx = enableJmx;
     }
 }

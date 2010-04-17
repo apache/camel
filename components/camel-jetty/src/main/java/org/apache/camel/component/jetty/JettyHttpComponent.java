@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.management.MBeanServer;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
@@ -29,14 +31,16 @@ import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.spi.ManagementAgent;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jetty.client.Address;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -76,6 +80,7 @@ public class JettyHttpComponent extends HttpComponent {
     protected ThreadPool httpClientThreadPool;
     protected Integer httpClientMinThreads;
     protected Integer httpClientMaxThreads;
+    protected MBeanContainer mbContainer;
 
     class ConnectorRef {
         Server server;
@@ -110,6 +115,7 @@ public class JettyHttpComponent extends HttpComponent {
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
+        Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
 
         // configure http client if we have url configuration for it
         // http client is only used for jetty http producer (hence not very commonly used)
@@ -155,6 +161,10 @@ public class JettyHttpComponent extends HttpComponent {
         if (matchOnUriPrefix != null) {
             endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
         }
+        
+        if (enableJmx != null) {
+            endpoint.setEnableJmx(enableJmx);
+        }
 
         setProperties(endpoint, parameters);
         return endpoint;
@@ -184,6 +194,9 @@ public class JettyHttpComponent extends HttpComponent {
                     LOG.warn("You use localhost interface! It means that no external connections will be available. Don't you want to use 0.0.0.0 instead (all network interfaces)?");
                 }
                 Server server = createServer();
+                if (endpoint.isEnableJmx()) {
+                    enableJmx(server);
+                }
                 server.addConnector(connector);
 
                 connectorRef = new ConnectorRef(server, connector, createServletForConnector(server, connector, endpoint.getHandlers()));
@@ -200,6 +213,16 @@ public class JettyHttpComponent extends HttpComponent {
                 enableSessionSupport(connectorRef.server);
             }
             connectorRef.servlet.connect(consumer);
+        }
+    }
+    
+    private void enableJmx(Server server) {
+        MBeanContainer containerToRegister = getMbContainer();
+        if (containerToRegister != null) {
+            server.getContainer().addEventListener(containerToRegister);
+            // Since we may have many Servers running, don't tie the MBeanContainer
+            // to a Server lifecycle or we end up closing it while it is still in use.
+            //server.addBean(mbContainer);
         }
     }
 
@@ -236,6 +259,13 @@ public class JettyHttpComponent extends HttpComponent {
                     connectorRef.connector.stop();
                     connectorRef.server.stop();
                     CONNECTORS.remove(connectorKey);
+                    // Camel controls the lifecycle of these entities so remove the
+                    // registered MBeans when Camel is done with the managed objects.
+                    MBeanContainer containerToClean = getMbContainer(); 
+                    if (containerToClean != null) {
+                        containerToClean.removeBean(connectorRef.server);
+                        containerToClean.removeBean(connectorRef.connector);
+                    }
                 }
             }
         }
@@ -379,6 +409,33 @@ public class JettyHttpComponent extends HttpComponent {
         this.httpClientMaxThreads = httpClientMaxThreads;
     }
 
+    public synchronized MBeanContainer getMbContainer() {
+        // If null, provide the default implementation.
+        if (mbContainer == null) {
+            MBeanServer mbs = null;
+            
+            final ManagementStrategy mStrategy = 
+                this.getCamelContext().getManagementStrategy();
+            final ManagementAgent mAgent = mStrategy.getManagementAgent();
+            if (mAgent != null) {
+                mbs = mAgent.getMBeanServer();
+            }
+            
+            if (mbs != null) {
+                mbContainer = new MBeanContainer(mbs);
+                startMbContainer();
+            } else {
+                LOG.warn("JMX disabled in Camel Context.  The Camel Context takes precedent and JMX will not be enabled in Jetty.");
+            }
+        }
+        
+        return this.mbContainer;
+    }
+
+    public void setMbContainer(MBeanContainer mbContainer) {
+        this.mbContainer = mbContainer;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected CamelServlet createServletForConnector(Server server, Connector connector, List<Handler> handlers) throws Exception {
@@ -422,6 +479,25 @@ public class JettyHttpComponent extends HttpComponent {
         server.setHandler(collection);
         return server;
     }
+    
+    /**
+     * Starts {@link #mbContainer} and registers the
+     * container with itself as a managed bean logging an error
+     * if there is a problem starting the container.  Does nothing
+     * if {@link #mbContainer} is {@code null}.
+     */
+    protected void startMbContainer() {
+        if (mbContainer != null && !mbContainer.isStarted()) {
+            try {
+                mbContainer.start();
+                // Publish the container itself for consistency with
+                // traditional embedded Jetty configurations.
+                mbContainer.addBean(mbContainer);
+            } catch (Exception e) {
+                LOG.fatal("Could not start Jetty MBeanContainer.  Jetty JMX extensions will remain disabled.", e);
+            }
+        }
+    }
 
     @Override
     protected void doStart() throws Exception {
@@ -433,6 +509,8 @@ public class JettyHttpComponent extends HttpComponent {
         if (httpClient != null && !httpClient.isStarted()) {
             httpClient.start();
         }
+        
+        startMbContainer();
     }
 
     @Override
@@ -442,7 +520,14 @@ public class JettyHttpComponent extends HttpComponent {
             for (ConnectorRef connectorRef : CONNECTORS.values()) {
                 connectorRef.server.removeConnector(connectorRef.connector);
                 connectorRef.connector.stop();
-                connectorRef.server.stop();                
+                connectorRef.server.stop();
+                // Camel controls the lifecycle of these entities so remove the
+                // registered MBeans when Camel is done with the managed objects.
+                MBeanContainer containerToClean = getMbContainer(); 
+                if (containerToClean != null) {
+                    containerToClean.removeBean(connectorRef.server);
+                    containerToClean.removeBean(connectorRef.connector);
+                }
             }
             CONNECTORS.clear();
         }
@@ -452,6 +537,9 @@ public class JettyHttpComponent extends HttpComponent {
         if (httpClientThreadPool != null && httpClientThreadPool instanceof LifeCycle) {
             LifeCycle lc = (LifeCycle) httpClientThreadPool;
             lc.stop();
+        }
+        if (mbContainer != null) {
+            mbContainer.stop();
         }
     }
 }

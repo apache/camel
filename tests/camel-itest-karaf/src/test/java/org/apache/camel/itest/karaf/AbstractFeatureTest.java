@@ -159,7 +159,7 @@ public abstract class AbstractFeatureTest {
 
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("apache-camel").versionAsInProject().type("xml/features"),
-                          "camel-osgi", "camel-" + feature),
+                          "camel-spring-osgi", "camel-" + feature),
                           //cleanCaches(),
 
             felix());
