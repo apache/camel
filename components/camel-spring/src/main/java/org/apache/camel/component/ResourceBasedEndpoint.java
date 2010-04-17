@@ -102,7 +102,7 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
             if (log.isDebugEnabled()) {
                 log.debug("Using resource: " + resourceUri + " from the content cache");
             }
-            is = new ByteArrayInputStream(buffer);
+            return new ByteArrayInputStream(buffer);
         } 
         return getResourceAsInputStreamWithoutCache();
     }
