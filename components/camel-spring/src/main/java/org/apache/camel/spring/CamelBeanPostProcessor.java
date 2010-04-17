@@ -147,7 +147,13 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             }
 
             protected boolean isSingleton(Object bean, String beanName) {
-                return applicationContext.isSingleton(beanName);
+                // no application context has been injected which means the bean
+                // has not been enlisted in Spring application context
+                if (applicationContext == null || beanName == null) {
+                    return super.isSingleton(bean, beanName);
+                } else {
+                    return applicationContext.isSingleton(beanName);
+                }
             }
 
             protected void startService(Service service, Object bean, String beanName) throws Exception {
