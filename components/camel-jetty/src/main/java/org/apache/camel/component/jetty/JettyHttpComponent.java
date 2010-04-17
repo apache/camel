@@ -81,6 +81,7 @@ public class JettyHttpComponent extends HttpComponent {
     protected Integer httpClientMinThreads;
     protected Integer httpClientMaxThreads;
     protected MBeanContainer mbContainer;
+    protected boolean enableJmx;
 
     class ConnectorRef {
         Server server;
@@ -102,6 +103,14 @@ public class JettyHttpComponent extends HttpComponent {
         public int decrement() {
             return --refCount;
         }
+    }
+    
+    public void setEnableJmx(boolean enableJmx) {
+        this.enableJmx = enableJmx;
+    }
+    
+    public boolean isEnableJmx() {
+        return enableJmx;
     }
     
     
@@ -164,6 +173,9 @@ public class JettyHttpComponent extends HttpComponent {
         
         if (enableJmx != null) {
             endpoint.setEnableJmx(enableJmx);
+        } else { 
+            // set this option based on setting of JettyHttpComponent
+            endpoint.setEnableJmx(isEnableJmx());
         }
 
         setProperties(endpoint, parameters);
@@ -494,7 +506,7 @@ public class JettyHttpComponent extends HttpComponent {
                 // traditional embedded Jetty configurations.
                 mbContainer.addBean(mbContainer);
             } catch (Exception e) {
-                LOG.fatal("Could not start Jetty MBeanContainer.  Jetty JMX extensions will remain disabled.", e);
+                LOG.warn("Could not start Jetty MBeanContainer.  Jetty JMX extensions will remain disabled.", e);
             }
         }
     }
