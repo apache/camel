@@ -30,14 +30,20 @@ public class TransactionalClientDataSourceTransactedWithLocalOnExceptionTest ext
                 from("direct:okay")
                     .transacted()
                     // use local on exception
-                    .onException(IllegalArgumentException.class).handled(false).to("mock:error")
+                    .onException(IllegalArgumentException.class)
+                        .handled(false)
+                        .to("mock:error")
+                    .end()
                     .setBody(constant("Tiger in Action")).beanRef("bookService")
                     .setBody(constant("Elephant in Action")).beanRef("bookService");
 
                 from("direct:fail")
                     .transacted()
                     // use local on exception
-                    .onException(IllegalArgumentException.class).handled(false).to("mock:error")
+                    .onException(IllegalArgumentException.class)
+                        .handled(false)
+                        .to("mock:error")
+                    .end()
                     .setBody(constant("Tiger in Action")).beanRef("bookService")
                     .setBody(constant("Donkey in Action")).beanRef("bookService");
             }

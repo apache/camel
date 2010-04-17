@@ -169,4 +169,33 @@ public final class ProcessorDefinitionHelper {
         }
     }
 
+    /**
+     * Is there any outputs in the given list.
+     * <p/>
+     * Is used for check if the route output has any real outputs (non abstracts)
+     *
+     * @param outputs           the outputs
+     * @param excludeAbstract   whether or not to exclude abstract outputs (e.g. skip onException etc.)
+     * @return <tt>true</tt> if has outputs, otherwise <tt>false</tt> is returned
+     */
+    @SuppressWarnings("unchecked")
+    public static boolean hasOutputs(List<ProcessorDefinition> outputs, boolean excludeAbstract) {
+        if (outputs == null || outputs.isEmpty()) {
+            return false;
+        }
+        if (!excludeAbstract) {
+            return !outputs.isEmpty();
+        }
+        for (ProcessorDefinition output : outputs) {
+            if (output instanceof TransactedDefinition || output instanceof PolicyDefinition) {
+                // special for those as they wrap entire output, so we should just check its output
+                return hasOutputs(output.getOutputs(), excludeAbstract);
+            }
+            if (!output.isAbstract()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

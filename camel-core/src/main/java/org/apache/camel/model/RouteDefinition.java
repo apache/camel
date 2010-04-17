@@ -717,7 +717,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         }
 
         // validate route has output processors
-        if (outputs.isEmpty()) {
+        if (!ProcessorDefinitionHelper.hasOutputs(outputs, true)) {
             RouteDefinition route = routeContext.getRoute();
             String at = fromType.toString();
             Exception cause = new IllegalArgumentException("Route " + route.getId() + " has no output processors."

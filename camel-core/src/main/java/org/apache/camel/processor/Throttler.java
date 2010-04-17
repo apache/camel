@@ -25,7 +25,7 @@ import org.apache.camel.Processor;
  * to a processor within a specific time period. <p/> This pattern can be
  * extremely useful if you have some external system which meters access; such
  * as only allowing 100 requests per second; or if huge load can cause a
- * particular systme to malfunction or to reduce its throughput you might want
+ * particular system to malfunction or to reduce its throughput you might want
  * to introduce some throttling.
  * 
  * @version $Revision$

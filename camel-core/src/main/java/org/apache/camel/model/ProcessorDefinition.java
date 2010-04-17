@@ -227,7 +227,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
             }
         }
 
-
         if (log.isTraceEnabled()) {
             log.trace(defn + " wrapped in Channel: " + channel);
         }
