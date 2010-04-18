@@ -50,11 +50,11 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements ExecutorServiceAwareDefinition<AggregateDefinition> {
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
-    @XmlElement(name = "completionPredicate", required = false)
+    @XmlElement(name = "completionPredicate")
     private ExpressionSubElementDefinition completionPredicate;
-    @XmlElement(name = "completionTimeout", required = false)
+    @XmlElement(name = "completionTimeout")
     private ExpressionSubElementDefinition completionTimeoutExpression;
-    @XmlElement(name = "completionSize", required = false)
+    @XmlElement(name = "completionSize")
     private ExpressionSubElementDefinition completionSizeExpression;
     @XmlTransient
     private ExpressionDefinition expression;
@@ -66,27 +66,27 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private ExecutorService executorService;
     @XmlTransient
     private AggregationRepository aggregationRepository;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean parallelProcessing;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String aggregationRepositoryRef;
-    @XmlAttribute(required = true)
+    @XmlAttribute
     private String strategyRef;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Integer completionSize;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Long completionTimeout;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean completionFromBatchConsumer;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean groupExchanges;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean eagerCheckCompletion;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean ignoreInvalidCorrelationKeys;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Integer closeCorrelationKeyOnCompletion;
 
     public AggregateDefinition() {
@@ -194,7 +194,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             answer.setEagerCheckCompletion(isEagerCheckCompletion());
         }
         if (isIgnoreInvalidCorrelationKeys() != null) {
-            answer.setIgnoreBadCorrelationKeys(isIgnoreInvalidCorrelationKeys());
+            answer.setIgnoreInvalidCorrelationKeys(isIgnoreInvalidCorrelationKeys());
         }
         if (getCloseCorrelationKeyOnCompletion() != null) {
             answer.setCloseCorrelationKeyOnCompletion(getCloseCorrelationKeyOnCompletion());
@@ -208,10 +208,15 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (strategy == null && strategyRef != null) {
             strategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
         }
-        if (strategy == null && groupExchanges != null && groupExchanges) {
+
+        if (groupExchanges != null && groupExchanges) {
+            if (strategy != null || strategyRef != null) {
+                throw new IllegalArgumentException("Options groupExchanges and AggregationStrategy cannot be enabled at the same time");
+            }
             // if grouped exchange is enabled then use special strategy for that
             strategy = new GroupedExchangeAggregationStrategy();
         }
+
         if (strategy == null) {
             throw new IllegalArgumentException("AggregationStrategy or AggregationStrategyRef must be set on " + this);
         }

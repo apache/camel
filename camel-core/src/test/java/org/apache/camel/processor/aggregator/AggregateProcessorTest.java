@@ -236,7 +236,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
 
-    public void testAggregateIgnoreBadCorrelationKey() throws Exception {
+    public void testAggregateIgnoreInvalidCorrelationKey() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+C+END");
 
@@ -247,7 +247,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService);
         ap.setCompletionPredicate(complete);
-        ap.setIgnoreBadCorrelationKeys(true);
+        ap.setIgnoreInvalidCorrelationKeys(true);
 
         ap.start();
 
@@ -312,7 +312,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
             ap.process(e2);
             fail("Should have thrown an exception");
         } catch (CamelExchangeException e) {
-            assertEquals("Correlation key could not be evaluated to a value. Exchange[Message: B]", e.getMessage());
+            assertEquals("Invalid correlation key. Exchange[Message: B]", e.getMessage());
         }
 
         ap.process(e3);

@@ -100,7 +100,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     }
 
     // options
-    private boolean ignoreBadCorrelationKeys;
+    private boolean ignoreInvalidCorrelationKeys;
     private Integer closeCorrelationKeyOnCompletion;
     private boolean parallelProcessing;
 
@@ -156,7 +156,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         String key = correlationExpression.evaluate(exchange, String.class);
         if (ObjectHelper.isEmpty(key)) {
             // we have a bad correlation key
-            if (isIgnoreBadCorrelationKeys()) {
+            if (isIgnoreInvalidCorrelationKeys()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Invalid correlation key. This Exchange will be ignored: " + exchange);
                 }
@@ -436,12 +436,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.completionSizeExpression = completionSizeExpression;
     }
 
-    public boolean isIgnoreBadCorrelationKeys() {
-        return ignoreBadCorrelationKeys;
+    public boolean isIgnoreInvalidCorrelationKeys() {
+        return ignoreInvalidCorrelationKeys;
     }
 
-    public void setIgnoreBadCorrelationKeys(boolean ignoreBadCorrelationKeys) {
-        this.ignoreBadCorrelationKeys = ignoreBadCorrelationKeys;
+    public void setIgnoreInvalidCorrelationKeys(boolean ignoreInvalidCorrelationKeys) {
+        this.ignoreInvalidCorrelationKeys = ignoreInvalidCorrelationKeys;
     }
 
     public Integer getCloseCorrelationKeyOnCompletion() {
