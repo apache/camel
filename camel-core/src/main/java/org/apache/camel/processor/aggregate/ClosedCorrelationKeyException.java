@@ -25,21 +25,19 @@ import org.apache.camel.Exchange;
  * @version $Revision$
  */
 public class ClosedCorrelationKeyException extends CamelExchangeException {
+    private final String correlationKey;
 
-    // the correlation key is not expected to be serialized
-    private final transient Object correlationKey;
-
-    public ClosedCorrelationKeyException(Object correlationKey, Exchange exchange) {
+    public ClosedCorrelationKeyException(String correlationKey, Exchange exchange) {
         super("The correlation key [" + correlationKey + "] has been closed", exchange);
         this.correlationKey = correlationKey;
     }
 
-    public ClosedCorrelationKeyException(Object correlationKey, Exchange exchange, Throwable cause) {
+    public ClosedCorrelationKeyException(String correlationKey, Exchange exchange, Throwable cause) {
         super("The correlation key [" + correlationKey + "] has been closed", exchange, cause);
         this.correlationKey = correlationKey;
     }
 
-    public Object getCorrelationKey() {
+    public String getCorrelationKey() {
         return correlationKey;
     }
 }
