@@ -45,7 +45,7 @@ public class HawtDBAggregationRepositoryTest extends CamelTestSupport {
 
     @Test
     public void testOperations() {
-        HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>();
+        HawtDBAggregationRepository repo = new HawtDBAggregationRepository();
         repo.setHawtDBFile(hawtDBFile);
         repo.setRepositoryName("repo1");
         repo.setReturnOldExchange(true);

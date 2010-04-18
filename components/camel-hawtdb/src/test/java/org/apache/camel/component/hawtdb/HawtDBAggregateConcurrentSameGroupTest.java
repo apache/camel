@@ -90,7 +90,7 @@ public class HawtDBAggregateConcurrentSameGroupTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>();
+                HawtDBAggregationRepository repo = new HawtDBAggregationRepository();
                 repo.setHawtDBFile(hawtDBFile);
                 repo.setRepositoryName("repo1");
 

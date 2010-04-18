@@ -55,7 +55,7 @@ public class HawtDBAggregateTest extends CamelTestSupport {
             // START SNIPPET: e1
             public void configure() throws Exception {
                 // create the hawtdb repo
-                HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
+                HawtDBAggregationRepository repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
 
                 // here is the Camel route where we aggregate
                 from("direct:start")

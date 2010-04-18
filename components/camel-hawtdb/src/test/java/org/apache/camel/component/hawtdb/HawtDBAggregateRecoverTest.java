@@ -29,12 +29,12 @@ import org.junit.Test;
 public class HawtDBAggregateRecoverTest extends CamelTestSupport {
 
     private static AtomicInteger counter = new AtomicInteger(0);
-    private HawtDBAggregationRepository<String> repo;
+    private HawtDBAggregationRepository repo;
 
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
-        repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
+        repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
         // enable recovery
         repo.setUseRecovery(true);
         // check faster

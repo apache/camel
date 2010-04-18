@@ -25,7 +25,7 @@ public class HawtDBAggregateBufferSizeTest extends HawtDBAggregateTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
+                HawtDBAggregationRepository repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
                 // use 2mb file
                 repo.setBufferSize(1024 * 1024 * 2);
 

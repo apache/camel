@@ -28,7 +28,7 @@ import org.apache.camel.Exchange;
  *
  * @version $Revision$
  */
-public interface RecoverableAggregationRepository<K> extends AggregationRepository<K> {
+public interface RecoverableAggregationRepository extends AggregationRepository {
 
     /**
      * Scans the repository for {@link Exchange}s to be recovered

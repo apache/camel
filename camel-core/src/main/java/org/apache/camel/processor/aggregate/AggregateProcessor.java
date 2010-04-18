@@ -83,11 +83,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private final ExecutorService executorService;
     private ScheduledExecutorService recoverService;
     // store correlation key -> exchange id in timeout map
-    private TimeoutMap<Object, String> timeoutMap;
+    private TimeoutMap<String, String> timeoutMap;
     private ExceptionHandler exceptionHandler = new LoggingExceptionHandler(getClass());
-    private AggregationRepository<Object> aggregationRepository = new MemoryAggregationRepository();
+    private AggregationRepository aggregationRepository = new MemoryAggregationRepository();
     private Map<Object, Object> closedCorrelationKeys;
-    private Set<Object> batchConsumerCorrelationKeys = new LinkedHashSet<Object>();
+    private Set<String> batchConsumerCorrelationKeys = new LinkedHashSet<String>();
     private final Set<String> inProgressCompleteExchanges = new HashSet<String>();
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<String, RedeliveryData>();
     // optional dead letter channel for exhausted recovered exchanges
@@ -153,7 +153,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     public void process(Exchange exchange) throws Exception {
         // compute correlation expression
-        Object key = correlationExpression.evaluate(exchange, Object.class);
+        String key = correlationExpression.evaluate(exchange, String.class);
         if (ObjectHelper.isEmpty(key)) {
             // we have a bad correlation key
             if (isIgnoreBadCorrelationKeys()) {
@@ -192,7 +192,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * @param exchange the exchange
      * @return the aggregated exchange
      */
-    private Exchange doAggregation(Object key, Exchange exchange) {
+    private Exchange doAggregation(String key, Exchange exchange) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("onAggregation +++ start +++ with correlation key: " + key);
         }
@@ -237,7 +237,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         } else {
             // if batch consumer completion is enabled then we need to complete the group
             if ("consumer".equals(complete)) {
-                for (Object batchKey : batchConsumerCorrelationKeys) {
+                for (String batchKey : batchConsumerCorrelationKeys) {
                     Exchange batchAnswer = aggregationRepository.get(camelContext, batchKey);
                     batchAnswer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
                     onCompletion(batchKey, batchAnswer, false);
@@ -264,7 +264,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * @param exchange  the incoming exchange
      * @return <tt>null</tt> if not completed, otherwise a String with the type that triggered the completion
      */
-    protected String isCompleted(Object key, Exchange exchange) {
+    protected String isCompleted(String key, Exchange exchange) {
         if (getCompletionPredicate() != null) {
             boolean answer = getCompletionPredicate().matches(exchange);
             if (answer) {
@@ -330,7 +330,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         return aggregationStrategy.aggregate(oldExchange, newExchange);
     }
 
-    protected void onCompletion(final Object key, final Exchange exchange, boolean fromTimeout) {
+    protected void onCompletion(final String key, final Exchange exchange, boolean fromTimeout) {
         // store the correlation key as property
         exchange.setProperty(Exchange.AGGREGATED_CORRELATION_KEY, key);
         // remove from repository as its completed
@@ -476,11 +476,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.parallelProcessing = parallelProcessing;
     }
 
-    public AggregationRepository<Object> getAggregationRepository() {
+    public AggregationRepository getAggregationRepository() {
         return aggregationRepository;
     }
 
-    public void setAggregationRepository(AggregationRepository<Object> aggregationRepository) {
+    public void setAggregationRepository(AggregationRepository aggregationRepository) {
         this.aggregationRepository = aggregationRepository;
     }
 
@@ -530,14 +530,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     /**
      * Background task that looks for aggregated exchanges which is triggered by completion timeouts.
      */
-    private final class AggregationTimeoutMap extends DefaultTimeoutMap<Object, String> {
+    private final class AggregationTimeoutMap extends DefaultTimeoutMap<String, String> {
 
         private AggregationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
             super(executor, requestMapPollTimeMillis);
         }
 
         @Override
-        public void onEviction(Object key, String exchangeId) {
+        public void onEviction(String key, String exchangeId) {
             if (log.isDebugEnabled()) {
                 log.debug("Completion timeout triggered for correlation key: " + key);
             }
@@ -571,9 +571,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * Background task that looks for aggregated exchanges to recover.
      */
     private final class RecoverTask implements Runnable {
-        private final RecoverableAggregationRepository<Object> recoverable;
+        private final RecoverableAggregationRepository recoverable;
 
-        private RecoverTask(RecoverableAggregationRepository<Object> recoverable) {
+        private RecoverTask(RecoverableAggregationRepository recoverable) {
             this.recoverable = recoverable;
         }
 
@@ -692,7 +692,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         // should we use recover checker
         if (aggregationRepository instanceof RecoverableAggregationRepository) {
-            RecoverableAggregationRepository<Object> recoverable = (RecoverableAggregationRepository<Object>) aggregationRepository;
+            RecoverableAggregationRepository recoverable = (RecoverableAggregationRepository) aggregationRepository;
             if (recoverable.isUseRecovery()) {
                 long interval = recoverable.getRecoveryIntervalInMillis();
                 if (interval <= 0) {

@@ -55,7 +55,7 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
             fail("Should throw an exception");
         } catch (CamelExecutionException e) {
             ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, e.getCause());
-            assertEquals(1, cause.getCorrelationKey());
+            assertEquals("1", cause.getCorrelationKey());
             assertEquals("The correlation key [1] has been closed. Exchange[Message: C]", cause.getMessage());
         }
 
@@ -92,7 +92,7 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
             fail("Should throw an exception");
         } catch (CamelExecutionException e) {
             ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, e.getCause());
-            assertEquals(2, cause.getCorrelationKey());
+            assertEquals("2", cause.getCorrelationKey());
             assertEquals("The correlation key [2] has been closed. Exchange[Message: H]", cause.getMessage());
         }
 
@@ -102,7 +102,7 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
             fail("Should throw an exception");
         } catch (CamelExecutionException e) {
             ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, e.getCause());
-            assertEquals(3, cause.getCorrelationKey());
+            assertEquals("3", cause.getCorrelationKey());
             assertEquals("The correlation key [3] has been closed. Exchange[Message: I]", cause.getMessage());
         }
 

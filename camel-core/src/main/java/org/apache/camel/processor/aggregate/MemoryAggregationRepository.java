@@ -29,19 +29,18 @@ import org.apache.camel.spi.AggregationRepository;
  *
  * @version $Revision$
  */
-public class MemoryAggregationRepository extends ServiceSupport implements AggregationRepository<Object> {
+public class MemoryAggregationRepository extends ServiceSupport implements AggregationRepository {
+    private final Map<String, Exchange> cache = new ConcurrentHashMap<String, Exchange>();
 
-    private final Map<Object, Exchange> cache = new ConcurrentHashMap<Object, Exchange>();
-
-    public Exchange add(CamelContext camelContext, Object key, Exchange exchange) {
+    public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
         return cache.put(key, exchange);
     }
 
-    public Exchange get(CamelContext camelContext, Object key) {
+    public Exchange get(CamelContext camelContext, String key) {
         return cache.get(key);
     }
 
-    public void remove(CamelContext camelContext, Object key, Exchange exchange) {
+    public void remove(CamelContext camelContext, String key, Exchange exchange) {
         cache.remove(key);
     }
 

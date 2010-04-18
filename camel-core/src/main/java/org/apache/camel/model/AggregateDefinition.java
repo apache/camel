@@ -162,7 +162,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         }
         AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), processor, correlation, strategy, executorService);
 
-        AggregationRepository<Object> repository = createAggregationRepository(routeContext);
+        AggregationRepository repository = createAggregationRepository(routeContext);
         if (repository != null) {
             answer.setAggregationRepository(repository);
         }

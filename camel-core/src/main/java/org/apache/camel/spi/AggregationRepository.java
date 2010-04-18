@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
  *  
  * @version $Revision$
  */
-public interface AggregationRepository<K> {
+public interface AggregationRepository {
 
     /**
      * Add the given {@link Exchange} under the correlation key.
@@ -36,7 +36,7 @@ public interface AggregationRepository<K> {
      * @param exchange       the aggregated exchange
      * @return the old exchange if any existed
      */
-    Exchange add(CamelContext camelContext, K key, Exchange exchange);
+    Exchange add(CamelContext camelContext, String key, Exchange exchange);
 
     /**
      * Gets the given exchange with the correlation key
@@ -45,7 +45,7 @@ public interface AggregationRepository<K> {
      * @param key            the correlation key
      * @return the exchange, or <tt>null</tt> if no exchange was previously added
      */
-    Exchange get(CamelContext camelContext, K key);
+    Exchange get(CamelContext camelContext, String key);
 
     /**
      * Removes the exchange with the given correlation key, which should happen
@@ -55,7 +55,7 @@ public interface AggregationRepository<K> {
      * @param key            the correlation key
      * @param exchange       the exchange to remove
      */
-    void remove(CamelContext camelContext, K key, Exchange exchange);
+    void remove(CamelContext camelContext, String key, Exchange exchange);
 
     /**
      * Confirms the completion of the {@link Exchange}.

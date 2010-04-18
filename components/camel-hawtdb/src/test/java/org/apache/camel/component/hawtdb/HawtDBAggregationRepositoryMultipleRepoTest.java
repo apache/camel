@@ -45,12 +45,12 @@ public class HawtDBAggregationRepositoryMultipleRepoTest extends CamelTestSuppor
 
     @Test
     public void testMultipeRepo() {
-        HawtDBAggregationRepository<String> repo1 = new HawtDBAggregationRepository<String>();
+        HawtDBAggregationRepository repo1 = new HawtDBAggregationRepository();
         repo1.setHawtDBFile(hawtDBFile);
         repo1.setRepositoryName("repo1");
         repo1.setReturnOldExchange(true);
 
-        HawtDBAggregationRepository<String> repo2 = new HawtDBAggregationRepository<String>();
+        HawtDBAggregationRepository repo2 = new HawtDBAggregationRepository();
         repo2.setHawtDBFile(hawtDBFile);
         repo2.setRepositoryName("repo2");
         repo2.setReturnOldExchange(true);
@@ -99,11 +99,11 @@ public class HawtDBAggregationRepositoryMultipleRepoTest extends CamelTestSuppor
 
     @Test
     public void testMultipeRepoSameKeyDifferentContent() {
-        HawtDBAggregationRepository<String> repo1 = new HawtDBAggregationRepository<String>();
+        HawtDBAggregationRepository repo1 = new HawtDBAggregationRepository();
         repo1.setHawtDBFile(hawtDBFile);
         repo1.setRepositoryName("repo1");
 
-        HawtDBAggregationRepository<String> repo2 = new HawtDBAggregationRepository<String>();
+        HawtDBAggregationRepository repo2 = new HawtDBAggregationRepository();
         repo2.setHawtDBFile(hawtDBFile);
         repo2.setRepositoryName("repo2");
 

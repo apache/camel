@@ -26,12 +26,12 @@ import org.junit.Test;
 
 public class HawtDBAggregateRecoverDeadLetterChannelTest extends CamelTestSupport {
 
-    private HawtDBAggregationRepository<String> repo;
+    private HawtDBAggregationRepository repo;
 
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
-        repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
+        repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
         // enable recovery
         repo.setUseRecovery(true);
         // exhaust after at most 3 attempts

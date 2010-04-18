@@ -45,7 +45,7 @@ public class HawtDBAggregationRepositoryAlotDataTest extends CamelTestSupport {
 
     @Test
     public void testWithAlotOfDataSameKey() {
-        HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>();
+        HawtDBAggregationRepository repo = new HawtDBAggregationRepository();
         repo.setHawtDBFile(hawtDBFile);
         repo.setRepositoryName("repo1");
 
@@ -62,7 +62,7 @@ public class HawtDBAggregationRepositoryAlotDataTest extends CamelTestSupport {
 
     @Test
     public void testWithAlotOfDataTwoKesy() {
-        HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>();
+        HawtDBAggregationRepository repo = new HawtDBAggregationRepository();
         repo.setHawtDBFile(hawtDBFile);
         repo.setRepositoryName("repo1");
 
@@ -83,7 +83,7 @@ public class HawtDBAggregationRepositoryAlotDataTest extends CamelTestSupport {
 
     @Test
     public void testWithAlotOfDataWithDifferentKesy() {
-        HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>();
+        HawtDBAggregationRepository repo = new HawtDBAggregationRepository();
         repo.setHawtDBFile(hawtDBFile);
         repo.setRepositoryName("repo1");
 

@@ -27,12 +27,12 @@ import org.junit.Test;
 
 public class HawtDBAggregateNotLostRemovedWhenConfirmedTest extends CamelTestSupport {
 
-    private HawtDBAggregationRepository<String> repo;
+    private HawtDBAggregationRepository repo;
 
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
-        repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
+        repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
         super.setUp();
     }
 
@@ -47,9 +47,6 @@ public class HawtDBAggregateNotLostRemovedWhenConfirmedTest extends CamelTestSup
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
         assertMockEndpointsSatisfied();
-
-        // sleep a bit since the completed signal is done async
-        Thread.sleep(2000);
 
         String exchangeId = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getExchangeId();
 

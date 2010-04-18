@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -40,7 +39,7 @@ import org.fusesource.hawtdb.util.buffer.Buffer;
 /**
  * An instance of AggregationRepository which is backed by a HawtDB.
  */
-public class HawtDBAggregationRepository<K> extends ServiceSupport implements AggregationRepository<K>, RecoverableAggregationRepository<K> {
+public class HawtDBAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
     private static final transient Log LOG = LogFactory.getLog(HawtDBAggregationRepository.class);
     private HawtDBFile hawtDBFile;
@@ -49,7 +48,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
     private Integer bufferSize;
     private boolean sync = true;
     private boolean returnOldExchange;
-    private HawtDBCamelMarshaller<K> marshaller = new HawtDBCamelMarshaller<K>();
+    private HawtDBCamelMarshaller<String> marshaller = new HawtDBCamelMarshaller<String>();
     private long recoveryInterval = 5000;
     private boolean useRecovery = true;
     private int maximumRedeliveries;
@@ -98,7 +97,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         this.repositoryName = repositoryName;
     }
 
-    public Exchange add(final CamelContext camelContext, final K key, final Exchange exchange) {
+    public Exchange add(final CamelContext camelContext, final String key, final Exchange exchange) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding key   [" + key + "] -> " + exchange);
         }
@@ -136,7 +135,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         return null;
     }
 
-    public Exchange get(final CamelContext camelContext, final K key) {
+    public Exchange get(final CamelContext camelContext, final String key) {
         Exchange answer = null;
         try {
             final Buffer keyBuffer = marshaller.marshallKey(key);
@@ -164,7 +163,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         return answer;
     }
 
-    public void remove(final CamelContext camelContext, final K key, final Exchange exchange) {
+    public void remove(final CamelContext camelContext, final String key, final Exchange exchange) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Removing key [" + key + "]");
         }

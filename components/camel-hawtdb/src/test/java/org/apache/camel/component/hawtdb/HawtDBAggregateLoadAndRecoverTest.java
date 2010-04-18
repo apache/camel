@@ -82,7 +82,7 @@ public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
+                HawtDBAggregationRepository repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
                 repo.setUseRecovery(true);
 
                 from("seda:start?size=" + SIZE)

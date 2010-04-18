@@ -78,7 +78,7 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
+                HawtDBAggregationRepository repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
 
                 from("seda:start?size=" + SIZE)
                     .to("log:input?groupSize=500")

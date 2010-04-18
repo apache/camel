@@ -27,12 +27,12 @@ import org.junit.Test;
 
 public class HawtDBAggregateNotLostTest extends CamelTestSupport {
 
-    private HawtDBAggregationRepository<String> repo;
+    private HawtDBAggregationRepository repo;
 
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
-        repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
+        repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
         super.setUp();
     }
 
@@ -48,9 +48,6 @@ public class HawtDBAggregateNotLostTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
         assertMockEndpointsSatisfied();
-
-        // sleep a bit since the completed signal is done async
-        Thread.sleep(2000);
 
         String exchangeId = getMockEndpoint("mock:aggregated").getReceivedExchanges().get(0).getExchangeId();
 
@@ -75,7 +72,8 @@ public class HawtDBAggregateNotLostTest extends CamelTestSupport {
         assertEquals(123, completed.getIn().getHeader("id"));
         assertEquals("size", completed.getProperty(Exchange.AGGREGATED_COMPLETED_BY));
         assertEquals(5, completed.getProperty(Exchange.AGGREGATED_SIZE));
-        assertEquals(123, completed.getProperty(Exchange.AGGREGATED_CORRELATION_KEY));
+        // will store correlation keys as String
+        assertEquals("123", completed.getProperty(Exchange.AGGREGATED_CORRELATION_KEY));
     }
 
     @Override
