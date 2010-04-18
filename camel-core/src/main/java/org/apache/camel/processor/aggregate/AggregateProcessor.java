@@ -158,11 +158,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             // we have a bad correlation key
             if (isIgnoreBadCorrelationKeys()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Correlation key could not be evaluated to a value. Exchange will be ignored: " + exchange);
+                    LOG.debug("Invalid correlation key. This Exchange will be ignored: " + exchange);
                 }
                 return;
             } else {
-                throw new CamelExchangeException("Correlation key could not be evaluated to a value", exchange);
+                throw new CamelExchangeException("Invalid correlation key", exchange);
             }
         }
 

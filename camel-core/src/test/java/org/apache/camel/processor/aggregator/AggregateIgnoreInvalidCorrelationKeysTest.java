@@ -25,20 +25,20 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 /**
  * @version $Revision$
  */
-public class AggregateIgnoreBadCorrelationKeysTest extends ContextTestSupport {
+public class AggregateIgnoreInvalidCorrelationKeysTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
-    public void testAggregateIgnoreBadCorrelationKeys() throws Exception {
+    public void testAggregateIgnoreInvalidCorrelationKeys() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionSize(2).ignoreBadCorrelationKeys()
+                        .completionSize(2).ignoreInvalidCorrelationKeys()
                         .to("mock:result");
             }
         });
@@ -56,7 +56,7 @@ public class AggregateIgnoreBadCorrelationKeysTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testAggregateNotIgnoreBadCorrelationKeys() throws Exception {
+    public void testAggregateNotIgnoreInvalidCorrelationKeys() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -77,7 +77,7 @@ public class AggregateIgnoreBadCorrelationKeysTest extends ContextTestSupport {
             fail("Should throw an exception");
         } catch (CamelExecutionException e) {
             CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertEquals("Correlation key could not be evaluated to a value. Exchange[Message: B]", cause.getMessage());
+            assertEquals("Invalid correlation key. Exchange[Message: B]", cause.getMessage());
         }
 
         template.sendBodyAndHeader("direct:start", "C", "id", 1);

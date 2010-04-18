@@ -85,7 +85,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute(required = false)
     private Boolean eagerCheckCompletion;
     @XmlAttribute(required = false)
-    private Boolean ignoreBadCorrelationKeys;
+    private Boolean ignoreInvalidCorrelationKeys;
     @XmlAttribute(required = false)
     private Integer closeCorrelationKeyOnCompletion;
 
@@ -193,8 +193,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (isEagerCheckCompletion() != null) {
             answer.setEagerCheckCompletion(isEagerCheckCompletion());
         }
-        if (isIgnoreBadCorrelationKeys() != null) {
-            answer.setIgnoreBadCorrelationKeys(isIgnoreBadCorrelationKeys());
+        if (isIgnoreInvalidCorrelationKeys() != null) {
+            answer.setIgnoreBadCorrelationKeys(isIgnoreInvalidCorrelationKeys());
         }
         if (getCloseCorrelationKeyOnCompletion() != null) {
             answer.setCloseCorrelationKeyOnCompletion(getCloseCorrelationKeyOnCompletion());
@@ -341,12 +341,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.eagerCheckCompletion = eagerCheckCompletion;
     }
 
-    public Boolean isIgnoreBadCorrelationKeys() {
-        return ignoreBadCorrelationKeys;
+    public Boolean isIgnoreInvalidCorrelationKeys() {
+        return ignoreInvalidCorrelationKeys;
     }
 
-    public void setIgnoreBadCorrelationKeys(Boolean ignoreBadCorrelationKeys) {
-        this.ignoreBadCorrelationKeys = ignoreBadCorrelationKeys;
+    public void setIgnoreInvalidCorrelationKeys(Boolean ignoreInvalidCorrelationKeys) {
+        this.ignoreInvalidCorrelationKeys = ignoreInvalidCorrelationKeys;
     }
 
     public Integer getCloseCorrelationKeyOnCompletion() {
@@ -393,8 +393,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      *
      * @return builder
      */
-    public AggregateDefinition ignoreBadCorrelationKeys() {
-        setIgnoreBadCorrelationKeys(true);
+    public AggregateDefinition ignoreInvalidCorrelationKeys() {
+        setIgnoreInvalidCorrelationKeys(true);
         return this;
     }
 
