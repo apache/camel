@@ -48,7 +48,7 @@ case class SAggregateDefinition(override val target: AggregateDefinition)(implic
   def parallelProcessing = wrap(target.parallelProcessing)
   def completionFromBatchConsumer = wrap(target.completionFromBatchConsumer)
   def eagerCheckCompletion = wrap(target.eagerCheckCompletion)
-  def ignoreBadCorrelationKeys = wrap(target.ignoreBadCorrelationKeys)
+  def ignoreInvalidCorrelationKeys = wrap(target.ignoreInvalidCorrelationKeys)
   def groupExchanges = wrap(target.groupExchanges)
 
   override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SAggregateDefinition]
