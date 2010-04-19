@@ -109,6 +109,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private Predicate completionPredicate;
     private long completionTimeout;
     private Expression completionTimeoutExpression;
+    private long completionInterval;
     private int completionSize;
     private Expression completionSizeExpression;
     private boolean completionFromBatchConsumer;
@@ -420,6 +421,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.completionTimeoutExpression = completionTimeoutExpression;
     }
 
+    public long getCompletionInterval() {
+        return completionInterval;
+    }
+
+    public void setCompletionInterval(long completionInterval) {
+        this.completionInterval = completionInterval;
+    }
+
     public int getCompletionSize() {
         return completionSize;
     }
@@ -568,6 +577,46 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     }
 
     /**
+     * Background task that triggers completion based on interval.
+     */
+    private final class AggregationIntervalTask implements Runnable {
+
+        public void run() {
+            // only run if CamelContext has been fully started
+            if (!camelContext.getStatus().isStarted()) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Completion interval task cannot start due CamelContext(" + camelContext.getName() + ") has not been started yet");
+                }
+                return;
+            }
+
+            LOG.trace("Starting completion interval task");
+
+            // trigger completion for all in the repository
+            try {
+                lock.lock();
+
+                Set<String> keys = aggregationRepository.getKeys();
+                for (String key : keys) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Completion interval triggered for correlation key: " + key);
+                    }
+                    Exchange exchange = aggregationRepository.get(camelContext, key);
+
+                    // indicate it was completed by interval
+                    exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "interval");
+
+                    onCompletion(key, exchange, false);
+                }
+            } finally {
+                lock.unlock();
+            }
+
+            LOG.trace("Completion interval task complete");
+        }
+    }
+
+    /**
      * Background task that looks for aggregated exchanges to recover.
      */
     private final class RecoverTask implements Runnable {
@@ -670,11 +719,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     @Override
     protected void doStart() throws Exception {
-        if (getCompletionTimeout() <= 0 && getCompletionSize() <= 0 && getCompletionPredicate() == null
+        if (getCompletionTimeout() <= 0 && getCompletionInterval() <= 0 && getCompletionSize() <= 0 && getCompletionPredicate() == null
                 && !isCompletionFromBatchConsumer() && getCompletionTimeoutExpression() == null
                 && getCompletionSizeExpression() == null) {
             throw new IllegalStateException("At least one of the completions options"
-                    + " [completionTimeout, completionSize, completionPredicate, completionFromBatchConsumer] must be set");
+                    + " [completionTimeout, completionInterval, completionSize, completionPredicate, completionFromBatchConsumer] must be set");
         }
 
         if (getCloseCorrelationKeyOnCompletion() != null) {
@@ -717,8 +766,19 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             }
         }
 
+        if (getCompletionInterval() > 0 && getCompletionTimeout() > 0) {
+            throw new IllegalArgumentException("Only one of completionInterval or completionTimeout can be used, not both.");
+        }
+        if (getCompletionInterval() > 0) {
+            LOG.info("Using CompletionInterval to run every " + getCompletionInterval() + " millis.");
+            ScheduledExecutorService scheduler = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateTimeoutChecker", 1);
+            // trigger completion based on interval
+            scheduler.scheduleAtFixedRate(new AggregationIntervalTask(), 1000L, getCompletionInterval(), TimeUnit.MILLISECONDS);
+        }
+
         // start timeout service if its in use
         if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
+            LOG.info("Using CompletionTimeout to trigger after " + getCompletionInterval() + " millis of inactivity.");
             ScheduledExecutorService scheduler = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateTimeoutChecker", 1);
             // check for timed out aggregated messages once every second
             timeoutMap = new AggregationTimeoutMap(scheduler, 1000L);

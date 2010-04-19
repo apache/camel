@@ -77,6 +77,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute
     private Integer completionSize;
     @XmlAttribute
+    private Long completionInterval;
+    @XmlAttribute
     private Long completionTimeout;
     @XmlAttribute
     private Boolean completionFromBatchConsumer;
@@ -180,6 +182,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (getCompletionTimeout() != null) {
             answer.setCompletionTimeout(getCompletionTimeout());
         }
+        if (getCompletionInterval() != null) {
+            answer.setCompletionInterval(getCompletionInterval());
+        }
         if (getCompletionSizeExpression() != null) {
             Expression expression = getCompletionSizeExpression().createExpression(routeContext);
             answer.setCompletionSizeExpression(expression);
@@ -256,6 +261,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public void setCompletionSize(Integer completionSize) {
         this.completionSize = completionSize;
+    }
+
+    public Long getCompletionInterval() {
+        return completionInterval;
+    }
+
+    public void setCompletionInterval(Long completionInterval) {
+        this.completionInterval = completionInterval;
     }
 
     public Long getCompletionTimeout() {
@@ -450,6 +463,18 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition completionSize(Expression completionSize) {
         setCompletionSizeExpression(new ExpressionSubElementDefinition(completionSize));
+        return this;
+    }
+
+    /**
+     * Sets the completion interval, which would cause the aggregate to consider the group as complete
+     * and send out the aggregated exchange.
+     *
+     * @param completionInterval  the interval in millis
+     * @return the builder
+     */
+    public AggregateDefinition completionInterval(long completionInterval) {
+        setCompletionInterval(completionInterval);
         return this;
     }
 

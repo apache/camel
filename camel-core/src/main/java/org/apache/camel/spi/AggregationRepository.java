@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
@@ -64,5 +66,12 @@ public interface AggregationRepository {
      * @param exchangeId    exchange id to confirm
      */
     void confirm(CamelContext camelContext, String exchangeId);
+
+    /**
+     * Gets the keys currently in the repository.
+     *
+     * @return the keys
+     */
+    Set<String> getKeys();
 
 }

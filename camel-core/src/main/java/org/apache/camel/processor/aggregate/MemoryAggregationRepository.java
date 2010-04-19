@@ -16,7 +16,9 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
@@ -46,6 +48,11 @@ public class MemoryAggregationRepository extends ServiceSupport implements Aggre
 
     public void confirm(CamelContext camelContext, String exchangeId) {
         // noop
+    }
+
+    public Set<String> getKeys() {
+        // do not allow edits to the set
+        return Collections.unmodifiableSet(cache.keySet());
     }
 
     @Override
