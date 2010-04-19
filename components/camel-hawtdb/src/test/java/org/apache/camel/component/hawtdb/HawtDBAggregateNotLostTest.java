@@ -53,8 +53,8 @@ public class HawtDBAggregateNotLostTest extends CamelTestSupport {
 
         // the exchange should be in the completed repo where we should be able to find it
         final HawtDBFile hawtDBFile = repo.getHawtDBFile();
-        final HawtDBCamelMarshaller<Object> marshaller = new HawtDBCamelMarshaller<Object>();
-        final Buffer confirmKeyBuffer = marshaller.marshallConfirmKey(exchangeId);
+        final HawtDBCamelMarshaller marshaller = new HawtDBCamelMarshaller();
+        final Buffer confirmKeyBuffer = marshaller.marshallKey(exchangeId);
         Buffer bf = hawtDBFile.execute(new Work<Buffer>() {
             public Buffer execute(Transaction tx) {
                 Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, "repo1-completed");

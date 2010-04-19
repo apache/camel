@@ -34,27 +34,20 @@ import org.fusesource.hawtdb.util.marshaller.StringMarshaller;
 /**
  * @version $Revision$
  */
-public final class HawtDBCamelMarshaller<K> {
+public final class HawtDBCamelMarshaller {
 
-    private Marshaller<K> keyMarshaller = new ObjectMarshaller<K>();
-    private Marshaller<String> confirmKeyMarshaller = new StringMarshaller();
+    private Marshaller<String> keyMarshaller = new StringMarshaller();
     private Marshaller<DefaultExchangeHolder> exchangeMarshaller = new ObjectMarshaller<DefaultExchangeHolder>();
 
-    public Buffer marshallKey(K key) throws IOException {
+    public Buffer marshallKey(String key) throws IOException {
         DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
         keyMarshaller.writePayload(key, baos);
         return baos.toBuffer();
     }
 
-    public Buffer marshallConfirmKey(String exchangeId) throws IOException {
-        DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
-        confirmKeyMarshaller.writePayload(exchangeId, baos);
-        return baos.toBuffer();
-    }
-
-    public String unmarshallConfirmKey(Buffer buffer) throws IOException {
+    public String unmarshallKey(Buffer buffer) throws IOException {
         DataByteArrayInputStream bais = new DataByteArrayInputStream(buffer);
-        String key = confirmKeyMarshaller.readPayload(bais);
+        String key = keyMarshaller.readPayload(bais);
         return key;
     }
 
