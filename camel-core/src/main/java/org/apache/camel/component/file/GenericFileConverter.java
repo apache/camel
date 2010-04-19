@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.IOException;
+import java.io.Serializable;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
@@ -57,9 +60,23 @@ public final class GenericFileConverter {
     }
 
     @Converter
-    public static String convertToString(GenericFile<?> file, Exchange exchange) {
+    public static String convertToString(GenericFile<?> file, Exchange exchange) throws IOException {
         if (exchange != null) {
+            // ensure the body is loaded as we do not want a toString of java.io.File handle returned, but the file content
+            file.getBinding().loadContent(exchange, file);
             return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, file.getBody());
+        } else {
+            // should revert to fallback converter if we don't have an exchange
+            return null;
+        }
+    }
+
+    @Converter
+    public static Serializable convertToSerializable(GenericFile<?> file, Exchange exchange) throws IOException {
+        if (exchange != null) {
+            // ensure the body is loaded as we do not want a java.io.File handle returned, but the file content
+            file.getBinding().loadContent(exchange, file);
+            return exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, file.getBody());
         } else {
             // should revert to fallback converter if we don't have an exchange
             return null;

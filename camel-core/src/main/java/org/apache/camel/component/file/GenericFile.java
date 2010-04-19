@@ -17,7 +17,6 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.camel.Exchange;
@@ -30,9 +29,8 @@ import org.apache.commons.logging.LogFactory;
  * Generic File. Specific implementations of a file based endpoint need to
  * provide a File for transfer.
  */
-public class GenericFile<T> implements Serializable {
-    private static final long serialVersionUID = 565270785443491000L;
-    private static final Log LOG = LogFactory.getLog(GenericFile.class);
+public class GenericFile<T>  {
+    private static final transient Log LOG = LogFactory.getLog(GenericFile.class);
 
     private String endpointPath;
     private String fileName;

@@ -27,8 +27,6 @@ import org.apache.camel.util.IOHelper;
  * File binding with the {@link java.io.File} type.
  */
 public class FileBinding implements GenericFileBinding<File> {
-    private static final long serialVersionUID = 1488800911529475617L;
-
     private File body;
     private byte[] content;
 
@@ -54,11 +52,13 @@ public class FileBinding implements GenericFileBinding<File> {
         // noop
     }
 
-    public void loadContent(Exchange exchange, GenericFile<File> file) throws IOException {
-        try {
-            content = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, file.getFile());
-        } catch (NoTypeConversionAvailableException e) {
-            throw IOHelper.createIOException("Cannot load file content: " + file.getAbsoluteFilePath(), e);
+    public void loadContent(Exchange exchange, GenericFile<?> file) throws IOException {
+        if (content == null) {
+            try {
+                content = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, file.getFile());
+            } catch (NoTypeConversionAvailableException e) {
+                throw IOHelper.createIOException("Cannot load file content: " + file.getAbsoluteFilePath(), e);
+            }
         }
     }
 }
