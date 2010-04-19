@@ -22,10 +22,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.apache.camel.language.simple.SimpleLanguage.simple;
+
 /**
  * @version $Revision$
  */
-public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
+public class WireTapUsingFireAndForgetCopyAsDefaultTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -38,9 +40,10 @@ public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .wireTap("direct:foo", false, new Processor() {
+                    .wireTap("direct:foo", new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            exchange.getIn().setBody("Bye World");
+                            String body = exchange.getIn().getBody(String.class);
+                            exchange.getIn().setBody("Bye " + body);
                             exchange.getIn().setHeader("foo", "bar");
                         }
                     }).to("mock:result");
@@ -53,13 +56,13 @@ public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
         context.start();
 
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceived("Hello World");
+        result.expectedBodiesReceived("World");
 
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.expectedBodiesReceived("Bye World");
         foo.expectedHeaderReceived("foo", "bar");
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "World");
 
         assertMockEndpointsSatisfied();
 
@@ -79,7 +82,7 @@ public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e2
                 from("direct:start")
-                    .wireTap("direct:foo", false, constant("Bye World"))
+                    .wireTap("direct:foo", simple("Bye ${body}"))
                     .to("mock:result");
 
                 from("direct:foo").to("mock:foo");
@@ -89,12 +92,12 @@ public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
         context.start();
 
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceived("Hello World");
+        result.expectedBodiesReceived("World");
 
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.expectedBodiesReceived("Bye World");
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "World");
 
         assertMockEndpointsSatisfied();
 

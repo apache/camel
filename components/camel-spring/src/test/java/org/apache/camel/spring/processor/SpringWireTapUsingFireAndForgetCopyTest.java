@@ -14,52 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.spring.processor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-/**
- * @version $Revision$
- */
-public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+public class SpringWireTapUsingFireAndForgetCopyTest extends ContextTestSupport {
+
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringWireTapUsingFireAndForgetCopyTest.xml");
+    }
+
+    public void testFireAndForgetUsingExpression() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived("World");
+
+        MockEndpoint foo = getMockEndpoint("mock:foo");
+        foo.expectedBodiesReceived("Bye World");
+
+        template.sendBody("direct:start", "World");
+
+        assertMockEndpointsSatisfied();
+
+        // should be different exchange instances
+        Exchange e1 = result.getReceivedExchanges().get(0);
+        Exchange e2 = foo.getReceivedExchanges().get(0);
+        assertNotSame("Should not be same Exchange", e1, e2);
+
+        // should have same from endpoint
+        assertEquals("direct://start", e1.getFromEndpoint().getEndpointUri());
+        assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
     }
 
     public void testFireAndForgetUsingProcessor() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                // START SNIPPET: e1
-                from("direct:start")
-                    .wireTap("direct:foo", false, new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getIn().setBody("Bye World");
-                            exchange.getIn().setHeader("foo", "bar");
-                        }
-                    }).to("mock:result");
-
-
-                from("direct:foo").to("mock:foo");
-                // END SNIPPET: e1
-            }
-        });
-        context.start();
-
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceived("Hello World");
+        result.expectedBodiesReceived("World");
 
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.expectedBodiesReceived("Bye World");
         foo.expectedHeaderReceived("foo", "bar");
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start2", "World");
 
         assertMockEndpointsSatisfied();
 
@@ -69,43 +69,21 @@ public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
         assertNotSame("Should not be same Exchange", e1, e2);
 
         // should have same from endpoint
-        assertEquals("direct://start", e1.getFromEndpoint().getEndpointUri());
-        assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
+        assertEquals("direct://start2", e1.getFromEndpoint().getEndpointUri());
+        assertEquals("direct://start2", e2.getFromEndpoint().getEndpointUri());
     }
 
-    public void testFireAndForgetUsingExpression() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                // START SNIPPET: e2
-                from("direct:start")
-                    .wireTap("direct:foo", false, constant("Bye World"))
-                    .to("mock:result");
+    // START SNIPPET: e1
+    public static class MyProcessor implements Processor {
 
-                from("direct:foo").to("mock:foo");
-                // END SNIPPET: e2
-            }
-        });
-        context.start();
-
-        MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceived("Hello World");
-
-        MockEndpoint foo = getMockEndpoint("mock:foo");
-        foo.expectedBodiesReceived("Bye World");
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-
-        // should be different exchange instances
-        Exchange e1 = result.getReceivedExchanges().get(0);
-        Exchange e2 = foo.getReceivedExchanges().get(0);
-        assertNotSame("Should not be same Exchange", e1, e2);
-
-        // should have same from endpoint
-        assertEquals("direct://start", e1.getFromEndpoint().getEndpointUri());
-        assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
+        public void process(Exchange exchange) throws Exception {
+            String body = exchange.getIn().getBody(String.class);
+            // here we prepare the new exchange by setting the payload on the exchange
+            // on the IN message.
+            exchange.getIn().setBody("Bye " + body);
+            exchange.getIn().setHeader("foo", "bar");
+        }
     }
+    // END SNIPPET: e1
 
 }

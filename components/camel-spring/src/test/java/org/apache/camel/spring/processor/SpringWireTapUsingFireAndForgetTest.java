@@ -45,9 +45,9 @@ public class SpringWireTapUsingFireAndForgetTest extends ContextTestSupport {
         Exchange e2 = foo.getReceivedExchanges().get(0);
         assertNotSame("Should not be same Exchange", e1, e2);
 
-        // should have different from endpoint
+        // should have same from endpoint
         assertEquals("direct://start", e1.getFromEndpoint().getEndpointUri());
-        assertEquals("direct://foo", e2.getFromEndpoint().getEndpointUri());
+        assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
     }
 
     public void testFireAndForgetUsingProcessor() throws Exception {
@@ -67,9 +67,9 @@ public class SpringWireTapUsingFireAndForgetTest extends ContextTestSupport {
         Exchange e2 = foo.getReceivedExchanges().get(0);
         assertNotSame("Should not be same Exchange", e1, e2);
 
-        // should have different from endpoint
+        // should have same from endpoint
         assertEquals("direct://start2", e1.getFromEndpoint().getEndpointUri());
-        assertEquals("direct://foo", e2.getFromEndpoint().getEndpointUri());
+        assertEquals("direct://start2", e2.getFromEndpoint().getEndpointUri());
     }
 
     // START SNIPPET: e1
@@ -77,7 +77,7 @@ public class SpringWireTapUsingFireAndForgetTest extends ContextTestSupport {
 
         public void process(Exchange exchange) throws Exception {
             // here we prepare the new exchange by setting the payload on the exchange
-            // on the IN messege.
+            // on the IN message.
             exchange.getIn().setBody("Bye World");
             exchange.getIn().setHeader("foo", "bar");
         }

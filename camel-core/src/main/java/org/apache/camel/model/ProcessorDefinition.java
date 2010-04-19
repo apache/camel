@@ -1684,6 +1684,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
      * Sends a new {@link org.apache.camel.Exchange} to the destination
      * using {@link ExchangePattern#InOnly}.
+     * <p/>
+     * Will use a copy of the original Exchange which is passed in as argument
+     * to the given expression
      *
      * @param uri  the destination
      * @param body expression that creates the body to send
@@ -1691,8 +1694,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type wireTap(String uri, Expression body) {
+        return wireTap(uri, true, body);
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
+     * Sends a new {@link org.apache.camel.Exchange} to the destination
+     * using {@link ExchangePattern#InOnly}.
+     *
+     * @param uri  the destination
+     * @param copy whether or not use a copy of the original exchange or a new empty exchange
+     * @param body expression that creates the body to send
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type wireTap(String uri, boolean copy, Expression body) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
+        answer.setCopy(copy);
         answer.setNewExchangeExpression(body);
         addOutput(answer);
         return (Type) this;
@@ -1702,15 +1721,33 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
      * Sends a new {@link org.apache.camel.Exchange} to the destination
      * using {@link ExchangePattern#InOnly}.
+     * <p/>
+     * Will use a copy of the original Exchange which is passed in as argument
+     * to the given processor
      *
      * @param uri  the destination
      * @param processor  processor preparing the new exchange to send
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
     public Type wireTap(String uri, Processor processor) {
+        return wireTap(uri, true, processor);
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
+     * Sends a new {@link org.apache.camel.Exchange} to the destination
+     * using {@link ExchangePattern#InOnly}.
+     *
+     * @param uri  the destination
+     * @param copy whether or not use a copy of the original exchange or a new empty exchange
+     * @param processor  processor preparing the new exchange to send
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type wireTap(String uri, boolean copy, Processor processor) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
+        answer.setCopy(copy);
         answer.setNewExchangeProcessor(processor);
         addOutput(answer);
         return (Type) this;
