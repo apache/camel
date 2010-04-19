@@ -18,6 +18,8 @@ package org.apache.camel.component.netty;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.util.URISupport;
@@ -29,6 +31,7 @@ import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.jboss.netty.handler.ssl.SslHandler;
 
+@SuppressWarnings("unchecked")
 public class NettyConfiguration {
     private String protocol;
     private String host;
@@ -44,8 +47,8 @@ public class NettyConfiguration {
     private File keyStoreFile;
     private File trustStoreFile;
     private SslHandler sslHandler;
-    private ChannelDownstreamHandler encoder;
-    private ChannelUpstreamHandler decoder;
+    private List<ChannelDownstreamHandler> encoders = new ArrayList<ChannelDownstreamHandler>();
+    private List<ChannelUpstreamHandler> decoders = new ArrayList<ChannelUpstreamHandler>();
     private ChannelHandler handler;
     private boolean ssl;
     private long sendBufferSize;
@@ -69,63 +72,72 @@ public class NettyConfiguration {
         setCorePoolSize(10);
         setMaxPoolSize(100);
     }
-    
+
     public void parseURI(URI uri, Map<String, Object> parameters, NettyComponent component) throws Exception {
         protocol = uri.getScheme();
-        
+
         if ((!protocol.equalsIgnoreCase("tcp")) && (!protocol.equalsIgnoreCase("udp"))) {
             throw new IllegalArgumentException("Unrecognized Netty protocol: " + protocol + " for uri: " + uri);
         }
-        
+
         setHost(uri.getHost());
         setPort(uri.getPort());
-     
+
         sslHandler = component.resolveAndRemoveReferenceParameter(parameters, "sslHandler", SslHandler.class, null);
         passphrase = component.resolveAndRemoveReferenceParameter(parameters, "passphrase", String.class, null);
-        keyStoreFormat = component.getAndRemoveParameter(parameters, "keyStoreFormat", String.class, "JKS");        
+        keyStoreFormat = component.getAndRemoveParameter(parameters, "keyStoreFormat", String.class, "JKS");
         securityProvider = component.getAndRemoveParameter(parameters, "securityProvider", String.class, "SunX509");
         keyStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "keyStoreFile", File.class, null);
         trustStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "trustStoreFile", File.class, null);
-        encoder = component.resolveAndRemoveReferenceParameter(parameters, "encoder", ChannelDownstreamHandler.class, new ObjectEncoder());
-        decoder = component.resolveAndRemoveReferenceParameter(parameters, "decoder", ChannelUpstreamHandler.class, new ObjectDecoder());
-        handler = component.resolveAndRemoveReferenceParameter(parameters, "handler", SimpleChannelHandler.class, null);        
-        
+
+        List<ChannelDownstreamHandler> referencedEncoders = component.resolveAndRemoveReferenceParameter(parameters, "encoders", List.class, null);
+        addToHandlersList(encoders, referencedEncoders, ChannelDownstreamHandler.class);
+        List<ChannelUpstreamHandler> referencedDecoders = component.resolveAndRemoveReferenceParameter(parameters, "decoders", List.class, null);
+        addToHandlersList(decoders, referencedDecoders, ChannelUpstreamHandler.class);
+
+        if (encoders.isEmpty() && decoders.isEmpty()) {
+            encoders.add(component.resolveAndRemoveReferenceParameter(parameters, "encoder", ChannelDownstreamHandler.class, new ObjectEncoder()));
+            decoders.add(component.resolveAndRemoveReferenceParameter(parameters, "decoder", ChannelUpstreamHandler.class, new ObjectDecoder()));
+        }
+
+        handler = component.resolveAndRemoveReferenceParameter(parameters, "handler", SimpleChannelHandler.class, null);
+
         Map<String, Object> settings = URISupport.parseParameters(uri);
         if (settings.containsKey("keepAlive")) {
             setKeepAlive(Boolean.valueOf((String) settings.get("keepAlive")));
-        }         
+        }
         if (settings.containsKey("tcpNoDelay")) {
             setTcpNoDelay(Boolean.valueOf((String) settings.get("tcpNoDelay")));
-        }        
+        }
         if (settings.containsKey("broadcast")) {
             setBroadcast(Boolean.valueOf((String) settings.get("broadcast")));
-        }            
+        }
         if (settings.containsKey("reuseAddress")) {
             setReuseAddress(Boolean.valueOf((String) settings.get("reuseAddress")));
         }
         if (settings.containsKey("connectTimeoutMillis")) {
-            setConnectTimeoutMillis(Long.valueOf((String)settings.get("connectTimeoutMillis")));
+            setConnectTimeoutMillis(Long.valueOf((String) settings.get("connectTimeoutMillis")));
         }
         if (settings.containsKey("sync")) {
             setTcpNoDelay(Boolean.valueOf((String) settings.get("sync")));
         }
         if (settings.containsKey("receiveTimeoutMillis")) {
-            setReceiveTimeoutMillis(Long.valueOf((String)settings.get("receiveTimeoutMillis")));
+            setReceiveTimeoutMillis(Long.valueOf((String) settings.get("receiveTimeoutMillis")));
         }
         if (settings.containsKey("sendBufferSize")) {
-            setSendBufferSize(Long.valueOf((String)settings.get("sendBufferSize")));
+            setSendBufferSize(Long.valueOf((String) settings.get("sendBufferSize")));
         }
         if (settings.containsKey("receiveBufferSize")) {
-            setReceiveBufferSize(Long.valueOf((String)settings.get("receiveBufferSize")));
-        }        
+            setReceiveBufferSize(Long.valueOf((String) settings.get("receiveBufferSize")));
+        }
         if (settings.containsKey("ssl")) {
             setTcpNoDelay(Boolean.valueOf((String) settings.get("ssl")));
         }
         if (settings.containsKey("corePoolSize")) {
-            setCorePoolSize(Integer.valueOf((String)settings.get("corePoolSize")));
+            setCorePoolSize(Integer.valueOf((String) settings.get("corePoolSize")));
         }
         if (settings.containsKey("maxPoolSize")) {
-            setMaxPoolSize(Integer.valueOf((String)settings.get("maxPoolSize")));
+            setMaxPoolSize(Integer.valueOf((String) settings.get("maxPoolSize")));
         }
     }
 
@@ -168,7 +180,7 @@ public class NettyConfiguration {
     public void setTcpNoDelay(boolean tcpNoDelay) {
         this.tcpNoDelay = tcpNoDelay;
     }
-   
+
     public boolean isBroadcast() {
         return broadcast;
     }
@@ -209,20 +221,41 @@ public class NettyConfiguration {
         this.sslHandler = sslHandler;
     }
 
+
+    public List<ChannelDownstreamHandler> getEncoders() {
+        return encoders;
+    }
+
+    public List<ChannelUpstreamHandler> getDecoders() {
+        return decoders;
+    }
+
     public ChannelDownstreamHandler getEncoder() {
-        return encoder;
+        return encoders.isEmpty() ? null : encoders.get(0);
     }
 
     public void setEncoder(ChannelDownstreamHandler encoder) {
-        this.encoder = encoder;
+        if (!encoders.contains(encoder)) {
+            encoders.add(encoder);
+        }
+    }
+
+    public void setEncoders(List<ChannelDownstreamHandler> encoders) {
+        this.encoders = encoders;
     }
 
     public ChannelUpstreamHandler getDecoder() {
-        return decoder;
+        return decoders.isEmpty() ? null : decoders.get(0);
     }
 
     public void setDecoder(ChannelUpstreamHandler decoder) {
-        this.decoder = decoder;
+        if (!decoders.contains(decoder)) {
+            decoders.add(decoder);
+        }
+    }
+
+    public void setDecoders(List<ChannelUpstreamHandler> decoders) {
+        this.decoders = decoders;
     }
 
     public ChannelHandler getHandler() {
@@ -248,7 +281,7 @@ public class NettyConfiguration {
     public void setSendBufferSize(long sendBufferSize) {
         this.sendBufferSize = sendBufferSize;
     }
-    
+
     public boolean isSsl() {
         return ssl;
     }
@@ -319,6 +352,17 @@ public class NettyConfiguration {
 
     public void setSecurityProvider(String securityProvider) {
         this.securityProvider = securityProvider;
-    }    
+    }
+
+    private <T> void addToHandlersList(List configured, List handlers, Class<? extends T> handlerType) {
+        if (handlers != null) {
+            for (int x = 0; x < handlers.size(); x++) {
+                Object handler = handlers.get(x);
+                if (handlerType.isInstance(handler)) {
+                    configured.add(handler);
+                }
+            }
+        }
+    }
 
 }

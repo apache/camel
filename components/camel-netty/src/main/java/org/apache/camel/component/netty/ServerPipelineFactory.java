@@ -16,14 +16,18 @@
  */
 package org.apache.camel.component.netty;
 
+import java.util.List;
+
 import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
+import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.ssl.SslHandler;
 
@@ -45,8 +49,15 @@ public class ServerPipelineFactory implements ChannelPipelineFactory {
             }
             channelPipeline.addLast("ssl", sslHandler);            
         }
-        channelPipeline.addLast("decoder", consumer.getConfiguration().getDecoder());
-        channelPipeline.addLast("encoder", consumer.getConfiguration().getEncoder());
+        List<ChannelUpstreamHandler> decoders = consumer.getConfiguration().getDecoders();
+        for (int x = 0; x < decoders.size(); x++) {
+            channelPipeline.addLast("decoder-" + x, decoders.get(x));
+        }
+
+        List<ChannelDownstreamHandler> encoders = consumer.getConfiguration().getEncoders();
+        for (int x = 0; x < encoders.size(); x++) {
+            channelPipeline.addLast("encoder-" + x, encoders.get(x));
+        }
         if (consumer.getConfiguration().getHandler() != null) {
             channelPipeline.addLast("handler", consumer.getConfiguration().getHandler());
         } else {
