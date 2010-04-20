@@ -45,8 +45,8 @@ public class PerformanceRouteTest extends CamelTestSupport {
         getMockEndpoint("mock:audit").expectedMessageCount(size);
         getMockEndpoint("mock:audit").expectsNoDuplicates().body();
 
-        getMockEndpoint("mock:gold").expectedMessageCount((size / 2) - (size / 10));
-        getMockEndpoint("mock:silver").expectedMessageCount(size / 10);
+        getMockEndpoint("mock:gold").expectedMinimumMessageCount((size / 2) - (size / 10));
+        getMockEndpoint("mock:silver").expectedMinimumMessageCount(size / 10);
 
         for (int i = 0; i < size; i++) {
             String type;

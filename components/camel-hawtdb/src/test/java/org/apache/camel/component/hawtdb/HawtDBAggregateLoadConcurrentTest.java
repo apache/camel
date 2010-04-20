@@ -46,7 +46,7 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
     @Test
     public void testLoadTestHawtDBAggregate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(9);
+        mock.expectedMessageCount(10);
         mock.setResultWaitTime(30 * 1000);
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
@@ -62,7 +62,7 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Sending " + value + " with id " + id);
                     }
-                    template.sendBodyAndHeader("seda:start?size=" + SIZE, value, "id", "" + id);
+                    template.sendBodyAndHeader("direct:start", value, "id", "" + id);
                     return null;
                 }
             });
@@ -80,7 +80,7 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
             public void configure() throws Exception {
                 HawtDBAggregationRepository repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
 
-                from("seda:start?size=" + SIZE)
+                from("direct:start")
                     .to("log:input?groupSize=500")
                     .aggregate(header("id"), new MyAggregationStrategy())
                         .aggregationRepository(repo)

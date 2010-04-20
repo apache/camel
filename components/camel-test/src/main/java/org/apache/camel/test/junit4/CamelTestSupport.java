@@ -81,6 +81,11 @@ public abstract class CamelTestSupport extends TestSupport {
 
     @Before
     public void setUp() throws Exception {
+        log.info("********************************************************************************");
+        log.info("Testing: " + getName() + "(" + getClass().getName() + ")");
+        log.info("********************************************************************************");
+
+        log.debug("setUp test");
         if (!useJmx()) {
             disableJMX();
         } else {
@@ -116,7 +121,9 @@ public abstract class CamelTestSupport extends TestSupport {
 
     @After
     public void tearDown() throws Exception {
-        log.debug("tearDown test ");
+        log.info("Testing done: " + this);
+
+        log.debug("tearDown test");
         if (consumer != null) {
             consumer.stop();
         }

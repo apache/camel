@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
+import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
@@ -48,7 +49,7 @@ import org.junit.Assert;
  *
  * @version $Revision$
  */
-public abstract class TestSupport extends Assert {
+public abstract class TestSupport extends TestCase {
     private static final Log LOG = LogFactory.getLog(TestSupport.class);    
     protected transient Log log = LogFactory.getLog(getClass());    
     
