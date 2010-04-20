@@ -28,6 +28,7 @@ public class MinaFileTcpTest extends ContextTestSupport {
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMessageCount(1);
+        endpoint.message(0).body().startsWith("Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -36,10 +37,11 @@ public class MinaFileTcpTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // lets setup a server
-                from("mina:tcp://localhost:9123?sync=false").to("mock:results");
+                from("mina:tcp://localhost:9123?sync=false&textline=true")
+                    .to("mock:results");
 
                 from("file:src/test/data?noop=true").
-                        to("mina:tcp://localhost:9123?sync=false&lazySessionCreation=true");
+                    to("mina:tcp://localhost:9123?sync=false&textline=true");
             }
         };
     }

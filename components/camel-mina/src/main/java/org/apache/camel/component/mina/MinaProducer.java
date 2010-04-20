@@ -84,6 +84,11 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
             return; // exit early since nothing to write
         }
 
+        // if textline enabled then covert to a String which must be used for textline
+        if (endpoint.getConfiguration().isTextline()) {
+            body = endpoint.getCamelContext().getTypeConverter().convertTo(String.class, exchange, body);
+        }
+
         // if sync is true then we should also wait for a response (synchronous mode)
         if (sync) {
             // only initialize latch if we should get a response
@@ -107,7 +112,9 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
 
         if (sync) {
             // wait for response, consider timeout
-            LOG.debug("Waiting for response");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Waiting for response using timeout " + timeout + " millis.");
+            }
             boolean done = latch.await(timeout, TimeUnit.MILLISECONDS);
             if (!done) {
                 throw new ExchangeTimedOutException(exchange, timeout);
@@ -116,7 +123,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
             // did we get a response
             ResponseHandler handler = (ResponseHandler) session.getHandler();
             if (handler.getCause() != null) {
-                throw new CamelExchangeException("Response Handler had an exception", exchange, handler.getCause());
+                throw new CamelExchangeException("Error occurred in ResponseHandler", exchange, handler.getCause());
             } else if (!handler.isMessageReceived()) {
                 // no message received
                 throw new CamelExchangeException("No response received from remote server: " + endpoint.getEndpointUri(), exchange);
