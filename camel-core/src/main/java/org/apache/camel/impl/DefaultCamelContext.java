@@ -1208,7 +1208,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         EventHelper.notifyCamelContextStopping(this);
 
         // stop route inputs in the same order as they was started so we stop the very first inputs first
-        shutdownStrategy.shutdown(this, getRouteStartupOrder());
+        try {
+            shutdownStrategy.shutdown(this, getRouteStartupOrder());
+        } catch (Throwable e) {
+            LOG.warn("Error occurred while shutting down routes. This exception will be ignored.", e);
+        }
         getRouteStartupOrder().clear();
 
         shutdownServices(routeServices.values());
