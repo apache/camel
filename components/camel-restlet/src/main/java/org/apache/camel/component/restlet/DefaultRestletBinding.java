@@ -35,6 +35,7 @@ import org.restlet.data.ChallengeScheme;
 import org.restlet.data.CharacterSet;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
+import org.restlet.data.Method;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -105,8 +106,13 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // add the body as the key in the form with null value
         form.add(body, null);
         
+        MediaType mediaType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, MediaType.class);
+        if (mediaType == null) {
+            mediaType = MediaType.APPLICATION_WWW_FORM;
+        }
+        
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Populate Restlet request from exchange body: " + body);
+            LOG.debug("Populate Restlet request from exchange body: " + body + " using media type " + mediaType);
         }
         
         // login and password are filtered by header filter strategy
@@ -123,12 +129,19 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                if (entry.getKey().startsWith("org.restlet.")) {
-                    // put the org.restlet headers in attributes
+                // Use forms only for GET and POST/x-www-form-urlencoded
+                if (request.getMethod() == Method.GET || (request.getMethod() == Method.POST && mediaType == MediaType.APPLICATION_WWW_FORM)) {
+                    if (entry.getKey().startsWith("org.restlet.")) {
+                        // put the org.restlet headers in attributes
+                        request.getAttributes().put(entry.getKey(), entry.getValue());
+                    } else {
+                        // put the user stuff in the form
+                        form.add(entry.getKey(), entry.getValue().toString());   
+                    }
+                }
+                else {
+                    // For non-form post put all the headers in attributes
                     request.getAttributes().put(entry.getKey(), entry.getValue());
-                } else {
-                    // put the user stuff in the form
-                    form.add(entry.getKey(), entry.getValue().toString());   
                 }
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Populate Restlet request from exchange header: " 
@@ -137,7 +150,18 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
         }
         
-        request.setEntity(form.getWebRepresentation());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Using Content Type: " 
+                    + mediaType + " for POST data:  " + body);
+        }
+
+        // Only URL Encode for GET and form POST
+        if (request.getMethod() == Method.GET || (request.getMethod() == Method.POST && mediaType == MediaType.APPLICATION_WWW_FORM)) {
+            request.setEntity(form.getWebRepresentation());
+        }
+        else {
+            request.setEntity(body, mediaType);
+        }
     }
 
     public void populateRestletResponseFromExchange(Exchange exchange, Response response) {

@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.restlet.Client;
+import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Protocol;
 import org.restlet.data.Request;
@@ -33,6 +34,7 @@ import org.restlet.data.Status;
 
 public class RestletRouteBuilderTest extends CamelTestSupport {
     private static final String ID = "89531";
+    private static final String JSON = "{\"document type\": \"JSON\"}";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -51,6 +53,17 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
                                 "received [" + exchange.getIn().getBody(String.class)
                                 + "] as an order id = "
                                 + exchange.getIn().getHeader("id"));
+                    }
+                });
+
+                // Restlet consumer to handler POST method
+                from("restlet:http://localhost:9080/ordersJSON?restletMethod=post").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        if (body.indexOf("{") == -1) {
+                            throw new Exception("Inproperly formatted JSON:  " + body );
+                        }
+                        exchange.getOut().setBody(exchange.getIn().getBody());
                     }
                 });
 
@@ -78,6 +91,30 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
              ExchangePattern.InOut,
              "<order foo='1'/>", "id", "89531");
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
+    }
+
+    @Test
+    public void testProducerJSON() throws IOException {
+        String response = (String)template.sendBodyAndHeader( 
+                "restlet:http://localhost:9080/ordersJSON?restletMethod=post&foo=bar", 
+                ExchangePattern.InOut,
+                JSON,
+                Exchange.CONTENT_TYPE,
+                MediaType.APPLICATION_JSON);
+           
+        assertEquals(JSON, response);
+    }
+
+
+    @Test
+    public void testProducerJSONFailure() throws IOException {
+        
+        String response = (String)template.sendBody( 
+                "restlet:http://localhost:9080/ordersJSON?restletMethod=post&foo=bar", 
+                ExchangePattern.InOut,
+                "{'JSON'}");
+           
+        assertEquals("{'JSON'}", response);
     }
 
     @Test
