@@ -256,7 +256,11 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.5.1</version>
+	  <version>2.5.1</version>
+	  <configuration>
+             <downloadSources>true</downloadSources>
+             <downloadJavadocs>false</downloadJavadocs>
+          </configuration>
           <dependencies>
              <dependency>
                 <groupId>org.apache.camel</groupId>
@@ -271,6 +275,12 @@
           <artifactId>maven-jetty-plugin</artifactId>
           <version>${jetty-version}</version>
         </plugin>
+      
+	<plugin>
+	  <groupId>org.codehaus.mojo</groupId>
+	  <artifactId>exec-maven-plugin</artifactId>
+	  <version>1.1.1</version>
+	</plugin>
 
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
