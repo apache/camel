@@ -475,7 +475,9 @@ public abstract class TestSupport extends Assert {
      *
      * @return the method name
      */
-    public static String getTestMethodName() {
+    public String getTestMethodName() {
+        // TODO: When using latest junit we can use @Rule to remember the test name
+        // http://kentbeck.github.com/junit/javadoc/latest/org/junit/rules/TestName.html
         return "";
     }
 
