@@ -17,14 +17,15 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Processor;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
  * @version $Revision$
  */
-public class HttpConsumer extends DefaultConsumer {
-
+public class HttpConsumer extends DefaultConsumer implements SuspendableService {
     private final HttpEndpoint endpoint;
+    private volatile boolean suspended;
 
     public HttpConsumer(HttpEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -55,4 +56,17 @@ public class HttpConsumer extends DefaultConsumer {
         endpoint.disconnect(this);
         super.doStop();
     }
+
+    public void suspend() {
+        suspended = true;
+    }
+
+    public void resume() {
+        suspended = false;
+    }
+
+    public boolean isSuspended() {
+        return suspended;
+    }
+
 }

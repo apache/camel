@@ -47,6 +47,12 @@ public class CamelServlet extends HttpServlet {
                 return;
             }
 
+            // are we suspended?
+            if (consumer.isSuspended()) {
+                response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                return;
+            }
+
             // Have the camel process the HTTP exchange.
             DefaultExchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
             exchange.setIn(new HttpMessage(exchange, request, response));

@@ -38,9 +38,9 @@ public class JettyJmsShutdownTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testShutdown() throws Exception {
-        Future<String> reply1 = template.asyncRequestBody("jetty:http://localhost:9000/test", "World", String.class);
-        Future<String> reply2 = template.asyncRequestBody("jetty:http://localhost:9000/test", "Camel", String.class);
-        Future<String> reply3 = template.asyncRequestBody("jetty:http://localhost:9000/test", "Tiger", String.class);
+        Future<String> reply1 = template.asyncRequestBody("http://localhost:9000/test", "World", String.class);
+        Future<String> reply2 = template.asyncRequestBody("http://localhost:9000/test", "Camel", String.class);
+        Future<String> reply3 = template.asyncRequestBody("http://localhost:9000/test", "Tiger", String.class);
 
         Thread.sleep(1000);
 

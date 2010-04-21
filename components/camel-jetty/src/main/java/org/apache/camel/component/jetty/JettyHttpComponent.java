@@ -104,16 +104,7 @@ public class JettyHttpComponent extends HttpComponent {
             return --refCount;
         }
     }
-    
-    public void setEnableJmx(boolean enableJmx) {
-        this.enableJmx = enableJmx;
-    }
-    
-    public boolean isEnableJmx() {
-        return enableJmx;
-    }
-    
-    
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         uri = uri.startsWith("jetty:") ? remaining : uri;
@@ -419,6 +410,14 @@ public class JettyHttpComponent extends HttpComponent {
 
     public void setHttpClientMaxThreads(Integer httpClientMaxThreads) {
         this.httpClientMaxThreads = httpClientMaxThreads;
+    }
+
+    public void setEnableJmx(boolean enableJmx) {
+        this.enableJmx = enableJmx;
+    }
+
+    public boolean isEnableJmx() {
+        return enableJmx;
     }
 
     public synchronized MBeanContainer getMbContainer() {
