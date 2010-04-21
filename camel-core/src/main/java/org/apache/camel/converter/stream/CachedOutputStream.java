@@ -30,7 +30,6 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
-import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.logging.Log;
