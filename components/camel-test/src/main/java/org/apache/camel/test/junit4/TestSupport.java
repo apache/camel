@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
@@ -49,7 +48,7 @@ import org.junit.Assert;
  *
  * @version $Revision$
  */
-public abstract class TestSupport extends TestCase {
+public abstract class TestSupport extends Assert {
     private static final Log LOG = LogFactory.getLog(TestSupport.class);    
     protected transient Log log = LogFactory.getLog(getClass());    
     
@@ -469,6 +468,15 @@ public abstract class TestSupport extends TestCase {
     public static boolean isJavaVendor(String vendor) {
         String javaVendor = System.getProperty("java.vendor").toLowerCase(Locale.US);
         return javaVendor.indexOf(vendor.toLowerCase(Locale.US)) > -1;
+    }
+
+    /**
+     * Gets the current test method name
+     *
+     * @return the method name
+     */
+    public static String getTestMethodName() {
+        return "";
     }
 
 }

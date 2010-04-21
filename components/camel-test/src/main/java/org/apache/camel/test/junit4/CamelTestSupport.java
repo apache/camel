@@ -82,7 +82,7 @@ public abstract class CamelTestSupport extends TestSupport {
     @Before
     public void setUp() throws Exception {
         log.info("********************************************************************************");
-        log.info("Testing: " + getName() + "(" + getClass().getName() + ")");
+        log.info("Testing: " + getTestMethodName() + "(" + getClass().getName() + ")");
         log.info("********************************************************************************");
 
         log.debug("setUp test");

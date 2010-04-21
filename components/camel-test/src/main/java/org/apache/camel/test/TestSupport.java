@@ -471,4 +471,13 @@ public abstract class TestSupport extends TestCase {
         return javaVendor.indexOf(vendor.toLowerCase(Locale.US)) > -1;
     }
 
+    /**
+     * Gets the current test method name
+     *
+     * @return the method name
+     */
+    public String getTestMethodName() {
+        return getName();
+    }
+
 }
