@@ -24,8 +24,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,8 +38,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor {
     private static final transient Log LOG = LogFactory.getLog(EventDrivenPollingConsumer.class);
-    private BlockingQueue<Exchange> queue;
-    private ExceptionHandler interuptedExceptionHandler = new LoggingExceptionHandler(new Logger(LOG));
+    private final BlockingQueue<Exchange> queue;
+    private ExceptionHandler interruptedExceptionHandler = new LoggingExceptionHandler(EventDrivenPollingConsumer.class);
     private Consumer consumer;
 
     public EventDrivenPollingConsumer(Endpoint endpoint) {
@@ -60,7 +60,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             try {
                 return queue.take();
             } catch (InterruptedException e) {
-                handleInteruptedException(e);
+                handleInterruptedException(e);
             }
         }
         if (LOG.isTraceEnabled()) {
@@ -73,7 +73,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         try {
             return queue.poll(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            handleInteruptedException(e);
+            handleInterruptedException(e);
             return null;
         }
     }
@@ -82,31 +82,25 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         queue.offer(exchange);
     }
 
-    public ExceptionHandler getInteruptedExceptionHandler() {
-        return interuptedExceptionHandler;
+    public ExceptionHandler getInterruptedExceptionHandler() {
+        return interruptedExceptionHandler;
     }
 
-    public void setInteruptedExceptionHandler(ExceptionHandler interuptedExceptionHandler) {
-        this.interuptedExceptionHandler = interuptedExceptionHandler;
+    public void setInterruptedExceptionHandler(ExceptionHandler interruptedExceptionHandler) {
+        this.interruptedExceptionHandler = interruptedExceptionHandler;
     }
 
-    protected void handleInteruptedException(InterruptedException e) {
-        getInteruptedExceptionHandler().handleException(e);
+    protected void handleInterruptedException(InterruptedException e) {
+        getInterruptedExceptionHandler().handleException(e);
     }
 
     protected void doStart() throws Exception {
         // lets add ourselves as a consumer
         consumer = getEndpoint().createConsumer(this);
-        consumer.start();
+        ServiceHelper.startService(consumer);
     }
 
     protected void doStop() throws Exception {
-        if (consumer != null) {
-            try {
-                consumer.stop();
-            } finally {
-                consumer = null;
-            }
-        }
+        ServiceHelper.stopService(consumer);
     }
 }
