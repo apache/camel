@@ -535,10 +535,9 @@ public class JettyHttpComponent extends HttpComponent {
                 connectorRef.server.stop();
                 // Camel controls the lifecycle of these entities so remove the
                 // registered MBeans when Camel is done with the managed objects.
-                MBeanContainer containerToClean = getMbContainer(); 
-                if (containerToClean != null) {
-                    containerToClean.removeBean(connectorRef.server);
-                    containerToClean.removeBean(connectorRef.connector);
+                if (mbContainer != null) {
+                    mbContainer.removeBean(connectorRef.server);
+                    mbContainer.removeBean(connectorRef.connector);
                 }
             }
             CONNECTORS.clear();
