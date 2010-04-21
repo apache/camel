@@ -27,7 +27,7 @@ public class HttpRouteUsingUrlPostTest extends HttpRouteTest {
         super.invokeHttpEndpoint();
 
         // TODO: Disable to let TC pass as some severs have connection refused
-        /*URL url = new URL("http://localhost:9080/test");
+        /*URL url = new URL("http://localhost:9280/test");
         URLConnection urlConnection = url.openConnection();
         urlConnection.setDoInput(true);
         urlConnection.setDoOutput(true);

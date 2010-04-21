@@ -74,7 +74,7 @@ public class HttpRouteTest extends CamelTestSupport {
     @Test
     public void testHelloEndpoint() throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        InputStream is = new URL("http://localhost:9080/hello").openStream();
+        InputStream is = new URL("http://localhost:9280/hello").openStream();
         int c;
         while ((c = is.read()) >= 0) {
             os.write(c);
@@ -86,7 +86,7 @@ public class HttpRouteTest extends CamelTestSupport {
 
     @Test
     public void testEchoEndpoint() throws Exception {
-        String out = template.requestBody("http://localhost:9080/echo", "HelloWorld", String.class);
+        String out = template.requestBody("http://localhost:9280/echo", "HelloWorld", String.class);
         assertEquals("Get a wrong output " , "HelloWorld", out);
     }
 
@@ -95,7 +95,7 @@ public class HttpRouteTest extends CamelTestSupport {
         NameValuePair[] data = {new NameValuePair("request", "PostParameter"),
                                 new NameValuePair("others", "bloggs")};
         HttpClient client = new HttpClient();
-        PostMethod post = new PostMethod("http://localhost:9080/parameter");
+        PostMethod post = new PostMethod("http://localhost:9280/parameter");
         post.setRequestBody(data);
         client.executeMethod(post);
         InputStream response = post.getResponseBodyAsStream();
@@ -106,7 +106,7 @@ public class HttpRouteTest extends CamelTestSupport {
     @Test
     public void testPostXMLMessage() throws Exception {
         HttpClient client = new HttpClient();
-        PostMethod post = new PostMethod("http://localhost:9080/postxml");
+        PostMethod post = new PostMethod("http://localhost:9280/postxml");
         StringRequestEntity entity = new StringRequestEntity(POST_MESSAGE, "application/xml", "UTF-8");
         post.setRequestEntity(entity);
         client.executeMethod(post);
@@ -118,7 +118,7 @@ public class HttpRouteTest extends CamelTestSupport {
     @Test
     public void testPostParameterInURI() throws Exception {
         HttpClient client = new HttpClient();
-        PostMethod post = new PostMethod("http://localhost:9080/parameter?request=PostParameter&others=bloggs");
+        PostMethod post = new PostMethod("http://localhost:9280/parameter?request=PostParameter&others=bloggs");
         StringRequestEntity entity = new StringRequestEntity(POST_MESSAGE, "application/xml", "UTF-8");
         post.setRequestEntity(entity);
         client.executeMethod(post);
@@ -130,7 +130,7 @@ public class HttpRouteTest extends CamelTestSupport {
     @Test
     public void testPutParameterInURI() throws Exception {
         HttpClient client = new HttpClient();
-        PutMethod put = new PutMethod("http://localhost:9080/parameter?request=PutParameter&others=bloggs");
+        PutMethod put = new PutMethod("http://localhost:9280/parameter?request=PutParameter&others=bloggs");
         StringRequestEntity entity = new StringRequestEntity(POST_MESSAGE, "application/xml", "UTF-8");
         put.setRequestEntity(entity);
         client.executeMethod(put);
@@ -140,7 +140,7 @@ public class HttpRouteTest extends CamelTestSupport {
     }
 
     protected void invokeHttpEndpoint() throws IOException {
-        template.requestBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
+        template.requestBodyAndHeader("http://localhost:9280/test", expectedBody, "Content-Type", "application/xml");
     }
 
     @Override
@@ -150,7 +150,7 @@ public class HttpRouteTest extends CamelTestSupport {
                 // enable stream cache
                 context.setStreamCaching(true);
 
-                from("jetty:http://localhost:9080/test").to("mock:a");
+                from("jetty:http://localhost:9280/test").to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -176,9 +176,9 @@ public class HttpRouteTest extends CamelTestSupport {
                         cache.reset();
                     }
                 };
-                from("jetty:http://localhost:9080/hello?sessionSupport=true").process(proc);
+                from("jetty:http://localhost:9280/hello?sessionSupport=true").process(proc);
 
-                from("jetty:http://localhost:9080/echo").process(printProcessor).process(printProcessor);
+                from("jetty:http://localhost:9280/echo").process(printProcessor).process(printProcessor);
 
                 Processor procParameters = new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -194,9 +194,9 @@ public class HttpRouteTest extends CamelTestSupport {
                     }
                 };
 
-                from("jetty:http://localhost:9080/parameter").process(procParameters);
+                from("jetty:http://localhost:9280/parameter").process(procParameters);
 
-                from("jetty:http://localhost:9080/postxml").process(new Processor() {
+                from("jetty:http://localhost:9280/postxml").process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
                         String value = exchange.getIn().getBody(String.class);
