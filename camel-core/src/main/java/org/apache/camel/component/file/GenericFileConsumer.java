@@ -218,6 +218,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         // must extract the absolute name before the begin strategy as the file could potentially be pre moved
         // and then the file name would be changed
         String absoluteFileName = file.getAbsoluteFilePath();
+
+        // check if we can begin processing the file
         try {
             final GenericFileProcessStrategy<T> processStrategy = endpoint.getGenericFileProcessStrategy();
 
@@ -226,17 +228,24 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
                 if (log.isDebugEnabled()) {
                     log.debug(endpoint + " cannot begin processing file: " + file);
                 }
-                // remove file from the in progress list as its no longer in progress
+                // begin returned false, so remove file from the in progress list as its no longer in progress
                 endpoint.getInProgressRepository().remove(absoluteFileName);
                 return;
             }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug(endpoint + " cannot begin processing file: " + file + " due to: " + e.getMessage(), e);
+            }
+            endpoint.getInProgressRepository().remove(absoluteFileName);
+            return;
+        }
 
-            // must use file from exchange as it can be updated due the
-            // preMoveNamePrefix/preMoveNamePostfix options
-            final GenericFile<T> target = getExchangeFileProperty(exchange);
-            // must use full name when downloading so we have the correct path
-            final String name = target.getAbsoluteFilePath();
-
+        // must use file from exchange as it can be updated due the
+        // preMoveNamePrefix/preMoveNamePostfix options
+        final GenericFile<T> target = getExchangeFileProperty(exchange);
+        // must use full name when downloading so we have the correct path
+        final String name = target.getAbsoluteFilePath();
+        try {
             // retrieve the file using the stream
             if (log.isTraceEnabled()) {
                 log.trace("Retrieving file: " + name + " from: " + endpoint);
@@ -248,18 +257,23 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
                 log.trace("Retrieved file: " + name + " from: " + endpoint);
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("About to process file: " + target + " using exchange: " + exchange);
-            }
-
             // register on completion callback that does the completion strategies
             // (for instance to move the file after we have processed it)
             exchange.addOnCompletion(new GenericFileOnCompletion<T>(endpoint, operations, target, absoluteFileName));
+
+            if (log.isDebugEnabled()) {
+                log.debug("About to process file: " + target + " using exchange: " + exchange);
+            }
 
             // process the exchange
             getProcessor().process(exchange);
 
         } catch (Exception e) {
+            // remove file from the in progress list due to failure
+            // (cannot be in finally block due to GenericFileOnCompletion will remove it
+            // from in progress when it takes over and processes the file, which may happen
+            // by another thread at a later time. So its only safe to remove it if there was an exception)
+            endpoint.getInProgressRepository().remove(absoluteFileName);
             handleException(e);
         }
     }
