@@ -121,13 +121,13 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
         return answer;
     }
 
-    public Index<Buffer, Buffer> getRepositoryIndex(Transaction tx, String name) {
-        Index<Buffer, Buffer> answer;
+    public Index<Buffer, Buffer> getRepositoryIndex(Transaction tx, String name, boolean create) {
+        Index<Buffer, Buffer> answer = null;
 
         Index<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx, 0);
         Integer location = indexes.get(name);
 
-        if (location == null) {
+        if (create && location == null) {
             // create it..
             int page = tx.allocator().alloc(1);
             Index<Buffer, Buffer> created = INDEX_FACTORY.create(tx, page);
@@ -140,7 +140,7 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
             }
 
             answer = created;
-        } else {
+        } else if (location != null) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Repository index with name " + name + " at location " + location);
             }

@@ -57,7 +57,7 @@ public class HawtDBAggregateNotLostTest extends CamelTestSupport {
         final Buffer confirmKeyBuffer = marshaller.marshallKey(exchangeId);
         Buffer bf = hawtDBFile.execute(new Work<Buffer>() {
             public Buffer execute(Transaction tx) {
-                Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, "repo1-completed");
+                Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, "repo1-completed", false);
                 return index.get(confirmKeyBuffer);
             }
         });
