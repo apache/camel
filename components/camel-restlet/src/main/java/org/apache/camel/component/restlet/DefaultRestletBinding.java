@@ -138,8 +138,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                         // put the user stuff in the form
                         form.add(entry.getKey(), entry.getValue().toString());   
                     }
-                }
-                else {
+                } else {
                     // For non-form post put all the headers in attributes
                     request.getAttributes().put(entry.getKey(), entry.getValue());
                 }
@@ -158,8 +157,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // Only URL Encode for GET and form POST
         if (request.getMethod() == Method.GET || (request.getMethod() == Method.POST && mediaType == MediaType.APPLICATION_WWW_FORM)) {
             request.setEntity(form.getWebRepresentation());
-        }
-        else {
+        } else {
             request.setEntity(body, mediaType);
         }
     }

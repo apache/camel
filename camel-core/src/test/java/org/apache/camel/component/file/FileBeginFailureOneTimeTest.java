@@ -74,7 +74,8 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         public void prepareOnStartup(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint) throws Exception {
         }
 
-        public boolean begin(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint, Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
+        public boolean begin(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
+                             Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
             invoked++;
             if (invoked <= 1) {
                 throw new IllegalArgumentException("Damn I cannot do this");
@@ -82,10 +83,12 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
             return true;
         }
 
-        public void commit(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint, Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
+        public void commit(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
+                            Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
         }
 
-        public void rollback(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint, Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
+        public void rollback(GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
+                            Exchange exchange, GenericFile<File> fileGenericFile) throws Exception {
         }
 
         public int getInvoked() {
