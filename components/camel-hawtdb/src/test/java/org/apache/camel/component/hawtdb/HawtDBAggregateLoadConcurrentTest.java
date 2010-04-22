@@ -34,7 +34,7 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
 
     private static final Log LOG = LogFactory.getLog(HawtDBAggregateLoadConcurrentTest.class);
     private static final char[] KEYS = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
-    private static final int SIZE = 5000;
+    private static final int SIZE = 500;
 
     @Before
     @Override
