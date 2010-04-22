@@ -208,12 +208,7 @@
                 <plugin>
                    <groupId>org.apache.felix.karaf.tooling</groupId>
                    <artifactId>features-maven-plugin</artifactId>
-                   <version>1.5.0-SNAPSHOT</version>
-		   <configuration>
-                      <repositories>
-			      <repository>mvn:org.apache.felix.karaf/apache-felix-karaf/${karaf-version}/xml/features</repository>
-		      </repositories>
-	           </configuration>
+		   <version>${karaf-version}</version>
 		   <executions>
                      <execution>
                        <id>validate</id>
