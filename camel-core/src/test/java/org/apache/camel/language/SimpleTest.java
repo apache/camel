@@ -23,10 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
+import org.apache.camel.language.simple.SimpleLanguage;
 
 /**
  * @version $Revision$
@@ -35,6 +37,20 @@ public class SimpleTest extends LanguageTestSupport {
 
     public void testConstantExpression() throws Exception {
         assertExpression("Hello World", "Hello World");
+    }
+
+    public void testBodyExpression() throws Exception {
+        Expression exp = SimpleLanguage.simple("${body}");
+        assertNotNull(exp);
+    }
+
+    public void testBodyExpressionNotStringType() throws Exception {
+        exchange.getIn().setBody(123);
+        Expression exp = SimpleLanguage.simple("${body}");
+        assertNotNull(exp);
+        Object val = exp.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Integer.class, val);
+        assertEquals(123, val);
     }
 
     public void testSimpleExpressions() throws Exception {
@@ -187,7 +203,7 @@ public class SimpleTest extends LanguageTestSupport {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
             assertEquals("Index: 2, Size: 2", cause.getMessage());
         }
-        assertExpression("${header.unknown[cool]}", "");
+        assertExpression("${header.unknown[cool]}", null);
     }
 
     public void testOGNLHeaderLinesList() throws Exception {
@@ -205,7 +221,7 @@ public class SimpleTest extends LanguageTestSupport {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
             assertEquals("Index: 2, Size: 2", cause.getMessage());
         }
-        assertExpression("${header.unknown[cool]}", "");
+        assertExpression("${header.unknown[cool]}", null);
     }
 
     public void testOGNLHeaderMap() throws Exception {
@@ -217,11 +233,11 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("${header.wicket[cool]}", "Camel rocks");
         assertExpression("${header.wicket[dude]}", "Hey dude");
-        assertExpression("${header.wicket[unknown]}", "");
+        assertExpression("${header.wicket[unknown]}", null);
         assertExpression("${header.wicket[code]}", 4321);
         // no header named unknown
-        assertExpression("${header?.unknown[cool]}", "");
-        assertExpression("${header.unknown[cool]}", "");
+        assertExpression("${header?.unknown[cool]}", null);
+        assertExpression("${header.unknown[cool]}", null);
     }
 
     public void testOGNLHeaderMapNotMap() throws Exception {
@@ -495,7 +511,7 @@ public class SimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(order);
 
-        assertExpression("${in.body?.getLines[3].getId}", "");
+        assertExpression("${in.body?.getLines[3].getId}", null);
     }
 
     public void testBodyOGNLOrderListOutOfBoundsWithElvisShorthand() throws Exception {
@@ -506,7 +522,7 @@ public class SimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(order);
 
-        assertExpression("${in.body?.lines[3].id}", "");
+        assertExpression("${in.body?.lines[3].id}", null);
     }
 
     public void testBodyOGNLOrderListNoMethodNameWithElvis() throws Exception {
@@ -543,7 +559,7 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
-    public void testBodyOGNLElvisToAvoidNPE() throws Exception {
+    public void testBodyOGNLNullSafeToAvoidNPE() throws Exception {
         Animal tiger = new Animal("Tony the Tiger", 13);
         Animal camel = new Animal("Camel", 6);
         camel.setFriend(tiger);
@@ -556,10 +572,10 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.body.getFriend.getName}", "Tony the Tiger");
         assertExpression("${in.body.getFriend.getAge}", "13");
 
-        // using elvis to avoid the NPE
-        assertExpression("${in.body.getFriend?.getFriend.getName}", "");
+        // using null safe to avoid the NPE
+        assertExpression("${in.body.getFriend?.getFriend.getName}", null);
         try {
-            // without elvis we get an NPE
+            // without null safe we get an NPE
             assertExpression("${in.body.getFriend.getFriend.getName}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
@@ -568,7 +584,7 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
-    public void testBodyOGNLElvisToAvoidNPEShorthand() throws Exception {
+    public void testBodyOGNLNullSafeToAvoidNPEShorthand() throws Exception {
         Animal tiger = new Animal("Tony the Tiger", 13);
         Animal camel = new Animal("Camel", 6);
         camel.setFriend(tiger);
@@ -582,10 +598,10 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.body.friend.getName}", "Tony the Tiger");
         assertExpression("${in.body.getFriend.age}", "13");
 
-        // using elvis to avoid the NPE
-        assertExpression("${in.body.friend?.friend.name}", "");
+        // using null safe to avoid the NPE
+        assertExpression("${in.body.friend?.friend.name}", null);
         try {
-            // without elvis we get an NPE
+            // without null safe we get an NPE
             assertExpression("${in.body.friend.friend.name}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {

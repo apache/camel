@@ -269,7 +269,15 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                 pivot = endIdx + 1;
             }
         }
-        return ExpressionBuilder.concatExpression(results, expression);
+
+        // only concat if there is more than one expression
+        if (results.size() > 1) {
+            return ExpressionBuilder.concatExpression(results, expression);
+        } else if (results.size() == 1) {
+            return results.get(0);
+        } else {
+            return null;
+        }
     }
 
     protected Expression createSimpleOrConstantExpression(String text) {
