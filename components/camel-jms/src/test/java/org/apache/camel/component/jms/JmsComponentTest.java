@@ -30,12 +30,12 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
  */
 public class JmsComponentTest extends CamelTestSupport {
 
-    protected String componentName = "activemq";
+    protected String componentName = "activemq123";
     protected JmsEndpoint endpoint;
 
     @Test
     public void testComponentOptions() throws Exception {
-        String reply = template.requestBody("activemq:queue:hello?requestTimeout=0", "Hello World", String.class);
+        String reply = template.requestBody("activemq123:queue:hello?requestTimeout=0", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
         assertEquals(true, endpoint.isAcceptMessagesWhileStopping());
