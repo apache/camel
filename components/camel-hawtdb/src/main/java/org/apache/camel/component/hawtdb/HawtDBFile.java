@@ -68,19 +68,19 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
             LOG.debug("Starting HawtDB using file: " + getFile());
         }
 
-        final boolean initialize = !getFile().exists();
         open();
         pageFile = getTxPageFile();
 
         execute(new Work<Boolean>() {
             public Boolean execute(Transaction tx) {
-                if (initialize) {
-                    int page = tx.allocator().alloc(1);
+                int page = tx.allocator().alloc(1);
+                if (page==0) {
                     // if we just created the file, first allocated page should be 0
-                    assert page == 0;
                     ROOT_INDEXES_FACTORY.create(tx, 0);
                     LOG.info("Aggregation repository data store created using file: " + getFile());
                 } else {
+                    // Was previously created.. so free up the test page
+                    tx.allocator().free(page, 1);
                     Index<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx, 0);
                     LOG.info("Aggregation repository data store loaded using file: " + getFile()
                             + " containing " + indexes.size() + " repositories.");
@@ -109,6 +109,7 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
         try {
             answer = work.execute(tx);
             tx.commit();
+            pageFile.flush();
         } catch (RuntimeException e) {
             LOG.warn("Error executing work " + work + " will do rollback.", e);
             tx.rollback();
