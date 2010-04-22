@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -47,8 +46,9 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     private HawtDBFile hawtDBFile;
     private String persistentFileName;
     private String repositoryName;
-    private Integer bufferSize;
+    private int bufferSize = 8 * 1024 * 1024;
     private boolean sync = true;
+    private short pageSize = 512;
     private boolean returnOldExchange;
     private HawtDBCamelMarshaller marshaller = new HawtDBCamelMarshaller();
     private long recoveryInterval = 5000;
@@ -442,6 +442,14 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
         this.deadLetterUri = deadLetterUri;
     }
 
+    public short getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(short pageSize) {
+        this.pageSize = pageSize;
+    }
+
     @Override
     protected void doStart() throws Exception {
         // either we have a HawtDB configured or we use a provided fileName
@@ -451,6 +459,9 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
             hawtDBFile.setSync(isSync());
             if (getBufferSize() != null) {
                 hawtDBFile.setMappingSegementSize(getBufferSize());
+            }
+            if (getPageSize() > 0) {
+                hawtDBFile.setPageSize(getPageSize());
             }
         }
 

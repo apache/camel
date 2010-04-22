@@ -63,6 +63,8 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
                         LOG.debug("Sending " + value + " with id " + id);
                     }
                     template.sendBodyAndHeader("direct:start", value, "id", "" + id);
+                    // simulate a little delay
+                    Thread.sleep(3);
                     return null;
                 }
             });

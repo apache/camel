@@ -78,6 +78,8 @@ public class HawtDBAggregateConcurrentSameGroupTest extends CamelTestSupport {
             executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     template.sendBodyAndHeader("direct:start", index, "id", 123);
+                    // simulate a little delay
+                    Thread.sleep(3);
                     return null;
                 }
             });

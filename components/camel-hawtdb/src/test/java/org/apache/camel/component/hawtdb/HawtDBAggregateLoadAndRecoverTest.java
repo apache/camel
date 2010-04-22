@@ -34,7 +34,7 @@ import org.junit.Test;
 public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
 
     private static final Log LOG = LogFactory.getLog(HawtDBAggregateLoadAndRecoverTest.class);
-    private static final int SIZE = 1000;
+    private static final int SIZE = 200;
     private static AtomicInteger counter = new AtomicInteger();
 
     @Before
@@ -62,6 +62,8 @@ public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
                 LOG.debug("Sending " + value + " with id " + id);
             }
             template.sendBodyAndHeaders("seda:start?size=" + SIZE, value, headers);
+            // simulate a little delay
+            Thread.sleep(3);
         }
 
         LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
@@ -74,7 +76,8 @@ public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
                 recovered++;
             }
         }
-        assertEquals("There should be 5 recovered", 5, recovered);
+        int expected = SIZE / 10 / 10;
+        assertEquals("There should be " + expected + " recovered", expected, recovered);
     }
 
     @Override
@@ -91,11 +94,11 @@ public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
                         .aggregationRepository(repo)
                         .completionSize(10)
                         .to("log:output?showHeaders=true")
-                        // have every 20th exchange fail which should then be recovered
+                        // have every 10th exchange fail which should then be recovered
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 int num = counter.incrementAndGet();
-                                if (num % 20 == 0) {
+                                if (num % 10 == 0) {
                                     throw new IllegalStateException("Failed for num " + num);
                                 }
                             }
