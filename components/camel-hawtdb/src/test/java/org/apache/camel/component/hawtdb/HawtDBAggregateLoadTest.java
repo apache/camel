@@ -29,7 +29,7 @@ import org.junit.Test;
 public class HawtDBAggregateLoadTest extends CamelTestSupport {
 
     private static final Log LOG = LogFactory.getLog(HawtDBAggregateLoadTest.class);
-    private static final int SIZE = 5000;
+    private static final int SIZE = 500;
 
     @Before
     @Override
