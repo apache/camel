@@ -92,6 +92,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-exec</artifactId>    
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-flatpack</artifactId>
     </dependency>
     <dependency>
@@ -208,6 +212,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-netty</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-nagios</artifactId>
     </dependency>
     <dependency>
@@ -274,7 +282,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-snmp</artifactId>
     </dependency>
- 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
@@ -282,6 +289,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-integration</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-security</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

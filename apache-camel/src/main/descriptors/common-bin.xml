@@ -46,7 +46,8 @@
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-dozer</include>
-        <include>org.apache.camel:camel-flatpack</include>
+	<include>org.apache.camel:camel-exec</include>
+	<include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-freemarker</include>
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-gae</include>
@@ -78,7 +79,8 @@
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mvel</include>
         <include>org.apache.camel:camel-nagios</include>
-        <include>org.apache.camel:camel-ognl</include>
+	<include>org.apache.camel:camel-netty</include>
+	<include>org.apache.camel:camel-ognl</include>
         <include>org.apache.camel:camel-osgi</include>
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-protobuf</include>
@@ -97,7 +99,8 @@
         <include>org.apache.camel:camel-soap</include>
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-integration</include>
-        <include>org.apache.camel:camel-spring-osgi</include>
+	<include>org.apache.camel:camel-spring-security</include>
+	<include>org.apache.camel:camel-spring-osgi</include>
         <include>org.apache.camel:camel-sql</include>
         <include>org.apache.camel:camel-stream</include>
         <include>org.apache.camel:camel-stringtemplate</include>
