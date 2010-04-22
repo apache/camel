@@ -18,12 +18,14 @@ package org.apache.camel.component.jms.tuning;
 
 import org.apache.camel.test.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
+@Ignore
 public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
 
     private int size = 200;
