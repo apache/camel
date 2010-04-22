@@ -21,9 +21,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Unit test to query Google using GET with endpoint having the query parameters.
+ * @version $Revision$
  */
-public class HttpQueryGoogleTest extends CamelTestSupport {
+public class HttpQueryGoogleProxyTest extends CamelTestSupport {
 
     public boolean isUseRouteBuilder() {
         return false;
@@ -31,10 +31,22 @@ public class HttpQueryGoogleTest extends CamelTestSupport {
 
     @Test
     @Ignore("Run manually")
-    public void testQueryGoogle() throws Exception {
-        Object out = template.requestBody("http://www.google.com/search?q=Camel", "");
+    public void testQueryGoogleProxy() throws Exception {
+        HttpConfiguration config = new HttpConfiguration();
+        config.setProxyHost("aa");
+        config.setProxyPort(80);
+        config.setProxyAuthMethod(AuthMethod.Basic);
+        config.setAuthMethodPriority("Basic,Digest");
+        config.setProxyAuthUsername("aa");
+        config.setProxyAuthPassword("aa");
+
+        HttpComponent http = context.getComponent("http", HttpComponent.class);
+        http.setHttpConfiguration(config);
+
+        Object out = template.requestBody("http://google.com/search?q=Camel", "");
         assertNotNull(out);
         String data = context.getTypeConverter().convertTo(String.class, out);
         assertTrue("Camel should be in search result from Google", data.indexOf("Camel") > -1);
     }
+
 }
