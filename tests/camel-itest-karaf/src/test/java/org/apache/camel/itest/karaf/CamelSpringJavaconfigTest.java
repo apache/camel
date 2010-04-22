@@ -16,12 +16,14 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
+@Ignore("This test need to run with Spring 3.x")
 @RunWith(JUnit4TestRunner.class)
 public class CamelSpringJavaconfigTest extends AbstractFeatureTest {
 
