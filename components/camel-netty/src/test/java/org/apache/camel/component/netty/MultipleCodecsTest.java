@@ -38,17 +38,28 @@ public class MultipleCodecsTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
+        // START SNIPPET: registry-beans
+        LengthFieldBasedFrameDecoder lengthDecoder = new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
+        StringDecoder stringDecoder = new StringDecoder();
+        registry.bind("length-decoder", lengthDecoder);
+        registry.bind("string-decoder", stringDecoder);
+
+        LengthFieldPrepender lengthEncoder = new LengthFieldPrepender(4);
+        StringEncoder stringEncoder = new StringEncoder();
+        registry.bind("length-encoder", lengthEncoder);
+        registry.bind("string-encoder", stringEncoder);
+
         List<ChannelUpstreamHandler> decoders = new ArrayList<ChannelUpstreamHandler>();
-        decoders.add(new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4));
-        decoders.add(new StringDecoder());
+        decoders.add(lengthDecoder);
+        decoders.add(stringDecoder);
 
         List<ChannelDownstreamHandler> encoders = new ArrayList<ChannelDownstreamHandler>();
-        encoders.add(new LengthFieldPrepender(4));
-        encoders.add(new StringEncoder());
+        encoders.add(lengthEncoder);
+        encoders.add(stringEncoder);
 
         registry.bind("encoders", encoders);
         registry.bind("decoders", decoders);
-
+        // END SNIPPET: registry-beans
         return registry;
     }
 
@@ -57,7 +68,7 @@ public class MultipleCodecsTest extends CamelTestSupport {
         String poem = new Poetry().getPoem();
         MockEndpoint mock = getMockEndpoint("mock:multiple-codec");
         mock.expectedBodiesReceived(poem);
-        sendBody("direct:mutliple-codec", poem);
+        sendBody("direct:multiple-codec", poem);
         mock.await(1, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
 
@@ -66,11 +77,11 @@ public class MultipleCodecsTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:mutliple-codec").to("netty:tcp://localhost:5150?encoders=#encoders");
-
-                from("netty:tcp://localhost:5150?decoders=#decoders").to("mock:multiple-codec");
+                // START SNIPPET: routes
+                from("direct:multiple-codec").to("netty:tcp://localhost:5150?encoders=#encoders");
+                from("netty:tcp://localhost:5150?decoders=#length-decoder,#string-decoder").to("mock:multiple-codec");
+                // START SNIPPET: routes
             }
         };
     }
-
 }

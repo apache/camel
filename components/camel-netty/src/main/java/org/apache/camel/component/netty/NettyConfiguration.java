@@ -90,9 +90,9 @@ public class NettyConfiguration {
         keyStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "keyStoreFile", File.class, null);
         trustStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "trustStoreFile", File.class, null);
 
-        List<ChannelDownstreamHandler> referencedEncoders = component.resolveAndRemoveReferenceParameter(parameters, "encoders", List.class, null);
+        List<ChannelDownstreamHandler> referencedEncoders = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelDownstreamHandler.class, null);
         addToHandlersList(encoders, referencedEncoders, ChannelDownstreamHandler.class);
-        List<ChannelUpstreamHandler> referencedDecoders = component.resolveAndRemoveReferenceParameter(parameters, "decoders", List.class, null);
+        List<ChannelUpstreamHandler> referencedDecoders = component.resolveAndRemoveReferenceListParameter(parameters, "decoders", ChannelUpstreamHandler.class, null);
         addToHandlersList(decoders, referencedDecoders, ChannelUpstreamHandler.class);
 
         if (encoders.isEmpty() && decoders.isEmpty()) {
