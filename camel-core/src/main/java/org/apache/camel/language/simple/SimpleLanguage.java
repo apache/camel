@@ -242,6 +242,8 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             return ExpressionBuilder.fileNameExpression();
         } else if (ObjectHelper.equal(remainder, "name.noext")) {
             return ExpressionBuilder.fileNameNoExtensionExpression();
+        } else if (ObjectHelper.equal(remainder, "name.ext")) {
+            return ExpressionBuilder.fileExtensionExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname")) {
             return ExpressionBuilder.fileOnlyNameExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
