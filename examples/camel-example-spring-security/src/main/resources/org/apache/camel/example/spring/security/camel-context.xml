@@ -17,9 +17,9 @@
 -->
 <!-- START SNIPPET: example -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:spring-security="http://www.springframework.org/schema/security"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring-security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans.xsd
           http://camel.apache.org/schema/spring
           http://camel.apache.org/schema/spring/camel-spring.xsd
@@ -27,53 +27,60 @@
           http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
           http://www.springframework.org/schema/security
 		  http://www.springframework.org/schema/security/spring-security.xsd">
-		  
-		<!-- we don't authenticate the user again here-->
-		<bean id="authenticationManager" class="org.springframework.security.MockAuthenticationManager"/>
 
-		<bean id="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
-			<property name="allowIfAllAbstainDecisions" value="true"/>
-			<property name="decisionVoters">
-				<list>
-					<bean class="org.springframework.security.vote.RoleVoter"/>
-				</list>
-			</property>
-		</bean>
-		  
-		<!-- The Policy for checking the authentication role of ADMIN -->
-        <authorizationPolicy id="admin" access="ROLE_ADMIN" 
-          	authenticationManager="authenticationManager"
-          	accessDecisionManager="accessDecisionManager"
-          	 xmlns="http://camel.apache.org/schema/spring-security"/>
-          	 
-        <!-- The Policy for checking the authentication role of USER -->
-        <authorizationPolicy id="user" access="ROLE_USER"
-          	 xmlns="http://camel.apache.org/schema/spring-security"/>
-          	 
-          <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/spring">
-              <!-- Catch the authorization exception and set the Access Denied message back -->
-              <onException>
-                 <exception>org.apache.camel.CamelAuthorizationException</exception>
-                 <handled><constant>true</constant></handled>
-                 <transform><constant>Access Denied!</constant></transform>
-              </onException>
-              
-              <route>
-               <from uri="servlet:///user"/>
-               <policy ref="user"/>
-               <transform>
-                  <simple>Normal user can access this service</simple>
-              </transform>
-             </route>
-             <route>
-               <from uri="servlet:///admin"/>
-               <policy ref="admin"/>
-               <transform>
-                  <simple>Call the admin operation OK</simple>
-              </transform>
-             </route>
-          </camelContext>
-          
+    <!-- we don't authenticate the user again here-->
+    <bean id="authenticationManager" class="org.springframework.security.MockAuthenticationManager"/>
+
+    <bean id="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
+        <property name="allowIfAllAbstainDecisions" value="true"/>
+        <property name="decisionVoters">
+            <list>
+                <bean class="org.springframework.security.vote.RoleVoter"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- The Policy for checking the authentication role of ADMIN -->
+    <authorizationPolicy id="admin" access="ROLE_ADMIN"
+                         authenticationManager="authenticationManager"
+                         accessDecisionManager="accessDecisionManager"
+                         xmlns="http://camel.apache.org/schema/spring-security"/>
+
+    <!-- The Policy for checking the authentication role of USER -->
+    <authorizationPolicy id="user" access="ROLE_USER"
+                         xmlns="http://camel.apache.org/schema/spring-security"/>
+
+    <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/spring">
+        <!-- Catch the authorization exception and set the Access Denied message back -->
+        <onException>
+            <exception>org.apache.camel.CamelAuthorizationException</exception>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <transform>
+                <constant>Access Denied!</constant>
+            </transform>
+        </onException>
+
+        <route>
+            <from uri="servlet:///user"/>
+            <!-- wrap the route in the policy which enforces security check -->
+            <policy ref="user">
+                <transform>
+                    <simple>Normal user can access this service</simple>
+                </transform>
+            </policy>
+        </route>
+        <route>
+            <from uri="servlet:///admin"/>
+            <!-- wrap the route in the policy which enforces security check -->
+            <policy ref="admin">
+                <transform>
+                    <simple>Call the admin operation OK</simple>
+                </transform>
+            </policy>
+        </route>
+    </camelContext>
+
 </beans>
-<!-- END SNIPPET: example -->                             
-                    
+<!-- END SNIPPET: example -->

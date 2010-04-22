@@ -33,7 +33,7 @@
             <!-- 1: from the jms queue -->
             <camel:from uri="activemq:queue:okay"/>
             <!-- 2: setup the transactional boundaries to require a transaction -->
-            <camel:policy ref="required"/>
+            <camel:transacted ref="required"/>
             <!-- 3: call our business logic that is myProcessor -->
             <camel:process ref="myProcessor"/>
             <!-- 4: if success then send it to the mock -->

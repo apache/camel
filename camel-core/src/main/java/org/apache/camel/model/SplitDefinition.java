@@ -84,7 +84,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = routeContext.createProcessor(this);
+        Processor childProcessor = this.createChildProcessor(routeContext, true);
 
         aggregationStrategy = createAggregationStrategy(routeContext);
 

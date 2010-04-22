@@ -250,7 +250,8 @@ public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinitio
      */
     protected Resequencer createBatchResequencer(RouteContext routeContext,
             BatchResequencerConfig config) throws Exception {
-        Processor processor = routeContext.createProcessor(this);
+
+        Processor processor = this.createChildProcessor(routeContext, true);
         Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), processor, resolveExpressionList(routeContext));
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
@@ -268,8 +269,9 @@ public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinitio
      */
     protected StreamResequencer createStreamResequencer(RouteContext routeContext, 
             StreamResequencerConfig config) throws Exception {
+
         config.getComparator().setExpressions(resolveExpressionList(routeContext));
-        Processor processor = routeContext.createProcessor(this);
+        Processor processor = this.createChildProcessor(routeContext, true);
         StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), processor, config.getComparator());
         resequencer.setTimeout(config.getTimeout());
         resequencer.setCapacity(config.getCapacity());

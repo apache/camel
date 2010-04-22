@@ -73,6 +73,9 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor tryProcessor = createOutputsProcessor(routeContext, getOutputsWithoutCatches());
+        if (tryProcessor == null) {
+            throw new IllegalArgumentException("Definition has no children on " + this);
+        }
 
         Processor finallyProcessor = null;
         if (finallyClause != null) {

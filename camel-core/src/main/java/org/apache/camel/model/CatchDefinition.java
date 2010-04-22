@@ -92,7 +92,8 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
             throw new IllegalArgumentException("At least one Exception must be configured to catch");
         }
 
-        Processor childProcessor = routeContext.createProcessor(this);
+        // do catch does not mandate a child processor
+        Processor childProcessor = this.createChildProcessor(routeContext, false);
 
         Predicate when = null;
         if (onWhen != null) {

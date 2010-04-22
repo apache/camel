@@ -65,9 +65,8 @@ public class LoopDefinition extends ExpressionNode {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return new LoopProcessor(
-            getExpression().createExpression(routeContext),
-            routeContext.createProcessor(this));
+        Processor output = this.createChildProcessor(routeContext, true);
+        return new LoopProcessor(getExpression().createExpression(routeContext), output);
     }
     
      // Fluent API

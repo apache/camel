@@ -30,7 +30,7 @@
             <!-- 1: from the jms queue -->
             <from uri="activemq:queue:okay"/>
             <!-- 2: setup the transactional boundaries to require a transaction -->
-            <policy ref="PROPAGATION_REQUIRED"/>
+            <transacted ref="PROPAGATION_REQUIRED"/>
             <!-- 3: call our business logic that is myProcessor -->
             <process ref="myProcessor"/>
             <!-- 4: choice -->

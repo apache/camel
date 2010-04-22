@@ -22,18 +22,23 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <bean id="foo" class="org.apache.camel.processor.PolicyPerRouteTest$MyPolicy">
+        <constructor-arg index="0" value="foo"/>
+    </bean>
+
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-
-        <!-- define the default thread profile settings -->
-        <threadPoolProfile id="customDefault" defaultProfile="true"
-                           poolSize="5" maxPoolSize="15" keepAliveTime="25" maxQueueSize="250" rejectedPolicy="Abort"/>
-
+        <!-- START SNIPPET: e1 -->
         <route>
             <from uri="direct:start"/>
-            <threads>
+            <!-- wraps the entire route in the same policy,
+                 notice how we have to wrap policy around the route -->
+            <policy ref="foo">
+                <to uri="mock:foo"/>
+                <to uri="mock:bar"/>
                 <to uri="mock:result"/>
-            </threads>
+            </policy>
         </route>
+        <!-- END SNIPPET: e1 -->
     </camelContext>
 
 </beans>

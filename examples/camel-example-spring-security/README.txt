@@ -29,7 +29,7 @@ To use log4j as the logging framework add this to the pom.xml:
 and log4j.properties is located in src/main/resources 
 
 For the latest & greatest documentation on how to use this example please see
-  http://camel.apache.org/spring-example.html
+  http://camel.apache.org/spring-security-example.html
 
 If you hit any problems please talk to us on the Camel Forums
   http://camel.apache.org/discussion-forums.html

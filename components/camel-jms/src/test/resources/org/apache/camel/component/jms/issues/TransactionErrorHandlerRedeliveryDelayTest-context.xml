@@ -24,7 +24,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route errorHandlerRef="myTransactionErrorHandler">
             <from uri="activemq:queue:in"/>
-            <policy ref="required"/>
+            <transacted ref="required"/>
             <process ref="myFailureProcessor"/>
             <to uri="mock:result"/>
         </route>

@@ -87,7 +87,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
 
-        Processor childProcessor = createOutputsProcessor(routeContext);
+        Processor childProcessor = this.createChildProcessor(routeContext, true);
 
         // wrap the on completion route in a unit of work processor
         childProcessor = new UnitOfWorkProcessor(routeContext, childProcessor);

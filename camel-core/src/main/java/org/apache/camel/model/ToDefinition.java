@@ -91,7 +91,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Execut
         // ----------------------------------------------------------
 
         // create the child processor which is the async route
-        Processor childProcessor = routeContext.createProcessor(this);
+        Processor childProcessor = this.createChildProcessor(routeContext, false);
 
         // wrap it in a unit of work so the route that comes next is also done in a unit of work
         UnitOfWorkProcessor uow = new UnitOfWorkProcessor(routeContext, childProcessor);

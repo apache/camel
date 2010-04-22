@@ -44,6 +44,7 @@ public class FinallyDefinition extends OutputDefinition<ProcessorDefinition> imp
      
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return routeContext.createProcessor(this);
+        // do finally does mandate a child processor
+        return this.createChildProcessor(routeContext, true);
     }
 }

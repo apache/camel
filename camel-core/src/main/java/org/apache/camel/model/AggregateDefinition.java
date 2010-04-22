@@ -144,7 +144,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     @SuppressWarnings("unchecked")
     protected AggregateProcessor createAggregator(RouteContext routeContext) throws Exception {
-        Processor processor = routeContext.createProcessor(this);
+        Processor processor = this.createChildProcessor(routeContext, true);
         // wrap the aggregated route in a unit of work processor
         processor = new UnitOfWorkProcessor(routeContext, processor);
 

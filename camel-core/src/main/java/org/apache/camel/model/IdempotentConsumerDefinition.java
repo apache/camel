@@ -134,9 +134,11 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     @Override
     @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = routeContext.createProcessor(this);
-        IdempotentRepository<String> idempotentRepository = 
+        Processor childProcessor = this.createChildProcessor(routeContext, true);
+
+        IdempotentRepository<String> idempotentRepository =
             (IdempotentRepository<String>) resolveMessageIdRepository(routeContext);
+
         Expression expression = getExpression().createExpression(routeContext);
         return new IdempotentConsumer(expression, idempotentRepository, eager, childProcessor);
     }

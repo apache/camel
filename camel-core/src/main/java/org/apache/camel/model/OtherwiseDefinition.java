@@ -41,7 +41,7 @@ public class OtherwiseDefinition extends OutputDefinition<ProcessorDefinition> i
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return routeContext.createProcessor(this);
+        return this.createChildProcessor(routeContext, false);
     }
 
     @Override

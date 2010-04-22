@@ -30,28 +30,30 @@
     <camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:okay"/>
-            <policy ref="PROPAGATION_REQUIRED"/>
-            <setBody>
-                <constant>Tiger in Action</constant>
-            </setBody>
-            <bean ref="bookService"/>
-            <setBody>
-                <constant>Elephant in Action</constant>
-            </setBody>
-            <bean ref="bookService"/>
+            <policy ref="PROPAGATION_REQUIRED">
+                <setBody>
+                    <constant>Tiger in Action</constant>
+                </setBody>
+                <bean ref="bookService"/>
+                <setBody>
+                    <constant>Elephant in Action</constant>
+                </setBody>
+                <bean ref="bookService"/>
+            </policy>
         </route>
 
         <route>
             <from uri="direct:fail"/>
-            <policy ref="PROPAGATION_REQUIRED"/>
-            <setBody>
-                <constant>Tiger in Action</constant>
-            </setBody>
-            <bean ref="bookService"/>
-            <setBody>
-                <constant>Donkey in Action</constant>
-            </setBody>
-            <bean ref="bookService"/>
+            <policy ref="PROPAGATION_REQUIRED">
+                <setBody>
+                    <constant>Tiger in Action</constant>
+                </setBody>
+                <bean ref="bookService"/>
+                <setBody>
+                    <constant>Donkey in Action</constant>
+                </setBody>
+                <bean ref="bookService"/>
+            </policy>
         </route>
     </camelContext>
 

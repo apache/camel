@@ -73,7 +73,8 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
     @Override
     public Processor createProcessor(final RouteContext routeContext) throws Exception {
         // create the output processor
-        output = createOutputsProcessor(routeContext);
+        // TODO: This should be mandatory (but ExceptionHandlerStreamCacheTest fails)
+        output = this.createChildProcessor(routeContext, false);
 
         // add the output as a intercept strategy to the route context so its invoked on each processing step
         routeContext.getInterceptStrategies().add(new InterceptStrategy() {

@@ -144,7 +144,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
 
     @Override
     public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = routeContext.createProcessor(this);
+        Processor childProcessor = this.createChildProcessor(routeContext, false);
 
         Predicate when = null;
         if (onWhen != null) {
@@ -158,7 +158,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
 
         return new CatchProcessor(getExceptionClasses(), childProcessor, when, handle);
     }
-
 
     // Fluent API
     //-------------------------------------------------------------------------
@@ -597,7 +596,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
         }
         return answer;
     }
-
 
     private void setHandledFromExpressionType(RouteContext routeContext) {
         if (getHandled() != null && handledPolicy == null && routeContext != null) {

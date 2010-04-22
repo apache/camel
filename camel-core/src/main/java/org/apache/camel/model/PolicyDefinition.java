@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
@@ -78,7 +79,8 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
 
     @Override
     public boolean isAbstract() {
-        return true;
+        // policy should NOT be abstract
+        return false;
     }
 
     public String getRef() {
@@ -118,11 +120,15 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = createOutputsProcessor(routeContext);
+        Processor childProcessor = this.createChildProcessor(routeContext, true);
 
         Policy policy = resolvePolicy(routeContext);
         ObjectHelper.notNull(policy, "policy", this);
-        return policy.wrap(routeContext, childProcessor);
+        Processor target = policy.wrap(routeContext, childProcessor);
+
+        // wrap the target so it becomes a service and we can manage its lifecycle
+        WrapProcessor wrap = new WrapProcessor(target, childProcessor);
+        return wrap;
     }
 
     protected String description() {

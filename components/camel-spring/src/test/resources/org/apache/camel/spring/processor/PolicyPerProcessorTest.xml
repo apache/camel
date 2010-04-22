@@ -22,18 +22,30 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <bean id="foo" class="org.apache.camel.processor.PolicyPerProcessorTest$MyPolicy">
+        <constructor-arg index="0" value="foo"/>
+    </bean>
+
+    <bean id="bar" class="org.apache.camel.processor.PolicyPerProcessorTest$MyPolicy">
+        <constructor-arg index="0" value="bar"/>
+    </bean>
+
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-
-        <!-- define the default thread profile settings -->
-        <threadPoolProfile id="customDefault" defaultProfile="true"
-                           poolSize="5" maxPoolSize="15" keepAliveTime="25" maxQueueSize="250" rejectedPolicy="Abort"/>
-
+        <!-- START SNIPPET: e1 -->
         <route>
             <from uri="direct:start"/>
-            <threads>
-                <to uri="mock:result"/>
-            </threads>
+            <!-- wraps the mock:foo processor in this policy -->
+            <policy ref="foo">
+                <to uri="mock:foo"/>
+            </policy>
+            <!-- wraps the mock:bar processor in this policy -->
+            <policy ref="bar">
+                <to uri="mock:bar"/>
+            </policy>
+            <!-- the mock:result is NOT wrapped in any policy -->
+            <to uri="mock:result"/>
         </route>
+        <!-- END SNIPPET: e1 -->
     </camelContext>
 
 </beans>

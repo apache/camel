@@ -97,7 +97,7 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
                                         .newThreadPool(this, name, poolSize, max, keepAlive, tu, maxQueue, rejected, true);
             }
         }
-        Processor childProcessor = routeContext.createProcessor(this);
+        Processor childProcessor = this.createChildProcessor(routeContext, true);
 
         // wrap it in a unit of work so the route that comes next is also done in a unit of work
         UnitOfWorkProcessor uow = new UnitOfWorkProcessor(routeContext, childProcessor);

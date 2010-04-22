@@ -16,14 +16,10 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -40,7 +36,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "sample")
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("unchecked")
-public class SamplingDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class SamplingDefinition extends OutputDefinition<ProcessorDefinition> {
 
     // use Long to let it be optional in JAXB so when using XML the default is 1 second
     
@@ -50,9 +46,6 @@ public class SamplingDefinition extends ProcessorDefinition<ProcessorDefinition>
     @XmlAttribute()
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     private TimeUnit units = TimeUnit.SECONDS;
-
-    @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
     public SamplingDefinition() {
     }
@@ -79,7 +72,7 @@ public class SamplingDefinition extends ProcessorDefinition<ProcessorDefinition>
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = routeContext.createProcessor(this);
+        Processor childProcessor = this.createChildProcessor(routeContext, true);
         return new SamplingThrottler(childProcessor, samplePeriod, units);
     }
 
@@ -110,14 +103,6 @@ public class SamplingDefinition extends ProcessorDefinition<ProcessorDefinition>
 
     // Properties
     // -------------------------------------------------------------------------
-
-    public List<ProcessorDefinition> getOutputs() {
-        return outputs;
-    }
-
-    public void setOutputs(List<ProcessorDefinition> outputs) {
-        this.outputs = outputs;
-    }
 
     public long getSamplePeriod() {
         return samplePeriod;

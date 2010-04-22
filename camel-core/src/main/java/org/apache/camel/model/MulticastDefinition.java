@@ -67,7 +67,7 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> i
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return createOutputsProcessor(routeContext);
+        return this.createChildProcessor(routeContext, true);
     }
 
     // Fluent API

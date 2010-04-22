@@ -108,13 +108,36 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return false;
     }
 
+    /**
+     * Override this in definition class and implement logic to create the processor
+     * based on the definition model.
+     */
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         throw new UnsupportedOperationException("Not implemented yet for class: " + getClass().getName());
     }
 
+    /**
+     * Prefer to use {#link #createChildProcessor}.
+     */
     public Processor createOutputsProcessor(RouteContext routeContext) throws Exception {
         Collection<ProcessorDefinition> outputs = getOutputs();
         return createOutputsProcessor(routeContext, outputs);
+    }
+
+    /**
+     * Creates the child processor (outputs) from the current definition
+     *
+     * @param routeContext   the route context
+     * @param mandatory      whether or not children is mandatory (ie the definition should have outputs)
+     * @return the created children, or <tt>null</tt> if definition had no output
+     * @throws Exception is thrown if error creating the child or if it was mandatory and there was no output defined on definition
+     */
+    public Processor createChildProcessor(RouteContext routeContext, boolean mandatory) throws Exception {
+        Processor children = routeContext.createProcessor(this);
+        if (children == null && mandatory) {
+            throw new IllegalArgumentException("Definition has no children on " + this);
+        }
+        return children;
     }
 
     public void addOutput(ProcessorDefinition processorType) {

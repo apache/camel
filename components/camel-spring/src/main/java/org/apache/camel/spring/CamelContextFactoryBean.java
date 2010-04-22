@@ -366,8 +366,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             initInterceptors(route, upper);
             // then on completion
             initOnCompletions(abstracts, upper);
-            // then polices
-            initPolicies(abstracts, lower);
+            // then transactions
+            initTransacted(abstracts, lower);
             // then on exception
             initOnExceptions(abstracts, upper);
 
@@ -456,7 +456,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     private void initOnExceptions(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper) {
-
         // add global on exceptions if any
         if (onExceptions != null && !onExceptions.isEmpty()) {
             abstracts.addAll(onExceptions);
@@ -473,7 +472,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     private void initInterceptors(RouteDefinition route, List<ProcessorDefinition> upper) {
-
         // configure intercept
         for (InterceptDefinition intercept : getIntercepts()) {
             intercept.afterPropertiesSet();
@@ -512,7 +510,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             // us the needed head start to init and be able to intercept all the remaining processing steps
             upper.add(0, intercept);
         }
-
     }
 
     private void initOnCompletions(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper) {
@@ -538,34 +535,27 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         upper.addAll(completions);
     }
 
-    private void initPolicies(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> lower) {
-
-        // we need two types as transacted cannot extend policy due JAXB limitations
-        PolicyDefinition policy = null;
+    private void initTransacted(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> lower) {
         TransactedDefinition transacted = null;
 
         // add to correct type
         for (ProcessorDefinition type : abstracts) {
-            if (type instanceof PolicyDefinition) {
-                policy = (PolicyDefinition) type;
-            } else if (type instanceof TransactedDefinition) {
-                transacted = (TransactedDefinition) type;
+            if (type instanceof TransactedDefinition) {
+                if (transacted == null) {
+                    transacted = (TransactedDefinition) type;
+                } else {
+                    throw new IllegalArgumentException("The route can only have one transacted defined");
+                }
             }
         }
 
-        if (policy != null) {
-            // the outputs should be moved to the policy
-            policy.getOutputs().addAll(lower);
-            // and add it as the single output
-            lower.clear();
-            lower.add(policy);
-        } else if (transacted != null) {
+        if (transacted != null) {
             // the outputs should be moved to the transacted policy
             transacted.getOutputs().addAll(lower);
             // and add it as the single output
             lower.clear();
             lower.add(transacted);
-        }
+        } 
     }
 
     private void initJMXAgent() throws Exception {

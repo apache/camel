@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.jms.tx;
 
-
-import org.apache.log4j.Logger;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-
 
 /**
  * Test case derived from:
@@ -34,17 +31,13 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
  */
 public class XMLQueueToProcessorTransactionTest extends AbstractTransactionTest {
 
-    private Logger log = Logger.getLogger(getClass());
-
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/XMLQueueToProcessorTransactionTest.xml");
     }
    
     @Test
     public void testRollbackUsingXmlQueueToQueue() throws Exception {
-
-        // routes should have been configured via xml and added to the camel
-        // context
+        // routes should have been configured via xml and added to the camel context
         assertResult();
     }
 }

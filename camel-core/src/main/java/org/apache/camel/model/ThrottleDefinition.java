@@ -69,7 +69,7 @@ public class ThrottleDefinition extends ProcessorDefinition<ProcessorDefinition>
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = routeContext.createProcessor(this);
+        Processor childProcessor = this.createChildProcessor(routeContext, true);
         return new Throttler(childProcessor, maximumRequestsPerPeriod, timePeriodMillis);
     }
 

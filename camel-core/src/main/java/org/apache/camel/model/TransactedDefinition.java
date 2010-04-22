@@ -26,9 +26,11 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -128,13 +130,16 @@ public class TransactedDefinition extends OutputDefinition<ProcessorDefinition> 
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = createOutputsProcessor(routeContext);
+        Processor childProcessor = this.createChildProcessor(routeContext, true);
 
         Policy policy = resolvePolicy(routeContext);
         ObjectHelper.notNull(policy, "policy", this);
-        return policy.wrap(routeContext, childProcessor);
-    }
+        Processor target = policy.wrap(routeContext, childProcessor);
 
+        // wrap the target so it becomes a service and we can manage its lifecycle
+        WrapProcessor wrap = new WrapProcessor(target, childProcessor);
+        return wrap;
+    }
 
     protected String description() {
         if (policy != null) {
@@ -155,7 +160,7 @@ public class TransactedDefinition extends OutputDefinition<ProcessorDefinition> 
     protected static Policy doResolvePolicy(RouteContext routeContext, String ref, Class<? extends Policy> type) {
         // explicit ref given so lookup by it
         if (ObjectHelper.isNotEmpty(ref)) {
-            return routeContext.lookup(ref, Policy.class);
+            return CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), ref, Policy.class);
         }
 
         // no explicit reference given from user so we can use some convention over configuration here

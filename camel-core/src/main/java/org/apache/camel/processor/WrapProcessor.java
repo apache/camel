@@ -14,31 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+package org.apache.camel.processor;
 
 import org.apache.camel.Processor;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ServiceHelper;
 
 /**
- * Represents an XML &lt;pipeline/&gt; element which can be used to define an explicit pipeline; or to define
- * a specific pipeline within a &lt;multicast&gt; block
+ * A processor which ensures wrapping processors is having lifecycle handled.
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "pipeline")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class PipelineDefinition extends OutputDefinition<ProcessorDefinition> {
+public class WrapProcessor extends DelegateProcessor {
+    private final Processor wrapped;
+
+    public WrapProcessor(Processor processor, Processor wrapped) {
+        super(processor);
+        this.wrapped = wrapped;
+    }
 
     @Override
-    public String getShortName() {
-        return "pipeline";
+    public String toString() {
+        return "Wrap[" + wrapped + "] -> " + processor;
     }
 
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return this.createChildProcessor(routeContext, true);
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(wrapped);
+        super.doStart();
     }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(wrapped);
+    }
+
 }

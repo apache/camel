@@ -91,7 +91,7 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
     }
 
     protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = routeContext.createProcessor(this);
+        Processor childProcessor = this.createChildProcessor(routeContext, false);
         return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
     }
 

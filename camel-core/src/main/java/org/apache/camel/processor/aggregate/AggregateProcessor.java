@@ -762,6 +762,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                     }
                     LOG.info("After " + max + " failed redelivery attempts Exchanges will be moved to deadLetterUri: " + recoverable.getDeadLetterUri());
                     deadLetterProcessor = camelContext.getEndpoint(recoverable.getDeadLetterUri()).createProducer();
+                    ServiceHelper.startService(deadLetterProcessor);
                 }
             }
         }
@@ -788,7 +789,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(timeoutMap, recoverService, aggregationRepository, processor);
+        camelContext.getExecutorServiceStrategy().shutdownNow(recoverService);
+        ServiceHelper.stopServices(timeoutMap, processor, deadLetterProcessor);
 
         if (closedCorrelationKeys != null) {
             closedCorrelationKeys.clear();
@@ -799,8 +801,13 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     @Override
     protected void doShutdown() throws Exception {
+        // shutdown aggregation repository
+        ServiceHelper.stopService(aggregationRepository);
+
         // cleanup when shutting down
         inProgressCompleteExchanges.clear();
+
+        super.doShutdown();
     }
 
 }

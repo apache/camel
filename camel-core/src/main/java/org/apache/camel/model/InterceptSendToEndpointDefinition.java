@@ -82,7 +82,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // create the detour
-        final Processor detour = routeContext.createProcessor(this);
+        final Processor detour = this.createChildProcessor(routeContext, true);
 
         // register endpoint callback so we can proxy the endpoint
         routeContext.getCamelContext().addRegisterEndpointCallback(new EndpointStrategy() {

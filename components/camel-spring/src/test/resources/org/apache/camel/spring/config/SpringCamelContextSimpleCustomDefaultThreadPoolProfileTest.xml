@@ -29,8 +29,9 @@
 
         <route>
             <from uri="direct:start"/>
-            <threads/>
-            <to uri="mock:result"/>
+            <threads>
+                <to uri="mock:result"/>
+            </threads>
         </route>
     </camelContext>
 

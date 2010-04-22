@@ -75,7 +75,7 @@ public class DelayDefinition extends ExpressionNode {
     
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = routeContext.createProcessor(this);
+        Processor childProcessor = this.createChildProcessor(routeContext, false);
         Expression delay = createAbsoluteTimeDelayExpression(routeContext);
         return new Delayer(childProcessor, delay);
     }

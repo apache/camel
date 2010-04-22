@@ -83,7 +83,7 @@ public class InterceptFromDefinition extends InterceptDefinition {
         });
         getOutputs().add(0, headerDefinition);
 
-        return createOutputsProcessor(routeContext);
+        return this.createChildProcessor(routeContext, true);
     }
 
     public String getUri() {
