@@ -60,8 +60,16 @@
 
         <!-- mock mail server so we do not send an email for real -->
         <dependency>
-            <groupId>org.apache.camel.tests</groupId>
-            <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
+            <groupId>org.jvnet.mock-javamail</groupId>
+            <artifactId>mock-javamail</artifactId>
+            <version>1.7</version>
+            <exclusions>
+              <exclusion>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+              </exclusion>
+            </exclusions>
+            <scope>test</scope>
         </dependency>
 
 		<!-- cxf -->
