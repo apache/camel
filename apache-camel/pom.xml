@@ -188,11 +188,19 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jt400</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jxpath</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-lucene</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ldap</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -224,10 +232,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-osgi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-printer</artifactId>
     </dependency>
     <dependency>
@@ -249,6 +253,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-rss</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ruby</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -286,6 +294,10 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>	
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-osgi</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-integration</artifactId>
@@ -407,6 +419,10 @@
       <artifactId>commons-management</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.osgi.core</artifactId>

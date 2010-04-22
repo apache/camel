@@ -81,7 +81,6 @@
         <include>org.apache.camel:camel-nagios</include>
 	<include>org.apache.camel:camel-netty</include>
 	<include>org.apache.camel:camel-ognl</include>
-        <include>org.apache.camel:camel-osgi</include>
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-protobuf</include>
         <include>org.apache.camel:camel-quartz</include>
@@ -122,8 +121,8 @@
         <include>org.springframework:spring-beans</include>
         <include>org.springframework:spring-context</include>
         <include>org.springframework:spring-core</include>
-        <include>org.springframework:spring-test</include>
         <include>org.springframework:spring-web</include>
+	<include>org.springframework:spring-test</include>
       </includes>
     </dependencySet>
     <dependencySet>
