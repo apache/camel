@@ -48,7 +48,6 @@ import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNAT
 public class SignatureTests extends ContextTestSupport {
 
     private KeyPair keyPair;
-
     private String payload = "Dear Alice, Rest assured it's me, signed Bob";
 
     @Override
@@ -194,7 +193,6 @@ public class SignatureTests extends ContextTestSupport {
     }
 
     public void testProvideAliasInHeader() throws Exception {
-
         MockEndpoint mock = setupMock();
         // START SNIPPET: alias-send
         Exchange unsigned = getMandatoryEndpoint("direct:alias-sign").createExchange();
@@ -214,7 +212,6 @@ public class SignatureTests extends ContextTestSupport {
     }
 
     public void testProvideKeysInHeader() throws Exception {
-
         MockEndpoint mock = setupMock();
         Exchange unsigned = getMandatoryEndpoint("direct:headerkey-sign").createExchange();
         unsigned.getIn().setBody(payload);
@@ -235,7 +232,6 @@ public class SignatureTests extends ContextTestSupport {
     }
 
     public void testProvideCertificateInHeader() throws Exception {
-
         MockEndpoint mock = setupMock();
         Exchange unsigned = getMandatoryEndpoint("direct:signature-property").createExchange();
         unsigned.getIn().setBody(payload);
@@ -258,8 +254,7 @@ public class SignatureTests extends ContextTestSupport {
     }
 
     private void verify(MockEndpoint mock) throws InterruptedException {
-        mock.await(4, TimeUnit.SECONDS);
-        mock.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock);
     }
 
     private MockEndpoint setupMock() {
@@ -270,7 +265,6 @@ public class SignatureTests extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     public Exchange doTestSignatureRoute(RouteBuilder builder) throws Exception {
-
         return doSignatureRouteTest(builder, null, Collections.EMPTY_MAP);
     }
 
@@ -327,6 +321,6 @@ public class SignatureTests extends ContextTestSupport {
 
     public PrivateKey getKeyFromKeystore() throws Exception {
         return (PrivateKey)loadKeystore().getKey("bob", "letmein".toCharArray());
-
     }
+
 }
