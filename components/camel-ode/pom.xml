@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-parent</artifactId>
+        <version>2.3-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>camel-ode</artifactId>
+    <packaging>bundle</packaging>
+    <name>Camel :: ODE</name>
+    <description>Camel BPEL (Apache ODE) support</description>
+
+    <properties>
+        <camel.osgi.export.pkg>org.apache.camel.component.ode.*</camel.osgi.export.pkg>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>servicemix</id>
+            <name>Apache ServiceMix Repository</name>
+            <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+
+        <!-- Apache ODE has many dependencies -->
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-bpel-api</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-bpel-compiler</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-bpel-epr</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-bpel-runtime</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-bpel-schemas</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-bpel-dao</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-bpel-obj</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-dao-jpa</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-bpel-store</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-agents</artifactId>
+            <!-- only version 1.3.2 is found -->
+            <version>1.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-scheduler-simple</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-tools</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-utils</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-jacob</artifactId>
+            <version>${ode-version}</version>
+        </dependency>
+
+        <!-- dependencies needed by ODE -->
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jta_1.1_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>${xmlbeans-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>${xalan-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <version>${jaxen-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon</artifactId>
+            <version>${saxon-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-dom</artifactId>
+            <version>${saxon-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-xqj</artifactId>
+            <version>${saxon-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-xpath</artifactId>
+            <version>${saxon-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>${xerces-version}</version>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- to allow Spring annotations (jmx) to be tested -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <optional>true</optional>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <optional>true</optional>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ode test kit -->
+        <dependency>
+            <groupId>org.apache.ode</groupId>
+            <artifactId>ode-bpel-test</artifactId>
+            <version>${ode-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- TM manager needed for testing -->
+        <dependency>
+            <groupId>org.apache.geronimo.components</groupId>
+            <artifactId>geronimo-transaction</artifactId>
+            <version>2.1.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
+            <scope>test</scope>
+            <version>1.2.1</version>
+        </dependency>
+
+    </dependencies>
+
+</project>
