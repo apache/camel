@@ -33,12 +33,12 @@ public class HttpQueryGoogleProxyTest extends CamelTestSupport {
     @Ignore("Run manually")
     public void testQueryGoogleProxy() throws Exception {
         HttpConfiguration config = new HttpConfiguration();
-        config.setProxyHost("aa");
-        config.setProxyPort(80);
+        config.setProxyHost("myProxyHost");
+        config.setProxyPort(8877);
         config.setProxyAuthMethod(AuthMethod.Basic);
-        config.setAuthMethodPriority("Basic,Digest");
-        config.setProxyAuthUsername("aa");
-        config.setProxyAuthPassword("aa");
+        config.setAuthMethodPriority("Digest,Basic");
+        config.setProxyAuthUsername("myProxyUsername");
+        config.setProxyAuthPassword("myProxyPassword");
 
         HttpComponent http = context.getComponent("http", HttpComponent.class);
         http.setHttpConfiguration(config);

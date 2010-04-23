@@ -127,13 +127,22 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      */
     protected HttpClientConfigurer configureAuth(HttpClientConfigurer configurer, AuthMethod authMethod, String username,
                                                  String password, String domain, String host, Set<AuthMethod> authMethods) {
-        if (authMethod == null) {
+
+        // no auth is in use
+        if (username == null && authMethod == null) {
             return configurer;
         }
-        authMethods.add(authMethod);
 
+        // validate mandatory options given
+        if (username != null && authMethod == null) {
+            throw new IllegalArgumentException("Option authMethod must be provided to use authentication");
+        }
+        ObjectHelper.notNull(authMethod, "authMethod");
         ObjectHelper.notNull(username, "authUsername");
         ObjectHelper.notNull(password, "authPassword");
+
+        // add it as a auth method used
+        authMethods.add(authMethod);
 
         if (authMethod == AuthMethod.Basic || authMethod == AuthMethod.Digest) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
@@ -155,13 +164,21 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      */
     protected HttpClientConfigurer configureProxyAuth(HttpClientConfigurer configurer, AuthMethod authMethod, String username,
                                                       String password, String domain, String host, Set<AuthMethod> authMethods) {
-        if (authMethod == null) {
+        // no proxy auth is in use
+        if (username == null && authMethod == null) {
             return configurer;
         }
-        authMethods.add(authMethod);
 
+        // validate mandatory options given
+        if (username != null && authMethod == null) {
+            throw new IllegalArgumentException("Option proxyAuthMethod must be provided to use proxy authentication");
+        }
+        ObjectHelper.notNull(authMethod, "proxyAuthMethod");
         ObjectHelper.notNull(username, "proxyAuthUsername");
         ObjectHelper.notNull(password, "proxyAuthPassword");
+
+        // add it as a auth method used
+        authMethods.add(authMethod);
 
         if (authMethod == AuthMethod.Basic || authMethod == AuthMethod.Digest) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
