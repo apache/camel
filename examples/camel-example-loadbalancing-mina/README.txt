@@ -102,19 +102,18 @@ who will display in its log  the content of the Report object.
 2. Test the example
 ===================
 
-First compile the loadbalancing example and add it in your maven repo. 
-remark : Classes compiled in this project are used by mina1 and mina2
+To compile and install the project in your maven repo, execute the following command on the 
+root of the project
 
->loadbalancing
 mvn clean install 
 
-To run the example, execute now the following command :
+To run the example, execute now the following command in the respective folder:
 
 >mina1
-mvn clean install camel:run 
+mvn camel:run 
 
 >mina2
-mvn clean install camel:run 
+mvn camel:run 
 
 >loadbalancing
 mvn camel:run 
