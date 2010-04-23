@@ -31,7 +31,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 
-public class JettyEnableJmxTest  extends CamelTestSupport {
+public class JettyEnableJmxTest extends CamelTestSupport {
     
     private String serverUri0 = 
         "http://localhost:9080/myservice?enableJmx=true";
@@ -48,10 +48,12 @@ public class JettyEnableJmxTest  extends CamelTestSupport {
         releaseMBeanServers();
         mbsc = null;
         super.tearDown();
+        disableJMX();
     }
 
     @Override
     public void setUp() throws Exception {
+        enableJMX();
         releaseMBeanServers();
         super.setUp();
         mbsc = getMBeanConnection();
@@ -61,8 +63,7 @@ public class JettyEnableJmxTest  extends CamelTestSupport {
     public void testEnableJmxProperty() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         String expectedBody = "<html><body>foo</body></html>";
-        mock.expectedBodiesReceived(
-                expectedBody, expectedBody, expectedBody, expectedBody);
+        mock.expectedBodiesReceived(expectedBody, expectedBody, expectedBody, expectedBody);
         mock.expectedHeaderReceived("x", "foo");
 
         template.requestBody(serverUri0 + "&x=foo", null, Object.class);
@@ -142,8 +143,7 @@ public class JettyEnableJmxTest  extends CamelTestSupport {
     }
     
     protected void releaseMBeanServers() {
-        List<MBeanServer> servers =
-            (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
+        List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
 
         for (MBeanServer server : servers) {
             MBeanServerFactory.releaseMBeanServer(server);

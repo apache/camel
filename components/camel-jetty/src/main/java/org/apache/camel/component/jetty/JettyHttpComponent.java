@@ -194,7 +194,8 @@ public class JettyHttpComponent extends HttpComponent {
                 connector.setPort(endpoint.getPort());
                 connector.setHost(endpoint.getHttpUri().getHost());
                 if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
-                    LOG.warn("You use localhost interface! It means that no external connections will be available. Don't you want to use 0.0.0.0 instead (all network interfaces)?");
+                    LOG.warn("You use localhost interface! It means that no external connections will be available."
+                            + " Don't you want to use 0.0.0.0 instead (all network interfaces)? " + endpoint);
                 }
                 Server server = createServer();
                 if (endpoint.isEnableJmx()) {
@@ -222,6 +223,7 @@ public class JettyHttpComponent extends HttpComponent {
     private void enableJmx(Server server) {
         MBeanContainer containerToRegister = getMbContainer();
         if (containerToRegister != null) {
+            LOG.info("Jetty JMX Extensions is enabled");
             server.getContainer().addEventListener(containerToRegister);
             // Since we may have many Servers running, don't tie the MBeanContainer
             // to a Server lifecycle or we end up closing it while it is still in use.
@@ -264,10 +266,9 @@ public class JettyHttpComponent extends HttpComponent {
                     CONNECTORS.remove(connectorKey);
                     // Camel controls the lifecycle of these entities so remove the
                     // registered MBeans when Camel is done with the managed objects.
-                    MBeanContainer containerToClean = getMbContainer(); 
-                    if (containerToClean != null) {
-                        containerToClean.removeBean(connectorRef.server);
-                        containerToClean.removeBean(connectorRef.connector);
+                    if (mbContainer != null) {
+                        mbContainer.removeBean(connectorRef.server);
+                        mbContainer.removeBean(connectorRef.connector);
                     }
                 }
             }
@@ -425,8 +426,7 @@ public class JettyHttpComponent extends HttpComponent {
         if (mbContainer == null) {
             MBeanServer mbs = null;
             
-            final ManagementStrategy mStrategy = 
-                this.getCamelContext().getManagementStrategy();
+            final ManagementStrategy mStrategy = this.getCamelContext().getManagementStrategy();
             final ManagementAgent mAgent = mStrategy.getManagementAgent();
             if (mAgent != null) {
                 mbs = mAgent.getMBeanServer();
@@ -436,7 +436,7 @@ public class JettyHttpComponent extends HttpComponent {
                 mbContainer = new MBeanContainer(mbs);
                 startMbContainer();
             } else {
-                LOG.warn("JMX disabled in Camel Context.  The Camel Context takes precedent and JMX will not be enabled in Jetty.");
+                LOG.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
             }
         }
         
@@ -492,10 +492,9 @@ public class JettyHttpComponent extends HttpComponent {
     }
     
     /**
-     * Starts {@link #mbContainer} and registers the
-     * container with itself as a managed bean logging an error
-     * if there is a problem starting the container.  Does nothing
-     * if {@link #mbContainer} is {@code null}.
+     * Starts {@link #mbContainer} and registers the container with itself as a managed bean
+     * logging an error if there is a problem starting the container.
+     * Does nothing if {@link #mbContainer} is {@code null}.
      */
     protected void startMbContainer() {
         if (mbContainer != null && !mbContainer.isStarted()) {
@@ -504,8 +503,8 @@ public class JettyHttpComponent extends HttpComponent {
                 // Publish the container itself for consistency with
                 // traditional embedded Jetty configurations.
                 mbContainer.addBean(mbContainer);
-            } catch (Exception e) {
-                LOG.warn("Could not start Jetty MBeanContainer.  Jetty JMX extensions will remain disabled.", e);
+            } catch (Throwable e) {
+                LOG.warn("Could not start Jetty MBeanContainer. Jetty JMX extensions will remain disabled.", e);
             }
         }
     }
