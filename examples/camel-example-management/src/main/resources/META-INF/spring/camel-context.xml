@@ -64,8 +64,9 @@
             <from uri="file://target/inbox"/>
             <split>
                 <xpath>/stocks/stock</xpath>
-                <throttle timePeriodMillis="1000" maximumRequestsPerPeriod="10"/>
-                <to uri="activemq:queue:stock"/>
+                <throttle timePeriodMillis="1000" maximumRequestsPerPeriod="10">
+                    <to uri="activemq:queue:stock"/>
+                </throttle>
             </split>
         </route>
 
