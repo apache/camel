@@ -62,6 +62,7 @@ import org.apache.camel.util.OgnlHelper;
  * <ul>
  *   <li><tt>file:name</tt> to access the file name (is relative, see note below))</li>
  *   <li><tt>file:name.noext</tt> to access the file name with no extension</li>
+ *   <li><tt>file:name.ext</tt> to access the file extension</li>
  *   <li><tt>file:ext</tt> to access the file extension</li>
  *   <li><tt>file:onlyname</tt> to access the file name (no paths)</li>
  *   <li><tt>file:onlyname.noext</tt> to access the file name (no paths) with no extension </li>

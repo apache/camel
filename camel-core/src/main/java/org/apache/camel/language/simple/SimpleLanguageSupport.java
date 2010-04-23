@@ -173,7 +173,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                         predicate = PredicateBuilder.not(predicate);
                     }
                 } else if (operator == REGEX || operator == NOT_REGEX) {
-                    // reg ex should use String pattern, so we evalute the right hand side as a String
+                    // reg ex should use String pattern, so we evaluate the right hand side as a String
                     predicate = PredicateBuilder.regex(left, right.evaluate(exchange, String.class));
                     if (operator == NOT_REGEX) {
                         predicate = PredicateBuilder.not(predicate);
@@ -197,11 +197,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                     String name = right.evaluate(exchange, String.class);
                     Class<?> rightType = exchange.getContext().getClassResolver().resolveClass(name);
                     if (rightType == null) {
-                        // prefix class name with java.lang. so people can use String as shorthand
-                        rightType = exchange.getContext().getClassResolver().resolveClass("java.lang." + name);
-                    }
-                    if (rightType == null) {
-                        throw new IllegalArgumentException("Syntax error in is operator: " + expression
+                        throw new IllegalArgumentException("Syntax error in " + operatorText + " operator: " + expression
                                 + " cannot find class with name: " + name);
                     }
                     predicate = PredicateBuilder.isInstanceOf(left, rightType);
@@ -220,8 +216,8 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                         predicate = PredicateBuilder.isGreaterThanOrEqualTo(left, from);
                         predicate = PredicateBuilder.and(predicate, PredicateBuilder.isLessThanOrEqualTo(left, to));
                     } else {
-                        throw new IllegalArgumentException("Syntax error in range operator: " + expression + " is not valid."
-                                + " Valid syntax: from..to (where from and to are numbers).");
+                        throw new IllegalArgumentException("Syntax error in " + operatorText + " operator: " + expression
+                                + " is not valid. Valid syntax:from..to(where from and to are numbers).");
                     }
                     if (operator == NOT_RANGE) {
                         predicate = PredicateBuilder.not(predicate);
@@ -229,7 +225,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                 }
 
                 if (predicate == null) {
-                    throw new IllegalArgumentException("Unsupported operator: " + operator + " for expression: " + expression);
+                    throw new IllegalArgumentException("Unsupported operator: " + operatorText + " for expression: " + expression);
                 }
 
                 boolean matches = predicate.matches(exchange);

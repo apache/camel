@@ -789,7 +789,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     @Override
     protected void doStop() throws Exception {
-        camelContext.getExecutorServiceStrategy().shutdownNow(recoverService);
+        if (recoverService != null) {
+            camelContext.getExecutorServiceStrategy().shutdownNow(recoverService);
+        }
         ServiceHelper.stopServices(timeoutMap, processor, deadLetterProcessor);
 
         if (closedCorrelationKeys != null) {

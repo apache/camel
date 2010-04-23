@@ -255,6 +255,8 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     }
 
     public void shutdown(ExecutorService executorService) {
+        ObjectHelper.notNull(executorService, "executorService");
+
         if (executorService.isShutdown()) {
             return;
         }
@@ -269,6 +271,8 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     }
 
     public List<Runnable> shutdownNow(ExecutorService executorService) {
+        ObjectHelper.notNull(executorService, "executorService");
+
         if (executorService.isShutdown()) {
             return null;
         }

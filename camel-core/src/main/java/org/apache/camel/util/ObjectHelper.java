@@ -291,7 +291,7 @@ public final class ObjectHelper {
      * Asserts whether the string is <b>not</b> empty.
      *
      * @param value  the string to test
-     * @param on     additional description to indicate where this problem occured (appended as toString())
+     * @param on     additional description to indicate where this problem occurred (appended as toString())
      * @param name   the key that resolved the value
      * @throws IllegalArgumentException is thrown if assertion fails
      */
@@ -541,12 +541,11 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method to access a system property, catching any security
-     * exceptions
+     * A helper method to access a system property, catching any security exceptions
      *
-     * @param name the name of the system property required
+     * @param name         the name of the system property required
      * @param defaultValue the default value to use if the property is not
-     *                available or a security exception prevents access
+     *                     available or a security exception prevents access
      * @return the system property value or the default value if the property is
      *         not available or security does not allow its access
      */
@@ -555,7 +554,7 @@ public final class ObjectHelper {
             return System.getProperty(name, defaultValue);
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Caught security exception accessing system property: " + name + ". Reason: " + e, e);
+                LOG.debug("Caught security exception accessing system property: " + name + ". Will use default value: " + defaultValue, e);
             }
             return defaultValue;
         }
@@ -565,9 +564,9 @@ public final class ObjectHelper {
      * A helper method to access a boolean system property, catching any
      * security exceptions
      *
-     * @param name the name of the system property required
+     * @param name         the name of the system property required
      * @param defaultValue the default value to use if the property is not
-     *                available or a security exception prevents access
+     *                     available or a security exception prevents access
      * @return the boolean representation of the system property value or the
      *         default value if the property is not available or security does
      *         not allow its access
@@ -608,7 +607,7 @@ public final class ObjectHelper {
      * loader or the class loader used to load this class
      *
      * @param name the name of the class to load
-     * @return the class or null if it could not be loaded
+     * @return the class or <tt>null</tt> if it could not be loaded
      */
     public static Class<?> loadClass(String name) {
         return loadClass(name, ObjectHelper.class.getClassLoader());
@@ -619,9 +618,8 @@ public final class ObjectHelper {
      * loader or the given class loader
      *
      * @param name the name of the class to load
-     * @param loader the class loader to use after the thread context class
-     *                loader
-     * @return the class or null if it could not be loaded
+     * @param loader the class loader to use after the thread context class loader
+     * @return the class or <tt>null</tt> if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader) {
         return loadClass(name, loader, true);
@@ -632,10 +630,9 @@ public final class ObjectHelper {
      * loader or the given class loader
      *
      * @param name the name of the class to load
-     * @param loader the class loader to use after the thread context class
-     *                loader
-     * @param needToWarn if it is true will use log a warning message for not loading the class               
-     * @return the class or null if it could not be loaded
+     * @param loader the class loader to use after the thread context class loader
+     * @param needToWarn when <tt>true</tt> logs a warning when a class with the given name could not be loaded
+     * @return the class or <tt>null</tt> if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader, boolean needToWarn) {
         // must clean the name so its pure java name, eg removing \n or whatever people can do in the Spring XML
@@ -649,8 +646,28 @@ public final class ObjectHelper {
             return String.class;
         } else if ("java.lang.Integer".equals(name) || "Integer".equals(name)) {
             return Integer.class;
+        } else if ("int".equals(name)) {
+            return int.class;
         } else if ("java.lang.Long".equals(name) || "Long".equals(name)) {
             return Long.class;
+        } else if ("long".equals(name)) {
+            return long.class;
+        } else if ("java.lang.Short".equals(name) || "Short".equals(name)) {
+            return Short.class;
+        } else if ("short".equals(name)) {
+            return long.class;
+        } else if ("java.lang.Byte".equals(name) || "Byte".equals(name)) {
+            return Byte.class;
+        } else if ("byte".equals(name)) {
+            return byte.class;
+        } else if ("java.lang.Float".equals(name) || "Float".equals(name)) {
+            return Float.class;
+        } else if ("float".equals(name)) {
+            return byte.class;
+        } else if ("java.lang.Double".equals(name) || "Double".equals(name)) {
+            return Double.class;
+        } else if ("double".equals(name)) {
+            return byte.class;
         }
 
         // try context class loader first
