@@ -16,20 +16,68 @@
  */
 package org.apache.camel.converter.jaxp;
 
+import java.io.InputStream;
+import java.util.List;
+
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision$
  */
 public class DomConverterTest extends ContextTestSupport {
 
-    public void testDomConverter() throws Exception {
+    public void testDomConverterToString() throws Exception {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
 
         String s = DomConverter.toString(document.getChildNodes());
         assertEquals("world!", s);
+    }
+
+    public void testDomConverterToBytes() throws Exception {
+        Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
+
+        byte[] bytes = DomConverter.toByteArray(document.getChildNodes());
+        assertTrue("Should be equal", ObjectHelper.equalByteArray("world!".getBytes(), bytes));
+    }
+
+    public void testDomConverterToInteger() throws Exception {
+        Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>47</hello>");
+
+        Integer number = DomConverter.toInteger(document.getChildNodes());
+        assertEquals(47, number.intValue());
+    }
+
+    public void testDomConverterToLong() throws Exception {
+        Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>47</hello>");
+
+        Long number = DomConverter.toLong(document.getChildNodes());
+        assertEquals(47L, number.longValue());
+    }
+
+    public void testDomConverterToList() throws Exception {
+        Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + "<foo><hello>Hello World</hello><bye>Bye Camel</bye></foo>");
+
+        List list = DomConverter.toList(document.getElementsByTagName("foo"));
+        assertEquals(1, list.size());
+
+        NodeList nl = assertIsInstanceOf(NodeList.class, list.get(0));
+        List sub = DomConverter.toList(nl);
+        assertEquals(2, sub.size());
+
+        assertEquals("Hello World", DomConverter.toString((NodeList) sub.get(0)));
+        assertEquals("Bye Camel", DomConverter.toString((NodeList) sub.get(1)));
+    }
+
+    public void testDomConverterToInputStream() throws Exception {
+        Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
+
+        InputStream is = DomConverter.toInputStream(document.getChildNodes());
+        assertEquals("world!", context.getTypeConverter().convertTo(String.class, is));
     }
 
 }

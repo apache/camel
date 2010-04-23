@@ -16,6 +16,14 @@
  */
 package org.apache.camel.converter.jaxp;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.util.ObjectHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -56,6 +64,27 @@ public final class DomConverter {
         append(buffer, nodeList);
         String s = buffer.toString();
         return Long.valueOf(s);
+    }
+
+    @Converter
+    public static List toList(NodeList nodeList) {
+        List answer = new ArrayList();
+        Iterator it = ObjectHelper.createIterator(nodeList);
+        while (it.hasNext()) {
+            answer.add(it.next());
+        }
+        return answer;
+    }
+
+    @Converter
+    public static InputStream toInputStream(NodeList nodeList) {
+        return new ByteArrayInputStream(toByteArray(nodeList));
+    }
+
+    @Converter
+    public static byte[] toByteArray(NodeList nodeList) {
+        String data = toString(nodeList);
+        return data.getBytes();
     }
 
     private static void append(StringBuilder buffer, NodeList nodeList) {
