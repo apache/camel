@@ -17,30 +17,30 @@
 -->
 <!-- START SNIPPET: example -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:spring-security="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring-security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
 			http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/security
 			http://www.springframework.org/schema/security/spring-security.xsd">
 
-	<bean id="authenticationManager" class="org.springframework.security.MockAuthenticationManager"/>
+    <bean id="authenticationManager" class="org.springframework.security.MockAuthenticationManager"/>
 
-	<bean id="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
-		<property name="allowIfAllAbstainDecisions" value="true"/>
-		<property name="decisionVoters">
-			<list>
-				<bean class="org.springframework.security.vote.RoleVoter"/>
-			</list>
-		</property>
-	</bean>
+    <bean id="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
+        <property name="allowIfAllAbstainDecisions" value="true"/>
+        <property name="decisionVoters">
+            <list>
+                <bean class="org.springframework.security.vote.RoleVoter"/>
+            </list>
+        </property>
+    </bean>
 
-	<spring-security:authentication-provider user-service-ref="userDetailsService"/>
+    <spring-security:authentication-provider user-service-ref="userDetailsService"/>
 
-	<spring-security:user-service id="userDetailsService">
-		<spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
-		<spring-security:user name="bob" password="bobspassword" authorities="ROLE_USER"/>
-	</spring-security:user-service>
+    <spring-security:user-service id="userDetailsService">
+        <spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
+        <spring-security:user name="bob" password="bobspassword" authorities="ROLE_USER"/>
+    </spring-security:user-service>
 
 </beans>
-<!-- END SNIPPET: example -->   
+<!-- END SNIPPET: example -->

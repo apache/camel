@@ -16,9 +16,9 @@
     limitations under the License.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:spring-security="http://www.springframework.org/schema/security"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring-security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans.xsd
           http://camel.apache.org/schema/spring
           http://camel.apache.org/schema/spring/camel-spring.xsd
@@ -26,17 +26,17 @@
           http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
           http://www.springframework.org/schema/security
 		  http://www.springframework.org/schema/security/spring-security.xsd">
-		  
-		  <import resource="classpath:org/apache/camel/component/spring/security/commonSecurity.xml"/>
-          
-          <authorizationPolicy id="admin" access="ROLE_ADMIN" 
-          	authenticationManager="authenticationManager"
-          	accessDecisionManager="accessDecisionManager"
-          	 xmlns="http://camel.apache.org/schema/spring-security"/>
-          	 
-          <authorizationPolicy id="user" access="ROLE_USER"
-            xmlns="http://camel.apache.org/schema/spring-security"/>
-          
+
+    <import resource="classpath:org/apache/camel/component/spring/security/commonSecurity.xml"/>
+
+    <authorizationPolicy id="admin" access="ROLE_ADMIN"
+                         authenticationManager="authenticationManager"
+                         accessDecisionManager="accessDecisionManager"
+                         xmlns="http://camel.apache.org/schema/spring-security"/>
+
+    <authorizationPolicy id="user" access="ROLE_USER"
+                         xmlns="http://camel.apache.org/schema/spring-security"/>
+
 </beans>
                         
                     

@@ -17,9 +17,9 @@
 -->
 <!-- START SNIPPET: example -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:spring-security="http://www.springframework.org/schema/security"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring-security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans.xsd
           http://camel.apache.org/schema/spring
           http://camel.apache.org/schema/spring/camel-spring.xsd
@@ -27,23 +27,25 @@
           http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
           http://www.springframework.org/schema/security
 		  http://www.springframework.org/schema/security/spring-security.xsd">
-		  <!-- import the spring security configuration  -->
-		  <import resource="classpath:org/apache/camel/component/spring/security/commonSecurity.xml"/>
-           
-          <authorizationPolicy id="admin" access="ROLE_ADMIN" 
-          	authenticationManager="authenticationManager"
-          	accessDecisionManager="accessDecisionManager"
-          	 xmlns="http://camel.apache.org/schema/spring-security"/>
-          	 
-          <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/spring">
-             <route>
-               <from uri="direct:start"/>
-               <!-- The exchange should be authenticated with the role of ADMIN before it is send to mock:endpoint -->
-               <policy ref="admin" />
-               <to uri="mock:end"/>
-             </route>
-          </camelContext>
-         
+
+    <!-- import the spring security configuration  -->
+    <import resource="classpath:org/apache/camel/component/spring/security/commonSecurity.xml"/>
+
+    <authorizationPolicy id="admin" access="ROLE_ADMIN"
+                         authenticationManager="authenticationManager"
+                         accessDecisionManager="accessDecisionManager"
+                         xmlns="http://camel.apache.org/schema/spring-security"/>
+
+    <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+            <!-- The exchange should be authenticated with the role of ADMIN before it is send to mock:endpoint -->
+            <policy ref="admin">
+                <to uri="mock:end"/>
+            </policy>
+        </route>
+    </camelContext>
+
 </beans>
- <!-- END SNIPPET: example -->                        
+        <!-- END SNIPPET: example -->
                     
