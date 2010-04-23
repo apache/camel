@@ -48,6 +48,8 @@ public class HawtDBAggregateNotLostRemovedWhenConfirmedTest extends CamelTestSup
 
         assertMockEndpointsSatisfied();
 
+        Thread.sleep(1000);
+
         String exchangeId = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getExchangeId();
 
         // the exchange should NOT be in the completed repo as it was confirmed

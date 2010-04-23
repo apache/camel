@@ -49,6 +49,8 @@ public class HawtDBAggregateNotLostTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        Thread.sleep(1000);
+
         String exchangeId = getMockEndpoint("mock:aggregated").getReceivedExchanges().get(0).getExchangeId();
 
         // the exchange should be in the completed repo where we should be able to find it

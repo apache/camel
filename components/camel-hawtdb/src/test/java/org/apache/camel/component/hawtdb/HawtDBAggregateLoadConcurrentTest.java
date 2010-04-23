@@ -28,8 +28,10 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Test manually as its aggressive on the file system with sync each write")
 public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
 
     private static final Log LOG = LogFactory.getLog(HawtDBAggregateLoadConcurrentTest.class);
