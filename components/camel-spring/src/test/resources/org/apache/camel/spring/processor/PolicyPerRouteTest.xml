@@ -39,6 +39,11 @@
             </policy>
         </route>
         <!-- END SNIPPET: e1 -->
+        <route>
+            <from uri="direct:send"/>
+            <to uri="direct:start"/>
+            <to uri="mock:response"/>
+        </route>
     </camelContext>
 
 </beans>

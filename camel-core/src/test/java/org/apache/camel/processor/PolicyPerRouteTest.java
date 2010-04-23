@@ -36,8 +36,10 @@ public class PolicyPerRouteTest extends ContextTestSupport {
         getMockEndpoint("mock:bar").expectedHeaderReceived("foo", "was wrapped");
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "was wrapped");
-
-        template.sendBody("direct:start", "Hello World");
+        
+        getMockEndpoint("mock:response").expectedMessageCount(1);
+        getMockEndpoint("mock:response").expectedHeaderReceived("foo", "policy finished excution");
+        template.sendBody("direct:send", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -66,6 +68,10 @@ public class PolicyPerRouteTest extends ContextTestSupport {
                         .to("mock:bar")
                         .to("mock:result");
                 // END SNIPPET: e1
+                
+                from("direct:send")
+                    .to("direct:start")
+                    .to("mock:response");
             }
         };
     }
@@ -83,10 +89,10 @@ public class PolicyPerRouteTest extends ContextTestSupport {
             return new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     invoked++;
-
-                    exchange.getIn().setHeader(name, "was wrapped");
                     // let the original processor continue routing
+                    exchange.getIn().setHeader(name, "was wrapped");
                     processor.process(exchange);
+                    exchange.getIn().setHeader(name, "policy finished excution");
                 }
             };
         }
