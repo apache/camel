@@ -41,6 +41,7 @@
     <fileset dir="${juel.home}">
       <include name="**/juel-*.jar"/>
     </fileset>
+    <path refid="spring.classpath"/>
     <path refid="camel.spring.classpath"/>
     <path refid="hibernate.classpath"/>
   </path>
