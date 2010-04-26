@@ -41,7 +41,7 @@
 			META-INF.cxf,
 			org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
      </camel.osgi.import.additional>
-		<camel.osgi.private.pkg>
+	 <camel.osgi.private.pkg>
 			org.apache.hello_world_soap_http,
 			org.apache.hello_world_soap_http.types
      </camel.osgi.private.pkg>

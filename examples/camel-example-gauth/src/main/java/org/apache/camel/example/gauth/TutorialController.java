@@ -49,7 +49,6 @@ public class TutorialController {
     @Autowired
     private TutorialService service;
     
-    @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
     public String handleGet(
             HttpServletRequest request, 

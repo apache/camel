@@ -25,12 +25,6 @@ import org.apache.commons.logging.LogFactory;
 //START SNIPPET: aggregation
 public class BankResponseAggregationStrategy implements AggregationStrategy {    
     private static final transient Log LOG = LogFactory.getLog(BankResponseAggregationStrategy.class);
-    private boolean aggregatingOutMessage;
-    
-    public BankResponseAggregationStrategy setAggregatingOutMessage(boolean flag) {
-        aggregatingOutMessage = flag;
-        return this;
-    }
     
     // Here we put the bank response together
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

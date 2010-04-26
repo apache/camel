@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CafeRouteSpringTest extends CafeRouteBuilderTest {
     private AbstractApplicationContext applicationContext;
-    private ProducerTemplate template;
+   
     
     @Before
     public void setUp() throws Exception {
