@@ -153,6 +153,28 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     /**
+     * Asserts that all the expectations on any {@link MockEndpoint} instances registered
+     * in the given context are valid
+     *
+     * @param context the camel context used to find all the available endpoints to be asserted
+     * @param timeout timeout
+     * @param unit    time unit
+     */
+    public static void assertIsSatisfied(CamelContext context, long timeout, TimeUnit unit) throws InterruptedException {
+        ObjectHelper.notNull(context, "camelContext");
+        ObjectHelper.notNull(unit, "unit");
+        Collection<Endpoint> endpoints = context.getEndpoints();
+        long millis = unit.toMillis(timeout);
+        for (Endpoint endpoint : endpoints) {
+            if (endpoint instanceof MockEndpoint) {
+                MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
+                mockEndpoint.setResultWaitTime(millis);
+                mockEndpoint.assertIsSatisfied();
+            }
+        }
+    }
+
+    /**
      * Reset all mock endpoints
      *
      * @param context the camel context used to find all the available endpoints to reset

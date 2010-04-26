@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -344,6 +345,13 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     protected void assertMockEndpointsSatisfied() throws InterruptedException {
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    /**
+     * Asserts that all the expectations of the Mock endpoints are valid
+     */
+    protected void assertMockEndpointsSatisfied(long timeout, TimeUnit unit) throws InterruptedException {
+        MockEndpoint.assertIsSatisfied(context, timeout, unit);
     }
 
     /**
