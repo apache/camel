@@ -57,42 +57,30 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
-    @SuppressWarnings("unchecked")
     public void readRequest(HttpServletRequest request, HttpMessage message) {
-        // lets parser the parameterMap first to avoid consuming the POST parameters as InputStream
-        request.getParameterMap();
 
         // lets force a parse of the body and headers
         message.getBody();
         // populate the headers from the request
         Map<String, Object> headers = message.getHeaders();
-
+        
         //apply the headerFilterStrategy
         Enumeration names = request.getHeaderNames();
         while (names.hasMoreElements()) {
-            String name = (String) names.nextElement();
+            String name = (String)names.nextElement();
             Object value = request.getHeader(name);
             // mapping the content-type 
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
             if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
                 headers.put(name, value);
             }
         }
 
-        //we populate the http request parameters without checking the request method
-        names = request.getParameterNames();
-        while (names.hasMoreElements()) {
-            String name = (String) names.nextElement();
-            Object value = request.getParameter(name);
-            if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                headers.put(name, value);
-            }
-        }
-
+        popluateRequestParameters(request, message);
+        
         // store the method and query and other info in headers
         headers.put(Exchange.HTTP_METHOD, request.getMethod());
         headers.put(Exchange.HTTP_QUERY, request.getQueryString());
@@ -102,8 +90,26 @@ public class DefaultHttpBinding implements HttpBinding {
         headers.put(Exchange.CONTENT_TYPE, request.getContentType());
         headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
         
+        popluateAttachments(request, message);
+    }
+    
+    protected void popluateRequestParameters(HttpServletRequest request, HttpMessage message) {
+        //we populate the http request parameters without checking the request method
+        Map<String, Object> headers = message.getHeaders();
+        Enumeration names = request.getParameterNames();
+        while (names.hasMoreElements()) {
+            String name = (String)names.nextElement();
+            Object value = request.getParameter(name);
+            if (headerFilterStrategy != null
+                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                headers.put(name, value);
+            }
+        }
+    }
+    
+    protected void popluateAttachments(HttpServletRequest request, HttpMessage message) {
         // check if there is multipart files, if so will put it into DataHandler
-        names = request.getAttributeNames();
+        Enumeration names = request.getAttributeNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
             Object object = request.getAttribute(name);
@@ -112,7 +118,6 @@ public class DefaultHttpBinding implements HttpBinding {
                 message.addAttachment(fileName, new DataHandler(new FileDataSource((File)object), FileTypeMap.getDefaultFileTypeMap().getContentType(fileName)));
             }
         }
-       
     }
 
     public void writeResponse(Exchange exchange, HttpServletResponse response) throws IOException {
