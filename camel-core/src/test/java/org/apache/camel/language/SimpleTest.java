@@ -225,7 +225,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testOGNLHeaderMap() throws Exception {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("cool", "Camel rocks");
         map.put("dude", "Hey dude");
         map.put("code", 4321);

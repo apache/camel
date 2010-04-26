@@ -205,7 +205,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         String propertyName = "producer";
 
         try {
-            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
+            helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             fail("Should throw exception");
         } catch (IllegalArgumentException e) {
             assertEquals("registry entry called unknown of type org.apache.camel.Endpoint must be specified", e.getMessage());
@@ -223,7 +223,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         String propertyName = "producer";
 
         try {
-            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
+            helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             fail("Should throw exception");
         } catch (ResolveEndpointFailedException e) {
             assertEquals("Failed to resolve endpoint: xxx://foo due to: No component found with scheme: xxx", e.getMessage());
@@ -241,7 +241,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         String propertyName = "producer";
 
         try {
-            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
+            helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             fail("Should throw exception");
         } catch (IllegalArgumentException e) {
             assertEquals("Both uri and name is provided, only either one is allowed: uri=seda:foo, ref=myEndpoint", e.getMessage());

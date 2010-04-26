@@ -29,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ChoiceWithEndTest extends ContextTestSupport {
 
+    @SuppressWarnings("unchecked")
     public void testRouteIsCorrectAtRuntime() throws Exception {
         // use navigate to find that the end works as expected
         Navigate<Processor> nav = getRoute("direct://start").navigate();
@@ -90,8 +91,7 @@ public class ChoiceWithEndTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @SuppressWarnings("unchecked")
+        return new RouteBuilder() {            
             @Override
             public void configure() throws Exception {
                 MyChoiceBean bean = new MyChoiceBean();

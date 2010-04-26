@@ -45,6 +45,7 @@ public class ManagedTracerOptionsTest extends ContextTestSupport {
         return context;
     }
 
+    @SuppressWarnings("unchecked")
     public void testManagedTracerOptions() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

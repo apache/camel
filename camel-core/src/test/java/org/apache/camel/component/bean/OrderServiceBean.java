@@ -50,7 +50,7 @@ public class OrderServiceBean {
             return null;
         }
 
-        String xml = converter.convertTo(String.class, doc);
+        converter.convertTo(String.class, doc);
 
         Integer orderId = 77889;
         Integer customerId = 667;

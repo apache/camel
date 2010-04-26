@@ -46,7 +46,6 @@ public class ManagedRouteContextTracerTest extends ContextTestSupport {
         return context;
     }
 
-    @SuppressWarnings("unchecked")
     public void testRouteTracing() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

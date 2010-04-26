@@ -42,7 +42,7 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
         MockEndpoint out = this.resolveMandatoryEndpoint("mock:out", MockEndpoint.class);
         out.expectedMessageCount(0);
         
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {    
+        template.send("direct:start", ExchangePattern.InOnly, new Processor() {    
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("hello");
             }

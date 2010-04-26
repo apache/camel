@@ -58,7 +58,6 @@ public class IOConverterTest extends ContextTestSupport {
 
     public void testToByteArray() throws Exception {
         String val = null;
-        assertNull(IOConverter.toByteArray(val));
         assertNull(IOConverter.toByteArray(val, null));
     }
 
@@ -134,14 +133,14 @@ public class IOConverterTest extends ContextTestSupport {
 
     public void testToByteArrayBufferReader() throws Exception {
         BufferedReader br = new BufferedReader(new StringReader("Hello World"));
-        byte[] bytes = IOConverter.toByteArray(br);
+        byte[] bytes = IOConverter.toByteArray(br, null);
         assertNotNull(bytes);
         assertEquals(11, bytes.length);
     }
 
     public void testToByteArrayReader() throws Exception {
         Reader br = new BufferedReader(new StringReader("Hello World"));
-        byte[] bytes = IOConverter.toByteArray(br);
+        byte[] bytes = IOConverter.toByteArray(br, null);
         assertNotNull(bytes);
         assertEquals(11, bytes.length);
     }
@@ -179,7 +178,7 @@ public class IOConverterTest extends ContextTestSupport {
 
     public void testStringUrl() throws Exception {
         URL url = ObjectHelper.loadResourceAsURL("log4j.properties");
-        String s = IOConverter.toString(url);
+        String s = IOConverter.toString(url, null);
         assertNotNull(s);
     }
 
@@ -193,7 +192,7 @@ public class IOConverterTest extends ContextTestSupport {
 
     public void testByteArrayByBufferedReader() throws Exception {
         Reader reader = new StringReader("Hello World");
-        byte[] data = IOConverter.toByteArray(reader);
+        byte[] data = IOConverter.toByteArray(reader, null);
         assertNotNull(data);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, data));
     }

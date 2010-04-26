@@ -223,7 +223,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals("HiHi", echo);
 
         try {
-            Exchange result = template.extractFutureBody(future, Exchange.class);
+            template.extractFutureBody(future, Exchange.class);
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             assertEquals("Damn forced by unit test", e.getCause().getMessage());
@@ -242,7 +242,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals("HiHi", echo);
 
         try {
-            String result = template.extractFutureBody(future, String.class);
+            template.extractFutureBody(future, String.class);
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             assertEquals("Damn forced by unit test", e.getCause().getMessage());

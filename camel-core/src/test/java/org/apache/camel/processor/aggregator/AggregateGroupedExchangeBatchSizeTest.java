@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
 
+    @SuppressWarnings("unchecked")
     public void testGrouped() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
 

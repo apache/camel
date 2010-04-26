@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class AggregateGroupedExchangeTest extends ContextTestSupport {
 
+    @SuppressWarnings("unchecked")
     public void testGrouped() throws Exception {
         // START SNIPPET: e2
         MockEndpoint result = getMockEndpoint("mock:result");

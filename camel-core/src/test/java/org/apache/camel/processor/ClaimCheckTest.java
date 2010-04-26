@@ -33,7 +33,6 @@ public class ClaimCheckTest extends ContextTestSupport {
     // in memory data store for testing only!
     public static Map<String, Object> dataStore = new HashMap<String, Object>();
     
-    @SuppressWarnings("unchecked")
     public void testClaimCheck() throws Exception {
         String body = "<order custId=\"123\"><lotsOfContent/></order>";
         

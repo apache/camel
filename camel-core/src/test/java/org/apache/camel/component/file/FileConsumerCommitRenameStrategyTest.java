@@ -70,7 +70,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
         Thread.sleep(1000);
 
         // content of file should be Hello London
-        String content = IOConverter.toString(new File("./target/done/london.txt"));
+        String content = IOConverter.toString(new File("./target/done/london.txt"), null);
         assertEquals("The file should have been renamed replacing any existing files", "Hello London", content);
     }
 

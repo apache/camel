@@ -61,7 +61,7 @@ public class DavidSiefertTest extends ContextTestSupport {
 
     public static class MyProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
-            String input = exchange.getIn().getBody(String.class);
+            exchange.getIn().getBody(String.class);
 
             Message output = exchange.getOut();
             output.setHeader("sample.name", "myValue");

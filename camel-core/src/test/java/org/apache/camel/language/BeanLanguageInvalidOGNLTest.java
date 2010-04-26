@@ -32,7 +32,7 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
 
     public void testBeanLanguageInvalidOGNL() throws Exception {
         try {
-            String reply = template.requestBody("direct:start", "World", String.class);
+            template.requestBody("direct:start", "World", String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             RuntimeBeanExpressionException rbee = assertIsInstanceOf(RuntimeBeanExpressionException.class, e.getCause());

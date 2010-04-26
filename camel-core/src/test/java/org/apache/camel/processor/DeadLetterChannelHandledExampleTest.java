@@ -103,6 +103,7 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
          * @return the out payload
          * @throws OrderFailedException is thrown if the order cannot be processed
          */
+        @SuppressWarnings("unchecked")
         public Object handleOrder(@Headers Map in, @Body String payload, @OutHeaders Map out)
             throws OrderFailedException {
             out.put("customerid", in.get("customerid"));
@@ -121,6 +122,7 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
          * @param out     the out headers
          * @return the out payload
          */
+        @SuppressWarnings("unchecked")
         public Object orderFailed(@Headers Map in, @Body String payload, @OutHeaders Map out) {
             out.put("customerid", in.get("customerid"));
             out.put("orderid", "failed");

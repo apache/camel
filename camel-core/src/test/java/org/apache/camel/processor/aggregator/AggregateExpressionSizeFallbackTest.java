@@ -31,7 +31,7 @@ public class AggregateExpressionSizeFallbackTest extends ContextTestSupport {
     public void testAggregateExpressionSizeFallback() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>(); 
         headers.put("id", 123);
 
         template.sendBodyAndHeaders("direct:start", "A", headers);

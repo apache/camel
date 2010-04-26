@@ -159,10 +159,6 @@ public class StringDataFormatTest extends TestSupport {
     private class MyBook {
         private String title;
 
-        public String getTitle() {
-            return title;
-        }
-
         public void setTitle(String title) {
             this.title = title;
         }

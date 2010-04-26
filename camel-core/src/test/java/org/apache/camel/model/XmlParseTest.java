@@ -168,7 +168,6 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("#", node.getUriDelimiter());
     }
 
-    @SuppressWarnings("unchecked")
     public void testParseRouteWithChoiceXml() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithChoice.xml");
         assertFrom(route, "seda:a");

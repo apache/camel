@@ -43,7 +43,6 @@ public class ManagedThrottlerTest extends ContextTestSupport {
         return context;
     }
 
-    @SuppressWarnings("unchecked")
     public void testManageThrottler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(10);
 

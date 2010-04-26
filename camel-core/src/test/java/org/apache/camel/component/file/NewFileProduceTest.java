@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -40,7 +41,7 @@ public class NewFileProduceTest extends ContextTestSupport {
         FileComponent comp = new FileComponent();
         comp.setCamelContext(context);
 
-        Endpoint endpoint = comp.createEndpoint("file://target/producefile", "target/producefile", new HashMap());
+        Endpoint endpoint = comp.createEndpoint("file://target/producefile", "target/producefile", new HashMap<String, Object>());
         template.send(endpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "bye.txt");

@@ -43,7 +43,6 @@ public class ManagedRegisterCamelContextTest extends ContextTestSupport {
         return context;
     }
 
-    @SuppressWarnings("unchecked")
     public void testRegisterCamelContext() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

@@ -53,6 +53,7 @@ public class SplitterTest extends ContextTestSupport {
         for (int i = 0; i < 4; i++) {
             Exchange exchange = list.get(i);
             Message in = exchange.getIn();
+            assertNotNull("The in message should not be null.", in);
             assertProperty(exchange, Exchange.SPLIT_INDEX, i);
             assertProperty(exchange, Exchange.SPLIT_SIZE, 4);
         }

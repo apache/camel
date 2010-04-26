@@ -84,7 +84,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         }
     }
 
-    private void navigateDefinition(ProcessorDefinition def, StringBuilder sb) {
+    private void navigateDefinition(ProcessorDefinition<?> def, StringBuilder sb) {
 
         if (def instanceof LoadBalanceDefinition) {
             sb.append(".loadBalance()");

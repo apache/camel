@@ -30,6 +30,7 @@ public class ExpressionAdapterTest extends ContextTestSupport {
             return "foo";
         }
 
+        @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             String in = exchange.getIn().getBody(String.class);
             if ("Kabom".equals(in)) {

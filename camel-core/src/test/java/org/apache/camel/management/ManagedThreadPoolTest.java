@@ -43,6 +43,7 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
         return context;
     }
 
+    @SuppressWarnings("unchecked")
     public void testManagedThreadPool() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

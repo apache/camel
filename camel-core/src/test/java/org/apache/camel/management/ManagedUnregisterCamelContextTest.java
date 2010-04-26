@@ -38,6 +38,7 @@ public class ManagedUnregisterCamelContextTest extends TestSupport {
         return context;
     }
 
+    @SuppressWarnings("unchecked")
     public void testUnregisterCamelContext() throws Exception {
         CamelContext context = createCamelContext();
         context.start();

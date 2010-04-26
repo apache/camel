@@ -18,10 +18,12 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 
+import org.w3c.dom.Document;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.w3c.dom.Document;
+
 
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 

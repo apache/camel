@@ -44,6 +44,7 @@ public class ManagedErrorHandlerTest extends ContextTestSupport {
         return context;
     }
 
+    @SuppressWarnings("unchecked")
     public void testManagedErrorHandler() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

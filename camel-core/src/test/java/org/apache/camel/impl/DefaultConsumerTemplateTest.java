@@ -302,7 +302,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         // test that we cache at most 500 consumers to avoid it eating to much memory
         for (int i = 0; i < 503; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
-            Exchange ex = template.receiveNoWait(e);
+            template.receiveNoWait(e);
         }
 
         assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
@@ -320,7 +320,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         // test that we cache at most 500 consumers to avoid it eating to much memory
         for (int i = 0; i < 503; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
-            Exchange ex = template.receiveNoWait(e);
+            template.receiveNoWait(e);
         }
 
         assertEquals("Size should be 500", 500, template.getCurrentCacheSize());

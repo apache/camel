@@ -34,6 +34,7 @@ public class ManagedRouteStopTest extends ContextTestSupport {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     public void testStopRoute() throws Exception {
         // fire a message to get it running
         getMockEndpoint("mock:result").expectedMessageCount(1);

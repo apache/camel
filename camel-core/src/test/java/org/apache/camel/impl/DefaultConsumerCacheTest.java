@@ -35,6 +35,7 @@ public class DefaultConsumerCacheTest extends ContextTestSupport {
         for (int i = 0; i < 1003; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
             PollingConsumer p = cache.getConsumer(e);
+            assertNotNull("the polling consumer should not be null", p);
         }
 
         assertEquals("Size should be 1000", 1000, cache.size());

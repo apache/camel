@@ -44,7 +44,6 @@ public class ManagedSendProcessorTest extends ContextTestSupport {
         return context;
     }
 
-    @SuppressWarnings("unchecked")
     public void testManageSendProcessor() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

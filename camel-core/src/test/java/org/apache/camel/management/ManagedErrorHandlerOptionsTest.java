@@ -51,6 +51,7 @@ public class ManagedErrorHandlerOptionsTest extends ContextTestSupport {
         return context;
     }
 
+    @SuppressWarnings("unchecked")
     public void testManagedErrorHandlerOptions() throws Exception {
         counter = 0;
 

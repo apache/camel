@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class AggregateGroupedExchangeSizePredicateTest extends ContextTestSupport {
 
+    @SuppressWarnings("unchecked")
     public void testGroupedSize() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
 

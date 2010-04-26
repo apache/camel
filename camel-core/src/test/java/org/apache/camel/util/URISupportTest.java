@@ -96,7 +96,7 @@ public class URISupportTest extends ContextTestSupport {
 
     public void testCreateRemaingURI() throws Exception {
         URI original = new URI("http://camel.apache.org");
-        Map param = new HashMap();
+        Map<Object, Object> param = new HashMap<Object, Object>();
         param.put("foo", "123");
         URI newUri = URISupport.createRemainingURI(original, param);
         assertNotNull(newUri);

@@ -129,7 +129,7 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                final IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
+                final IdempotentRepository<String> repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
                 from("direct:start").idempotentConsumer(header("messageId"), repo).eager(false).
                         process(new Processor() {
@@ -156,7 +156,7 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                final IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
+                final IdempotentRepository<String> repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
                 from("direct:start").idempotentConsumer(header("messageId"), repo).eager(true).
                         process(new Processor() {

@@ -35,6 +35,7 @@ public class CoarseGrainedProcessorDefinitionIssueTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
 
         Route route = context.getRoutes().get(0);
+        assertNotNull("The route should not be null", route);
 
         // TODO: drill down the route and check that Channel have
         // the fine grained processor definition assigned

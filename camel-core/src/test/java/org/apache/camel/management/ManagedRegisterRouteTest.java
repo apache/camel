@@ -34,6 +34,7 @@ public class ManagedRegisterRouteTest extends ContextTestSupport {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     public void testRoutes() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

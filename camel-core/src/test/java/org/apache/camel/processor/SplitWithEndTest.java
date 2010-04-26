@@ -30,6 +30,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class SplitWithEndTest extends ContextTestSupport {
 
+    @SuppressWarnings("unchecked")
     public void testRouteIsCorrectAtRuntime() throws Exception {
         // use navigate to find that the end works as expected
         Navigate<Processor> nav = context.getRoutes().get(0).navigate();

@@ -47,8 +47,7 @@ public class SetHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                Namespaces ns = new Namespaces("foo", "urn:cheese");
-
+                
                 from("direct:start").
                         unmarshal().string().
                         setHeader("foo").xpath("/person[@name='James']/@city", String.class).

@@ -100,15 +100,13 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
     public String getShortName() {
         return "wireTap";
     }
-
-    @SuppressWarnings("unchecked")
+    
     public ProcessorDefinition executorService(ExecutorService executorService) {
         // wiretap has no outputs and therefore we cannot use custom wiretap builder methods in Java DSL
         // as the Java DSL is stretched so far we can using regular Java
         throw new UnsupportedOperationException("wireTap does not support these builder methods");
     }
-
-    @SuppressWarnings("unchecked")
+    
     public ProcessorDefinition executorServiceRef(String executorServiceRef) {
         // wiretap has no outputs and therefore we cannot use custom wiretap builder methods in Java DSL
         // as the Java DSL is stretched so far we can using regular Java

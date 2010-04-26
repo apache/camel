@@ -116,7 +116,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         exchange.getOut().setBody("bar");
         exchange.getOut().setHeader("quote", "Camel rocks");
 
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         ExchangeHelper.populateVariableMap(exchange, map);
 
         assertEquals(8, map.size());

@@ -50,8 +50,7 @@ public class SimpleRegistryTest extends TestCase {
             // expected
         }
     }
-
-    @SuppressWarnings("unchecked")
+    
     public void testLookupByType() {
         Map map = registry.lookupByType(String.class);
         assertEquals(1, map.size());
@@ -61,8 +60,7 @@ public class SimpleRegistryTest extends TestCase {
         assertEquals("b", map.get("a"));
         assertEquals(1, map.get("c"));
     }
-
-    @SuppressWarnings("unchecked")
+ 
     public void testLookupByWrongType() {
         Map map = registry.lookupByType(Float.class);
         assertEquals(0, map.size());

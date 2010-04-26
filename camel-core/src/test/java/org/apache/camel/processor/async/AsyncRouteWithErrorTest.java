@@ -41,7 +41,7 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
 
         // send a request reply to the direct start endpoint
         try {
-            Object out = template.requestBody("direct:start", "Hello");
+            template.requestBody("direct:start", "Hello");
         } catch (CamelExecutionException e) {
             // expected an execution exception
             assertEquals("Damn forced by unit test", e.getCause().getMessage());
@@ -62,7 +62,7 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
         // send a request reply to the direct start endpoint, but will use
         // future type converter that will wait for the response
         try {
-            String response = template.requestBody("direct:start", "Hello", String.class);
+            template.requestBody("direct:start", "Hello", String.class);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             // expected an execution exception

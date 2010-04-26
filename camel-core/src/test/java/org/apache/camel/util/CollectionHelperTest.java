@@ -43,7 +43,7 @@ public class CollectionHelperTest extends TestCase {
     }
 
     public void testSize() {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("foo", 123);
         map.put("bar", 456);
 

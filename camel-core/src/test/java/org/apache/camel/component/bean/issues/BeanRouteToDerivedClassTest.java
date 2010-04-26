@@ -47,8 +47,7 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
         assertEquals("Derived class should have been invoked", "Hello World", derived.getAndClearBody());
     }
-
-    @SuppressWarnings("unchecked")
+    
     public void testDerivedClassCalledWithNoCustomProcessor() throws Exception {
         context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class, new MyMessageToProcessorConverter());
 
@@ -72,19 +71,18 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
         assertEquals("Bye World", out.toString());
     }
-
-    @SuppressWarnings("unchecked")
+    
     public void testDerivedClassCalledWithCustomProcessor() throws Exception {
         context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class, new MyMessageToProcessorConverter());
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // explict method name given so always call this
+                // Explicit method name given so always call this
                 from("direct:start")
                     .to("bean:derived?method=process");
 
-                // no explicy method name then a custom processor can kick in
+                // no explicit method name then a custom processor can kick in
                 from("direct:other")
                     .to("bean:derived");
             }

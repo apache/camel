@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.Consumer;
@@ -54,7 +55,7 @@ public class NewFileConsumeTest extends ContextTestSupport {
             fos.close();
         }
 
-        Endpoint endpoint = comp.createEndpoint("file://target/consumefile", "target/consumefile", new HashMap());
+        Endpoint endpoint = comp.createEndpoint("file://target/consumefile", "target/consumefile", new HashMap<String, Object>());
         Consumer consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 assertNotNull(exchange);

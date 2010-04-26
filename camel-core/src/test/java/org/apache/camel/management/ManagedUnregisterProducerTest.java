@@ -46,10 +46,9 @@ public class ManagedUnregisterProducerTest extends ContextTestSupport {
         return context;
     }
 
-    @SuppressWarnings("unchecked")
     public void testUnregisterProducer() throws Exception {
         // send a message so the managed producer is started
-        // do this "manually" to avoid camel manageging the direct:start producer as well
+        // do this "manually" to avoid camel managing the direct:start producer as well
         // this makes the unit test easier as we only have 1 managed producer = mock:result
         Endpoint endpoint = context.getEndpoint("direct:start");
         Producer producer = endpoint.createProducer();

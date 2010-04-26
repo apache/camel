@@ -60,7 +60,7 @@ public class AsyncRouteNoWaitWithErrorTest extends ContextTestSupport {
 
         // get the response from the future
         try {
-            String response = context.getTypeConverter().convertTo(String.class, future);
+            context.getTypeConverter().convertTo(String.class, future);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             // expected an execution exception
@@ -77,7 +77,7 @@ public class AsyncRouteNoWaitWithErrorTest extends ContextTestSupport {
         // send a request reply to the direct start endpoint, but will use
         // future type converter that will wait for the response
         try {
-            String response = template.requestBody("direct:start", "Hello", String.class);
+            template.requestBody("direct:start", "Hello", String.class);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             // expected an execution exception

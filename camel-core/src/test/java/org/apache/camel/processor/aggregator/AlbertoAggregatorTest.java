@@ -73,6 +73,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             AggregationStrategy surnameAggregator = new AggregationStrategy() {
+                @SuppressWarnings("unchecked")
                 public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                     debugIn("Surname Aggregator", oldExchange, newExchange);
 

@@ -35,7 +35,7 @@ public class FileIdempotentConsumerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
     private File store = new File("target/idempotentfilestore.dat");
-    private IdempotentRepository repo;
+    private IdempotentRepository<String> repo;
 
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         assertFalse(repo.contains("1"));

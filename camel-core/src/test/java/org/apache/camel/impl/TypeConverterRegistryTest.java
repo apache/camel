@@ -68,6 +68,7 @@ public class TypeConverterRegistryTest extends TestCase {
     // START SNIPPET: e2
     private class MyOrderTypeConverter implements TypeConverter {
 
+        @SuppressWarnings("unchecked")
         public <T> T convertTo(Class<T> type, Object value) {
             // converter from value to the MyOrder bean
             MyOrder order = new MyOrder();

@@ -36,7 +36,7 @@ public class RouteWithMistypedComponentNameTest extends TestSupport {
                     from("direct:hello").to("mock:result");
 
                     // unknown component
-                    Endpoint endpoint = endpoint("mistyped:hello");
+                    endpoint("mistyped:hello");
                 }
             });
             fail("Should have thrown a ResolveEndpointFailedException");
@@ -55,7 +55,7 @@ public class RouteWithMistypedComponentNameTest extends TestSupport {
                     from("direct:hello").to("mock:result");
 
                     // unknown component
-                    Endpoint endpoint = endpoint("mistyped:hello", Endpoint.class);
+                    endpoint("mistyped:hello", Endpoint.class);
                 }
             });
             fail("Should have thrown a ResolveEndpointFailedException");

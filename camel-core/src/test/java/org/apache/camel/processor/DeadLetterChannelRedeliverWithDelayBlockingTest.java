@@ -36,6 +36,7 @@ public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTest
 
     private static int counter;
 
+    @SuppressWarnings("unchecked")
     public void testRedeliverWithDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
 

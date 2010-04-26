@@ -41,8 +41,7 @@ public class ManagedDelayerTest extends ContextTestSupport {
         naming.setDomainName("org.apache.camel");
         return context;
     }
-
-    @SuppressWarnings("unchecked")
+    
     public void testManageDelay() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

@@ -70,6 +70,7 @@ public class GertJBIIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @SuppressWarnings("unchecked")
     public void testSimulateJBIEndpointNotExist() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
