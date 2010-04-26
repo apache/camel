@@ -110,13 +110,13 @@ mvn clean install
 To run the example, execute now the following command in the respective folder:
 
 >mina1
-mvn camel:run 
+mvn exec:java -Pmina1
 
 >mina2
-mvn camel:run 
+mvn exec:java -Pmina2 
 
 >loadbalancing
-mvn camel:run 
+mvn exec:java -Ploadbalancer
 
 and check the result in the log of loadbalancer
 
