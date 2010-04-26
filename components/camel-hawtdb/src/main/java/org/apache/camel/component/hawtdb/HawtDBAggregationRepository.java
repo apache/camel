@@ -353,6 +353,24 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
         return answer;
     }
 
+    private int size(final String repositoryName) {
+        int answer = hawtDBFile.execute(new Work<Integer>() {
+            public Integer execute(Transaction tx) {
+                Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, false);
+                return index != null ? index.size() : 0;
+            }
+
+            @Override
+            public String toString() {
+                return "Size[" + repositoryName + "]";
+            }
+        });
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Size of repository [" + repositoryName + "] -> " + answer);
+        }
+        return answer;
+    }
 
     public HawtDBFile getHawtDBFile() {
         return hawtDBFile;
@@ -469,6 +487,21 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
         ObjectHelper.notNull(repositoryName, "repositoryName");
 
         ServiceHelper.startService(hawtDBFile);
+
+        // log number of existing exchanges
+        int current = size(getRepositoryName());
+        int completed = size(getRepositoryNameCompleted());
+
+        if (current > 0) {
+            LOG.info("On startup there are " + current + " aggregate exchanges (not completed) in repository: " + getRepositoryName());
+        } else {
+            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: " + getRepositoryName());
+        }
+        if (completed > 0) {
+            LOG.warn("On startup there are " + completed + " completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+        } else {
+            LOG.info("On startup there are no completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+        }
     }
 
     @Override

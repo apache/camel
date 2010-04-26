@@ -34,13 +34,6 @@ public class HawtDBAggregationRepositoryRecoverExistingTest extends CamelTestSup
         File file = new File("target/data/hawtdb.dat");
         hawtDBFile = new HawtDBFile();
         hawtDBFile.setFile(file);
-        hawtDBFile.start();
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        hawtDBFile.stop();
-        super.tearDown();
     }
 
     @Test
@@ -50,6 +43,7 @@ public class HawtDBAggregationRepositoryRecoverExistingTest extends CamelTestSup
         repo.setRepositoryName("repo1");
         repo.setReturnOldExchange(true);
         repo.setUseRecovery(true);
+        repo.start();
 
         // Store it..
         Exchange exchange1 = new DefaultExchange(context);
@@ -63,12 +57,12 @@ public class HawtDBAggregationRepositoryRecoverExistingTest extends CamelTestSup
         String id = exchange1.getExchangeId();
 
         // stop the repo
-        hawtDBFile.stop();
+        repo.stop();
 
         Thread.sleep(1000);
 
         // load the repo again
-        hawtDBFile.start();
+        repo.start();
 
         // Get it back..
         actual = repo.get(context, "foo");
@@ -78,6 +72,8 @@ public class HawtDBAggregationRepositoryRecoverExistingTest extends CamelTestSup
         actual = repo.recover(context, id);
         assertNotNull(actual);
         assertEquals("counter:1", actual.getIn().getBody());
+
+        repo.stop();
     }
 
 }
