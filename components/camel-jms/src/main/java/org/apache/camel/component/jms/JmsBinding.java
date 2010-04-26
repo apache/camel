@@ -265,11 +265,11 @@ public class JmsBinding {
 
         if (answer == null) {
             if (cause != null) {
-                // an exception occured so send it as response
+                // an exception occurred so send it as response
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Will create JmsMessage with caused exception: " + cause);
                 }
-                // create jms message containg the caused exception
+                // create jms message containing the caused exception
                 answer = createJmsMessage(cause, session);
             } else {
                 ObjectHelper.notNull(camelMessage, "message");

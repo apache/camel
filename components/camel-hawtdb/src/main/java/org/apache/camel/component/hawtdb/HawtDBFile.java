@@ -74,7 +74,7 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
         execute(new Work<Boolean>() {
             public Boolean execute(Transaction tx) {
                 int page = tx.allocator().alloc(1);
-                if (page==0) {
+                if (page == 0) {
                     // if we just created the file, first allocated page should be 0
                     ROOT_INDEXES_FACTORY.create(tx, 0);
                     LOG.info("Aggregation repository data store created using file: " + getFile());

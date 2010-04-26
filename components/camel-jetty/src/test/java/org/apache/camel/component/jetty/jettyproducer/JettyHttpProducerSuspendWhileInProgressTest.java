@@ -66,7 +66,7 @@ public class JettyHttpProducerSuspendWhileInProgressTest extends CamelTestSuppor
         // the 2nd should have a 503 returned as we are shutting down
         try {
             reply2.get(20, TimeUnit.SECONDS);
-           fail("Should throw exception");
+            fail("Should throw exception");
         } catch (Exception e) {
             RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, rce.getCause());
