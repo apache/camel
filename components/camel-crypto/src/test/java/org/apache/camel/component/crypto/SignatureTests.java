@@ -166,6 +166,10 @@ public class SignatureTests extends ContextTestSupport {
     }
 
     public void testSetProviderInRouteDefinition() throws Exception {
+        if (isJavaVendor("ibm")) {
+            return;
+        }
+        // can only be run on SUN JDK
         MockEndpoint mock = setupMock();
         sendBody("direct:provider", payload);
         verify(mock);
