@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.fusesource.hawtdb.api.BTreeIndexFactory;
 import org.fusesource.hawtdb.api.Index;
+import org.fusesource.hawtdb.api.OptimisticUpdateException;
 import org.fusesource.hawtdb.api.Transaction;
 import org.fusesource.hawtdb.api.TxPageFile;
 import org.fusesource.hawtdb.api.TxPageFileFactory;
@@ -104,17 +105,8 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
             LOG.trace("Executing work +++ start +++ " + work);
         }
 
-        T answer;
         Transaction tx = pageFile.tx();
-        try {
-            answer = work.execute(tx);
-            tx.commit();
-            pageFile.flush();
-        } catch (RuntimeException e) {
-            LOG.warn("Error executing work " + work + " will do rollback.", e);
-            tx.rollback();
-            throw e;
-        }
+        T answer = doExecute(work, tx, pageFile);
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Executing work +++ done  +++ " + work);
@@ -151,6 +143,41 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Repository index with name " + name + " -> " + answer);
         }
+        return answer;
+    }
+
+    private static <T> T doExecute(Work<T> work, Transaction tx, TxPageFile page) {
+        T answer = null;
+
+        boolean done = false;
+        int attempt = 0;
+        while (!done) {
+            try {
+                // only log at DEBUG level if we are retrying
+                if (attempt > 0 && LOG.isDebugEnabled()) {
+                    LOG.debug("Attempt " + attempt + " to execute work " + work);
+                }
+                attempt++;
+
+                answer = work.execute(tx);
+                // commit work
+                tx.commit();
+                // and flush so we ensure data is spooled to disk
+                page.flush();
+                // and we are done
+                done = true;
+            } catch (OptimisticUpdateException e) {
+                // retry as we hit an optimistic update error
+                LOG.warn("OptimisticUpdateException occurred at attempt " + attempt + " executing work " + work + " will do rollback and retry.");
+                // no harm doing rollback before retry and no wait is needed
+                tx.rollback();
+            } catch (RuntimeException e) {
+                LOG.warn("Error executing work " + work + " will do rollback.", e);
+                tx.rollback();
+                throw e;
+            }
+        }
+
         return answer;
     }
 

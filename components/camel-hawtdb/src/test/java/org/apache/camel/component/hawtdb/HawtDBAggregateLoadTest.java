@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Test manually as its aggressive on the file system with sync each write")
 public class HawtDBAggregateLoadTest extends CamelTestSupport {
 
     private static final Log LOG = LogFactory.getLog(HawtDBAggregateLoadTest.class);
