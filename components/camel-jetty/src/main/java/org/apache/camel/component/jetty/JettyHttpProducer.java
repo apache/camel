@@ -88,29 +88,36 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
     protected void sendSynchronous(Exchange exchange, HttpClient client, JettyContentExchange httpExchange) throws Exception {
         doSendExchange(client, httpExchange);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for HTTP exchange to be done");
-        }
         // we send synchronous so wait for it to be done
         // must use our own lock detection as Jettys waitForDone will wait forever in case of connection issues
-        int exchangeState = httpExchange.waitForDoneOrFailure();
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("HTTP exchange is done with state " + exchangeState);
-        }
-
-        if (exchangeState == HttpExchange.STATUS_COMPLETED) {
-            // process the response as the state is ok
-            getBinding().populateResponse(exchange, httpExchange);
-        } else if (exchangeState == HttpExchange.STATUS_EXPIRED) {
-            // we did timeout
-            throw new ExchangeTimedOutException(exchange, client.getTimeout());
-        } else {
-            // some kind of other error
-            if (exchange.getException() != null) {
-                throw exchange.getException();
-            } else {
-                exchange.setException(new CamelExchangeException("JettyClient failed with state " + exchangeState, exchange));
+        try {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Waiting for HTTP exchange to be done");
             }
+            int exchangeState = httpExchange.waitForDoneOrFailure();
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("HTTP exchange is done with state " + exchangeState);
+            }
+            if (exchangeState == HttpExchange.STATUS_COMPLETED) {
+                // process the response as the state is ok
+                getBinding().populateResponse(exchange, httpExchange);
+            } else if (exchangeState == HttpExchange.STATUS_EXPIRED) {
+                // we did timeout
+                throw new ExchangeTimedOutException(exchange, client.getTimeout());
+            } else {
+                // some kind of other error
+                if (exchange.getException() != null) {
+                    throw exchange.getException();
+                } else {
+                    exchange.setException(new CamelExchangeException("JettyClient failed with state " + exchangeState, exchange));
+                }
+            }
+        } catch (InterruptedException e) {
+            // are we shutting down?
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Interrupted waiting for async reply, are we stopping? " + (isStopping() || isStopped()));
+            }
+            exchange.setException(e);
         }
     }
 
