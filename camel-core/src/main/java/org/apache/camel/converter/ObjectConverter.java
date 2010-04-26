@@ -65,7 +65,6 @@ public final class ObjectConverter {
     /**
      * Creates an iterator over the value
      */
-    @SuppressWarnings("unchecked")
     @Converter
     public static Iterator iterator(Object value) {
         return ObjectHelper.createIterator(value);

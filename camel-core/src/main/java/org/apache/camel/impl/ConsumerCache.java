@@ -109,6 +109,10 @@ public class ConsumerCache extends ServiceSupport {
         PollingConsumer consumer = getConsumer(endpoint);
         return consumer.receiveNoWait();
     }
+    
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
 
     protected void doStart() throws Exception {
         ServiceHelper.startServices(consumers);

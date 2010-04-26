@@ -68,6 +68,10 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
     protected void doStop() throws Exception {
         ServiceHelper.stopService(processor);
     }
+    
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
 
     public void process(Exchange exchange) throws Exception {
         if (processor == null) {

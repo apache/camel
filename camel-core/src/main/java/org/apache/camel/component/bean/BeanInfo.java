@@ -404,8 +404,7 @@ public class BeanInfo {
         // not possible to determine
         return null;
     }
-
-    @SuppressWarnings("unchecked")
+    
     private MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList)
         throws AmbiguousMethodCallException {
         // lets see if we can find a method who's body param type matches the message body
@@ -450,7 +449,6 @@ public class BeanInfo {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     private MethodInfo chooseBestPossibleMethodInfo(Exchange exchange, Collection<MethodInfo> operationList, Object body,
                                                     List<MethodInfo> possibles, List<MethodInfo> possiblesWithException)
         throws AmbiguousMethodCallException {

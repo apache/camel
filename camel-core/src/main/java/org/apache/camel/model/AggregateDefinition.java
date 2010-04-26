@@ -142,7 +142,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return clause;
     }
 
-    @SuppressWarnings("unchecked")
     protected AggregateProcessor createAggregator(RouteContext routeContext) throws Exception {
         Processor processor = this.createChildProcessor(routeContext, true);
         // wrap the aggregated route in a unit of work processor
@@ -595,14 +594,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         setParallelProcessing(true);
         return this;
     }
-
-    @SuppressWarnings("unchecked")
+    
     public AggregateDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public AggregateDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

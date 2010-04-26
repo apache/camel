@@ -33,7 +33,6 @@ public class DefaultRouteStartupOrder implements RouteStartupOrder {
 
     private final int startupOrder;
     private final Route route;
-    private final List<Consumer> inputs = new ArrayList<Consumer>();
     private final RouteService routeService;
 
     public DefaultRouteStartupOrder(int startupOrder, Route route, RouteService routeService) {

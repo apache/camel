@@ -40,7 +40,6 @@ public final class URISupport {
         // Helper class
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> parseQuery(String uri) throws URISyntaxException {
         // must check for trailing & as the uri.split("&") will ignore those
         if (uri != null && uri.endsWith("&")) {

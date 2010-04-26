@@ -836,7 +836,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected void performAssertions(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
         Object actualBody = in.getBody();

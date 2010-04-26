@@ -185,7 +185,6 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
      *
      * @param endpoint the Endpoint attempted to be added
      */
-    @SuppressWarnings("unchecked")
     public void onEndpointAdd(Endpoint endpoint) {
         // the agent hasn't been started
         if (!initialized) {

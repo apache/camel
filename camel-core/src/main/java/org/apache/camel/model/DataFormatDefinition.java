@@ -92,7 +92,6 @@ public class DataFormatDefinition extends IdentifiedType {
     /**
      * Factory method to create the data format instance
      */
-    @SuppressWarnings("unchecked")
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (dataFormatName != null) {
             return routeContext.getCamelContext().resolveDataFormat(dataFormatName);

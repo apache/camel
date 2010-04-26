@@ -143,7 +143,6 @@ public class BeanDefinition extends OutputDefinition<ProcessorDefinition> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) {
         BeanProcessor answer;
         if (ObjectHelper.isNotEmpty(ref)) {

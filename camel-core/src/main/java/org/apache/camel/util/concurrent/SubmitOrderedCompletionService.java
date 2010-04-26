@@ -65,15 +65,13 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
             // if the answer is 0 then this task is ready to be taken
             return id - index.get();
         }
-
-        @SuppressWarnings("unchecked")
+        
         public int compareTo(Delayed o) {
             SubmitOrderFutureTask other = (SubmitOrderFutureTask) o;
             return (int) (this.id - other.id);
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         protected void done() {
             // when we are done add to the completion queue
             completionQueue.add(this);
@@ -94,7 +92,6 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         return (Future<V>) f;
     }
 
-    @SuppressWarnings("unchecked")
     public Future<V> submit(Runnable task, Object result) {
         if (task == null) {
             throw new IllegalArgumentException("Task must be provided");

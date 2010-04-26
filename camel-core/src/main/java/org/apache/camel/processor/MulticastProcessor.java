@@ -137,6 +137,10 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     public String getTraceLabel() {
         return "multicast";
     }
+    
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
 
     public void process(Exchange exchange) throws Exception {
         final AtomicExchange result = new AtomicExchange();

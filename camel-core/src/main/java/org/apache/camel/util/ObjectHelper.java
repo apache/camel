@@ -404,7 +404,6 @@ public final class ObjectHelper {
     /**
      * Returns true if the collection contains the specified value
      */
-    @SuppressWarnings("unchecked")
     public static boolean contains(Object collectionOrArray, Object value) {
         if (collectionOrArray instanceof Collection) {
             Collection collection = (Collection)collectionOrArray;

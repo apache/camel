@@ -189,7 +189,6 @@ public class JndiContext implements Context, Serializable {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public Object addToEnvironment(String propName, Object propVal) throws NamingException {
         return environment.put(propName, propVal);
     }

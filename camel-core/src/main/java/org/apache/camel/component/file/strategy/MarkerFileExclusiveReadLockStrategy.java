@@ -47,7 +47,6 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         deleteLockFiles(file, endpoint.isRecursive());
     }
 
-    @SuppressWarnings("unchecked")
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations,
                                             GenericFile<File> file, Exchange exchange) throws Exception {
 

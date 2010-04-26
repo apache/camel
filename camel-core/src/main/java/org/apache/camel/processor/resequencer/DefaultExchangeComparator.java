@@ -45,7 +45,6 @@ public class DefaultExchangeComparator implements ExpressionResultComparator {
         this.expression = expression;
     }
 
-    @SuppressWarnings("unchecked")
     public void setExpressions(List<Expression> expressions) {
         if (expressions.isEmpty()) {
             throw new IllegalArgumentException("Expression required to resolve sequence number");

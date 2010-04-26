@@ -58,7 +58,6 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         this.resolver = resolver;
     }
 
-    @SuppressWarnings("unchecked")
     public void load(TypeConverterRegistry registry) throws Exception {
         String[] packageNames = findPackageNames();
         Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packageNames);

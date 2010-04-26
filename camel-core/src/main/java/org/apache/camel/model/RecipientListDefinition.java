@@ -183,13 +183,11 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends E
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public RecipientListDefinition<Type> executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public RecipientListDefinition<Type> executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

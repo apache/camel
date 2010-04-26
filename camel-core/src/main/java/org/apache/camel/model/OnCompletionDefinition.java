@@ -185,14 +185,12 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
         onWhen.setExpression(clause);
         return clause;
     }
-
-    @SuppressWarnings("unchecked")
+    
     public OnCompletionDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public OnCompletionDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

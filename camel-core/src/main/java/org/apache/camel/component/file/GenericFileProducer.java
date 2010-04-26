@@ -51,7 +51,6 @@ public class GenericFileProducer<T> extends DefaultProducer {
         return FileUtil.normalizePath(name);
     }
 
-    @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         Exchange fileExchange = endpoint.createExchange(exchange);
         processExchange(fileExchange);

@@ -285,7 +285,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      * @param isDirectory whether the file is a directory or a file
      * @return <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
-    @SuppressWarnings("unchecked")
     protected boolean isValidFile(GenericFile<T> file, boolean isDirectory) {
         if (!isMatched(file, isDirectory)) {
             if (log.isTraceEnabled()) {

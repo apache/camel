@@ -64,7 +64,6 @@ public class IdempotentOnCompletion implements Synchronization {
      * @param exchange the exchange
      * @param messageId the message ID of this exchange
      */
-    @SuppressWarnings("unchecked")
     protected void onCompletedMessage(Exchange exchange, String messageId) {
         if (!eager) {
             // if not eager we should add the key when its complete
@@ -80,7 +79,6 @@ public class IdempotentOnCompletion implements Synchronization {
      * @param exchange the exchange
      * @param messageId the message ID of this exchange
      */
-    @SuppressWarnings("unchecked")
     protected void onFailedMessage(Exchange exchange, String messageId) {
         idempotentRepository.remove(messageId);
         if (LOG.isDebugEnabled()) {

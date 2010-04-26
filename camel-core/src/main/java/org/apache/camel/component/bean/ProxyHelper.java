@@ -37,7 +37,6 @@ public final class ProxyHelper {
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
      */
-    @SuppressWarnings("unchecked")
     public static Object createProxyObject(Endpoint endpoint, Producer producer, ClassLoader classLoader, Class[] interfaces, MethodInfoCache methodCache) {
         return Proxy.newProxyInstance(classLoader, interfaces.clone(), new CamelInvocationHandler(endpoint, producer, methodCache));
     }
@@ -63,7 +62,6 @@ public final class ProxyHelper {
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T createProxy(Endpoint endpoint, Class<T>... interfaceClasses) throws Exception {
         return (T) createProxy(endpoint, getClassLoader(interfaceClasses), interfaceClasses);
     }

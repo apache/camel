@@ -126,14 +126,12 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> i
         setStopOnException(true);
         return this;
     }
-       
-    @SuppressWarnings("unchecked")
+    
     public MulticastDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
-
-    @SuppressWarnings("unchecked")
+    
     public MulticastDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

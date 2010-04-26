@@ -984,7 +984,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
     public ProcessorDefinition end() {
         // when using doTry .. doCatch .. doFinally we should always
         // end the try definition to avoid having to use 2 x end() in the route
@@ -1204,7 +1203,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param recipients expression to decide the destinations
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
     public RecipientListDefinition<Type> recipientList(Expression recipients) {
         RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>(recipients);
         addOutput(answer);
@@ -1219,7 +1217,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param delimiter  a custom delimiter to use
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
     public RecipientListDefinition<Type> recipientList(Expression recipients, String delimiter) {
         RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>(recipients);
         answer.setDelimiter(delimiter);
@@ -1624,7 +1621,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @return the builder
      * @see #markRollbackOnly()
      */
-    @SuppressWarnings("unchecked")
     public Type rollback() {
         return rollback(null);
     }
@@ -1715,7 +1711,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param body expression that creates the body to send
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
     public Type wireTap(String uri, Expression body) {
         return wireTap(uri, true, body);
     }
@@ -2464,7 +2459,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
     public OnCompletionDefinition onCompletion() {
         OnCompletionDefinition answer = new OnCompletionDefinition();
         // we must remove all existing on completion definition (as they are global)

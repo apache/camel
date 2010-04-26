@@ -610,6 +610,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
 
     // Implementation methods
     // -------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     protected RouteContext addRoutes(Collection<Route> routes, FromDefinition fromType) throws Exception {
         RouteContext routeContext = new DefaultRouteContext(getCamelContext(), this, fromType, routes);
 

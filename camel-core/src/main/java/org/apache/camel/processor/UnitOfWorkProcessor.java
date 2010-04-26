@@ -47,6 +47,10 @@ public final class UnitOfWorkProcessor extends DelegateProcessor {
     public String toString() {
         return "UnitOfWork(" + processor + ")";
     }
+    
+    public RouteContext getRouteContext() {
+        return routeContext;
+    }
 
     @Override
     protected void processNext(Exchange exchange) throws Exception {

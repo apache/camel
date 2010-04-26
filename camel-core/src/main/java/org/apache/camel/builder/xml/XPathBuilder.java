@@ -442,7 +442,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getBodyFunction() {
         if (bodyFunction == null) {
             bodyFunction = new XPathFunction() {
-                @SuppressWarnings("unchecked")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange == null) {
                         return null;
@@ -461,7 +460,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getHeaderFunction() {
         if (headerFunction == null) {
             headerFunction = new XPathFunction() {
-                @SuppressWarnings("unchecked")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange != null && !list.isEmpty()) {
                         Object value = list.get(0);
@@ -483,7 +481,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getOutBodyFunction() {
         if (outBodyFunction == null) {
             outBodyFunction = new XPathFunction() {
-                @SuppressWarnings("unchecked")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange.get() != null && exchange.get().hasOut()) {
                         return exchange.get().getOut().getBody();
@@ -501,8 +498,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
     public XPathFunction getOutHeaderFunction() {
         if (outHeaderFunction == null) {
-            outHeaderFunction = new XPathFunction() {
-                @SuppressWarnings("unchecked")
+            outHeaderFunction = new XPathFunction() {                
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange.get() != null && !list.isEmpty()) {
                         Object value = list.get(0);

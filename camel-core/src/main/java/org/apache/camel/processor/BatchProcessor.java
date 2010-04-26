@@ -406,8 +406,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                 queueLock.unlock();
             }
         }
-
-        @SuppressWarnings("unchecked")
+        
         private void sendExchanges() throws Exception {
             Iterator<Exchange> iter = collection.iterator();
             while (iter.hasNext()) {

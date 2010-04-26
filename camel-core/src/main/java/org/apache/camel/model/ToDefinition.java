@@ -180,13 +180,11 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Execut
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public ToDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public ToDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

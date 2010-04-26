@@ -177,14 +177,12 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         setStopOnException(true);
         return this;
     }
-
-    @SuppressWarnings("unchecked")
+   
     public SplitDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
     
-    @SuppressWarnings("unchecked")
     public SplitDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

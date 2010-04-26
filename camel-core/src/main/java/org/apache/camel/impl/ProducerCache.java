@@ -65,6 +65,10 @@ public class ProducerCache extends ServiceSupport {
         this.pool = producerServicePool;
         this.producers = cache;
     }
+    
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
 
     /**
      * Gets the source which uses this cache

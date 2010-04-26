@@ -120,13 +120,11 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
         return "Threads[" + getOutputs() + "]";
     }
 
-    @SuppressWarnings("unchecked")
     public ThreadsDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public ThreadsDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

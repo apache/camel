@@ -46,7 +46,6 @@ public class ConvertBodyProcessor implements Processor {
         return "convertBodyTo[" + type.getCanonicalName() + "]";
     }
 
-    @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
         if (charset != null) {

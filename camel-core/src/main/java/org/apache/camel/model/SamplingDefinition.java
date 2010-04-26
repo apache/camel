@@ -35,7 +35,6 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "sample")
 @XmlAccessorType(XmlAccessType.FIELD)
-@SuppressWarnings("unchecked")
 public class SamplingDefinition extends OutputDefinition<ProcessorDefinition> {
 
     // use Long to let it be optional in JAXB so when using XML the default is 1 second

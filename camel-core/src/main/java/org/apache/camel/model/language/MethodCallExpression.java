@@ -94,8 +94,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     public void setMethod(String method) {
         this.method = method;
     }
-
-    @SuppressWarnings("unchecked")
+    
     @Override
     public Expression createExpression(CamelContext camelContext) {
         if (beanType != null) {            
@@ -107,7 +106,6 @@ public class MethodCallExpression extends ExpressionDefinition {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Predicate createPredicate(CamelContext camelContext) {
         if (beanType != null) {

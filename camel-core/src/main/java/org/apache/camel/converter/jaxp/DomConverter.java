@@ -22,14 +22,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.camel.converter.ObjectConverter;
-import org.apache.camel.util.ObjectHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+
 import org.apache.camel.Converter;
+import org.apache.camel.util.ObjectHelper;
+
 
 /**
  * Converts from some DOM types to Java types
@@ -66,6 +67,7 @@ public final class DomConverter {
         return Long.valueOf(s);
     }
 
+    @SuppressWarnings("unchecked")
     @Converter
     public static List toList(NodeList nodeList) {
         List answer = new ArrayList();

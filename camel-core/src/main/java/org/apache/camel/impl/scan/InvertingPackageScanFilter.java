@@ -23,7 +23,7 @@ import org.apache.camel.spi.PackageScanFilter;
  * subfilter would match and return <tt>true</tt> this filter will invert that
  * match and return <tt>false</tt>.
  */
-@SuppressWarnings("unchecked")
+
 public class InvertingPackageScanFilter implements PackageScanFilter {
 
     private PackageScanFilter filter;
