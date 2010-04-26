@@ -46,8 +46,8 @@
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-dozer</include>
-	<include>org.apache.camel:camel-exec</include>
-	<include>org.apache.camel:camel-flatpack</include>
+        <include>org.apache.camel:camel-exec</include>
+        <include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-freemarker</include>
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-gae</include>
@@ -79,8 +79,8 @@
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mvel</include>
         <include>org.apache.camel:camel-nagios</include>
-	<include>org.apache.camel:camel-netty</include>
-	<include>org.apache.camel:camel-ognl</include>
+        <include>org.apache.camel:camel-netty</include>
+        <include>org.apache.camel:camel-ognl</include>
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-protobuf</include>
         <include>org.apache.camel:camel-quartz</include>
@@ -98,8 +98,8 @@
         <include>org.apache.camel:camel-soap</include>
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-integration</include>
-	<include>org.apache.camel:camel-spring-security</include>
-	<include>org.apache.camel:camel-spring-osgi</include>
+        <include>org.apache.camel:camel-spring-security</include>
+        <include>org.apache.camel:camel-spring-osgi</include>
         <include>org.apache.camel:camel-sql</include>
         <include>org.apache.camel:camel-stream</include>
         <include>org.apache.camel:camel-stringtemplate</include>
@@ -122,7 +122,7 @@
         <include>org.springframework:spring-context</include>
         <include>org.springframework:spring-core</include>
         <include>org.springframework:spring-web</include>
-	<include>org.springframework:spring-test</include>
+        <include>org.springframework:spring-test</include>
       </includes>
     </dependencySet>
     <dependencySet>
@@ -131,6 +131,11 @@
       <scope>runtime</scope>
       <includes>
         <include>log4j:log4j</include>
+        <!-- commons-XXX is needed when running examples using ANT -->
+        <include>commons-beanutils:commons-beanutils</include>
+        <include>commons-collections:commons-collections</include>
+        <include>commons-dbcp:commons-dbcp</include>
+        <include>commons-pool:commons-pool</include>
         <include>org.apache.geronimo.specs:geronimo-j2ee-management_1.0_spec</include>
         <include>org.apache.geronimo.specs:geronimo-jms_1.1_spec</include>
         <include>org.apache.geronimo.specs:geronimo-j2ee-jacc_1.0_spec</include>

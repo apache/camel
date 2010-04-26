@@ -674,6 +674,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                             try {
                                 // set redelivery counter
                                 exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
+                                exchange.getIn().setHeader(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
                                 deadLetterProcessor.process(exchange);
                             } catch (Exception e) {
                                 exchange.setException(e);

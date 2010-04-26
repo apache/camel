@@ -59,7 +59,7 @@
 
 	<target name="generate.code">
 		<echo level="info" message="Generating code using wsdl2java..."/>
-		<wsdl2java file="src/main/resources/report_incident.wsdl"/>
+		<wsdl2java file="src/main/resources/etc/report_incident.wsdl"/>
 	</target>
 
 	<target name="run" depends="generate.code,build"
@@ -67,7 +67,7 @@
 		<camelrun mainClass="org.apache.camel.example.reportincident.ReportIncidentRoutes" />
 	</target>
 
-	<available property="wsdl.dir" value="${build.resources.dir}" file="${build.resources.dir}/report_incident.wsdl" />
+	<available property="wsdl.dir" value="${build.resources.dir}" file="${build.resources.dir}/etc/report_incident.wsdl" />
 	<property name="wsdl.dir" location="."/>
 
 	<macrodef name="wsdl2java">

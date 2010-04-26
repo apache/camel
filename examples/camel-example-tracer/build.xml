@@ -34,6 +34,7 @@
       <include name="**/commons-collections-*.jar"/>
       <exclude name="**/*-tests.jar"/>
     </fileset>
+    <path refid="spring.classpath"/>
     <path refid="camel.spring.classpath"/>
     <path refid="hibernate.classpath"/>
   </path>
