@@ -43,8 +43,13 @@ public class OSGiCamelContextProvider implements Provider<CamelContext> {
     private Injector injector;
     
     public OSGiCamelContextProvider(BundleContext context) {
-        factory = new CamelContextFactory();
-        factory.setBundleContext(context);
+        // In this we can support to run this provider with or without OSGI
+        if (context != null) {
+            factory = new CamelContextFactory();
+            factory.setBundleContext(context);
+        } else {
+            factory = null;
+        }
     }
     
     protected Context getJndiContext() {
@@ -66,7 +71,12 @@ public class OSGiCamelContextProvider implements Provider<CamelContext> {
     }
 
     public CamelContext get() {
-        DefaultCamelContext camelContext = factory.createContext();
+        DefaultCamelContext camelContext;
+        if (factory != null) {
+            camelContext = factory.createContext();
+        } else {
+            camelContext = new DefaultCamelContext();
+        }
         if (routeBuilders != null) {
             for (RoutesBuilder builder : routeBuilders) {
                 try {
