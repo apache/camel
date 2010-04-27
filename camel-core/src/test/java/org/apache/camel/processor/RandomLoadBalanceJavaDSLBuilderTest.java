@@ -84,24 +84,28 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void navigateDefinition(ProcessorDefinition<?> def, StringBuilder sb) {
 
-        if (def instanceof LoadBalanceDefinition) {
+        // must do this ugly cast to avoid compiler error on HP-UX
+        ProcessorDefinition defn = (ProcessorDefinition) def;
+
+        if (defn instanceof LoadBalanceDefinition) {
             sb.append(".loadBalance()");
 
-            LoadBalanceDefinition lbd = (LoadBalanceDefinition) def;
+            LoadBalanceDefinition lbd = (LoadBalanceDefinition) defn;
             LoadBalancer balancer = lbd.getLoadBalancerType().getLoadBalancer(null);
             if (balancer instanceof RandomLoadBalancer) {
                 sb.append(".random()");
             }
         }
 
-        if (def instanceof SendDefinition) {
-            SendDefinition send = (SendDefinition) def;
+        if (defn instanceof SendDefinition) {
+            SendDefinition send = (SendDefinition) defn;
             sb.append(".to(\"" + send.getEndpoint().getEndpointUri() + "\")");
         }
 
-        List<ProcessorDefinition> children = def.getOutputs();
+        List<ProcessorDefinition> children = defn.getOutputs();
         if (children == null || children.isEmpty()) {
             return;
         }
