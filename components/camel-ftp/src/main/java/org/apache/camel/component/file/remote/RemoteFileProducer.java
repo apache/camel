@@ -44,7 +44,6 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         return name;
     }
 
-    @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         Exchange remoteExchange = getEndpoint().createExchange(exchange);
         processExchange(remoteExchange);

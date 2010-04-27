@@ -82,7 +82,7 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // use no delay for fast unit testing
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliverDelay(0).handled(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).handled(false));
 
                 from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

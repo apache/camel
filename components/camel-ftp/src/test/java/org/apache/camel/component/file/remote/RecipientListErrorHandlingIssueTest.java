@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -67,7 +68,7 @@ public class RecipientListErrorHandlingIssueTest extends FtpServerTestSupport {
 
         String foo = "direct:foo," + getFtpUrl();
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("foo", foo);
         headers.put(Exchange.FILE_NAME, "hello.txt");
 
@@ -97,7 +98,7 @@ public class RecipientListErrorHandlingIssueTest extends FtpServerTestSupport {
 
         String foo = "direct:foo," + getFtpUrl();
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("foo", foo);
         headers.put(Exchange.FILE_NAME, "hello.txt");
 
