@@ -198,8 +198,6 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @return the builder
      */
     public RouteDefinition route(RouteDefinition route) {
-        // lets configure the route
-        route.setCamelContext(getCamelContext());
 
         // configure intercept
         for (InterceptDefinition intercept : getIntercepts()) {

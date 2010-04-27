@@ -16,13 +16,11 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
@@ -36,13 +34,11 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThrottleDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class ThrottleDefinition extends OutputDefinition<ProcessorDefinition> {
     @XmlAttribute
     private Long maximumRequestsPerPeriod;
     @XmlAttribute
     private long timePeriodMillis = 1000;
-    @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
     public ThrottleDefinition() {
     }
@@ -117,11 +113,4 @@ public class ThrottleDefinition extends ProcessorDefinition<ProcessorDefinition>
         this.timePeriodMillis = timePeriodMillis;
     }
 
-    public List<ProcessorDefinition> getOutputs() {
-        return outputs;
-    }
-
-    public void setOutputs(List<ProcessorDefinition> outputs) {
-        this.outputs = outputs;
-    }
 }

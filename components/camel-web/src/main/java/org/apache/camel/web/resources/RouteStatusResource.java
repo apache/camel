@@ -61,7 +61,7 @@ public class RouteStatusResource {
     }
 
     public ServiceStatus getStatus() {
-        return getRoute().getStatus();
+        return getRoute().getStatus(getCamelContext());
     }
 
     @POST

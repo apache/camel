@@ -28,9 +28,8 @@ import org.apache.camel.spi.InterceptStrategy;
  */
 public final class StreamCaching implements InterceptStrategy {
     
-    public Processor wrapProcessorInInterceptors(CamelContext context, 
-            ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
-
+    public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition,
+                                                 Processor target, Processor nextTarget) throws Exception {
         return new StreamCachingInterceptor(target);
     }
     
@@ -42,8 +41,18 @@ public final class StreamCaching implements InterceptStrategy {
      * @return the stream cache or null if none can be found
      */
     public static StreamCaching getStreamCaching(CamelContext context) {
-        List<InterceptStrategy> list = context.getInterceptStrategies();
-        for (InterceptStrategy interceptStrategy : list) {
+        return getStreamCaching(context.getInterceptStrategies());
+    }
+
+    /**
+     * A helper method to return the StreamCaching instance
+     * for a given list of interceptors
+     *
+     * @param interceptors the list of interceptors
+     * @return the stream cache or null if none can be found
+     */
+    public static StreamCaching getStreamCaching(List<InterceptStrategy> interceptors) {
+        for (InterceptStrategy interceptStrategy : interceptors) {
             if (interceptStrategy instanceof StreamCaching) {
                 return (StreamCaching)interceptStrategy;
             }

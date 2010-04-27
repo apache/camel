@@ -579,7 +579,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         for (RouteDefinition routeDefinition : routeDefinitions) {
-            routeDefinition.setCamelContext(this);
             removeRouteDefinition(routeDefinition);
         }
         this.routeDefinitions.addAll(routeDefinitions);

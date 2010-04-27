@@ -99,9 +99,6 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public CamelContext getCamelContext() {
-        if (camelContext == null) {
-            camelContext = getRoute().getCamelContext();
-        }
         return camelContext;
     }
 
@@ -110,7 +107,7 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public Endpoint resolveEndpoint(String uri) {
-        return route.resolveEndpoint(uri);
+        return route.resolveEndpoint(getCamelContext(), uri);
     }
 
     public Endpoint resolveEndpoint(String uri, String ref) {

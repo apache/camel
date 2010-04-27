@@ -87,9 +87,8 @@ public class TemporalRule extends ServiceSupport {
     public Processor getOverdueAction() throws Exception {
         if (overdueAction == null && overdueProcessors != null) {
             RouteDefinition route = new RouteDefinition();
-            route.setCamelContext(first.getBuilder().getProcessBuilder().getContext());
-            RouteContext routeContext = new DefaultRouteContext(
-                first.getBuilder().getProcessBuilder().getContext(), route, null, new ArrayList<Route>());
+            RouteContext routeContext = new DefaultRouteContext(first.getBuilder().getProcessBuilder().getContext(),
+                    route, null, new ArrayList<Route>());
 
             overdueAction = overdueProcessors.createOutputsProcessor(routeContext);
         }
@@ -158,8 +157,6 @@ public class TemporalRule extends ServiceSupport {
     /**
      * Returns the date in the future adding the given number of millis
      *
-     * @param date
-     * @param millis
      * @return the date in the future
      */
     protected Date add(Date date, long millis) {

@@ -64,8 +64,6 @@ public final class ProcessorDefinitionRenderer {
         } else if (processor instanceof OnExceptionDefinition) {
             OnExceptionDefinitionRenderer.render(buffer, processor);
             return;
-        } else if (processor instanceof OutputDefinition) {
-            OutputDefinitionRenderer.render(buffer, processor);
         } else if (processor instanceof ResequenceDefinition) {
             ResequenceDefinitionRenderer.render(buffer, processor);
         } else if (processor instanceof RollbackDefinition) {
@@ -80,6 +78,9 @@ public final class ProcessorDefinitionRenderer {
             ThrottleDefinitionRenderer.render(buffer, processor);
         } else if (processor instanceof ThrowExceptionDefinition) {
             ThrowExceptionDefinitionRenderer.render(buffer, processor);
+        } else if (processor instanceof OutputDefinition) {
+            // output must be last as its very generic
+            OutputDefinitionRenderer.render(buffer, processor);
         } else {
             buffer.append(".").append(processor.getShortName()).append("()");
         }

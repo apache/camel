@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class AdviceWithRouteIdTest extends AdviceWithTest {
 
     public void testAdvised() throws Exception {
-        context.getRouteDefinition("myRoute").adviceWith(new RouteBuilder() {
+        context.getRouteDefinition("myRoute").adviceWith(context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:foo")

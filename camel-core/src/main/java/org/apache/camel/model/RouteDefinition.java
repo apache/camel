@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchEndpointException;
@@ -47,6 +46,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;route/&gt; element
@@ -56,10 +56,9 @@ import org.apache.camel.util.CamelContextHelper;
 @XmlRootElement(name = "route")
 @XmlType(propOrder = {"inputs", "outputs" })
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> implements CamelContextAware {
+public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> {
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
-    private CamelContext camelContext;
     private String group;
     private Boolean streamCache;
     private Boolean trace;
@@ -96,7 +95,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     /**
      * Returns the status of the route if it has been registered with a {@link CamelContext}
      */
-    public ServiceStatus getStatus() {
+    public ServiceStatus getStatus(CamelContext camelContext) {
         if (camelContext != null) {
             ServiceStatus answer = camelContext.getRouteStatus(this.getId());
             if (answer == null) {
@@ -107,8 +106,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         return null;
     }
 
-    public boolean isStartable() {
-        ServiceStatus status = getStatus();
+    public boolean isStartable(CamelContext camelContext) {
+        ServiceStatus status = getStatus(camelContext);
         if (status == null) {
             return true;
         } else {
@@ -116,8 +115,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         }
     }
 
-    public boolean isStoppable() {
-        ServiceStatus status = getStatus();
+    public boolean isStoppable(CamelContext camelContext) {
+        ServiceStatus status = getStatus(camelContext);
         if (status == null) {
             return false;
         } else {
@@ -125,11 +124,10 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         }
     }
     
-    public List<RouteContext> addRoutes(CamelContext context, Collection<Route> routes) throws Exception {
+    public List<RouteContext> addRoutes(CamelContext camelContext, Collection<Route> routes) throws Exception {
         List<RouteContext> answer = new ArrayList<RouteContext>();
-        setCamelContext(context);
 
-        ErrorHandlerBuilder handler = context.getErrorHandlerBuilder();
+        ErrorHandlerBuilder handler = camelContext.getErrorHandlerBuilder();
         if (handler != null) {
             setErrorHandlerBuilderIfNull(handler);
         }
@@ -137,7 +135,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         for (FromDefinition fromType : inputs) {
             RouteContext routeContext;
             try {
-                routeContext = addRoutes(routes, fromType);
+                routeContext = addRoutes(camelContext, routes, fromType);
             } catch (FailedToCreateRouteException e) {
                 throw e;
             } catch (Exception e) {
@@ -150,12 +148,9 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     }
 
 
-    public Endpoint resolveEndpoint(String uri) throws NoSuchEndpointException {
-        CamelContext context = getCamelContext();
-        if (context == null) {
-            throw new IllegalArgumentException("CamelContext has not been injected!");
-        }
-        return CamelContextHelper.getMandatoryEndpoint(context, uri);
+    public Endpoint resolveEndpoint(CamelContext camelContext, String uri) throws NoSuchEndpointException {
+        ObjectHelper.notNull(camelContext, "CamelContext");
+        return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
 
     /**
@@ -168,18 +163,17 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
      * <p/>
      * Will stop and remove the old route from camel context and add and start this new advised route.
      *
-     * @param builder the route builder
+     * @param camelContext  the camel context
+     * @param builder       the route builder
      * @return a new route which is this route merged with the route builder
      * @throws Exception can be thrown from the route builder
      */
-    public RouteDefinition adviceWith(RouteBuilder builder) throws Exception {
-        CamelContext context = getCamelContext();
-        if (context == null) {
-            throw new IllegalArgumentException("CamelContext has not been injected!");
-        }
+    public RouteDefinition adviceWith(CamelContext camelContext, RouteBuilder builder) throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext");
+        ObjectHelper.notNull(builder, "RouteBuilder");
 
         // configure and prepare the routes from the builder
-        RoutesDefinition routes = builder.configureRoutes(context);
+        RoutesDefinition routes = builder.configureRoutes(camelContext);
 
         // we can only advice with a route builder without any routes
         if (!routes.getRoutes().isEmpty()) {
@@ -188,18 +182,18 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         }
 
         // stop and remove this existing route
-        List<RouteDefinition> list = new ArrayList<RouteDefinition>();
+        List<RouteDefinition> list = new ArrayList<RouteDefinition>(1);
         list.add(this);
-        context.removeRouteDefinitions(list);
+        camelContext.removeRouteDefinitions(list);
 
         // now merge which also ensures that interceptors and the likes get mixed in correctly as well
         RouteDefinition merged = routes.route(this);
 
         // add the new merged route
-        context.getRouteDefinitions().add(0, merged);
+        camelContext.getRouteDefinitions().add(0, merged);
 
         // and start it
-        context.startRoute(merged);
+        camelContext.startRoute(merged);
         return merged;
     }
 
@@ -294,7 +288,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
      */
     public RouteDefinition streamCaching() {
         setStreamCache(Boolean.TRUE);
-        StreamCaching cache = StreamCaching.getStreamCaching(getCamelContext());
+        StreamCaching cache = StreamCaching.getStreamCaching(getInterceptStrategies());
         if (cache == null) {
             cache = new StreamCaching();
         }
@@ -470,15 +464,6 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         }
     }
 
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @XmlTransient
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
     /**
      * The group that this route belongs to; could be the name of the RouteBuilder class
      * or be explicitly configured in the XML.
@@ -611,8 +596,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     // Implementation methods
     // -------------------------------------------------------------------------
     @SuppressWarnings("unchecked")
-    protected RouteContext addRoutes(Collection<Route> routes, FromDefinition fromType) throws Exception {
-        RouteContext routeContext = new DefaultRouteContext(getCamelContext(), this, fromType, routes);
+    protected RouteContext addRoutes(CamelContext camelContext, Collection<Route> routes, FromDefinition fromType) throws Exception {
+        RouteContext routeContext = new DefaultRouteContext(camelContext, this, fromType, routes);
 
         // configure tracing
         if (trace != null) {
@@ -633,7 +618,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
                     log.debug("StreamCaching is enabled on route: " + this);
                 }
                 // only add a new stream cache if not already a global configured on camel context
-                if (StreamCaching.getStreamCaching(getCamelContext()) == null) {
+                if (StreamCaching.getStreamCaching(camelContext) == null) {
                     addInterceptStrategy(new StreamCaching());
                 }
             }
@@ -647,7 +632,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
                     log.debug("HandleFault is enabled on route: " + this);
                 }
                 // only add a new handle fault if not already a global configured on camel context
-                if (HandleFault.getHandleFault(getCamelContext()) == null) {
+                if (HandleFault.getHandleFault(camelContext) == null) {
                     addInterceptStrategy(new HandleFault());
                 }
             }
@@ -678,7 +663,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
             }
             routeContext.setRoutePolicy(getRoutePolicy());
         } else if (routePolicyRef != null) {
-            RoutePolicy policy = CamelContextHelper.mandatoryLookup(getCamelContext(), routePolicyRef, RoutePolicy.class);
+            RoutePolicy policy = CamelContextHelper.mandatoryLookup(camelContext, routePolicyRef, RoutePolicy.class);
             if (log.isDebugEnabled()) {
                 log.debug("RoutePolicy is enabled: " + policy + " on route: " + this);
             }

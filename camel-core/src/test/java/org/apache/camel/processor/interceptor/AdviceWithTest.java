@@ -37,7 +37,7 @@ public class AdviceWithTest extends ContextTestSupport {
     // START SNIPPET: e1
     public void testAdvised() throws Exception {
         // advice the first route using the inlined route builder
-        context.getRouteDefinitions().get(0).adviceWith(new RouteBuilder() {
+        context.getRouteDefinitions().get(0).adviceWith(context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // intercept sending to mock:foo and do something else
@@ -60,7 +60,7 @@ public class AdviceWithTest extends ContextTestSupport {
 
     public void testAdvisedNoNewRoutesAllowed() throws Exception {
         try {
-            context.getRouteDefinitions().get(0).adviceWith(new RouteBuilder() {
+            context.getRouteDefinitions().get(0).adviceWith(context, new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     from("direct:bar").to("mock:bar");
@@ -78,7 +78,7 @@ public class AdviceWithTest extends ContextTestSupport {
     }
 
     public void testAdvisedThrowException() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(new RouteBuilder() {
+        context.getRouteDefinitions().get(0).adviceWith(context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:foo")
