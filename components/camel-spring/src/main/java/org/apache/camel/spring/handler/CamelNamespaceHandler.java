@@ -33,6 +33,7 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
@@ -42,6 +43,7 @@ import org.apache.camel.spring.CamelEndpointFactoryBean;
 import org.apache.camel.spring.CamelJMXAgentDefinition;
 import org.apache.camel.spring.CamelProducerTemplateFactoryBean;
 import org.apache.camel.spring.CamelPropertyPlaceholderDefinition;
+import org.apache.camel.spring.CamelRouteContextFactoryBean;
 import org.apache.camel.spring.CamelThreadPoolFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
@@ -64,6 +66,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final Log LOG = LogFactory.getLog(CamelNamespaceHandler.class);
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(CamelEndpointFactoryBean.class);
+    protected BeanDefinitionParser routeParser = new BeanDefinitionParser(RouteDefinition.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
     protected Set<String> parserElementNames = new HashSet<String>();
     private JAXBContext jaxbContext;
@@ -88,6 +91,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     public void init() {
+        // register routeContext parser
+        registerParser("routeContext", new RouteContextDefinitionParser());
+
         addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class, true);
         addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, true);
         addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class, true);
@@ -98,10 +104,11 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         // jmx agent and property placeholder cannot be used outside of the camel context
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false);
         addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false);
-        // errorhandler could be the sub element of camelContext
-        BeanDefinitionParser parser = new ErrorHandlerDefinitionParser();
-        registerParser("errorHandler", parser);
-        parserMap.put("errorHandler", parser);
+
+        // errorhandler could be the sub element of camelContext or defined outside camelContext
+        BeanDefinitionParser errorHandlerParser = new ErrorHandlerDefinitionParser();
+        registerParser("errorHandler", errorHandlerParser);
+        parserMap.put("errorHandler", errorHandlerParser);
 
         // camel context
         boolean osgi = false;
@@ -113,13 +120,11 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             // not running with camel-osgi so we fallback to the regular factory bean
             LOG.trace("Cannot find class so assuming not running in OSGi container: " + t.getMessage());
         }
-
         if (osgi) {
             LOG.info("camel-osgi.jar/camel-spring-osgi.jar detected in classpath");
         } else {
             LOG.info("camel-osgi.jar/camel-spring-osgi.jar not detected in classpath");
         }
-
         if (LOG.isDebugEnabled()) {
             LOG.debug("Using " + cl.getCanonicalName() + " as CamelContextBeanDefinitionParser");
         }
@@ -154,7 +159,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         try {
             return binder.unmarshal(element);
         } catch (JAXBException e) {
-            throw new BeanDefinitionStoreException("Failed to parse JAXB element: " + e, e);
+            throw new BeanDefinitionStoreException("Failed to parse JAXB element", e);
         }
     }
 
@@ -188,7 +193,36 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         return classes;
     }
 
+    protected class RouteContextDefinitionParser extends BeanDefinitionParser {
+
+        public RouteContextDefinitionParser() {
+            super(CamelRouteContextFactoryBean.class);
+        }
+
+        @Override
+        protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            renameNamespaceRecursive(element);
+            super.doParse(element, parserContext, builder);
+
+            // now lets parse the routes with JAXB
+            Binder<Node> binder;
+            try {
+                binder = getJaxbContext().createBinder();
+            } catch (JAXBException e) {
+                throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
+            }
+            Object value = parseUsingJaxb(element, parserContext, binder);
+
+            if (value instanceof CamelRouteContextFactoryBean) {
+                CamelRouteContextFactoryBean factoryBean = (CamelRouteContextFactoryBean)value;
+                builder.addPropertyValue("routes", factoryBean.getRoutes());
+            }
+        }
+    }
+
+
     protected class CamelContextBeanDefinitionParser extends BeanDefinitionParser {
+
         public CamelContextBeanDefinitionParser(Class type) {
             super(type);
         }
@@ -211,7 +245,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             try {
                 binder = getJaxbContext().createBinder();
             } catch (JAXBException e) {
-                throw new BeanDefinitionStoreException("Failed to create the JAXB binder : " + e, e);
+                throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
             }
             Object value = parseUsingJaxb(element, parserContext, binder);
             
@@ -227,6 +261,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("onCompletions", factoryBean.getOnCompletions());
                 builder.addPropertyValue("onExceptions", factoryBean.getOnExceptions());
                 builder.addPropertyValue("builderRefs", factoryBean.getBuilderRefs());
+                builder.addPropertyValue("routeRefs", factoryBean.getRouteRefs());
                 builder.addPropertyValue("properties", factoryBean.getProperties());
                 builder.addPropertyValue("packageScan", factoryBean.getPackageScan());
                 if (factoryBean.getPackages().length > 0) {
@@ -270,7 +305,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                     }
                 }
             }
-           
 
             // register as endpoint defined indirectly in the routes by from/to types having id explicit set
             registerEndpointsWithIdsDefinedInFromOrToTypes(element, parserContext, contextId, binder);
@@ -287,7 +321,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 createBeanPostProcessor(parserContext, contextId, childElement, builder);
             }
         }
-
     }
 
     protected void addDependsOn(CamelContextFactoryBean factoryBean, BeanDefinitionBuilder builder) {

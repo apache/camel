@@ -58,6 +58,7 @@ ResequenceDefinition
 RollbackDefinition
 RouteBuilderDefinition
 RouteDefinition
+RouteContextRefDefinition
 RoutesDefinition
 RoutingSlipDefinition
 SamplingDefinition

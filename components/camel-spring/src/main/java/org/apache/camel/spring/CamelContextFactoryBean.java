@@ -51,10 +51,10 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
-import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
+import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -76,6 +76,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.CamelContextHelper;
@@ -146,6 +147,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private List beans;    
     @XmlElement(name = "routeBuilder", required = false)
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
+    @XmlElement(name = "routeContextRef", required = false)
+    private List<RouteContextRefDefinition> routeRefs = new ArrayList<RouteContextRefDefinition>();
     @XmlElement(name = "threadPoolProfile", required = false)
     private List<ThreadPoolProfileDefinition> threadPoolProfiles;
     @XmlElement(name = "threadPool", required = false)
@@ -197,7 +200,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     public ClassLoader getContextClassLoaderOnStart() {
         return contextClassLoaderOnStart;
     }
-    
+
     public void afterPropertiesSet() throws Exception {
         if (ObjectHelper.isEmpty(getId())) {
             throw new IllegalArgumentException("Id must be set");
@@ -343,6 +346,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
         initSpringCamelContext(getContext());
 
+        // must init route refs before we prepare the routes below
+        initRouteRefs();
+
         // do special preparation for some concepts such as interceptors and policies
         // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
         // using route builders. So we have here a little custom code to fix the JAXB gaps
@@ -382,8 +388,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
         if (dataFormats != null) {
             getContext().setDataFormats(dataFormats.asMap());
-        } 
-        
+        }
+
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
@@ -606,6 +612,23 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
             // register the properties component
             getContext().addComponent("properties", pc);
+        }
+    }
+
+    private void initRouteRefs() throws Exception {
+        // add route refs to existing routes
+        if (routeRefs != null) {
+            for (RouteContextRefDefinition ref : routeRefs) {
+                List<RouteDefinition> defs = ref.lookupRoutes(getContext());
+                for (RouteDefinition def : defs) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Adding route from " + ref + " -> " + def);
+                    }
+                    // add in top as they are most likely to be common/shared
+                    // which you may want to start first
+                    routes.add(0, def);
+                }
+            }
         }
     }
 
@@ -883,6 +906,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public void setBuilderRefs(List<RouteBuilderDefinition> builderRefs) {
         this.builderRefs = builderRefs;
+    }
+
+    public List<RouteContextRefDefinition> getRouteRefs() {
+        return routeRefs;
+    }
+
+    public void setRouteRefs(List<RouteContextRefDefinition> routeRefs) {
+        this.routeRefs = routeRefs;
     }
 
     public String getErrorHandlerRef() {

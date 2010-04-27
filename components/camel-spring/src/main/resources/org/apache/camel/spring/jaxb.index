@@ -22,5 +22,6 @@ CamelJMXAgentDefinition
 CamelProducerTemplateFactoryBean
 CamelPropertyPlaceholderDefinition
 CamelProxyFactoryDefinition
+CamelRouteContextFactoryBean
 CamelServiceExporterDefinition
 CamelThreadPoolFactoryBean
