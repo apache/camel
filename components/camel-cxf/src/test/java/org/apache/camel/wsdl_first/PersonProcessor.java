@@ -30,6 +30,7 @@ public class PersonProcessor implements Processor {
 
     private static final transient Log LOG = LogFactory.getLog(PersonProcessor.class);
 
+    @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         LOG.info("processing exchange in camel");
 

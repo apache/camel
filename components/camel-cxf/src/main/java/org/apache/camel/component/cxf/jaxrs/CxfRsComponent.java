@@ -40,7 +40,6 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
         super(context);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         CxfRsEndpoint answer = null;

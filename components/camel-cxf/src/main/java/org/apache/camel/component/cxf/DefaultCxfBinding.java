@@ -398,6 +398,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
      * @param camelMessage
      * @param exchange provides context for filtering
      */
+    @SuppressWarnings("unchecked")
     protected void propagateHeadersFromCxfToCamel(Message cxfMessage,
             org.apache.camel.Message camelMessage, Exchange exchange) {
         
@@ -433,6 +434,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void propagateHeadersFromCamelToCxf(Exchange camelExchange, 
             Map<String, Object> camelHeaders,
             org.apache.cxf.message.Exchange cxfExchange, 
@@ -498,6 +500,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }        
     }
 
+    @SuppressWarnings("unchecked")
     protected static Object getContentFromCxf(Message message, DataFormat dataFormat) {
         Set<Class<?>> contentFormats = message.getContentFormats();
         Object answer = null;

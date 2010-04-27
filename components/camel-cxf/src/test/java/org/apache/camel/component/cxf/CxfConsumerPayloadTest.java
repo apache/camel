@@ -42,6 +42,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerTest {
         return new RouteBuilder() {
             public void configure() {
                 from(SIMPLE_ENDPOINT_URI + "&dataFormat=PAYLOAD").to("log:info").process(new Processor() {
+                    @SuppressWarnings("unchecked")
                     public void process(final Exchange exchange) throws Exception {                        
                         CxfPayload<SoapHeader> requestPayload = exchange.getIn().getBody(CxfPayload.class);
                         List<Element> inElements = requestPayload.getBody();

@@ -38,6 +38,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
     private static final String TEST_KEY = "sendSimpleMessage-test";
     private static final String TEST_VALUE = "exchange property value should get passed through request context";
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testExchangePropertyPropagation() throws Exception {
         Exchange exchange = sendSimpleMessage();

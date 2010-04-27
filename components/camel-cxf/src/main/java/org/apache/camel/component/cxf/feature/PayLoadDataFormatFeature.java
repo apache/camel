@@ -35,7 +35,6 @@ import org.apache.cxf.phase.Phase;
  * This feature just setting up the CXF endpoint interceptor for handling the
  * Message in PAYLOAD data format
  */
-@SuppressWarnings("rawtypes")
 public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     private static final Logger LOG = LogUtils.getL7dLogger(PayLoadDataFormatFeature.class);
     // filter the unused phase

@@ -31,8 +31,7 @@ import org.apache.cxf.phase.PhaseInterceptor;
 public abstract class AbstractDataFormatFeature extends AbstractFeature {
 
     protected abstract Logger getLogger();
-
-    @SuppressWarnings("unchecked")
+    
     protected void removeInterceptorWhichIsInThePhases(List<Interceptor> interceptors, String[] phaseNames) {
         for (Interceptor i : interceptors) {
             if (i instanceof PhaseInterceptor) {
@@ -48,7 +47,6 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected void removeInterceptorWhichIsOutThePhases(List<Interceptor> interceptors, String[] phaseNames) {
         for (Interceptor i : interceptors) {
             boolean outside = false;
@@ -69,7 +67,6 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
     }
     
       
-    @SuppressWarnings("rawtypes")
     protected void removeInterceptors(List<Interceptor> interceptors,
                                       Collection<Class> toBeRemovedInterceptors) {
         for (Interceptor interceptor : interceptors) {

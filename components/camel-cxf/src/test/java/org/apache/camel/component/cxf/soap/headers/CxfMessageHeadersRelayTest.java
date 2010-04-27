@@ -305,7 +305,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         try {
             response = proxy.inHeader(me, Constants.IN_HEADER_DATA);
         } catch (Exception e) {
-            int i = 0;
+            // do nothing
         }
         assertTrue("Expected in in band header *not* to propagate but it did", 
                    response.getResponseType().equals("pass"));
@@ -325,7 +325,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         try {
             proxy.outHeader(me, result, header);
         } catch (Exception e) {
-            int i = 0;
+            // do nothing
         }
         assertTrue("Ultimate remote HeaderTester.outHeader() destination was not reached", 
                    result.value.getResponseType().equals("pass"));
@@ -345,7 +345,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         try {
             result = proxy.inoutHeader(me, header);
         } catch (Exception e) {
-            int i = 0;
+            // do nothing
         }
         assertTrue("Expected in band out header *not* to propagate but it did", 
                    result.getResponseType().equals("pass"));
@@ -613,7 +613,6 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         assertTrue("HeaderHolder list expected to conain 2 object received " + oobHdr.size(),
                    oobHdr.size() == 2);
         
-        int i = 0;
         if (oobHdr != null & oobHdr instanceof List) {
             Iterator iter = oobHdr.iterator();
             while (iter.hasNext()) {
@@ -654,6 +653,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
 
     public static class InsertRequestOutHeaderProcessor implements Processor {
 
+        @SuppressWarnings("unchecked")
         public void process(Exchange exchange) throws Exception {
             List<SoapHeader> soapHeaders = (List)exchange.getIn().getHeader(Header.HEADER_LIST);
    
@@ -678,6 +678,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
     
     public static class InsertResponseOutHeaderProcessor implements Processor {
 
+        @SuppressWarnings("unchecked")
         public void process(Exchange exchange) throws Exception {
             List<SoapHeader> soapHeaders = (List)exchange.getIn().getHeader(Header.HEADER_LIST);
 
