@@ -33,7 +33,6 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
@@ -66,7 +65,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final Log LOG = LogFactory.getLog(CamelNamespaceHandler.class);
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(CamelEndpointFactoryBean.class);
-    protected BeanDefinitionParser routeParser = new BeanDefinitionParser(RouteDefinition.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
     protected Set<String> parserElementNames = new HashSet<String>();
     private JAXBContext jaxbContext;
