@@ -31,6 +31,7 @@ public class GHttpTestServlet extends HttpServlet {
         doPost(req, resp);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // Set default response code

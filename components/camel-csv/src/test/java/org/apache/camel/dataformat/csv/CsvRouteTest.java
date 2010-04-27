@@ -60,7 +60,7 @@ public class CsvRouteTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(1);
 
         // START SNIPPET: marshalInput
-        Map body = new HashMap();
+        Map<String, Object> body = new HashMap<String, Object>();
         body.put("foo", "abc");
         body.put("bar", 123);
         // END SNIPPET: marshalInput
@@ -87,11 +87,11 @@ public class CsvRouteTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMulti",
                                                                MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
-        Map body1 = new HashMap();
+        Map<String, Object> body1 = new HashMap<String, Object>();
         body1.put("foo", "abc");
         body1.put("bar", 123);
 
-        Map body2 = new HashMap();
+        Map<String, Object> body2 = new HashMap<String, Object>();
         body2.put("foo", "def");
         body2.put("bar", 456);
         body2.put("baz", 789);
@@ -128,11 +128,11 @@ public class CsvRouteTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMultiCustom",
                                                                MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
-        Map body1 = new HashMap();
+        Map<String, Object> body1 = new HashMap<String, Object>();
         body1.put("foo", "abc");
         body1.put("bar", 123);
 
-        Map body2 = new HashMap();
+        Map<String, Object> body2 = new HashMap<String, Object>();
         body2.put("foo", "def");
         body2.put("bar", 456);
         body2.put("baz", 789);
@@ -158,6 +158,7 @@ public class CsvRouteTest extends CamelTestSupport {
 
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testUnMarshal() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:daltons");

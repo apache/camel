@@ -48,9 +48,6 @@ public class GHttpCombinedRouteBuilderTest extends ServletTestSupport {
     private final LocalURLFetchServiceTestConfig config = new LocalURLFetchServiceTestConfig();
     private final LocalServiceTestHelper helper = new LocalServiceTestHelper(config);
 
-    @Autowired
-    private ProducerTemplate producerTemplate;
-
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         // Start servlet container for running the CamelHttpTransportServlet
