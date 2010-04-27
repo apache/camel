@@ -38,7 +38,6 @@ public class BeanValidator implements Processor {
     
     private ValidatorFactory validatorFactory;
     private Validator validator;
-    @SuppressWarnings("unchecked")
     private Class group;
     
     public void process(Exchange exchange) throws Exception {
@@ -68,13 +67,11 @@ public class BeanValidator implements Processor {
     public Validator getValidator() {
         return validator;
     }
-
-    @SuppressWarnings("unchecked")
+    
     public Class getGroup() {
         return group;
     }
-
-    @SuppressWarnings("unchecked")
+   
     public void setGroup(Class group) {
         this.group = group;
     }

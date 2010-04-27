@@ -56,7 +56,7 @@ public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
             char id = 'A';
-            Map headers = new HashMap();
+            Map<String, Object> headers = new HashMap<String, Object>();
             headers.put("id", id);
             headers.put("seq", i);
             if (LOG.isDebugEnabled()) {

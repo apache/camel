@@ -36,7 +36,6 @@ import org.apache.camel.impl.ProcessorEndpoint;
  */
 public class BeanValidatorComponent extends DefaultComponent {
     
-    @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanValidator beanValidator = new BeanValidator();
         
