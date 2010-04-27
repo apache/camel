@@ -28,8 +28,8 @@ public class MyRouteInstaller extends RouteBuilder {
         // TODO we could register explicit endpoints here too if we want
 
         // lets add some other route builders
-        addRoutes(new MyConfigurableRoute(endpoint("direct:a"), endpoint("direct:b")));
-        addRoutes(new MyConfigurableRoute(endpoint("direct:c"), endpoint("direct:d")));
+        includeRoutes(new MyConfigurableRoute(endpoint("direct:a"), endpoint("direct:b")));
+        includeRoutes(new MyConfigurableRoute(endpoint("direct:c"), endpoint("direct:d")));
 
     }
 }

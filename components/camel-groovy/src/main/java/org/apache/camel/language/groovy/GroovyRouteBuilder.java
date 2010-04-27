@@ -16,6 +16,9 @@
  */
 package org.apache.camel.language.groovy;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 import groovy.lang.GroovyShell;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,7 +39,7 @@ public abstract class GroovyRouteBuilder extends RouteBuilder {
     private void init() {
         ClassLoader loader = getClass().getClassLoader();
         GroovyShell shell = new GroovyShell(loader);
-        shell.evaluate(loader.getResourceAsStream("org/apache/camel/language/groovy/ConfigureCamel.groovy"));
+        shell.evaluate(new InputStreamReader(loader.getResourceAsStream("org/apache/camel/language/groovy/ConfigureCamel.groovy")));
 
         // TODO compile Groovy as part of build!
         //new ConfigureCamel().run();

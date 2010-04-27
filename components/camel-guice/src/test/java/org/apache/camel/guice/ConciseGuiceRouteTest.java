@@ -27,6 +27,7 @@ import org.junit.Test;
  */
 public class ConciseGuiceRouteTest extends Assert {
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testGuice() throws Exception {
         // lets disable resource injection to avoid JNDI being used

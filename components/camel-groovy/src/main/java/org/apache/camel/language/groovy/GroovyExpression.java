@@ -65,6 +65,7 @@ public class GroovyExpression extends ExpressionSupport {
                 return null;
             }
 
+            @SuppressWarnings("unchecked")
             @Override
             public Set entrySet() {
                 return Collections.EMPTY_SET;

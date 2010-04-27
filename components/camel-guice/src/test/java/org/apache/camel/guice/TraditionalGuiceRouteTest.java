@@ -30,6 +30,7 @@ public class TraditionalGuiceRouteTest extends Assert {
 
     public static class MyModule extends CamelModuleWithRouteTypes {
 
+        @SuppressWarnings("unchecked")
         public MyModule() {
             super(MyHardcodeRoute.class, MyRouteInstaller.class);
         }

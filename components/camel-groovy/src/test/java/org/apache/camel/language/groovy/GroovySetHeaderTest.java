@@ -37,7 +37,7 @@ public class GroovySetHeaderTest extends ContextTestSupport {
         mock.expectedHeaderReceived("beer", "Carlsberg");
         mock.expectedHeaderReceived("drink", "Carlsberg");
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("one", "einz");
         headers.put("two", "twei");
         headers.put("beer", "Carlsberg");
