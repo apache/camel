@@ -29,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
+
 import org.junit.Test;
 
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
@@ -41,6 +42,7 @@ import static org.apache.camel.component.exec.ExecEndpoint.NO_TIMEOUT;
 import static org.apache.camel.component.exec.ExecTestUtils.buildJavaExecutablePath;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.EXIT_WITH_VALUE_0;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.EXIT_WITH_VALUE_1;
+import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_IN_STDERR;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_IN_STDOUT;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.READ_INPUT_LINES_AND_PRINT_THEM;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.SLEEP_WITH_TIMEOUT;
@@ -107,6 +109,39 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         output.assertIsSatisfied();
         String out = e.getIn().getBody(String.class);
         assertEquals(PRINT_IN_STDOUT, out);
+    }
+
+    @Test
+    public void testByteArrayInputStreamIsResetInConverter() throws Exception {
+        String commandArgument = PRINT_IN_STDOUT;
+        output.setExpectedMessageCount(1);
+
+        Exchange e = sendExchange(commandArgument, NO_TIMEOUT);
+        String out1 = e.getIn().getBody(String.class);
+        // the second conversion should not need a reset, this is handled
+        // in the type converter.
+        String out2 = e.getIn().getBody(String.class);
+        
+        output.assertIsSatisfied();
+        assertEquals(PRINT_IN_STDOUT, out1);
+        assertEquals(out1, out2);
+    }
+
+    @Test
+    public void testIfStdoutIsNullStderrIsReturnedInConverter() throws Exception {
+        // this will be printed
+        String commandArgument = PRINT_IN_STDERR;
+        output.setExpectedMessageCount(1);
+
+        Exchange e = sendExchange(commandArgument, NO_TIMEOUT);
+        ExecResult body = e.getIn().getBody(ExecResult.class);
+
+        output.assertIsSatisfied();
+        assertNull("the test executable must not print anything in stdout", body.getStdout());
+        assertNotNull("the test executable must print in stderr", body.getStderr());
+        // the converter must fall back to the stderr, because stdout is null
+        String stderr = e.getIn().getBody(String.class);
+        assertEquals(PRINT_IN_STDERR, stderr);
     }
 
     @Test
@@ -218,7 +253,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
     protected Exchange sendExchange(final Object commandArgument, final long timeout, final String body) {
         final List<String> args = buildArgs(commandArgument);
         final String javaAbsolutePath = buildJavaExecutablePath();
-        
+
         return producerTemplate.send(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(body);

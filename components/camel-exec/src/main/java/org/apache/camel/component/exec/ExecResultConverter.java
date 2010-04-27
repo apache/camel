@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.exec;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -50,7 +51,12 @@ public final class ExecResultConverter {
 
     @Converter
     public static byte[] convertToByteArray(ExecResult result, Exchange exchange) throws FileNotFoundException, IOException {
-        return IOUtils.toByteArray(toInputStream(result));
+        InputStream stream = toInputStream(result);
+        try {
+            return IOUtils.toByteArray(stream);
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 
     @Converter
@@ -85,30 +91,56 @@ public final class ExecResultConverter {
     }
 
     /**
-     * If the ExecResult contains out file,
-     * <code>InputStream<code> with the output of the <code>execResult</code>.
-     * If there is {@link ExecCommand#getOutFile()}, its content is preferred to
-     * {@link ExecResult#getStdout()}. Returns <code>null</code> if the stdout
-     * is null, or if the <code>execResult</code> is <code>null</code>.
+     * Returns <code>InputStream</code> object with the <i>output</i> of the
+     * executable. If there is {@link ExecCommand#getOutFile()}, its content is
+     * preferred to {@link ExecResult#getStdout()}. If no out file is set, and
+     * the stdout of the exec result is <code>null</code> returns the stderr of
+     * the exec result. <br>
+     * If the output stream is of type <code>ByteArrayInputStream</code>, its
+     * <code>reset()</code> method is called.
      * 
-     * @param execResult ExecResult object.
-     * @return InputStream object if the output of the executable.
-     * @throws FileNotFoundException if the {@link ExecCommand#getOutFile()} is
-     *             not <code>null</code>, but can not be found
+     * @param execResult ExecResult object to convert to InputStream.
+     * @return InputStream object with the <i>output</i> of the executable.
+     *         Returns <code>null</code> if both {@link ExecResult#getStdout()}
+     *         and {@link ExecResult#getStderr()} are <code>null</code> , or if
+     *         the <code>execResult</code> is <code>null</code>.
+     * @throws FileNotFoundException if the {@link ExecCommand#getOutFile()} can
+     *             not be opened. In this case the out file must have had a not
+     *             <code>null</code> value
      */
     public static InputStream toInputStream(ExecResult execResult) throws FileNotFoundException {
         if (execResult == null) {
             LOG.warn("Received a null ExecResult instance to convert!");
             return null;
         }
-        // prefer generic file conversion
+        // prefer the out file for output
+        InputStream result;
         if (execResult.getCommand().getOutFile() != null) {
-            return new FileInputStream(execResult.getCommand().getOutFile());
+            result = new FileInputStream(execResult.getCommand().getOutFile());
         } else {
+            // if the stdout is null, return the stderr.
             if (execResult.getStdout() == null) {
-                LOG.warn("Received null stdout of the ExecResult for conversion!");
+                LOG.warn("ExecResult has no stdout, will fallback to use stderr.");
+                result = execResult.getStderr();
+            } else {
+                result = execResult.getStdout();
             }
-            return execResult.getStdout();
+        }
+        // reset the stream if it was already read.
+        resetIfByteArrayInputStream(result);
+        return result;
+    }
+
+    /**
+     * Resets the stream, only if it's a ByteArrayInputStream.
+     */
+    private static void resetIfByteArrayInputStream(InputStream stream) {
+        if (stream != null && stream instanceof ByteArrayInputStream) {
+            try {
+                stream.reset();
+            } catch (IOException ioe) {
+                LOG.error("Unable to reset the stream ", ioe);
+            }
         }
     }
 }
