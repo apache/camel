@@ -526,7 +526,7 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if the first element is a boolean and its value
      *         is true or if the list is non empty
      */
-    public static boolean matches(List<Object> list) {
+    public static boolean matches(List list) {
         if (!list.isEmpty()) {
             Object value = list.get(0);
             if (value instanceof Boolean) {

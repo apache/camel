@@ -24,10 +24,9 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
+
 /**
  * A content enricher that enriches input data by first obtaining additional
  * data from a <i>resource</i> represented by an endpoint <code>producer</code>
@@ -42,7 +41,6 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  */
 public class Enricher extends ServiceSupport implements Processor {
 
-    private static final transient Log LOG = LogFactory.getLog(Enricher.class);
     private AggregationStrategy aggregationStrategy;
     private Producer producer;
 
