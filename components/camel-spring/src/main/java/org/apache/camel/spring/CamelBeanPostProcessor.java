@@ -246,8 +246,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     }
 
     protected void injectMethods(final Object bean, final String beanName) {
-        ReflectionUtils.doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {
-            @SuppressWarnings("unchecked")
+        ReflectionUtils.doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {           
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
                 setterInjection(method, bean, beanName);
                 getPostProcessor().consumerInjection(method, bean, beanName);

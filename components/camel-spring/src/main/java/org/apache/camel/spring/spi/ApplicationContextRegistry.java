@@ -55,7 +55,6 @@ public class ApplicationContextRegistry implements Registry {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <T> Map<String, T> lookupByType(Class<T> type) {
         return applicationContext.getBeansOfType(type);
     }

@@ -48,7 +48,7 @@ public class ConsumerTemplateMaximumCacheSizeTest extends AbstractJUnit38SpringC
         // test that we cache at most 50 producers to avoid it eating to much memory
         for (int i = 0; i < 53; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
-            Exchange ex = template.receiveNoWait(e);
+            template.receiveNoWait(e);
         }
 
         assertEquals("Size should be 50", 50, template.getCurrentCacheSize());

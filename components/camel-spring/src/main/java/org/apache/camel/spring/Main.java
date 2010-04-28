@@ -220,7 +220,6 @@ public class Main extends MainSupport {
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected Map<String, CamelContext> getCamelContextMap() {
         Map<String, SpringCamelContext> map = applicationContext.getBeansOfType(SpringCamelContext.class);
         Set<Map.Entry<String, SpringCamelContext>> entries = map.entrySet();

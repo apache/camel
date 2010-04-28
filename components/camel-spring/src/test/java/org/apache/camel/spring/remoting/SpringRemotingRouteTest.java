@@ -17,12 +17,8 @@
 package org.apache.camel.spring.remoting;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,8 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision$
  */
 public class SpringRemotingRouteTest extends TestCase {
-    private static final Log LOG = LogFactory.getLog(SpringRemotingRouteTest.class);
-
+    
     public void testBeanRoutes() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
 /*

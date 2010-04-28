@@ -35,7 +35,6 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
     protected AbstractXmlApplicationContext applicationContext;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected List<Route> buildSimpleRoute() {
         return getRoutesFromContext("org/apache/camel/spring/xml/buildSimpleRoute.xml");
     }

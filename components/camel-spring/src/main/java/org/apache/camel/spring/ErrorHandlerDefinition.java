@@ -33,7 +33,8 @@ import org.apache.camel.model.RedeliveryPolicyDefinition;
  */
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ErrorHandlerDefinition extends IdentifiedType {
+@SuppressWarnings("unused")
+public class ErrorHandlerDefinition extends IdentifiedType {    
     @XmlAttribute
     private ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
     @XmlAttribute

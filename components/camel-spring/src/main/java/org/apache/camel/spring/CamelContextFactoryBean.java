@@ -106,6 +106,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings("unused")
 public class CamelContextFactoryBean extends IdentifiedType implements RouteContainer, FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
     private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
 
@@ -632,7 +633,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
     }
 
-    @SuppressWarnings("unchecked")
     private <T> T getBeanForType(Class<T> clazz) {
         T bean = null;
         String[] names = getApplicationContext().getBeanNamesForType(clazz, true, true);
@@ -1075,7 +1075,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     /**
      * Strategy to install all available routes into the context
      */
-    @SuppressWarnings("unchecked")
     protected void installRoutes() throws Exception {
         List<RouteBuilder> builders = new ArrayList<RouteBuilder>();
 

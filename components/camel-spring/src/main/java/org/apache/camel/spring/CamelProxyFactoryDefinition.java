@@ -27,6 +27,7 @@ import org.apache.camel.model.IdentifiedType;
  * @version $Revision$
 */ // to fudge the XSD generation
 @XmlRootElement(name = "proxy")
+@SuppressWarnings("unused")
 public class CamelProxyFactoryDefinition extends IdentifiedType {
     @XmlAttribute
     private String serviceUrl;

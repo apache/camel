@@ -43,7 +43,6 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
      * @param type the type of the bean
      * @return the bean
      */
-    @SuppressWarnings("unchecked")
     public <T> T lookup(String beanName, Class<T> type) {
         ApplicationContext context = getApplicationContext();
         return (T)context.getBean(beanName, type);

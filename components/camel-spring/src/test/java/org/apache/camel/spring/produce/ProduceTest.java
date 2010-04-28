@@ -17,8 +17,6 @@
 package org.apache.camel.spring.produce;
 
 import org.apache.camel.Produce;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
@@ -27,8 +25,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
  */
 @ContextConfiguration
 public class ProduceTest extends AbstractJUnit38SpringContextTests {
-    private static final Log LOG = LogFactory.getLog(ProduceTest.class);
-
+    
     @Produce(uri = "direct:myService")
     protected MyListener producer;
 

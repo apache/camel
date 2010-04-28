@@ -36,7 +36,7 @@ public class OrderService {
      * @return the out payload
      * @throws OrderFailedException is thrown if the order cannot be processed
      */
-    public Object handleOrder(@Headers Map in, @Body String payload, @OutHeaders Map out)
+    public Object handleOrder(@Headers Map<String, Object> in, @Body String payload, @OutHeaders Map<String, Object> out)
         throws OrderFailedException {
         out.put("customerid", in.get("customerid"));
         if ("Order: kaboom".equals(payload)) {
@@ -56,7 +56,7 @@ public class OrderService {
      * @param out the out headers
      * @return the out payload
      */
-    public Object orderFailed(@Headers Map in, @Body String payload, @OutHeaders Map out) {
+    public Object orderFailed(@Headers Map<String, Object> in, @Body String payload, @OutHeaders Map<String, Object> out) {
         out.put("customerid", in.get("customerid"));
         out.put("orderid", "failed");
         return "Order ERROR";

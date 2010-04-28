@@ -28,6 +28,7 @@ public class TraceInterceptorSubclassTest extends TracingTestBase {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/tracing/traceInterceptorSubclassContext.xml");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected List<StringBuilder> getTracedMessages() {
         return (List<StringBuilder>) this.applicationContext.getBean("eventMessages");

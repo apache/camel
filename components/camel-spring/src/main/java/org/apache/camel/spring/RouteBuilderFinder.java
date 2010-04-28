@@ -38,7 +38,6 @@ public class RouteBuilderFinder {
     private ApplicationContext applicationContext;    
     private BeanPostProcessor beanPostProcessor;
 
-    @SuppressWarnings("unchecked")
     public RouteBuilderFinder(SpringCamelContext camelContext, String[] packages, ClassLoader classLoader,
                               BeanPostProcessor postProcessor, PackageScanClassResolver resolver) {
         this.camelContext = camelContext;
@@ -73,7 +72,7 @@ public class RouteBuilderFinder {
     /**
      * Lets ignore beans that are not explicitly configured in the spring.xml
      */
-    protected boolean shouldIgnoreBean(Class type) {
+    protected boolean shouldIgnoreBean(Class<?> type) {
         Map beans = applicationContext.getBeansOfType(type, true, true);
         if (beans == null || beans.isEmpty()) {
             return false;

@@ -22,7 +22,6 @@ import java.util.Set;
 import junit.framework.TestCase;
 import org.apache.camel.spring.PatternBasedPackageScanFilter;
 
-@SuppressWarnings("unchecked")
 public abstract class ScanTestSupport extends TestCase {
 
     protected PatternBasedPackageScanFilter filter;

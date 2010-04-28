@@ -29,12 +29,13 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class FileConsumerIdempotentTest extends ContextTestSupport {
 
-    private IdempotentRepository repo;
+    private IdempotentRepository<String> repo;
 
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/idempotent/fileConsumerIdempotentTest.xml");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/fileidempotent");

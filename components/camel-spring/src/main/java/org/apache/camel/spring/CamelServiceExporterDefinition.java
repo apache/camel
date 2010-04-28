@@ -27,6 +27,7 @@ import org.apache.camel.model.IdentifiedType;
  * @version $Revision$
 */
 @XmlRootElement(name = "export")
+@SuppressWarnings("unused")
 public class CamelServiceExporterDefinition extends IdentifiedType {
     @XmlAttribute
     private String uri;

@@ -49,7 +49,7 @@ public class RouteExclusionFromWithinSpringTestSupportTest extends SpringTestSup
     }
 
     @Override
-    protected Class excludeRoute() {
+    protected Class<?> excludeRoute() {
 
         return MyExcludedRouteBuilder.class;
     }

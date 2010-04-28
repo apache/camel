@@ -29,7 +29,6 @@ import java.util.jar.JarFile;
 import org.apache.camel.spring.PatternBasedPackageScanFilter;
 import org.apache.camel.util.CollectionHelper;
 
-@SuppressWarnings("unchecked")
 public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.scan.ScanTestSupport {
 
     private Set<Class<?>> allClasses;
