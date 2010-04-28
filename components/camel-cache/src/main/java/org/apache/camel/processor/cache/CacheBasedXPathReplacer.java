@@ -30,9 +30,10 @@ import org.w3c.dom.Document;
 
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cache.factory.CacheManagerFactory;
+import org.apache.camel.component.cache.CacheManagerFactory;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.util.ObjectHelper;

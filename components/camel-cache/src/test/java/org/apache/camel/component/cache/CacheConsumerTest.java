@@ -48,16 +48,16 @@ public class CacheConsumerTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(3);
 
         List<String> operations = new ArrayList<String>();
-        operations.add("ADD");
-        operations.add("UPDATE");
-        operations.add("DELETE");
+        operations.add(CacheConstants.CACHE_OPERATION_ADD);
+        operations.add(CacheConstants.CACHE_OPERATION_UPDATE);
+        operations.add(CacheConstants.CACHE_OPERATION_DELETE);
         for (final String operation : operations) {
             producerTemplate.send(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                     Message in = exchange.getIn();
-                    in.setHeader("CACHE_OPERATION", operation);
-                    in.setHeader("CACHE_KEY", "greeting");
+                    in.setHeader(CacheConstants.CACHE_OPERATION, operation);
+                    in.setHeader(CacheConstants.CACHE_KEY, "greeting");
                     in.setBody("Hello World");
                 }
             });
@@ -74,20 +74,20 @@ public class CacheConsumerTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(3);
 
         List<String> operations = new ArrayList<String>();
-        operations.add("ADD");
-        operations.add("UPDATE");
-        operations.add("DELETE");
+        operations.add(CacheConstants.CACHE_OPERATION_ADD);
+        operations.add(CacheConstants.CACHE_OPERATION_UPDATE);
+        operations.add(CacheConstants.CACHE_OPERATION_DELETE);
         for (final String operation : operations) {
             producerTemplate.send(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     Poetry p = new Poetry();
                     p.setPoet("Ralph Waldo Emerson");
                     p.setPoem("Brahma");
-                    
+
                     exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                     Message in = exchange.getIn();
-                    in.setHeader("CACHE_OPERATION", operation);
-                    in.setHeader("CACHE_KEY", "poetry");
+                    in.setHeader(CacheConstants.CACHE_OPERATION, operation);
+                    in.setHeader(CacheConstants.CACHE_KEY, "poetry");
                     in.setBody(p);
                 }
             });
@@ -96,15 +96,15 @@ public class CacheConsumerTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
         LOG.debug("Completed Test ---> testReceivingFileFromCache()");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("cache://TestCache1").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        String operation = (String)exchange.getIn().getHeader("CACHE_OPERATION");
-                        String key = (String)exchange.getIn().getHeader("CACHE_KEY");
+                        String operation = (String) exchange.getIn().getHeader(CacheConstants.CACHE_OPERATION);
+                        String key = (String) exchange.getIn().getHeader(CacheConstants.CACHE_KEY);
                         Object body = exchange.getIn().getBody();
                         String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);
 

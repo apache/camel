@@ -25,28 +25,36 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.util.ObjectHelper;
 
 public class CacheEndpoint extends DefaultEndpoint {
-    private static final transient Log LOG = LogFactory.getLog(CacheEndpoint.class);
-    CacheConfiguration config;
-    
-    public CacheEndpoint(String endpointUri, Component component, CacheConfiguration config) {
+    private CacheConfiguration config;
+    private CacheManagerFactory cacheManagerFactory;
+
+    public CacheEndpoint() {
+    }
+
+    public CacheEndpoint(String endpointUri, Component component, CacheConfiguration config,
+                         CacheManagerFactory cacheManagerFactory) {
         super(endpointUri, component);
         this.config = config;
+        this.cacheManagerFactory = cacheManagerFactory;
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
+        ObjectHelper.notNull(config, "config");
+        ObjectHelper.notNull(cacheManagerFactory, "cacheManagerFactory");
         return new CacheConsumer(this, processor, config);
     }
 
     public Producer createProducer() throws Exception {
+        ObjectHelper.notNull(config, "config");
+        ObjectHelper.notNull(cacheManagerFactory, "cacheManagerFactory");
         return new CacheProducer(this, config);
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     public CacheConfiguration getConfig() {
@@ -55,6 +63,14 @@ public class CacheEndpoint extends DefaultEndpoint {
 
     public void setConfig(CacheConfiguration config) {
         this.config = config;
+    }
+
+    public CacheManagerFactory getCacheManagerFactory() {
+        return cacheManagerFactory;
+    }
+
+    public void setCacheManagerFactory(CacheManagerFactory cacheManagerFactory) {
+        this.cacheManagerFactory = cacheManagerFactory;
     }
 
     public Exchange createCacheExchange(String operation, String key, Object value) {

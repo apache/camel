@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cache.factory;
+package org.apache.camel.component.cache;
 
 import net.sf.ehcache.CacheManager;
+import org.apache.camel.impl.ServiceSupport;
 
-public class CacheManagerFactory {
-
+public class CacheManagerFactory extends ServiceSupport {
     private CacheManager cacheManager;
 
     public synchronized CacheManager instantiateCacheManager() {
@@ -30,4 +30,15 @@ public class CacheManagerFactory {
         return cacheManager;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // shutdown cache manager when stopping
+        if (cacheManager != null) {
+            cacheManager.shutdown();
+        }
+    }
 }

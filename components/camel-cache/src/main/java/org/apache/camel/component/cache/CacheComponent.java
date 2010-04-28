@@ -22,9 +22,11 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ServiceHelper;
 
 public class CacheComponent extends DefaultComponent {
-    CacheConfiguration config;
+    private CacheConfiguration config;
+    private CacheManagerFactory cacheManagerFactory = new CacheManagerFactory();
     
     public CacheComponent() {
         config = new CacheConfiguration();
@@ -40,9 +42,28 @@ public class CacheComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         config.parseURI(new URI(uri));
         
-        CacheEndpoint cacheEndpoint = new CacheEndpoint(uri, this, config);
+        CacheEndpoint cacheEndpoint = new CacheEndpoint(uri, this, config, cacheManagerFactory);
         setProperties(cacheEndpoint.getConfig(), parameters);
         return cacheEndpoint;
     }
 
+    public CacheManagerFactory getCacheManagerFactory() {
+        return cacheManagerFactory;
+    }
+
+    public void setCacheManagerFactory(CacheManagerFactory cacheManagerFactory) {
+        this.cacheManagerFactory = cacheManagerFactory;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ServiceHelper.startService(cacheManagerFactory);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(cacheManagerFactory);
+        super.doStop();
+    }
 }

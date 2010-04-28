@@ -25,72 +25,77 @@ import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.cache.factory.CacheManagerFactory;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class CacheProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(CacheProducer.class);
-    Endpoint endpoint;
-    CacheConfiguration config;
-    CacheManager cacheManager;
-    Ehcache cache;
-    
+    private CacheConfiguration config;
+    private CacheManager cacheManager;
+    private Ehcache cache;
+
     public CacheProducer(Endpoint endpoint, CacheConfiguration config) throws Exception {
         super(endpoint);
-        this.endpoint = endpoint;
         this.config = config;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        cacheManager = getEndpoint().getCacheManagerFactory().instantiateCacheManager();
+        super.doStart();
+    }
+
+    @Override
+    public CacheEndpoint getEndpoint() {
+        return (CacheEndpoint) super.getEndpoint();
+    }
+
     public void process(Exchange exchange) throws Exception {
-         
-        cacheManager = new CacheManagerFactory().instantiateCacheManager();
-        
         if (LOG.isTraceEnabled()) {
             LOG.trace("Cache Name: " + config.getCacheName());
         }
+
         if (cacheManager.cacheExists(config.getCacheName())) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Found an existing cache: " + config.getCacheName());
-                LOG.trace("Cache " + config.getCacheName() + " currently contains " + cacheManager.getCache(config.getCacheName()).getSize() + " elements");
+                LOG.trace("Cache " + config.getCacheName() + " currently contains "
+                        + cacheManager.getCache(config.getCacheName()).getSize() + " elements");
             }
             cache = cacheManager.getCache(config.getCacheName());
         } else {
-            cache = new Cache(config.getCacheName(), 
+            cache = new Cache(config.getCacheName(),
                     config.getMaxElementsInMemory(),
-                    config.getMemoryStoreEvictionPolicy(), 
-                    config.isOverflowToDisk(), 
-                    config.getDiskStorePath(), 
-                    config.isEternal(), 
-                    config.getTimeToLiveSeconds(), 
-                    config.getTimeToIdleSeconds(), 
-                    config.isDiskPersistent(), 
-                    config.getDiskExpiryThreadIntervalSeconds(), 
+                    config.getMemoryStoreEvictionPolicy(),
+                    config.isOverflowToDisk(),
+                    config.getDiskStorePath(),
+                    config.isEternal(),
+                    config.getTimeToLiveSeconds(),
+                    config.getTimeToIdleSeconds(),
+                    config.isDiskPersistent(),
+                    config.getDiskExpiryThreadIntervalSeconds(),
                     null);
             cacheManager.addCache(cache);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Added a new cache: " + cache.getName());
             }
         }
-       
-        
-        String key = (String) exchange.getIn().getHeader("CACHE_KEY");
-        String operation = (String) exchange.getIn().getHeader("CACHE_OPERATION");
+
+        String key = exchange.getIn().getHeader(CacheConstants.CACHE_KEY, String.class);
+        String operation = exchange.getIn().getHeader(CacheConstants.CACHE_OPERATION, String.class);
+
         if (operation == null) {
-            throw new CacheException("Operation property is not specified in the incoming exchange header."
-                + "A valid Operation property must be set to ADD, UPDATE, DELETE, DELETEALL");
+            throw new CacheException("Operation not specified in the message header [" + CacheConstants.CACHE_KEY + "]");
         }
-        if ((key == null) && (!operation.equalsIgnoreCase("DELETEALL"))) {
-            throw new CacheException("Cache Key is not specified in exchange either header or URL. Unable to add objects to the cache without a Key");
+        if ((key == null) && (!operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_DELETEALL))) {
+            throw new CacheException("Cache Key is not specified in message header header or endpoint URL.");
         }
-        
+
         performCacheOperation(exchange, operation, key);
     }
-    
+
     private void performCacheOperation(Exchange exchange, String operation, String key) throws Exception {
         Object element;
 
@@ -99,37 +104,51 @@ public class CacheProducer extends DefaultProducer {
             element = body;
         } else {
             InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
-
             // Read InputStream into a byte[] buffer
-            byte[] buffer = new byte[is.available()];
-            int n = is.available();
-            for (int j = 0; j < n; j++) {
-                buffer[j] = (byte)is.read();
-            }
-
-            element = buffer;
+            element = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, is);
         }
 
-        if (operation.equalsIgnoreCase("ADD")) {
+        if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_ADD)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Adding an element with key " + key + " into the Cache");
             }
             cache.put(new Element(key, element), true);
-        } else if (operation.equalsIgnoreCase("UPDATE")) {
+        } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_UPDATE)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Updating an element with key " + key + " into the Cache");
             }
             cache.put(new Element(key, element), true);
-        } else if (operation.equalsIgnoreCase("DELETEALL")) {
+        } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_DELETEALL)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Deleting All elements from the Cache");
             }
             cache.removeAll();
-        } else if (operation.equalsIgnoreCase("DELETE")) {
+        } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_DELETE)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Deleting an element with key " + key + " into the Cache");
             }
             cache.remove(key, true);
+        } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_GET)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Quering an element with key " + key + " from the Cache");
+            }
+            if (cache.isKeyInCache(key)) {
+                exchange.getIn().setHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND, true);
+                exchange.getIn().setBody(cache.get(key).getValue());
+            } else {
+                exchange.getIn().removeHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND);
+            }
+        } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_CHECK)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Querying an element with key " + key + " from the Cache");
+            }
+            if (cache.isKeyInCache(key)) {
+                exchange.getIn().setHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND, true);
+            } else {
+                exchange.getIn().removeHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND);
+            }
+        } else {
+            throw new CacheException("Operation " + operation + " is not supported.");
         }
     }
 

@@ -22,7 +22,6 @@ import net.sf.ehcache.Ehcache;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cache.factory.CacheManagerFactory;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,14 +29,12 @@ import org.apache.commons.logging.LogFactory;
 public class CacheConsumer extends DefaultConsumer {
 
     private static final transient Log LOG = LogFactory.getLog(CacheConsumer.class);
-    CacheEndpoint endpoint;
-    CacheConfiguration config;
-    Ehcache cache;
-    CacheManager cacheManager;
-    
+    private CacheConfiguration config;
+    private Ehcache cache;
+    private CacheManager cacheManager;
+
     public CacheConsumer(Endpoint endpoint, Processor processor, CacheConfiguration config) {
         super(endpoint, processor);
-        this.endpoint = (CacheEndpoint) endpoint;
         this.config = config;
     }
 
@@ -55,11 +52,11 @@ public class CacheConsumer extends DefaultConsumer {
 
     @Override
     public CacheEndpoint getEndpoint() {
-        return endpoint;
+        return (CacheEndpoint) super.getEndpoint();
     }
     
     protected void createConsumerCacheConnection() {
-        cacheManager = new CacheManagerFactory().instantiateCacheManager();
+        cacheManager = getEndpoint().getCacheManagerFactory().instantiateCacheManager();
         CacheEventListener cacheEventListener = new CacheEventListenerFactory().createCacheEventListener(null);
         cacheEventListener.setCacheConsumer(this);
 
@@ -89,9 +86,6 @@ public class CacheConsumer extends DefaultConsumer {
     
     protected void removeConsumerCacheConnection() {
         cacheManager.removeCache(config.getCacheName());
-        if (cacheManager.getCacheNames().length == 0) {
-            cacheManager.shutdown();
-        }
     }
 
 }

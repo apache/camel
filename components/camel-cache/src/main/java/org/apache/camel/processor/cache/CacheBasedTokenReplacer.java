@@ -23,7 +23,7 @@ import net.sf.ehcache.Ehcache;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cache.factory.CacheManagerFactory;
+import org.apache.camel.component.cache.CacheManagerFactory;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;

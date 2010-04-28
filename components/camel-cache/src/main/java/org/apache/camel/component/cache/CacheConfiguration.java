@@ -44,7 +44,6 @@ public class CacheConfiguration {
 
     public CacheConfiguration(URI uri) throws Exception {
         parseURI(uri);
-        
     }
     
     public void parseURI(URI uri) throws Exception {
