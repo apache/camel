@@ -66,7 +66,7 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
                     .onException(ConnectException.class)
                         .maximumRedeliveries(4)
                         .backOffMultiplier(2)
-                        .redeliverDelay(100)
+                        .redeliveryDelay(100)
                         .maximumRedeliveryDelay(5000)
                         .useExponentialBackOff()
                     .end()

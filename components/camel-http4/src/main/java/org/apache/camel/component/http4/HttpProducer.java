@@ -202,6 +202,17 @@ public class HttpProducer extends DefaultProducer {
         String contentEncoding = header != null ? header.getValue() : null;
 
         is = GZIPHelper.toGZIPInputStream(contentEncoding, is);
+        // Honor the character encoding
+        header = httpRequest.getFirstHeader("content-type");
+        if (header != null) {
+            String contentType = header.getValue();
+            // find the charset and set it to the Exchange
+            int index = contentType.indexOf("charset=");
+            if (index > 0) {
+                String charset = contentType.substring(index + 8);
+                exchange.setProperty(Exchange.CHARSET_NAME, charset);
+            }
+        }
         return doExtractResponseBody(is, exchange);
     }
 
