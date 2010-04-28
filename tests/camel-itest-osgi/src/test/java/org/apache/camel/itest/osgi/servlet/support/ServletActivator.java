@@ -67,7 +67,7 @@ public final class ServletActivator implements BundleActivator, BundleContextAwa
                 // create a default context to share between registrations
                 final HttpContext httpContext = httpService.createDefaultHttpContext();
                 // register the hello world servlet
-                final Dictionary initParams = new Hashtable();
+                final Dictionary<String, String> initParams = new Hashtable<String, String>();
                 initParams.put("matchOnUriPrefix", "false");
                 initParams.put("servlet-name", "camelServlet");
                 httpService.registerServlet("/camel/services", // alias

@@ -53,8 +53,7 @@ public class JmsToHttpTXWithOnExceptionTest extends AbstractJUnit4SpringContextT
     private MockEndpoint rollback;
 
     // the ok response to expect
-    private String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
-    private String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
+    private String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";    
     private String noAccess  = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
     @Test

@@ -92,7 +92,7 @@ public class JmsJaxbTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("jms:queue:error").redeliverDelay(0));
+                errorHandler(deadLetterChannel("jms:queue:error").redeliveryDelay(0));
 
                 onException(InvalidOrderException.class).maximumRedeliveries(0).handled(true)
                     .to("jms:queue:invalid");

@@ -38,7 +38,6 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
 public class JaxbFallbackConverterTest extends OSGiIntegrationTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(JaxbFallbackConverterTest.class);
     
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

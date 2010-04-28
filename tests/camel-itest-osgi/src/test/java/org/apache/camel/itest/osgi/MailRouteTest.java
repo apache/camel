@@ -85,7 +85,7 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
         Object content = message.getContent();
         assertNotNull("The content should not be null!", content);
         if (content instanceof InputStream) {
-            assertEquals("hello world!", IOConverter.toString((InputStream)content));
+            assertEquals("hello world!", IOConverter.toString((InputStream)content, null));
         } else {
             assertEquals("hello world!", message.getContent());
         }
@@ -131,7 +131,7 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
-                          "camel-core","camel-spring-osgi", "camel-test"),
+                          "camel-core", "camel-spring-osgi", "camel-test"),
             
             // using the java mail API bundle
             mavenBundle().groupId("org.apache.servicemix.specs").artifactId("org.apache.servicemix.specs.javamail-api-1.4").version("1.3.0"),
