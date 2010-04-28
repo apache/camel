@@ -127,6 +127,7 @@ abstract class AbstractTracked {
      *            entries in the list are ignored.
      * @GuardedBy this
      */
+    @SuppressWarnings("unchecked")
     void setInitial(Object[] list) {
         if (list == null) {
             return;
@@ -149,6 +150,7 @@ abstract class AbstractTracked {
      * be received. This method must be called from Tracker's open method while
      * not synchronized on this object after the add listener call.
      */
+    @SuppressWarnings("unchecked")
     void trackInitial() {
         while (true) {
             Object item;
@@ -206,6 +208,7 @@ abstract class AbstractTracked {
      * @param item Item to be tracked.
      * @param related Action related object.
      */
+    @SuppressWarnings("unchecked")
     void track(final Object item, final Object related) {
         final Object object;
         synchronized (this) {
@@ -250,6 +253,7 @@ abstract class AbstractTracked {
      * @param item Item to be tracked.
      * @param related Action related object.
      */
+    @SuppressWarnings("unchecked")
     private void trackAdding(final Object item, final Object related) {
         if (DEBUG) {
             System.out.println("AbstractTracked.trackAdding: " + item); //$NON-NLS-1$
@@ -379,6 +383,7 @@ abstract class AbstractTracked {
      *         items or a new array large enough to hold the tracked items.
      * @GuardedBy this
      */
+    @SuppressWarnings("unchecked")
     Object[] getTracked(final Object[] list) {
         return tracked.keySet().toArray(list);
     }

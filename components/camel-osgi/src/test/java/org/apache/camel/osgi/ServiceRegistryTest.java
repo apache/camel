@@ -34,10 +34,10 @@ public class ServiceRegistryTest extends CamelOsgiTestSupport {
         assertNotNull("MyService should not be null", myService);
         
         Object service = context.getRegistry().lookup(MyService.class.getName());
-        assertNotNull("MyService should not be null", myService);
+        assertNotNull("MyService should not be null", service);
         
         service = context.getRegistry().lookupByType(MyService.class);
-        assertNotNull("MyService should not be null", myService);
+        assertNotNull("MyService should not be null", service);
         context.stop();
     }
     
@@ -53,10 +53,10 @@ public class ServiceRegistryTest extends CamelOsgiTestSupport {
         assertNotNull("MyService should not be null", myService);
         
         Object service = context.getRegistry().lookup(MyService.class.getName());
-        assertNotNull("MyService should not be null", myService);
+        assertNotNull("MyService should not be null", service);
         
         service = context.getRegistry().lookupByType(MyService.class);
-        assertNotNull("MyService should not be null", myService);
+        assertNotNull("MyService should not be null", service);
         
         context.stop();
     }

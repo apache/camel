@@ -30,7 +30,8 @@ public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
 
     @Test
     public void testOsgiResolverFindAnnotatedTest() throws IOException {
-        BundleContext  context = getActivator().getBundle().getBundleContext();
+        BundleContext context = Activator.getBundle().getBundleContext();        
+        assertNotNull("The BundleContext should not be null", context);
         OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
              
         String[] packageNames = {"org.apache.camel.osgi.test"};
@@ -41,7 +42,8 @@ public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
  
     @Test
     public void testOsgiResolverFindImplementationTest() {
-        BundleContext  context = getActivator().getBundle().getBundleContext();
+        BundleContext context = Activator.getBundle().getBundleContext();        
+        assertNotNull("The BundleContext should not be null", context);
         OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
         String[] packageNames = {"org.apache.camel.osgi.test"};
         Set<Class<?>> classes = resolver.findImplementations(RoutesBuilder.class, packageNames);

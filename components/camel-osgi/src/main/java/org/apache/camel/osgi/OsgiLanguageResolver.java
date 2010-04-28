@@ -30,12 +30,12 @@ public class OsgiLanguageResolver extends DefaultLanguageResolver {
     }
     
     @Override
-    protected Class findLanguage(String name, CamelContext context) throws Exception {
+    protected Class<?> findLanguage(String name, CamelContext context) throws Exception {
         return Activator.getLanguage(name);
     }
     
     @Override
-    protected Class findLanguageResolver(String name, CamelContext context) throws Exception {
+    protected Class<?> findLanguageResolver(String name, CamelContext context) throws Exception {
         return Activator.getLanguageResolver(name);
     }
 

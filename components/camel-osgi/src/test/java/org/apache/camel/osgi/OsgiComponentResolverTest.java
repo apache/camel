@@ -27,7 +27,8 @@ public class OsgiComponentResolverTest extends CamelOsgiTestSupport {
     
     @Test
     public void testOsgiResolverFindLanguageTest() throws Exception {
-        BundleContext context = getActivator().getBundle().getBundleContext();        
+        BundleContext context = Activator.getBundle().getBundleContext();        
+        assertNotNull("The BundleContext should not be null", context);
         CamelContext camelContext = new DefaultCamelContext();
         OsgiComponentResolver resolver = new OsgiComponentResolver();
         Component component = resolver.resolveComponent("file_test", camelContext);

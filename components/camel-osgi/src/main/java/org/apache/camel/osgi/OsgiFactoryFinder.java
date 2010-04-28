@@ -41,7 +41,7 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
     }
 
     @Override
-    public Class findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
+    public Class<?> findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
         if (propertyPrefix == null) {
             propertyPrefix = "";
         }
