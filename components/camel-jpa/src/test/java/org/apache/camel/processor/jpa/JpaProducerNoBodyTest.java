@@ -72,6 +72,7 @@ public class JpaProducerNoBodyTest extends CamelTestSupport {
         };
     }
 
+    @SuppressWarnings("unchecked")
     protected void cleanupRepository() {
         jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 

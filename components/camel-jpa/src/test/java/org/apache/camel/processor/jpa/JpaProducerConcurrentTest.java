@@ -64,7 +64,7 @@ public class JpaProducerConcurrentTest extends CamelTestSupport {
         getMockEndpoint("mock:result").assertNoDuplicates(body());
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future> responses = new ConcurrentHashMap();
+        Map<Integer, Future> responses = new ConcurrentHashMap<Integer, Future>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future out = executor.submit(new Callable<Object>() {
@@ -114,6 +114,7 @@ public class JpaProducerConcurrentTest extends CamelTestSupport {
         assertIsInstanceOf(SendEmail.class, list.get(0));
     }
 
+    @SuppressWarnings("unchecked")
     protected void cleanupRepository() {
         jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 

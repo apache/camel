@@ -88,6 +88,7 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
         assertEquals("mock://result", db.getToNode());
     }
 
+    @SuppressWarnings("unchecked")
     protected void cleanupRepository() {
         jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 

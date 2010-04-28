@@ -63,6 +63,7 @@ public class JpaMessageIdRepository implements IdempotentRepository<String> {
         return transactionTemplate;
     }
 
+    @SuppressWarnings("unchecked")
     public boolean add(final String messageId) {
         // Run this in single transaction.
         Boolean rc = (Boolean)transactionTemplate.execute(new TransactionCallback() {
@@ -83,6 +84,7 @@ public class JpaMessageIdRepository implements IdempotentRepository<String> {
         return rc.booleanValue();
     }
 
+    @SuppressWarnings("unchecked")
     public boolean contains(final String messageId) {
         // Run this in single transaction.
         Boolean rc = (Boolean)transactionTemplate.execute(new TransactionCallback() {
@@ -98,6 +100,7 @@ public class JpaMessageIdRepository implements IdempotentRepository<String> {
         return rc.booleanValue();
     }
 
+    @SuppressWarnings("unchecked")
     public boolean remove(final String messageId) {
         Boolean rc = (Boolean)transactionTemplate.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {

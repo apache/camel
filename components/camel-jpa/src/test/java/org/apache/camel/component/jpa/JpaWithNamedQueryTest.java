@@ -111,6 +111,7 @@ public class JpaWithNamedQueryTest extends Assert {
         Thread.sleep(1000);
 
         transactionStrategy.execute(new JpaCallback() {
+            @SuppressWarnings("unchecked")
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
 
                 // now lets assert that there are still 2 entities left

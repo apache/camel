@@ -67,6 +67,7 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     protected void cleanupRepository() {
         jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
@@ -94,6 +95,7 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         context.addRoutes(new SpringRouteBuilder() {
@@ -133,12 +135,13 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
         assertTrue("Should contain message 3", ids.contains("3"));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testFailedExchangesNotAdded() throws Exception {
         context.addRoutes(new SpringRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).redeliverDelay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).redeliveryDelay(0).logStackTrace(false));
 
                 from("direct:start").idempotentConsumer(
                         header("messageId"),

@@ -87,6 +87,7 @@ public class JpaRouteMaximumResultsTest extends CamelTestSupport {
         assertIsInstanceOf(SendEmail.class, list.get(0));
     }
 
+    @SuppressWarnings("unchecked")
     protected void cleanupRepository() {
         jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 

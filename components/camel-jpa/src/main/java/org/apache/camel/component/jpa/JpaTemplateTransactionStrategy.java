@@ -73,6 +73,7 @@ public class JpaTemplateTransactionStrategy implements TransactionStrategy {
         return new JpaTemplateTransactionStrategy(template, tranasctionTemplate);
     }
 
+    @SuppressWarnings("unchecked")
     public Object execute(final JpaCallback callback) {
         return transactionTemplate.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus status) {

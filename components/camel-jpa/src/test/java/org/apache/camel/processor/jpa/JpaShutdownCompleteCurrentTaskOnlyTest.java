@@ -101,6 +101,7 @@ public class JpaShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
         return SpringCamelContext.springCamelContext(applicationContext);
     }
 
+    @SuppressWarnings("unchecked")
     protected void cleanupRepository() {
         jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
