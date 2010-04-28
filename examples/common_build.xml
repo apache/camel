@@ -128,6 +128,7 @@
     <path refid="camel.core.classpath"/>
     <fileset dir="${camel.lib}">
       <include name="**/camel-spring-*.jar"/>
+      <exclude name="**/camel-spring-osgi*.jar"/>
       <exclude name="**/camel-spring-integration*.jar"/>
       <include name="**/activation-*.jar"/>
       <include name="**/jaxb-impl-*.jar"/>
