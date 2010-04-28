@@ -16,15 +16,10 @@
  */
 package org.apache.camel.web.util;
 
-import java.io.UnsupportedEncodingException;
 import java.util.BitSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public final class UriCharactersEncoder {
-    private static BitSet unsafeCharacters;
-    private static final transient Log LOG = LogFactory.getLog(UriCharactersEncoder.class);
+    private static BitSet unsafeCharacters;    
     private static final char[] HEX_DIGITS = {
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 

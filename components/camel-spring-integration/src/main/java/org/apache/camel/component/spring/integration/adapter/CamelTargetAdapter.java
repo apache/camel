@@ -23,8 +23,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.spring.integration.SpringIntegrationBinding;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.integration.core.Message;
 import org.springframework.integration.core.MessageChannel;
 import org.springframework.integration.core.MessageHeaders;
@@ -39,8 +37,6 @@ import org.springframework.integration.message.MessageHandler;
  * @version $Revision$
  */
 public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageHandler {
-
-    private final Log logger = LogFactory.getLog(this.getClass());
     private ProducerTemplate camelTemplate;
     private MessageChannel replyChannel;
 

@@ -31,7 +31,7 @@ public class RssEndpointTest extends RssPollingConsumerTest {
                 rss.setFeedUri("file:src/test/data/rss20.xml");
                 rss.setSplitEntries(false);
 
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<String, Object>();
                 map.put("delay", 100);
                 rss.setConsumerProperties(map);
 

@@ -45,6 +45,7 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void sortEntries() {
         Collections.sort(list, new RssDateComparator());
     }

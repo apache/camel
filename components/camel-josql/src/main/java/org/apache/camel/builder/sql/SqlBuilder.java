@@ -101,6 +101,7 @@ public class SqlBuilder implements Expression, Predicate {
 
     // Implementation methods
     // -----------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     protected boolean matches(Exchange exchange, List list) {
         return ObjectHelper.matches(list);
     }

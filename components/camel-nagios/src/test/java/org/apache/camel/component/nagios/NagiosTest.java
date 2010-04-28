@@ -150,7 +150,7 @@ public class NagiosTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(NagiosConstants.LEVEL, "CRITICAL");
         headers.put(NagiosConstants.HOST_NAME, "myHost");
         headers.put(NagiosConstants.SERVICE_NAME, "myService");

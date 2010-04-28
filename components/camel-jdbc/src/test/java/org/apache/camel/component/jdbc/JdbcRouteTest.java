@@ -41,6 +41,7 @@ public class JdbcRouteTest extends CamelTestSupport {
     private String user = "sa";
     private String password = "";
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testJdbcRoutes() throws Exception {
         // START SNIPPET: invoke

@@ -42,6 +42,7 @@ public final class ProcessorDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }
 
+    @SuppressWarnings("unchecked")
     public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         if (processor instanceof AggregateDefinition) {
             AggregateDefinitionRenderer.render(buffer, processor);

@@ -73,7 +73,7 @@ public class RestletProducerConcurrentTest extends CamelTestSupport {
         assertEquals(files, responses.size());
 
         // get all responses
-        Set unique = new HashSet();
+        Set<Object> unique = new HashSet<Object>();
         for (Future future : responses.values()) {
             unique.add(future.get());
         }

@@ -47,7 +47,7 @@ public class MinaProducerConcurrentTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(files);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future> responses = new ConcurrentHashMap();
+        Map<Integer, Future> responses = new ConcurrentHashMap<Integer, Future>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future out = executor.submit(new Callable<Object>() {
@@ -62,7 +62,7 @@ public class MinaProducerConcurrentTest extends ContextTestSupport {
         assertEquals(files, responses.size());
 
         // get all responses
-        Set unique = new HashSet();
+        Set<Object> unique = new HashSet<Object>();
         for (Future future : responses.values()) {
             unique.add(future.get());
         }

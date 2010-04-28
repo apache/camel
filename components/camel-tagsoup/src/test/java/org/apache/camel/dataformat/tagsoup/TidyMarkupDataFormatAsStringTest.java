@@ -26,16 +26,14 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+
 
 /**
  * @version $Revision$
  */
 public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(TidyMarkupDataFormatAsStringTest.class);
-
+   
     @Test
     public void testUnMarshalToStringOfXml() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);

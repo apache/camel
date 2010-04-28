@@ -54,7 +54,7 @@ import org.springframework.core.io.Resource;
  * @version $Revision$
  */
 public class JingValidator implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(JingValidator.class);
+    //private static final transient Log LOG = LogFactory.getLog(JingValidator.class);
     private Schema schema;
     private SchemaFactory schemaFactory;
     private String schemaNamespace = XMLConstants.RELAXNG_NS_URI;

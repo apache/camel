@@ -29,6 +29,7 @@ import org.apache.camel.language.NamespacePrefix;
  * @version $Revision$
  */
 public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
+    @SuppressWarnings("unchecked")
     @Override
     public Expression createExpression(CamelContext camelContext, Annotation annotation,
                                        LanguageAnnotation languageAnnotation, Class expressionReturnType) {

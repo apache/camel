@@ -28,6 +28,7 @@ import org.apache.camel.impl.JndiRegistry;
 
 public class LdapRouteTest extends LdapTestSupport {
 
+    @SuppressWarnings("unchecked")
     public void testLdapRoute() throws Exception {
         // START SNIPPET: invoke
         Endpoint endpoint = context.getEndpoint("direct:start");

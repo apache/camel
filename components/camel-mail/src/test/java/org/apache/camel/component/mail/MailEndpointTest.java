@@ -76,8 +76,7 @@ public class MailEndpointTest extends CamelTestSupport {
         assertNull(endpoint.getContentTypeResolver());
         assertNotNull(endpoint.getBinding());
         assertNotNull(endpoint.getHeaderFilterStrategy());
-
-        MailBinding bnd = endpoint.getBinding();
+        
         MyMailBinding myBnd = new MyMailBinding();
         endpoint.setBinding(myBnd);
         assertSame(myBnd, endpoint.getBinding());

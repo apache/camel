@@ -106,6 +106,7 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void fireExpiredEvent(final ActivityState activityState) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Trying to fire expiration of: " + activityState);

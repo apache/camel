@@ -42,7 +42,7 @@ public class AtomGoodBlogsTest extends CamelTestSupport {
     private CamelContext context;
 
     // We use a simple Hashtable for our bean registry. For more advanced usage Spring is supported out-of-the-box
-    private Hashtable beans = new Hashtable();
+    private Hashtable<String, Object> beans = new Hashtable<String, Object>();
 
     // We initialize Camel
     private void setupCamel() throws Exception {

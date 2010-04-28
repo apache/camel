@@ -27,8 +27,6 @@ import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.restlet.data.Method;
 
 /**
@@ -37,7 +35,7 @@ import org.restlet.data.Method;
  * @version $Revision$
  */
 public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
-    private static final Log LOG = LogFactory.getLog(RestletEndpoint.class);
+    //private static final Log LOG = LogFactory.getLog(RestletEndpoint.class);
 
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_PROTOCOL = "http";

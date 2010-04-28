@@ -19,15 +19,13 @@ package org.apache.camel.component.quickfix;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
  * QuickfixConsumer is intended to consume the FIX messages
  */
 public class QuickfixConsumer extends DefaultConsumer {
-    private static final Log LOG = LogFactory.getLog(QuickfixConsumer.class);
+    //private static final Log LOG = LogFactory.getLog(QuickfixConsumer.class);
 
     public QuickfixConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);

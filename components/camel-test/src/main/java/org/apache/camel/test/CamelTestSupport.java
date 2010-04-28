@@ -182,6 +182,7 @@ public abstract class CamelTestSupport extends TestSupport {
         return new JndiRegistry(createJndiContext());
     }
 
+    @SuppressWarnings("unchecked")
     protected Context createJndiContext() throws Exception {
         Properties properties = new Properties();
 

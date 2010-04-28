@@ -36,7 +36,7 @@ public class PrinterComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         config.parseURI(new URI(uri));
         
         PrinterEndpoint printerEndpoint = new PrinterEndpoint(uri, this, config);

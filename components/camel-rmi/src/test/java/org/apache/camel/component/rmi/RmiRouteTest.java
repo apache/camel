@@ -38,6 +38,7 @@ public class RmiRouteTest extends Assert {
         return 37541;
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testPojoRoutes() throws Exception {
         if (classPathHasSpaces()) {

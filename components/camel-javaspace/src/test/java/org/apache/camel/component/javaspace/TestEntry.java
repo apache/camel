@@ -48,6 +48,6 @@ public class TestEntry implements Entry {
     }
 
     public void setId(Integer id) {
-        id = id;
+        this.id = id;
     }
 }

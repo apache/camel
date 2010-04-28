@@ -77,7 +77,7 @@ public class RouteWithErrorHandlerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0));
+                errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0));
 
                 onException(InvalidOrderException.class).maximumRedeliveries(0).handled(true)
                     .to("mock:invalid");

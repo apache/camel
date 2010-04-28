@@ -115,6 +115,7 @@ public class TidyMarkupDataFormat implements DataFormat {
      * 
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
 
         ObjectHelper.notNull(dataObjectType, "dataObjectType", this);

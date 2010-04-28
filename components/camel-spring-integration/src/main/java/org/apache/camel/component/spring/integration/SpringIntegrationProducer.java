@@ -23,8 +23,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.integration.channel.BeanFactoryChannelResolver;
 import org.springframework.integration.channel.ChannelResolver;
 import org.springframework.integration.channel.DirectChannel;
@@ -40,19 +38,17 @@ import org.springframework.integration.message.MessageHandler;
  * should be set for receiving the response message.
  * @version $Revision$
  */
-public class SpringIntegrationProducer extends DefaultProducer implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(SpringIntegrationProducer.class);
+public class SpringIntegrationProducer extends DefaultProducer implements Processor {    
 
     private SpringCamelContext context;
     private DirectChannel inputChannel;
     private MessageChannel outputChannel;
     private String outputChannelName;
     private ChannelResolver channelResolver;
-    private SpringIntegrationEndpoint endpoint;
+
 
     public SpringIntegrationProducer(SpringIntegrationEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
         context = (SpringCamelContext) endpoint.getCamelContext();
         if (context != null && endpoint.getMessageChannel() == null) {
             outputChannelName = endpoint.getDefaultChannel();
@@ -98,6 +94,5 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
         
         outputChannel.send(siOutmessage);
     }
-
 
 }

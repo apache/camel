@@ -36,7 +36,7 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         Mailbox.clearAll();
 
         // START SNIPPET: e1
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("To", "davsclaus@apache.org");
         map.put("From", "jstrachan@apache.org");
         map.put("Subject", "Camel rocks");

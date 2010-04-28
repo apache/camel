@@ -39,6 +39,7 @@ public class SqlProducer extends DefaultProducer {
         this.query = query;
     }
 
+    @SuppressWarnings("unchecked")
     public void process(final Exchange exchange) throws Exception {
         jdbcTemplate.execute(query, new PreparedStatementCallback() {
             public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {

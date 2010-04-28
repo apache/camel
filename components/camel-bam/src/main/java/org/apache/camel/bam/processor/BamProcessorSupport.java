@@ -74,6 +74,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
         this.correlationKeyExpression = correlationKeyExpression;
     }
 
+    @SuppressWarnings("unchecked")
     public void process(final Exchange exchange) {
         for (int i = 1; i <= retryCount; i++) {
             if (i > 1) {

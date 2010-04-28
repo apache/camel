@@ -37,7 +37,7 @@ public final class ErrorHandlerRenderer {
             if (maxRedeliveries != 0) {
                 buffer.append(".maximumRedeliveries(").append(maxRedeliveries).append(")");
             }
-            long redeliverDelay = redelivery.getRedeliverDelay();
+            long redeliverDelay = redelivery.getRedeliveryDelay();
             if (redeliverDelay != 1000) {
                 buffer.append(".redeliverDelay(").append(redeliverDelay).append(")");
             }

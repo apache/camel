@@ -42,6 +42,7 @@ public class JXPathTest extends LanguageTestSupport {
      */
     public void testJXPathPredicates() throws Exception {
         assertPredicate("in/headers/@foo = 'abc'");
+        assertInvalidPredicate("in/headders/@foo = 'abc'");
     }
 
     /**
@@ -65,7 +66,7 @@ public class JXPathTest extends LanguageTestSupport {
         try {
             assertPredicate(predicate);
             fail("Expected an ExpressionEvaluationException");
-        } catch (ExpressionEvaluationException e) {
+        } catch (AssertionError e) {
             //nothing to do -- test success
         }
     }

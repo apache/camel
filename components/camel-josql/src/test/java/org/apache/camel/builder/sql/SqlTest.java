@@ -51,6 +51,7 @@ public class SqlTest extends TestSupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testExpressionWithHeaderVariable() throws Exception {
         Expression expression = sql("SELECT * FROM org.apache.camel.builder.sql.Person where name = :fooHeader");

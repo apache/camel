@@ -66,7 +66,7 @@ public abstract class AbstractCastorDataFormat implements DataFormat {
 
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         Writer writer = new OutputStreamWriter(outputStream, encoding);
-        getMarshaller(exchange).marshal(body, writer);
+        Marshaller.marshal(body, writer);
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {

@@ -19,8 +19,6 @@ package org.apache.camel.component.xmpp;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -28,7 +26,6 @@ import org.junit.Test;
  * @version $Revision$
  */
 public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(XmppRouteMultipleProducersSingleConsumerTest.class);
     protected MockEndpoint goodEndpoint;
     protected MockEndpoint badEndpoint;
 
