@@ -139,13 +139,17 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
     }
 
     public boolean remove(String key) {
+        boolean answer;
         synchronized (cache) {
             // init store if not loaded before
             if (init.compareAndSet(false, true)) {
                 loadStore();
             }
-            return cache.remove(key) != null;
+            answer = cache.remove(key) != null;
+            // trunk store and flush the cache on remove
+            trunkStore();
         }
+        return answer;
     }
 
     public boolean confirm(String key) {
