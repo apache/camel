@@ -59,6 +59,7 @@ public class JettyEnableJmxTest extends CamelTestSupport {
         mbsc = getMBeanConnection();
     }
     
+    @SuppressWarnings("unchecked")
     @Test
     public void testEnableJmxProperty() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -77,6 +78,7 @@ public class JettyEnableJmxTest extends CamelTestSupport {
         assertEquals("Could not find 2 Jetty Server: " + s, 2, s.size());
     }
     
+    @SuppressWarnings("unchecked")
     @Test
     public void testShutdown() throws Exception {
         Set<ObjectName> s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
@@ -88,6 +90,7 @@ public class JettyEnableJmxTest extends CamelTestSupport {
         assertEquals("Could not find 0 Jetty Server: " + s, 0, s.size());
     }
     
+    @SuppressWarnings("unchecked")
     @Test
     public void testEndpointDisconnect() throws Exception {
         Set<ObjectName> s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
@@ -142,6 +145,7 @@ public class JettyEnableJmxTest extends CamelTestSupport {
         };
     }
     
+    @SuppressWarnings("unchecked")
     protected void releaseMBeanServers() {
         List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
 

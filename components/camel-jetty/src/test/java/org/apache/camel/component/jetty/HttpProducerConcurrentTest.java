@@ -51,7 +51,7 @@ public class HttpProducerConcurrentTest extends CamelTestSupport {
         getMockEndpoint("mock:result").assertNoDuplicates(body());
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future> responses = new ConcurrentHashMap();
+        Map<Integer, Future> responses = new ConcurrentHashMap<Integer, Future>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future out = executor.submit(new Callable<Object>() {
@@ -67,7 +67,7 @@ public class HttpProducerConcurrentTest extends CamelTestSupport {
         assertEquals(files, responses.size());
 
         // get all responses
-        Set unique = new HashSet();
+        Set<Object> unique = new HashSet<Object>();
         for (Future future : responses.values()) {
             unique.add(future.get());
         }

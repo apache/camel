@@ -69,12 +69,6 @@ public class HttpClientRouteEnableChunkedTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
-
-                Processor clientProc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        assertIsInstanceOf(InputStream.class, exchange.getIn().getBody());
-                    }
-                };
                 
                 from("direct:start2").to("http://localhost:9081/hello").to("mock:a");
                 

@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit testing demonstrating how to store incomming requests as files and serving a reponse back.
+ * Unit testing demonstrating how to store incoming requests as files and serving a reponse back.
  */
 public class HttpToFileTest extends CamelTestSupport {
 
@@ -50,7 +50,7 @@ public class HttpToFileTest extends CamelTestSupport {
         file = file.getAbsoluteFile();
         assertTrue("File should exists", file.exists());
 
-        String content = IOConverter.toString(file);
+        String content = IOConverter.toString(file, null);
         assertEquals("File content", "Hello World", content);
     }
 

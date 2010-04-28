@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -34,7 +36,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.http.helper.GZIPHelper;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
@@ -58,7 +62,7 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     public void readRequest(HttpServletRequest request, HttpMessage message) {
-
+        
         // lets force a parse of the body and headers
         message.getBody();
         // populate the headers from the request
@@ -78,8 +82,17 @@ public class DefaultHttpBinding implements HttpBinding {
                 headers.put(name, value);
             }
         }
+                
+        if (request.getCharacterEncoding() != null) {
+            headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
+            message.getExchange().setProperty(Exchange.CHARSET_NAME, request.getCharacterEncoding());
+        }
 
-        popluateRequestParameters(request, message);
+        popluateRequestParameters(request, message);        
+        
+        // reset the stream cache
+        StreamCache cache = message.getBody(StreamCache.class);
+        cache.reset();
         
         // store the method and query and other info in headers
         headers.put(Exchange.HTTP_METHOD, request.getMethod());
@@ -88,7 +101,6 @@ public class DefaultHttpBinding implements HttpBinding {
         headers.put(Exchange.HTTP_URI, request.getRequestURI());
         headers.put(Exchange.HTTP_PATH, request.getPathInfo());
         headers.put(Exchange.CONTENT_TYPE, request.getContentType());
-        headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
         
         popluateAttachments(request, message);
     }
@@ -105,6 +117,29 @@ public class DefaultHttpBinding implements HttpBinding {
                 headers.put(name, value);
             }
         }
+        
+        if (request.getMethod().equals("POST") && request.getContentType() != null && request.getContentType().equals("application/x-www-form-urlencoded")) {
+            String charset = request.getCharacterEncoding();
+            if (charset == null) {
+                charset = "UTF-8";
+            }
+            // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
+            String body = message.getBody(String.class);
+            try {
+                for (String param : body.split("&")) {
+                    String[] pair = param.split("=", 2);
+                    String name = URLDecoder.decode(pair[0], charset);
+                    String value = URLDecoder.decode(pair[1], charset);
+                    if (headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                        headers.put(name, value);
+                    }
+                }
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        
     }
     
     protected void popluateAttachments(HttpServletRequest request, HttpMessage message) {
@@ -271,8 +306,16 @@ public class DefaultHttpBinding implements HttpBinding {
         if (isUseReaderForPayload()) {
             return request.getReader();
         } else {
-            // otherwise use input stream
-            return HttpConverter.toInputStream(request);
+            // otherwise use input stream and we need to cache it first
+            InputStream is = HttpConverter.toInputStream(request);
+            try {
+                CachedOutputStream cos = new CachedOutputStream(httpMessage.getExchange());
+                IOHelper.copy(is, cos);
+                return cos.getStreamCache();
+            } finally {
+                is.close();
+            }
+             
         }
     }
 

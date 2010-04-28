@@ -30,9 +30,7 @@ public class JettyHttpEndpointDisconnectTest extends CamelTestSupport {
     @Test
     public void testContextShutdownRemovesHttpConnector() throws Exception {
         context.stop();
-        
-        JettyHttpComponent component = (JettyHttpComponent) context.getComponent("jetty");
-        assertEquals("Connector should have been removed", 0, component.CONNECTORS.size());
+        assertEquals("Connector should have been removed", 0, JettyHttpComponent.CONNECTORS.size());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
