@@ -55,7 +55,7 @@ public class LuceneQueryProducer extends DefaultProducer {
         String phrase = exchange.getIn().getHeader("QUERY", String.class);
         if (phrase != null) {
             searcher.open(indexDirectory, analyzer);
-            hits = searcher.search(phrase, maxNumberOfHits);            
+            hits = searcher.search(phrase, maxNumberOfHits, config.getLuceneVersion());            
         } else {
             throw new IllegalArgumentException("SearchPhrase for LucenePhraseQuerySearcher not set. Set the Header value: QUERY");
         }            

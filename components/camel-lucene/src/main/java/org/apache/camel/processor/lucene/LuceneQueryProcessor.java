@@ -24,6 +24,7 @@ import org.apache.camel.component.lucene.LuceneSearcher;
 import org.apache.camel.processor.lucene.support.Hits;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.util.Version;
 
 public class LuceneQueryProcessor implements Processor {
     private File indexDirectory;
@@ -32,6 +33,7 @@ public class LuceneQueryProcessor implements Processor {
     private LuceneSearcher searcher;
     private String searchPhrase;
     private int maxNumberOfHits; 
+    private Version luceneVersion;
     
     public LuceneQueryProcessor(String indexDirectoryPath, Analyzer analyzer, String defaultSearchPhrase, int maxNumberOfHits) {
         this.setAnalyzer(analyzer);
@@ -47,7 +49,7 @@ public class LuceneQueryProcessor implements Processor {
         if (phrase != null) {
             searcher = new LuceneSearcher();
             searcher.open(indexDirectory, analyzer);
-            hits = searcher.search(phrase, maxNumberOfHits);            
+            hits = searcher.search(phrase, maxNumberOfHits, luceneVersion);            
         } else {
             throw new IllegalArgumentException("SearchPhrase for LuceneQueryProcessor not set. Set the Header value: QUERY");
         }            
@@ -93,6 +95,14 @@ public class LuceneQueryProcessor implements Processor {
 
     public void setMaxNumberOfHits(int maxNumberOfHits) {
         this.maxNumberOfHits = maxNumberOfHits;
+    }
+    
+    public void setLuceneVersion(Version luceneVersion) {
+        this.luceneVersion = luceneVersion;
+    }
+    
+    public Version getLuceneVersion() {
+        return luceneVersion;
     }
         
 }

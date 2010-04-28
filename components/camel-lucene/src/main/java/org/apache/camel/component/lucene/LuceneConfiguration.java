@@ -21,13 +21,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.util.Version;
 
 public class LuceneConfiguration {
-    private static final transient Log LOG = LogFactory.getLog(LuceneConfiguration.class);
     private URI uri;
     private String protocolType;
     private String authority;
@@ -37,6 +35,7 @@ public class LuceneConfiguration {
     private File indexDirectory;
     private Analyzer analyzer;
     private int maxHits;
+    private Version luceneVersion = Version.LUCENE_30; 
 
     public LuceneConfiguration() {
     }
@@ -67,7 +66,7 @@ public class LuceneConfiguration {
         indexDirectory = component.resolveAndRemoveReferenceParameter(
                 parameters, "indexDir", File.class, new File("file:///./indexDirectory"));
         analyzer = component.resolveAndRemoveReferenceParameter(
-                parameters, "analyzer", Analyzer.class, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_CURRENT));
+                parameters, "analyzer", Analyzer.class, new StandardAnalyzer(luceneVersion));
 
         setMaxHits(component.getAndRemoveParameter(parameters, "maxHits", Integer.class, 10));
     }
@@ -163,6 +162,14 @@ public class LuceneConfiguration {
 
     public void setMaxHits(int maxHits) {
         this.maxHits = maxHits;
-    }    
+    }
+    
+    public void setLuceneVersion(Version luceneVersion) {
+        this.luceneVersion = luceneVersion;
+    }
+    
+    public Version getLuceneVersion() {
+        return luceneVersion;
+    }
     
 }

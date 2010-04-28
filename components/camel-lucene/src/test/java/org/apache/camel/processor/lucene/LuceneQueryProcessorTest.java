@@ -53,7 +53,7 @@ public class LuceneQueryProcessorTest extends CamelTestSupport {
     
     @Test
     public void testPhraseSearcher() throws Exception {
-        final StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
+        final StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_30);
         MockEndpoint mockSearchEndpoint = new MockEndpoint("mock:searchResult");
         
         context.stop();
