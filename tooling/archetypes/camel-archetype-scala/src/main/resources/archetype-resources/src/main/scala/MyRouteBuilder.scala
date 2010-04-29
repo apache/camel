@@ -26,16 +26,15 @@ class MyRouteBuilder extends RouteBuilder {
 
    //an example for the simple DSL syntax...
    "timer://foo?fixedRate=true&delay=0&period=10000" setbody("simple test") to "log:simple"
+
+   // an example of a Processor method
+   val myProcessorMethod = (exchange: Exchange) => {
+     exchange.getIn.setBody("block test")
+   }
    
    // ...and another one using Scala blocks
    "timer://foo?fixedRate=true&delay=5000&period=10000" ==> {
       process(myProcessorMethod)
       to("log:block")
    }
-
-   // an example of a Processor method
-   def myProcessorMethod(exchange: Exchange) = {
-      exchange.getIn().setBody("block test")
-   }
-
 }
