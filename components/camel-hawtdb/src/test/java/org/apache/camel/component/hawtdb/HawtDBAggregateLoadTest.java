@@ -31,11 +31,13 @@ public class HawtDBAggregateLoadTest extends CamelTestSupport {
 
     private static final Log LOG = LogFactory.getLog(HawtDBAggregateLoadTest.class);
     private static final int SIZE = 500;
+    private HawtDBAggregationRepository repo;
 
     @Before
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
+        repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
         super.setUp();
     }
 
@@ -66,8 +68,6 @@ public class HawtDBAggregateLoadTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                HawtDBAggregationRepository repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
-
                 from("seda:start?size=" + SIZE)
                     .to("log:input?groupSize=500")
                     .aggregate(header("id"), new MyAggregationStrategy())

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hawtdb;
 
-import java.io.File;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,23 +32,10 @@ import org.junit.Test;
  */
 public class HawtDBAggregateConcurrentSameGroupTest extends CamelTestSupport {
 
-    private HawtDBFile hawtDBFile;
-
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
-        File file = new File("target/data/hawtdb.dat");
-        hawtDBFile = new HawtDBFile();
-        hawtDBFile.setFile(file);
-        hawtDBFile.start();
-
         super.setUp();
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        hawtDBFile.stop();
-        super.tearDown();
     }
 
     @Test
@@ -92,9 +78,7 @@ public class HawtDBAggregateConcurrentSameGroupTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                HawtDBAggregationRepository repo = new HawtDBAggregationRepository();
-                repo.setHawtDBFile(hawtDBFile);
-                repo.setRepositoryName("repo1");
+                HawtDBAggregationRepository repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
 
                 from("direct:start")
                     .aggregate(header("id"), new MyAggregationStrategy())
