@@ -182,11 +182,11 @@ public class HttpRouteTest extends CamelTestSupport {
 
                 Processor procParameters = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
-                        String value = req.getParameter("request");
-                        String requestValue = exchange.getIn().getHeader("request", String.class);
+                        // As the request input stream is cached by DefaultHttpBinding,
+                        // HttpServletRequest can't get the parameters of post message
+                        String value = exchange.getIn().getHeader("request", String.class);
                         if (value != null) {
-                            assertEquals("We should get the same request header value from message", value, requestValue);
+                            assertNotNull("The value of the parameter should not be null", value);
                             exchange.getOut().setBody(value);
                         } else {
                             exchange.getOut().setBody("Can't get a right parameter");

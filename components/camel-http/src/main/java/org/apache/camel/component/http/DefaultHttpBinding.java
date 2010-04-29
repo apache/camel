@@ -310,6 +310,10 @@ public class DefaultHttpBinding implements HttpBinding {
         } else {
             // otherwise use input stream and we need to cache it first
             InputStream is = HttpConverter.toInputStream(request);
+            if (is == null) {
+                return is;
+            }
+            // convert the input stream to StreamCache
             try {
                 CachedOutputStream cos = new CachedOutputStream(httpMessage.getExchange());
                 IOHelper.copy(is, cos);

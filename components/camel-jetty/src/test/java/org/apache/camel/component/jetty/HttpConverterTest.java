@@ -78,7 +78,9 @@ public class HttpConverterTest extends CamelTestSupport {
 
                                 ServletInputStream sis = HttpConverter.toServletInputStream(msg);
                                 assertNotNull(sis);
-                                String s = exchange.getContext().getTypeConverter().convertTo(String.class, sis);
+                                // The ServletInputStream should be cached and you can't read message here
+                                assertTrue(sis.available() == 0);                                
+                                String s = msg.getBody(String.class);
 
                                 assertEquals("Hello World", s);
                             }
@@ -101,7 +103,7 @@ public class HttpConverterTest extends CamelTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 HttpMessage msg = exchange.getIn(HttpMessage.class);
 
-                                InputStream sis = HttpConverter.toInputStream(msg);
+                                InputStream sis = msg.getBody(InputStream.class);
                                 assertNotNull(sis);
                                 String s = exchange.getContext().getTypeConverter().convertTo(String.class, sis);
 
