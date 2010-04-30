@@ -206,7 +206,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     log.trace("URL from classloader: " + url);
                 }
                 
-                url = customerResourceLocator(url);
+                url = customResourceLocator(url);
 
                 String urlPath = url.getFile();
                 urlPath = URLDecoder.decode(urlPath, "UTF-8");
