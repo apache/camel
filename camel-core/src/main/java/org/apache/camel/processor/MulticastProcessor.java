@@ -101,7 +101,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
     private final CamelContext camelContext;
     private Collection<Processor> processors;
-    private AggregationStrategy aggregationStrategy;
+    private final AggregationStrategy aggregationStrategy;
     private final boolean parallelProcessing;
     private final boolean streaming;
     private final boolean stopOnException;
@@ -406,10 +406,6 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;
-    }
-
-    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
-        this.aggregationStrategy = aggregationStrategy;
     }
 
     public boolean isParallelProcessing() {
