@@ -39,6 +39,8 @@ public class ShutdownSedaAndDirectEndpointTest extends ContextTestSupport {
 
         context.stop();
 
+        assertMockEndpointsSatisfied();
+
         assertEquals("Should complete all messages", 5, bar.getReceivedCounter());
     }
 
@@ -52,7 +54,7 @@ public class ShutdownSedaAndDirectEndpointTest extends ContextTestSupport {
                     .to("direct:bar");
 
                 from("direct:bar")
-                    .delay(1000)
+                    .delay(250)
                     .to("mock:bar");
             }
         };

@@ -29,6 +29,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -66,6 +67,26 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
     @Override
     public String getTraceLabel() {
         return "split[" + expression + "]";
+    }
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        AggregationStrategy strategy = getAggregationStrategy();
+
+        // if original aggregation strategy then store exchange
+        // on it as the original exchange
+        UseOriginalAggregationStrategy original = null;
+        if (strategy instanceof UseOriginalAggregationStrategy) {
+            original = (UseOriginalAggregationStrategy) strategy;
+            original.setOriginal(exchange);
+        }
+
+        super.process(exchange);
+
+        if (original != null) {
+            // and remove the reference when we are done (due to thread local stuff)
+            original.setOriginal(null);
+        }
     }
 
     @Override

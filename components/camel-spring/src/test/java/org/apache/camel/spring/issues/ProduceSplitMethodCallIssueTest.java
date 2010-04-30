@@ -35,7 +35,8 @@ public class ProduceSplitMethodCallIssueTest extends SpringTestSupport {
 
         CoolService cool = context.getRegistry().lookup("cool", CoolService.class);
         String out = cool.stuff("A,B");
-        assertEquals("Hello B", out);
+        // keeps the original message
+        assertEquals("A,B", out);
 
         assertMockEndpointsSatisfied();
     }
