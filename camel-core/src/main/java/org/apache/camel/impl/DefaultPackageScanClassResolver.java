@@ -205,6 +205,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 if (log.isTraceEnabled()) {
                     log.trace("URL from classloader: " + url);
                 }
+                
+                url = customerResourceLocator(url);
 
                 String urlPath = url.getFile();
                 urlPath = URLDecoder.decode(urlPath, "UTF-8");
@@ -278,6 +280,12 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 log.debug("Cannot read entries in url: " + url, e);
             }
         }
+    }
+
+    // We can override this method to support the customer ResourceLocator
+    protected URL customerResourceLocator(URL url) throws IOException {
+        // Do nothing here
+        return url;
     }
 
     /**

@@ -45,6 +45,7 @@
     <module>camel-csv</module>
     <module>camel-cxf</module>
     <module>camel-dozer</module>
+    <module>camel-eclipse</module>
     <module>camel-exec</module>
     <module>camel-flatpack</module>
     <module>camel-freemarker</module>
