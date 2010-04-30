@@ -149,9 +149,7 @@ public class SmppBinding {
 
         if (in.getHeaders().containsKey(SCHEDULE_DELIVERY_TIME)) {
             submitSm.setScheduleDeliveryTime(timeFormatter.format((Date) in.getHeader(SCHEDULE_DELIVERY_TIME)));
-        } else {
-            submitSm.setScheduleDeliveryTime(timeFormatter.format(getCurrentDate()));
-        }
+        } 
 
         if (in.getHeaders().containsKey(VALIDITY_PERIOD)) {
             submitSm.setValidityPeriod(timeFormatter.format((Date) in.getHeader(VALIDITY_PERIOD)));
