@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.FileLocator;
 
 public class EclipsePackageScanClassResolver extends DefaultPackageScanClassResolver {
     
-    protected URL customerResourceLocator(URL url) throws IOException {
+    protected URL customResourceLocator(URL url) throws IOException {
         if (url.getProtocol().equalsIgnoreCase("bundleresource")) {
             url = FileLocator.resolve(url);
         }

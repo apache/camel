@@ -282,8 +282,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         }
     }
 
-    // We can override this method to support the customer ResourceLocator
-    protected URL customerResourceLocator(URL url) throws IOException {
+    // We can override this method to support the custom ResourceLocator
+    protected URL customResourceLocator(URL url) throws IOException {
         // Do nothing here
         return url;
     }

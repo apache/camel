@@ -46,6 +46,7 @@
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-dozer</include>
+	<include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-freemarker</include>
