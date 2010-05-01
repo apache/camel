@@ -32,6 +32,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.hl7.*</camel.osgi.export.pkg>
+        <hapi-version>1.0</hapi-version>
     </properties>
 
     <repositories>
@@ -51,7 +52,7 @@
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
-            <version>0.6</version>
+            <version>${hapi-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.mina</groupId>
@@ -72,13 +73,13 @@
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v24</artifactId>
-            <version>0.6</version>
+            <version>${hapi-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v25</artifactId>
-            <version>0.6</version>
+            <version>${hapi-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
