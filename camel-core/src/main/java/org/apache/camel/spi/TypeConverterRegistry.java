@@ -38,8 +38,9 @@ public interface TypeConverterRegistry {
      * Registers a new fallback type converter
      *
      * @param typeConverter the type converter to use
+     * @param canPromote  whether or not the fallback type converter can be promoted to a first class type converter
      */
-    void addFallbackTypeConverter(TypeConverter typeConverter);
+    void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote);
 
     /**
      * Performs a lookup for a given type converter.
@@ -52,11 +53,15 @@ public interface TypeConverterRegistry {
 
     /**
      * Sets the injector to be used for creating new instances during type convertions.
+     *
+     * @param injector the injector
      */
     void setInjector(Injector injector);
 
     /**
      * Gets the injector
+     *
+     * @return the injector
      */
     Injector getInjector();
 }

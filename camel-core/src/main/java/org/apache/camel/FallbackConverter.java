@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * <p/>
  * The difference between a regular <tt>@Converter</tt> and a <tt>@FallbackConverter</tt>
  * is that the fallback is resolved at last if no regular converter could be found.
- * Also the method signautre is scoped to be generic to allow handling a broader range
+ * Also the method signature is scoped to be generic to allow handling a broader range
  * of types trying to be converted. The fallback converter can just return <tt>null</tt>
  * if it can not handle the types to convert from/to.
  *
@@ -42,4 +42,9 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.TYPE, ElementType.METHOD })
 public @interface FallbackConverter {
+
+    /**
+     * Whether or not this fallback converter can be promoted to a first class type converter.
+     */
+    boolean canPromote() default false;
 }

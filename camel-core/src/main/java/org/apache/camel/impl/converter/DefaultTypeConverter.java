@@ -53,7 +53,7 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
     private final Map<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
     private final Map<TypeMapping, TypeMapping> misses = new ConcurrentHashMap<TypeMapping, TypeMapping>();
     private final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
-    private final List<TypeConverter> fallbackConverters = new ArrayList<TypeConverter>();
+    private final List<FallbackTypeConverter> fallbackConverters = new ArrayList<FallbackTypeConverter>();
     private Injector injector;
     private final FactoryFinder factoryFinder;
 
@@ -64,11 +64,11 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
 
         // add to string first as it will then be last in the last as to string can nearly
         // always convert something to a string so we want it only as the last resort
-        addFallbackTypeConverter(new ToStringTypeConverter());
-        addFallbackTypeConverter(new EnumTypeConverter());
-        addFallbackTypeConverter(new ArrayTypeConverter());
-        addFallbackTypeConverter(new PropertyEditorTypeConverter());
-        addFallbackTypeConverter(new FutureTypeConverter(this));
+        addFallbackTypeConverter(new ToStringTypeConverter(), false);
+        addFallbackTypeConverter(new EnumTypeConverter(), true);
+        addFallbackTypeConverter(new ArrayTypeConverter(), true);
+        addFallbackTypeConverter(new PropertyEditorTypeConverter(), true);
+        addFallbackTypeConverter(new FutureTypeConverter(this), false);
     }
 
     public List<TypeConverterLoader> getTypeConverterLoaders() {
@@ -131,7 +131,7 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
     public Object doConvertTo(final Class type, final Exchange exchange, final Object value) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Converting " + (value == null ? "null" : value.getClass().getCanonicalName())
-                + " -> " + type.getCanonicalName() + " with value: " + value);
+                    + " -> " + type.getCanonicalName() + " with value: " + value);
         }
 
         if (value == null) {
@@ -164,8 +164,8 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
         }
 
         // fallback converters
-        for (TypeConverter fallback : fallbackConverters) {
-            Object rc = fallback.convertTo(type, exchange, value);
+        for (FallbackTypeConverter fallback : fallbackConverters) {
+            Object rc = fallback.getFallbackTypeConverter().convertTo(type, exchange, value);
 
             if (Void.TYPE.equals(rc)) {
                 // it cannot be converted so give up
@@ -173,15 +173,28 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
             }
 
             if (rc != null) {
-                // add it as a known type converter since we found a fallback that could do it
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Adding fallback type converter as a known type converter to convert from: "
-                        + type.getCanonicalName() + " to: " + value.getClass().getCanonicalName());
+                // if fallback can promote then let it be promoted to a first class type converter
+                if (fallback.isCanPromote()) {
+                    // add it as a known type converter since we found a fallback that could do it
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Promoting fallback type converter as a known type converter to convert from: "
+                                + type.getCanonicalName() + " to: " + value.getClass().getCanonicalName()
+                                + " for the fallback converter: " + fallback.getFallbackTypeConverter());
+                    }
+                    addTypeConverter(type, value.getClass(), fallback.getFallbackTypeConverter());
                 }
-                addTypeConverter(type, value.getClass(), fallback);
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Fallback type converter " + fallback.getFallbackTypeConverter() + " converted type from: "
+                                + type.getCanonicalName() + " to: " + value.getClass().getCanonicalName());
+                }
+
+                // return converted value
                 return rc;
             }
         }
+
+        // TODO: check before if its type/value is primitive/wrapper combo which we can convert asap then
 
         // primitives
         if (type.isPrimitive()) {
@@ -218,15 +231,15 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
         }
     }
 
-    public void addFallbackTypeConverter(TypeConverter typeConverter) {
+    public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Adding fallback type converter: " + typeConverter);
+            LOG.trace("Adding fallback type converter: " + typeConverter + " which can promote: " + canPromote);
         }
 
         // add in top of fallback as the toString() fallback will nearly always be able to convert
-        fallbackConverters.add(0, typeConverter);
+        fallbackConverters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
         if (typeConverter instanceof TypeConverterAware) {
-            TypeConverterAware typeConverterAware = (TypeConverterAware)typeConverter;
+            TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
             typeConverterAware.setTypeConverter(this);
         }
     }
@@ -377,7 +390,7 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
     protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
         List<TypeConverter> converters = factoryFinder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
         for (TypeConverter converter : converters) {
-            addFallbackTypeConverter(converter);
+            addFallbackTypeConverter(converter, false);
         }
     }
 
@@ -415,9 +428,9 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
         @Override
         public boolean equals(Object object) {
             if (object instanceof TypeMapping) {
-                TypeMapping that = (TypeMapping)object;
+                TypeMapping that = (TypeMapping) object;
                 return ObjectHelper.equal(this.fromType, that.fromType)
-                       && ObjectHelper.equal(this.toType, that.toType);
+                        && ObjectHelper.equal(this.toType, that.toType);
             }
             return false;
         }
@@ -440,4 +453,26 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
             return fromType.isAssignableFrom(fromClass);
         }
     }
+
+    /**
+     * Represents a fallback type converter
+     */
+    protected static class FallbackTypeConverter {
+        private boolean canPromote;
+        private TypeConverter fallbackTypeConverter;
+
+        FallbackTypeConverter(TypeConverter fallbackTypeConverter, boolean canPromote) {
+            this.canPromote = canPromote;
+            this.fallbackTypeConverter = fallbackTypeConverter;
+        }
+
+        public boolean isCanPromote() {
+            return canPromote;
+        }
+
+        public TypeConverter getFallbackTypeConverter() {
+            return fallbackTypeConverter;
+        }
+    }
+
 }

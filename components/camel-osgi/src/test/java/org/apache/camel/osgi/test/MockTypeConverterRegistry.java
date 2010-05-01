@@ -39,7 +39,7 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         typeConverters.add(typeConverter);
     }
 
-    public void addFallbackTypeConverter(TypeConverter typeConverter) {
+    public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
         fallbackTypeConverters.add(typeConverter);
     }
 

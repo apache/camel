@@ -76,18 +76,13 @@ public final class ExecResultConverter {
      * @param type Class instance of the type to which to convert
      * @param exchange a Camel exchange. If exchange is <code>null</code>, no
      *            conversion will be made
-     * @param result
+     * @param result the exec result
      * @return the converted {@link ExecResult}
-     * @throws FileNotFoundException if theres is a file in the execResult, and
+     * @throws FileNotFoundException if there is a file in the execResult, and
      *             the file can not be found
      */
     public static <T> T convertTo(Class<T> type, Exchange exchange, ExecResult result) throws FileNotFoundException {
-        if (exchange != null) {
-            return (T)exchange.getContext().getTypeConverter().convertTo(type, exchange, toInputStream(result));
-        } else {
-            // should revert to fallback converter if we don't have an exchange
-            return null;
-        }
+        return exchange.getContext().getTypeConverter().convertTo(type, exchange, toInputStream(result));
     }
 
     /**

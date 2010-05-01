@@ -181,7 +181,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
             completion = new SubmitOrderedCompletionService<Exchange>(executorService);
         }
 
-        final AtomicInteger total =  new AtomicInteger(0);
+        final AtomicInteger total = new AtomicInteger(0);
 
         for (ProcessorExchangePair pair : pairs) {
             final Processor processor = pair.getProcessor();

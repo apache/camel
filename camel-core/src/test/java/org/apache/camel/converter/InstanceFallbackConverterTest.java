@@ -31,7 +31,7 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class InstanceFallbackConverterTest extends ContextTestSupport {
 
-    public void testIntanceFallbackConverter() throws Exception {
+    public void testInstanceFallbackConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Currency cur = Currency.getInstance(Locale.US);
 
@@ -39,7 +39,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         assertEquals("Money talks", money);
     }
 
-    public void testIntanceFallbackMandatoryConverter() throws Exception {
+    public void testInstanceFallbackMandatoryConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Currency cur = Currency.getInstance(Locale.US);
 
@@ -47,7 +47,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         assertEquals("Money talks", money);
     }
 
-    public void testIntanceFallbackMandatoryFailed() throws Exception {
+    public void testInstanceFallbackMandatoryFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
 
         try {
@@ -58,7 +58,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         }
     }
 
-    public void testIntanceFallbackFailed() throws Exception {
+    public void testInstanceFallbackFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
 
         Date out = context.getTypeConverter().convertTo(Date.class, exchange, new Timestamp(0));

@@ -213,12 +213,12 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                             + method + " as a fallback converter method returns a void method");
                 } else {
                     if (isStatic(modifiers)) {
-                        registerFallbackTypeConverter(registry, new StaticMethodFallbackTypeConverter(method, registry));
+                        registerFallbackTypeConverter(registry, new StaticMethodFallbackTypeConverter(method, registry), method);
                     } else {
                         if (injector == null) {
                             injector = new CachingInjector<Object>(registry, CastUtils.cast(type, Object.class));
                         }
-                        registerFallbackTypeConverter(registry, new InstanceMethodFallbackTypeConverter(injector, method, registry));
+                        registerFallbackTypeConverter(registry, new InstanceMethodFallbackTypeConverter(injector, method, registry), method);
                     }
                 }
             }
@@ -240,8 +240,13 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 || (parameterTypes.length == 2 && Exchange.class.isAssignableFrom(parameterTypes[1])));
     }
 
-    protected void registerFallbackTypeConverter(TypeConverterRegistry registry, TypeConverter typeConverter) {
-        registry.addFallbackTypeConverter(typeConverter);
+    protected void registerFallbackTypeConverter(TypeConverterRegistry registry, TypeConverter typeConverter, Method method) {
+        boolean canPromote = false;
+        // check whether the annotation may indicate it can promote
+        if (method.getAnnotation(FallbackConverter.class) != null) {
+            canPromote = method.getAnnotation(FallbackConverter.class).canPromote();
+        }
+        registry.addFallbackTypeConverter(typeConverter, canPromote);
     }
 
     protected boolean isValidFallbackConverterMethod(Method method) {
