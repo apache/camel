@@ -64,10 +64,15 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
 
         // add to string first as it will then be last in the last as to string can nearly
         // always convert something to a string so we want it only as the last resort
+        // ToStringTypeConverter should NOT allow to be promoted
         addFallbackTypeConverter(new ToStringTypeConverter(), false);
+        // enum is okay to be promoted
         addFallbackTypeConverter(new EnumTypeConverter(), true);
+        // arrays is okay to be promoted
         addFallbackTypeConverter(new ArrayTypeConverter(), true);
-        addFallbackTypeConverter(new PropertyEditorTypeConverter(), true);
+        // do not assume property editor as it has a String converter
+        addFallbackTypeConverter(new PropertyEditorTypeConverter(), false);
+        // and future should also not allowed to be promoted
         addFallbackTypeConverter(new FutureTypeConverter(this), false);
     }
 
@@ -194,9 +199,7 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
             }
         }
 
-        // TODO: check before if its type/value is primitive/wrapper combo which we can convert asap then
-
-        // primitives
+        // not found with that type then if it was a primitive type then try again with the wrapper type
         if (type.isPrimitive()) {
             Class primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(type);
             if (primitiveType != type) {
