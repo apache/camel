@@ -25,6 +25,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Message;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -54,15 +55,34 @@ public final class GZIPHelper {
         response.setHeader(CONTENT_ENCODING, GZIP);
     }
 
-    public static InputStream toGZIPInputStream(String contentEncoding, InputStream in) throws IOException {
+    public static InputStream uncompressGzip(String contentEncoding, InputStream in) throws IOException {
         if (isGzip(contentEncoding)) {
             return new GZIPInputStream(in);
         } else {
             return in;
         }
     }
+    
+    public static InputStream compressGzip(String contentEncoding, InputStream in) throws IOException {
 
-    public static InputStream toGZIPInputStream(String contentEncoding, byte[] data) throws Exception {
+        if (isGzip(contentEncoding)) {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            GZIPOutputStream gzip = new GZIPOutputStream(os);
+            try {
+                IOHelper.copy(in, gzip);
+                gzip.finish();
+                return new ByteArrayInputStream(os.toByteArray());
+            } finally {
+                ObjectHelper.close(gzip, "gzip", null);
+                ObjectHelper.close(os, "byte array output stream", null);
+            }
+        } else {
+            return in;
+        }
+
+    }
+
+    public static InputStream compressGzip(String contentEncoding, byte[] data) throws IOException {
         if (isGzip(contentEncoding)) {
             ByteArrayOutputStream os = null;
             GZIPOutputStream gzip = null;

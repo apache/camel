@@ -50,7 +50,7 @@ public class HttpGetTest extends ContextTestSupport {
         log.debug("Headers: " + headers);
         checkHeaders(headers);       
 
-        String body = in.getBody(String.class);
+        String body = in.getBody(String.class);        
 
         log.debug("Body: " + body);
         assertNotNull("Should have a body!", body);

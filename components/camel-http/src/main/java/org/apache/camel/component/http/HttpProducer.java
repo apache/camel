@@ -170,7 +170,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         Header header = method.getRequestHeader(GZIPHelper.CONTENT_ENCODING);
         String contentEncoding = header != null ? header.getValue() : null;
 
-        is = GZIPHelper.toGZIPInputStream(contentEncoding, is);
+        is = GZIPHelper.uncompressGzip(contentEncoding, is);
         return doExtractResponseBody(is, exchange);
     }
 

@@ -29,7 +29,7 @@ public class HttpGetWithHeadersTest extends HttpGetTest {
                 from("direct:start")
                     .setHeader("TestHeader", constant("test"))
                     .setHeader("Content-Length", constant(0))
-                    .setHeader("Accept-Language", constant("pl"))
+                    .setHeader("Accept-Language", constant("en"))
                     .to("http://www.google.com/search")
                     .to("mock:results");
             }
@@ -39,7 +39,7 @@ public class HttpGetWithHeadersTest extends HttpGetTest {
     @Override
     protected void setUp() throws Exception {
         // "Szukaj" is "Search" in polish language
-        expectedText = "Szukaj";
+        expectedText = "Google";
         super.setUp();
     }
     
