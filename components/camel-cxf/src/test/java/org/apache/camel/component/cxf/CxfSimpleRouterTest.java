@@ -26,10 +26,12 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CxfSimpleRouterTest extends CamelTestSupport {    
+    protected static Server server;
     protected static final String ROUTER_ADDRESS = "http://localhost:9000/router";
     protected static final String SERVICE_ADDRESS = "http://localhost:9002/helloworld";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
@@ -46,8 +48,15 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
     
-        Server server = svrBean.create();
+        server = svrBean.create();
         server.start();
+    }
+    
+    @AfterClass
+    public static void shutdownService() {
+        if (server != null) {
+            server.stop();
+        }
     }
     
     protected RouteBuilder createRouteBuilder() {
