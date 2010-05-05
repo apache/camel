@@ -29,6 +29,7 @@ import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.apache.hello_world_soap_http.NoSuchCodeLitFault;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,6 +37,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CXFGreeterRouterTest extends CamelTestSupport {
+    protected static Endpoint endpoint;
     protected AbstractXmlApplicationContext applicationContext;
     
     private final QName serviceName = new QName("http://apache.org/hello_world_soap_http",
@@ -69,7 +71,14 @@ public class CXFGreeterRouterTest extends CamelTestSupport {
     public static void startService() {
         Object implementor = new GreeterImpl();
         String address = "http://localhost:9000/SoapContext/SoapPort";
-        Endpoint.publish(address, implementor); 
+        endpoint = Endpoint.publish(address, implementor); 
+    }
+    
+    @AfterClass
+    public static void stopService() {
+        if (endpoint != null) {
+            endpoint.stop();
+        }
     }
 
     @Test
