@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
@@ -49,6 +50,9 @@ public class CamelServlet extends HttpServlet {
 
             // Have the camel process the HTTP exchange.
             DefaultExchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
+            if (((HttpEndpoint)consumer.getEndpoint()).isBridgeEndpoint()) {
+                exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+            }
             exchange.setIn(new HttpMessage(exchange, request, response));
             consumer.getProcessor().process(exchange);
 

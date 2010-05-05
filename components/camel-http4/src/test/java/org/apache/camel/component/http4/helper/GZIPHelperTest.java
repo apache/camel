@@ -23,6 +23,7 @@ import java.io.InputStream;
 import org.apache.camel.Message;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultMessage;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -30,13 +31,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class GZIPHelperTest {
+public class GZIPHelperTest extends Assert {
 
     private static byte[] sampleBytes = new byte[]{1, 2, 3, 1, 2, 3};
+    private static String sampleString = "<Hello>World</Hello>";
 
     @Test
     public void toGZIPInputStreamShouldReturnTheSameInputStream() throws IOException {
-        InputStream inputStream = GZIPHelper.toGZIPInputStream("text", new ByteArrayInputStream(sampleBytes));
+        InputStream inputStream = GZIPHelper.uncompressGzip("text", new ByteArrayInputStream(sampleBytes));
         byte[] bytes = new byte[6];
         inputStream.read(bytes);
 
@@ -46,10 +48,20 @@ public class GZIPHelperTest {
 
     @Test
     public void toGZIPInputStreamShouldReturnAByteArrayInputStream() throws IOException {
-        InputStream inputStream = GZIPHelper.toGZIPInputStream("text", sampleBytes);
+        InputStream inputStream = GZIPHelper.compressGzip("text", sampleBytes);
 
         byte[] bytes = IOConverter.toBytes(inputStream);
         assertArrayEquals(sampleBytes, bytes);
+    }
+    
+    @Test
+    public void testCompressAndUnCompressData() throws IOException {
+        InputStream inputStream = GZIPHelper.compressGzip("gzip", new ByteArrayInputStream(sampleString.getBytes()));
+        assertNotNull("The inputStream should not be null.", inputStream);
+        inputStream = GZIPHelper.uncompressGzip("gzip", inputStream);        
+        String result = IOConverter.toString(inputStream, null);
+        assertEquals("The result is wrong.", sampleString, result);
+        
     }
 
     @Test

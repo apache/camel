@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http4;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -57,11 +58,15 @@ public class HttpEntityConverter {
         String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
         String contentType = ExchangeHelper.getContentType(exchange);
 
-        InputStreamEntity entity = new InputStreamEntity(
-                GZIPHelper.toGZIPInputStream(contentEncoding, in), -1);
+        InputStreamEntity entity = null;
+        if (exchange == null
+            || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+            entity = new InputStreamEntity(GZIPHelper.compressGzip(contentEncoding, in), -1);        
+        } else {
+            entity = new InputStreamEntity(in, -1);
+        }
         entity.setContentEncoding(contentEncoding);
         entity.setContentType(contentType);
-
         return entity;
     }
 
@@ -69,8 +74,13 @@ public class HttpEntityConverter {
         String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
         String contentType = ExchangeHelper.getContentType(exchange);
 
-        InputStreamEntity entity = new InputStreamEntity(
-                GZIPHelper.toGZIPInputStream(contentEncoding, data), -1);
+        InputStreamEntity entity = null;
+        if (exchange == null
+            || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+            entity = new InputStreamEntity(GZIPHelper.compressGzip(contentEncoding, data), -1);        
+        } else {
+            entity = new InputStreamEntity(new ByteArrayInputStream(data), -1);
+        }
         entity.setContentEncoding(contentEncoding);
         entity.setContentType(contentType);
 

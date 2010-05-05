@@ -25,6 +25,7 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -35,15 +36,34 @@ public final class GZIPHelper {
     private GZIPHelper() {
     }
 
-    public static InputStream toGZIPInputStream(String contentEncoding, InputStream in) throws IOException {
+    public static InputStream uncompressGzip(String contentEncoding, InputStream in) throws IOException {
         if (isGzip(contentEncoding)) {
             return new GZIPInputStream(in);
         } else {
             return in;
         }
     }
+    
+    public static InputStream compressGzip(String contentEncoding, InputStream in) throws IOException {
 
-    public static InputStream toGZIPInputStream(String contentEncoding, byte[] data) throws IOException {
+        if (isGzip(contentEncoding)) {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            GZIPOutputStream gzip = new GZIPOutputStream(os);
+            try {
+                IOHelper.copy(in, gzip);
+                gzip.finish();
+                return new ByteArrayInputStream(os.toByteArray());
+            } finally {
+                ObjectHelper.close(gzip, "gzip", null);
+                ObjectHelper.close(os, "byte array output stream", null);
+            }
+        } else {
+            return in;
+        }
+
+    }
+
+    public static InputStream compressGzip(String contentEncoding, byte[] data) throws IOException {
         if (isGzip(contentEncoding)) {
             ByteArrayOutputStream os = null;
             GZIPOutputStream gzip = null;
@@ -75,12 +95,19 @@ public final class GZIPHelper {
         }
     }
 
-    public static boolean isGzip(Message message) {
-        return isGzip(message.getHeader(Exchange.CONTENT_ENCODING, String.class));
+    public static boolean isGzip(Message message) {        
+        return isGzip(message.getHeader(Exchange.CONTENT_ENCODING, String.class), message.getExchange());
+    }
+    
+    public static boolean isGzip(String header , Exchange exchange) {
+        if (exchange == null || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+            return isGzip(header);
+        } else {
+            return false;
+        }
     }
 
     public static boolean isGzip(String header) {
         return header != null && header.toLowerCase().contains("gzip");
     }
-
 }

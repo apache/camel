@@ -69,8 +69,8 @@ public final class HttpConverter {
     }
 
     @Converter
-    public static InputStream toInputStream(HttpMessage message) throws Exception {
-        return toInputStream(toServletRequest(message));
+    public static InputStream toInputStream(HttpMessage message, Exchange exchange) throws Exception {
+        return toInputStream(toServletRequest(message), exchange);
     }
 
     @Converter
@@ -83,12 +83,17 @@ public final class HttpConverter {
     }
 
     @Converter
-    public static InputStream toInputStream(HttpServletRequest request) throws IOException {
+    public static InputStream toInputStream(HttpServletRequest request, Exchange exchange) throws IOException {
         if (request == null) {
             return null;
         }
-        String contentEncoding = request.getHeader(Exchange.CONTENT_ENCODING);
-        return GZIPHelper.toGZIPInputStream(contentEncoding, request.getInputStream());
+        if (exchange == null
+            || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+            String contentEncoding = request.getHeader(Exchange.CONTENT_ENCODING);
+            return GZIPHelper.uncompressGzip(contentEncoding, request.getInputStream());
+        } else {
+            return request.getInputStream();
+        }
     }
 
 }
