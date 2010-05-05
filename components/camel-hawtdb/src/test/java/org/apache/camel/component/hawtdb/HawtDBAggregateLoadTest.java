@@ -45,7 +45,7 @@ public class HawtDBAggregateLoadTest extends CamelTestSupport {
     public void testLoadTestHawtDBAggregate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.setResultWaitTime(30 * 1000);
+        mock.setResultWaitTime(50 * 1000);
 
         LOG.info("Staring to send " + SIZE + " messages.");
 

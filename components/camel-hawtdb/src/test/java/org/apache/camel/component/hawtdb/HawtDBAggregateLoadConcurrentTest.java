@@ -48,7 +48,7 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
     public void testLoadTestHawtDBAggregate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);
-        mock.setResultWaitTime(30 * 1000);
+        mock.setResultWaitTime(50 * 1000);
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
 
