@@ -52,7 +52,12 @@ public class NagiosEventNotifierTest extends CamelTestSupport {
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        nagios.stop();
+        try {
+            nagios.stop();
+        } catch (Exception e) {
+            // ignore
+            log.warn("Error stopping NagiosNscaStub. This exception is ignored.", e);
+        }
     }
 
     @Override
