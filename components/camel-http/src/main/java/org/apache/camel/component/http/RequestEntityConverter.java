@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -54,17 +55,25 @@ public class RequestEntityConverter {
     }
 
     private RequestEntity asRequestEntity(InputStream in, Exchange exchange) throws IOException {
-        return new InputStreamRequestEntity(
-                GZIPHelper.toGZIPInputStream(
-                        exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class),
-                        in), ExchangeHelper.getContentType(exchange));
+        if (exchange == null
+            || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+            return new InputStreamRequestEntity(GZIPHelper.compressGzip(exchange.getIn()
+                .getHeader(Exchange.CONTENT_ENCODING, String.class), in), ExchangeHelper
+                .getContentType(exchange));
+        } else {
+            return new InputStreamRequestEntity(in);
+        }
     }
 
     private RequestEntity asRequestEntity(byte[] data, Exchange exchange) throws Exception {
-        return new InputStreamRequestEntity(
-            GZIPHelper.toGZIPInputStream(
-                    exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class),
-                    data), ExchangeHelper.getContentType(exchange));
+        if (exchange == null
+            || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+            return new InputStreamRequestEntity(GZIPHelper.compressGzip(exchange.getIn()
+                .getHeader(Exchange.CONTENT_ENCODING, String.class), data), ExchangeHelper
+                .getContentType(exchange));
+        } else {
+            return new InputStreamRequestEntity(new ByteArrayInputStream(data));
+        }
     }
 }
 

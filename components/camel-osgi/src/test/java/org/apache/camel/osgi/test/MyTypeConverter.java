@@ -57,7 +57,7 @@ public final class MyTypeConverter {
         // use a fallback type converter so we can convert the embedded body if the value is GenericFile
         if (GenericFile.class.isAssignableFrom(value.getClass())) {
             GenericFile file = (GenericFile) value;
-            Class from = file.getBody().getClass();
+            Class<?> from = file.getBody().getClass();
 
             // maybe from is already the type we want
             if (from.isAssignableFrom(type)) {

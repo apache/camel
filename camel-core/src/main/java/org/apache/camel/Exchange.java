@@ -104,6 +104,8 @@ public interface Exchange {
     String REDELIVERY_EXHAUSTED = "CamelRedeliveryExhausted";
     String ROLLBACK_ONLY        = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST   = "CamelRollbackOnlyLast";
+    
+    String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
 
     String SOAP_ACTION = "CamelSoapAction";
     String SPLIT_INDEX = "CamelSplitIndex";

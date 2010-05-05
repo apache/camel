@@ -57,6 +57,9 @@ public class HttpProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
+        if (((HttpEndpoint)getEndpoint()).isBridgeEndpoint()) {
+            exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+        }
         HttpMethod method = createMethod(exchange);
         Message in = exchange.getIn();
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
@@ -198,7 +201,10 @@ public class HttpProducer extends DefaultProducer {
         Header header = method.getRequestHeader(Exchange.CONTENT_ENCODING);        
         String contentEncoding = header != null ? header.getValue() : null;
         
-        is = GZIPHelper.toGZIPInputStream(contentEncoding, is);
+        if (!exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+            is = GZIPHelper.uncompressGzip(contentEncoding, is);
+        }
+        
         // Honor the character encoding
         header = method.getResponseHeader("content-type");
         if (header != null) {

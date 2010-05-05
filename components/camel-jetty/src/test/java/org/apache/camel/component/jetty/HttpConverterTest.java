@@ -121,13 +121,13 @@ public class HttpConverterTest extends CamelTestSupport {
     @Test
     public void testNulls() throws Exception {
         HttpMessage msg = null;
-        assertNull(HttpConverter.toInputStream(msg));
+        assertNull(HttpConverter.toInputStream(msg, null));
         assertNull(HttpConverter.toServletInputStream(msg));
         assertNull(HttpConverter.toServletRequest(msg));
         assertNull(HttpConverter.toServletResponse(msg));
 
         HttpServletRequest req = null;
-        assertNull(HttpConverter.toInputStream(req));
+        assertNull(HttpConverter.toInputStream(req, null));
     }
 
 }

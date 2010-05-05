@@ -309,7 +309,7 @@ public class DefaultHttpBinding implements HttpBinding {
             return request.getReader();
         } else {
             // otherwise use input stream and we need to cache it first
-            InputStream is = HttpConverter.toInputStream(request);
+            InputStream is = HttpConverter.toInputStream(request, httpMessage.getExchange());
             if (is == null) {
                 return is;
             }
