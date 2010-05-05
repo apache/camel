@@ -34,7 +34,7 @@ public class MessageIOSessionTest extends ContextTestSupport {
     public void testIoSession() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        template.sendBody("mina:tcp://localhost:6200?textline=true&sync=false", "Hello World");
+        template.sendBody("mina:tcp://localhost:9200?textline=true&sync=false", "Hello World");
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
@@ -46,7 +46,7 @@ public class MessageIOSessionTest extends ContextTestSupport {
     public void testLocalAndRemoteAddressHeaders() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        template.sendBody("mina:tcp://localhost:6200?textline=true&sync=false", "Hello World");
+        template.sendBody("mina:tcp://localhost:9200?textline=true&sync=false", "Hello World");
         assertMockEndpointsSatisfied();
         
         Message message = mock.getExchanges().get(0).getIn();
@@ -61,7 +61,7 @@ public class MessageIOSessionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("mina:tcp://localhost:6200?textline=true&sync=false")
+                from("mina:tcp://localhost:9200?textline=true&sync=false")
                     .to("log://mytest")
                     .to("mock:result");
             }

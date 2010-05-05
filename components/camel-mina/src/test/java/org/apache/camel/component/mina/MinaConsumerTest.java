@@ -41,7 +41,7 @@ public class MinaConsumerTest extends ContextTestSupport {
 
     public void testSendTextlineSyncText() throws Exception {
         // START SNIPPET: e4
-        String response = (String)template.requestBody("mina:tcp://localhost:6201?textline=true&sync=true", "World");
+        String response = (String)template.requestBody("mina:tcp://localhost:9201?textline=true&sync=true", "World");
         assertEquals("Bye World", response);
         // END SNIPPET: e4
     }
@@ -54,7 +54,7 @@ public class MinaConsumerTest extends ContextTestSupport {
                 // END SNIPPET: e1
 
                 // START SNIPPET: e3
-                from("mina:tcp://localhost:6201?textline=true&sync=true").process(new Processor() {
+                from("mina:tcp://localhost:9201?textline=true&sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);
