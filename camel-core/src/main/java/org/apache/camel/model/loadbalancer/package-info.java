@@ -16,7 +16,7 @@
  */
 
 /**
- * The LoadBalancer and the LoadBalancerStrategy JAXB Objects
+ * The <a href="http://camel.apache.org/load-balancer.html">Load Balancer</a> EIP pattern
  */
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.model.loadbalancer;

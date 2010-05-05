@@ -27,9 +27,7 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * A <a href="http://camel.apache.org/routes.html">Route</a>
- * defines the processing used on an inbound message exchange
- * from a specific {@link org.apache.camel.Endpoint} within a {@link org.apache.camel.CamelContext}
+ * Default implementation of {@link Route}.
  *
  * @version $Revision$
  */

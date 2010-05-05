@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Represents the XML type for a collection of DataFormats.
+ * Represents the XML type for &lt;properties&gt;.
  */
 @XmlRootElement(name = "properties")
 @XmlAccessorType(XmlAccessType.FIELD)

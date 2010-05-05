@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A default implementation of @{link Producer} for implementation inheritance
+ * A default implementation of {@link Producer} for implementation inheritance.
  *
  * @version $Revision$
  */

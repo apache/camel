@@ -41,6 +41,8 @@ import org.apache.camel.management.event.ServiceStopFailureEvent;
 import org.apache.camel.spi.EventFactory;
 
 /**
+ * Default implementation of the {@link org.apache.camel.spi.EventFactory}.
+ *
  * @version $Revision$
  */
 public class DefaultEventFactory implements EventFactory {

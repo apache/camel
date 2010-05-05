@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 
 /**
+ * A repository which tracks in flight {@link Exchange}s.
+ *
  * @version $Revision$
  */
 public interface InflightRepository extends Service {

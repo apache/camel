@@ -26,6 +26,10 @@ import org.apache.camel.util.ServiceHelper;
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
+ * Template (named like Spring's TransactionTemplate & JmsTemplate
+ * et al) for working with Camel and consuming {@link org.apache.camel.Message} instances in an
+ * {@link Exchange} from an {@link Endpoint}.
+ *
  * @version $Revision$
  */
 public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerTemplate {

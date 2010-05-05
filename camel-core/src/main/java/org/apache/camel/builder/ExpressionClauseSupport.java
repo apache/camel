@@ -29,6 +29,8 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 
 /**
+ * A support class for building expression clauses.
+ *
  * @version $Revision$
  */
 public class ExpressionClauseSupport<T> {

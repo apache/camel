@@ -17,6 +17,8 @@
 package org.apache.camel.model;
 
 /**
+ * Various constants.
+ *
  * @version $Revision$
  */
 public final class Constants {

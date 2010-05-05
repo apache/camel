@@ -27,6 +27,11 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Represents the Json {@link DataFormat}
+ *
+ * @version $Revision$
+ */
 @XmlRootElement(name = "json")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonDataFormat extends DataFormatDefinition {

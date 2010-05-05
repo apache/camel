@@ -24,7 +24,7 @@ import javax.activation.DataHandler;
 /**
  * Implements the <a
  * href="http://camel.apache.org/message.html">Message</a> pattern and
- * represents an inbound or outbound message as part of an {@link Exchange}
+ * represents an inbound or outbound message as part of an {@link Exchange}.
  * <p/>
  * See {@link org.apache.camel.impl.DefaultMessage DefaultMessage} for how headers
  * is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.

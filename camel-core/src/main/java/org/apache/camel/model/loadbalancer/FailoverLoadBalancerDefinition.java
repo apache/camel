@@ -29,6 +29,9 @@ import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.RouteContext;
 
+/**
+ * Represents an XML &lt;failover/&gt; element
+ */
 @XmlRootElement(name = "failover")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {

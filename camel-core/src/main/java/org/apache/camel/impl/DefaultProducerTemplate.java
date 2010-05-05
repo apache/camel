@@ -38,6 +38,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
+ * Template (named like Spring's TransactionTemplate & JmsTemplate
+ * et al) for working with Camel and sending {@link Message} instances in an
+ * {@link Exchange} to an {@link Endpoint}.
+ *
  * @version $Revision$
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
@@ -632,7 +636,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return executor.submit(task);
     }
    
-    public Future<Object> asyncCallback(final Endpoint endpoint, final ExchangePattern pattern, final Object body, final Synchronization onCompletion) {
+    private Future<Object> asyncCallback(final Endpoint endpoint, final ExchangePattern pattern, final Object body, final Synchronization onCompletion) {
         Callable<Object> task = new Callable<Object>() {
             public Object call() throws Exception {
                 Exchange answer = send(endpoint, pattern, createSetBodyProcessor(body));

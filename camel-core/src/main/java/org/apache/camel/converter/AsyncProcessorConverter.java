@@ -24,6 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateProcessor;
 
 /**
+ * A type converter to convert a {@link Processor} to {@link org.apache.camel.AsyncProcessor}.
+ *
  * @version $Revision$
  */
 @Converter
@@ -44,8 +46,9 @@ public final class AsyncProcessorConverter {
                 processor.process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
+            } finally {
+                callback.onTaskCompleted(exchange);
             }
-            callback.onTaskCompleted(exchange);
         }
     }
 

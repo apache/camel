@@ -21,6 +21,11 @@ import java.util.Map;
 
 import org.apache.camel.spi.RouteContext;
 
+/**
+ * A <a href="http://camel.apache.org/routes.html">Route</a>
+ * defines the processing used on an inbound message exchange
+ * from a specific {@link org.apache.camel.Endpoint} within a {@link org.apache.camel.CamelContext}
+ */
 public interface Route {
 
     String ID_PROPERTY = "id";
