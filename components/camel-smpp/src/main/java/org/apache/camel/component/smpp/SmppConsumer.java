@@ -21,6 +21,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsmpp.DefaultPDUReader;
+import org.jsmpp.DefaultPDUSender;
+import org.jsmpp.SynchronizedPDUSender;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.DeliverSm;
@@ -29,6 +32,7 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.util.DefaultComposer;
 
 /**
  * An implementation of @{link Consumer} which use the SMPP protocol
@@ -118,7 +122,12 @@ public class SmppConsumer extends DefaultConsumer {
      * @return the SMPPSession
      */
     SMPPSession createSMPPSession() {
-        return new SMPPSession();
+        if (configuration.getUsingSSL()) {
+            return new SMPPSession(new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())),
+                new DefaultPDUReader(), SmppSSLConnectionFactory.getInstance());
+        } else {
+            return new SMPPSession();
+        }
     }
 
     @Override

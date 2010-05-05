@@ -53,6 +53,7 @@ public class SmppConfiguration implements Cloneable {
     private byte replaceIfPresentFlag = (byte) 0;
     private byte typeOfNumber = TypeOfNumber.UNKNOWN.value();
     private byte numberingPlanIndicator = NumberingPlanIndicator.UNKNOWN.value();
+    private boolean usingSSL;
 
     /**
      * A POJO which contains all necessary configuration parameters for the SMPP connection
@@ -63,6 +64,9 @@ public class SmppConfiguration implements Cloneable {
         setSystemId(uri.getUserInfo());
         setHost(uri.getHost());
         setPort(uri.getPort());
+        if (uri.getScheme().startsWith("smpps")) {
+            setUsingSSL(true);
+        }
     }
 
     public SmppConfiguration copy() {
@@ -239,6 +243,14 @@ public class SmppConfiguration implements Cloneable {
 
     public void setNumberingPlanIndicator(byte numberingPlanIndicator) {
         this.numberingPlanIndicator = numberingPlanIndicator;
+    }
+
+    public boolean getUsingSSL() {
+        return usingSSL;
+    }
+
+    public void setUsingSSL(boolean usingSSL) {
+        this.usingSSL = usingSSL;
     }
 
     @Override

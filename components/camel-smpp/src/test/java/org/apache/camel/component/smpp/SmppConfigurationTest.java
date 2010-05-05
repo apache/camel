@@ -65,6 +65,7 @@ public class SmppConfigurationTest {
         assertEquals("ISO-8859-1", configuration.getEncoding());
         assertEquals(0x00, configuration.getNumberingPlanIndicator());
         assertEquals(0x00, configuration.getTypeOfNumber());
+        assertEquals(false, configuration.getUsingSSL());
     }
     
     @Test
@@ -92,6 +93,7 @@ public class SmppConfigurationTest {
         assertEquals("UTF-8", configuration.getEncoding());
         assertEquals(0x08, configuration.getNumberingPlanIndicator());
         assertEquals(0x02, configuration.getTypeOfNumber());
+        assertEquals(true, configuration.getUsingSSL());
     }
 
     @Test
@@ -129,6 +131,7 @@ public class SmppConfigurationTest {
         assertEquals(config.getEncoding(), configuration.getEncoding());
         assertEquals(config.getNumberingPlanIndicator(), configuration.getNumberingPlanIndicator());
         assertEquals(config.getTypeOfNumber(), configuration.getTypeOfNumber());
+        assertEquals(config.getUsingSSL(), configuration.getUsingSSL());
     }
 
     private void setNoneDefaultValues(SmppConfiguration config) {
@@ -153,5 +156,6 @@ public class SmppConfigurationTest {
         config.setEncoding("UTF-8");
         config.setNumberingPlanIndicator(NumberingPlanIndicator.NATIONAL.value());
         config.setTypeOfNumber(TypeOfNumber.NATIONAL.value());
+        config.setUsingSSL(true);
     }
 }

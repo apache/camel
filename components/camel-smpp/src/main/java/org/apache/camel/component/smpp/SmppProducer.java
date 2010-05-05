@@ -22,8 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsmpp.DefaultPDUReader;
+import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
+import org.jsmpp.SynchronizedPDUSender;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.ESMClass;
@@ -37,6 +40,7 @@ import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.util.DefaultComposer;
 
 /**
  * An implementation of @{link Producer} which use the SMPP protocol
@@ -88,7 +92,12 @@ public class SmppProducer extends DefaultProducer {
      * @return the SMPPSession
      */
     SMPPSession createSMPPSession() {
-        return new SMPPSession();
+        if (configuration.getUsingSSL()) {
+            return new SMPPSession(new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())),
+                                   new DefaultPDUReader(), SmppSSLConnectionFactory.getInstance());
+        } else {
+            return new SMPPSession();
+        }
     }
 
     public void process(Exchange exchange) throws Exception {

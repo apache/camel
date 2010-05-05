@@ -82,6 +82,26 @@ public class SmppComponentTest {
         assertTrue(smppEndpoint.getBinding() instanceof SmppBinding);
         assertNotNull(smppEndpoint.getCamelContext());
     }
+
+    @Test
+    public void createEndpointStringStringMapShouldReturnASmppsEndpoint() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        component = new SmppComponent(context);
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("password", "secret");
+        Endpoint endpoint = component.createEndpoint("smpps://smppclient@localhost:2775", "?password=secret", parameters);
+        SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
+
+        assertEquals("smpps://smppclient@localhost:2775", smppEndpoint.getEndpointUri());
+        assertEquals("smpps://smppclient@localhost:2775", smppEndpoint.getEndpointKey());
+        assertSame(component, smppEndpoint.getComponent());
+        assertNotNull(smppEndpoint.getConfiguration());
+        assertEquals("secret", smppEndpoint.getConfiguration().getPassword());
+        assertEquals("smpps://smppclient@localhost:2775", smppEndpoint.getConnectionString());
+        assertEquals(ExchangePattern.InOnly, smppEndpoint.getExchangePattern());
+        assertTrue(smppEndpoint.getBinding() instanceof SmppBinding);
+        assertNotNull(smppEndpoint.getCamelContext());
+    }
     
     @Test
     public void createEndpointStringStringMapWithoutACamelContextShouldReturnASmppEndpoint() throws Exception {
