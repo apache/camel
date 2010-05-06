@@ -66,12 +66,12 @@ public class CxfConsumer extends DefaultConsumer {
                 DataFormat dataFormat = endpoint.getDataFormat();
 
                 BindingOperationInfo boi = cxfExchange.getBindingOperationInfo();
+                // make sure the "boi" is remained as wrapped in PAYLOAD mode
                 if (dataFormat == DataFormat.PAYLOAD && boi.isUnwrapped()) {
                     boi = boi.getWrappedOperation();
                     cxfExchange.put(BindingOperationInfo.class, boi);
                 }
                 
-                //BindingOperationInfo boi = cxfExchange.get(BindingOperationInfo.class);
                 if (boi != null) {
                     camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
                     if (LOG.isTraceEnabled()) {
