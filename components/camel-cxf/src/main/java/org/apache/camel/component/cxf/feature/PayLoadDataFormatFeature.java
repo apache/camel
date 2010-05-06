@@ -20,86 +20,40 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-import org.apache.camel.component.cxf.interceptors.DOMInInterceptor;
-import org.apache.camel.component.cxf.interceptors.DOMOutInterceptor;
-import org.apache.camel.component.cxf.interceptors.PayloadContentRedirectInterceptor;
+import org.apache.camel.component.cxf.interceptors.ConfigureDocLitWrapperInterceptor;
+import org.apache.camel.component.cxf.interceptors.RemoveClassTypeInterceptor;
 import org.apache.cxf.Bus;
-import org.apache.cxf.binding.Binding;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.interceptor.ClientFaultConverter;
-import org.apache.cxf.phase.Phase;
 
 /**
  * This feature just setting up the CXF endpoint interceptor for handling the
  * Message in PAYLOAD data format
  */
 public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
-    private static final Logger LOG = LogUtils.getL7dLogger(PayLoadDataFormatFeature.class);
-    // filter the unused phase
-    
-    // PRE_INVOKE needs to be removed.  Otherwise, HolderInInterceptor will interfere us
-    private static final String[] REMOVING_IN_PHASES = {
-        Phase.UNMARSHAL, Phase.PRE_LOGICAL, Phase.PRE_LOGICAL_ENDING, Phase.POST_LOGICAL,
-        Phase.POST_LOGICAL_ENDING, Phase.PRE_INVOKE
-    };
+    private static final Logger LOG = LogUtils.getL7dLogger(PayLoadDataFormatFeature.class);    
 
-    private static final String[] REMOVING_OUT_PHASES = {
-        Phase.MARSHAL, Phase.MARSHAL_ENDING, Phase.PRE_LOGICAL, Phase.PRE_LOGICAL_ENDING, Phase.POST_LOGICAL,
-        Phase.POST_LOGICAL_ENDING
-    };
-    
     private static final Collection<Class> REMOVING_FAULT_IN_INTERCEPTORS;
-    
+
+
     static {
         REMOVING_FAULT_IN_INTERCEPTORS = new ArrayList<Class>();
-        // remove ClientFaultConverter as it tries to unmarshal to java object.  
         REMOVING_FAULT_IN_INTERCEPTORS.add(ClientFaultConverter.class);
     }
     
     @Override
     public void initialize(Client client, Bus bus) {
-        removeInterceptorWhichIsInThePhases(client.getInInterceptors(), REMOVING_IN_PHASES);
-        removeInterceptorWhichIsInThePhases(client.getEndpoint().getService().getInInterceptors(), REMOVING_IN_PHASES);
-        removeInterceptorWhichIsInThePhases(client.getEndpoint().getInInterceptors(), REMOVING_IN_PHASES);
-        removeInterceptorWhichIsInThePhases(client.getEndpoint().getBinding().getInInterceptors(), REMOVING_IN_PHASES);
-
-        removeInterceptorWhichIsInThePhases(client.getOutInterceptors(), REMOVING_OUT_PHASES);
-        removeInterceptorWhichIsInThePhases(client.getEndpoint().getService().getOutInterceptors(), REMOVING_OUT_PHASES);
-        removeInterceptorWhichIsInThePhases(client.getEndpoint().getOutInterceptors(), REMOVING_OUT_PHASES);
-        removeInterceptorWhichIsInThePhases(client.getEndpoint().getBinding().getOutInterceptors(), REMOVING_OUT_PHASES);
-        
-        removeInterceptors(client.getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
-        removeInterceptors(client.getEndpoint().getService().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
-        removeInterceptors(client.getEndpoint().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
-        removeInterceptors(client.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
-
-        addDataHandlingInterceptors(client.getEndpoint().getBinding());        
+        removeFaultInInterceptorFromClient(client);
+        client.getEndpoint().getBinding().getInInterceptors().add(new ConfigureDocLitWrapperInterceptor(true));
+        client.getEndpoint().getBinding().getInInterceptors().add(new RemoveClassTypeInterceptor());
     }
 
     @Override
-    public void initialize(Server server, Bus bus) {
-
-        removeInterceptorWhichIsInThePhases(server.getEndpoint().getService().getInInterceptors(), REMOVING_IN_PHASES);
-        removeInterceptorWhichIsInThePhases(server.getEndpoint().getInInterceptors(), REMOVING_IN_PHASES);
-        removeInterceptorWhichIsInThePhases(server.getEndpoint().getBinding().getInInterceptors(), REMOVING_IN_PHASES);
-
-        removeInterceptorWhichIsInThePhases(server.getEndpoint().getService().getOutInterceptors(), REMOVING_OUT_PHASES);
-        removeInterceptorWhichIsInThePhases(server.getEndpoint().getOutInterceptors(), REMOVING_OUT_PHASES);
-        removeInterceptorWhichIsInThePhases(server.getEndpoint().getBinding().getOutInterceptors(), REMOVING_OUT_PHASES);
-        
-        removeInterceptors(server.getEndpoint().getService().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
-        removeInterceptors(server.getEndpoint().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
-        removeInterceptors(server.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
-
-        addDataHandlingInterceptors(server.getEndpoint().getBinding());        
-    }
-
-    private void addDataHandlingInterceptors(Binding binding) {
-        binding.getInInterceptors().add(new DOMInInterceptor());
-        binding.getOutInterceptors().add(new DOMOutInterceptor());
-        binding.getOutInterceptors().add(new PayloadContentRedirectInterceptor());
+    public void initialize(Server server, Bus bus) {               
+        server.getEndpoint().getBinding().getInInterceptors().add(new ConfigureDocLitWrapperInterceptor(true));
+        server.getEndpoint().getBinding().getInInterceptors().add(new RemoveClassTypeInterceptor());
     }
 
     @Override
@@ -107,5 +61,12 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         return LOG;
     }
     
+    private void removeFaultInInterceptorFromClient(Client client) {
+        removeInterceptors(client.getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+        removeInterceptors(client.getEndpoint().getService().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+        removeInterceptors(client.getEndpoint().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+        removeInterceptors(client.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);        
+    }
+
 
 }

@@ -52,7 +52,7 @@ public class CxfConsumer extends DefaultConsumer {
 
             // we receive a CXF request when this method is called
             public Object invoke(Exchange cxfExchange, Object o) {
-                
+
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Received CXF Request: " + cxfExchange);
                 }
@@ -63,8 +63,15 @@ public class CxfConsumer extends DefaultConsumer {
 
                 // create a Camel exchange
                 org.apache.camel.Exchange camelExchange = endpoint.createExchange();
+                DataFormat dataFormat = endpoint.getDataFormat();
+
+                BindingOperationInfo boi = cxfExchange.getBindingOperationInfo();
+                if (dataFormat == DataFormat.PAYLOAD && boi.isUnwrapped()) {
+                    boi = boi.getWrappedOperation();
+                    cxfExchange.put(BindingOperationInfo.class, boi);
+                }
                 
-                BindingOperationInfo boi = cxfExchange.get(BindingOperationInfo.class);
+                //BindingOperationInfo boi = cxfExchange.get(BindingOperationInfo.class);
                 if (boi != null) {
                     camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
                     if (LOG.isTraceEnabled()) {
@@ -73,7 +80,6 @@ public class CxfConsumer extends DefaultConsumer {
                 }
                 
                 // set data format mode in Camel exchange
-                DataFormat dataFormat = endpoint.getDataFormat();
                 camelExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Set Exchange property: " + DataFormat.class.getName() 

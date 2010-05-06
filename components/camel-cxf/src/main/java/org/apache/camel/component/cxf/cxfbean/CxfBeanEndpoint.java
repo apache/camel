@@ -29,6 +29,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.transport.ConduitInitiatorManager;
@@ -48,7 +49,8 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
     private boolean isSetDefaultBus;
     private CxfBeanBinding cxfBeanBinding = new DefaultCxfBeanBinding();
     private HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
-    
+    private boolean loggingFeatureEnabled;
+
     public CxfBeanEndpoint(String remaining, CxfBeanComponent component) {
         super(remaining, component);
     }
@@ -101,15 +103,21 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
             bean.setBus(bus);
             bean.setStart(true);
             bean.setAddress("camel://" + createEndpointUri());
+            if (loggingFeatureEnabled) {
+                bean.getFeatures().add(new LoggingFeature());
+            }            
             server = bean.create();
         } else {
-            JAXRSServerFactoryBean answer = new JAXRSServerFactoryBean();
-            answer.setServiceBeans(serviceBeans);
-            answer.setAddress("camel://" + createEndpointUri());
-            answer.setStart(true);
-            answer.setTransportId(CxfBeanTransportFactory.TRANSPORT_ID);
-            answer.setBus(bus);
-            server = answer.create();
+            JAXRSServerFactoryBean bean = new JAXRSServerFactoryBean();
+            bean.setServiceBeans(serviceBeans);
+            bean.setAddress("camel://" + createEndpointUri());
+            bean.setStart(true);
+            bean.setTransportId(CxfBeanTransportFactory.TRANSPORT_ID);
+            bean.setBus(bus);
+            if (loggingFeatureEnabled) {
+                bean.getFeatures().add(new LoggingFeature());
+            }  
+            server = bean.create();
         }
     }
     
@@ -167,5 +175,13 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
+    
+    public void setLoggingFeatureEnabled(boolean loggingFeatureEnabled) {
+        this.loggingFeatureEnabled = loggingFeatureEnabled;
+    }
+
+    public boolean isLoggingFeatureEnabled() {
+        return loggingFeatureEnabled;
+    }     
 
 }

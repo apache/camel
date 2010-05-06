@@ -27,8 +27,11 @@ import java.util.Set;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.ws.Holder;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -43,6 +46,8 @@ import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.MethodDispatcher;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.helpers.DOMUtils;
+import org.apache.cxf.helpers.XMLUtils;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
@@ -50,6 +55,8 @@ import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
+import org.apache.cxf.service.model.MessagePartInfo;
+import org.apache.cxf.service.model.OperationInfo;
 
 /**
  * The Default CXF binding implementation.
@@ -267,6 +274,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,  
                 DataFormat.class);
         
+        // make sure the "requestor role" property does not get propagated as we do switch role
+        responseContext.remove(Message.REQUESTOR_ROLE);
+        
         // propagate contexts
         if (dataFormat != DataFormat.POJO) {
             // copying response context to out message seems to cause problem in POJO mode
@@ -284,7 +294,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (outBody != null) {
             if (dataFormat == DataFormat.PAYLOAD) {
                 CxfPayload<?> payload = (CxfPayload<?>)outBody;
-                outMessage.put(List.class, payload.getBody());
+                outMessage.setContent(List.class, getResponsePayloadList(cxfExchange, payload.getBody()));
                 outMessage.put(Header.HEADER_LIST, payload.getHeaders());
             } else {
                 if (responseContext.get(Header.HEADER_LIST) != null) {
@@ -333,7 +343,6 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
     }
 
-    
     // HeaderFilterStrategyAware Methods
     // -------------------------------------------------------------------------
     
@@ -349,6 +358,30 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
        
     // Non public methods
     // -------------------------------------------------------------------------
+    
+    protected MessageContentsList getResponsePayloadList(org.apache.cxf.message.Exchange exchange, 
+                                                         List<Element> elements) {
+        BindingOperationInfo boi = exchange.getBindingOperationInfo();
+
+        if (boi.isUnwrapped()) {
+            boi = boi.getWrappedOperation();
+            exchange.put(BindingOperationInfo.class, boi);
+        }
+        
+        MessageContentsList answer = new MessageContentsList();
+
+        int i = 0;
+        
+        for (MessagePartInfo partInfo : boi.getOperationInfo().getOutput().getMessageParts()) {
+            if (elements.size() > i) {
+                answer.put(partInfo, elements.get(i++));
+                
+            }
+        }
+
+        return answer;
+        
+    }
     
     /**
      * @param camelExchange
@@ -500,7 +533,6 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }        
     }
 
-    @SuppressWarnings("unchecked")
     protected static Object getContentFromCxf(Message message, DataFormat dataFormat) {
         Set<Class<?>> contentFormats = message.getContentFormats();
         Object answer = null;
@@ -522,11 +554,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                     }
                 }
             } else if (dataFormat == DataFormat.PAYLOAD) {
-                // TODO handle other message types in the future.  Currently, this binding only 
-                // deal with SOAP in PayLoad mode.
-                List<Element> body = message.get(List.class);
                 List<SoapHeader> headers = CastUtils.cast((List<?>)message.get(Header.HEADER_LIST));
-                answer = new CxfPayload<SoapHeader>(headers, body);
+                answer = new CxfPayload<SoapHeader>(headers, getPayloadBodyElements(message));
+                
             } else if (dataFormat == DataFormat.MESSAGE) {
                 answer = message.getContent(InputStream.class);
             }
@@ -538,6 +568,68 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         return answer;
     }
     
+
+    protected static List<Element> getPayloadBodyElements(Message message) {
+        MessageContentsList inObjects = MessageContentsList.getContentsList(message);
+        org.apache.cxf.message.Exchange exchange = message.getExchange();
+        BindingOperationInfo boi = exchange.getBindingOperationInfo();
+
+        OperationInfo op = boi.getOperationInfo();
+        
+        if (boi.isUnwrapped()) {
+            op = boi.getWrappedOperation().getOperationInfo();
+        } 
+        
+        
+        List<MessagePartInfo> partInfos = null;
+        boolean client = Boolean.TRUE.equals(message.get(Message.REQUESTOR_ROLE));
+        if (client) {
+            // it is a response
+            partInfos = op.getOutput().getMessageParts();            
+            
+        } else {
+            // it is a request
+            partInfos = op.getInput().getMessageParts();            
+        }
+        
+        List<Element> answer = new ArrayList<Element>();
+
+        for (MessagePartInfo partInfo : partInfos) {
+            if (!inObjects.hasValue(partInfo)) {
+                continue;
+            }
+            
+            Object part = inObjects.get(partInfo);
+            
+            if (part instanceof Holder) {
+                part = ((Holder)part).value;
+            }
+                        
+            if (part instanceof DOMSource) {
+                Element element = getFirstElement(((DOMSource)part).getNode());
+
+                if (element != null) {
+                    answer.add(element);
+                }
+                
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Extract body element " 
+                              + (element == null ? "null" : XMLUtils.toString(element)));
+                }
+                
+            } else if (part instanceof Element) {
+                answer.add((Element)part);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unhandled part type '" + part.getClass());
+                }
+            }
+        }
+
+        return answer;
+    }
+
+
     public static Object getBodyFromCamel(org.apache.camel.Message out,
             DataFormat dataFormat) {
         Object answer = null;
@@ -552,6 +644,14 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         return answer;
     }
 
+    private static Element getFirstElement(Node node) {
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            return (Element)node;
+        } 
+        
+        return DOMUtils.getFirstElement(node);
+    }
+    
     public void copyJaxWsContext(org.apache.cxf.message.Exchange cxfExchange, Map<String, Object> context) {
         if (cxfExchange.getOutMessage() != null) {
             org.apache.cxf.message.Message outMessage = cxfExchange.getOutMessage();

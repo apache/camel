@@ -23,6 +23,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.ws.WebServiceProvider;
 
+import org.w3c.dom.Element;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
@@ -41,12 +43,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
-import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.util.ClassHelper;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
@@ -57,6 +59,9 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.service.model.BindingOperationInfo;
+import org.apache.cxf.service.model.MessagePartInfo;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -83,6 +88,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private HeaderFilterStrategy headerFilterStrategy;
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
     private boolean isSetDefaultBus;
+    private boolean loggingFeatureEnabled;
 
     public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
         super(remaining, cxfComponent);
@@ -143,6 +149,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                         + " since SEI class is annotated with WebServiceProvider");
             }
         }
+        
+        if (loggingFeatureEnabled) {
+            sfb.getFeatures().add(new LoggingFeature());
+        }
+
+        if (getDataFormat() == DataFormat.PAYLOAD) {
+            sfb.setDataBinding(new HybridSourceDataBinding());
+        }        
         
         sfb.setBus(getBus());
         sfb.setStart(false);
@@ -237,6 +251,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             factoryBean.getFeatures().add(new MessageDataFormatFeature());
         } else if (getDataFormat() == DataFormat.PAYLOAD) {
             factoryBean.getFeatures().add(new PayLoadDataFormatFeature());
+            factoryBean.setDataBinding(new HybridSourceDataBinding());
+        }
+        
+        if (loggingFeatureEnabled) {
+            factoryBean.getFeatures().add(new LoggingFeature());
         }
         
         factoryBean.setBus(getBus());
@@ -267,6 +286,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             factoryBean.getFeatures().add(new MessageDataFormatFeature());
         } else if (getDataFormat() == DataFormat.PAYLOAD) {
             factoryBean.getFeatures().add(new PayLoadDataFormatFeature());
+            factoryBean.setDataBinding(new HybridSourceDataBinding());
+        }
+        
+        if (loggingFeatureEnabled) {
+            factoryBean.getFeatures().add(new LoggingFeature());
         }
         
         factoryBean.setBus(getBus());        
@@ -453,6 +477,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public boolean isSetDefaultBus() {
         return isSetDefaultBus;
     }
+    
+    public void setLoggingFeatureEnabled(boolean loggingFeatureEnabled) {
+        this.loggingFeatureEnabled = loggingFeatureEnabled;
+    }
+
+    public boolean isLoggingFeatureEnabled() {
+        return loggingFeatureEnabled;
+    }    
 
     public void start() throws Exception {
         if (headerFilterStrategy == null) {
@@ -496,8 +528,21 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             }
             
             if (DataFormat.PAYLOAD == message.get(DataFormat.class)) {
+                
                 CxfPayload<?> payload = (CxfPayload<?>)params[0];
-                message.put(List.class, payload.getBody());
+                List<Element> elements = payload.getBody();
+                
+                BindingOperationInfo boi = message.get(BindingOperationInfo.class);
+                MessageContentsList content = new MessageContentsList();
+                int i = 0;
+                
+                for (MessagePartInfo partInfo : boi.getOperationInfo().getInput().getMessageParts()) {
+                    if (elements.size() > i) {
+                        content.put(partInfo, elements.get(i++));
+                    }
+                }
+
+                message.setContent(List.class, content);
                 message.put(Header.HEADER_LIST, payload.getHeaders());
             } else {
                 super.setParameters(params, message);

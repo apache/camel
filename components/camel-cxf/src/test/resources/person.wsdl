@@ -64,6 +64,13 @@
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
+
+			<xsd:element name="StringInputElem" type="xsd:string" />
+			<xsd:element name="IntegerInputElem" type="xsd:int" />
+
+			<xsd:element name="StringOutputElem" type="xsd:string" />
+			<xsd:element name="IntegerOutputElem" type="xsd:int" />
+				
 		</xsd:schema>
   </wsdl:types>
 	
@@ -76,12 +83,28 @@
 	<wsdl:message name="UnknownPersonFault">
 		<wsdl:part name="payload" element="typens:UnknownPersonFault"/>
 	</wsdl:message>
+	
+    <wsdl:message name="GetPersonMultiPartRequest">
+		<wsdl:part name="nameIn" element="typens:StringInputElem" />
+		<wsdl:part name="ssnIn" element="typens:IntegerInputElem" />
+	</wsdl:message>
+	<wsdl:message name="GetPersonMultiPartResponse">
+		<wsdl:part name="nameOut" element="typens:StringOutputElem" />
+		<wsdl:part name="ssnOut" element="typens:IntegerOutputElem" />
+	</wsdl:message>
 
     <wsdl:portType name="Person">
 		<wsdl:operation name="GetPerson">
 			<wsdl:input message="tns:GetPersonRequest"/>
 			<wsdl:output message="tns:GetPersonResponse"/>
 			<wsdl:fault name="UnknownPerson" message="tns:UnknownPersonFault"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	
+	<wsdl:portType name="PersonMultiPartPortType">
+		<wsdl:operation name="GetPersonMultiPartOperation">
+			<wsdl:input message="tns:GetPersonMultiPartRequest" />
+			<wsdl:output message="tns:GetPersonMultiPartResponse" />
 		</wsdl:operation>
 	</wsdl:portType>
 	
@@ -116,11 +139,11 @@
       </wsdl:operation>
    </wsdl:binding>   
    
-       <wsdl:binding name="PersonSOAPBinding2" type="tns:Person">
-    	<soap:binding style="document" transport="http://cxf.apache.org/transports/camel" />
-		<wsdl:operation name="GetPerson">
-			<wsdl:input>
-				<soap:body use="literal" />
+   <wsdl:binding name="PersonSOAPBinding2" type="tns:Person">
+       <soap:binding style="document" transport="http://cxf.apache.org/transports/camel" />
+	   <wsdl:operation name="GetPerson">
+           <wsdl:input>
+			    <soap:body use="literal" />
 			</wsdl:input>
 			<wsdl:output>
 				<soap:body use="literal" />
@@ -130,6 +153,22 @@
 			</wsdl:fault>
        </wsdl:operation>
    </wsdl:binding>
+   
+   <wsdl:binding name="PersonMultiPartSOAPBinding"
+		type="tns:PersonMultiPartPortType">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="GetPersonMultiPartOperation">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+		</wsdl:operation>
+	</wsdl:binding>
 
 	<wsdl:service name="PersonService">
     	<wsdl:port binding="tns:PersonSOAPBinding" name="soap">
@@ -148,5 +187,11 @@
        <soap12:address location="http://localhost:8092/PersonService/" />
        </wsdl:port>
    </wsdl:service>      
+   
+	<wsdl:service name="PersonMultiPartService">
+		<wsdl:port name="PersonMultiPartPort" binding="tns:PersonMultiPartSOAPBinding">
+			<soap:address location="http://localhost:9000/PersonMultiPart" />
+		</wsdl:port>
+	</wsdl:service>   
 
 </wsdl:definitions>
