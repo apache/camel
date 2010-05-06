@@ -38,6 +38,7 @@
         <include>org.apache.camel:camel-bam</include>
         <include>org.apache.camel:camel-bean-validator</include>
         <include>org.apache.camel:camel-bindy</include>
+        <include>org.apache.camel:camel-blueprint</include>
         <include>org.apache.camel:camel-cache</include>
         <include>org.apache.camel:camel-castor</include>
         <include>org.apache.camel:camel-core</include>
@@ -46,7 +47,7 @@
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-dozer</include>
-	<include>org.apache.camel:camel-eclipse</include>
+        <include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-freemarker</include>
@@ -100,7 +101,7 @@
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>
-	<include>org.apache.camel:camel-spring-security</include>
+        <include>org.apache.camel:camel-spring-security</include>
         <include>org.apache.camel:camel-spring-osgi</include>
         <include>org.apache.camel:camel-sql</include>
         <include>org.apache.camel:camel-stream</include>

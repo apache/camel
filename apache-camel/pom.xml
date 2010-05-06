@@ -64,6 +64,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-blueprint</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-cache</artifactId>
     </dependency>
     <dependency>
@@ -523,7 +527,7 @@
             <configuration>
               <descriptors>
                 <descriptor>src/main/descriptors/unix-src.xml</descriptor>
-	      </descriptors>
+	          </descriptors>
               <tarLongFileMode>gnu</tarLongFileMode> 
             </configuration>
           </execution>
