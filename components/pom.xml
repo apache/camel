@@ -36,8 +36,7 @@
     <module>camel-bam</module>
     <module>camel-bean-validator</module>
     <module>camel-bindy</module>
-    <!-- component still under active development 
-       <module>camel-blueprint</module> -->
+    <module>camel-blueprint</module>
     <module>camel-cometd</module>
     <module>camel-cache</module>
     <module>camel-castor</module>
