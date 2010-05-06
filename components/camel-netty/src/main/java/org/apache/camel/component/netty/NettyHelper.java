@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty;
 
+import java.net.SocketAddress;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
@@ -45,17 +47,34 @@ public final class NettyHelper {
      * @throws CamelExchangeException is thrown if the body could not be written for some reasons
      *                                (eg remote connection is closed etc.)
      */
-    public static void writeBody(Channel channel, Object body, Exchange exchange) throws CamelExchangeException {
+    public static void writeBody(Channel channel, SocketAddress remoteAddress, Object body, Exchange exchange) throws CamelExchangeException {
         // the write operation is asynchronous. Use future to wait until the session has been written
-        ChannelFuture future = channel.write(body);
+        ChannelFuture future;
+        if (remoteAddress != null) {
+            future = channel.write(body, remoteAddress);
+        } else {
+            future = channel.write(body);
+        }
 
         // wait for the write
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Waiting for write to complete");
+        }
         future.awaitUninterruptibly();
 
         // if it was not a success then thrown an exception
         if (future.isSuccess() == false) {
             LOG.warn("Cannot write body: " + body + " using channel: " + channel);
-            throw new CamelExchangeException("Cannot write body", exchange);
+            throw new CamelExchangeException("Cannot write body", exchange, future.getCause());
+        }
+    }
+
+    public static void close(Channel channel) {
+        if (channel != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Closing channel: " + channel);
+            }
+            channel.close().awaitUninterruptibly();
         }
     }
 

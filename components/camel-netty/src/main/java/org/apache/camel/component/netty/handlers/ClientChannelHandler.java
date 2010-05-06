@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.handlers;
 
+import org.apache.camel.CamelException;
+import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.NettyProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,20 +39,25 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent)
-        throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("An exception was caught by the ClientChannelHandler during communication", exceptionEvent.getCause());
+            LOG.debug("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
         }
+        // close channel in case an exception was thrown
+        NettyHelper.close(exceptionEvent.getChannel());
+
+        // must wrap and rethrow since cause can be of Throwable and we must only throw Exception
+        throw new CamelException(exceptionEvent.getCause());
     }
 
     @Override
-    public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent)
-        throws Exception {
-        response = messageEvent.getMessage();
+    public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
+        setResponse(messageEvent.getMessage());
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Incoming message:" + response);
         }
+
         if (producer.getConfiguration().isSync()) {
             producer.getCountdownLatch().countDown();
         }        

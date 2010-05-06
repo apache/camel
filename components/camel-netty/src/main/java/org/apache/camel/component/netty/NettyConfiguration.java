@@ -57,6 +57,7 @@ public class NettyConfiguration {
     private int maxPoolSize;
     private String keyStoreFormat;
     private String securityProvider;
+    private boolean disconnect;
 
     public NettyConfiguration() {
         setKeepAlive(true);
@@ -139,6 +140,9 @@ public class NettyConfiguration {
         if (settings.containsKey("maxPoolSize")) {
             setMaxPoolSize(Integer.valueOf((String) settings.get("maxPoolSize")));
         }
+        if (settings.containsKey("disconnect")) {
+            setDisconnect(Boolean.valueOf((String) settings.get("disconnect")));
+        }
     }
 
     public String getProtocol() {
@@ -220,7 +224,6 @@ public class NettyConfiguration {
     public void setSslHandler(SslHandler sslHandler) {
         this.sslHandler = sslHandler;
     }
-
 
     public List<ChannelDownstreamHandler> getEncoders() {
         return encoders;
@@ -352,6 +355,18 @@ public class NettyConfiguration {
 
     public void setSecurityProvider(String securityProvider) {
         this.securityProvider = securityProvider;
+    }
+
+    public boolean isDisconnect() {
+        return disconnect;
+    }
+
+    public void setDisconnect(boolean disconnect) {
+        this.disconnect = disconnect;
+    }
+
+    public String getAddress() {
+        return host + ":" + port;
     }
 
     private <T> void addToHandlersList(List configured, List handlers, Class<? extends T> handlerType) {

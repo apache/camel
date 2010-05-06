@@ -43,13 +43,13 @@ public class NettyEndpoint extends DefaultEndpoint {
 
     public Exchange createExchange(ChannelHandlerContext ctx, MessageEvent messageEvent) {
         Exchange exchange = createExchange();
-        exchange.getIn().setHeader("NettyChannelHandlerContext", ctx);
-        exchange.getIn().setHeader("NettyMessageEvent", messageEvent);
+        exchange.getIn().setHeader(NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, ctx);
+        exchange.getIn().setHeader(NettyConstants.NETTY_MESSAGE_EVENT, messageEvent);
         return exchange;        
     }
     
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     public NettyConfiguration getConfiguration() {

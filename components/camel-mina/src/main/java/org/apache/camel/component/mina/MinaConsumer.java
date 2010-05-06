@@ -105,7 +105,12 @@ public class MinaConsumer extends DefaultConsumer {
             if (endpoint.getConfiguration().getCharsetName() != null) {
                 exchange.setProperty(Exchange.CHARSET_NAME, endpoint.getConfiguration().getCharsetName());
             }
-            getProcessor().process(exchange);
+
+            try {
+                getProcessor().process(exchange);
+            } catch (Throwable e) {
+                getExceptionHandler().handleException(e);
+            }
 
             // if sync then we should return a response
             if (sync) {
