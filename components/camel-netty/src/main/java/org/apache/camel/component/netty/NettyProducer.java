@@ -37,18 +37,23 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelPipeline;
+import org.jboss.netty.channel.group.ChannelGroup;
+import org.jboss.netty.channel.group.ChannelGroupFuture;
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.DatagramChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
 
 public class NettyProducer extends DefaultProducer implements ServicePoolAware {
     private static final transient Log LOG = LogFactory.getLog(NettyProducer.class);
+    private final ChannelGroup allChannels;
     private CamelContext context;
     private NettyConfiguration configuration;
     private CountDownLatch countdownLatch;
     private ChannelFactory channelFactory;
     private DatagramChannelFactory datagramChannelFactory;
     private ChannelFuture channelFuture;
+    private Channel channel;
     private ClientBootstrap clientBootstrap;
     private ConnectionlessBootstrap connectionlessClientBootstrap;
     private ClientPipelineFactory clientPipelineFactory;
@@ -58,6 +63,7 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         super(nettyEndpoint);
         this.configuration = configuration;
         this.context = this.getEndpoint().getCamelContext();
+        this.allChannels = new DefaultChannelGroup("NettyProducer-" + nettyEndpoint.getEndpointUri());
     }
 
     @Override
@@ -87,9 +93,12 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Stopping producer at address: " + configuration.getAddress());
         }
-        if (channelFuture != null) {
-            NettyHelper.close(channelFuture.getChannel());
-        }
+
+        // close all channels
+        ChannelGroupFuture future = allChannels.close();
+        future.awaitUninterruptibly();
+
+        // and then release other resources
         if (channelFactory != null) {
             channelFactory.releaseExternalResources();
         }
@@ -103,7 +112,6 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         }
 
         // write the body
-        Channel channel = channelFuture.getChannel();
         NettyHelper.writeBody(channel, null, exchange.getIn().getBody(), exchange);
 
         if (configuration.isSync()) {
@@ -162,6 +170,9 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         if (!channelFuture.isSuccess()) {
             throw new CamelException("Cannot connect to " + configuration.getAddress(), channelFuture.getCause());
         }
+        channel = channelFuture.getChannel();
+        // to keep track of all channels in use
+        allChannels.add(channel);
 
         LOG.info("Netty TCP Producer started and now listening on: " + configuration.getAddress());
     }
@@ -195,6 +206,9 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         if (!channelFuture.isSuccess()) {
             throw new CamelException("Cannot connect to " + configuration.getAddress(), channelFuture.getCause());
         }
+        channel = channelFuture.getChannel();
+        // to keep track of all channels in use
+        allChannels.add(channel);
 
         LOG.info("Netty UDP Producer started and now listening on: " + configuration.getAddress());
     }
@@ -255,4 +269,7 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         this.clientPipeline = clientPipeline;
     }
 
+    public ChannelGroup getAllChannels() {
+        return allChannels;
+    }
 }

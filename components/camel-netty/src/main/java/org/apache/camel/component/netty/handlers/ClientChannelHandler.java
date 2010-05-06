@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelPipelineCoverage;
+import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
@@ -36,6 +37,12 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
     public ClientChannelHandler(NettyProducer producer) {
         super();
         this.producer = producer;
+    }
+
+    @Override
+    public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent channelStateEvent) throws Exception {
+        // to keep track of open sockets
+        producer.getAllChannels().add(channelStateEvent.getChannel());
     }
 
     @Override

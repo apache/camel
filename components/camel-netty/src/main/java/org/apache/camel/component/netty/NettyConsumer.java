@@ -20,7 +20,6 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.commons.logging.Log;
@@ -29,12 +28,16 @@ import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
+import org.jboss.netty.channel.group.ChannelGroup;
+import org.jboss.netty.channel.group.ChannelGroupFuture;
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.DatagramChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
 public class NettyConsumer extends DefaultConsumer {
     private static final transient Log LOG = LogFactory.getLog(NettyConsumer.class);
+    private final ChannelGroup allChannels;
     private CamelContext context;
     private NettyConfiguration configuration;
     private ChannelFactory channelFactory;
@@ -47,6 +50,7 @@ public class NettyConsumer extends DefaultConsumer {
         super(nettyEndpoint, processor);
         this.context = this.getEndpoint().getCamelContext();
         this.configuration = configuration;
+        this.allChannels = new DefaultChannelGroup("NettyProducer-" + nettyEndpoint.getEndpointUri());
     }
 
     @Override
@@ -72,20 +76,22 @@ public class NettyConsumer extends DefaultConsumer {
             LOG.info("Netty consumer unbinding from: " + configuration.getAddress());
         }
 
+        // close all channels
+        ChannelGroupFuture future = allChannels.close();
+        future.awaitUninterruptibly();
 
-        if (channel != null) {
-            NettyHelper.close(channel);
+        // and then release other resources
+        if (channelFactory != null) {
+            channelFactory.releaseExternalResources();
         }
-
-        // TODO: use ChannelGroup to keep track on open connections etc to be closed on stopping
-        // and then releasing channel factory would be faster
-//        if (channelFactory != null) {
-//            channelFactory.releaseExternalResources();
-//        }
 
         super.doStop();
     }
-    
+
+    public ChannelGroup getAllChannels() {
+        return allChannels;
+    }
+
     public NettyConfiguration getConfiguration() {
         return configuration;
     }
@@ -108,8 +114,8 @@ public class NettyConsumer extends DefaultConsumer {
 
     public void setDatagramChannelFactory(DatagramChannelFactory datagramChannelFactory) {
         this.datagramChannelFactory = datagramChannelFactory;
-    } 
-    
+    }
+
     public ServerBootstrap getServerBootstrap() {
         return serverBootstrap;
     }
@@ -124,8 +130,8 @@ public class NettyConsumer extends DefaultConsumer {
 
     public void setConnectionlessServerBootstrap(ConnectionlessBootstrap connectionlessServerBootstrap) {
         this.connectionlessServerBootstrap = connectionlessServerBootstrap;
-    } 
-    
+    }
+
     private void initializeTCPServerSocketCommunicationLayer() throws Exception {
         ExecutorService bossExecutor = context.getExecutorServiceStrategy().newThreadPool(this, "NettyTCPBoss",
                 configuration.getCorePoolSize(), configuration.getMaxPoolSize());
@@ -141,6 +147,8 @@ public class NettyConsumer extends DefaultConsumer {
         serverBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeoutMillis());
 
         channel = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+        // to keep track of all channels in use
+        allChannels.add(channel);
     }
 
     private void initializeUDPServerSocketCommunicationLayer() throws Exception {
@@ -159,6 +167,8 @@ public class NettyConsumer extends DefaultConsumer {
         connectionlessServerBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
 
         channel = connectionlessServerBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+        // to keep track of all channels in use
+        allChannels.add(channel);
     }
 
 }

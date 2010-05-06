@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelPipelineCoverage;
+import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
@@ -39,6 +40,12 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     public ServerChannelHandler(NettyConsumer consumer) {
         super();
         this.consumer = consumer;    
+    }
+
+    @Override
+    public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent channelStateEvent) throws Exception {
+        // to keep track of open sockets
+        consumer.getAllChannels().add(channelStateEvent.getChannel());
     }
 
     @Override
@@ -108,7 +115,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         } else {
             // we got a body to write
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Writing body" + body);
+                LOG.debug("Writing body: " + body);
             }
             if (consumer.getConfiguration().getProtocol().equalsIgnoreCase("udp")) {
                 NettyHelper.writeBody(messageEvent.getChannel(), messageEvent.getRemoteAddress(), body, exchange);
