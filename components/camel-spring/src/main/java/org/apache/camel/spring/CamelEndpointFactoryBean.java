@@ -26,7 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.springframework.beans.BeansException;
@@ -44,8 +43,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware, ApplicationContextAware {
-    @XmlAttribute    
-    private Boolean singleton = Boolean.FALSE;
     @XmlAttribute
     private String uri;
     @XmlAttribute
@@ -69,13 +66,9 @@ public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryB
     }
     
     public boolean isSingleton() {
-        return singleton;
+        return true;
     }
     
-    public void setSingleton(boolean singleton) {
-        this.singleton = singleton;
-    }
-
     public CamelContext getCamelContext() {
         return context;
     }
