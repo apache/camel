@@ -50,15 +50,16 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     }
 
     @Override
+    public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
+        LOG.debug("Channel closed: " + e.getChannel());
+    }
+
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
-        }
+        LOG.warn("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
+
         // close channel in case an exception was thrown
         NettyHelper.close(exceptionEvent.getChannel());
-
-        // must wrap and rethrow since cause can be of Throwable and we must only throw Exception
-        throw new CamelException(exceptionEvent.getCause());
     }
     
     @Override

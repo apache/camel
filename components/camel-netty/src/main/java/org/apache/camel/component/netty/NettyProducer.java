@@ -134,9 +134,9 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         NettyHelper.writeBody(channel, null, body, exchange);
 
         if (configuration.isSync()) {
-            boolean success = countdownLatch.await(configuration.getReceiveTimeoutMillis(), TimeUnit.MILLISECONDS);
+            boolean success = countdownLatch.await(configuration.getTimeout(), TimeUnit.MILLISECONDS);
             if (!success) {
-                throw new ExchangeTimedOutException(exchange, configuration.getReceiveTimeoutMillis());
+                throw new ExchangeTimedOutException(exchange, configuration.getTimeout());
             }
 
             ClientChannelHandler handler = (ClientChannelHandler) clientPipeline.get("handler");
@@ -189,7 +189,7 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
             clientBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
             clientBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
             clientBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
-            clientBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeoutMillis());
+            clientBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
         }
         if (clientPipelineFactory == null) {
             clientPipelineFactory = new ClientPipelineFactory(this);
@@ -209,7 +209,7 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
             connectionlessClientBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
             connectionlessClientBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
             connectionlessClientBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
-            connectionlessClientBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeoutMillis());
+            connectionlessClientBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
             connectionlessClientBootstrap.setOption("child.broadcast", configuration.isBroadcast());
             connectionlessClientBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
             connectionlessClientBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());

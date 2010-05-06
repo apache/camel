@@ -24,23 +24,36 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 public class NettyComponent extends DefaultComponent {
-    private NettyConfiguration config;
+    private NettyConfiguration configuration;
 
     public NettyComponent() {
-        config = new NettyConfiguration();
     }
 
     public NettyComponent(CamelContext context) {
         super(context);
-        config = new NettyConfiguration();
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        NettyConfiguration config;
+        if (configuration != null) {
+            config = configuration.copy();
+        } else {
+            config = new NettyConfiguration();
+        }
+
         config.parseURI(new URI(remaining), parameters, this);
         
         NettyEndpoint nettyEndpoint = new NettyEndpoint(remaining, this, config);
         setProperties(nettyEndpoint.getConfiguration(), parameters);
         return nettyEndpoint;
+    }
+
+    public NettyConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(NettyConfiguration configuration) {
+        this.configuration = configuration;
     }
 }

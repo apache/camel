@@ -144,7 +144,7 @@ public class NettyConsumer extends DefaultConsumer {
         serverBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
         serverBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
         serverBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
-        serverBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeoutMillis());
+        serverBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
 
         channel = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         // to keep track of all channels in use
@@ -161,7 +161,7 @@ public class NettyConsumer extends DefaultConsumer {
         connectionlessServerBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
         connectionlessServerBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
         connectionlessServerBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
-        connectionlessServerBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeoutMillis());
+        connectionlessServerBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
         connectionlessServerBootstrap.setOption("child.broadcast", configuration.isBroadcast());
         connectionlessServerBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
         connectionlessServerBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());

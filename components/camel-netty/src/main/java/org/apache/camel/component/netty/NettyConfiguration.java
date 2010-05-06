@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.URISupport;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelHandler;
@@ -32,16 +33,16 @@ import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.jboss.netty.handler.ssl.SslHandler;
 
 @SuppressWarnings("unchecked")
-public class NettyConfiguration {
+public class NettyConfiguration implements Cloneable {
     private String protocol;
     private String host;
     private int port;
-    private boolean keepAlive;
-    private boolean tcpNoDelay;
+    private boolean keepAlive = true;
+    private boolean tcpNoDelay = true;
     private boolean broadcast;
-    private long connectTimeoutMillis;
-    private long receiveTimeoutMillis;
-    private boolean reuseAddress;
+    private long connectTimeout = 10000;
+    private long timeout = 30000;
+    private boolean reuseAddress = true;
     private boolean sync = true;
     private String passphrase;
     private File keyStoreFile;
@@ -51,30 +52,31 @@ public class NettyConfiguration {
     private List<ChannelUpstreamHandler> decoders = new ArrayList<ChannelUpstreamHandler>();
     private ChannelHandler handler;
     private boolean ssl;
-    private long sendBufferSize;
-    private long receiveBufferSize;
-    private int corePoolSize;
-    private int maxPoolSize;
+    private long sendBufferSize = 65536;
+    private long receiveBufferSize = 65536;
+    private int corePoolSize = 10;
+    private int maxPoolSize = 100;
     private String keyStoreFormat;
     private String securityProvider;
     private boolean disconnect;
     private boolean lazyChannelCreation = true;
     private boolean transferExchange;
 
-    public NettyConfiguration() {
-        setKeepAlive(true);
-        setTcpNoDelay(true);
-        setBroadcast(false);
-        setReuseAddress(true);
-        setSync(true);
-        setConnectTimeoutMillis(10000);
-        setReceiveTimeoutMillis(10000);
-        setSendBufferSize(65536);
-        setReceiveBufferSize(65536);
-        setSsl(false);
-        setCorePoolSize(10);
-        setMaxPoolSize(100);
-        setLazyChannelCreation(true);
+    /**
+     * Returns a copy of this configuration
+     */
+    public NettyConfiguration copy() {
+        try {
+            NettyConfiguration answer = (NettyConfiguration) clone();
+            // make sure the lists is copied in its own instance
+            List<ChannelDownstreamHandler> encodersCopy = new ArrayList<ChannelDownstreamHandler>(encoders);
+            answer.setEncoders(encodersCopy);
+            List<ChannelUpstreamHandler> decodersCopy = new ArrayList<ChannelUpstreamHandler>(decoders);
+            answer.setDecoders(decodersCopy);
+            return answer;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     public void parseURI(URI uri, Map<String, Object> parameters, NettyComponent component) throws Exception {
@@ -120,13 +122,13 @@ public class NettyConfiguration {
             setReuseAddress(Boolean.valueOf((String) settings.get("reuseAddress")));
         }
         if (settings.containsKey("connectTimeoutMillis")) {
-            setConnectTimeoutMillis(Long.valueOf((String) settings.get("connectTimeoutMillis")));
+            setConnectTimeout(Long.valueOf((String) settings.get("connectTimeoutMillis")));
         }
         if (settings.containsKey("sync")) {
             setTcpNoDelay(Boolean.valueOf((String) settings.get("sync")));
         }
         if (settings.containsKey("receiveTimeoutMillis")) {
-            setReceiveTimeoutMillis(Long.valueOf((String) settings.get("receiveTimeoutMillis")));
+            setTimeout(Long.valueOf((String) settings.get("receiveTimeoutMillis")));
         }
         if (settings.containsKey("sendBufferSize")) {
             setSendBufferSize(Long.valueOf((String) settings.get("sendBufferSize")));
@@ -202,12 +204,12 @@ public class NettyConfiguration {
         this.broadcast = broadcast;
     }
 
-    public long getConnectTimeoutMillis() {
-        return connectTimeoutMillis;
+    public long getConnectTimeout() {
+        return connectTimeout;
     }
 
-    public void setConnectTimeoutMillis(long connectTimeoutMillis) {
-        this.connectTimeoutMillis = connectTimeoutMillis;
+    public void setConnectTimeout(long connectTimeout) {
+        this.connectTimeout = connectTimeout;
     }
 
     public boolean isReuseAddress() {
@@ -278,12 +280,12 @@ public class NettyConfiguration {
         this.handler = handler;
     }
 
-    public long getReceiveTimeoutMillis() {
-        return receiveTimeoutMillis;
+    public long getTimeout() {
+        return timeout;
     }
 
-    public void setReceiveTimeoutMillis(long receiveTimeoutMillis) {
-        this.receiveTimeoutMillis = receiveTimeoutMillis;
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 
     public long getSendBufferSize() {
