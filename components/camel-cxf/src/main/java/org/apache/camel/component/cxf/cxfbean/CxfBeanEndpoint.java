@@ -50,6 +50,7 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
     private CxfBeanBinding cxfBeanBinding = new DefaultCxfBeanBinding();
     private HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
     private boolean loggingFeatureEnabled;
+    private boolean populateFromClass = true;
 
     public CxfBeanEndpoint(String remaining, CxfBeanComponent component) {
         super(remaining, component);
@@ -100,6 +101,9 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
             JaxWsServerFactoryBean bean = new JaxWsServerFactoryBean();
             bean.setTransportId(CxfBeanTransportFactory.TRANSPORT_ID);
             bean.setServiceClass(serviceBeans.get(0).getClass());
+            if (bean.getServiceFactory() != null) {
+                bean.getServiceFactory().setPopulateFromClass(isPopulateFromClass());
+            }
             bean.setBus(bus);
             bean.setStart(true);
             bean.setAddress("camel://" + createEndpointUri());
@@ -184,4 +188,11 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
         return loggingFeatureEnabled;
     }     
 
+    public void setPopulateFromClass(boolean populateFromClass) {
+        this.populateFromClass = populateFromClass;
+    }
+
+    public boolean isPopulateFromClass() {
+        return populateFromClass;
+    }
 }
