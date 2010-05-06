@@ -14,13 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mina;
+package org.apache.camel.component.netty;
 
 import java.nio.charset.Charset;
 
 import junit.framework.Assert;
-
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -28,22 +26,24 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
- * Unit test for the <tt>transferExchange=true</tt> option.
- *
  * @version $Revision$
  */
-public class MinaTransferExchangeOptionTest extends ContextTestSupport {
+public class NettyTransferExchangeOptionTest extends CamelTestSupport {
 
-    protected String uri = "mina:tcp://localhost:6321?sync=true&encoding=UTF-8&transferExchange=true";
+    protected String uri = "netty:tcp://localhost:6321?transferExchange=true";
 
-    public void testMinaTransferExchangeOptionWithoutException() throws Exception {
+    @Test
+    public void testNettyTransferExchangeOptionWithoutException() throws Exception {
         Exchange exchange = sendExchange(false);
         assertExchange(exchange, false);
     }
 
-    public void testMinaTransferExchangeOptionWithException() throws Exception {
+    @Test
+    public void testNettyTransferExchangeOptionWithException() throws Exception {
         Exchange exchange = sendExchange(true);
         assertExchange(exchange, true);
     }
@@ -122,3 +122,5 @@ public class MinaTransferExchangeOptionTest extends ContextTestSupport {
         };
     }
 }
+
+

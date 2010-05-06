@@ -243,7 +243,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
-            if (sync && message == null) {
+            if (sync && !messageReceived) {
                 // sync=true (InOut mode) so we expected a message as reply but did not get one before the session is closed
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Session closed but no message received from address: " + this.endpoint.getAddress());

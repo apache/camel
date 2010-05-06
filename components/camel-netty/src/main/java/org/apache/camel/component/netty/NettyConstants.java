@@ -26,6 +26,7 @@ public final class NettyConstants {
     public static final String NETTY_CLOSE_CHANNEL_WHEN_COMPLETE = "CamelNettyCloseChannelWhenComplete";
     public static final String NETTY_CHANNEL_HANDLER_CONTEXT = "CamelNettyChannelHandlerContext";
     public static final String NETTY_MESSAGE_EVENT = "CamelNettyMessageEvent";
+    public static final String NETTY_REMOTE_ADDRESS = "CamelNettyRemoteAddress";
 
     private NettyConstants() {
         // Utility class

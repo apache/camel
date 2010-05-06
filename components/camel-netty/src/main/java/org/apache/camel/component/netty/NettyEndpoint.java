@@ -45,7 +45,9 @@ public class NettyEndpoint extends DefaultEndpoint {
         Exchange exchange = createExchange();
         exchange.getIn().setHeader(NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, ctx);
         exchange.getIn().setHeader(NettyConstants.NETTY_MESSAGE_EVENT, messageEvent);
-        return exchange;        
+        exchange.getIn().setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, messageEvent.getRemoteAddress());
+        NettyPayloadHelper.setIn(exchange, messageEvent.getMessage());
+        return exchange;
     }
     
     public boolean isSingleton() {

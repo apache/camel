@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.ServicePoolAware;
@@ -108,20 +109,50 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
             openConnection();
         }
 
+        Object body = NettyPayloadHelper.getIn(getEndpoint(), exchange);
+        if (body == null) {
+            LOG.warn("No payload to send for exchange: " + exchange);
+            return; // exit early since nothing to write
+        }
+
         if (configuration.isSync()) {
+            // only initialize latch if we should get a response
             countdownLatch = new CountDownLatch(1);
         }
 
+        // log what we are writing
+        if (LOG.isDebugEnabled()) {
+            Object out = body;
+            if (body instanceof byte[]) {
+                // byte arrays is not readable so convert to string
+                out = exchange.getContext().getTypeConverter().convertTo(String.class, body);
+            }
+            LOG.debug("Writing body : " + out);
+        }
+
         // write the body
-        NettyHelper.writeBody(channel, null, exchange.getIn().getBody(), exchange);
+        NettyHelper.writeBody(channel, null, body, exchange);
 
         if (configuration.isSync()) {
             boolean success = countdownLatch.await(configuration.getReceiveTimeoutMillis(), TimeUnit.MILLISECONDS);
             if (!success) {
                 throw new ExchangeTimedOutException(exchange, configuration.getReceiveTimeoutMillis());
             }
-            Object response = ((ClientChannelHandler) clientPipeline.get("handler")).getResponse();
-            exchange.getOut().setBody(response);
+
+            ClientChannelHandler handler = (ClientChannelHandler) clientPipeline.get("handler");
+            if (handler.getCause() != null) {
+                throw new CamelExchangeException("Error occurred in ClientChannelHandler", exchange, handler.getCause());
+            } else if (!handler.isMessageReceived()) {
+                // no message received
+                throw new CamelExchangeException("No response received from remote server: " + configuration.getAddress(), exchange);
+            } else {
+                // set the result on either IN or OUT on the original exchange depending on its pattern
+                if (ExchangeHelper.isOutCapable(exchange)) {
+                    NettyPayloadHelper.setOut(exchange, handler.getMessage());
+                } else {
+                    NettyPayloadHelper.setIn(exchange, handler.getMessage());
+                }
+            }
         }
 
         // should channel be closed after complete?

@@ -22,6 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
+import org.apache.camel.component.netty.NettyPayloadHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,7 +77,6 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         if (consumer.getConfiguration().isSync()) {
             exchange.setPattern(ExchangePattern.InOut);
         }
-        exchange.getIn().setBody(in);
 
         try {
             consumer.getProcessor().process(exchange);
@@ -93,17 +93,18 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     private void sendResponse(MessageEvent messageEvent, Exchange exchange) throws Exception {
         Object body;
         if (ExchangeHelper.isOutCapable(exchange)) {
-            body = exchange.getOut().getBody();
+            body = NettyPayloadHelper.getOut(consumer.getEndpoint(), exchange);
         } else {
-            body = exchange.getIn().getBody();
+            body = NettyPayloadHelper.getIn(consumer.getEndpoint(), exchange);
         }
 
-        if (exchange.isFailed()) {
-            if (exchange.getException() == null) {
-                // fault detected
-                body = exchange.getOut().getBody();
-            } else {
+        boolean failed = exchange.isFailed();
+        if (failed && !consumer.getEndpoint().getConfiguration().isTransferExchange()) {
+            if (exchange.getException() != null) {
                 body = exchange.getException();
+            } else {
+                // failed and no exception, must be a fault
+                body = exchange.getOut().getBody();
             }
         }
 

@@ -59,6 +59,7 @@ public class NettyConfiguration {
     private String securityProvider;
     private boolean disconnect;
     private boolean lazyChannelCreation = true;
+    private boolean transferExchange;
 
     public NettyConfiguration() {
         setKeepAlive(true);
@@ -147,6 +148,9 @@ public class NettyConfiguration {
         }
         if (settings.containsKey("lazyChannelCreation")) {
             setLazyChannelCreation(Boolean.valueOf((String) settings.get("lazyChannelCreation")));
+        }
+        if (settings.containsKey("transferExchange")) {
+            setTransferExchange(Boolean.valueOf((String) settings.get("transferExchange")));
         }
     }
 
@@ -376,6 +380,14 @@ public class NettyConfiguration {
 
     public void setLazyChannelCreation(boolean lazyChannelCreation) {
         this.lazyChannelCreation = lazyChannelCreation;
+    }
+
+    public boolean isTransferExchange() {
+        return transferExchange;
+    }
+
+    public void setTransferExchange(boolean transferExchange) {
+        this.transferExchange = transferExchange;
     }
 
     public String getAddress() {

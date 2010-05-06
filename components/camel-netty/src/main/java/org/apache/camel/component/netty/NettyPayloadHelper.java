@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mina;
+package org.apache.camel.component.netty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
 
 /**
- * Helper to get and set the correct payload when transferring data using camel-mina.
+ * Helper to get and set the correct payload when transferring data using camel-netty.
  * Always use this helper instead of direct access on the exchange object.
  * <p/>
  * This helper ensures that we can also transfer exchange objects over the wire using the
@@ -28,13 +28,9 @@ import org.apache.camel.impl.DefaultExchangeHolder;
  *
  * @version $Revision$
  */
-public final class MinaPayloadHelper {
+public final class NettyPayloadHelper {
 
-    private MinaPayloadHelper() {
-        //Utility Class
-    }
-
-    public static Object getIn(MinaEndpoint endpoint, Exchange exchange) {
+    public static Object getIn(NettyEndpoint endpoint, Exchange exchange) {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
             return DefaultExchangeHolder.marshal(exchange);
@@ -44,7 +40,7 @@ public final class MinaPayloadHelper {
         }
     }
 
-    public static Object getOut(MinaEndpoint endpoint, Exchange exchange) {
+    public static Object getOut(NettyEndpoint endpoint, Exchange exchange) {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
             return DefaultExchangeHolder.marshal(exchange);
@@ -72,4 +68,5 @@ public final class MinaPayloadHelper {
             exchange.getOut().setBody(payload);
         }
     }
+
 }
