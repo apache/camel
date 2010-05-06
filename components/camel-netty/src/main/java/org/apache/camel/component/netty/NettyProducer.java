@@ -52,7 +52,6 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
     private CountDownLatch countdownLatch;
     private ChannelFactory channelFactory;
     private DatagramChannelFactory datagramChannelFactory;
-    private ChannelFuture channelFuture;
     private Channel channel;
     private ClientBootstrap clientBootstrap;
     private ConnectionlessBootstrap connectionlessClientBootstrap;
@@ -81,10 +80,14 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
         if (configuration.getProtocol().equalsIgnoreCase("udp")) {
             setupUDPCommunication();
         } else {
             setupTCPCommunication();
+        }
+        if (!configuration.isLazyChannelCreation()) {
+            openConnection();
         }
     }
 
@@ -93,20 +96,18 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Stopping producer at address: " + configuration.getAddress());
         }
-
-        // close all channels
-        ChannelGroupFuture future = allChannels.close();
-        future.awaitUninterruptibly();
-
-        // and then release other resources
-        if (channelFactory != null) {
-            channelFactory.releaseExternalResources();
-        }
-
+        closeConnection();
         super.doStop();
     }
 
     public void process(Exchange exchange) throws Exception {
+        if (channel == null && !configuration.isLazyChannelCreation()) {
+            throw new IllegalStateException("Not started yet!");
+        }
+        if (channel == null || !channel.isConnected()) {
+            openConnection();
+        }
+
         if (configuration.isSync()) {
             countdownLatch = new CountDownLatch(1);
         }
@@ -164,17 +165,6 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
             clientPipeline = clientPipelineFactory.getPipeline();
             clientBootstrap.setPipeline(clientPipeline);
         }
-
-        channelFuture = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-        channelFuture.awaitUninterruptibly();
-        if (!channelFuture.isSuccess()) {
-            throw new CamelException("Cannot connect to " + configuration.getAddress(), channelFuture.getCause());
-        }
-        channel = channelFuture.getChannel();
-        // to keep track of all channels in use
-        allChannels.add(channel);
-
-        LOG.info("Netty TCP Producer started and now listening on: " + configuration.getAddress());
     }
 
     protected void setupUDPCommunication() throws Exception {
@@ -199,9 +189,20 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
             clientPipeline = clientPipelineFactory.getPipeline();
             connectionlessClientBootstrap.setPipeline(clientPipeline);
         }
+    }
 
-        connectionlessClientBootstrap.bind(new InetSocketAddress(0));
-        channelFuture = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+    private void openConnection() throws Exception {
+        ChannelFuture channelFuture;
+
+        if (clientBootstrap != null) {
+            channelFuture = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+        } else if (connectionlessClientBootstrap != null) {
+            connectionlessClientBootstrap.bind(new InetSocketAddress(0));
+            channelFuture = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+        } else {
+            throw new IllegalStateException("Should either be TCP or UDP");
+        }
+
         channelFuture.awaitUninterruptibly();
         if (!channelFuture.isSuccess()) {
             throw new CamelException("Cannot connect to " + configuration.getAddress(), channelFuture.getCause());
@@ -210,7 +211,20 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         // to keep track of all channels in use
         allChannels.add(channel);
 
-        LOG.info("Netty UDP Producer started and now listening on: " + configuration.getAddress());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating connector to address: " + configuration.getAddress());
+        }
+    }
+
+    private void closeConnection() throws Exception {
+        // close all channels
+        ChannelGroupFuture future = allChannels.close();
+        future.awaitUninterruptibly();
+
+        // and then release other resources
+        if (channelFactory != null) {
+            channelFactory.releaseExternalResources();
+        }
     }
 
     public NettyConfiguration getConfiguration() {
@@ -225,24 +239,12 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         return countdownLatch;
     }
 
-    public void setCountdownLatch(CountDownLatch countdownLatch) {
-        this.countdownLatch = countdownLatch;
-    }
-
     public ChannelFactory getChannelFactory() {
         return channelFactory;
     }
 
     public void setChannelFactory(ChannelFactory channelFactory) {
         this.channelFactory = channelFactory;
-    }
-
-    public ChannelFuture getChannelFuture() {
-        return channelFuture;
-    }
-
-    public void setChannelFuture(ChannelFuture channelFuture) {
-        this.channelFuture = channelFuture;
     }
 
     public ClientBootstrap getClientBootstrap() {
@@ -259,14 +261,6 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
 
     public void setClientPipelineFactory(ClientPipelineFactory clientPipelineFactory) {
         this.clientPipelineFactory = clientPipelineFactory;
-    }
-
-    public ChannelPipeline getClientPipeline() {
-        return clientPipeline;
-    }
-
-    public void setClientPipeline(ChannelPipeline clientPipeline) {
-        this.clientPipeline = clientPipeline;
     }
 
     public ChannelGroup getAllChannels() {

@@ -63,7 +63,7 @@ public final class NettyHelper {
         future.awaitUninterruptibly();
 
         // if it was not a success then thrown an exception
-        if (future.isSuccess() == false) {
+        if (!future.isSuccess()) {
             LOG.warn("Cannot write body: " + body + " using channel: " + channel);
             throw new CamelExchangeException("Cannot write body", exchange, future.getCause());
         }

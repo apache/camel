@@ -42,7 +42,7 @@ public class NettyConfiguration {
     private long connectTimeoutMillis;
     private long receiveTimeoutMillis;
     private boolean reuseAddress;
-    private boolean sync;
+    private boolean sync = true;
     private String passphrase;
     private File keyStoreFile;
     private File trustStoreFile;
@@ -58,13 +58,14 @@ public class NettyConfiguration {
     private String keyStoreFormat;
     private String securityProvider;
     private boolean disconnect;
+    private boolean lazyChannelCreation = true;
 
     public NettyConfiguration() {
         setKeepAlive(true);
         setTcpNoDelay(true);
         setBroadcast(false);
         setReuseAddress(true);
-        setSync(false);
+        setSync(true);
         setConnectTimeoutMillis(10000);
         setReceiveTimeoutMillis(10000);
         setSendBufferSize(65536);
@@ -72,6 +73,7 @@ public class NettyConfiguration {
         setSsl(false);
         setCorePoolSize(10);
         setMaxPoolSize(100);
+        setLazyChannelCreation(true);
     }
 
     public void parseURI(URI uri, Map<String, Object> parameters, NettyComponent component) throws Exception {
@@ -142,6 +144,9 @@ public class NettyConfiguration {
         }
         if (settings.containsKey("disconnect")) {
             setDisconnect(Boolean.valueOf((String) settings.get("disconnect")));
+        }
+        if (settings.containsKey("lazyChannelCreation")) {
+            setLazyChannelCreation(Boolean.valueOf((String) settings.get("lazyChannelCreation")));
         }
     }
 
@@ -363,6 +368,14 @@ public class NettyConfiguration {
 
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
+    }
+
+    public boolean isLazyChannelCreation() {
+        return lazyChannelCreation;
+    }
+
+    public void setLazyChannelCreation(boolean lazyChannelCreation) {
+        this.lazyChannelCreation = lazyChannelCreation;
     }
 
     public String getAddress() {

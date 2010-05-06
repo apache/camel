@@ -78,8 +78,9 @@ public class MultipleCodecsTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: routes
-                from("direct:multiple-codec").to("netty:tcp://localhost:5150?encoders=#encoders");
-                from("netty:tcp://localhost:5150?decoders=#length-decoder,#string-decoder").to("mock:multiple-codec");
+                from("direct:multiple-codec").to("netty:tcp://localhost:5150?encoders=#encoders&sync=false");
+                
+                from("netty:tcp://localhost:5150?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
                 // START SNIPPET: routes
             }
         };

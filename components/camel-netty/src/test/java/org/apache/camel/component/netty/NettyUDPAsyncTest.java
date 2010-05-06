@@ -68,7 +68,7 @@ public class NettyUDPAsyncTest extends CamelTestSupport {
         
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        sendFile("netty:udp://localhost:5151");        
+        sendFile("netty:udp://localhost:5151?sync=false");
         mock.assertIsSatisfied();
 
         if (LOG.isDebugEnabled()) {
@@ -82,7 +82,7 @@ public class NettyUDPAsyncTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:udp://localhost:5151")
+                from("netty:udp://localhost:5151?sync=false")
                     .to("mock:result")
                     .to("log:Message"); 
             }

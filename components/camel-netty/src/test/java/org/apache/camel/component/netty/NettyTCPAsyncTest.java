@@ -68,7 +68,7 @@ public class NettyTCPAsyncTest extends CamelTestSupport {
         
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        sendFile("netty:tcp://localhost:5150");
+        sendFile("netty:tcp://localhost:5150?sync=false");
         
         mock.assertIsSatisfied();
         if (LOG.isDebugEnabled()) {
@@ -81,7 +81,7 @@ public class NettyTCPAsyncTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:5150")
+                from("netty:tcp://localhost:5150?sync=false")
                     .to("mock:result");                
             }
         };

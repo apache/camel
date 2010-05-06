@@ -49,7 +49,7 @@ public class NettyConcurrentTest extends CamelTestSupport {
             final int index = i;
             Future out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    return template.requestBody("netty:tcp://localhost:5150?sync=true", index, String.class);
+                    return template.requestBody("netty:tcp://localhost:5150", index, String.class);
                 }
             });
             responses.put(index, out);
