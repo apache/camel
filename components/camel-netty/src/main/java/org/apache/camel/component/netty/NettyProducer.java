@@ -73,9 +73,10 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         super.doStop();
     }
 
-    
     @Override
     public boolean isSingleton() {
+        // the producer should not be singleton otherwise cannot use concurrent producers and safely
+        // use request/reply with correct correlation
         return false;
     }
 
@@ -83,10 +84,11 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         if (configuration.isSync()) {
             countdownLatch = new CountDownLatch(1);
         }
-        
+
+        // write the body
         Channel channel = channelFuture.getChannel();
-        channel.write(exchange.getIn().getBody());
-        
+        NettyHelper.writeBody(channel, exchange.getIn().getBody(), exchange);
+
         if (configuration.isSync()) {
             boolean success = countdownLatch.await(configuration.getReceiveTimeoutMillis(), TimeUnit.MILLISECONDS);
             if (!success) {
@@ -97,7 +99,7 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         }                 
     }
 
-    public void setupTCPCommunication() throws Exception {
+    protected void setupTCPCommunication() throws Exception {
         if (channelFactory == null) {
             ExecutorService bossExecutor = 
                 context.getExecutorServiceStrategy().newThreadPool(this, 
@@ -128,7 +130,7 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         LOG.info("Netty TCP Producer started and now listening on Host: " + configuration.getHost() + "Port : " + configuration.getPort());
     }
     
-    public void setupUDPCommunication() throws Exception {
+    protected void setupUDPCommunication() throws Exception {
         if (datagramChannelFactory == null) {
             ExecutorService workerExecutor = 
                 context.getExecutorServiceStrategy().newThreadPool(this, 
