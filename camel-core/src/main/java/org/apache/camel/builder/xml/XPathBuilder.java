@@ -686,33 +686,15 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
     /**
      * Strategy method to extract the document from the exchange.
-     * <p/>
-     * Prefer to return types of {@link InputSource} or {@link DOMSource} which is what the XPath
-     * library works best with. Otherwise you can return types such as {@link Document} or any other kinds.
-     * <p/>
-     * Will try to convert the message body to the same type as of {@link #getDocumentType()}.
      */
     @SuppressWarnings("unchecked")
     protected Object getDocument(Exchange exchange) {
         Object answer = null;
         Message in = exchange.getIn();
 
-        // prefer to use InputSource for well known types
-        if (in.getBody() instanceof GenericFile) {
-            // special for files so we can work with them out of the box
-            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, in.getBody());
-            answer = new InputSource(is);
-        } else if (in.getBody() instanceof InputStream) {
-            // special for streams so we can work with them out of the box
-            answer = new InputSource(in.getBody(InputStream.class));
-        } else if (in.getBody() instanceof String) {
-            // special for String so we can work with them out of the box
-            answer = new InputSource(new StringReader(in.getBody(String.class)));
-        }
-
-        // try to type convert to the desired type
         Class type = getDocumentType();
         if (type != null) {
+            // try to get the body as the desired type
             answer = in.getBody(type);
         }
         // fallback to get the body as is
@@ -720,14 +702,20 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             answer = in.getBody();
         }
 
-        // special for bean invocation
-        if (answer instanceof BeanInvocation) {
+        // lets try coerce some common types into something JAXP can deal with
+        if (answer instanceof GenericFile) {
+            // special for files so we can work with them out of the box
+            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, answer);
+            answer = new InputSource(is);
+        } else if (answer instanceof BeanInvocation) {
             // if its a null bean invocation then handle that
             BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, answer);
             if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
                 // its a null argument from the bean invocation so use null as answer
                 answer = null;
             }
+        } else if (answer instanceof String) {
+            answer = new InputSource(new StringReader(answer.toString()));
         }
 
         // call the reset if the in message body is StreamCache
