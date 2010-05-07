@@ -712,7 +712,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
         // try to type convert to the desired type
         Class type = getDocumentType();
-        if (answer == null && type != null) {
+        if (type != null) {
             answer = in.getBody(type);
         }
         // fallback to get the body as is
