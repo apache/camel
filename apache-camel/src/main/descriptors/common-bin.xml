@@ -38,7 +38,9 @@
         <include>org.apache.camel:camel-bam</include>
         <include>org.apache.camel:camel-bean-validator</include>
         <include>org.apache.camel:camel-bindy</include>
+<!-- blueprint is under active development
         <include>org.apache.camel:camel-blueprint</include>
+-->
         <include>org.apache.camel:camel-cache</include>
         <include>org.apache.camel:camel-castor</include>
         <include>org.apache.camel:camel-core</include>
