@@ -26,7 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.bean.BeanExpression;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -39,15 +38,16 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends ExpressionDefinition {
     @XmlAttribute(required = false)
+    @Deprecated
     private String bean;
     @XmlAttribute(required = false)
+    private String ref;
+    @XmlAttribute(required = false)
     private String method;
-    @XmlTransient
-    // we don't need to support the beanType class in Spring
+    @XmlAttribute(required = false)
     private Class<?> beanType;
     @XmlTransient
     private Object instance;
-    
 
     public MethodCallExpression() {
     }
@@ -120,6 +120,8 @@ public class MethodCallExpression extends ExpressionDefinition {
     protected String beanName() {
         if (bean != null) {
             return bean;
+        } else if (ref != null) {
+            return ref;
         } else if (instance != null) {
             return ObjectHelper.className(instance);
         }

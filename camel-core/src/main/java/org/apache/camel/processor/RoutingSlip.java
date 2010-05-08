@@ -29,6 +29,7 @@ import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -180,10 +181,10 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
      */
     private String[] recipients(Message message) {
         Object headerValue = message.getHeader(header);
-        if (headerValue != null && !headerValue.equals("")) {
+        if (ObjectHelper.isNotEmpty(headerValue)) {
             return headerValue.toString().split(uriDelimiter);
         }
-        return new String[] {};
+        return new String[]{};
     }
 
     /**
