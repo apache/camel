@@ -132,12 +132,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
             index++;
             counter++;
 
-            if (index < list.size()) {
-                // try again but prepare exchange before we failover
-                prepareExchangeForFailover(exchange);
-                processor = list.get(index);
-                processExchange(processor, exchange, attempts);
-            } else {
+            if (index >= list.size()) {
+                // out of bounds
                 if (isRoundRobin()) {
                     log.debug("Failover is round robin enabled and therefore starting from the first endpoint");
                     index = 0;
@@ -148,6 +144,11 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
                     break;
                 }
             }
+
+            // try again but prepare exchange before we failover
+            prepareExchangeForFailover(exchange);
+            processor = list.get(index);
+            processExchange(processor, exchange, attempts);
         }
     }
 
