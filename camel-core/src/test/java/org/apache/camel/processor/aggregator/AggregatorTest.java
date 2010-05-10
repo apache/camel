@@ -89,7 +89,9 @@ public class AggregatorTest extends ContextTestSupport {
 
                 // in this sample we aggregate using our own strategy with a completion predicate
                 from("direct:predicate")
-                    .aggregate(header("cheese"), new MyAggregationStrategy()).completionPredicate(header("bar").isEqualTo("viper bar"))
+                    .aggregate(header("cheese"), new MyAggregationStrategy())
+                        .eagerCheckCompletion()
+                        .completionPredicate(header("bar").isEqualTo("viper bar"))
                         .to("mock:result");
                 // END SNIPPET: ex
             }
