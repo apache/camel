@@ -23,7 +23,10 @@
     ">
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <package>org.apache.camel.spring.issues</package>
+        <packageScan>
+            <package>org.apache.camel.spring.issues</package>
+            <excludes>**/*MyInjectionRouteBuilder*</excludes>
+        </packageScan>
     </camelContext>
 
 </beans>
