@@ -81,6 +81,14 @@ public class BeanRegistryBeanTest extends ContextTestSupport {
         assertEquals("foofoo", foo.echo("foo"));
     }
 
+    public void testLookupFQNClass() throws Exception {
+        RegistryBean rb = new RegistryBean(context, "org.apache.camel.component.bean.MyDummyBean");
+
+        Object bean = rb.getBean();
+        MyDummyBean dummy = assertIsInstanceOf(MyDummyBean.class, bean);
+        assertEquals("Hello World", dummy.hello("World"));
+    }
+
     public static class MyFooBean {
 
         public String echo(String s) {

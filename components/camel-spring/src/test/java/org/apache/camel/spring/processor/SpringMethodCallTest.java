@@ -47,6 +47,16 @@ public class SpringMethodCallTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testToBeanType() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hi Camel", "Hi World");
+
+        template.sendBody("direct:tobeantype", "Camel");
+        template.sendBody("direct:tobeantype", "World");
+
+        assertMockEndpointsSatisfied();
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "/org/apache/camel/spring/processor/SpringMethodCallTest.xml");
     }

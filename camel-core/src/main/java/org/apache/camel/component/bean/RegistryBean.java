@@ -55,7 +55,12 @@ public class RegistryBean implements BeanHolder {
     public Object getBean() throws NoSuchBeanException {
         Object value = lookupBean();
         if (value == null) {
-            throw new NoSuchBeanException(name);
+            // maybe its a class
+            value = context.getClassResolver().resolveClass(name);
+            if (value == null) {
+                // no its not a class then we cannot find the bean
+                throw new NoSuchBeanException(name);
+            }
         }
         if (value != bean) {
             bean = value;

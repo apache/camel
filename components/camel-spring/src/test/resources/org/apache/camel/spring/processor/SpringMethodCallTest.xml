@@ -40,6 +40,14 @@
             </setHeader>
             <to uri="mock:ref"/>
         </route>
+
+        <route>
+            <from uri="direct:tobeantype"/>
+            <to uri="bean:org.apache.camel.spring.processor.MyCoolBean"/>
+            <to uri="mock:result"/>
+        </route>
+
     </camelContext>
+
 
 </beans>
