@@ -22,13 +22,13 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="coolBean" class="org.apache.camel.spring.processor.SpringMethodCallTest$MyCoolBean"/>
+    <bean id="coolBean" class="org.apache.camel.spring.processor.MyCoolBean"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
             <setHeader headerName="foo">
-                <method beanType="org.apache.camel.spring.processor.SpringMethodCallTest$MyCoolBean"/>
+                <method beanType="org.apache.camel.spring.processor.MyCoolBean"/>
             </setHeader>
             <to uri="mock:result"/>
         </route>

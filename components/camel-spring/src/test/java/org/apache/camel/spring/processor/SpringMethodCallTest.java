@@ -51,10 +51,4 @@ public class SpringMethodCallTest extends ContextTestSupport {
         return createSpringCamelContext(this, "/org/apache/camel/spring/processor/SpringMethodCallTest.xml");
     }
 
-    public static class MyCoolBean {
-
-        public String cool(String body) {
-            return "Hi " + body;
-        }
-    }
 }
