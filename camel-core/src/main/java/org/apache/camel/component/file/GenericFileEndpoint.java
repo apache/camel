@@ -472,9 +472,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
             String name = file.isAbsolute() ? file.getAbsoluteFilePath() : file.getRelativeFilePath();
 
             // skip leading endpoint configured directory
-            String endpointPath = getConfiguration().getDirectory();
+            String endpointPath = getConfiguration().getDirectory() + getFileSeparator();
             if (ObjectHelper.isNotEmpty(endpointPath) && name.startsWith(endpointPath)) {
-                name = ObjectHelper.after(name, getConfiguration().getDirectory() + File.separator);
+                name = ObjectHelper.after(name, endpointPath);
             }
 
             // adjust filename

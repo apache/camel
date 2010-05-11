@@ -14,39 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.stress;
-
-import java.util.Random;
+package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
  */
-public class FileAsyncStressTest extends ContextTestSupport {
-
-    private int files = 150;
+public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        deleteDirectory("target/filename-consumer");
         super.setUp();
-        deleteDirectory("target/filestress");
-        for (int i = 0; i < files; i++) {
-            template.sendBodyAndHeader("file:target/filestress", "Hello World", Exchange.FILE_NAME, i + ".txt");
-        }
+        // the file name is also starting with target/filename-consumer
+        template.sendBodyAndHeader("file:target/filename-consumer", "Hello World",
+                Exchange.FILE_NAME, "target/filename-consumer-hello.txt");
+        template.sendBodyAndHeader("file:target/filename-consumer", "Bye World",
+                Exchange.FILE_NAME, "target/filename-consumer-bye.txt");
     }
 
-    public void testAsyncStress() throws Exception {
-        // start route when all the files have been written
-        context.startRoute("foo");
-
+    public void testValidFilenameOnExchange() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(100);
-        mock.setResultWaitTime(20000);
+        mock.expectedMessageCount(2);
+        // should have file name header set
+        mock.allMessages().header(Exchange.FILE_NAME).isNotNull();
+        // and expect name to contain target/filename-consumer-XXX.txt
+        mock.message(0).header(Exchange.FILE_NAME).isEqualTo("target/filename-consumer-bye.txt");
+        mock.message(1).header(Exchange.FILE_NAME).isEqualTo("target/filename-consumer-hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -56,21 +54,8 @@ public class FileAsyncStressTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // leverage the fact that we can limit to max 50 files per poll
-                // this will result in polling again and potentially picking up files
-                // that already are in progress
-                from("file:target/filestress?maxMessagesPerPoll=50").routeId("foo").noAutoStartup()
-                    .threads(10)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // simulate some work with random time to complete
-                            Random ran = new Random();
-                            int delay = ran.nextInt(50) + 10;
-                            Thread.sleep(delay);
-                        }
-                    }).to("mock:result");
+                from("file:target/filename-consumer?recursive=true&sortBy=file:name").to("mock:result");
             }
         };
     }
-
 }
