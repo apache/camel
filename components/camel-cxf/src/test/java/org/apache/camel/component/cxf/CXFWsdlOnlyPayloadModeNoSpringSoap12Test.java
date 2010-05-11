@@ -19,13 +19,13 @@ package org.apache.camel.component.cxf;
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.wsdl_first.PersonImpl12;
-import org.junit.Before;
+import org.junit.BeforeClass;
 
 public class CXFWsdlOnlyPayloadModeNoSpringSoap12Test extends CXFWsdlOnlyPayloadModeNoSpringTest {
     
     
-    @Before
-    public void startService() {
+    @BeforeClass
+    public static void startService() {
         endpoint = Endpoint.publish("http://localhost:8093/PersonService", new PersonImpl12());
     }
     
