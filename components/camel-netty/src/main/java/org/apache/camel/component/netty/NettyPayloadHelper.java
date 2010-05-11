@@ -29,6 +29,10 @@ import org.apache.camel.impl.DefaultExchangeHolder;
  * @version $Revision$
  */
 public final class NettyPayloadHelper {
+    
+    private NettyPayloadHelper() {
+        //Helper class
+    }
 
     public static Object getIn(NettyEndpoint endpoint, Exchange exchange) {
         if (endpoint.getConfiguration().isTransferExchange()) {
