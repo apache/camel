@@ -42,7 +42,8 @@ public class XPathToFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 
-        String xml = "<foo><person>Claus</person><person>Jonathan</person></foo>";
+        String xml = "<foo><person id=\"1\">Claus<country>SE</country></person>"
+                + "<person id=\"2\">Jonathan<country>CA</country></person></foo>";
         Document doc = context.getTypeConverter().convertTo(Document.class, xml);
 
         template.sendBody("direct:start", doc);
@@ -51,11 +52,11 @@ public class XPathToFileTest extends ContextTestSupport {
 
         File first = new File("target/xpath/xpath-0.xml").getAbsoluteFile();
         assertTrue("File xpath-0.xml should exists", first.exists());
-        assertEquals("Claus", context.getTypeConverter().convertTo(String.class, first));
+        assertEquals("<person id=\"1\">Claus<country>SE</country></person>", context.getTypeConverter().convertTo(String.class, first));
 
         File second = new File("target/xpath/xpath-1.xml").getAbsoluteFile();
         assertTrue("File xpath-1.xml should exists", second.exists());
-        assertEquals("Jonathan", context.getTypeConverter().convertTo(String.class, second));
+        assertEquals("<person id=\"2\">Jonathan<country>CA</country></person>", context.getTypeConverter().convertTo(String.class, second));
     }
 
     @Override
@@ -65,6 +66,7 @@ public class XPathToFileTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .split(xpath("/foo/person"))
+                        .log("${bodyAs(String)}")
                         .to("file://target/xpath?fileName=xpath-${property.CamelSplitIndex}.xml")
                         .to("mock:result");
             }

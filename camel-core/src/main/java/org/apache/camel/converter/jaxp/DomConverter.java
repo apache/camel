@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -31,7 +32,6 @@ import org.w3c.dom.Text;
 import org.apache.camel.Converter;
 import org.apache.camel.util.ObjectHelper;
 
-
 /**
  * Converts from some DOM types to Java types
  *
@@ -39,20 +39,53 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Converter
 public final class DomConverter {
+    private final XmlConverter xml;
 
-    private DomConverter() {
-        // Utility Class
+    public DomConverter() {
+        xml = new XmlConverter();
     }
 
     @Converter
-    public static String toString(NodeList nodeList) {
+    public String toString(NodeList nodeList) throws TransformerException {
+        // converting NodeList to String is more tricky
+        // sometimes the NodeList is a Node which we can then leverage
+        // the XML converter to turn into XML incl. tags
+
         StringBuilder buffer = new StringBuilder();
-        append(buffer, nodeList);
+
+        // use XML converter at first since it preserves tag names
+        boolean found = false;
+        if (nodeList instanceof Node) {
+            Node node = (Node) nodeList;
+            String s = xml.toString(node);
+            if (ObjectHelper.isNotEmpty(s)) {
+                found = true;
+                buffer.append(s);
+            }
+        } else {
+            // use XML converter at first since it preserves tag names
+            int size = nodeList.getLength();
+            for (int i = 0; i < size; i++) {
+                Node node = nodeList.item(i);
+                String s = xml.toString(node);
+                if (ObjectHelper.isNotEmpty(s)) {
+                    found = true;
+                    buffer.append(s);
+                }
+            }
+        }
+
+        // and eventually we must fallback to append without tags, such as when you have
+        // used an xpath to select an attribute or text() or something
+        if (!found) {
+            append(buffer, nodeList);
+        }
+
         return buffer.toString();
     }
 
     @Converter
-    public static Integer toInteger(NodeList nodeList) {
+    public Integer toInteger(NodeList nodeList) {
         StringBuilder buffer = new StringBuilder();
         append(buffer, nodeList);
         String s = buffer.toString();
@@ -60,7 +93,7 @@ public final class DomConverter {
     }
 
     @Converter
-    public static Long toLong(NodeList nodeList) {
+    public Long toLong(NodeList nodeList) {
         StringBuilder buffer = new StringBuilder();
         append(buffer, nodeList);
         String s = buffer.toString();
@@ -79,12 +112,12 @@ public final class DomConverter {
     }
 
     @Converter
-    public static InputStream toInputStream(NodeList nodeList) {
+    public InputStream toInputStream(NodeList nodeList) throws TransformerException {
         return new ByteArrayInputStream(toByteArray(nodeList));
     }
 
     @Converter
-    public static byte[] toByteArray(NodeList nodeList) {
+    public byte[] toByteArray(NodeList nodeList) throws TransformerException {
         String data = toString(nodeList);
         return data.getBytes();
     }

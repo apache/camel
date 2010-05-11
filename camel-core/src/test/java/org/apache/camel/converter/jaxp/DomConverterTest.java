@@ -33,28 +33,28 @@ public class DomConverterTest extends ContextTestSupport {
     public void testDomConverterToString() throws Exception {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
 
-        String s = DomConverter.toString(document.getChildNodes());
-        assertEquals("world!", s);
+        String s = new DomConverter().toString(document.getChildNodes());
+        assertEquals("<hello>world!</hello>", s);
     }
 
     public void testDomConverterToBytes() throws Exception {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
 
-        byte[] bytes = DomConverter.toByteArray(document.getChildNodes());
-        assertTrue("Should be equal", ObjectHelper.equalByteArray("world!".getBytes(), bytes));
+        byte[] bytes = new DomConverter().toByteArray(document.getChildNodes());
+        assertTrue("Should be equal", ObjectHelper.equalByteArray("<hello>world!</hello>".getBytes(), bytes));
     }
 
     public void testDomConverterToInteger() throws Exception {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>47</hello>");
 
-        Integer number = DomConverter.toInteger(document.getChildNodes());
+        Integer number = new DomConverter().toInteger(document.getChildNodes());
         assertEquals(47, number.intValue());
     }
 
     public void testDomConverterToLong() throws Exception {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>47</hello>");
 
-        Long number = DomConverter.toLong(document.getChildNodes());
+        Long number = new DomConverter().toLong(document.getChildNodes());
         assertEquals(47L, number.longValue());
     }
 
@@ -69,15 +69,15 @@ public class DomConverterTest extends ContextTestSupport {
         List sub = DomConverter.toList(nl);
         assertEquals(2, sub.size());
 
-        assertEquals("Hello World", DomConverter.toString((NodeList) sub.get(0)));
-        assertEquals("Bye Camel", DomConverter.toString((NodeList) sub.get(1)));
+        assertEquals("<hello>Hello World</hello>", new DomConverter().toString((NodeList) sub.get(0)));
+        assertEquals("<bye>Bye Camel</bye>", new DomConverter().toString((NodeList) sub.get(1)));
     }
 
     public void testDomConverterToInputStream() throws Exception {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
 
-        InputStream is = DomConverter.toInputStream(document.getChildNodes());
-        assertEquals("world!", context.getTypeConverter().convertTo(String.class, is));
+        InputStream is = new DomConverter().toInputStream(document.getChildNodes());
+        assertEquals("<hello>world!</hello>", context.getTypeConverter().convertTo(String.class, is));
     }
 
 }

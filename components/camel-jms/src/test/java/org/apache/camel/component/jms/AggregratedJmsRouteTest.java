@@ -24,8 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.BatchProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +44,7 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
     @Test
     public void testJmsBatchTimeoutExpiryWithAggregrationDelay() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.setSleepForEmptyTest(3 * BatchProcessor.DEFAULT_BATCH_TIMEOUT);
+        resultEndpoint.setSleepForEmptyTest(3000);
         resultEndpoint.expectedMessageCount(1);
         for (int i = 1; i <= 2; i++) {
             String body = "message:" + i;
@@ -84,10 +84,11 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(timeOutEndpointUri).to("jms:queue:test.b");
+
                 from("jms:queue:test.b").aggregate(header("cheese"), new AggregationStrategy() {
                     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                         try {
-                            Thread.sleep(2 * BatchProcessor.DEFAULT_BATCH_TIMEOUT);
+                            Thread.sleep(2000);
                         } catch (InterruptedException e) {
                             LOG.error("aggregration delay sleep inturrepted", e);
                             fail("aggregration delay sleep inturrepted");
@@ -100,22 +101,8 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
                 from("jms:queue:point1").process(new MyProcessor()).to("jms:queue:reply");
                 from("jms:queue:point2").process(new MyProcessor()).to("jms:queue:reply");
                 from("jms:queue:point3").process(new MyProcessor()).to("jms:queue:reply");
-                from("jms:queue:reply").aggregate(header("cheese"), new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        if (oldExchange == null) {
-                            return newExchange;
-                        }
-
-                        LOG.info("try to aggregating the message ");
-                        Integer old = oldExchange.getProperty("aggregated", Integer.class);
-                        if (old == null) {
-                            old = 1;
-                        }
-                        oldExchange.setProperty("aggregated", old + 1);
-                        return oldExchange;
-                    }
-                }).completionPredicate(header("aggregated").isEqualTo(3))
-                .to("mock:reply");
+                from("jms:queue:reply").aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionSize(3)
+                    .to("mock:reply");
             }
         };
     }
