@@ -34,7 +34,9 @@ import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
@@ -42,15 +44,15 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
     protected static final String SERVICE_NAME_PROP =  "serviceName=";
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}soap";
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
-    protected Endpoint endpoint;
+    protected static Endpoint endpoint;
 
-    @Before
-    public void startService() {
+    @BeforeClass
+    public static void startService() {
         endpoint = Endpoint.publish("http://localhost:8093/PersonService", new PersonImpl());
     }
     
-    @After
-    public void stopService() {
+    @AfterClass
+    public static void stopService() {
         if (endpoint != null) {
             endpoint.stop();
         }
