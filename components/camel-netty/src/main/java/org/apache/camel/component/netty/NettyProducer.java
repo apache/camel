@@ -191,11 +191,6 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
             clientBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
             clientBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
         }
-        if (clientPipelineFactory == null) {
-            clientPipelineFactory = new ClientPipelineFactory(this);
-            clientPipeline = clientPipelineFactory.getPipeline();
-            clientBootstrap.setPipeline(clientPipeline);
-        }
     }
 
     protected void setupUDPCommunication() throws Exception {
@@ -215,19 +210,23 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
             connectionlessClientBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
 
         }
-        if (clientPipelineFactory == null) {
-            clientPipelineFactory = new ClientPipelineFactory(this);
-            clientPipeline = clientPipelineFactory.getPipeline();
-            connectionlessClientBootstrap.setPipeline(clientPipeline);
-        }
     }
 
     private void openConnection() throws Exception {
         ChannelFuture channelFuture;
 
+        // initialize client pipeline factory
+        if (clientPipelineFactory == null) {
+            clientPipelineFactory = new ClientPipelineFactory(this);
+        }
+        // must get the pipeline from the factory when opening a new connection
+        clientPipeline = clientPipelineFactory.getPipeline();
+
         if (clientBootstrap != null) {
+            clientBootstrap.setPipeline(clientPipeline);
             channelFuture = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         } else if (connectionlessClientBootstrap != null) {
+            connectionlessClientBootstrap.setPipeline(clientPipeline);
             connectionlessClientBootstrap.bind(new InetSocketAddress(0));
             channelFuture = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         } else {

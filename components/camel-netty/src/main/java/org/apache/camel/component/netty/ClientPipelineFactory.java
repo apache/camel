@@ -17,7 +17,6 @@
 package org.apache.camel.component.netty;
 
 import java.util.List;
-
 import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
@@ -37,22 +36,33 @@ public class ClientPipelineFactory implements ChannelPipelineFactory {
     private ChannelPipeline channelPipeline;
 
     public ClientPipelineFactory(NettyProducer producer) {
-        this.producer = producer; 
-    }    
-    
+        this.producer = producer;
+    }
+
     public ChannelPipeline getPipeline() throws Exception {
         if (channelPipeline != null) {
+            // http://docs.jboss.org/netty/3.1/api/org/jboss/netty/handler/ssl/SslHandler.html
+            // To restart the SSL session, you must remove the existing closed SslHandler
+            // from the ChannelPipeline, insert a new SslHandler with a new SSLEngine into
+            // the pipeline, and start the handshake process as described in the first section.
+            if (channelPipeline.remove("ssl") != null) {
+                // reinitialize and add SSL first
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Client SSL handler re-initialized on the ChannelPipeline");
+                }
+                channelPipeline.addFirst("ssl", configureClientSSLOnDemand());
+            }
             return channelPipeline;
         }
-        
+
         channelPipeline = Channels.pipeline();
 
         SslHandler sslHandler = configureClientSSLOnDemand();
         if (sslHandler != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Client SSL handler configured and added as an interceptor against the ChannelPipeline");
+                LOG.debug("Client SSL handler configured and added to the ChannelPipeline");
             }
-            channelPipeline.addLast("ssl", sslHandler);            
+            channelPipeline.addLast("ssl", sslHandler);
         }
 
         List<ChannelUpstreamHandler> decoders = producer.getConfiguration().getDecoders();
@@ -84,7 +94,7 @@ public class ClientPipelineFactory implements ChannelPipelineFactory {
         } else {
             if (producer.getConfiguration().getKeyStoreFile() == null) {
                 LOG.debug("keystorefile is null");
-            } 
+            }
             if (producer.getConfiguration().getTrustStoreFile() == null) {
                 LOG.debug("truststorefile is null");
             }
@@ -94,11 +104,12 @@ public class ClientPipelineFactory implements ChannelPipelineFactory {
             SSLEngineFactory sslEngineFactory = new SSLEngineFactory(
                 producer.getConfiguration().getKeyStoreFormat(),
                 producer.getConfiguration().getSecurityProvider(),
-                producer.getConfiguration().getKeyStoreFile(), 
-                producer.getConfiguration().getTrustStoreFile(), 
+                producer.getConfiguration().getKeyStoreFile(),
+                producer.getConfiguration().getTrustStoreFile(),
                 producer.getConfiguration().getPassphrase().toCharArray());
             SSLEngine sslEngine = sslEngineFactory.createClientSSLEngine();
             return new SslHandler(sslEngine);
         }
     }
+
 }
