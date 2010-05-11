@@ -34,7 +34,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class MinaEncodingTest extends ContextTestSupport {
 
     public void testTCPEncodeUTF8InputIsBytes() throws Exception {
-        final String uri = "mina:tcp://localhost:9085?encoding=UTF-8&sync=false";
+        final String uri = "mina:tcp://localhost:9083?encoding=UTF-8&sync=false";
         this.context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).to("mock:result");
@@ -54,7 +54,7 @@ public class MinaEncodingTest extends ContextTestSupport {
     }
 
     public void testTCPEncodeUTF8InputIsString() throws Exception {
-        final String uri = "mina:tcp://localhost:9085?encoding=UTF-8&sync=false";
+        final String uri = "mina:tcp://localhost:9084?encoding=UTF-8&sync=false";
         this.context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).to("mock:result");

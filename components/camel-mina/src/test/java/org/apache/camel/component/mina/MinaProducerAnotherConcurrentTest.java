@@ -74,9 +74,9 @@ public class MinaProducerAnotherConcurrentTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").to("mina:tcp://localhost:8080?sync=true");
+                from("direct:start").to("mina:tcp://localhost:9080?sync=true");
 
-                from("mina:tcp://localhost:8080?sync=true").process(new Processor() {
+                from("mina:tcp://localhost:9080?sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);
