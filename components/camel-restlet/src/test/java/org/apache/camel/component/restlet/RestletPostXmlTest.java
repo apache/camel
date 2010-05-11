@@ -1,0 +1,66 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.restlet;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.junit.Test;
+
+/**
+ * @version $Revision$
+ */
+public class RestletPostXmlTest extends RestletTestSupport {
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // enable POST support
+                from("restlet:http://localhost:9087/users/?restletMethods=post")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            Object body = exchange.getIn().getBody();
+                            assertNotNull(body);
+                            assertEquals("<mail><body>HelloWorld!</body><subject>test</subject><to>x@y.net</to></mail>", body);
+                            exchange.getOut().setBody("<status>OK</status>");
+                            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+                        }
+                    });
+            }
+        };
+    }
+
+    @Test
+    public void testPostXml() throws Exception {
+        String xml = "<mail><body>HelloWorld!</body><subject>test</subject><to>x@y.net</to></mail>";
+
+        HttpPost post = new HttpPost("http://localhost:9087/users/");
+        post.addHeader(Exchange.CONTENT_TYPE, "application/xml");
+        post.setEntity(new StringEntity(xml));
+
+        HttpResponse response = doExecute(post);
+        assertHttpResponse(response, 200, "application/xml");
+        String s = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
+        assertEquals("<status>OK</status>", s);
+    }
+
+}
