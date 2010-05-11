@@ -16,12 +16,22 @@
  */
 package org.apache.camel.builder.xml;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import javax.xml.xpath.XPathFunctionResolver;
 
+import org.w3c.dom.Document;
+
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
@@ -29,7 +39,7 @@ import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 /**
  * @version $Revision$
  */
-public class XPathTest extends TestSupport {
+public class XPathTest extends ContextTestSupport {
 
     public void testXPathExpressions() throws Exception {
         assertExpression("/foo/bar/@xyz", "<foo><bar xyz='cheese'/></foo>", "cheese");
@@ -94,4 +104,52 @@ public class XPathTest extends TestSupport {
         exchange.getIn().setHeader("name", "James");
         return exchange;
     }
+
+    public void testXPathSplit() throws Exception {
+        Object node = XPathBuilder.xpath("foo/bar").nodeResult()
+                .evaluate(createExchange("<foo><bar>cheese</bar><bar>cake</bar><bar>beer</bar></foo>"));
+        assertNotNull(node);
+
+        Document doc = context.getTypeConverter().convertTo(Document.class, node);
+        assertNotNull(doc);
+    }
+
+    public void testXPathSplitConcurrent() throws Exception {
+        int size = 100;
+
+        final Object node = XPathBuilder.xpath("foo/bar").nodeResult()
+                .evaluate(createExchange("<foo><bar>cheese</bar><bar>cake</bar><bar>beer</bar></foo>"));
+        assertNotNull(node);
+
+        // convert the node concurrently to test that XML Parser is not thread safe when
+        // importing nodes to a new Document, so try a test for that
+
+        final Set<Document> result = new HashSet<Document>();
+        ExecutorService executor = Executors.newFixedThreadPool(size);
+        final CountDownLatch latch = new CountDownLatch(size);
+        for (int i = 0; i < size; i++) {
+            executor.submit(new Callable<Document>() {
+                public Document call() throws Exception {
+                    Document doc = context.getTypeConverter().convertTo(Document.class, node);
+                    result.add(doc);
+                    latch.countDown();
+                    return doc;
+                }
+            });
+        }
+
+        // give time to convert concurrently
+        latch.await(20, TimeUnit.SECONDS);
+
+        assertEquals(size, result.size());
+        Iterator<Document> it = result.iterator();
+        int count = 0;
+        while (it.hasNext()) {
+            count++;
+            Document doc = it.next();
+            assertNotNull(doc);
+        }
+        assertEquals(size, count);
+    }
+
 }

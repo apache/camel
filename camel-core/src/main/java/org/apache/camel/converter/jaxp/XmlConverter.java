@@ -556,6 +556,8 @@ public class XmlConverter {
      */
     @Converter
     public Document toDOMDocument(Node node) throws ParserConfigurationException, TransformerException {
+        ObjectHelper.notNull(node, "node");
+
         // If the node is the document, just cast it
         if (node instanceof Document) {
             return (Document) node;
@@ -568,12 +570,16 @@ public class XmlConverter {
             // else, create a new doc and copy the element inside it
             } else {
                 Document doc = createDocument();
-                doc.appendChild(doc.importNode(node, true));
+                // import node must no occur concurrent on the same node
+                // so we need to synchronize on it
+                synchronized (node) {
+                    doc.appendChild(doc.importNode(node, true));
+                }
                 return doc;
             }
         // other element types are not handled
         } else {
-            throw new TransformerException("Unable to convert DOM node to a Document");
+            throw new TransformerException("Unable to convert DOM node to a Document: " + node);
         }
     }
 
