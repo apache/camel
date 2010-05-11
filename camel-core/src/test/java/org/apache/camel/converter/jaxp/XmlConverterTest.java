@@ -346,7 +346,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
         Document doc = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
 
-        InputStream is = conv.toInputStrean(doc);
+        InputStream is = conv.toInputStream(doc);
         assertNotNull(is);
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, is));
     }
@@ -365,7 +365,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
 
         DOMSource source = conv.toDOMSource("<foo>bar</foo>");
-        InputStream out = conv.toInputStrean(source);
+        InputStream out = conv.toInputStream(source);
         assertNotSame(source, out);
 
         String s = context.getTypeConverter().convertTo(String.class, out);

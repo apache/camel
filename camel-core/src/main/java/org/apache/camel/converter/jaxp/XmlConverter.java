@@ -384,9 +384,10 @@ public class XmlConverter {
 
     @Converter
     public DOMSource toDOMSourceFromStream(StreamSource source) throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilder builder = createDocumentBuilder();
+        Document document;
         String systemId = source.getSystemId();
-        Document document = null;
+
+        DocumentBuilder builder = createDocumentBuilder();
         Reader reader = source.getReader();
         if (reader != null) {
             document = builder.parse(new InputSource(reader));
@@ -397,7 +398,7 @@ public class XmlConverter {
                 inputsource.setSystemId(systemId);
                 document = builder.parse(inputsource);
             } else {
-                throw new IOException("No input stream or reader available");
+                throw new IOException("No input stream or reader available on StreamSource: " + source);
             }
         }
         return new DOMSource(document, systemId);
@@ -550,13 +551,14 @@ public class XmlConverter {
 
     /**
      * Create a DOM document from the given Node.
-     * If the node is an document, just cast it,
-     * if the node is an root element, retrieve its
-     * owner element or create a new document and import
-     * the node.
+     *
+     * If the node is an document, just cast it, if the node is an root element, retrieve its
+     * owner element or create a new document and import the node.
      */
     @Converter
-    public Document toDOMDocument(Node node) throws ParserConfigurationException, TransformerException {
+    public Document toDOMDocument(final Node node) throws ParserConfigurationException, TransformerException {
+        ObjectHelper.notNull(node, "node");
+
         // If the node is the document, just cast it
         if (node instanceof Document) {
             return (Document) node;
@@ -569,23 +571,27 @@ public class XmlConverter {
                 // else, create a new doc and copy the element inside it
             } else {
                 Document doc = createDocument();
-                doc.appendChild(doc.importNode(node, true));
+                // import node must no occur concurrent on the same node
+                // so we need to synchronize on it
+                synchronized (node) {
+                    doc.appendChild(doc.importNode(node, true));
+                }
                 return doc;
             }
             // other element types are not handled
         } else {
-            throw new TransformerException("Unable to convert DOM node to a Document");
+            throw new TransformerException("Unable to convert DOM node to a Document: " + node);
         }
     }
 
     @Converter
-    public InputStream toInputStrean(DOMSource source) throws TransformerException, IOException {
+    public InputStream toInputStream(DOMSource source) throws TransformerException, IOException {
         String s = toString(source);
         return new ByteArrayInputStream(s.getBytes());
     }
 
     @Converter
-    public InputStream toInputStrean(Document dom) throws TransformerException, IOException {
+    public InputStream toInputStream(Document dom) throws TransformerException, IOException {
         String s = toString(dom);
         return new ByteArrayInputStream(s.getBytes());
     }
