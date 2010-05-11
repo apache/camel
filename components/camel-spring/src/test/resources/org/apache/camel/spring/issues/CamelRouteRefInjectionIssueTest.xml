@@ -18,7 +18,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
@@ -28,6 +28,9 @@
 
     <bean id="myRoute" class="org.apache.camel.spring.issues.MyInjectionRouteBuilder">
         <property name="startEndpointUri" value="direct:start"/>
+        <property name="myProcessor" ref="myProcessor"/>
     </bean>
+    
+    <bean id="myProcessor" class="org.apache.camel.spring.issues.MyProcessor"/>
 
 </beans>

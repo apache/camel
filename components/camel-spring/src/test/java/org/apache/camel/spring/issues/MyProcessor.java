@@ -16,40 +16,14 @@
  */
 package org.apache.camel.spring.issues;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version $Revision$
- */
-public class MyInjectionRouteBuilder extends RouteBuilder {
-    
-    private String startEndpointUri;
-    private Processor myProcessor;
-    
-    public void setStartEndpointUri(String startUri) {
-        startEndpointUri = startUri;
-    }
-    
-    public String getStartEndpointUri() {
-        return startEndpointUri;
-    }
-    
-    public void setMyProcessor(Processor processor) {
-        myProcessor = processor;
-    }
-    
-    public Processor getMyProcessor() {
-        return myProcessor;
-    }
-   
-    public void configure() throws Exception {
-        from(getStartEndpointUri()).process(getMyProcessor()).to("mock:result");
+public class MyProcessor implements Processor {
+
+    public void process(Exchange exchange) throws Exception {
+        // Do nothing here
+        
     }
 
-   
-    
 }
