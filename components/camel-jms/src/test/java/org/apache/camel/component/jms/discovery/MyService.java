@@ -31,7 +31,7 @@ public class MyService {
     }
 
     public Map status() {
-        Map answer = new HashMap();
+        Map<String, Object> answer = new HashMap<String, Object>();
         answer.put("name", name);
         answer.put("time", new Date().getTime());
         return answer;

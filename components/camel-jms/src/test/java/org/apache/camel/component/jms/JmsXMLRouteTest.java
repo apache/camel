@@ -200,7 +200,7 @@ public class JmsXMLRouteTest extends CamelTestSupport {
                 // enable stream caching
                 context.setStreamCaching(true);
 
-                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0));
+                errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0));
 
                 // no need to convert to String as JMS producer can handle XML streams now
                 from("direct:object").to("activemq:queue:object?jmsMessageType=Object");

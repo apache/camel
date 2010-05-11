@@ -19,7 +19,6 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.log4j.Logger;
 import org.junit.Test;
 
 /**
@@ -32,8 +31,7 @@ import org.junit.Test;
  * Transaction classes can be joined into one.
  */
 public class QueueToQueueTransactionTest extends AbstractTransactionTest {
-
-    private Logger log = Logger.getLogger(getClass());
+   
     
     protected int getExpectedRouteCount() {
         return 0;

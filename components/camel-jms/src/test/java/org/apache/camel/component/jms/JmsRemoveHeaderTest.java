@@ -42,7 +42,7 @@ public class JmsRemoveHeaderTest extends CamelTestSupport {
         // but only the bar header
         mock.expectedHeaderReceived("bar", 123);
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("foo", "cheese");
         headers.put("bar", 123);
 

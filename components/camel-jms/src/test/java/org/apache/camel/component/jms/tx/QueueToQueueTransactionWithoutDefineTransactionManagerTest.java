@@ -18,15 +18,13 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.apache.log4j.Logger;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends AbstractTransactionTest {
-
-    private Logger log = Logger.getLogger(getClass());
+   
     
     protected int getExpectedRouteCount() {
         return 0;

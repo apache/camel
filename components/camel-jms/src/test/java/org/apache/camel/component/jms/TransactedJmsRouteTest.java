@@ -34,13 +34,10 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -54,8 +51,6 @@ import static org.apache.camel.component.mock.MockEndpoint.assertWait;
 public class TransactedJmsRouteTest extends CamelTestSupport {
 
     // TODO: This is not a nice unit test. Please do not do like this. Big, confusing and takes long time to run
-
-    private static final transient Log LOG = LogFactory.getLog(TransactedJmsRouteTest.class);
     protected int assertTimeoutSeconds = 10;
     private MockEndpoint mockEndpointA;
     private MockEndpoint mockEndpointB;

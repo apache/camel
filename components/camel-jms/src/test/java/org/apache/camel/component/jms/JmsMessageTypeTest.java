@@ -155,7 +155,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Map.class);
 
-        Map body = new HashMap();
+        Map<String, Object> body = new HashMap<String, Object>();
         body.put("name", "Claus");
 
         template.sendBody("direct:map", body);

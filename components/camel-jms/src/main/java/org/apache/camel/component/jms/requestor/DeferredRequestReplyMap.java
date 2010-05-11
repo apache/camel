@@ -32,8 +32,8 @@ public class DeferredRequestReplyMap  {
     private static final transient Log LOG = LogFactory.getLog(DeferredRequestReplyMap.class);
     private Requestor requestor;
     private JmsProducer producer;
-    private TimeoutMap deferredRequestMap;
-    private TimeoutMap deferredReplyMap;
+    private TimeoutMap<String, Object> deferredRequestMap;
+    private TimeoutMap<String, Object> deferredReplyMap;
 
     public static class DeferredMessageSentCallback implements MessageSentCallback {
         private DeferredRequestReplyMap map;
@@ -67,8 +67,8 @@ public class DeferredRequestReplyMap  {
 
     public DeferredRequestReplyMap(Requestor requestor,
                                    JmsProducer producer,
-                                   TimeoutMap deferredRequestMap,
-                                   TimeoutMap deferredReplyMap) {
+                                   TimeoutMap<String, Object> deferredRequestMap,
+                                   TimeoutMap<String, Object> deferredReplyMap) {
         this.requestor = requestor;
         this.producer = producer;
         this.deferredRequestMap = deferredRequestMap;
@@ -93,8 +93,8 @@ public class DeferredRequestReplyMap  {
     }
 
     public static void processDeferredRequests(Object monitor,
-                                               TimeoutMap requestMap,
-                                               TimeoutMap replyMap,
+                                               TimeoutMap<String, Object> requestMap,
+                                               TimeoutMap<String, Object> replyMap,
                                                String correlationID,
                                                long timeout,
                                                Message inMessage) {

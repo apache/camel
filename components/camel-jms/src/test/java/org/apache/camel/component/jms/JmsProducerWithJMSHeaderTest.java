@@ -141,7 +141,7 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         mock.message(0).header("JMSPriority").isEqualTo(3);
         mock.message(0).header("JMSDeliveryMode").isEqualTo(2);
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("JMSPriority", 3);
         headers.put("JMSDeliveryMode", 2);
         template.sendBodyAndHeaders("activemq:queue:foo?preserveMessageQos=true", "Hello World", headers);
@@ -157,7 +157,7 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         mock.message(0).header("JMSDeliveryMode").isEqualTo(2);
 
         long ttl = System.currentTimeMillis() + 2000;
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("JMSPriority", 3);
         headers.put("JMSDeliveryMode", 2);
         headers.put("JMSExpiration", ttl);
@@ -182,7 +182,7 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         long ttl = System.currentTimeMillis() + 2000;
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("JMSPriority", 3);
         headers.put("JMSDeliveryMode", 2);
         headers.put("JMSExpiration", ttl);

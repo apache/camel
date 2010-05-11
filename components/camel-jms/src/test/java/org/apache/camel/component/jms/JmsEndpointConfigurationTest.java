@@ -71,14 +71,14 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     @Test
     public void testNotSetUsernameOrPassword() {
         try {
-            JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar?username=James");
+            resolveMandatoryEndpoint("jms:topic:Foo.Bar?username=James");
             fail("Expect the exception here");
         } catch (ResolveEndpointFailedException exception) {
             // Expect the exception here
         }
         
         try {
-            JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar?password=ABC");
+            resolveMandatoryEndpoint("jms:topic:Foo.Bar?password=ABC");
             fail("Expect the exception here");
         } catch (ResolveEndpointFailedException exception) {
             // Expect the exception here
@@ -130,6 +130,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         endpoint.getConfiguration().setDeliveryPersistent(true);
         endpoint.getConfiguration().setReplyToDeliveryPersistent(false);
         JmsProducer producer = endpoint.createProducer();
+        assertNotNull("The producer should not be null", producer);
         JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
         JmsOperations operations = consumer.getEndpointMessageListener().getTemplate();
         assertTrue(operations instanceof JmsTemplate);

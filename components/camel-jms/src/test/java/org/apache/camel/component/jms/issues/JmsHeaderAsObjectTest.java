@@ -36,7 +36,7 @@ public class JmsHeaderAsObjectTest extends CamelTestSupport {
         mock.message(0).header("foo").isEqualTo("bar");
         mock.message(0).header("number").isEqualTo(23);
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("foo", "bar");
         headers.put("number", 23);
         template.sendBodyAndHeaders("activemq:in", "Hello World", headers);
@@ -56,7 +56,7 @@ public class JmsHeaderAsObjectTest extends CamelTestSupport {
         order.setOrderId(333);
         order.setQuantity(2);
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("foo", "bar");
         headers.put("order", order);
         template.sendBodyAndHeaders("activemq:in", "Hello World", headers);

@@ -57,7 +57,7 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
         MockEndpoint errors = this.resolveMandatoryEndpoint(assertionReceiver, MockEndpoint.class);
         errors.expectedMessageCount(0);
 
-        Exchange exchange = template.send(testQueueEndpointA, ExchangePattern.InOnly, new Processor() {
+        template.send(testQueueEndpointA, ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader("org.apache.camel.jms", 10000);
                 exchange.getIn().setHeader("org.apache.camel.test.jms", 20000);

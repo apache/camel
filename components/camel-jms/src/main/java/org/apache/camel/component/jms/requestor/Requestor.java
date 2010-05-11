@@ -53,10 +53,10 @@ public class Requestor extends ServiceSupport implements MessageListener {
     private final JmsConfiguration configuration;
     private ScheduledExecutorService executorService;
     private AbstractMessageListenerContainer listenerContainer;
-    private TimeoutMap requestMap;
+    private TimeoutMap<String, Object> requestMap;
     private Map<JmsProducer, DeferredRequestReplyMap> producerDeferredRequestReplyMap;
-    private TimeoutMap deferredRequestMap;
-    private TimeoutMap deferredReplyMap;
+    private TimeoutMap<String, Object> deferredRequestMap;
+    private TimeoutMap<String, Object> deferredReplyMap;
     private Destination replyTo;
     private long maxRequestTimeout = -1;
     private long replyToResolverTimeout = 5000;
@@ -65,10 +65,10 @@ public class Requestor extends ServiceSupport implements MessageListener {
     public Requestor(JmsConfiguration configuration, ScheduledExecutorService executorService) {
         this.configuration = configuration;
         this.executorService = executorService;
-        requestMap = new DefaultTimeoutMap(executorService, configuration.getRequestMapPurgePollTimeMillis());
+        requestMap = new DefaultTimeoutMap<String, Object>(executorService, configuration.getRequestMapPurgePollTimeMillis());
         producerDeferredRequestReplyMap = new HashMap<JmsProducer, DeferredRequestReplyMap>();
-        deferredRequestMap = new DefaultTimeoutMap(executorService, configuration.getRequestMapPurgePollTimeMillis());
-        deferredReplyMap = new DefaultTimeoutMap(executorService, configuration.getRequestMapPurgePollTimeMillis());
+        deferredRequestMap = new DefaultTimeoutMap<String, Object>(executorService, configuration.getRequestMapPurgePollTimeMillis());
+        deferredReplyMap = new DefaultTimeoutMap<String, Object>(executorService, configuration.getRequestMapPurgePollTimeMillis());
     }
 
     public synchronized DeferredRequestReplyMap getDeferredRequestReplyMap(JmsProducer producer) {

@@ -93,7 +93,7 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false).handled(false));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false).handled(false));
 
                 from(getUri())
                         .process(new Processor() {

@@ -24,12 +24,9 @@ import javax.jms.Message;
 
 import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap.DeferredMessageSentCallback;
 import org.apache.camel.component.jms.requestor.PersistentReplyToRequestor.MessageSelectorComposer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class PersistentReplyToFutureHandler extends FutureHandler {
 
-    private static final transient Log LOG = LogFactory.getLog(PersistentReplyToFutureHandler.class);
     protected PersistentReplyToRequestor requestor;
     protected DeferredMessageSentCallback callback;
     protected String correlationID;
