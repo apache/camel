@@ -59,6 +59,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Processor failureProcessor;
         Processor onRedeliveryProcessor = redeliveryProcessor;
         Predicate handledPredicate = handledPolicy;
+        Predicate continuedPredicate = null;
         boolean useOriginalInMessage = useOriginalMessagePolicy;
     }
 
@@ -115,14 +116,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     boolean deadLetterChannel = target == data.deadLetterProcessor && data.deadLetterProcessor != null;
                     EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, target, deadLetterChannel);
                 }
+
+                boolean shouldContinue = shouldContinue(exchange, data);
+                if (shouldContinue) {
+                    // okay we want to continue then prepare the exchange for that as well
+                    prepareExchangeForContinue(exchange, data);
+                }
                 // and then return
                 return;
             }
 
-            // if we are redelivering then sleep before trying again
             if (shouldRedeliver && data.redeliveryCounter > 0) {
+                // prepare for redelivery
                 prepareExchangeForRedelivery(exchange);
 
+                // if we are redelivering then sleep before trying again
                 // wait until we should redeliver
                 try {
                     data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay, data.redeliveryCounter);
@@ -186,7 +194,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // or we are exhausted
         return exchange.getException() == null
             || ExchangeHelper.isFailureHandled(exchange)
-            || ExchangeHelper.isRedelieryExhausted(exchange);
+            || ExchangeHelper.isRedeliveryExhausted(exchange);
     }
 
     /**
@@ -220,6 +228,25 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return logger;
     }
 
+    protected void prepareExchangeForContinue(Exchange exchange, RedeliveryData data) {
+        Exception caught = exchange.getException();
+
+        // continue is a kind of redelivery so reuse the logic to prepare
+        prepareExchangeForRedelivery(exchange);
+        // its continued then remove traces of redelivery attempted and caught exception
+        exchange.getIn().removeHeader(Exchange.REDELIVERED);
+        exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
+        // keep the Exchange.EXCEPTION_CAUGHT as property so end user knows the caused exception
+
+        // create log message
+        String msg = "Failed delivery for exchangeId: " + exchange.getExchangeId();
+        msg = msg + ". Exhausted after delivery attempt: " + data.redeliveryCounter + " caught: " + caught;
+        msg = msg + ". Handled and continue routing.";
+
+        // log that we failed but want to continue
+        logFailedDelivery(false, false, true, exchange, msg, data, null);
+    }
+
     protected void prepareExchangeForRedelivery(Exchange exchange) {
         // okay we will give it another go so clear the exception so we can try again
         if (exchange.getException() != null) {
@@ -244,6 +271,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         if (exceptionPolicy != null) {
             data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
             data.handledPredicate = exceptionPolicy.getHandledPolicy();
+            data.continuedPredicate = exceptionPolicy.getContinuedPolicy();
             data.retryUntilPredicate = exceptionPolicy.getRetryUntilPolicy();
             data.useOriginalInMessage = exceptionPolicy.getUseOriginalMessagePolicy();
 
@@ -261,7 +289,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         String msg = "Failed delivery for exchangeId: " + exchange.getExchangeId()
                 + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e;
-        logFailedDelivery(true, false, exchange, msg, data, e);
+        logFailedDelivery(true, false, false, exchange, msg, data, e);
 
         data.redeliveryCounter = incrementRedeliveryCounter(exchange, e);
     }
@@ -347,7 +375,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
 
         // log that we failed delivery as we are exhausted
-        logFailedDelivery(false, handled, exchange, msg, data, null);
+        logFailedDelivery(false, handled, false, exchange, msg, data, null);
     }
 
     protected void prepareExchangeAfterFailure(final Exchange exchange, final RedeliveryData data) {
@@ -391,12 +419,17 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
     }
 
-    private void logFailedDelivery(boolean shouldRedeliver, boolean handled, Exchange exchange, String message, RedeliveryData data, Throwable e) {
+    private void logFailedDelivery(boolean shouldRedeliver, boolean handled, boolean continued, Exchange exchange, String message, RedeliveryData data, Throwable e) {
         if (logger == null) {
             return;
         }
 
         if (handled && !data.currentRedeliveryPolicy.isLogHandled()) {
+            // do not log handled
+            return;
+        }
+
+        if (continued && !data.currentRedeliveryPolicy.isLogContinued()) {
             // do not log handled
             return;
         }
@@ -443,6 +476,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
     }
 
+    /**
+     * Determines whether or not to we should try to redeliver
+     *
+     * @param exchange the current exchange
+     * @param data     the redelivery data
+     * @return <tt>true</tt> to redeliver, or <tt>false</tt> to exhaust.
+     */
     private boolean shouldRedeliver(Exchange exchange, RedeliveryData data) {
         // if marked as rollback only then do not redeliver
         boolean rollbackOnly = exchange.getProperty(Exchange.ROLLBACK_ONLY, false, Boolean.class);
@@ -453,6 +493,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             return false;
         }
         return data.currentRedeliveryPolicy.shouldRedeliver(exchange, data.redeliveryCounter, data.retryUntilPredicate);
+    }
+
+    /**
+     * Determines whether or not to continue if we are exhausted.
+     *
+     * @param exchange the current exchange
+     * @param data     the redelivery data
+     * @return <tt>true</tt> to continue, or <tt>false</tt> to exhaust.
+     */
+    private boolean shouldContinue(Exchange exchange, RedeliveryData data) {
+        if (data.continuedPredicate != null) {
+            return data.continuedPredicate.matches(exchange);
+        }
+        // do not continue by default
+        return false;
     }
 
     /**

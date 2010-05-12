@@ -63,6 +63,8 @@ public class RedeliveryPolicyDefinition {
     @XmlAttribute
     private Boolean logHandled;
     @XmlAttribute
+    private Boolean logContinued;
+    @XmlAttribute
     private Boolean logExhausted;
     @XmlAttribute
     private Boolean disableRedelivery;
@@ -118,6 +120,9 @@ public class RedeliveryPolicyDefinition {
         }
         if (logHandled != null) {
             answer.setLogHandled(logHandled);
+        }
+        if (logContinued != null) {
+            answer.setLogContinued(logContinued);
         }
         if (logRetryAttempted != null) {
             answer.setLogRetryAttempted(logRetryAttempted);
@@ -252,6 +257,18 @@ public class RedeliveryPolicyDefinition {
      */
     public RedeliveryPolicyDefinition logHandled(boolean logHandled) {
         setLogHandled(logHandled);
+        return this;
+    }
+
+    /**
+     * Sets whether continued exceptions should be logged or not
+     * Can be used to include or reduce verbose.
+     *
+     * @param logContinued  whether continued exceptions should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logContinued(boolean logContinued) {
+        setLogContinued(logContinued);
         return this;
     }
 
@@ -449,6 +466,14 @@ public class RedeliveryPolicyDefinition {
 
     public void setLogHandled(Boolean logHandled) {
         this.logHandled = logHandled;
+    }
+
+    public Boolean getLogContinued() {
+        return logContinued;
+    }
+
+    public void setLogContinued(Boolean logContinued) {
+        this.logContinued = logContinued;
     }
 
     public Boolean isLogRetryAttempted() {

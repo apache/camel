@@ -64,6 +64,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     private RedeliveryPolicyDefinition redeliveryPolicy;
     @XmlElement(name = "handled", required = false)
     private ExpressionSubElementDefinition handled;
+    @XmlElement(name = "continued", required = false)
+    private ExpressionSubElementDefinition continued;
     @XmlAttribute(name = "onRedeliveryRef", required = false)
     private String onRedeliveryRef;
     @XmlAttribute(name = "useOriginalMessage", required = false)
@@ -76,6 +78,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     private Processor errorHandler;
     @XmlTransient
     private Predicate handledPolicy;
+    @XmlTransient
+    private Predicate continuedPolicy;
     @XmlTransient
     private Predicate retryUntilPolicy;
     @XmlTransient
@@ -130,6 +134,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         setHandledFromExpressionType(routeContext);
+        setContinuedFromExpressionType(routeContext);
         setRetryUntilFromExpressionType(routeContext);
         // lookup onRedelivery if ref is provided
         if (ObjectHelper.isNotEmpty(onRedeliveryRef)) {
@@ -198,6 +203,45 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
      */
     public OnExceptionDefinition handled(Expression handled) {
         setHandledPolicy(toPredicate(handled));
+        return this;
+    }
+
+    /**
+     * Sets whether the exchange should handle and continue routing from the point of failure.
+     * <p/>
+     * If this option is enabled then its considered handled as well.
+     *
+     * @param continued continued or not
+     * @return the builder
+     */
+    public OnExceptionDefinition continued(boolean continued) {
+        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(continued));
+        return continued(expression);
+    }
+
+    /**
+     * Sets whether the exchange should be marked as handled or not.
+     * <p/>
+     * If this option is enabled then its considered handled as well.
+     *
+     * @param continued predicate that determines true or false
+     * @return the builder
+     */
+    public OnExceptionDefinition continued(Predicate continued) {
+        setContinuedPolicy(continued);
+        return this;
+    }
+
+    /**
+     * Sets whether the exchange should be marked as handled or not.
+     * <p/>
+     * If this option is enabled then its considered handled as well.
+     *
+     * @param continued expression that determines true or false
+     * @return the builder
+     */
+    public OnExceptionDefinition continued(Expression continued) {
+        setContinuedPolicy(toPredicate(continued));
         return this;
     }
 
@@ -353,6 +397,14 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
      */
     public OnExceptionDefinition logHandled(boolean logHandled) {
         getOrCreateRedeliveryPolicy().setLogHandled(logHandled);
+        return this;
+    }
+
+    /**
+     * Sets whether to log errors even if its continued
+     */
+    public OnExceptionDefinition logContinued(boolean logContinued) {
+        getOrCreateRedeliveryPolicy().setLogContinued(logContinued);
         return this;
     }
 
@@ -521,12 +573,28 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
         this.handled = handled;
     }
 
+    public ExpressionSubElementDefinition getContinued() {
+        return continued;
+    }
+
+    public void setContinued(ExpressionSubElementDefinition continued) {
+        this.continued = continued;
+    }
+
     public ExpressionSubElementDefinition getHandled() {
         return handled;
     }
 
     public void setHandledPolicy(Predicate handledPolicy) {
         this.handledPolicy = handledPolicy;
+    }
+
+    public Predicate getContinuedPolicy() {
+        return continuedPolicy;
+    }
+
+    public void setContinuedPolicy(Predicate continuedPolicy) {
+        this.continuedPolicy = continuedPolicy;
     }
 
     public WhenDefinition getOnWhen() {
@@ -600,6 +668,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     private void setHandledFromExpressionType(RouteContext routeContext) {
         if (getHandled() != null && handledPolicy == null && routeContext != null) {
             handled(getHandled().createPredicate(routeContext));
+        }
+    }
+
+    private void setContinuedFromExpressionType(RouteContext routeContext) {
+        if (getContinued() != null && continuedPolicy == null && routeContext != null) {
+            continued(getContinued().createPredicate(routeContext));
         }
     }
 

@@ -153,6 +153,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      * @param handled  handled or not
      * @return the builder
      */
+    @Deprecated
     public DefaultErrorHandlerBuilder handled(boolean handled) {
         Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
         return handled(expression);
@@ -164,6 +165,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      * @param handled  predicate that determines true or false
      * @return the builder
      */
+    @Deprecated
     public DefaultErrorHandlerBuilder handled(Predicate handled) {
         this.setHandledPolicy(handled);
         return this;
@@ -175,6 +177,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      * @param handled  expression that determines true or false
      * @return the builder
      */
+    @Deprecated
     public DefaultErrorHandlerBuilder handled(Expression handled) {
         this.setHandledPolicy(toPredicate(handled));
         return this;
@@ -335,6 +338,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         this.onRedelivery = onRedelivery;
     }
 
+    @Deprecated
     public Predicate getHandledPolicy() {
         if (handledPolicy == null) {
             handledPolicy = createHandledPolicy();
@@ -342,6 +346,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return handledPolicy;
     }
 
+    @Deprecated
     public void setHandledPolicy(Predicate handled) {
         this.handledPolicy = handled;
     }
@@ -349,6 +354,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     /**
      * Sets the handled using a boolean and thus easier to use for Spring XML configuration as well
      */
+    @Deprecated
     public void setHandled(boolean handled) {
         handled(handled);
     }

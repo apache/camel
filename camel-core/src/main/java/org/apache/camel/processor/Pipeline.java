@@ -79,7 +79,7 @@ public class Pipeline extends MulticastProcessor implements Processor, Traceable
 
             // check for error if so we should break out
             boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(nextExchange);
-            if (nextExchange.isFailed() || nextExchange.isRollbackOnly() ||  exceptionHandled) {
+            if (nextExchange.isFailed() || nextExchange.isRollbackOnly() || exceptionHandled) {
                 // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
                 // by the error handler. It's still an exception, the exchange still failed.
                 if (LOG.isDebugEnabled()) {

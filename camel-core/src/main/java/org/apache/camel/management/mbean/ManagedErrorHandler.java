@@ -328,6 +328,66 @@ public class ManagedErrorHandler {
         redelivery.getRedeliveryPolicy().setLogRetryStackTrace(log);
     }
 
+    @ManagedAttribute(description = "RedeliveryPolicy for logging handled exceptions")
+    public Boolean getLogHandled() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().isLogHandled();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging handled exceptions")
+    public void setLogHandled(Boolean log) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setLogHandled(log);
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging handled and continued exceptions")
+    public Boolean getLogContinued() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().isLogHandled();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging handled and continued exceptions")
+    public void setLogContinued(Boolean log) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setLogContinued(log);
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging exhausted exceptions")
+    public Boolean getLogExhausted() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().isLogExhausted();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging exhausted exceptions")
+    public void setLogExhausted(Boolean log) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setLogExhausted(log);
+    }
+
     @ManagedAttribute(description = "RedeliveryPolicy for using collision avoidance")
     public Boolean getUseCollisionAvoidance() {
         if (!isSupportRedelivery()) {

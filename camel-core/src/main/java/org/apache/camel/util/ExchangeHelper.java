@@ -425,14 +425,14 @@ public final class ExchangeHelper {
         exchange.setException(null);
     }
 
-    public static boolean isRedelieryExhausted(Exchange exchange) {
+    public static boolean isRedeliveryExhausted(Exchange exchange) {
         return exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
     }
 
     /**
      * Extracts the body from the given exchange.
      * <p/>
-     * If the exchange pattern is provided it will try to honor it and retrive the body
+     * If the exchange pattern is provided it will try to honor it and retrieve the body
      * from either IN or OUT according to the pattern.
      *
      * @param exchange   the exchange

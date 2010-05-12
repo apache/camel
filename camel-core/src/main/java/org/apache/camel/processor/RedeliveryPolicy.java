@@ -90,6 +90,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean logStackTrace = true;
     protected boolean logRetryStackTrace;
     protected boolean logHandled;
+    protected boolean logContinued;
     protected boolean logExhausted = true;
     protected boolean logRetryAttempted = true;
     protected String delayPattern;
@@ -108,6 +109,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             + ", logStackTrace=" + logStackTrace
             + ", logRetryStackTrace=" + logRetryStackTrace
             + ", logHandled=" + logHandled
+            + ", logContinued=" + logContinued
             + ", logExhausted=" + logExhausted
             + ", useExponentialBackOff="  + useExponentialBackOff
             + ", backOffMultiplier=" + backOffMultiplier
@@ -562,6 +564,17 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public void setLogHandled(boolean logHandled) {
         this.logHandled = logHandled;
+    }
+
+    public boolean isLogContinued() {
+        return logContinued;
+    }
+
+    /**
+     * Sets whether errors should be logged even if its continued
+     */
+    public void setLogContinued(boolean logContinued) {
+        this.logContinued = logContinued;
     }
 
     public boolean isLogRetryAttempted() {
