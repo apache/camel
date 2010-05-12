@@ -78,25 +78,32 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (!request.isEntityAvailable()) {
             return;
         }
+        
+        
 
-        Form form = new Form(request.getEntity());
-        for (Map.Entry<String, String> entry : form.getValuesMap().entrySet()) {
-            // extract body added to the form as the key which has null value
-            if (entry.getValue() == null) {
-                inMessage.setBody(entry.getKey());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Populate exchange from Restlet request body: " + entry.getValue());
-                }
-            } else {
-                if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                    inMessage.setHeader(entry.getKey(), entry.getValue());
+        // only deal with the form if the content type is "application/x-www-form-urlencoded"
+        if (request.getEntity().getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {            
+            Form form = new Form(request.getEntity());
+            for (Map.Entry<String, String> entry : form.getValuesMap().entrySet()) {
+                if (entry.getValue() == null) {
+                    inMessage.setBody(entry.getKey());
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Populate exchange from Restlet request user header: "
-                                + entry.getKey() + " value: " + entry.getValue());
+                        LOG.debug("Populate exchange from Restlet request body: " + entry.getValue());
+                    }
+                } else {
+                    if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
+                        inMessage.setHeader(entry.getKey(), entry.getValue());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Populate exchange from Restlet request user header: "
+                                    + entry.getKey() + " value: " + entry.getValue());
+                        }
                     }
                 }
             }
+        } else {
+            inMessage.setBody(request.getEntity().getStream());
         }
+        
     }
 
     public void populateRestletRequestFromExchange(Request request, Exchange exchange) {

@@ -63,7 +63,7 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
                         if (body.indexOf("{") == -1) {
                             throw new Exception("Inproperly formatted JSON:  " + body);
                         }
-                        exchange.getOut().setBody(exchange.getIn().getBody());
+                        exchange.getOut().setBody(body);
                     }
                 });
 
@@ -109,10 +109,12 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
     @Test
     public void testProducerJSONFailure() throws IOException {
         
-        String response = (String)template.sendBody(
+        String response = (String)template.sendBodyAndHeader(
                 "restlet:http://localhost:9080/ordersJSON?restletMethod=post&foo=bar", 
                 ExchangePattern.InOut,
-                "{'JSON'}");
+                "{'JSON'}",
+                Exchange.CONTENT_TYPE,
+                MediaType.APPLICATION_JSON);
            
         assertEquals("{'JSON'}", response);
     }

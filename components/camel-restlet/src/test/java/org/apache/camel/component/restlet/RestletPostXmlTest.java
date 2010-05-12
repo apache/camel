@@ -28,6 +28,12 @@ import org.junit.Test;
  * @version $Revision$
  */
 public class RestletPostXmlTest extends RestletTestSupport {
+    
+    private static final String REQUEST_MESSAGE = 
+        "<mail><body>HelloWorld!</body><subject>test</subject><to>x@y.net</to></mail>";
+    private static final String REQUEST_MESSAGE_WITH_XML_TAG = 
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + REQUEST_MESSAGE;
+    
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -38,9 +44,9 @@ public class RestletPostXmlTest extends RestletTestSupport {
                 from("restlet:http://localhost:9087/users/?restletMethods=post")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            Object body = exchange.getIn().getBody();
+                            String body = exchange.getIn().getBody(String.class);
                             assertNotNull(body);
-                            assertEquals("<mail><body>HelloWorld!</body><subject>test</subject><to>x@y.net</to></mail>", body);
+                            assertTrue("Get a wrong request message", body.indexOf(REQUEST_MESSAGE) >= 0);
                             exchange.getOut().setBody("<status>OK</status>");
                             exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
                         }
@@ -51,11 +57,18 @@ public class RestletPostXmlTest extends RestletTestSupport {
 
     @Test
     public void testPostXml() throws Exception {
-        String xml = "<mail><body>HelloWorld!</body><subject>test</subject><to>x@y.net</to></mail>";
-
+        postRequestMessage(REQUEST_MESSAGE);
+    }
+    
+    @Test
+    public void testPostXmlWithXmlTag() throws Exception {
+        postRequestMessage(REQUEST_MESSAGE_WITH_XML_TAG);
+    }
+    
+    private void postRequestMessage(String message) throws Exception {
         HttpPost post = new HttpPost("http://localhost:9087/users/");
         post.addHeader(Exchange.CONTENT_TYPE, "application/xml");
-        post.setEntity(new StringEntity(xml));
+        post.setEntity(new StringEntity(message));
 
         HttpResponse response = doExecute(post);
         assertHttpResponse(response, 200, "application/xml");
