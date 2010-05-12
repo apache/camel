@@ -29,11 +29,15 @@ import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
 
 /**
+ * Currently not in use.
+ *
  * @version $Revision$
  */
 public class CamelContinuationServlet extends CamelServlet {
 
-    // TODO: should use the new Async API and allow end users to define if they want Jetty continuation support or not
+    // TODO: We should look into what we can do to introduce back Jetty Continuations
+    // and it should be documented how it works and to be used
+    // and end users should be able to decide if they want to leverage it or not
 
     private static final long serialVersionUID = 1L;
         

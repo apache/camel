@@ -1,18 +1,23 @@
-Loadbalancing with MINA Example
-===============================
+Load balancing with MINA Example
+================================
 
 This example show how you can easily use the camel-mina component to design a solution allowing to distribute message 
 workload on several servers. Those servers are simple TCP/IP servers created by the Apache MINA framework and running in
 separate Java Virtual Machine. The loadbalancer pattern of Camel which is used top of them allows to send in a Round Robin model
-mode the messages created from a camel-bean component respectively to each server running on localhost:9999 and localhost:9998.
+mode the messages created from a camel Bean component respectively to each server running on localhost:9999 and localhost:9998.
 MINA has been configured to send over the wire objects serialized and this is what is showed also in this example.
-The advantage of this apporach is that you don't need to use CORBA or Java RMI for the communication between the different jvm.
+The advantage of this approach is that you don't need to use CORBA or Java RMI for the communication between the different JVMs.
 The example has been configured to use InOut EIP pattern.
 
 The demo starts when every one minute, a Report object is created from the camel loadbalancer server. This object is send by the 
 camel loadbalancer to a MINA server and object is serialized. One of the two MINA servers (localhost:9999 and localhost:9998) receives
 the object and enrich it by setting the field reply of the Report object. The reply is send back by the MINA server to the camel loadbalancer 
-who will display in its log  the content of the Report object. 
+who will display in its log the content of the Report object. 
+
+
+For the latest & greatest documentation on how to use this example please see 
+  http://camel.apache.org/loadbalacing-mina.html
+
 
 1. Description of the routes 
 ============================
@@ -31,9 +36,7 @@ who will display in its log  the content of the Report object.
 <bean id="service" class="org.apache.camel.example.service.Generator"/> 
 
 <camelContext xmlns="http://camel.apache.org/schema/spring" trace="false">
-    <package>
-        com.intuit.ai.step.camel 
-    </package>
+
     <route id="sendMessage">
     	<from uri="timer://org.apache.camel.example.loadbalancer?fixedRate=true&amp;period=60000"/>
     	<bean ref="service" method="createReport"/>
@@ -150,22 +153,14 @@ and check the result in the log of loadbalancer
 >> Report reply : Report updated from MINA server running on : localhost:9999
 >> ***********************************************
 ]
-
 ...
 
 
+If you hit an problems please let us know on the Camel Forums
+  http://camel.apache.org/discussion-forums.html
 
+Please help us make Apache Camel better - we appreciate any feedback you may
+have.  Enjoy!
 
-
-
-
-
-
-
-
-
-
-
-
-Enjoy it
-
+------------------------
+The Camel riders!

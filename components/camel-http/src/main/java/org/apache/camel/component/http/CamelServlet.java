@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
@@ -34,6 +36,7 @@ import org.apache.camel.impl.DefaultExchange;
 public class CamelServlet extends HttpServlet {
 
     private static final long serialVersionUID = -7061982839117697829L;
+    private static final transient Log LOG = LogFactory.getLog(CamelServlet.class);
 
     private ConcurrentHashMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
    
@@ -54,24 +57,21 @@ public class CamelServlet extends HttpServlet {
                 return;
             }
 
-            // Have the camel process the HTTP exchange.
-            DefaultExchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
-            if (((HttpEndpoint)consumer.getEndpoint()).isBridgeEndpoint()) {
+            // create exchange and set data on it
+            Exchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
+            if ((consumer.getEndpoint()).isBridgeEndpoint()) {
                 exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
             }
             exchange.setIn(new HttpMessage(exchange, request, response));
-            consumer.getProcessor().process(exchange);
 
-            // HC: The getBinding() is interesting because it illustrates the
-            // impedance miss-match between
-            // HTTP's stream oriented protocol, and Camels more message oriented
-            // protocol exchanges.
+            // Have the camel process the HTTP exchange.
+            consumer.getProcessor().process(exchange);
 
             // now lets output to the response
             consumer.getBinding().writeResponse(exchange, response);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Error processing request", e);
             throw new ServletException(e);
         }
     }
