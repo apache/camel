@@ -33,10 +33,13 @@ public class XPathTest extends CamelTestSupport {
         XPathFactory fac = new XPathFactoryImpl();
         XPathBuilder builder = XPathBuilder.xpath("foo/bar").factory(fac);
 
-        String name = builder.evaluate(context, "<foo><bar>cheese</bar></foo>", String.class);
-        assertEquals("cheese", name);
+        // will evaluate as XPathConstants.NODESET and have Camel convert that to String
+        // this should return the String incl. xml tags
+        String name = builder.evaluate(context, "<foo><bar id=\"1\">cheese</bar></foo>", String.class);
+        assertEquals("<bar id=\"1\">cheese</bar>", name);
 
-        name = builder.evaluate(context, "<foo><bar>cheese</bar></foo>");
+        // will evaluate using XPathConstants.STRING which just return the text content (eg like text())
+        name = builder.evaluate(context, "<foo><bar id=\"1\">cheese</bar></foo>");
         assertEquals("cheese", name);
     }
 

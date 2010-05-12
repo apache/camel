@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFunctionResolver;
 
 import org.w3c.dom.Document;
@@ -408,6 +409,19 @@ public class XPathTest extends ContextTestSupport {
 
         String s = context.getTypeConverter().convertTo(String.class, result);
         assertEquals("Claus", s);
+    }
+
+    public void testXPathString() throws Exception {
+        XPathBuilder builder = XPathBuilder.xpath("foo/bar");
+
+        // will evaluate as XPathConstants.NODESET and have Camel convert that to String
+        // this should return the String incl. xml tags
+        String name = builder.evaluate(context, "<foo><bar id=\"1\">cheese</bar></foo>", String.class);
+        assertEquals("<bar id=\"1\">cheese</bar>", name);
+
+        // will evaluate using XPathConstants.STRING which just return the text content (eg like text())
+        name = builder.evaluate(context, "<foo><bar id=\"1\">cheese</bar></foo>");
+        assertEquals("cheese", name);
     }
 
 }
