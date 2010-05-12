@@ -48,4 +48,15 @@ public class DefaultNodeIdFactory implements NodeIdFactory {
         }
         return answer;
     }
+
+
+    /**
+     * Helper method for test purposes that allows tests to start clean (made protected 
+     *  to ensure that it is not called accidentally)
+     */
+    protected static synchronized void resetAllCounters() {
+        for (AtomicInteger counter : nodeCounters.values()) {
+            counter.set(0);
+        }
+    }
 }

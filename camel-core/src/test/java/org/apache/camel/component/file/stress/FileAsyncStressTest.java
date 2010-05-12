@@ -46,7 +46,7 @@ public class FileAsyncStressTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(100);
-        mock.setResultWaitTime(20000);
+        mock.setResultWaitTime(30000);
 
         assertMockEndpointsSatisfied();
     }

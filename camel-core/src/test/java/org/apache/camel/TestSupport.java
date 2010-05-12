@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.util.ExchangeHelper;
@@ -46,6 +47,18 @@ public abstract class TestSupport extends TestCase {
     protected transient Log log = LogFactory.getLog(getClass());
     // Builder methods for expressions used when testing
     // -------------------------------------------------------------------------
+
+    /**
+     * Runs the bare test sequence.
+     * @exception Throwable if any exception is thrown
+     */
+    @Override
+    public void runBare() throws Throwable {
+        //start with a clean slate
+        DefaultCamelContext.setContextCounter(0);
+        TestSupportNodeIdFactory.resetCounters();
+        super.runBare();
+    }
 
     /**
      * Returns a value builder for the given header

@@ -109,7 +109,7 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultCamelContext extends ServiceSupport implements CamelContext {
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
     private static final String NAME_PREFIX = "camel-";
-    private static AtomicInteger nameSuffix = new AtomicInteger(0);
+    private static AtomicInteger contextCounter = new AtomicInteger(0);
     private ClassLoader applicationContextClassLoader;
     private boolean routeDefinitionInitiated;
     private String name;
@@ -166,7 +166,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public DefaultCamelContext() {
         super();
-        name = NAME_PREFIX + nameSuffix.incrementAndGet();
+        name = NAME_PREFIX + contextCounter.incrementAndGet();
 
         // use WebSphere specific resolver if running on WebSphere
         if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
@@ -1397,16 +1397,23 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     public ManagementStrategy getManagementStrategy() {
-        if (managementStrategyInitialized.compareAndSet(false, true)) {
-            managementStrategy = createManagementStrategy();
+        synchronized (managementStrategyInitialized) {
+            if (managementStrategyInitialized.compareAndSet(false, true)) {
+                managementStrategy = createManagementStrategy();
+            }
+            return managementStrategy;
         }
-        return managementStrategy;
     }
 
     public void setManagementStrategy(ManagementStrategy managementStrategy) {
-        this.managementStrategy = managementStrategy;
-        // should be considered initialized as we use a custom strategy
-        managementStrategyInitialized.set(true);
+        synchronized (managementStrategyInitialized) {
+            if (managementStrategyInitialized.get()) {
+                LOG.warn("Resetting ManagementStrategy for context " + getName());
+            }
+
+            this.managementStrategy = managementStrategy;
+            managementStrategyInitialized.set(true);
+        }
     }
 
     public InterceptStrategy getDefaultTracer() {
@@ -1546,4 +1553,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return "CamelContext(" + getName() + ")";
     }
 
+    /**
+     * Reset contextCounter to a preset value. Mostly used for tests to ensure a predictable getName()
+     * 
+     * @param value new value for the contextCounter
+     */
+    public static void setContextCounter(int value) {
+        contextCounter.set(value);
+    }
 }

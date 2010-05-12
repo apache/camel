@@ -17,18 +17,24 @@
 package org.apache.camel.management;
 
 import java.util.Map;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * @version $Revision$
  */
-public class ManagedUnregisterCamelContextTest extends TestSupport {
+public class ManagedUnregisterCamelContextTest extends ContextTestSupport {
+
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext();

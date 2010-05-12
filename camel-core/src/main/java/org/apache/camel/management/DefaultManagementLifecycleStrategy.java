@@ -20,8 +20,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -133,7 +136,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             ManagedCamelContext mc = new ManagedCamelContext(context);
             mc.init(context.getManagementStrategy());
             // the context could have been removed already
-            if (getManagementStrategy().isManaged(null, mc)) {
+            if (getManagementStrategy().isManaged(mc, null)) {
                 getManagementStrategy().unmanageObject(mc);
             }
         } catch (Exception e) {

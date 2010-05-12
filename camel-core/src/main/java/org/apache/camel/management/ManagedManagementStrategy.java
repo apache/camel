@@ -50,7 +50,7 @@ import org.fusesource.commons.management.basic.StatisticImpl;
  */
 public class ManagedManagementStrategy extends DefaultManagementStrategy {
 
-    private static final Log LOG = LogFactory.getLog(ManagedManagementStrategy.class);
+    private static final transient Log LOG = LogFactory.getLog(ManagedManagementStrategy.class);
 
     public ManagedManagementStrategy() {
     }
