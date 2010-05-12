@@ -42,11 +42,12 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
         mock.expectedMessageCount(2);
         // should have file name header set
         mock.allMessages().header(Exchange.FILE_NAME).isNotNull();
-        // and expect name to contain target/filename-consumer-XXX.txt
-        mock.message(0).header(Exchange.FILE_NAME).isEqualTo("target/filename-consumer-bye.txt");
-        mock.message(1).header(Exchange.FILE_NAME).isEqualTo("target/filename-consumer-hello.txt");
 
         assertMockEndpointsSatisfied();
+
+        // and expect name to contain target/filename-consumer-XXX.txt
+        assertDirectoryEquals("target/filename-consumer-bye.txt", mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_NAME, String.class));
+        assertDirectoryEquals("target/filename-consumer-hello.txt", mock.getReceivedExchanges().get(1).getIn().getHeader(Exchange.FILE_NAME, String.class));
     }
 
     @Override
