@@ -17,7 +17,7 @@
 package org.apache.camel.spi;
 
 /**
- * Represents a resolver of FactoryFinder to
+ * Represents a resolver for {@link FactoryFinder}
  *
  * @version $Revision$
  */

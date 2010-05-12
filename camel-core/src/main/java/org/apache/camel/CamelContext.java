@@ -146,18 +146,6 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      */
     Component removeComponent(String componentName);
 
-    /**
-     * Gets the a previously added component by name or lazily creates the component
-     * using the factory Callback.
-     *
-     * @param componentName the name of the component
-     * @param factory       used to create a new component instance if the component was not previously added.
-     * @return the component
-     * @deprecated will be removed in Camel 2.3.
-     */
-    @Deprecated
-    Component getOrCreateComponent(String componentName, Callable<Component> factory);
-
     // Endpoint Management Methods
     //-----------------------------------------------------------------------
 
@@ -206,26 +194,6 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     Endpoint hasEndpoint(String uri);
 
     /**
-     * Returns the collection of all registered endpoints for a uri or an empty collection.
-     * For a singleton endpoint the collection will contain exactly one element.
-     *
-     * @param uri  the URI of the endpoints
-     * @return  collection of endpoints
-     * @deprecated not used will be removed in Camel 2.3.
-     */
-    @Deprecated
-    Collection<Endpoint> getEndpoints(String uri);
-
-    /**
-     * Returns the collection of all registered singleton endpoints.
-     *
-     * @return  all the singleton endpoints
-     * @deprecated not used will be removed in Camel 2.3.
-     */
-    @Deprecated
-    Collection<Endpoint> getSingletonEndpoints();
-
-    /**
      * Adds the endpoint to the context using the given URI.
      *
      * @param uri the URI to be used to resolve this endpoint
@@ -234,17 +202,6 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @throws Exception if the new endpoint could not be started or the old endpoint could not be stopped
      */
     Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception;
-
-    /**
-     * Removes all endpoints with the given URI
-     *
-     * @param uri the URI to be used to remove
-     * @return a collection of endpoints removed or null if there are no endpoints for this URI
-     * @throws Exception if at least one endpoint could not be stopped
-     * @deprecated not used will be removed in Camel 2.3.
-     */
-    @Deprecated
-    Collection<Endpoint> removeEndpoints(String uri) throws Exception;
 
     /**
      * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom
@@ -380,16 +337,6 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @return the status for the route
      */
     ServiceStatus getRouteStatus(String routeId);
-
-    /**
-     * Returns the current status of the given route
-     *
-     * @param route the route
-     * @return the status for the route
-     * @deprecated will be removed in Camel 2.3.
-     */
-    @Deprecated
-    ServiceStatus getRouteStatus(RouteDefinition route);
 
     // Properties
     //-----------------------------------------------------------------------

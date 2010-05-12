@@ -274,30 +274,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
     }
 
-    public Component getOrCreateComponent(String componentName, Callable<Component> factory) {
-        synchronized (components) {
-            Component component = components.get(componentName);
-            if (component == null) {
-                try {
-                    component = factory.call();
-                    if (component == null) {
-                        throw new RuntimeCamelException("Factory failed to create the " + componentName
-                                + " component, it returned null.");
-                    }
-                    components.put(componentName, component);
-                    component.setCamelContext(this);
-                    for (LifecycleStrategy strategy : lifecycleStrategies) {
-                        strategy.onComponentAdd(componentName, component);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeCamelException("Factory failed to create the " + componentName
-                            + " component.", e);
-                }
-            }
-            return component;
-        }
-    }
-
     // Endpoint Management Methods
     // -----------------------------------------------------------------------
 
@@ -325,36 +301,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
     }
 
-    public Collection<Endpoint> getEndpoints(String uri) {
-        Collection<Endpoint> answer = new ArrayList<Endpoint>();
-        Collection<Endpoint> coll;
-        synchronized (endpoints) {
-            Endpoint ep = endpoints.get(uri);
-            if (ep != null) {
-                answer.add(ep);
-                return answer;
-            }
-            coll = new ArrayList<Endpoint>(endpoints.values());
-        }
-        for (Endpoint ep : coll) {
-            if (!ep.isSingleton() && uri.equals(ep.getEndpointUri())) {
-                answer.add(ep);
-            }
-        }
-        return answer;
-    }
-
-    public Collection<Endpoint> getSingletonEndpoints() {
-        Collection<Endpoint> answer = new ArrayList<Endpoint>();
-        Collection<Endpoint> coll = getEndpoints();
-        for (Endpoint ep : coll) {
-            if (ep.isSingleton()) {
-                answer.add(ep);
-            }
-        }
-        return answer;
-    }
-
     public Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception {
         Endpoint oldEndpoint;
         synchronized (endpoints) {
@@ -369,40 +315,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
         }
         return oldEndpoint;
-    }
-
-    public Collection<Endpoint> removeEndpoints(String uri) throws Exception {
-        Collection<Endpoint> answer = new ArrayList<Endpoint>();
-        synchronized (endpoints) {
-            Endpoint oldEndpoint = endpoints.remove(uri);
-            if (oldEndpoint != null) {
-                answer.add(oldEndpoint);
-                stopServices(oldEndpoint);
-                for (LifecycleStrategy strategy : lifecycleStrategies) {
-                    strategy.onEndpointRemove(oldEndpoint);
-                }
-            } else {
-                Collection<Map.Entry<String, Endpoint>> worklist = new ArrayList<Map.Entry<String, Endpoint>>();
-                for (Map.Entry<String, Endpoint> entry : endpoints.entrySet()) {
-                    oldEndpoint = entry.getValue();
-                    if (!oldEndpoint.isSingleton() && uri.equals(oldEndpoint.getEndpointUri())) {
-                        // add to worklist to avoid concurrent modification exception
-                        worklist.add(entry);
-                    }
-                }
-                for (Map.Entry<String, Endpoint> entry : worklist) {
-                    oldEndpoint = entry.getValue();
-                    answer.add(oldEndpoint);
-                    stopServices(oldEndpoint);
-                    endpoints.remove(entry.getKey());
-                    for (LifecycleStrategy strategy : lifecycleStrategies) {
-                        strategy.onEndpointRemove(oldEndpoint);
-                    }
-                }
-
-            }
-        }
-        return answer;
     }
 
     public Endpoint getEndpoint(String uri) {
@@ -618,10 +530,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         stopRoute(key);
         this.routeServices.remove(key);
         removeRouteDefinition(key);
-    }
-
-    public ServiceStatus getRouteStatus(RouteDefinition route) {
-        return getRouteStatus(route.idOrCreate(nodeIdFactory));
     }
 
     public ServiceStatus getRouteStatus(String key) {
