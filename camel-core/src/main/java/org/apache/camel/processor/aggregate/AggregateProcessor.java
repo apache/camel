@@ -738,7 +738,6 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 LOG.info("Using ClosedCorrelationKeys with unbounded capacity");
                 closedCorrelationKeys = new HashMap<Object, Object>();
             }
-
         }
 
         ServiceHelper.startServices(processor, aggregationRepository);
@@ -799,6 +798,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         ServiceHelper.stopServices(timeoutMap, processor, deadLetterProcessor);
 
         if (closedCorrelationKeys != null) {
+            // it may be a service so stop it as well
+            ServiceHelper.stopService(closedCorrelationKeys);
             closedCorrelationKeys.clear();
         }
         batchConsumerCorrelationKeys.clear();
