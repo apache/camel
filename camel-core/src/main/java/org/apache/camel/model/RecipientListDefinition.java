@@ -57,6 +57,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends E
     private String executorServiceRef;
     @XmlAttribute(required = false)
     private Boolean stopOnException;
+    @XmlAttribute(required = false)
+    private Boolean ignoreInvalidEndpoints;
 
     public RecipientListDefinition() {
     }
@@ -93,6 +95,9 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends E
         answer.setParallelProcessing(isParallelProcessing());
         if (stopOnException != null) {
             answer.setStopOnException(isStopOnException());
+        }
+        if (ignoreInvalidEndpoints != null) {
+            answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
         }
 
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "RecipientList", this);
@@ -157,6 +162,16 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends E
      */
     public RecipientListDefinition<Type> aggregationStrategyRef(String aggregationStrategyRef) {
         setStrategyRef(aggregationStrategyRef);
+        return this;
+    }
+    
+    /**
+     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     *
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> ignoreInvalidEndpoints() {
+        setIgnoreInvalidEndpoints(true);
         return this;
     }
 
@@ -226,6 +241,14 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends E
 
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
+    }
+    
+    public Boolean isIgnoreInvalidEndpoints() {
+        return ignoreInvalidEndpoints;
+    }
+
+    public void setIgnoreInvalidEndpoints(Boolean ignoreInvalidEndpoints) {
+        this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
 
     public Boolean isStopOnException() {

@@ -36,6 +36,8 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -48,12 +50,14 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public class RecipientList extends ServiceSupport implements Processor {
+    private static final transient Log LOG = LogFactory.getLog(RecipientList.class);
     private final CamelContext camelContext;
     private ProducerCache producerCache;
     private Expression expression;
     private final String delimiter;
     private boolean parallelProcessing;
     private boolean stopOnException;
+    private boolean ignoreInvalidEndpoints;
     private ExecutorService executorService;
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
 
@@ -110,11 +114,19 @@ public class RecipientList extends ServiceSupport implements Processor {
             List<Processor> processors = new ArrayList<Processor>();
             while (iter.hasNext()) {
                 Object recipient = iter.next();
-                Endpoint endpoint = resolveEndpoint(exchange, recipient);
-                // acquire producer which we then release later
-                Producer producer = producerCache.acquireProducer(endpoint);
-                processors.add(producer);
-                producers.put(endpoint, producer);
+                try {
+                    Endpoint endpoint = resolveEndpoint(exchange, recipient);
+                    // acquire producer which we then release later
+                    Producer producer = producerCache.acquireProducer(endpoint);
+                    processors.add(producer);
+                    producers.put(endpoint, producer);
+                } catch (Exception ex) {
+                    if (isIgnoreInvalidEndpoints()) {
+                        LOG.warn("Get a invalid endpoint with " + recipient , ex);
+                    } else {
+                        throw ex;
+                    }
+                }
             }
 
             MulticastProcessor mp = new MulticastProcessor(exchange.getContext(), processors, getAggregationStrategy(),
@@ -149,6 +161,14 @@ public class RecipientList extends ServiceSupport implements Processor {
 
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
+    }
+    
+    public boolean isIgnoreInvalidEndpoints() {
+        return ignoreInvalidEndpoints;
+    }
+    
+    public void setIgnoreInvalidEndpoints(boolean ignoreInvalidEndpoints) {
+        this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
 
     public boolean isParallelProcessing() {
