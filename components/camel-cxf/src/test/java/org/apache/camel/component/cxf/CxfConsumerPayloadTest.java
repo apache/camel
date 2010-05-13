@@ -36,6 +36,10 @@ public class CxfConsumerPayloadTest extends CxfConsumerTest {
     private static final String ECHO_BOOLEAN_RESPONSE = "<ns1:echoBooleanResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
             + "<return xmlns=\"http://cxf.component.camel.apache.org/\">true</return>"
             + "</ns1:echoBooleanResponse>";
+    private static final String ECHO_REQUEST = "<ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+            + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">Hello World!</arg0></ns1:echo>";
+    private static final String ECHO_BOOLEAN_REQUEST = "<ns1:echoBoolean xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+            + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">true</arg0></ns1:echoBoolean>";
 
     // START SNIPPET: payload
     protected RouteBuilder createRouteBuilder() {
@@ -43,14 +47,19 @@ public class CxfConsumerPayloadTest extends CxfConsumerTest {
             public void configure() {
                 from(SIMPLE_ENDPOINT_URI + "&dataFormat=PAYLOAD").to("log:info").process(new Processor() {
                     @SuppressWarnings("unchecked")
-                    public void process(final Exchange exchange) throws Exception {                        
+                    public void process(final Exchange exchange) throws Exception {
                         CxfPayload<SoapHeader> requestPayload = exchange.getIn().getBody(CxfPayload.class);
                         List<Element> inElements = requestPayload.getBody();
                         List<Element> outElements = new ArrayList<Element>();
+                        // You can use a customer toStringConverter to turn a CxfPayLoad message into String as you want                        
+                        String request = exchange.getIn().getBody(String.class);
                         XmlConverter converter = new XmlConverter();
                         String documentString = ECHO_RESPONSE;
                         if (inElements.get(0).getLocalName().equals("echoBoolean")) {
                             documentString = ECHO_BOOLEAN_RESPONSE;
+                            assertEquals("Get a wrong request", ECHO_BOOLEAN_REQUEST, request);
+                        } else {
+                            assertEquals("Get a wrong request", ECHO_REQUEST, request);
                         }
                         Document outDocument = converter.toDOMDocument(documentString);
                         outElements.add(outDocument.getDocumentElement());
