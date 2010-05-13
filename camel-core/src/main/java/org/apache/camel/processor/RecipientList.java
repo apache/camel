@@ -97,15 +97,15 @@ public class RecipientList extends ServiceSupport implements Processor {
             throw new IllegalStateException("RecipientList has not been started: " + this);
         }
 
-        Object receipientList = expression.evaluate(exchange, Object.class);
-        sendToRecipientList(exchange, receipientList);
+        Object recipientList = expression.evaluate(exchange, Object.class);
+        sendToRecipientList(exchange, recipientList);
     }
 
     /**
      * Sends the given exchange to the recipient list
      */
-    public void sendToRecipientList(Exchange exchange, Object receipientList) throws Exception {
-        Iterator<Object> iter = ObjectHelper.createIterator(receipientList, delimiter);
+    public void sendToRecipientList(Exchange exchange, Object recipientList) throws Exception {
+        Iterator<Object> iter = ObjectHelper.createIterator(recipientList, delimiter);
 
         // we should acquire and release the producers we need so we can leverage the producer
         // cache to the fullest
@@ -120,11 +120,11 @@ public class RecipientList extends ServiceSupport implements Processor {
                     Producer producer = producerCache.acquireProducer(endpoint);
                     processors.add(producer);
                     producers.put(endpoint, producer);
-                } catch (Exception ex) {
+                } catch (Exception e) {
                     if (isIgnoreInvalidEndpoints()) {
-                        LOG.warn("Get a invalid endpoint with " + recipient , ex);
+                        LOG.info("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
                     } else {
-                        throw ex;
+                        throw e;
                     }
                 }
             }

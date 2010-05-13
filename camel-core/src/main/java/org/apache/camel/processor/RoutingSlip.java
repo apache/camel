@@ -91,15 +91,15 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
         Exchange current = exchange;
 
         for (String nextRecipient : recipients) {
-            Endpoint endpoint = null;
+            Endpoint endpoint;
             try {
                 endpoint = resolveEndpoint(exchange, nextRecipient.trim());
-            } catch (Exception ex) {
+            } catch (Exception e) {
                 if (isIgnoreInvalidEndpoints()) {
-                    LOG.info("Cannot resolve the endpoint with " + nextRecipient, ex);
+                    LOG.info("Endpoint uri is invalid: " + nextRecipient + ". This exception will be ignored.", e);
                     continue;
                 } else {
-                    throw ex;
+                    throw e;
                 }
             }
 
@@ -119,7 +119,7 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
             } catch (Exception e) {
                 // Need to check the if the exception is thrown when camel try to create and start the producer 
                 if (e instanceof FailedToCreateProducerException && isIgnoreInvalidEndpoints()) {
-                    LOG.info("An Invalid endpoint with " + nextRecipient, e);
+                    LOG.info("Endpoint uri is invalid: " + nextRecipient + ". This exception will be ignored.", e);
                     continue;
                 } else {
                     // catch exception so we can decide if we want to continue or not
