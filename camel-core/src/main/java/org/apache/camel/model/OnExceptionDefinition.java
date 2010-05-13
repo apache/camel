@@ -40,6 +40,7 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 
@@ -136,9 +137,17 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
         setHandledFromExpressionType(routeContext);
         setContinuedFromExpressionType(routeContext);
         setRetryUntilFromExpressionType(routeContext);
+
+        // only one of handled or continued is allowed
+        if (getHandledPolicy() != null && getContinuedPolicy() != null) {
+            throw new IllegalArgumentException("Only one of handled or continued is allowed to be configured on: " + this);
+        }
+
         // lookup onRedelivery if ref is provided
         if (ObjectHelper.isNotEmpty(onRedeliveryRef)) {
-            setOnRedelivery(routeContext.lookup(onRedeliveryRef, Processor.class));
+            // if ref is provided then use mandatory lookup to fail if not found
+            Processor onRedelivery = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onRedeliveryRef, Processor.class);
+            setOnRedelivery(onRedelivery);
         }
 
         // lets attach this on exception to the route error handler
