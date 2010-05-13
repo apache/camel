@@ -290,6 +290,6 @@ public final class IOConverter {
     }
     
     public static String getDefaultCharsetName() {
-        return "UTF-8";
+        return ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
     }
 }

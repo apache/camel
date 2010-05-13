@@ -32,6 +32,8 @@ import org.apache.camel.spi.UnitOfWork;
 public interface Exchange {
 
     String CHARSET_NAME = "org.apache.camel.Exchange.CharsetName";
+    
+    String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
 
     String AGGREGATED_COUNT = "org.apache.camel.Exchange.AggregatedCount";
 
