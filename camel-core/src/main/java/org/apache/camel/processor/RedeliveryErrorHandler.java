@@ -59,7 +59,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Processor failureProcessor;
         Processor onRedeliveryProcessor = redeliveryProcessor;
         Predicate handledPredicate = handledPolicy;
-        Predicate continuedPredicate = null;
+        Predicate continuedPredicate;
         boolean useOriginalInMessage = useOriginalMessagePolicy;
     }
 

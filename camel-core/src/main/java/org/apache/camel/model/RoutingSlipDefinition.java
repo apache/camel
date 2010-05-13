@@ -41,6 +41,8 @@ public class RoutingSlipDefinition extends ProcessorDefinition<ProcessorDefiniti
     private String headerName;
     @XmlAttribute
     private String uriDelimiter;
+    @XmlAttribute
+    private Boolean ignoreInvalidEndpoints;
 
     public RoutingSlipDefinition() {
         this(null, DEFAULT_DELIMITER);
@@ -69,7 +71,11 @@ public class RoutingSlipDefinition extends ProcessorDefinition<ProcessorDefiniti
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notEmpty(getHeaderName(), "headerName", this);
         ObjectHelper.notEmpty(getUriDelimiter(), "uriDelimiter", this);
-        return new RoutingSlip(routeContext.getCamelContext(), getHeaderName(), getUriDelimiter());
+        RoutingSlip routingSlip = new RoutingSlip(routeContext.getCamelContext(), getHeaderName(), getUriDelimiter());
+        if (getIgnoreInvalidEndpoint() != null) {
+            routingSlip.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoint());
+        }
+        return routingSlip;
     }
 
     @Override
@@ -91,5 +97,13 @@ public class RoutingSlipDefinition extends ProcessorDefinition<ProcessorDefiniti
 
     public String getUriDelimiter() {
         return uriDelimiter;
+    }
+    
+    public void setIgnoreInvalidEndpoints(Boolean ignoreInvalidEndpoints) {
+        this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
+    }
+    
+    public Boolean getIgnoreInvalidEndpoint() {
+        return ignoreInvalidEndpoints;
     }
 }
