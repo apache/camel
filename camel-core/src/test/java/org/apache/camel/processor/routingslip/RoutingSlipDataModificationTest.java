@@ -16,24 +16,17 @@
  */
 package org.apache.camel.processor.routingslip;
 
-import java.util.Map;
-
 import javax.naming.Context;
 
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Headers;
-import org.apache.camel.OutHeaders;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class RoutingSlipDataModificationTest extends ContextTestSupport {
     protected static final String ANSWER = "answer";
     protected static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
-    private static final transient Log LOG = LogFactory.getLog(RoutingSlipDataModificationTest.class);
     protected MyBean myBean = new MyBean();
 
     public void testModificationOfDataAlongRoute()
@@ -51,7 +44,7 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
 
     protected void sendBody() {
         template.sendBodyAndHeader("direct:a", ANSWER, ROUTING_SLIP_HEADER,
-                "mock:x,bean:myBean?method=modifyData");
+                "mock:x , bean:myBean?method=modifyData");
     }
 
     @Override
