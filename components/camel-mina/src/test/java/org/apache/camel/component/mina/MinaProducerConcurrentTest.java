@@ -52,7 +52,7 @@ public class MinaProducerConcurrentTest extends ContextTestSupport {
             final int index = i;
             Future out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    return template.requestBody("mina:tcp://localhost:8080?sync=true", index, String.class);
+                    return template.requestBody("mina:tcp://localhost:9090?sync=true", index, String.class);
                 }
             });
             responses.put(index, out);
@@ -75,7 +75,7 @@ public class MinaProducerConcurrentTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina:tcp://localhost:8080?sync=true").process(new Processor() {
+                from("mina:tcp://localhost:9090?sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);
