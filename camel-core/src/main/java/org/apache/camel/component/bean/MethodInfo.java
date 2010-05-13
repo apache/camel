@@ -84,6 +84,7 @@ public class MethodInfo {
 
             recipientList = new RecipientList(camelContext, annotation.delimiter());
             recipientList.setStopOnException(annotation.stopOnException());
+            recipientList.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
             recipientList.setParallelProcessing(annotation.parallelProcessing());
 
             if (ObjectHelper.isNotEmpty(annotation.executorServiceRef())) {
