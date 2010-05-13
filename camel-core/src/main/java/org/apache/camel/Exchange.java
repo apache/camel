@@ -55,6 +55,7 @@ public interface Exchange {
     String CORRELATION_ID   = "CamelCorrelationId";
 
     String DATASET_INDEX = "CamelDataSetIndex";
+    String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
 
     String EXCEPTION_CAUGHT     = "CamelExceptionCaught";
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";

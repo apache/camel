@@ -63,9 +63,11 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Converter
 public class XmlConverter {
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the Exchange.DEFAULT_CHARSET 
     public static final String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
-
-    public static String defaultCharset = ObjectHelper.getSystemProperty(DEFAULT_CHARSET_PROPERTY, "UTF-8");
+    
+    public static String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
     /*
      * When converting a DOM tree to a SAXSource, we try to use Xalan internal DOM parser if
