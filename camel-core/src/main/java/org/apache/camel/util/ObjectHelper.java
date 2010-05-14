@@ -34,11 +34,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Scanner;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -573,6 +576,29 @@ public final class ObjectHelper {
     public static boolean getSystemProperty(String name, Boolean defaultValue) {
         String result = getSystemProperty(name, defaultValue.toString());
         return Boolean.parseBoolean(result);
+    }
+   
+    /**
+     * A helper method to access a camel context properties with a prefix
+     *
+     * @param name         the name of the system property required
+     * @param defaultValue the default value to use if the property is not
+     *                     available or a security exception prevents access
+     * @return the properties which holds the camel context properties with the prefix,
+     *         and the key omit the prefix part
+     */
+    public static Properties getCamelPropertiesWithPrefix(String prefix, CamelContext camelContext) {
+        Properties answer = new Properties();
+        Map<String, String> camelProperties = camelContext.getProperties();
+        if (camelProperties != null) {
+            for (Map.Entry<String, String> entry : camelProperties.entrySet()) {
+                String key = entry.getKey();
+                if (key.startsWith(prefix)) {
+                    answer.put(key.substring(prefix.length()), entry.getValue());
+                }
+            }
+        }
+        return answer;
     }
 
     /**

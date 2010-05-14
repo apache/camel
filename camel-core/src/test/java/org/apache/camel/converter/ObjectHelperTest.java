@@ -17,12 +17,16 @@
 package org.apache.camel.converter;
 
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import junit.framework.TestCase;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -113,6 +117,19 @@ public class ObjectHelperTest extends TestCase {
         assertTrue(it.hasNext());
         it.next();
         assertFalse(it.hasNext());
+    }
+    
+    public void testGetCamelContextPropertiesWithPrefix() {
+        CamelContext context = new DefaultCamelContext();
+        Map<String, String> properties = context.getProperties();
+        properties.put("camel.object.helper.test1", "test1");
+        properties.put("camel.object.helper.test2", "test2");
+        properties.put("camel.object.test", "test");
+        
+        Properties result = ObjectHelper.getCamelPropertiesWithPrefix("camel.object.helper.", context);
+        assertEquals("Get a wrong size properties", 2, result.size());
+        assertEquals("It should contain the test1", "test1", result.get("test1"));
+        assertEquals("It should contain the test2", "test2", result.get("test2"));
     }
 
 }

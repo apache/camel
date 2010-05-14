@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.ByteBuffer;
+
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
@@ -31,8 +33,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
@@ -56,7 +60,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
 
         Source source = null;
-        String out = conv.toString(source);
+        String out = conv.toString(source, null);
         assertEquals(null, out);
     }
 
@@ -64,7 +68,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
 
         Source source = conv.toSource("<foo>bar</foo>".getBytes());
-        String out = conv.toString(source);
+        String out = conv.toString(source, null);
         assertEquals("<foo>bar</foo>", out);
     }
 
@@ -96,11 +100,11 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToDomSourceByStaxSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        SAXSource source = conv.toSAXSource("<foo>bar</foo>");
+        SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
         DOMSource out = conv.toDOMSource(source);
         assertNotSame(source, out);
 
-        assertEquals("<foo>bar</foo>", conv.toString(out));
+        assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
 
     public void testToDomSourceByCustomSource() throws Exception {
@@ -123,27 +127,27 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
 
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<foo>bar</foo>");
-        SAXSource out = conv.toSAXSource(is);
+        SAXSource out = conv.toSAXSource(is, null);
 
         assertNotNull(out);
-        assertEquals("<foo>bar</foo>", conv.toString(out));
+        assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
 
     public void testToSaxSourceByDomSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         DOMSource source = conv.toDOMSource("<foo>bar</foo>");
-        SAXSource out = conv.toSAXSource(source);
+        SAXSource out = conv.toSAXSource(source, null);
         assertNotSame(source, out);
 
-        assertEquals("<foo>bar</foo>", conv.toString(out));
+        assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
 
     public void testToSaxSourceByStaxSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        SAXSource source = conv.toSAXSource("<foo>bar</foo>");
-        SAXSource out = conv.toSAXSource(source);
+        SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
+        SAXSource out = conv.toSAXSource(source, null);
         assertSame(source, out);
     }
 
@@ -159,7 +163,7 @@ public class XmlConverterTest extends ContextTestSupport {
             }
         };
 
-        SAXSource out = conv.toSAXSource(dummy);
+        SAXSource out = conv.toSAXSource(dummy, null);
         assertNull(out);
     }
 
@@ -168,7 +172,7 @@ public class XmlConverterTest extends ContextTestSupport {
         
         File file = new File("org/apache/camel/converter/stream/test.xml").getAbsoluteFile();
         StreamSource source = conv.toStreamSource(file);
-        StreamSource out = conv.toStreamSource(source);
+        StreamSource out = conv.toStreamSource(source, null);
         assertSame(source, out);
     }
 
@@ -177,7 +181,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
 
         StreamSource source = conv.toStreamSource("<foo>bar</foo>".getBytes(), exchange);
-        StreamSource out = conv.toStreamSource(source);
+        StreamSource out = conv.toStreamSource(source, null);
         assertSame(source, out);
     }
 
@@ -185,20 +189,20 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
 
         DOMSource source = conv.toDOMSource("<foo>bar</foo>");
-        StreamSource out = conv.toStreamSource(source);
+        StreamSource out = conv.toStreamSource(source, null);
         assertNotSame(source, out);
 
-        assertEquals("<foo>bar</foo>", conv.toString(out));
+        assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
 
     public void testToStreamSourceByStaxSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        SAXSource source = conv.toSAXSource("<foo>bar</foo>");
-        StreamSource out = conv.toStreamSource(source);
+        SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
+        StreamSource out = conv.toStreamSource(source, null);
         assertNotSame(source, out);
 
-        assertEquals("<foo>bar</foo>", conv.toString(out));
+        assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
 
     public void testToStreamSourceByCustomSource() throws Exception {
@@ -213,7 +217,7 @@ public class XmlConverterTest extends ContextTestSupport {
             }
         };
 
-        StreamSource out = conv.toStreamSource(dummy);
+        StreamSource out = conv.toStreamSource(dummy, null);
         assertNull(out);
     }
 
@@ -223,7 +227,7 @@ public class XmlConverterTest extends ContextTestSupport {
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<foo>bar</foo>");
         StreamSource out = conv.toStreamSource(is);
         assertNotNull(out);
-        assertEquals("<foo>bar</foo>", conv.toString(out));
+        assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
 
     public void testToStreamSourceByReader() throws Exception {
@@ -232,7 +236,7 @@ public class XmlConverterTest extends ContextTestSupport {
         Reader reader = context.getTypeConverter().convertTo(Reader.class, "<foo>bar</foo>");
         StreamSource out = conv.toStreamSource(reader);
         assertNotNull(out);
-        assertEquals("<foo>bar</foo>", conv.toString(out));
+        assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
 
     public void testToStreamSourceByByteArray() throws Exception {
@@ -242,7 +246,7 @@ public class XmlConverterTest extends ContextTestSupport {
         byte[] bytes = context.getTypeConverter().convertTo(byte[].class, "<foo>bar</foo>");
         StreamSource out = conv.toStreamSource(bytes, exchange);
         assertNotNull(out);
-        assertEquals("<foo>bar</foo>", conv.toString(out));
+        assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
 
     public void testToStreamSourceByByteBuffer() throws Exception {
@@ -252,7 +256,7 @@ public class XmlConverterTest extends ContextTestSupport {
         ByteBuffer bytes = context.getTypeConverter().convertTo(ByteBuffer.class, "<foo>bar</foo>");
         StreamSource out = conv.toStreamSource(bytes, exchange);
         assertNotNull(out);
-        assertEquals("<foo>bar</foo>", conv.toString(out));
+        assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
 
     public void testToVariousUsingNull() throws Exception {
@@ -281,9 +285,9 @@ public class XmlConverterTest extends ContextTestSupport {
 
     public void testToReaderFromSource() throws Exception {
         XmlConverter conv = new XmlConverter();
-        SAXSource source = conv.toSAXSource("<foo>bar</foo>");
+        SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
         
-        Reader out = conv.toReaderFromSource(source);
+        Reader out = conv.toReaderFromSource(source, null);
         assertNotNull(out);
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
     }
@@ -299,7 +303,7 @@ public class XmlConverterTest extends ContextTestSupport {
 
     public void testToDomElement() throws Exception {
         XmlConverter conv = new XmlConverter();
-        SAXSource source = conv.toSAXSource("<foo>bar</foo>");
+        SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
 
         Element out = conv.toDOMElement(source);
         assertNotNull(out);
@@ -346,7 +350,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
         Document doc = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
 
-        InputStream is = conv.toInputStream(doc);
+        InputStream is = conv.toInputStream(doc, null);
         assertNotNull(is);
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, is));
     }
@@ -365,7 +369,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
 
         DOMSource source = conv.toDOMSource("<foo>bar</foo>");
-        InputStream out = conv.toInputStream(source);
+        InputStream out = conv.toInputStream(source, null);
         assertNotSame(source, out);
 
         String s = context.getTypeConverter().convertTo(String.class, out);
@@ -379,6 +383,20 @@ public class XmlConverterTest extends ContextTestSupport {
         InputSource out = conv.toInputSource(is);
         assertNotNull(out);
         assertNotNull(out.getByteStream());
+    }
+    
+    public void testOutOptionsFromCamelContext() throws Exception {
+        CamelContext context = new DefaultCamelContext();        
+        Exchange exchange =  new DefaultExchange(context);
+        // shows how to set the OutputOptions from camelContext
+        context.getProperties().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "US_ASCII");
+        XmlConverter conv = new XmlConverter();
+
+        SAXSource source = conv.toSAXSource("<foo>bar</foo>", exchange);
+        DOMSource out = conv.toDOMSource(source);
+        assertNotSame(source, out);
+
+        assertEquals("<?xml version=\"1.0\" encoding=\"US_ASCII\"?><foo>bar</foo>", conv.toString(out, exchange));
     }
 
 }

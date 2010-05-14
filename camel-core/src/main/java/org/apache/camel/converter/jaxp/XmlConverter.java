@@ -67,6 +67,7 @@ public class XmlConverter {
     //It will be removed in Camel 3.0, please use the Exchange.DEFAULT_CHARSET 
     public static final String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
     
+    public static final String OUTPUT_PROPERTIES_PREFIX = "org.apache.camel.xmlconverter.output.";
     public static String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
     /*
@@ -170,12 +171,21 @@ public class XmlConverter {
     public Source toSource(Node node) {
         return new DOMSource(node);
     }
+    
+    /**
+     * Converts the given input Source into text
+     */
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
+    public String toString(Source source) throws TransformerException {
+        return toString(source, null);
+    }
 
     /**
      * Converts the given input Source into text
      */
     @Converter
-    public String toString(Source source) throws TransformerException {
+    public String toString(Source source, Exchange exchange) throws TransformerException {
         if (source == null) {
             return null;
         } else if (source instanceof StringSource) {
@@ -183,8 +193,17 @@ public class XmlConverter {
         } else if (source instanceof BytesSource) {
             return new String(((BytesSource) source).getData());
         } else {
-            StringWriter buffer = new StringWriter();
-            toResult(source, new StreamResult(buffer));
+            StringWriter buffer = new StringWriter();           
+            if (exchange != null) {
+                // check the camelContext properties first
+                Properties properties = ObjectHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX, exchange.getContext());
+                if (properties.size() > 0) {
+                    toResult(source, new StreamResult(buffer), properties);
+                    return buffer.toString();
+                }            
+            }
+            // using the old way to deal with it
+            toResult(source, new StreamResult(buffer));            
             return buffer.toString();
         }
     }
@@ -194,20 +213,29 @@ public class XmlConverter {
      */
     @Converter
     public byte[] toByteArray(Source source, Exchange exchange) throws TransformerException {
-        String answer = toString(source);
+        String answer = toString(source, exchange);
         if (exchange != null) {
             return exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, answer);
         } else {
             return answer.getBytes();
         }
     }
-
+    
+    /**
+     * Converts the given input Node into text
+     */
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
+    public String toString(Node node) throws TransformerException {
+        return toString(node, null);
+    }
+    
     /**
      * Converts the given input Node into text
      */
     @Converter
-    public String toString(Node node) throws TransformerException {
-        return toString(new DOMSource(node));
+    public String toString(Node node, Exchange exchange) throws TransformerException {
+        return toString(new DOMSource(node), exchange);
     }
 
     /**
@@ -241,34 +269,66 @@ public class XmlConverter {
         }
     }
 
+    
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
      */
-    @Converter
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public SAXSource toSAXSource(String source) throws IOException, SAXException, TransformerException {
-        return toSAXSource(toSource(source));
+        return toSAXSource(source, null);
     }
-
+    
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
      */
     @Converter
-    public SAXSource toSAXSource(InputStream source) throws IOException, SAXException, TransformerException {
-        return toSAXSource(toStreamSource(source));
+    public SAXSource toSAXSource(String source, Exchange exchange) throws IOException, SAXException, TransformerException {
+        return toSAXSource(toSource(source), exchange);
     }
-
+   
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
      */
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter    
+    public SAXSource toSAXSource(InputStream source) throws IOException, SAXException, TransformerException {
+        return toSAXSource(source, null);
+    }
+    
+    /**
+     * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
+     * supported (making it easy to derive from this class to add new kinds of conversion).
+     */
+    @Converter
+    public SAXSource toSAXSource(InputStream source, Exchange exchange) throws IOException, SAXException, TransformerException {
+        return toSAXSource(toStreamSource(source), exchange);
+    }
+    
+    /**
+     * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
+     * supported (making it easy to derive from this class to add new kinds of conversion).
+     */
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     @Converter
     public SAXSource toSAXSource(Source source) throws IOException, SAXException, TransformerException {
+        return toSAXSource(source, null);
+    }
+    
+    /**
+     * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
+     * supported (making it easy to derive from this class to add new kinds of conversion).
+     */
+    @Converter
+    public SAXSource toSAXSource(Source source, Exchange exchange) throws IOException, SAXException, TransformerException {
         if (source instanceof SAXSource) {
             return (SAXSource) source;
         } else if (source instanceof DOMSource) {
-            return toSAXSourceFromDOM((DOMSource) source);
+            return toSAXSourceFromDOM((DOMSource) source, exchange);
         } else if (source instanceof StreamSource) {
             return toSAXSourceFromStream((StreamSource) source);
         } else {
@@ -276,14 +336,20 @@ public class XmlConverter {
         }
     }
 
-    @Converter
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter    
     public StreamSource toStreamSource(Source source) throws TransformerException {
+        return toStreamSource(source, null);
+    }
+    
+    @Converter
+    public StreamSource toStreamSource(Source source, Exchange exchange) throws TransformerException {
         if (source instanceof StreamSource) {
             return (StreamSource) source;
         } else if (source instanceof DOMSource) {
-            return toStreamSourceFromDOM((DOMSource) source);
+            return toStreamSourceFromDOM((DOMSource) source, exchange);
         } else if (source instanceof SAXSource) {
-            return toStreamSourceFromSAX((SAXSource) source);
+            return toStreamSourceFromSAX((SAXSource) source, exchange);
         } else {
             return null;
         }
@@ -331,8 +397,14 @@ public class XmlConverter {
         return null;
     }
 
-    @Converter
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public StreamSource toStreamSourceFromSAX(SAXSource source) throws TransformerException {
+        return toStreamSourceFromSAX(source, null);
+    }
+    
+    @Converter
+    public StreamSource toStreamSourceFromSAX(SAXSource source, Exchange exchange) throws TransformerException {
         InputSource inputSource = source.getInputSource();
         if (inputSource != null) {
             if (inputSource.getCharacterStream() != null) {
@@ -342,13 +414,19 @@ public class XmlConverter {
                 return new StreamSource(inputSource.getByteStream());
             }
         }
-        String result = toString(source);
+        String result = toString(source, exchange);
         return new StringSource(result);
     }
 
-    @Converter
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public StreamSource toStreamSourceFromDOM(DOMSource source) throws TransformerException {
-        String result = toString(source);
+        return toStreamSourceFromDOM(source, null);
+    }
+    
+    @Converter
+    public StreamSource toStreamSourceFromDOM(DOMSource source, Exchange exchange) throws TransformerException {
+        String result = toString(source, exchange);
         return new StringSource(result);
     }
 
@@ -365,9 +443,15 @@ public class XmlConverter {
         return new SAXSource(inputSource);
     }
 
-    @Converter
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public Reader toReaderFromSource(Source src) throws TransformerException {
-        StreamSource stSrc = toStreamSource(src);
+        return toReaderFromSource(src, null);
+    }
+    
+    @Converter
+    public Reader toReaderFromSource(Source src, Exchange exchange) throws TransformerException {
+        StreamSource stSrc = toStreamSource(src, exchange);
         Reader r = stSrc.getReader();
         if (r == null) {
             r = new InputStreamReader(stSrc.getInputStream());
@@ -405,9 +489,15 @@ public class XmlConverter {
         }
         return new DOMSource(document, systemId);
     }
-
-    @Converter
+    
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public SAXSource toSAXSourceFromDOM(DOMSource source) throws TransformerException {
+        return toSAXSourceFromDOM(source, null);
+    }
+    
+    @Converter
+    public SAXSource toSAXSourceFromDOM(DOMSource source, Exchange exchange) throws TransformerException {
         if (DOM_TO_SAX_CLASS != null) {
             try {
                 Constructor<?> cns = DOM_TO_SAX_CLASS.getConstructor(Node.class);
@@ -417,7 +507,7 @@ public class XmlConverter {
                 throw new TransformerException(e);
             }
         } else {
-            String str = toString(source);
+            String str = toString(source, exchange);
             StringReader reader = new StringReader(str);
             return new SAXSource(new InputSource(reader));
         }
@@ -586,15 +676,27 @@ public class XmlConverter {
         }
     }
 
-    @Converter
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public InputStream toInputStream(DOMSource source) throws TransformerException, IOException {
-        String s = toString(source);
+        return toInputStream(source, null);
+    }
+    
+    @Converter
+    public InputStream toInputStream(DOMSource source, Exchange exchange) throws TransformerException, IOException {
+        String s = toString(source, exchange);
         return new ByteArrayInputStream(s.getBytes());
     }
 
-    @Converter
+    @Deprecated
+    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public InputStream toInputStream(Document dom) throws TransformerException, IOException {
-        String s = toString(dom);
+        return toInputStream(dom, null);
+    }
+    
+    @Converter
+    public InputStream toInputStream(Document dom, Exchange exchange) throws TransformerException, IOException {
+        String s = toString(dom, exchange);
         return new ByteArrayInputStream(s.getBytes());
     }
 
