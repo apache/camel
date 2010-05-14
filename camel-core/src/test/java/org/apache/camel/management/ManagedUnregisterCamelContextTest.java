@@ -46,9 +46,8 @@ public class ManagedUnregisterCamelContextTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     public void testUnregisterCamelContext() throws Exception {
-        CamelContext context = createCamelContext();
-        context.start();
-
+        // The camel context already started by ContextTestSupport in the startup method
+        
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");

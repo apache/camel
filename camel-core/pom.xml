@@ -142,7 +142,6 @@
             <!-- TODO FIXME ASAP -->
 	    <!-- need to fix this issue when we rewrite the stream cache-->
             <exclude>**/SplitterStreamCacheTest.*</exclude>            
-            <exclude>**/ManagedUnregisterCamelContextTest.*</exclude>            
           </excludes>
         </configuration>
       </plugin>
