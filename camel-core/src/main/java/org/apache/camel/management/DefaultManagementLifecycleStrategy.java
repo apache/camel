@@ -420,6 +420,32 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     public void onRoutesRemove(Collection<Route> routes) {
         // noop - keep the route in the mbean so its still there, it will still be unregistered
         // when camel itself is shutting down
+        
+        // the agent hasn't been started
+        if (!initialized) {
+            return;
+        }
+
+        for (Route route : routes) {            
+            ManagedRoute mr = new ManagedRoute(camelContext, route);
+            mr.init(getManagementStrategy());
+
+            // skip unmanaged routes
+            if (!getManagementStrategy().isManaged(mr, null)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("The route is already managed: " + route);
+                }
+                continue;
+            }
+
+            try {
+                getManagementStrategy().unmanageObject(mr);
+            } catch (JMException e) {
+                LOG.warn("Could not register Route MBean", e);
+            } catch (Exception e) {
+                LOG.warn("Could not create Route MBean", e);
+            }
+        }
     }
 
     public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder errorHandlerBuilder) {

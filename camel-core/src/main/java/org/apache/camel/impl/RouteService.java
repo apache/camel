@@ -51,6 +51,7 @@ public class RouteService extends ServiceSupport {
     private final List<RouteContext> routeContexts;
     private final List<Route> routes;
     private final String id;
+    private boolean removingRoutes;
     private boolean startInputs = true;
     private final Map<Route, Consumer> inputs = new HashMap<Route, Consumer>();
 
@@ -100,6 +101,14 @@ public class RouteService extends ServiceSupport {
      */
     public Map<Route, Consumer> getInputs() {
         return inputs;
+    }
+    
+    public boolean isRemovingRoutes() {
+        return removingRoutes;
+    }
+    
+    public void setRemovingRoutes(boolean removingRoutes) {
+        this.removingRoutes = removingRoutes;
     }
 
     protected void doStart() throws Exception {
@@ -160,14 +169,17 @@ public class RouteService extends ServiceSupport {
     protected void doStop() throws Exception {
         // clear inputs
         inputs.clear();
-
-        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-            strategy.onRoutesRemove(routes);
-        }
-
+        
         // if we are stopping CamelContext then we are shutting down
         boolean isShutdownCamelContext = camelContext.isStopping();
 
+        if (isShutdownCamelContext || isRemovingRoutes()) {
+            // need to call onRoutesRemove when the CamelContext is shutting down or Route is shutdown
+            for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+                strategy.onRoutesRemove(routes);
+            }
+        }
+        
         for (Route route : routes) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Stopping route: " + route);

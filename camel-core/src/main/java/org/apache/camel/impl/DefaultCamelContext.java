@@ -568,6 +568,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     public synchronized void shutdownRoute(String routeId) throws Exception {
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
+            routeService.setRemovingRoutes(true);
             List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
             RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
             routes.add(order);
@@ -581,6 +582,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     public synchronized void shutdownRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
+            routeService.setRemovingRoutes(true);
             List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
             RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
             routes.add(order);
