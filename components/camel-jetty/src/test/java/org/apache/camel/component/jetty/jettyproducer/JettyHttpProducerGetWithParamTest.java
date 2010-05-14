@@ -23,11 +23,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Unit test to verify that we can have URI options for external system (endpoint is lenient)
  */
+@Ignore
 public class JettyHttpProducerGetWithParamTest extends CamelTestSupport {
 
     private String serverUri = "jetty://http://localhost:9086/myservice";

@@ -25,6 +25,7 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
+@Ignore
 public class JettyHttpProducerGoogleAsynchronousTest extends CamelTestSupport {
 
     @Test
@@ -51,7 +52,7 @@ public class JettyHttpProducerGoogleAsynchronousTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     // to prevent redirect being thrown as an exception
-                    .toAsync("jetty://http://www.google.com?throwExceptionOnFailure=false")
+                    .to("jetty://http://www.google.com?throwExceptionOnFailure=false")
                     .to("mock:result");
             }
         };

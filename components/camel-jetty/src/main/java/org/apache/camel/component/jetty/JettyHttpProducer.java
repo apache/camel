@@ -67,11 +67,18 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         sendSynchronous(exchange, client, httpExchange);
     }
 
-    public void process(Exchange exchange, final AsyncCallback callback) throws Exception {
+    public boolean process(Exchange exchange, final AsyncCallback callback) {
         HttpClient client = getEndpoint().getClient();
 
-        JettyContentExchange httpExchange = createHttpExchange(exchange);
-        sendAsynchronous(exchange, client, httpExchange, callback);
+        try {
+            JettyContentExchange httpExchange = createHttpExchange(exchange);
+            sendAsynchronous(exchange, client, httpExchange, callback);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+        // we should continue processing this asynchronously
+        return false;
     }
 
     protected void sendAsynchronous(final Exchange exchange, final HttpClient client, final JettyContentExchange httpExchange,

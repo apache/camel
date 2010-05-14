@@ -57,7 +57,6 @@ import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
-import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
@@ -76,7 +75,6 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.CamelContextHelper;
@@ -366,9 +364,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
             prepareRouteForInit(route, abstracts, lower);
 
-            // toAsync should fix up itself at first
-            initToAsync(lower);
-
             // interceptors should be first for the cross cutting concerns
             initInterceptors(route, upper);
             // then on completion
@@ -433,33 +428,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 initParent(child);
             }
         }
-    }
-
-    private void initToAsync(List<ProcessorDefinition> lower) {
-        List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
-        ToDefinition toAsync = null;
-
-        for (ProcessorDefinition output : lower) {
-            if (toAsync != null) {
-                // add this output on toAsync
-                toAsync.getOutputs().add(output);
-            } else {
-                // regular outputs
-                outputs.add(output);
-            }
-
-            if (output instanceof ToDefinition) {
-                ToDefinition to = (ToDefinition) output;
-                if (to.isAsync() != null && to.isAsync()) {
-                    // new current to async
-                    toAsync = to;
-                }
-            }
-        }
-
-        // rebuild outputs
-        lower.clear();
-        lower.addAll(outputs);
     }
 
     private void initOnExceptions(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper) {

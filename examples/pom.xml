@@ -53,13 +53,11 @@
     <module>camel-example-bam</module>
     <module>camel-example-cafe</module>
     <module>camel-example-cxf</module>
-    <module>camel-example-cxf-async</module>
     <module>camel-example-docs</module>
     <module>camel-example-etl</module>
     <module>camel-example-gae</module>
     <module>camel-example-gauth</module>
     <module>camel-example-guice-jms</module>
-    <module>camel-example-http-async</module>
     <module>camel-example-jms-file</module>
     <module>camel-example-loan-broker</module>
     <module>camel-example-management</module>

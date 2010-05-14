@@ -19,11 +19,13 @@ package org.apache.camel.component.jetty.jettyproducer;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
+@Ignore
 public class JettyHttpProducerTimeoutTest extends CamelTestSupport {
 
     private String url = "jetty://http://0.0.0.0:9123/timeout?httpClient.timeout=2000";

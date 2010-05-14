@@ -17,12 +17,14 @@
 package org.apache.camel.component.jetty.jettyproducer;
 
 import org.apache.camel.component.jetty.JettyHandle404Test;
+import org.junit.Ignore;
 
 /**
  * Based on end user on forum how to get the 404 error code in his enrich aggregator
  *
  * @version $Revision$
  */
+@Ignore
 public class JettyProducerHandle404Test extends JettyHandle404Test {
 
     public String getProducerUrl() {

@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,11 +26,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
-import org.apache.camel.processor.SendAsyncProcessor;
-import org.apache.camel.processor.UnitOfWorkProcessor;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;to/&gt; element
@@ -40,19 +34,11 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ToDefinition extends SendDefinition<ToDefinition> implements ExecutorServiceAwareDefinition<ToDefinition> {
+public class ToDefinition extends SendDefinition<ToDefinition> {
     @XmlTransient
     private final List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlAttribute(required = false)
     private ExchangePattern pattern;
-    @XmlAttribute(required = false)
-    private Boolean async = Boolean.FALSE;
-    @XmlTransient
-    private ExecutorService executorService;
-    @XmlAttribute(required = false)
-    private String executorServiceRef;
-    @XmlAttribute(required = false)
-    private Integer poolSize;
 
     public ToDefinition() {
     }
@@ -81,46 +67,8 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Execut
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        if (async == null || !async) {
-            // when sync then let super create the processor
-            return super.createProcessor(routeContext);
-        }
-
-        // this code below is only for creating when async is enabled
-        // ----------------------------------------------------------
-
-        // create the child processor which is the async route
-        Processor childProcessor = this.createChildProcessor(routeContext, false);
-
-        // wrap it in a unit of work so the route that comes next is also done in a unit of work
-        UnitOfWorkProcessor uow = new UnitOfWorkProcessor(routeContext, childProcessor);
-
-        // create async processor
-        Endpoint endpoint = resolveEndpoint(routeContext);
-
-        // TODO: rework to have configured executor service in SendAsyncProcessor being handled in stop/start scenario
-
-        SendAsyncProcessor async = new SendAsyncProcessor(endpoint, getPattern(), uow);
-
-        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "ToAsync", this);
-        if (executorService != null) {
-            async.setExecutorService(executorService);
-        }
-        if (poolSize != null) {
-            async.setPoolSize(poolSize);
-        }
-
-        return async;
-    }
-
-    @Override
     public String toString() {
-        if (async != null && async) {
-            return "ToAsync[" + getLabel() + "] -> " + getOutputs();
-        } else {
-            return "To[" + getLabel() + "]";
-        }
+        return "To[" + getLabel() + "]";
     }
 
     @Override
@@ -131,38 +79,6 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Execut
     @Override
     public ExchangePattern getPattern() {
         return pattern;
-    }
-
-    public Boolean isAsync() {
-        return async;
-    }
-
-    public void setAsync(Boolean async) {
-        this.async = async;
-    }
-
-    public Integer getPoolSize() {
-        return poolSize;
-    }
-
-    public void setPoolSize(Integer poolSize) {
-        this.poolSize = poolSize;
-    }
-
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
-    }
-
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
     }
 
     /**
@@ -180,23 +96,4 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Execut
         return this;
     }
 
-    public ToDefinition executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
-        return this;
-    }
-
-    public ToDefinition executorServiceRef(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
-        return this;
-    }
-
-    /**
-     * Setting the core pool size for the underlying {@link java.util.concurrent.ExecutorService}.
-     *
-     * @return the builder
-     */
-    public ToDefinition poolSize(int poolSize) {
-        setPoolSize(poolSize);
-        return this;
-    }
 }

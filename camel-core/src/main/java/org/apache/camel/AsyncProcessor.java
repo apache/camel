@@ -19,21 +19,20 @@ package org.apache.camel;
 /**
  * An <b>asynchronous</b> processor which can process an {@link Exchange} in an asynchronous fashion
  * and signal completion by invoking the {@link AsyncCallback}.
- * <p/>
- * For example {@link Producer} can implement this interface to support real asynchronous non blocking
- * when using the {@link org.apache.camel.processor.SendAsyncProcessor}.
  *
  * @version $Revision$
  */
 public interface AsyncProcessor extends Processor {
 
     /**
-     * Processes the message exchange
+     * Processes the message exchange.
+     * <p/>
+     * If there was a failure processing then the caused {@link Exception} would be set on the {@link Exchange}.
      *
      * @param exchange the message exchange
      * @param callback the callback to invoke when data has been received and the {@link Exchange}
      * is ready to be continued routed.
-     * @throws Exception if an internal processing error has occurred.
+     * @return <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
      */
-    void process(Exchange exchange, AsyncCallback callback) throws Exception;
+    boolean process(Exchange exchange, AsyncCallback callback);
 }
