@@ -433,7 +433,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             // skip unmanaged routes
             if (!getManagementStrategy().isManaged(mr, null)) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("The route is already managed: " + route);
+                    LOG.trace("The route is not managed: " + route);
                 }
                 continue;
             }
