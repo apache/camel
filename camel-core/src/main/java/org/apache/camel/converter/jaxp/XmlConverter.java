@@ -314,7 +314,6 @@ public class XmlConverter {
      */
     @Deprecated
     //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
-    @Converter
     public SAXSource toSAXSource(Source source) throws IOException, SAXException, TransformerException {
         return toSAXSource(source, null);
     }
