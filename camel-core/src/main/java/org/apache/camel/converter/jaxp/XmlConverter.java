@@ -160,7 +160,6 @@ public class XmlConverter {
      * Converts the given Document to a Source
      * @deprecated use toDOMSource instead
      */
-    @Converter
     @Deprecated
     public DOMSource toSource(Document document) {
         return toDOMSource(document);
