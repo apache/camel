@@ -33,14 +33,14 @@ public class DomConverterTest extends ContextTestSupport {
     public void testDomConverterToString() throws Exception {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
 
-        String s = new DomConverter().toString(document.getChildNodes());
+        String s = new DomConverter().toString(document.getChildNodes(), null);
         assertEquals("<hello>world!</hello>", s);
     }
 
     public void testDomConverterToBytes() throws Exception {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
 
-        byte[] bytes = new DomConverter().toByteArray(document.getChildNodes());
+        byte[] bytes = new DomConverter().toByteArray(document.getChildNodes(), null);
         assertTrue("Should be equal", ObjectHelper.equalByteArray("<hello>world!</hello>".getBytes(), bytes));
     }
 
@@ -69,14 +69,14 @@ public class DomConverterTest extends ContextTestSupport {
         List sub = DomConverter.toList(nl);
         assertEquals(2, sub.size());
 
-        assertEquals("<hello>Hello World</hello>", new DomConverter().toString((NodeList) sub.get(0)));
-        assertEquals("<bye>Bye Camel</bye>", new DomConverter().toString((NodeList) sub.get(1)));
+        assertEquals("<hello>Hello World</hello>", new DomConverter().toString((NodeList) sub.get(0), null));
+        assertEquals("<bye>Bye Camel</bye>", new DomConverter().toString((NodeList) sub.get(1), null));
     }
 
     public void testDomConverterToInputStream() throws Exception {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
 
-        InputStream is = new DomConverter().toInputStream(document.getChildNodes());
+        InputStream is = new DomConverter().toInputStream(document.getChildNodes(), null);
         assertEquals("<hello>world!</hello>", context.getTypeConverter().convertTo(String.class, is));
     }
 

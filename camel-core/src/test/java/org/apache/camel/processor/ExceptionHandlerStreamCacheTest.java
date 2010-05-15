@@ -81,7 +81,7 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
         exceptionEndpoint.assertIsSatisfied();
 
         StreamSource body = (StreamSource) exceptionEndpoint.getExchanges().get(0).getIn().getBody();
-        assertEquals("Ensure message re-readability in the exception handler", xml, new XmlConverter().toString(body));
+        assertEquals("Ensure message re-readability in the exception handler", xml, new XmlConverter().toString(body, null));
     }
 
     @Override

@@ -51,7 +51,7 @@ public class XmlConverterTest extends ContextTestSupport {
 
     public void testToBytesSource() throws Exception {
         XmlConverter conv = new XmlConverter();
-        BytesSource bs = conv.toSource("<foo>bar</foo>".getBytes());
+        BytesSource bs = conv.toBytesSource("<foo>bar</foo>".getBytes());
         assertNotNull(bs);
         assertEquals("<foo>bar</foo>", new String(bs.getData()));
     }
@@ -67,16 +67,35 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToStringWithBytesSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        Source source = conv.toSource("<foo>bar</foo>".getBytes());
+        Source source = conv.toBytesSource("<foo>bar</foo>".getBytes());
         String out = conv.toString(source, null);
         assertEquals("<foo>bar</foo>", out);
+    }
+
+    public void testToSource() throws Exception {
+        XmlConverter conv = new XmlConverter();
+
+        Source source = conv.toSource("<foo>bar</foo>");
+        String out = conv.toString(source, null);
+        assertEquals("<foo>bar</foo>", out);
+    }
+
+    public void testToSourceUsingTypeConverter() throws Exception {
+        Source source = context.getTypeConverter().convertTo(Source.class, "<foo>bar</foo>");
+        String out = context.getTypeConverter().convertTo(String.class, source);
+        assertEquals("<foo>bar</foo>", out);
+
+        // try again to ensure it works the 2nd time
+        source = context.getTypeConverter().convertTo(Source.class, "<foo>baz</foo>");
+        out = context.getTypeConverter().convertTo(String.class, source);
+        assertEquals("<foo>baz</foo>", out);
     }
 
     public void testToByteArrayWithExchange() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         XmlConverter conv = new XmlConverter();
 
-        Source source = conv.toSource("<foo>bar</foo>".getBytes());
+        Source source = conv.toBytesSource("<foo>bar</foo>".getBytes());
         byte[] out = conv.toByteArray(source, exchange);
         assertEquals("<foo>bar</foo>", new String(out));
     }
@@ -84,7 +103,7 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToByteArrayWithNoExchange() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        Source source = conv.toSource("<foo>bar</foo>".getBytes());
+        Source source = conv.toBytesSource("<foo>bar</foo>".getBytes());
         byte[] out = conv.toByteArray(source, null);
         assertEquals("<foo>bar</foo>", new String(out));
     }

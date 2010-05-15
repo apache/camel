@@ -56,8 +56,7 @@ public final class CxfUtils {
         W3CDOMStreamWriter writer = new W3CDOMStreamWriter();
         writeElement(element, writer, namespaces);
         XmlConverter converter = new XmlConverter();
-        return converter.toString(converter.toSource(writer.getDocument()));
-        
+        return converter.toString(converter.toSource(writer.getDocument()), null);
     }
     
     private static void writeElement(Element e,

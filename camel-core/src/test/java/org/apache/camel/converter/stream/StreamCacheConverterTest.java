@@ -65,9 +65,9 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         StreamCache cache = converter.convertToStreamCache(source, exchange);
         //assert re-readability of the cached StreamSource
         XmlConverter converter = new XmlConverter();
-        assertNotNull(converter.toString((Source)cache));
+        assertNotNull(converter.toString((Source)cache, null));
         cache.reset();
-        assertNotNull(converter.toString((Source)cache));
+        assertNotNull(converter.toString((Source)cache, null));
     }
 
     public void testConvertToStreamCacheInputStream() throws Exception {

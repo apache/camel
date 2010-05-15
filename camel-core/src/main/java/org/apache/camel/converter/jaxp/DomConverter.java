@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.xml.transform.TransformerException;
 
+import org.apache.camel.Exchange;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -46,7 +47,7 @@ public final class DomConverter {
     }
 
     @Converter
-    public String toString(NodeList nodeList) throws TransformerException {
+    public String toString(NodeList nodeList, Exchange exchange) throws TransformerException {
         // converting NodeList to String is more tricky
         // sometimes the NodeList is a Node which we can then leverage
         // the XML converter to turn into XML incl. tags
@@ -57,7 +58,7 @@ public final class DomConverter {
         boolean found = false;
         if (nodeList instanceof Node) {
             Node node = (Node) nodeList;
-            String s = xml.toString(node);
+            String s = xml.toString(node, exchange);
             if (ObjectHelper.isNotEmpty(s)) {
                 found = true;
                 buffer.append(s);
@@ -67,7 +68,7 @@ public final class DomConverter {
             int size = nodeList.getLength();
             for (int i = 0; i < size; i++) {
                 Node node = nodeList.item(i);
-                String s = xml.toString(node);
+                String s = xml.toString(node, exchange);
                 if (ObjectHelper.isNotEmpty(s)) {
                     found = true;
                     buffer.append(s);
@@ -112,13 +113,13 @@ public final class DomConverter {
     }
 
     @Converter
-    public InputStream toInputStream(NodeList nodeList) throws TransformerException {
-        return new ByteArrayInputStream(toByteArray(nodeList));
+    public InputStream toInputStream(NodeList nodeList, Exchange exchange) throws TransformerException {
+        return new ByteArrayInputStream(toByteArray(nodeList, exchange));
     }
 
     @Converter
-    public byte[] toByteArray(NodeList nodeList) throws TransformerException {
-        String data = toString(nodeList);
+    public byte[] toByteArray(NodeList nodeList, Exchange exchange) throws TransformerException {
+        String data = toString(nodeList, exchange);
         return data.getBytes();
     }
 

@@ -39,7 +39,7 @@ public final class MyCxfCustomerConverter {
         for (Object element : payload.getBody()) {
             String elementString = "";
             try {
-                elementString = converter.toString((Element)element);
+                elementString = converter.toString((Element)element, null);
             } catch (TransformerException e) {
                 elementString = element.toString();
             }

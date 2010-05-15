@@ -96,7 +96,7 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
                 Source xslSource = xmlConverter.toStreamSource(new StringReader(xslString));
                 TransformerFactory transformerFactory = xmlConverter.createTransformerFactory();
                 Transformer transformer = transformerFactory.newTransformer(xslSource);
-                source = xmlConverter.toSource(document);
+                source = xmlConverter.toDOMSource(document);
                 result = new DOMResult();
 
                 transformer.setParameter("cacheValue", cacheValueDocument);

@@ -143,7 +143,7 @@ public class XmlConverter {
      * Converts the given byte[] to a Source
      */
     @Converter
-    public BytesSource toSource(byte[] data) {
+    public BytesSource toBytesSource(byte[] data) {
         return new BytesSource(data);
     }
 
@@ -152,15 +152,25 @@ public class XmlConverter {
      * Converts the given String to a Source
      */
     @Converter
-    public StringSource toSource(String data) {
+    public StringSource toStringSource(String data) {
         return new StringSource(data);
+    }
+
+    /**
+     * Converts the given Document to a Source
+     * @deprecated use toDOMSource instead
+     */
+    @Converter
+    @Deprecated
+    public DOMSource toSource(Document document) {
+        return toDOMSource(document);
     }
 
     /**
      * Converts the given Document to a Source
      */
     @Converter
-    public DOMSource toSource(Document document) {
+    public DOMSource toDOMSource(Document document) {
         return new DOMSource(document);
     }
 
@@ -172,6 +182,14 @@ public class XmlConverter {
         return new DOMSource(node);
     }
     
+    /**
+     * Converts the given String to a Source
+     */
+    @Converter
+    public Source toSource(String data) {
+        return new StringSource(data);
+    }
+
     /**
      * Converts the given input Source into text
      */

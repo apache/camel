@@ -61,7 +61,7 @@ public class CxfPayload<T> {
             for (Element element : body) {
                 String elementString = "";
                 try {
-                    elementString = converter.toString(element);
+                    elementString = converter.toString(element, null);
                 } catch (TransformerException e) {
                     elementString = element.toString();
                 }
