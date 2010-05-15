@@ -23,6 +23,7 @@ import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.NettyPayloadHelper;
+import org.apache.camel.processor.Logger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,10 +38,12 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     private static final transient Log LOG = LogFactory.getLog(ServerChannelHandler.class);
     private NettyConsumer consumer;
-    
+    private Logger noReplyLogger;
+
     public ServerChannelHandler(NettyConsumer consumer) {
         super();
         this.consumer = consumer;    
+        this.noReplyLogger = new Logger(LOG, consumer.getConfiguration().getNoReplyLogLevel());
     }
 
     @Override
@@ -110,10 +113,15 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         }
 
         if (body == null) {
-            // must close session if no data to write otherwise client will never receive a response
-            // and wait forever (if not timing out)
-            LOG.warn("Cannot write body since its null, closing channel: " + exchange);
-            NettyHelper.close(messageEvent.getChannel());
+            noReplyLogger.log("No payload to send as reply for exchange: " + exchange);
+            if (consumer.getConfiguration().isDisconnectOnNoReply()) {
+                // must close session if no data to write otherwise client will never receive a response
+                // and wait forever (if not timing out)
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Closing channel as no payload to send as reply at address: " + messageEvent.getRemoteAddress());
+                }
+                NettyHelper.close(messageEvent.getChannel());
+            }
         } else {
             // we got a body to write
             if (LOG.isDebugEnabled()) {

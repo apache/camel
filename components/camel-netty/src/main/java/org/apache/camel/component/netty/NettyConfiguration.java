@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.URISupport;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
@@ -61,6 +62,8 @@ public class NettyConfiguration implements Cloneable {
     private boolean disconnect;
     private boolean lazyChannelCreation = true;
     private boolean transferExchange;
+    private boolean disconnectOnNoReply = true;
+    private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
 
     /**
      * Returns a copy of this configuration
@@ -153,6 +156,12 @@ public class NettyConfiguration implements Cloneable {
         }
         if (settings.containsKey("transferExchange")) {
             setTransferExchange(Boolean.valueOf((String) settings.get("transferExchange")));
+        }
+        if (settings.containsKey("disconnectOnNoReply")) {
+            setDisconnectOnNoReply(Boolean.valueOf((String) settings.get("disconnectOnNoReply")));
+        }
+        if (settings.containsKey("noReplyLogLevel")) {
+            setNoReplyLogLevel(LoggingLevel.valueOf((String) settings.get("noReplyLogLevel")));
         }
     }
 
@@ -390,6 +399,22 @@ public class NettyConfiguration implements Cloneable {
 
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
+    }
+
+    public boolean isDisconnectOnNoReply() {
+        return disconnectOnNoReply;
+    }
+
+    public void setDisconnectOnNoReply(boolean disconnectOnNoReply) {
+        this.disconnectOnNoReply = disconnectOnNoReply;
+    }
+
+    public LoggingLevel getNoReplyLogLevel() {
+        return noReplyLogLevel;
+    }
+
+    public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
+        this.noReplyLogLevel = noReplyLogLevel;
     }
 
     public String getAddress() {

@@ -22,6 +22,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.processor.Logger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +43,7 @@ public class MinaConsumer extends DefaultConsumer {
     private final SocketAddress address;
     private final IoAcceptor acceptor;
     private boolean sync;
+    private Logger noReplyLogger;
 
     public MinaConsumer(final MinaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -49,6 +51,7 @@ public class MinaConsumer extends DefaultConsumer {
         this.address = endpoint.getAddress();
         this.acceptor = endpoint.getAcceptor();
         this.sync = endpoint.getConfiguration().isSync();
+        this.noReplyLogger = new Logger(LOG, endpoint.getConfiguration().getNoReplyLogLevel());
     }
 
     @Override
@@ -132,10 +135,15 @@ public class MinaConsumer extends DefaultConsumer {
                 }
 
                 if (body == null) {
-                    // must close session if no data to write otherwise client will never receive a response
-                    // and wait forever (if not timing out)
-                    LOG.warn("Cannot write body since its null, closing session: " + exchange);
-                    session.close();
+                    noReplyLogger.log("No payload to send as reply for exchange: " + exchange);
+                    if (endpoint.getConfiguration().isDisconnectOnNoReply()) {
+                        // must close session if no data to write otherwise client will never receive a response
+                        // and wait forever (if not timing out)
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Closing session as no payload to send as reply at address: " + address);
+                        }
+                        session.close();
+                    }
                 } else {
                     // we got a response to write
                     if (LOG.isDebugEnabled()) {

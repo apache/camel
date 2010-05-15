@@ -19,6 +19,7 @@ package org.apache.camel.component.mina;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.mina.common.IoFilter;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
@@ -44,6 +45,8 @@ public class MinaConfiguration implements Cloneable {
     private List<IoFilter> filters;
     private boolean allowDefaultCodec = true;
     private boolean disconnect;
+    private boolean disconnectOnNoReply = true;
+    private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
 
     /**
      * Returns a copy of this configuration
@@ -189,7 +192,7 @@ public class MinaConfiguration implements Cloneable {
     }
 
     public boolean isDatagramProtocol() {
-        return protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast");
+        return protocol.equals("udp");
     }
     
     public void setAllowDefaultCodec(boolean allowDefaultCodec) {
@@ -206,5 +209,21 @@ public class MinaConfiguration implements Cloneable {
 
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
+    }
+
+    public boolean isDisconnectOnNoReply() {
+        return disconnectOnNoReply;
+    }
+
+    public void setDisconnectOnNoReply(boolean disconnectOnNoReply) {
+        this.disconnectOnNoReply = disconnectOnNoReply;
+    }
+
+    public LoggingLevel getNoReplyLogLevel() {
+        return noReplyLogLevel;
+    }
+
+    public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
+        this.noReplyLogLevel = noReplyLogLevel;
     }
 }

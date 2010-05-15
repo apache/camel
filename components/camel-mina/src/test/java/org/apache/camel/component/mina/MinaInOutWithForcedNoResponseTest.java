@@ -17,6 +17,7 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -39,12 +40,26 @@ public class MinaInOutWithForcedNoResponseTest extends ContextTestSupport {
         }
     }
 
+    public void testNoResponseDisconnectOnNoReplyFalse() throws Exception {
+        try {
+            template.requestBody("mina:tcp://localhost:4445?sync=true&timeout=3000", "London");
+            fail("Should throw an exception");
+        } catch (RuntimeCamelException e) {
+            assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("mina:tcp://localhost:4444?sync=true")
-                        .choice()
+                    .choice()
+                        .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
+                        .otherwise().transform(constant(null));
+
+                from("mina:tcp://localhost:4445?sync=true&disconnectOnNoReply=false&noReplyLogLevel=OFF")
+                    .choice()
                         .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
                         .otherwise().transform(constant(null));
             }

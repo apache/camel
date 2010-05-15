@@ -29,6 +29,7 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.processor.Logger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,12 +59,14 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
     private ConnectionlessBootstrap connectionlessClientBootstrap;
     private ClientPipelineFactory clientPipelineFactory;
     private ChannelPipeline clientPipeline;
+    private Logger noReplyLogger;
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint);
         this.configuration = configuration;
         this.context = this.getEndpoint().getCamelContext();
         this.allChannels = new DefaultChannelGroup("NettyProducer-" + nettyEndpoint.getEndpointUri());
+        this.noReplyLogger = new Logger(LOG, configuration.getNoReplyLogLevel());
     }
 
     @Override
@@ -111,7 +114,7 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
 
         Object body = NettyPayloadHelper.getIn(getEndpoint(), exchange);
         if (body == null) {
-            LOG.warn("No payload to send for exchange: " + exchange);
+            noReplyLogger.log("No payload to send for exchange: " + exchange);
             return; // exit early since nothing to write
         }
 

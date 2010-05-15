@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.processor.Logger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,6 +50,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
     private long timeout;
     private IoConnector connector;
     private boolean sync;
+    private Logger noReplyLogger;
 
     public MinaProducer(MinaEndpoint endpoint) {
         super(endpoint);
@@ -56,6 +58,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
         this.lazySessionCreation = endpoint.getConfiguration().isLazySessionCreation();
         this.timeout = endpoint.getConfiguration().getTimeout();
         this.sync = endpoint.getConfiguration().isSync();
+        this.noReplyLogger = new Logger(LOG, endpoint.getConfiguration().getNoReplyLogLevel());
     }
 
     @Override
@@ -80,7 +83,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
 
         Object body = MinaPayloadHelper.getIn(endpoint, exchange);
         if (body == null) {
-            LOG.warn("No payload to send for exchange: " + exchange);
+            noReplyLogger.log("No payload to send for exchange: " + exchange);
             return; // exit early since nothing to write
         }
 
