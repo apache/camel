@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
  * is an {@link ExecCommand} and the output is an {@link ExecResult}.
  */
 public interface ExecBinding {
+
     /**
      * The header value overrides the executable of the command, configured in
      * the exec endpoint URI. As executable is considered the remaining of the
@@ -35,6 +36,7 @@ public interface ExecBinding {
      * <code>C:/Program Files/jdk/java.exe<code> is the executable.
      */
     String EXEC_COMMAND_EXECUTABLE = "CamelExecCommandExecutable";
+
     /**
      * The header value overrides the existing command arguments in the
      * {@link ExecEndpoint} URI. The arguments may be a
@@ -60,6 +62,7 @@ public interface ExecBinding {
      * used.
      */
     String EXEC_COMMAND_WORKING_DIR = "CamelExecCommandWorkingDir";
+
     /**
      * Specifies the amount of time, in milliseconds, after which the process of
      * the executable should be terminated. The default value is
@@ -80,6 +83,12 @@ public interface ExecBinding {
      * <b>Note that the exit value is OS dependent.</b>
      */
     String EXEC_EXIT_VALUE = "CamelExecExitValue";
+
+    /**
+     * The value of this header is a boolean which indicates whether or not
+     * to fallback and use stderr when stdout is empty.
+     */
+    String EXEC_USE_STDERR_ON_EMPTY_STDOUT = "CamelExecUseStderrOnEmptyStdout";
 
     /**
      * Creates a {@link ExecCommand} from the headers in the

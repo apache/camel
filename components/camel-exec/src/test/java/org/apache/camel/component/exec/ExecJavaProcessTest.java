@@ -38,6 +38,7 @@ import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_TIMEOUT;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_WORKING_DIR;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_EXIT_VALUE;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_STDERR;
+import static org.apache.camel.component.exec.ExecBinding.EXEC_USE_STDERR_ON_EMPTY_STDOUT;
 import static org.apache.camel.component.exec.ExecEndpoint.NO_TIMEOUT;
 import static org.apache.camel.component.exec.ExecTestUtils.buildJavaExecutablePath;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.EXIT_WITH_VALUE_0;
@@ -133,7 +134,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         String commandArgument = PRINT_IN_STDERR;
         output.setExpectedMessageCount(1);
 
-        Exchange e = sendExchange(commandArgument, NO_TIMEOUT);
+        Exchange e = sendExchange(commandArgument, NO_TIMEOUT, null, true);
         ExecResult body = e.getIn().getBody(ExecResult.class);
 
         output.assertIsSatisfied();
@@ -142,6 +143,23 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         // the converter must fall back to the stderr, because stdout is null
         String stderr = e.getIn().getBody(String.class);
         assertEquals(PRINT_IN_STDERR, stderr);
+    }
+
+    @Test
+    public void testStdoutIsNull() throws Exception {
+        // this will be printed
+        String commandArgument = PRINT_IN_STDERR;
+        output.setExpectedMessageCount(1);
+
+        Exchange e = sendExchange(commandArgument, NO_TIMEOUT, null, false);
+        ExecResult body = e.getIn().getBody(ExecResult.class);
+
+        output.assertIsSatisfied();
+        assertNull("the test executable must not print anything in stdout", body.getStdout());
+        assertNotNull("the test executable must print in stderr", body.getStderr());
+        // the converter must fall back to the stderr, because stdout is null
+        String out = e.getIn().getBody(String.class);
+        assertNull("Should be null", out);
     }
 
     @Test
@@ -240,17 +258,17 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         String whiteSpaceSeparatedLines = builder.toString();
         String expected = builder.toString();
 
-        Exchange e = sendExchange(READ_INPUT_LINES_AND_PRINT_THEM, 20000, whiteSpaceSeparatedLines);
+        Exchange e = sendExchange(READ_INPUT_LINES_AND_PRINT_THEM, 20000, whiteSpaceSeparatedLines, false);
         ExecResult inBody = e.getIn().getBody(ExecResult.class);
         assertEquals(expected, IOUtils.toString(inBody.getStdout()));
 
     }
 
     protected Exchange sendExchange(final Object commandArgument, final long timeout) {
-        return sendExchange(commandArgument, timeout, "testBody");
+        return sendExchange(commandArgument, timeout, "testBody", false);
     }
 
-    protected Exchange sendExchange(final Object commandArgument, final long timeout, final String body) {
+    protected Exchange sendExchange(final Object commandArgument, final long timeout, final String body, final boolean useStderrOnEmptyStdout) {
         final List<String> args = buildArgs(commandArgument);
         final String javaAbsolutePath = buildJavaExecutablePath();
 
@@ -260,6 +278,9 @@ public class ExecJavaProcessTest extends CamelTestSupport {
                 exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, javaAbsolutePath);
                 exchange.getIn().setHeader(EXEC_COMMAND_TIMEOUT, timeout);
                 exchange.getIn().setHeader(EXEC_COMMAND_ARGS, args);
+                if (useStderrOnEmptyStdout) {
+                    exchange.getIn().setHeader(EXEC_USE_STDERR_ON_EMPTY_STDOUT, true);
+                }
             }
         });
     }

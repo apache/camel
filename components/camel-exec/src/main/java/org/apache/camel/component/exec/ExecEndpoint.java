@@ -17,7 +17,6 @@
 package org.apache.camel.component.exec;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.exec.impl.DefaultExecBinding;
@@ -29,8 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The endpoint utilizes an {@link ExecCommandExecutor} to execute a system
  * command when it receives message exchanges.
- * 
- * @see Endpoint
+ *
  * @see ExecBinding
  * @see ExecCommandExecutor
  * @see ExecCommand
@@ -56,6 +54,8 @@ public class ExecEndpoint extends DefaultEndpoint {
     private ExecCommandExecutor commandExecutor;
 
     private ExecBinding binding;
+
+    private boolean useStderrOnEmptyStdout;
 
     public ExecEndpoint(String uri, ExecComponent component) {
         super(uri, component);
@@ -187,7 +187,7 @@ public class ExecEndpoint extends DefaultEndpoint {
 
     /**
      * @return The command executor used to execute commands. Defaults to
-     *         {@link DefaultExecCommandExecutror}
+     *         {@link org.apache.camel.component.exec.impl.DefaultExecCommandExecutor}
      */
     public ExecCommandExecutor getCommandExecutor() {
         return commandExecutor;
@@ -210,5 +210,13 @@ public class ExecEndpoint extends DefaultEndpoint {
     public void setBinding(ExecBinding binding) {
         ObjectHelper.notNull(binding, "binding");
         this.binding = binding;
+    }
+
+    public boolean isUseStderrOnEmptyStdout() {
+        return useStderrOnEmptyStdout;
+    }
+
+    public void setUseStderrOnEmptyStdout(boolean useStderrOnEmptyStdout) {
+        this.useStderrOnEmptyStdout = useStderrOnEmptyStdout;
     }
 }

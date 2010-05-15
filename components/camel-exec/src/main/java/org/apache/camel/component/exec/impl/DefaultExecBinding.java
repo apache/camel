@@ -47,6 +47,7 @@ public class DefaultExecBinding implements ExecBinding {
         String dir = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_WORKING_DIR, endpoint.getWorkingDir(), String.class);
         long timeout = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_TIMEOUT, endpoint.getTimeout(), Long.class);
         String outFilePath = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_OUT_FILE, endpoint.getOutFile(), String.class);
+        boolean useStderrOnEmptyStdout = getAndRemoveHeader(exchange.getIn(), EXEC_USE_STDERR_ON_EMPTY_STDOUT, endpoint.isUseStderrOnEmptyStdout(), Boolean.class);
         InputStream input = exchange.getIn().getBody(InputStream.class);
 
         if (argsList == null) {
@@ -55,7 +56,7 @@ public class DefaultExecBinding implements ExecBinding {
         }
 
         File outFile = outFilePath == null ? null : new File(outFilePath);
-        return new ExecCommand(cmd, argsList, dir, timeout, input, outFile);
+        return new ExecCommand(cmd, argsList, dir, timeout, input, outFile, useStderrOnEmptyStdout);
     }
 
     public void writeOutput(Exchange exchange, ExecResult result) {

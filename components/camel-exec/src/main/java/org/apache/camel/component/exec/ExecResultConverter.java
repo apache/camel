@@ -82,7 +82,14 @@ public final class ExecResultConverter {
      *             the file can not be found
      */
     public static <T> T convertTo(Class<T> type, Exchange exchange, ExecResult result) throws FileNotFoundException {
-        return exchange.getContext().getTypeConverter().convertTo(type, exchange, toInputStream(result));
+        InputStream is = toInputStream(result);
+        if (is != null) {
+            return exchange.getContext().getTypeConverter().convertTo(type, exchange, is);
+        } else {
+            // use Void to indicate we cannot convert it
+            // (prevents Camel from using a fallback converter which may convert a String from the instance name)  
+            return (T) Void.TYPE;
+        }
     }
 
     /**
@@ -114,11 +121,11 @@ public final class ExecResultConverter {
             result = new FileInputStream(execResult.getCommand().getOutFile());
         } else {
             // if the stdout is null, return the stderr.
-            if (execResult.getStdout() == null) {
+            if (execResult.getStdout() == null && execResult.getCommand().isUseStderrOnEmptyStdout()) {
                 LOG.warn("ExecResult has no stdout, will fallback to use stderr.");
                 result = execResult.getStderr();
             } else {
-                result = execResult.getStdout();
+                result = execResult.getStdout() != null ? execResult.getStdout() : null;
             }
         }
         // reset the stream if it was already read.

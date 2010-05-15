@@ -35,33 +35,37 @@ public class ExecCommand implements Serializable {
     /**
      * @see ExecBinding#EXEC_COMMAND_EXECUTABLE
      */
-    private String executable;
+    private final String executable;
 
     /**
      * @see ExecBinding#EXEC_COMMAND_ARGS
      */
-    private List<String> args;
+    private final List<String> args;
 
     /**
      * @see ExecBinding#EXEC_COMMAND_WORKING_DIR
      */
-    private String workingDir;
+    private final String workingDir;
 
     /**
      * @see ExecBinding#EXEC_COMMAND_TIMEOUT
      */
-    private long timeout;
+    private final long timeout;
 
     /**
      * @see ExecBinding#EXEC_COMMAND_OUT_FILE
      */
-    private File outFile;
+    private final File outFile;
+
     /**
      * The input of the executable
      */
-    private InputStream input;
+    private final InputStream input;
 
-    public ExecCommand(String executable, List<String> args, String workingDir, Long timeout, InputStream input, File outFile) {
+    private final boolean useStderrOnEmptyStdout;
+
+    public ExecCommand(String executable, List<String> args, String workingDir, Long timeout,
+                       InputStream input, File outFile, boolean useStderrOnEmptyStdout) {
         notNull(executable, "command executable");
         this.executable = executable;
         this.args = unmodifiableOrEmptyList(args);
@@ -69,6 +73,7 @@ public class ExecCommand implements Serializable {
         this.timeout = timeout;
         this.input = input;
         this.outFile = outFile;
+        this.useStderrOnEmptyStdout = useStderrOnEmptyStdout;
     }
 
     public List<String> getArgs() {
@@ -95,11 +100,16 @@ public class ExecCommand implements Serializable {
         return workingDir;
     }
 
+    public boolean isUseStderrOnEmptyStdout() {
+        return useStderrOnEmptyStdout;
+    }
+
     @Override
     public String toString() {
         String dirToPrint = workingDir == null ? "null" : workingDir;
         String outFileToPrint = outFile == null ? "null" : outFile.getPath();
-        return "ExecCommand [args=" + args + ", executable=" + executable + ", timeout=" + timeout + ", outFile=" + outFileToPrint + ", workingDir=" + dirToPrint + "]";
+        return "ExecCommand [args=" + args + ", executable=" + executable + ", timeout=" + timeout + ", outFile="
+                + outFileToPrint + ", workingDir=" + dirToPrint + ", useStderrOnEmptyStdout=" + useStderrOnEmptyStdout + "]";
     }
 
     private <T> List<T> unmodifiableOrEmptyList(List<T> list) {

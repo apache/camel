@@ -73,11 +73,11 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
             return result;
 
         } catch (ExecuteException ee) {
-            LOG.error("ExecuteExeption while executing " + command.toString());
+            LOG.error("ExecException while executing command: " + command.toString() + " - " + ee.getMessage());
             throw new ExecException("Failed to execute command " + command, ee);
         } catch (IOException ioe) {
             // invalid working dir
-            LOG.error("IOException while executing " + command.toString());
+            LOG.error("IOException while executing command: " + command.toString() + " - " + ioe.getMessage());
             throw new ExecException("Unable to execute command " + command, ioe);
         } finally {
             // the inputStream must be closed after the execution
