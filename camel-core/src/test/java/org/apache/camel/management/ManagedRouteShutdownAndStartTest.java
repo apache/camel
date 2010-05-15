@@ -57,12 +57,12 @@ public class ManagedRouteShutdownAndStartTest extends ContextTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be started", ServiceStatus.Started.name(), state);
 
-        // stop
+        // calling the shutdown 
         mbeanServer.invoke(on, "shutdown", null, null);
 
-        state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
-
+        // the managed route object should be removed
+        assertFalse("The managed route should be removed", mbeanServer.isRegistered(on));
+        
         mock.reset();
         mock.expectedBodiesReceived("Bye World");
         // wait 3 seconds while route is stopped to verify that file was not consumed
@@ -72,19 +72,7 @@ public class ManagedRouteShutdownAndStartTest extends ContextTestSupport {
 
         // route is stopped so we do not get the file
         mock.assertIsNotSatisfied();
-
-        // prepare mock for starting route
-        mock.reset();
-        mock.expectedBodiesReceived("Bye World");
-
-        // start
-        mbeanServer.invoke(on, "start", null, null);
-
-        state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
-
-        // this time the file is consumed
-        mock.assertIsSatisfied();
+        
     }
 
     @SuppressWarnings("unchecked")
