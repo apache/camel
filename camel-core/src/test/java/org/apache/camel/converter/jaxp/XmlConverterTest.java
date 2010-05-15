@@ -389,14 +389,15 @@ public class XmlConverterTest extends ContextTestSupport {
         CamelContext context = new DefaultCamelContext();        
         Exchange exchange =  new DefaultExchange(context);
         // shows how to set the OutputOptions from camelContext
-        context.getProperties().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "US_ASCII");
+        context.getProperties().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
+        context.getProperties().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.STANDALONE, "no");
         XmlConverter conv = new XmlConverter();
 
         SAXSource source = conv.toSAXSource("<foo>bar</foo>", exchange);
         DOMSource out = conv.toDOMSource(source);
         assertNotSame(source, out);
 
-        assertEquals("<?xml version=\"1.0\" encoding=\"US_ASCII\"?><foo>bar</foo>", conv.toString(out, exchange));
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><foo>bar</foo>", conv.toString(out, exchange));
     }
 
 }
