@@ -194,6 +194,11 @@
                        <type>xml</type>
                        <classifier>features</classifier>
                      </artifact>
+		     <artifact>
+                       <file>target/classes/features-spring3.xml</file>
+                       <type>xml</type>
+                       <classifier>features-spring3</classifier>
+                     </artifact>
                    </artifacts>
                  </configuration>
                </execution>
