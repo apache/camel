@@ -19,10 +19,8 @@ package org.apache.camel.component.jetty.jettyproducer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jetty.HttpsRouteTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class JettyProducerHttpsRouteTest extends HttpsRouteTest {
 
     public String getHttpProducerScheme() {

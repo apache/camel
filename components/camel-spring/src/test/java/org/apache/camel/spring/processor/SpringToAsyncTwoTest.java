@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty.jettyproducer;
+package org.apache.camel.spring.processor;
 
-import org.apache.camel.component.jetty.JettyHandle404Test;
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.async.ToAsyncTwoTest;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * Based on end user on forum how to get the 404 error code in his enrich aggregator
- *
  * @version $Revision$
  */
-public class JettyProducerHandle404Test extends JettyHandle404Test {
+public class SpringToAsyncTwoTest extends ToAsyncTwoTest {
 
-    public String getProducerUrl() {
-        return "jetty://http://localhost:8123/myserver?user=Camel";
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringToAsyncTwoTest.xml");
     }
 
 }

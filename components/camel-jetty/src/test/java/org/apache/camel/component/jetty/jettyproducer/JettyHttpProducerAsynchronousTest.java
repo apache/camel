@@ -23,13 +23,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettyHttpProducerAsynchronousTest extends CamelTestSupport {
 
     private static String thread1;
@@ -71,7 +69,7 @@ public class JettyHttpProducerAsynchronousTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         thread1 = Thread.currentThread().getName();
                     }
-                }).to(url).process(new Processor() {
+                }).toAsync(url).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         thread2 = Thread.currentThread().getName();
                     }

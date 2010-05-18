@@ -14,32 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty.jettyproducer;
+package org.apache.camel.component.mina;
 
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerGoogleAsynchronousTest extends CamelTestSupport {
+public class MinaToAsyncTest extends ContextTestSupport {
 
-    @Test
-    @Ignore("ignore online tests, will be improved in Camel 2.3")
-    public void testGoogleFrontPageAsync() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
+    public void testToAsync() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("google");
+        mock.expectedBodiesReceivedInAnyOrder("Bye Camel", "Bye World", "Bye Donkey", "Bye Tiger", "Bye Elephant");
 
-        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", "Camel");
+        template.sendBody("direct:start", "World");
+        template.sendBody("direct:start", "Donkey");
+        template.sendBody("direct:start", "Tiger");
+        template.sendBody("direct:start", "Elephant");
 
         assertMockEndpointsSatisfied();
     }
@@ -49,9 +45,17 @@ public class JettyHttpProducerGoogleAsynchronousTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                from("mina:tcp://localhost:6202?textline=true&sync=true").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        Thread.sleep(2000);
+                        exchange.getOut().setBody("Bye " + body);
+                    }
+                });
+
                 from("direct:start")
-                    // to prevent redirect being thrown as an exception
-                    .toAsync("jetty://http://www.google.com?throwExceptionOnFailure=false")
+                    .toAsync("mina:tcp://localhost:6202?sync=true&textline=true")
+                    .to("log:reply")
                     .to("mock:result");
             }
         };

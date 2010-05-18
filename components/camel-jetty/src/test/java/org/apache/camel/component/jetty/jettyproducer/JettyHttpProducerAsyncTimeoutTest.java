@@ -19,13 +19,11 @@ package org.apache.camel.component.jetty.jettyproducer;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettyHttpProducerAsyncTimeoutTest extends CamelTestSupport {
 
     private String url = "jetty://http://0.0.0.0:9123/timeout?httpClient.timeout=2000";
@@ -57,7 +55,7 @@ public class JettyHttpProducerAsyncTimeoutTest extends CamelTestSupport {
                 onException(Exception.class).handled(true).to("mock:error");
                 onException(ExchangeTimedOutException.class).handled(true).to("mock:timeout");
 
-                from("direct:start").to(url).to("mock:result");
+                from("direct:start").toAsync(url).to("mock:result");
 
                 from(url).delay(5000).transform(constant("Bye World"));
             }
