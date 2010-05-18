@@ -39,7 +39,7 @@ public class VmInOutChainedTimeoutTest extends ContextTestSupport {
         }
         long delta = watch.stop();
 
-        assertTrue("Should be faster than 3000 millis, was: " + delta, delta < 3000);
+        assertTrue("Should be faster than 4000 millis, was: " + delta, delta < 4000);
 
         Thread.sleep(2000);
     }

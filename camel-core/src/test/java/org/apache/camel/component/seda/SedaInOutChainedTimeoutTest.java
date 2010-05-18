@@ -39,7 +39,7 @@ public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
         }
         long delta = watch.stop();
 
-        assertTrue("Should be faster than 3000 millis, was: " + delta, delta < 3000);
+        assertTrue("Should be faster than 4000 millis, was: " + delta, delta < 4000);
     }
 
     @Override

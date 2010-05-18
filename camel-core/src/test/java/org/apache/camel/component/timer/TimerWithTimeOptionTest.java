@@ -50,7 +50,8 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        // period is default 1000 so we can get more messages
+        mock.expectedMinimumMessageCount(1);
 
         assertMockEndpointsSatisfied();
     }
@@ -90,7 +91,8 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        // period is default 1000 so we can get more messages
+        mock.expectedMinimumMessageCount(1);
 
         assertMockEndpointsSatisfied();
     }
@@ -105,6 +107,27 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 String time = sdf.format(future);
 
                 fromF("timer://foo?time=%s", time).to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        // period is default 1000 so we can get more messages
+        mock.expectedMinimumMessageCount(1);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testFiredInFutureWithoutTPatternNoPeriod() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                Date future = new Date(new Date().getTime() + 2000);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String time = sdf.format(future);
+
+                fromF("timer://foo?period=0&time=%s", time).to("mock:result");
             }
         });
         context.start();
@@ -125,6 +148,27 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 String time = sdf.format(future);
 
                 fromF("timer://foo?time=%s&pattern=dd-MM-yyyy HH:mm:ss", time).to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        // period is default 1000 so we can get more messages
+        mock.expectedMinimumMessageCount(1);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testFiredInFutureCustomPatternNoPeriod() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                Date future = new Date(new Date().getTime() + 2000);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                String time = sdf.format(future);
+
+                fromF("timer://foo?period=0&time=%s&pattern=dd-MM-yyyy HH:mm:ss", time).to("mock:result");
             }
         });
         context.start();
