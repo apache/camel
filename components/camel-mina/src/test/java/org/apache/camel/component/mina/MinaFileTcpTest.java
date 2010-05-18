@@ -40,7 +40,7 @@ public class MinaFileTcpTest extends ContextTestSupport {
                 from("mina:tcp://localhost:9123?sync=false&textline=true")
                     .to("mock:results");
 
-                from("file:src/test/data?noop=true").
+                from("file:src/test/data?noop=true&fileName=message1.txt").
                     to("mina:tcp://localhost:9123?sync=false&textline=true");
             }
         };
