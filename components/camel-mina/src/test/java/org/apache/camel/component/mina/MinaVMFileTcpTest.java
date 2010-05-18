@@ -17,8 +17,6 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -29,7 +27,7 @@ public class MinaVMFileTcpTest extends ContextTestSupport {
 
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
-        endpoint.expectedMessageCount(2);
+        endpoint.expectedMessageCount(1);
         endpoint.message(0).body().startsWith("Hello World");
 
         assertMockEndpointsSatisfied();
@@ -39,11 +37,11 @@ public class MinaVMFileTcpTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // lets setup a server
-                from("mina:vm://localhost:9123?sync=false&textline=true").to("mock:results");
+                from("mina:vm://localhost:9123?sync=false&textline=true")
+                    .to("mock:results");
 
-                from("file:src/test/data?noop=true&delay=2000")
-                    .to("mina:vm://localhost:9123?sync=false&textline=true");
-                    
+                from("file:src/test/data?noop=true&fileName=message1.txt").
+                    to("mina:vm://localhost:9123?sync=false&textline=true");
             }
         };
     }
