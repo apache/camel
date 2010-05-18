@@ -59,7 +59,7 @@ public class AddRoutesAtRuntimeTest extends ContextTestSupport {
     /**
      * This route builder is a skeleton to add new routes at runtime
      */
-    private class MyDynamcRouteBuilder extends RouteBuilder {
+    private final class MyDynamcRouteBuilder extends RouteBuilder {
         private final String from;
         private final String to;
 

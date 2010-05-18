@@ -31,8 +31,9 @@ import org.junit.Test;
  * @version $Revision$
  */
 public class NagiosEventNotifierTest extends CamelTestSupport {
-    private NagiosNscaStub nagios;
     protected boolean canRun;
+    private NagiosNscaStub nagios;
+    
 
     @Override
     protected boolean useJmx() {

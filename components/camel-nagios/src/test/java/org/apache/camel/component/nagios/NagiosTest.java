@@ -33,10 +33,9 @@ import org.junit.Test;
  * @version $Revision$
  */
 public class NagiosTest extends CamelTestSupport {
-
-    private NagiosNscaStub nagios;
     protected boolean canRun;
-
+    private NagiosNscaStub nagios;
+    
     @Before
     @Override
     public void setUp() throws Exception {

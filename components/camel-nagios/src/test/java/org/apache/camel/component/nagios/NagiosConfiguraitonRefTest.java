@@ -31,9 +31,8 @@ import org.junit.Test;
  * @version $Revision$
  */
 public class NagiosConfiguraitonRefTest extends CamelTestSupport {
-
-    private NagiosNscaStub nagios;
     protected boolean canRun;
+    private NagiosNscaStub nagios;    
 
     @Before
     @Override
