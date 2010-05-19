@@ -87,6 +87,9 @@ public class NagiosConfiguraitonRefTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        // sleep a little to let nagios stub process the payloads
+        Thread.sleep(1000);
+
         assertEquals(1, nagios.getMessagePayloadList().size());
 
         MessagePayload payload = nagios.getMessagePayloadList().get(0);

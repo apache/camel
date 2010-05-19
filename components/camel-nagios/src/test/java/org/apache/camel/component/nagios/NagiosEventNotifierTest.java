@@ -33,7 +33,6 @@ import org.junit.Test;
 public class NagiosEventNotifierTest extends CamelTestSupport {
     protected boolean canRun;
     private NagiosNscaStub nagios;
-    
 
     @Override
     protected boolean useJmx() {
@@ -93,6 +92,9 @@ public class NagiosEventNotifierTest extends CamelTestSupport {
 
         context.stop();
 
+        // sleep a little to let nagios stub process the payloads
+        Thread.sleep(2000);
+
         List<MessagePayload> events = nagios.getMessagePayloadList();
         assertTrue("Should be 11+ events, was: " + events.size(), events.size() >= 11);
     }
@@ -110,6 +112,9 @@ public class NagiosEventNotifierTest extends CamelTestSupport {
         }
 
         context.stop();
+
+        // sleep a little to let nagios stub process the payloads
+        Thread.sleep(2000);
 
         List<MessagePayload> events = nagios.getMessagePayloadList();
         assertTrue("Should be 9+ events, was: " + events.size(), events.size() >= 9);
