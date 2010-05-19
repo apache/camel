@@ -255,6 +255,7 @@ public class SmppProducerTest {
         SubmitSm submitSm = createMock(SubmitSm.class);
         expect(exchange.getExchangeId()).andReturn("ID-muellerc-macbookpro/3690-1214458315718/2-0");
         expect(endpoint.getBinding()).andReturn(binding);
+        expect(exchange.getExchangeId()).andReturn("ID-muellerc-macbookpro/3690-1214458315718/2-0");
         expect(binding.createSubmitSm(exchange)).andReturn(submitSm);
         submitSmExpectations(exchange, binding, submitSm);
         expect(session.submitShortMessage(

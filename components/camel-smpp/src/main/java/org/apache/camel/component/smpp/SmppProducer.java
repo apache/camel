@@ -111,20 +111,31 @@ public class SmppProducer extends DefaultProducer {
         try {
             messageId = doProcess(submitSm);
         } catch (Exception e) {
-            // TODO: Add some DEBUG logging that we retry one more time
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Caught exception while trying to send short message for exchange id '"
+                        + exchange.getExchangeId() + "', retrying...", e);
+            }
             doStop();
             doStart();
             
             messageId = doProcess(submitSm);
         }
 
-        LOG.info("Sent a short message for exchange id '"
-                + exchange.getExchangeId() + "' and received message id '"
-                + messageId + "'");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Sent a short message for exchange id '"
+                    + exchange.getExchangeId() + "' and received message id '"
+                    + messageId + "'");
+        }
 
         if (exchange.getPattern().isOutCapable()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Exchange is out capable, setting headers on out exchange...");
+            }
             exchange.getOut().setHeader(SmppBinding.ID, messageId);
         } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Exchange is not out capable, setting headers on in exchange...");
+            }
             exchange.getIn().setHeader(SmppBinding.ID, messageId);
         }
     }
