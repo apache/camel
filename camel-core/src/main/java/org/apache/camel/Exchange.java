@@ -56,6 +56,8 @@ public interface Exchange {
 
     String DATASET_INDEX = "CamelDataSetIndex";
     String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
+    
+    String DISABLE_STREAM_CACHE = "CamelDisableStreamCache";
 
     String EXCEPTION_CAUGHT     = "CamelExceptionCaught";
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
@@ -107,7 +109,7 @@ public interface Exchange {
     String ROLLBACK_ONLY_LAST   = "CamelRollbackOnlyLast";
     
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
-
+   
     String SOAP_ACTION = "CamelSoapAction";
     String SPLIT_INDEX = "CamelSplitIndex";
     String SPLIT_SIZE  = "CamelSplitSize";
