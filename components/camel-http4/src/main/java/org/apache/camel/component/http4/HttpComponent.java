@@ -143,6 +143,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
+        Boolean disableStreamCache = getAndRemoveParameter(parameters, "disableStreamCache", Boolean.class);
 
         // validate that we could resolve all httpClient. parameters as this component is lenient
         validateParameters(uri, parameters, "httpClient.");
@@ -189,6 +190,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         if (matchOnUriPrefix != null) {
             endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
+        }
+        if (disableStreamCache != null) {
+            endpoint.setDisableStreamCache(disableStreamCache);
         }
 
         setProperties(endpoint, parameters);

@@ -53,6 +53,9 @@ public class CamelServlet extends HttpServlet {
             if (((HttpEndpoint)consumer.getEndpoint()).isBridgeEndpoint()) {
                 exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
             }
+            if (consumer.getEndpoint().isDisableStreamCache()) {
+                exchange.setProperty(Exchange.DISABLE_STREAM_CACHE, Boolean.TRUE);
+            }
             exchange.setIn(new HttpMessage(exchange, request, response));
             consumer.getProcessor().process(exchange);
 

@@ -307,12 +307,20 @@ public class DefaultHttpBinding implements HttpBinding {
         } else {
             // otherwise use input stream and we need to cache it first
             InputStream is = HttpConverter.toInputStream(request, httpMessage.getExchange());
-            try {
-                CachedOutputStream cos = new CachedOutputStream(httpMessage.getExchange());
-                IOHelper.copy(is, cos);
-                return cos.getStreamCache();
-            } finally {
-                is.close();
+            if (is == null) {
+                return is;
+            }
+            // convert the input stream to StreamCache if the stream cache is not disabled
+            if (httpMessage.getExchange().getProperty(Exchange.DISABLE_STREAM_CACHE, Boolean.FALSE, Boolean.class)) {
+                return is;
+            } else {
+                try {
+                    CachedOutputStream cos = new CachedOutputStream(httpMessage.getExchange());
+                    IOHelper.copy(is, cos);
+                    return cos.getStreamCache();
+                } finally {
+                    is.close();
+                }
             }
         }
     }

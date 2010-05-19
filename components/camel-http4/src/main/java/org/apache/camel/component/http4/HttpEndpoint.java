@@ -55,6 +55,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private boolean bridgeEndpoint;
     private boolean matchOnUriPrefix;
     private boolean chunked = true;
+    private boolean disableStreamCache;
 
     public HttpEndpoint() {
     }
@@ -260,6 +261,14 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public void setMatchOnUriPrefix(boolean match) {
         this.matchOnUriPrefix = match;
+    }
+    
+    public boolean isDisableStreamCache() {
+        return this.disableStreamCache;
+    }
+       
+    public void setDisableStreamCache(boolean disable) {
+        this.disableStreamCache = disable;
     }
 
     public boolean isChunked() {
