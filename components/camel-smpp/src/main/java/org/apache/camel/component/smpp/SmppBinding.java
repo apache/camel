@@ -63,6 +63,7 @@ public class SmppBinding {
     public static final String ESME_ADDR_NPI = "CamelSmppEsmeAddrNpi";
     public static final String ESME_ADDR_TON = "CamelSmppEsmeAddrTon";
     public static final String ESME_ADDR = "CamelSmppEsmeAddr";
+    public static final String FINAL_STATUS = "CamelSmppStatus";
 
     private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
 
@@ -201,6 +202,7 @@ public class SmppBinding {
             }
             smppMessage.setHeader(SUBMIT_DATE, smscDeliveryReceipt.getSubmitDate());
             smppMessage.setHeader(SUBMITTED, smscDeliveryReceipt.getSubmitted());
+            smppMessage.setHeader(FINAL_STATUS, smscDeliveryReceipt.getFinalStatus());
         } else {
             smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(),
                     configuration.getEncoding())));

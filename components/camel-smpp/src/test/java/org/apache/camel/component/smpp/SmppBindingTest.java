@@ -27,6 +27,7 @@ import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.util.DeliveryReceiptState;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -168,7 +169,7 @@ public class SmppBindingTest {
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
-        assertEquals(6, smppMessage.getHeaders().size());
+        assertEquals(7, smppMessage.getHeaders().size());
         assertEquals("2", smppMessage.getHeader(SmppBinding.ID));
         assertEquals(1, smppMessage.getHeader(SmppBinding.DELIVERED));
         // To avoid the test failure when running in different TimeZone
@@ -176,6 +177,7 @@ public class SmppBindingTest {
         assertEquals("xxx", smppMessage.getHeader(SmppBinding.ERROR));
         //assertEquals(new Date(1251753000000L), smppMessage.getHeader(SmppBinding.SUBMIT_DATE));
         assertEquals(1, smppMessage.getHeader(SmppBinding.SUBMITTED));
+        assertEquals(DeliveryReceiptState.DELIVRD, smppMessage.getHeader(SmppBinding.FINAL_STATUS));
     }
     
     @Test
