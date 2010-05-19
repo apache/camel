@@ -109,7 +109,7 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultCamelContext extends ServiceSupport implements CamelContext {
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
     private static final String NAME_PREFIX = "camel-";
-    private static final AtomicInteger contextCounter = new AtomicInteger(0);
+    private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
     private ClassLoader applicationContextClassLoader;
     private boolean routeDefinitionInitiated;
     private String name;
@@ -166,7 +166,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public DefaultCamelContext() {
         super();
-        name = NAME_PREFIX + contextCounter.incrementAndGet();
+        name = NAME_PREFIX + CONTEXT_COUNTER.incrementAndGet();
 
         // use WebSphere specific resolver if running on WebSphere
         if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
@@ -1556,11 +1556,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     /**
-     * Reset contextCounter to a preset value. Mostly used for tests to ensure a predictable getName()
+     * Reset CONTEXT_COUNTER to a preset value. Mostly used for tests to ensure a predictable getName()
      * 
-     * @param value new value for the contextCounter
+     * @param value new value for the CONTEXT_COUNTER
      */
     public static void setContextCounter(int value) {
-        contextCounter.set(value);
+        CONTEXT_COUNTER.set(value);
     }
 }
