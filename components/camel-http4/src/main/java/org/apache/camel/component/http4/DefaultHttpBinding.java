@@ -311,7 +311,7 @@ public class DefaultHttpBinding implements HttpBinding {
                 return is;
             }
             // convert the input stream to StreamCache if the stream cache is not disabled
-            if (httpMessage.getExchange().getProperty(Exchange.DISABLE_STREAM_CACHE, Boolean.FALSE, Boolean.class)) {
+            if (httpMessage.getExchange().getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.FALSE, Boolean.class)) {
                 return is;
             } else {
                 try {

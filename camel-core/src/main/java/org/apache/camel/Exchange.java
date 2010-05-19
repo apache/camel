@@ -57,7 +57,7 @@ public interface Exchange {
     String DATASET_INDEX = "CamelDataSetIndex";
     String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
     
-    String DISABLE_STREAM_CACHE = "CamelDisableStreamCache";
+    String DISABLE_HTTP_STREAM_CACHE = "CamelDisableHttpStreamCache";
 
     String EXCEPTION_CAUGHT     = "CamelExceptionCaught";
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
