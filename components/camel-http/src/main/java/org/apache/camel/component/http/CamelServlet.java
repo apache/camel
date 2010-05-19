@@ -59,8 +59,11 @@ public class CamelServlet extends HttpServlet {
 
             // create exchange and set data on it
             Exchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
-            if ((consumer.getEndpoint()).isBridgeEndpoint()) {
+            if (consumer.getEndpoint().isBridgeEndpoint()) {
                 exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+            }
+            if (consumer.getEndpoint().isDisableStreamCache()) {
+                exchange.setProperty(Exchange.DISABLE_STREAM_CACHE, Boolean.TRUE);
             }
             exchange.setIn(new HttpMessage(exchange, request, response));
 

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -138,6 +139,16 @@ public class HttpRouteTest extends CamelTestSupport {
         String out = context.getTypeConverter().convertTo(String.class, response);
         assertEquals("Get a wrong output " , "PutParameter", out);
     }
+    
+    @Test
+    public void testDisableStreamCache() throws Exception {
+        String response = 
+            template.requestBodyAndHeader("http://localhost:9083/noStreamCache", 
+                                          new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
+        
+        assertEquals("Get a wrong output ", "OK", response);
+    }
+
 
     protected void invokeHttpEndpoint() throws IOException {
         template.requestBodyAndHeader("http://localhost:9280/test", expectedBody, "Content-Type", "application/xml");
@@ -204,6 +215,17 @@ public class HttpRouteTest extends CamelTestSupport {
                         exchange.getOut().setBody("OK");
                     }
 
+                });
+                
+                from("jetty:http://localhost:9083/noStreamCache?disableStreamCache=true").noStreamCaching().process(new Processor() {
+
+                    public void process(Exchange exchange) throws Exception {
+                        InputStream is = (InputStream)exchange.getIn().getBody();
+                        System.out.println(is.getClass());
+                        assertTrue("It should be a raw inputstream", is instanceof org.eclipse.jetty.server.HttpInput);
+                        exchange.getOut().setBody("OK");
+                    }
+                    
                 });
 
             }

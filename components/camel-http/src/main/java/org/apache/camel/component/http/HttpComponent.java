@@ -205,6 +205,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
+        Boolean disableStreamCache = getAndRemoveParameter(parameters, "disableStreamCache", Boolean.class);
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
         String authMethodPriority = getAndRemoveParameter(parameters, "authMethodPriority", String.class);
@@ -253,6 +254,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         if (matchOnUriPrefix != null) {
             endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
+        }
+        if (disableStreamCache != null) {
+            endpoint.setDisableStreamCache(disableStreamCache);
         }
         if (proxyHost != null) {
             endpoint.setProxyHost(proxyHost);
