@@ -89,7 +89,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
         Subject subject = new Subject();
         subject.getPrincipals().add(authToken);
 
-        template.sendBodyAndProperty("direct:start", "hello world", Exchange.AUTHENTICATION, subject);
+        template.sendBodyAndHeader("direct:start", "hello world", Exchange.AUTHENTICATION, subject);
 
     }
 

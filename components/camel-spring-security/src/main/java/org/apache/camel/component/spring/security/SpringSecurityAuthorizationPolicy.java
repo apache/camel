@@ -18,6 +18,7 @@ package org.apache.camel.component.spring.security;
 
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.AuthorizationPolicy;
@@ -59,7 +60,7 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
         ConfigAttributeDefinition attributes = accessPolicy.getConfigAttributeDefinition();
         
         try {
-            Authentication authToken = getAuthentication(exchange);
+            Authentication authToken = getAuthentication(exchange.getIn());
             if (authToken == null) {
                 CamelAuthorizationException authorizationException =
                     new CamelAuthorizationException("Cannot find the Authentication instance.", exchange);
@@ -86,8 +87,8 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
         }
     }
     
-    protected Authentication getAuthentication(Exchange exchange) {
-        Authentication answer = exchange.getProperty(Exchange.AUTHENTICATION, Authentication.class);
+    protected Authentication getAuthentication(Message message) {
+        Authentication answer = message.getHeader(Exchange.AUTHENTICATION, Authentication.class);
         // try to get it from thread context as a fallback
         if (answer == null && useThreadSecurityContext) {
             answer = SecurityContextHolder.getContext().getAuthentication();
