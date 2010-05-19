@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,6 +48,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.RouteDotGenerator;
+import org.apache.camel.web.model.Route;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -97,7 +99,7 @@ public class RoutesResource extends CamelChildResourceSupport {
      */
     @Path("{id}")
     public RouteResource getRoute(@PathParam("id") String id) {
-        List<RouteDefinition> list = getRoutes();
+        List<RouteDefinition> list = getRouteDefinitions().getRoutes();
         for (RouteDefinition routeType : list) {
             if (routeType.getId().equals(id)) {
                 return new RouteResource(this, routeType);
@@ -148,15 +150,21 @@ public class RoutesResource extends CamelChildResourceSupport {
             return parseGroovy(body);
         }
         
-        error = "Not supproted language!";
+        error = "Not supported language!";
         return Response.ok(new Viewable("edit", this)).build();
 
     }
     
     // Properties
     // -------------------------------------------------------------------------
-    public List<RouteDefinition> getRoutes() {
-        return getRouteDefinitions().getRoutes();
+
+    public List<Route> getRoutes() {
+        List<Route> answer = new ArrayList<Route>();
+        for (RouteDefinition def : getRouteDefinitions().getRoutes()) {
+            Route route = new Route(getCamelContext(), def);
+            answer.add(route);
+        }
+        return answer;
     }
     
     public String getError() {
