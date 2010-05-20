@@ -34,7 +34,8 @@ public class JettyContentTypeTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("<order>123</order>");
-        exchange.getIn().setHeader("user", "Claus");
+        exchange.getIn().setHeader("User", "Claus");
+        exchange.getIn().setHeader("SOAPAction", "test");
         exchange.getIn().setHeader("Content-Type", "text/xml");
         if (usingGZip) {
             exchange.getIn().setHeader("Content-Encoding", "gzip");
@@ -81,9 +82,10 @@ public class JettyContentTypeTest extends CamelTestSupport {
 
     public class MyBookService implements Processor {
         public void process(Exchange exchange) throws Exception {
-            if (exchange.getIn().getHeader("user") != null 
+            if ("Claus".equals(exchange.getIn().getHeader("User", String.class))
                 && exchange.getIn().getBody(String.class).equals("<order>123</order>")
                 && "text/xml".equals(ExchangeHelper.getContentType(exchange))) {
+                assertEquals("test", exchange.getIn().getHeader("SOAPAction", String.class));
                 exchange.getOut().setBody("<order>OK</order>");
                 exchange.getOut().setHeader("Content-Type", "text/xml");
             } else {
