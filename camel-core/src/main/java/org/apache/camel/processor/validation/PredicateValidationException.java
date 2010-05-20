@@ -40,7 +40,6 @@ public class PredicateValidationException extends ValidationException {
         StringBuilder builder = new StringBuilder("Validation failed for Predicate[");
         builder.append(predicate.toString());
         builder.append("]");
-
         return builder.toString();
     }
 

@@ -45,7 +45,7 @@ public class PredicateValidatingProcessor extends DelegateProcessor implements T
         boolean matches = predicate.matches(exchange);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Validation " + (matches ? "succeed " : "failed ") + "for " + exchange + " and Predicate[" + predicate + "]");
+            LOG.debug("Validation " + (matches ? "succeed " : "failed ") + "for " + exchange + " with Predicate[" + predicate + "]");
         }
 
         if (matches) {
@@ -57,11 +57,11 @@ public class PredicateValidatingProcessor extends DelegateProcessor implements T
     
     @Override
     public String toString() {
-        return "validate[if: " + predicate + " matches]";
+        return "validate[" + predicate + "]";
     }
 
     public String getTraceLabel() {
-        return toString();
+        return "validate";
     }
     
     public Predicate getPredicate() {

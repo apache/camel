@@ -79,5 +79,6 @@ TransactedDefinition
 TransformDefinition
 TryDefinition
 UnmarshalDefinition
+ValidateDefinition
 WhenDefinition
 WireTapDefinition

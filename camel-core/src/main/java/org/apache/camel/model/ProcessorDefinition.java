@@ -1112,18 +1112,46 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     
     /**
      * Creates a validation expression which only if it is <tt>true</tt> then the
-     * exchange is forwarded to the destination. Otherwise a 
-     * PredicateExpValidationException is thrown.
+     * exchange is forwarded to the destination.
+     * Otherwise a {@link org.apache.camel.processor.validation.PredicateValidationException} is thrown.
      *
-     * @param builder the value builder
-     * @return the validate definition
+     * @param expression  the expression
+     * @return the builder
      */
-    public ValidateDefinition validate(ValueBuilder builder) {
-        ValidateDefinition validate = new ValidateDefinition(builder);
-        addOutput(validate);
-        return validate;
+    public ValidateDefinition validate(Expression expression) {
+        ValidateDefinition answer = new ValidateDefinition();
+        answer.setExpression(new ExpressionDefinition(expression));
+        addOutput(answer);
+        return answer;
     }
 
+    /**
+     * Creates a validation expression which only if it is <tt>true</tt> then the
+     * exchange is forwarded to the destination.
+     * Otherwise a {@link org.apache.camel.processor.validation.PredicateValidationException} is thrown.
+     *
+     * @param predicate  the predicate
+     * @return the builder
+     */
+    public ValidateDefinition validate(Predicate predicate) {
+        ValidateDefinition answer = new ValidateDefinition();
+        answer.setExpression(new ExpressionDefinition(predicate));
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Creates a validation expression which only if it is <tt>true</tt> then the
+     * exchange is forwarded to the destination.
+     * Otherwise a {@link org.apache.camel.processor.validation.PredicateValidationException} is thrown.
+     *
+     * @return the builder
+     */
+    public ExpressionClause<ValidateDefinition> validate() {
+        ValidateDefinition answer = new ValidateDefinition();
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
+    }
     /**
      * <a href="http://camel.apache.org/load-balancer.html">Load Balancer EIP:</a>
      * Creates a loadbalance

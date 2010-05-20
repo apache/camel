@@ -26,15 +26,15 @@ import org.apache.camel.processor.validation.PredicateValidationException;
 /**
  * @version $Revision$
  */
-public class ValidateRegExpTest extends ContextTestSupport {
-    
+public class ValidateSimpleTest extends ContextTestSupport {
+
     private Endpoint startEndpoint;
     private MockEndpoint resultEndpoint;
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        
+
         startEndpoint = resolveMandatoryEndpoint("direct:start", Endpoint.class);
         resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     }
@@ -42,8 +42,8 @@ public class ValidateRegExpTest extends ContextTestSupport {
     public void testSendMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(1);
 
-        template.sendBody(startEndpoint, "01.01.2010");
-        
+        template.sendBody(startEndpoint, "Hello Camel");
+
         assertMockEndpointsSatisfied();
     }
 
@@ -51,13 +51,13 @@ public class ValidateRegExpTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(0);
 
         try {
-            template.sendBody(startEndpoint, "1.1.2010");
+            template.sendBody(startEndpoint, "Bye World");
             fail("CamelExecutionException expected");
         } catch (CamelExecutionException e) {
             // expected
             assertIsInstanceOf(PredicateValidationException.class, e.getCause());
-            assertEquals("Validation failed for Predicate[bodyAs[java.lang.String].matches('^\\d{2}\\.\\d{2}\\.\\d{4}$')]."
-                + " Exchange[Message: 1.1.2010]", e.getCause().getMessage());
+            assertEquals("Validation failed for Predicate[body contains Camel]."
+                + " Exchange[Message: Bye World]", e.getCause().getMessage());
         }
 
         assertMockEndpointsSatisfied();
@@ -68,7 +68,7 @@ public class ValidateRegExpTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .validate(body(String.class).regex("^\\d{2}\\.\\d{2}\\.\\d{4}$"))
+                    .validate().simple("${body} contains 'Camel'")
                     .to("mock:result");
             }
         };
