@@ -35,6 +35,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Handler;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -219,6 +220,21 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     // Testing API
     // -------------------------------------------------------------------------
+
+    /**
+     * Handles the incoming exchange.
+     * <p/>
+     * This method turns this mock endpoint into a bean which you can use
+     * in the Camel routes, which allows you to inject MockEndpoint as beans
+     * in your routes and use the features of the mock to control the bean.
+     *
+     * @param exchange  the exchange
+     * @throws Exception can be thrown
+     */
+    @Handler
+    public void handle(Exchange exchange) throws Exception {
+        onExchange(exchange);
+    }
 
     /**
      * Set the processor that will be invoked when the index
