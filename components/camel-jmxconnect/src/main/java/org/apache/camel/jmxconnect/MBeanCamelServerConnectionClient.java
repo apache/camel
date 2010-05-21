@@ -42,7 +42,7 @@ public class MBeanCamelServerConnectionClient extends MBeanServerConnectionDeleg
     private MBeanCamelServerConnection serverConnection;
     private Endpoint replyToEndpoint;
     private List listeners = new CopyOnWriteArrayList();
-    private UuidGenerator idGenerator = new UuidGenerator();
+    private UuidGenerator idGenerator = UuidGenerator.get();
     private NotificationBroadcasterSupport localNotifier = new NotificationBroadcasterSupport();
 
     public MBeanCamelServerConnectionClient(MBeanCamelServerConnection serverConnection) {
@@ -68,7 +68,7 @@ public class MBeanCamelServerConnectionClient extends MBeanServerConnectionDeleg
     }
 
     public String generateId() {
-        return idGenerator.generateId();
+        return idGenerator.generateUuid();
     }
 
     /**
