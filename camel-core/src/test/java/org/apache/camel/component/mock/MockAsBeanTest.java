@@ -27,19 +27,24 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class MockAsBeanTest extends ContextTestSupport {
 
-    private MockEndpoint bean = new MockEndpoint();
+    // create foo bean as a mock endpoint
+    private MockEndpoint foo = new MockEndpoint();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("foo", bean);
+        jndi.bind("foo", foo);
         return jndi;
     }
 
+    // START SNIPPET: e1
     public void testMockAsBean() throws Exception {
+        // we should expect to receive the transformed message
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        bean.whenAnyExchangeReceived(new Processor() {
+        // the foo bean is a MockEndpoint which we use in this test to transform
+        // the message
+        foo.whenAnyExchangeReceived(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 String in = exchange.getIn().getBody(String.class);
                 exchange.getIn().setBody("Bye " + in);
@@ -50,16 +55,22 @@ public class MockAsBeanTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+    // END SNIPPET: e1
 
     @Override
+    // START SNIPPET: e2
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").beanRef("foo").to("mock:result");
+                from("direct:start")
+                    // send to foo bean
+                    .beanRef("foo")
+                    // and then to result mock
+                    .to("mock:result");
             }
         };
     }
-
+    // END SNIPPET: e2
 
 }
