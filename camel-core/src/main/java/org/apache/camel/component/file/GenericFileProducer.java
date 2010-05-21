@@ -25,6 +25,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -214,7 +215,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             }
 
         } finally {
-            ObjectHelper.close(payload, "Closing payload", log);
+            IOHelper.close(payload, "Closing payload", log);
         }
 
     }

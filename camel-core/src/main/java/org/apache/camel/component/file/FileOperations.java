@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -255,8 +256,8 @@ public class FileOperations implements GenericFileOperations<File> {
                 position += in.transferTo(position, endpoint.getBufferSize(), out);
             }
         } finally {
-            ObjectHelper.close(in, source.getName(), LOG);
-            ObjectHelper.close(out, source.getName(), LOG);
+            IOHelper.close(in, source.getName(), LOG);
+            IOHelper.close(out, source.getName(), LOG);
         }
     }
 
@@ -280,8 +281,8 @@ public class FileOperations implements GenericFileOperations<File> {
                 byteBuffer.clear();
             }
         } finally {
-            ObjectHelper.close(in, target.getName(), LOG);
-            ObjectHelper.close(out, target.getName(), LOG);
+            IOHelper.close(in, target.getName(), LOG);
+            IOHelper.close(out, target.getName(), LOG);
         }
     }
 

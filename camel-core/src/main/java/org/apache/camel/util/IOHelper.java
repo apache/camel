@@ -16,11 +16,15 @@
  */
 package org.apache.camel.util;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * IO helper class.
@@ -29,6 +33,7 @@ import java.nio.charset.Charset;
  */
 public final class IOHelper {
     
+    private static final transient Log LOG = LogFactory.getLog(IOHelper.class);
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
     private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
@@ -104,11 +109,55 @@ public final class IOHelper {
     
     public static void copyAndCloseInput(InputStream input, OutputStream output) throws IOException {
         copy(input, output);
-        input.close();
+        close(input, null, LOG);
     }
     
     public static void copyAndCloseInput(InputStream input, OutputStream output, int bufferSize) throws IOException {
         copy(input, output, bufferSize);
-        input.close();
+        close(input, null, LOG);
     }
+
+    /**
+     * Closes the given resource if it is available, logging any closing
+     * exceptions to the given log
+     *
+     * @param closeable the object to close
+     * @param name the name of the resource
+     * @param log the log to use when reporting closure warnings
+     */
+    public static void close(Closeable closeable, String name, Log log) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                if (log != null) {
+                    if (name != null) {
+                        log.warn("Cannot close: " + name + ". Reason: " + e.getMessage(), e);
+                    } else {
+                        log.warn("Cannot close. Reason: " + e.getMessage(), e);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Closes the given resource if it is available.
+     *
+     * @param closeable the object to close
+     * @param name the name of the resource
+     */
+    public static void close(Closeable closeable, String name) {
+        close(closeable, name, LOG);
+    }
+
+    /**
+     * Closes the given resource if it is available.
+     *
+     * @param closeable the object to close
+     */
+    public static void close(Closeable closeable) {
+        close(closeable, null, LOG);
+    }
+
 }

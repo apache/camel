@@ -36,9 +36,9 @@ public class GzipDataFormat implements DataFormat {
         try {
             IOHelper.copy(is, zipOutput);
         } finally {
-            zipOutput.close();
+            IOHelper.close(is);
+            IOHelper.close(zipOutput);
         }
-        
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
@@ -47,8 +47,12 @@ public class GzipDataFormat implements DataFormat {
         
         // Create an expandable byte array to hold the inflated data
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        IOHelper.copy(unzipInput, bos);
-        return bos.toByteArray();
+        try {
+            IOHelper.copy(unzipInput, bos);
+            return bos.toByteArray();
+        } finally {
+            IOHelper.close(unzipInput);
+        }
     }
 
 }

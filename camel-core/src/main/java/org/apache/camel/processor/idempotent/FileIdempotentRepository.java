@@ -24,6 +24,7 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -218,7 +219,7 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
         } catch (IOException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         } finally {
-            ObjectHelper.close(fos, "Appending to file idempotent repository", LOG);
+            IOHelper.close(fos, "Appending to file idempotent repository", LOG);
         }
     }
 
@@ -240,7 +241,7 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
         } catch (IOException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         } finally {
-            ObjectHelper.close(fos, "Trunking file idempotent repository", LOG);
+            IOHelper.close(fos, "Trunking file idempotent repository", LOG);
         }
     }
 
