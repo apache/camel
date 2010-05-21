@@ -66,7 +66,7 @@ public class HttpProducer extends DefaultProducer {
 
         // propagate headers as HTTP headers
         for (Map.Entry<String, Object> entry : in.getHeaders().entrySet()) {
-            String headerValue = (String) entry.getValue();
+            String headerValue = in.getHeader(entry.getKey(), String.class);
             if (strategy != null && !strategy.applyFilterToCamelHeaders(entry.getKey(), headerValue, exchange)) {
                 method.addRequestHeader(entry.getKey(), headerValue);
             }

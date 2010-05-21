@@ -70,13 +70,13 @@ public class HttpProducer extends DefaultProducer {
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
 
         // propagate headers as HTTP headers
-        for (String headerName : in.getHeaders().keySet()) {
-            String headerValue = in.getHeader(headerName, String.class);
-            if (strategy != null && !strategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
-                httpRequest.addHeader(headerName, headerValue);
+        for (Map.Entry<String, Object> entry : in.getHeaders().entrySet()) {
+            String headerValue = in.getHeader(entry.getKey(), String.class);
+            if (strategy != null && !strategy.applyFilterToCamelHeaders(entry.getKey(), headerValue, exchange)) {
+                httpRequest.addHeader(entry.getKey(), headerValue);
             }
         }
-
+        
         // lets store the result in the output message.
         HttpResponse httpResponse = null;
         try {
