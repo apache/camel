@@ -333,7 +333,8 @@ public class JmsBinding {
             if (value != null) {
                 // must encode to safe JMS header name before setting property on jmsMessage
                 String key = jmsKeyFormatStrategy.encodeKey(headerName);
-                jmsMessage.setObjectProperty(key, value);
+                // set the property
+                JmsMessageHelper.setProperty(jmsMessage, key, value);
             } else if (LOG.isDebugEnabled()) {
                 // okay the value is not a primitive or string so we cannot sent it over the wire
                 LOG.debug("Ignoring non primitive header: " + headerName + " of class: "
@@ -397,7 +398,7 @@ public class JmsBinding {
         } else if (headerValue instanceof CharSequence) {
             return headerValue.toString();
         } else if (headerValue instanceof Boolean) {
-            return headerValue.toString();
+            return headerValue;
         } else if (headerValue instanceof Date) {
             return headerValue.toString();
         }

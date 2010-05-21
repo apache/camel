@@ -91,4 +91,38 @@ public final class JmsMessageHelper {
         return false;
     }
 
+    /**
+     * Sets the property on the given JMS message.
+     *
+     * @param jmsMessage  the JMS message
+     * @param name        name of the property to set
+     * @param value       the value
+     * @throws JMSException can be thrown
+     */
+    public static void setProperty(Message jmsMessage, String name, Object value) throws JMSException {
+        if (value == null) {
+            return;
+        }
+        if (value instanceof Byte) {
+            jmsMessage.setByteProperty(name, (Byte) value);
+        } else if (value instanceof Boolean) {
+            jmsMessage.setBooleanProperty(name, (Boolean) value);
+        } else if (value instanceof Double) {
+            jmsMessage.setDoubleProperty(name, (Double) value);
+        } else if (value instanceof Float) {
+            jmsMessage.setFloatProperty(name, (Float) value);
+        } else if (value instanceof Integer) {
+            jmsMessage.setIntProperty(name, (Integer) value);
+        } else if (value instanceof Long) {
+            jmsMessage.setLongProperty(name, (Long) value);
+        } else if (value instanceof Short) {
+            jmsMessage.setShortProperty(name, (Short) value);
+        } else if (value instanceof String) {
+            jmsMessage.setStringProperty(name, (String) value);
+        } else {
+            // fallback to Object
+            jmsMessage.setObjectProperty(name, value);
+        }
+    }
+
 }
