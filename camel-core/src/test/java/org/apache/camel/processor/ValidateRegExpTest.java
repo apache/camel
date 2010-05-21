@@ -56,8 +56,9 @@ public class ValidateRegExpTest extends ContextTestSupport {
         } catch (CamelExecutionException e) {
             // expected
             assertIsInstanceOf(PredicateValidationException.class, e.getCause());
-            assertEquals("Validation failed for Predicate[bodyAs[java.lang.String].matches('^\\d{2}\\.\\d{2}\\.\\d{4}$')]."
-                + " Exchange[Message: 1.1.2010]", e.getCause().getMessage());
+            // as the Expression could be different between the DSL and simple language, here we just check part of the message 
+            assertTrue("Get a wrong exception message", e.getCause().getMessage().startsWith("Validation failed for Predicate[bodyAs[java.lang.String]"));
+            assertTrue("Get a wrong exception message", e.getCause().getMessage().endsWith("Exchange[Message: 1.1.2010]"));           
         }
 
         assertMockEndpointsSatisfied();
