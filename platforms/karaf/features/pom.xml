@@ -24,13 +24,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>karaf</artifactId>
-        <version>2.3-SNAPSHOT</version>
+        <version>2.3.0</version>
     </parent>
 
     <groupId>org.apache.camel.karaf</groupId>
     <artifactId>apache-camel</artifactId>
     <packaging>pom</packaging>
-    <version>2.3-SNAPSHOT</version>
+    <version>2.3.0</version>
     <name>Camel :: Platforms :: Apache Karaf :: Features</name>
 
     <!-- some of the bundles is located at: http://repo1.maven.org/maven2/org/apache/servicemix/bundles/ -->
