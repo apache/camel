@@ -37,6 +37,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -117,7 +118,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                         tokenize(packages, line);
                     }
                 } finally {
-                    ObjectHelper.close(reader, null, LOG);
+                    IOHelper.close(reader, null, LOG);
                 }
             }
         }

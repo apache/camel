@@ -45,6 +45,7 @@ import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
@@ -1108,7 +1109,49 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     public FilterDefinition filter(String language, String expression) {
         return filter(new LanguageExpression(language, expression));
     }
+    
+    /**
+     * Creates a validation expression which only if it is <tt>true</tt> then the
+     * exchange is forwarded to the destination.
+     * Otherwise a {@link org.apache.camel.processor.validation.PredicateValidationException} is thrown.
+     *
+     * @param expression  the expression
+     * @return the builder
+     */
+    public ValidateDefinition validate(Expression expression) {
+        ValidateDefinition answer = new ValidateDefinition();
+        answer.setExpression(new ExpressionDefinition(expression));
+        addOutput(answer);
+        return answer;
+    }
 
+    /**
+     * Creates a validation expression which only if it is <tt>true</tt> then the
+     * exchange is forwarded to the destination.
+     * Otherwise a {@link org.apache.camel.processor.validation.PredicateValidationException} is thrown.
+     *
+     * @param predicate  the predicate
+     * @return the builder
+     */
+    public ValidateDefinition validate(Predicate predicate) {
+        ValidateDefinition answer = new ValidateDefinition();
+        answer.setExpression(new ExpressionDefinition(predicate));
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Creates a validation expression which only if it is <tt>true</tt> then the
+     * exchange is forwarded to the destination.
+     * Otherwise a {@link org.apache.camel.processor.validation.PredicateValidationException} is thrown.
+     *
+     * @return the builder
+     */
+    public ExpressionClause<ValidateDefinition> validate() {
+        ValidateDefinition answer = new ValidateDefinition();
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
+    }
     /**
      * <a href="http://camel.apache.org/load-balancer.html">Load Balancer EIP:</a>
      * Creates a loadbalance

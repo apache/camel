@@ -90,10 +90,10 @@ public class DefaultHttpBinding implements HttpBinding {
 
         popluateRequestParameters(request, message);        
         
-        // reset the stream cache
-        StreamCache cache = message.getBody(StreamCache.class);
-        if (cache != null) {
-            cache.reset();
+        Object body = message.getBody();
+        // reset the stream cache if the body is the instance of StreamCache
+        if (body instanceof StreamCache) {
+            ((StreamCache)body).reset();
         }
         
         // store the method and query and other info in headers

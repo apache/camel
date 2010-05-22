@@ -220,9 +220,10 @@ public class HttpRouteTest extends CamelTestSupport {
                 from("jetty:http://localhost:9083/noStreamCache?disableStreamCache=true").noStreamCaching().process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
-                        InputStream is = (InputStream)exchange.getIn().getBody();
-                        System.out.println(is.getClass());
+                        InputStream is = (InputStream)exchange.getIn().getBody();                        
                         assertTrue("It should be a raw inputstream", is instanceof org.eclipse.jetty.server.HttpInput);
+                        String request = exchange.getIn().getBody(String.class);
+                        assertEquals("Get a wrong request", "This is a test", request);
                         exchange.getOut().setBody("OK");
                     }
                     

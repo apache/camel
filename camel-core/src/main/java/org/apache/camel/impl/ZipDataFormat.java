@@ -47,7 +47,8 @@ public class ZipDataFormat implements DataFormat {
         try {
             IOHelper.copy(is, zipOutput);
         } finally {
-            zipOutput.close();
+            IOHelper.close(is);
+            IOHelper.close(zipOutput);
         }
     }
 
@@ -61,8 +62,7 @@ public class ZipDataFormat implements DataFormat {
             IOHelper.copy(unzipInput, bos);
             return bos.toByteArray();
         } finally {
-            unzipInput.close();
-            bos.close();
+            IOHelper.close(unzipInput);
         }
     }
 

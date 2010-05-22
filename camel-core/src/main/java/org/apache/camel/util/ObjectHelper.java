@@ -581,9 +581,8 @@ public final class ObjectHelper {
     /**
      * A helper method to access a camel context properties with a prefix
      *
-     * @param name         the name of the system property required
-     * @param defaultValue the default value to use if the property is not
-     *                     available or a security exception prevents access
+     * @param prefix       the prefix
+     * @param camelContext the camel context
      * @return the properties which holds the camel context properties with the prefix,
      *         and the key omit the prefix part
      */
@@ -993,18 +992,13 @@ public final class ObjectHelper {
      * @param closeable the object to close
      * @param name the name of the resource
      * @param log the log to use when reporting closure warnings
+     * @deprecated use {@link org.apache.camel.util.IOHelper#close(java.io.Closeable, String, org.apache.commons.logging.Log)}
      */
+    @Deprecated
     public static void close(Closeable closeable, String name, Log log) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (IOException e) {
-                if (log != null) {
-                    log.warn("Cannot close: " + name + ". Reason: " + e, e);
-                }
-            }
-        }
+        IOHelper.close(closeable, name, log);
     }
+
 
     /**
      * Converts the given value to the required type or throw a meaningful exception

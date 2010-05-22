@@ -50,6 +50,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -404,38 +405,56 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
         }
 
-        // either we have not used template before or we have auto registered it already and therefore we
-        // need it to allow to do it so it can remove the existing auto registered as there is now a clash id
-        // since we have multiple camel contexts
-        boolean canDoTemplate = autoRegisterMap.get("template") != null
-                || !parserContext.getRegistry().isBeanNameInUse("template");
-        if (!template && canDoTemplate) {
-            String id = "template";
-            // auto create a template
-            Element templateElement = element.getOwnerDocument().createElement("template");
-            templateElement.setAttribute("id", id);
-            BeanDefinitionParser parser = parserMap.get("template");
-            BeanDefinition definition = parser.parse(templateElement, parserContext);
+        if (!template) {
+            // either we have not used template before or we have auto registered it already and therefore we
+            // need it to allow to do it so it can remove the existing auto registered as there is now a clash id
+            // since we have multiple camel contexts
+            boolean existing = autoRegisterMap.get("template") != null;
+            boolean inUse = false;
+            try {
+                inUse = parserContext.getRegistry().isBeanNameInUse("template");
+            } catch (BeanCreationException e) {
+                // Spring Eclipse Tooling may throw an exception when you edit the Spring XML online in Eclipse
+                // when the isBeanNameInUse method is invoked, so ignore this and continue (CAMEL-2739)
+                LOG.debug("Error checking isBeanNameInUse(template). This exception will be ignored", e);
+            }
+            if (!inUse || existing) {
+                String id = "template";
+                // auto create a template
+                Element templateElement = element.getOwnerDocument().createElement("template");
+                templateElement.setAttribute("id", id);
+                BeanDefinitionParser parser = parserMap.get("template");
+                BeanDefinition definition = parser.parse(templateElement, parserContext);
 
-            // auto register it
-            autoRegisterBeanDefinition(id, definition, parserContext, contextId);
+                // auto register it
+                autoRegisterBeanDefinition(id, definition, parserContext, contextId);
+            }
         }
 
-        // either we have not used template before or we have auto registered it already and therefore we
-        // need it to allow to do it so it can remove the existing auto registered as there is now a clash id
-        // since we have multiple camel contexts
-        boolean canDoConsumerTemplate = autoRegisterMap.get("consumerTemplate") != null
-                || !parserContext.getRegistry().isBeanNameInUse("consumerTemplate");
-        if (!consumerTemplate && canDoConsumerTemplate) {
-            String id = "consumerTemplate";
-            // auto create a template
-            Element templateElement = element.getOwnerDocument().createElement("consumerTemplate");
-            templateElement.setAttribute("id", id);
-            BeanDefinitionParser parser = parserMap.get("consumerTemplate");
-            BeanDefinition definition = parser.parse(templateElement, parserContext);
+        if (!consumerTemplate) {
+            // either we have not used template before or we have auto registered it already and therefore we
+            // need it to allow to do it so it can remove the existing auto registered as there is now a clash id
+            // since we have multiple camel contexts
+            boolean existing = autoRegisterMap.get("consumerTemplate") != null;
+            boolean inUse = false;
+            try {
+                inUse = parserContext.getRegistry().isBeanNameInUse("consumerTemplate");
+            } catch (BeanCreationException e) {
+                // Spring Eclipse Tooling may throw an exception when you edit the Spring XML online in Eclipse
+                // when the isBeanNameInUse method is invoked, so ignore this and continue (CAMEL-2739)
+                LOG.debug("Error checking isBeanNameInUse(consumerTemplate). This exception will be ignored", e);
+            }
+            if (!inUse || existing) {
+                String id = "consumerTemplate";
+                // auto create a template
+                Element templateElement = element.getOwnerDocument().createElement("consumerTemplate");
+                templateElement.setAttribute("id", id);
+                BeanDefinitionParser parser = parserMap.get("consumerTemplate");
+                BeanDefinition definition = parser.parse(templateElement, parserContext);
 
-            // auto register it
-            autoRegisterBeanDefinition(id, definition, parserContext, contextId);
+                // auto register it
+                autoRegisterBeanDefinition(id, definition, parserContext, contextId);
+            }
         }
 
     }

@@ -23,20 +23,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.example.model.Report;
 
 public class Reporting implements Processor {
-	
-	private static Integer count;
 
-	public void process(Exchange exchange) throws Exception {
-	}
+    private static Integer count;
 
-	public Report updateReport(@Body Report report, @Header("minaServer") String name) throws Exception {
-		
-		report.setReply("Report updated from MINA server running on : " + name);
-		
-		// send the report updated
-		return report;		
-	}
-	
-	
+    public void process(Exchange exchange) throws Exception {
+    }
 
+    public Report updateReport(@Body Report report, @Header("minaServer") String name) throws Exception {
+        report.setReply("Report updated from MINA server running on : " + name);
+
+        // send the report updated
+        return report;
+    }
 }

@@ -14,34 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jmxconnect;
+package org.apache.camel.spring.processor;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.ValidateRegExpTest;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 /**
  * @version $Revision$
  */
-public interface SimpleServiceMBean {
-    void start();
-
-    void stop();
-
-    /**
-     * @param simpleCounter
-     *            The simpleCounter to set.
-     */
-    void setSimpleCounter(int simpleCounter);
-
-    /**
-     * @return Returns the simpleCounter.
-     */
-    int getSimpleCounter();
-
-    /**
-     * @return Returns the simpleValue.
-     */
-    int getSimpleValue();
-
-    /**
-     * @param simpleValue The simpleValue to set.
-     */
-    void setSimpleValue(int simpleValue);
+public class SpringValidateRegExpTest extends ValidateRegExpTest {
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/validate.xml");
+    }
 }

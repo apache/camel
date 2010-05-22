@@ -14,32 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jmxconnect;
+package org.apache.camel.spring.processor;
 
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.ValidateSimpleTest;
 
-import org.apache.camel.Endpoint;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version $Revision$
- */
-public interface MBeanCamelServerConnection extends MBeanServerConnection {
+public class SpringValidateSimpleTest extends ValidateSimpleTest {
 
-    /**
-     * Add a Notification listener
-     *
-     * @param listenerId
-     * @param name
-     * @param replyToEndpoint
-     */
-    void addNotificationListener(String listenerId, ObjectName name, Endpoint replyToEndpoint);
-
-    /**
-     * Remove a Notification listener
-     *
-     * @param listenerId
-     */
-    void removeNotificationListener(String listenerId);
-
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/ValidateSimpleTest.xml");
+    }
 }

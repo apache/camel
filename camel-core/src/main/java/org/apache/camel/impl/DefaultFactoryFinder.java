@@ -30,7 +30,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.IOHelper;
 
 /**
  * Default factory finder.
@@ -143,8 +143,8 @@ public class DefaultFactoryFinder implements FactoryFinder {
             properties.load(reader);
             return properties;
         } finally {
-            ObjectHelper.close(reader, key, null);
-            ObjectHelper.close(in, key, null);
+            IOHelper.close(reader, key, null);
+            IOHelper.close(in, key, null);
         }
     }
 }

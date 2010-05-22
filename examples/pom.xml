@@ -59,6 +59,7 @@
     <module>camel-example-gauth</module>
     <module>camel-example-guice-jms</module>
     <module>camel-example-jms-file</module>
+    <module>camel-example-loadbalancing-mina</module>
     <module>camel-example-loan-broker</module>
     <module>camel-example-management</module>
     <module>camel-example-osgi</module>
@@ -66,8 +67,10 @@
     <module>camel-example-reportincident</module>
     <module>camel-example-route-throttling</module>
     <module>camel-example-spring</module>
+    <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
     <module>camel-example-spring-xquery</module>
+    <module>camel-example-spring-security</module>
     <module>camel-example-tracer</module>
   </modules>
 

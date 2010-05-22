@@ -13,8 +13,8 @@ You will need to compile this example first:
 To run the example type
   mvn jetty:run
 
-The webservice is exposed at:
-  http://localhost:9080/camel-example-reportincident/webservices/incident
+The webservice will be listed in this overview:
+  http://localhost:9080/webservices/
 
 
 To run the example with Ant
@@ -41,8 +41,8 @@ To run the example with Ant
   c. To Run using Ant, type
     ant run
 
-The webservice is exposed at:
-  http://localhost:9080/camel-example-reportincident/webservices/incident
+The webservice WSDL is exposed at:
+  http://localhost:9080/webservices/incident?wsdl
 
 
 To stop the example hit ctrl + c

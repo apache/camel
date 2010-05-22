@@ -29,7 +29,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -126,7 +126,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
             lock.release();
         } finally {
             // must close channel first
-            ObjectHelper.close(channel, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
+            IOHelper.close(channel, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
         }
     }
 

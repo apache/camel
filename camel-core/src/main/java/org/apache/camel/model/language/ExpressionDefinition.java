@@ -92,14 +92,14 @@ public class ExpressionDefinition implements Expression, Predicate {
         if (getLanguage() != null) {
             sb.append(getLanguage()).append("{");
         }
-        if (getExpression() != null) {
-            sb.append(getExpression());
-        }
         if (getPredicate() != null) {
             sb.append(getPredicate().toString());
         }
         if (getExpressionValue() != null) {
             sb.append(getExpressionValue().toString());
+        }
+        if (getPredicate() == null && getExpressionValue() == null && getExpression() != null) {
+            sb.append(getExpression());
         }
         if (getLanguage() != null) {
             sb.append("}");

@@ -40,7 +40,6 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -177,7 +176,7 @@ public final class IOConverter {
         try {
             return toBytes(is);
         } finally {
-            ObjectHelper.close(is, "file", LOG);
+            IOHelper.close(is, "file", LOG);
         }
     }
     
@@ -206,7 +205,7 @@ public final class IOConverter {
         try {
             return toString(is, exchange);
         } finally {
-            ObjectHelper.close(is, "url", LOG);
+            IOHelper.close(is, "url", LOG);
         }
     }
 
@@ -237,7 +236,7 @@ public final class IOConverter {
                 }
             }
         } finally {
-            ObjectHelper.close(reader, "reader", LOG);
+            IOHelper.close(reader, "reader", LOG);
         }
 
         return sb.toString();
@@ -303,7 +302,7 @@ public final class IOConverter {
             IOHelper.copy(stream, bos);
             return bos.toByteArray();
         } finally {
-            ObjectHelper.close(bos, "stream", LOG);
+            IOHelper.close(bos, "stream", LOG);
         }
     }
 

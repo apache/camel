@@ -195,7 +195,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * @param exchange the exchange
      * @return the aggregated exchange
      */
-    private Exchange doAggregation(String key, Exchange exchange) {
+    private Exchange doAggregation(String key, Exchange exchange) throws CamelExchangeException {
         if (LOG.isTraceEnabled()) {
             LOG.trace("onAggregation +++ start +++ with correlation key: " + key);
         }
@@ -223,6 +223,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // prepare the exchanges for aggregation and aggregate it
         ExchangeHelper.prepareAggregation(oldExchange, newExchange);
         answer = onAggregation(oldExchange, exchange);
+        if (answer == null) {
+            throw new CamelExchangeException("AggregationStrategy " + aggregationStrategy + " returned null which is not allowed", exchange);
+        }
+
         // update the aggregated size
         answer.setProperty(Exchange.AGGREGATED_SIZE, size);
 

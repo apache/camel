@@ -41,7 +41,7 @@ import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.CompositePackageScanFilter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -386,7 +386,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             log.warn("Cannot search jar file '" + urlPath + "' for classes matching criteria: " + test
                 + " due to an IOException: " + ioe.getMessage(), ioe);
         } finally {
-            ObjectHelper.close(jarStream, urlPath, log);
+            IOHelper.close(jarStream, urlPath, log);
         }
     }
 
