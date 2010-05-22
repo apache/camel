@@ -19,23 +19,20 @@ package org.apache.camel.example.service;
 import org.apache.camel.example.model.Report;
 
 public class Generator  {
-	
-	private static int count = 0;
 
-	public Report createReport() throws Exception {
-		
-		int counter = ++count;
-		
-		// Create a Report object
-		Report report = new Report();
-		report.setId(counter);
-		report.setTitle("Report Title : " + counter);
-		report.setContent("This is a dummy report");
-		
-		// Add the report to the Body
-		return report;		
-	}
-	
-	
+    private static int count;
 
+    public Report createReport() throws Exception {
+
+        int counter = ++count;
+
+        // Create a Report object
+        Report report = new Report();
+        report.setId(counter);
+        report.setTitle("Report Title : " + counter);
+        report.setContent("This is a dummy report");
+
+        // Add the report to the Body
+        return report;
+    }
 }
