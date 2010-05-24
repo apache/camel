@@ -81,6 +81,7 @@ public final class ExecResultConverter {
      * @throws FileNotFoundException if there is a file in the execResult, and
      *             the file can not be found
      */
+    @SuppressWarnings("unchecked")
     public static <T> T convertTo(Class<T> type, Exchange exchange, ExecResult result) throws FileNotFoundException {
         InputStream is = toInputStream(result);
         if (is != null) {

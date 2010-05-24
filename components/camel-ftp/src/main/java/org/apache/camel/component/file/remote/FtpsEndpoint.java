@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -74,7 +75,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             try {
                 keyStore.load(keyStoreFileInputStream, password.toCharArray());
             } finally {
-                ObjectHelper.close(keyStoreFileInputStream, "keyStore", log);
+                IOHelper.close(keyStoreFileInputStream, "keyStore", log);
             }
 
             KeyManagerFactory keyMgrFactory = KeyManagerFactory.getInstance(algorithm);
@@ -97,7 +98,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             try {
                 trustStore.load(trustStoreFileInputStream, password.toCharArray());
             } finally {
-                ObjectHelper.close(trustStoreFileInputStream, "trustStore", log);
+                IOHelper.close(trustStoreFileInputStream, "trustStore", log);
             }
 
             TrustManagerFactory trustMgrFactory = TrustManagerFactory.getInstance(algorithm);

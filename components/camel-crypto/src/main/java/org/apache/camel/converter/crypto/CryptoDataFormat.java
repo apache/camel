@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
 import java.security.spec.AlgorithmParameterSpec;
+
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
@@ -36,7 +37,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -139,7 +139,7 @@ public class CryptoDataFormat implements DataFormat {
                     cipherStream.write(mac);
                 }
             } finally {
-                ObjectHelper.close(cipherStream, "cipher", LOG);
+                IOHelper.close(cipherStream, "cipher", LOG);
             }
         }
     }

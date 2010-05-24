@@ -28,7 +28,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jetty.client.ContentExchange;
@@ -75,7 +75,7 @@ public class JettyContentExchange extends ContentExchange {
         // close the input stream when its not needed anymore
         InputStream is = getRequestContentSource();
         if (is != null) {
-            ObjectHelper.close(is, "RequestContentSource", LOG);
+            IOHelper.close(is, "RequestContentSource", LOG);
         }
     }
 

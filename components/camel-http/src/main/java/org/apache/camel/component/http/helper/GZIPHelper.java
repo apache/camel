@@ -26,7 +26,6 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Helper class to help wrapping content into GZIP input and output streams.
@@ -54,8 +53,8 @@ public final class GZIPHelper {
                 gzip.finish();
                 return new ByteArrayInputStream(os.toByteArray());
             } finally {
-                ObjectHelper.close(gzip, "gzip", null);
-                ObjectHelper.close(os, "byte array output stream", null);
+                IOHelper.close(gzip, "gzip", null);
+                IOHelper.close(os, "byte array output stream", null);
             }
         } else {
             return in;
@@ -74,8 +73,8 @@ public final class GZIPHelper {
                 gzip.finish();
                 return new ByteArrayInputStream(os.toByteArray());
             } finally {
-                ObjectHelper.close(gzip, "gzip", null);
-                ObjectHelper.close(os, "byte array", null);
+                IOHelper.close(gzip, "gzip", null);
+                IOHelper.close(os, "byte array", null);
             }
         } else {
             return new ByteArrayInputStream(data);

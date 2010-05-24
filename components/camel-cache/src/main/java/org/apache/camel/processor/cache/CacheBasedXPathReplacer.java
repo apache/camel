@@ -30,15 +30,15 @@ import org.w3c.dom.Document;
 
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cache.CacheManagerFactory;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 
 public class CacheBasedXPathReplacer extends CacheValidate implements Processor {
     private static final transient Log LOG = LogFactory.getLog(CacheBasedXPathReplacer.class);
@@ -79,7 +79,7 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
             try {
                 document = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, is);
             } finally {
-                ObjectHelper.close(is, "is", LOG);
+                IOHelper.close(is, "is", LOG);
             }
 
             InputStream cis = exchange.getContext().getTypeConverter()
@@ -102,7 +102,7 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
                 transformer.setParameter("cacheValue", cacheValueDocument);
                 transformer.transform(source, result);
             } finally {
-                ObjectHelper.close(cis, "cis", LOG);
+                IOHelper.close(cis, "cis", LOG);
             }
         }
 

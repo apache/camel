@@ -26,7 +26,6 @@ import org.apache.camel.component.http4.helper.LoadingByteArrayOutputStream;
 import org.apache.camel.impl.PollingConsumerSupport;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -84,7 +83,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
                 IOHelper.copy(is, bos);
                 bos.flush();
             } finally {
-                ObjectHelper.close(is, "input stream", null);
+                IOHelper.close(is, "input stream", null);
             }
             Message message = exchange.getIn();
             message.setBody(bos.createInputStream());

@@ -26,8 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class CacheConfiguration {
-    private static final transient Log LOG = LogFactory.getLog(CacheConfiguration.class);
-    private URI uri;
     private String cacheName;
     private int maxElementsInMemory = 1000;
     private MemoryStoreEvictionPolicy memoryStoreEvictionPolicy = MemoryStoreEvictionPolicy.LFU;

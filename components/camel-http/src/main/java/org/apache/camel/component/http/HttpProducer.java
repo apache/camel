@@ -32,7 +32,6 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -227,7 +226,7 @@ public class HttpProducer extends DefaultProducer {
             IOHelper.copy(is, cos);
             return cos.getInputStream();
         } finally {
-            ObjectHelper.close(is, "Extracting response body", LOG);            
+            IOHelper.close(is, "Extracting response body", LOG);            
         }
     }
 

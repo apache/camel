@@ -34,6 +34,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -251,7 +252,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } finally {
-            ObjectHelper.close(os, "retrieve: " + name, log);
+            IOHelper.close(os, "retrieve: " + name, log);
         }
     }
 
@@ -310,7 +311,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } finally {
             // need to close the stream before rename it
-            ObjectHelper.close(os, "retrieve: " + name, log);
+            IOHelper.close(os, "retrieve: " + name, log);
         }
 
         if (log.isDebugEnabled()) {
@@ -359,7 +360,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         } catch (InvalidPayloadException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } finally {
-            ObjectHelper.close(is, "store: " + name, log);
+            IOHelper.close(is, "store: " + name, log);
         }
     }
 

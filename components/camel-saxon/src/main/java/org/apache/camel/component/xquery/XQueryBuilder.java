@@ -402,7 +402,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         } else {
             Source source = in.getBody(Source.class);
             if (source == null) {
-                source = converter.toSource(converter.createDocument());
+                source = converter.toDOMSource(converter.createDocument());
             }
             DocumentInfo doc = getStaticQueryContext().buildDocument(source);
             dynamicQueryContext.setContextItem(doc);

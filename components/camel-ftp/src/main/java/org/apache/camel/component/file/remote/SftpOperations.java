@@ -42,6 +42,7 @@ import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -339,7 +340,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
-            ObjectHelper.close(os, "retrieve: " + name, LOG);
+            IOHelper.close(os, "retrieve: " + name, LOG);
         }
     }
 
@@ -395,7 +396,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
-            ObjectHelper.close(os, "retrieve: " + name, LOG);
+            IOHelper.close(os, "retrieve: " + name, LOG);
         }
 
         if (LOG.isDebugEnabled()) {
@@ -443,7 +444,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         } catch (InvalidPayloadException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } finally {
-            ObjectHelper.close(is, "store: " + name, LOG);
+            IOHelper.close(is, "store: " + name, LOG);
         }
     }
 

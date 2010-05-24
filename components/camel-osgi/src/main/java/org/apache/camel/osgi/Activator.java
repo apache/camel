@@ -36,7 +36,7 @@ import org.apache.camel.osgi.tracker.BundleTracker;
 import org.apache.camel.osgi.tracker.BundleTrackerCustomizer;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
@@ -230,7 +230,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 // Do nothing here
             } finally {
                 if (reader != null) {
-                    ObjectHelper.close(reader, null, LOG);
+                    IOHelper.close(reader, null, LOG);
                 }
             }
         }

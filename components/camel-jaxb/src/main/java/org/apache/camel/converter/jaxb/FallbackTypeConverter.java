@@ -38,13 +38,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.TypeConverterAware;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -210,7 +210,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             }
         } finally {
             if (value instanceof Closeable) {
-                ObjectHelper.close((Closeable)value, "Unmarshalling", LOG);
+                IOHelper.close((Closeable)value, "Unmarshalling", LOG);
             }
         }
         return null;
