@@ -35,6 +35,7 @@
 
     <properties>
       <karaf-version>1.4.0</karaf-version>
+      <features-maven-plugin-version>1.7.0-SNAPSHOT</features-maven-plugin-version>
     </properties>
 
     <modules>
