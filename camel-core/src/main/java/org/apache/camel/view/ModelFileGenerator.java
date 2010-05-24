@@ -106,7 +106,7 @@ public class ModelFileGenerator {
         outputProperties.put(OutputKeys.OMIT_XML_DECLARATION, "no");
         outputProperties.put(OutputKeys.INDENT, "yes");
 
-        converter.toResult(converter.toSource(doc), result, outputProperties);
+        converter.toResult(converter.toDOMSource(doc), result, outputProperties);
     }
 
     /**

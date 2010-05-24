@@ -17,11 +17,8 @@
 package org.apache.camel.converter;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class TimePatternConverterTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(TimePatternConverterTest.class);
 
     public void testMillisecondsTimePattern() throws Exception {
         String source = new String("444");

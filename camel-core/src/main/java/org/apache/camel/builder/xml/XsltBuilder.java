@@ -291,7 +291,7 @@ public class XsltBuilder implements Processor {
                 throw new ExpectedBodyTypeException(exchange, Source.class);
             } else {
                 try {
-                    source = converter.toSource(converter.createDocument());
+                    source = converter.toDOMSource(converter.createDocument());
                 } catch (ParserConfigurationException e) {
                     throw new RuntimeTransformException(e);
                 }

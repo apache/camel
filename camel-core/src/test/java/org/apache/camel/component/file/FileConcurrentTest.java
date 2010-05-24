@@ -144,7 +144,7 @@ public class FileConcurrentTest extends ContextTestSupport {
 
         private Random ran = new Random();
 
-        public String processData(@Body String data, @Header(value = "id") int id, @Headers Map headers, TypeConverter converter) {
+        public String processData(@Body String data, @Header(value = "id") int id, @Headers Map<String, Object> headers, TypeConverter converter) {
             // simulate some heavy calculations
             int num = 200 + ran.nextInt(500);
             try {
