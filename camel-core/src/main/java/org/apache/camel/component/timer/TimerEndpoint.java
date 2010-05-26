@@ -23,6 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.ManagementAware;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -34,7 +35,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * @version $Revision$
  */
 @ManagedResource(description = "Managed Timer Endpoint")
-public class TimerEndpoint extends DefaultEndpoint implements ManagementAware<TimerEndpoint> {
+public class TimerEndpoint extends DefaultEndpoint implements Service, ManagementAware<TimerEndpoint> {
     private String timerName;
     private Date time;
     private long period = 1000;
@@ -70,6 +71,14 @@ public class TimerEndpoint extends DefaultEndpoint implements ManagementAware<Ti
 
     public Object getManagedObject(TimerEndpoint object) {
         return this;
+    }
+
+    public void start() throws Exception {
+        // do nothing, the timer will be set when the first consumer will request it
+    }
+
+    public void stop() throws Exception {
+        setTimer(null);
     }
 
     @ManagedAttribute(description = "Timer Name")
@@ -139,15 +148,19 @@ public class TimerEndpoint extends DefaultEndpoint implements ManagementAware<Ti
     }
 
     public Timer getTimer() {
-        if (timer == null) {
-            TimerComponent tc = (TimerComponent) getComponent();
-            timer = tc.getTimer(this);
+        synchronized (this) {
+            if (timer == null) {
+                TimerComponent tc = (TimerComponent) getComponent();
+                timer = tc.getTimer(this);
+            }
+            return timer;
         }
-        return timer;
     }
 
     public void setTimer(Timer timer) {
-        this.timer = timer;
+        synchronized (this) {
+            this.timer = timer;
+        }
     }
 
     @ManagedAttribute(description = "Camel id")
@@ -159,5 +172,4 @@ public class TimerEndpoint extends DefaultEndpoint implements ManagementAware<Ti
     public String getEndpointUri() {
         return super.getEndpointUri();
     }
-
 }
