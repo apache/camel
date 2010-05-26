@@ -665,8 +665,11 @@ public class BeanInfo {
     }
 
     private static Class<?> getTargetClass(Class<?> clazz) {
-        if (clazz.getName().indexOf(CGLIB_CLASS_SEPARATOR) != -1) {
-            return clazz.getSuperclass();
+        if (clazz != null && clazz.getName().contains(CGLIB_CLASS_SEPARATOR)) {
+            Class<?> superClass = clazz.getSuperclass();
+            if (superClass != null && !Object.class.equals(superClass)) {
+                return superClass;
+            }
         }
         return clazz;
     }
