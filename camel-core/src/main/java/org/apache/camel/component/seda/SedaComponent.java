@@ -32,9 +32,9 @@ import org.apache.camel.impl.DefaultComponent;
  * @version $Revision$
  */
 public class SedaComponent extends DefaultComponent {
+    protected final int maxConcurrentConsumers = 500;
     private final Map<String, BlockingQueue<Exchange>> queues = new HashMap<String, BlockingQueue<Exchange>>();
-    private final int maxConcurrentConsumers = 500;
-    
+
     public synchronized BlockingQueue<Exchange> createQueue(String uri, Map<String, Object> parameters) {
         String key = getQueueKey(uri);
 

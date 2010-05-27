@@ -19,12 +19,11 @@ package org.apache.camel.component.vm;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.seda.SedaComponent;
-import org.apache.camel.component.seda.SedaEndpoint;
 
 /**
  * An implementation of the <a href="http://camel.apache.org/vm.html">VM components</a>
@@ -39,22 +38,24 @@ public class VmComponent extends SedaComponent {
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        BlockingQueue<Exchange> blockingQueue = getBlockingQueue(uri, parameters);
-        SedaEndpoint answer = new SedaEndpoint(uri, this, blockingQueue);
-        answer.configureProperties(parameters);
-        return answer;
-    }
+    public synchronized BlockingQueue<Exchange> createQueue(String uri, Map<String, Object> parameters) {
+        String key = getQueueKey(uri);
 
-    protected BlockingQueue<Exchange> getBlockingQueue(String uri, Map<String, Object> parameters) {
-        synchronized (QUEUES) {
-            BlockingQueue<Exchange> answer = QUEUES.get(uri);
-            if (answer == null) {
-                answer = createQueue(uri, parameters);
-                QUEUES.put(uri, answer);
-            }
-            return answer;
+        if (QUEUES.containsKey(key)) {
+            return QUEUES.get(key);
         }
+
+        // create queue
+        BlockingQueue<Exchange> queue;
+        Integer size = getAndRemoveParameter(parameters, "size", Integer.class);
+        if (size != null && size > 0) {
+            queue = new LinkedBlockingQueue<Exchange>(size);
+        } else {
+            queue = new LinkedBlockingQueue<Exchange>();
+        }
+
+        QUEUES.put(key, queue);
+        return queue;
     }
 
     @Override
