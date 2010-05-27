@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
@@ -42,15 +43,15 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
     private final CamelContext camelContext;
     private final Processor processor;
     private final ExecutorService executorService;
-    private boolean onCompleteOnly;
-    private boolean onFailureOnly;
-    private Predicate onWhen;
+    private final boolean onCompleteOnly;
+    private final boolean onFailureOnly;
+    private final Predicate onWhen;
+    private final boolean useOriginalBody;
 
     public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService,
-                                 boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen) {
+                                 boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen, boolean useOriginalBody) {
         notNull(camelContext, "camelContext");
         notNull(processor, "processor");
-        notNull(executorService, "executorService");
         this.camelContext = camelContext;
         // wrap processor in UnitOfWork so what we send out runs in a UoW
         this.processor = new UnitOfWorkProcessor(processor);
@@ -58,6 +59,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
         this.onCompleteOnly = onCompleteOnly;
         this.onFailureOnly = onFailureOnly;
         this.onWhen = onWhen;
+        this.useOriginalBody = useOriginalBody;
     }
 
     protected void doStart() throws Exception {
@@ -81,7 +83,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
         // register callback
         exchange.getUnitOfWork().addSynchronization(new SynchronizationAdapter() {
             @Override
-            public void onComplete(Exchange exchange) {
+            public void onComplete(final Exchange exchange) {
                 if (onFailureOnly) {
                     return;
                 }
@@ -105,7 +107,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
                 });
             }
 
-            public void onFailure(Exchange exchange) {
+            public void onFailure(final Exchange exchange) {
                 if (onCompleteOnly) {
                     return;
                 }
@@ -127,7 +129,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
                             LOG.debug("Processing onFailure: " + copy);
                         }
                         doProcess(processor, copy);
-                        return copy;
+                        return null;
                     }
                 });
             }
@@ -159,7 +161,6 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
         }
     }
 
-
     /**
      * Prepares the {@link Exchange} to send as onCompletion.
      *
@@ -167,13 +168,33 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
      * @return the exchange to be routed in onComplete
      */
     protected Exchange prepareExchange(Exchange exchange) {
-        // must use a copy as we dont want it to cause side effects of the original exchange
-        final Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+        Exchange answer;
+
+        // for asynchronous routing we must use a copy as we dont want it
+        // to cause side effects of the original exchange
+        // (the original thread will run in parallel)
+        answer = ExchangeHelper.createCorrelatedCopy(exchange, false);
+        if (answer.hasOut()) {
+            // move OUT to IN (pipes and filters)
+            answer.setIn(answer.getOut());
+            answer.setOut(null);
+        }
         // set MEP to InOnly as this wire tap is a fire and forget
-        copy.setPattern(ExchangePattern.InOnly);
+        answer.setPattern(ExchangePattern.InOnly);
+
+        if (useOriginalBody) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Using the original IN message instead of current");
+            }
+
+            Message original = exchange.getUnitOfWork().getOriginalInMessage();
+            answer.setIn(original);
+        }
+
         // add a header flag to indicate its a on completion exchange
-        copy.setProperty(Exchange.ON_COMPLETION, Boolean.TRUE);
-        return copy;
+        answer.setProperty(Exchange.ON_COMPLETION, Boolean.TRUE);
+
+        return answer;
     }
 
     @Override

@@ -57,6 +57,8 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
     private ExecutorService executorService;
     @XmlAttribute(required = false)
     private String executorServiceRef;
+    @XmlAttribute(name = "useOriginalMessage", required = false)
+    private Boolean useOriginalMessagePolicy = Boolean.FALSE;
 
     public OnCompletionDefinition() {
     }
@@ -101,8 +103,8 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
         if (executorService == null) {
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "OnCompletion");
         }
-        OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), childProcessor, executorService,
-                                                                 onCompleteOnly, onFailureOnly, when);
+        OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), childProcessor,
+                executorService, onCompleteOnly, onFailureOnly, when, useOriginalMessagePolicy);
         return answer;
     }
 
@@ -185,7 +187,19 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
         onWhen.setExpression(clause);
         return clause;
     }
-    
+
+    /**
+     * Will use the original input body when an {@link org.apache.camel.Exchange} for this on completion.
+     * <p/>
+     * By default this feature is off.
+     *
+     * @return the builder
+     */
+    public OnCompletionDefinition useOriginalBody() {
+        setUseOriginalMessagePolicy(Boolean.TRUE);
+        return this;
+    }
+
     public OnCompletionDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
@@ -243,4 +257,13 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }
+
+    public Boolean getUseOriginalMessagePolicy() {
+        return useOriginalMessagePolicy;
+    }
+
+    public void setUseOriginalMessagePolicy(Boolean useOriginalMessagePolicy) {
+        this.useOriginalMessagePolicy = useOriginalMessagePolicy;
+    }
+
 }
