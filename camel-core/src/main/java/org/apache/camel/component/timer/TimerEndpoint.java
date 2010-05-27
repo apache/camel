@@ -147,20 +147,16 @@ public class TimerEndpoint extends DefaultEndpoint implements Service, Managemen
         return true;
     }
 
-    public Timer getTimer() {
-        synchronized (this) {
-            if (timer == null) {
-                TimerComponent tc = (TimerComponent) getComponent();
-                timer = tc.getTimer(this);
-            }
-            return timer;
+    public synchronized Timer getTimer() {
+        if (timer == null) {
+            TimerComponent tc = (TimerComponent)getComponent();
+            timer = tc.getTimer(this);
         }
+        return timer;
     }
 
-    public void setTimer(Timer timer) {
-        synchronized (this) {
-            this.timer = timer;
-        }
+    public synchronized void setTimer(Timer timer) {
+        this.timer = timer;
     }
 
     @ManagedAttribute(description = "Camel id")
