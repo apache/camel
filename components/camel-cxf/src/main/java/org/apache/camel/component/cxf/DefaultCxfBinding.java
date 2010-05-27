@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.activation.DataHandler;
+import javax.security.auth.Subject;
 import javax.xml.namespace.QName;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.Holder;
@@ -52,6 +53,7 @@ import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.security.SecurityContext;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
@@ -464,6 +466,14 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             } else {
                 ((List<?>)value).clear();
             }
+        }
+        
+        // propagate the security subject from CXF security context
+        SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
+        if (securityContext != null) {
+            Subject subject = new Subject();
+            subject.getPrincipals().add(securityContext.getUserPrincipal());
+            camelHeaders.put(Exchange.AUTHENTICATION, subject);
         }
     }
 
