@@ -139,8 +139,6 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
 
         authentication = authenticationManager.authenticate(authentication);
         
-        System.out.println("The authenitcation is " + authentication);
-        
         if (LOG.isDebugEnabled()) {
             LOG.debug("Successfully Authenticated: " + authentication);
         }
