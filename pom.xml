@@ -359,6 +359,7 @@
 	   <archive>
                <manifestEntries>
                  <Bundle-SymbolicName>${project.groupId}.${project.artifactId}.source</Bundle-SymbolicName>
+                 <Bundle-Version>${camel.osgi.version.clean}</Bundle-Version>
                  <Eclipse-SourceBundle>${project.groupId}.${project.artifactId};version="${camel.osgi.version.clean}"</Eclipse-SourceBundle>
                </manifestEntries>
              </archive>
