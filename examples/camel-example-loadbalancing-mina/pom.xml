@@ -27,10 +27,8 @@
 	    <version>2.4-SNAPSHOT</version>
 	</parent>
 	
-	<groupId>org.apache.camel.example</groupId>
 	<artifactId>loadbalancing</artifactId>
 	<packaging>jar</packaging>
-	
 	<name>Camel :: Example :: Loadbalancer camel-mina</name>
 	<description>An example that show loadbalancing messaging with mina servers (TCP/IP)</description>
 
