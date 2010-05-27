@@ -14,34 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.spring.security.converter;
-
-import java.util.Set;
+package org.apache.camel.component.spring.security;
 
 import javax.security.auth.Subject;
 
 import org.springframework.security.Authentication;
 
-public class DefaultAuthenticationConverter implements AuthenticationConverter {
-
-    public Authentication toAuthentication(Subject subject) {
-        if (subject == null || subject.getPrincipals().size() == 0) {
-            return null;
-        }
-        Set<Authentication> authentications  = subject.getPrincipals(Authentication.class);
-        if (authentications.size() > 0) {
-            // just return the first one 
-            return authentications.iterator().next();
-        } else {
-            return convertToAuthentication(subject);
-        }
-    }
-
-    /**
-     * You can add the customer convert code here
-     */
-    protected Authentication convertToAuthentication(Subject subject) {
-        return null;        
-    }
+public interface AuthenticationAdapter {
+    
+    Authentication toAuthentication(Subject subject);
 
 }

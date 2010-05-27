@@ -22,8 +22,6 @@ import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.spring.security.converter.AuthenticationConverter;
-import org.apache.camel.component.spring.security.converter.DefaultAuthenticationConverter;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.RouteContext;
@@ -48,7 +46,7 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
     private static final transient Log LOG = LogFactory.getLog(SpringSecurityAuthorizationPolicy.class);
     private AccessDecisionManager accessDecisionManager;
     private AuthenticationManager authenticationManager;
-    private AuthenticationConverter authenticationConverter;
+    private AuthenticationAdapter authenticationAdapter;
     private ApplicationEventPublisher eventPublisher;
     private SpringSecurityAccessPolicy accessPolicy;
     
@@ -96,7 +94,7 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
         Subject subject = message.getHeader(Exchange.AUTHENTICATION, Subject.class);
         Authentication answer = null;
         if (subject != null) {
-            answer = getAuthenticationConverter().toAuthentication(subject);
+            answer = getAuthenticationAdapter().toAuthentication(subject);
         }
         // try to get it from thread context as a fallback
         if (answer == null && useThreadSecurityContext) {
@@ -152,21 +150,21 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
         }
     }
 
-    public AuthenticationConverter getAuthenticationConverter() {
-        if (authenticationConverter == null) {
+    public AuthenticationAdapter getAuthenticationAdapter() {
+        if (authenticationAdapter == null) {
             synchronized (this) {
-                if (authenticationConverter != null) {
-                    return authenticationConverter;
+                if (authenticationAdapter != null) {
+                    return authenticationAdapter;
                 } else {
-                    authenticationConverter = new DefaultAuthenticationConverter();
+                    authenticationAdapter = new DefaultAuthenticationAdapter();
                 }
             }
         } 
-        return authenticationConverter;
+        return authenticationAdapter;
     }
     
-    public void setAuthenticationConverter(AuthenticationConverter converter) {
-        this.authenticationConverter = converter;
+    public void setAuthenticationAdapter(AuthenticationAdapter adapter) {
+        this.authenticationAdapter = adapter;
     }
     
     public AccessDecisionManager getAccessDecisionManager() {

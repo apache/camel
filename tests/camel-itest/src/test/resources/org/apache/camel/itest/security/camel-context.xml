@@ -35,12 +35,12 @@
     <import resource="classpath:org/apache/camel/itest/security/commonSecurity.xml"/>
 
     <authorizationPolicy id="admin" access="ROLE_ADMIN"
-                         authenticationConverter="myAuthenticationConverter"
+                         authenticationAdapter="myAuthenticationAdapter"
                          authenticationManager="authenticationManager"
                          accessDecisionManager="accessDecisionManager"
                          xmlns="http://camel.apache.org/schema/spring-security"/>
       
-    <bean id="myAuthenticationConverter"  class="org.apache.camel.itest.security.MyAuthenticationConverter"/>
+    <bean id="myAuthenticationAdapter"  class="org.apache.camel.itest.security.MyAuthenticationAdapter"/>
     <bean id="myProcessor" class="org.apache.camel.itest.security.MyProcessor"/>
 
     <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/spring">

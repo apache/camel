@@ -21,12 +21,12 @@ import java.security.cert.X509Certificate;
 
 import javax.security.auth.Subject;
 
-import org.apache.camel.component.spring.security.converter.DefaultAuthenticationConverter;
+import org.apache.camel.component.spring.security.DefaultAuthenticationAdapter;
 import org.apache.ws.security.WSUsernameTokenPrincipal;
 import org.springframework.security.Authentication;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 
-public class MyAuthenticationConverter extends DefaultAuthenticationConverter {
+public class MyAuthenticationAdapter extends DefaultAuthenticationAdapter {
     
     protected Authentication convertToAuthentication(Subject subject) {
         Authentication answer = null;
