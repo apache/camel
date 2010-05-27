@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.spring.security;
 
+import javax.security.auth.Subject;
+
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.spring.security.converter.AuthenticationConverter;
+import org.apache.camel.component.spring.security.converter.DefaultAuthenticationConverter;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.RouteContext;
@@ -44,6 +48,7 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
     private static final transient Log LOG = LogFactory.getLog(SpringSecurityAuthorizationPolicy.class);
     private AccessDecisionManager accessDecisionManager;
     private AuthenticationManager authenticationManager;
+    private AuthenticationConverter authenticationConverter;
     private ApplicationEventPublisher eventPublisher;
     private SpringSecurityAccessPolicy accessPolicy;
     
@@ -88,7 +93,11 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
     }
     
     protected Authentication getAuthentication(Message message) {
-        Authentication answer = message.getHeader(Exchange.AUTHENTICATION, Authentication.class);
+        Subject subject = message.getHeader(Exchange.AUTHENTICATION, Subject.class);
+        Authentication answer = null;
+        if (subject != null) {
+            answer = getAuthenticationConverter().toAuthentication(subject);
+        }
         // try to get it from thread context as a fallback
         if (answer == null && useThreadSecurityContext) {
             answer = SecurityContextHolder.getContext().getAuthentication();
@@ -130,6 +139,8 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
 
         authentication = authenticationManager.authenticate(authentication);
         
+        System.out.println("The authenitcation is " + authentication);
+        
         if (LOG.isDebugEnabled()) {
             LOG.debug("Successfully Authenticated: " + authentication);
         }
@@ -141,6 +152,23 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);
         }
+    }
+
+    public AuthenticationConverter getAuthenticationConverter() {
+        if (authenticationConverter == null) {
+            synchronized (this) {
+                if (authenticationConverter != null) {
+                    return authenticationConverter;
+                } else {
+                    authenticationConverter = new DefaultAuthenticationConverter();
+                }
+            }
+        } 
+        return authenticationConverter;
+    }
+    
+    public void setAuthenticationConverter(AuthenticationConverter converter) {
+        this.authenticationConverter = converter;
     }
     
     public AccessDecisionManager getAccessDecisionManager() {

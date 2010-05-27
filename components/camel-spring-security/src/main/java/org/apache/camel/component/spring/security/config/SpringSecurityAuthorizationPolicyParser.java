@@ -45,6 +45,7 @@ public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParse
         
         setReferenceIfAttributeDefine(builder, element, "accessDecisionManager");
         setReferenceIfAttributeDefine(builder, element, "authenticationManager");
+        setReferenceIfAttributeDefine(builder, element, "authenticationConverter");
         
         BeanDefinitionBuilder accessPolicyBuilder = BeanDefinitionBuilder.genericBeanDefinition(
             SpringSecurityAccessPolicy.class.getCanonicalName());
