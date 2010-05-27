@@ -220,6 +220,14 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         Message cxfMessage = cxfExchange.getInMessage();
         propagateHeadersFromCxfToCamel(cxfMessage, camelExchange.getIn(), camelExchange);
         
+        // propagate the security subject from CXF security context
+        SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
+        if (securityContext != null && securityContext.getUserPrincipal() != null) {
+            Subject subject = new Subject();
+            subject.getPrincipals().add(securityContext.getUserPrincipal());
+            camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, subject);
+        }
+        
         // Propagating properties from CXF Exchange to Camel Exchange has an  
         // side effect of copying reply side stuff when the producer is retried.
         // So, we do not want to do this.
@@ -466,15 +474,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             } else {
                 ((List<?>)value).clear();
             }
-        }
-        
-        // propagate the security subject from CXF security context
-        SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
-        if (securityContext != null) {
-            Subject subject = new Subject();
-            subject.getPrincipals().add(securityContext.getUserPrincipal());
-            camelHeaders.put(Exchange.AUTHENTICATION, subject);
-        }
+        }       
     }
 
     @SuppressWarnings("unchecked")
