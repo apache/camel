@@ -20,6 +20,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class EchoSpringRemotingPojoOutOfCamelContextTest extends EchoSpringRemotingPojoTest {
+
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/echo-pojo-out-of-camelContext.xml");
     }
