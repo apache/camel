@@ -21,14 +21,14 @@ import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.TemporaryTopic;
 
-
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
  * for working with a {@link TemporaryTopic}
+ * <p/>
+ * <b>Important:</b> Need to be really careful to always use the same Connection otherwise the destination goes stale
  *
  * @version $Revision$
  */
-// TODO need to be really careful to always use the same Connection otherwise the destination goes stale
 public class JmsTemporaryTopicEndpoint extends JmsEndpoint implements DestinationEndpoint {
     private Destination jmsDestination;
 
@@ -57,8 +57,8 @@ public class JmsTemporaryTopicEndpoint extends JmsEndpoint implements Destinatio
     }
     
     @Override
-    // We don't want to manage this temporary object
     public Object getManagedObject(JmsEndpoint object) {
+        // We don't want to manage this temporary object
         return null;
     }
 
