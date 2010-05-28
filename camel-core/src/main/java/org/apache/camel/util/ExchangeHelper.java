@@ -78,7 +78,7 @@ public final class ExchangeHelper {
         if (value instanceof Endpoint) {
             endpoint = (Endpoint)value;
         } else {
-            String uri = value.toString();
+            String uri = value.toString().trim();
             endpoint = CamelContextHelper.getMandatoryEndpoint(exchange.getContext(), uri);
         }
         return endpoint;

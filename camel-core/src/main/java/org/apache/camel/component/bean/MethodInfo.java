@@ -33,6 +33,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -60,6 +61,7 @@ public class MethodInfo {
     private Expression parametersExpression;
     private ExchangePattern pattern = ExchangePattern.InOut;
     private RecipientList recipientList;
+    private RoutingSlip routingSlip;
 
     public MethodInfo(CamelContext camelContext, Class<?> type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
                       boolean hasCustomAnnotation, boolean hasHandlerAnnotation) {
@@ -75,6 +77,20 @@ public class MethodInfo {
         Pattern oneway = findOneWayAnnotation(method);
         if (oneway != null) {
             pattern = oneway.value();
+        }
+        
+        if (method.getAnnotation(org.apache.camel.RoutingSlip.class) != null
+                && matchContext(method.getAnnotation(org.apache.camel.RoutingSlip.class).context())) {
+            org.apache.camel.RoutingSlip annotation = method.getAnnotation(org.apache.camel.RoutingSlip.class);
+            routingSlip = new RoutingSlip(camelContext);
+            routingSlip.setDelimiter(annotation.delimiter());
+            routingSlip.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
+            // add created recipientList as a service so we have its lifecycle managed
+            try {
+                camelContext.addService(routingSlip);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
         }
 
         if (method.getAnnotation(org.apache.camel.RecipientList.class) != null
@@ -152,6 +168,13 @@ public class MethodInfo {
                     recipientList.sendToRecipientList(exchange, result);
                     // we don't want to return the list of endpoints
                     // return Void to indicate to BeanProcessor that there is no reply
+                    return Void.TYPE;
+                }
+                if (routingSlip != null) {
+                    if (!routingSlip.isStarted()) {
+                        ServiceHelper.startService(routingSlip);
+                    }
+                    routingSlip.doRoutingSlip(exchange, result);
                     return Void.TYPE;
                 }
                 return result;

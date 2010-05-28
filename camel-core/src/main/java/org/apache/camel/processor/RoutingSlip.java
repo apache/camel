@@ -16,15 +16,19 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Iterator;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Expression;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
@@ -46,14 +50,23 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
     private static final transient Log LOG = LogFactory.getLog(RoutingSlip.class);
     private ProducerCache producerCache;
     private boolean ignoreInvalidEndpoints;
-    private final String header;
-    private final String uriDelimiter;
+    private String header;
+    private Expression expression;    
+    private String uriDelimiter;
     private final CamelContext camelContext;
+    
+    public RoutingSlip(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
+    // This method will be replaced by the construction method with the expression
+    @Deprecated
     public RoutingSlip(CamelContext camelContext, String header) {
         this(camelContext, header, RoutingSlipDefinition.DEFAULT_DELIMITER);
     }
 
+ // This method will be replaced by the construction method with the expression
+    @Deprecated
     public RoutingSlip(CamelContext camelContext, String header, String uriDelimiter) {
         notNull(camelContext, "camelContext");
         notNull(header, "header");
@@ -61,7 +74,22 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
 
         this.camelContext = camelContext;
         this.header = header;
+        expression = ExpressionBuilder.headerExpression(header);
         this.uriDelimiter = uriDelimiter;
+    }
+    
+    public RoutingSlip(CamelContext camelContext, Expression expression, String uriDelimiter) {
+        notNull(camelContext, "camelContext");
+        notNull(expression, "expression");
+        
+        this.camelContext = camelContext;
+        this.expression = expression;
+        this.uriDelimiter = uriDelimiter;
+        this.header = null;
+    }
+    
+    public void setDelimiter(String delimiter) {
+        this.uriDelimiter = delimiter;
     }
     
     public boolean isIgnoreInvalidEndpoints() {
@@ -74,26 +102,31 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
 
     @Override
     public String toString() {
-        return "RoutingSlip[header=" + header + " uriDelimiter=" + uriDelimiter + "]";
+        return "RoutingSlip[expression=" + expression + " uriDelimiter=" + uriDelimiter + "]";
     }
 
     public String getTraceLabel() {
-        return "routingSlip[" + header + "]";
+        return "routingSlip[" + expression + "]";
     }
 
     public void process(Exchange exchange) throws Exception {
         if (!isStarted()) {
             throw new IllegalStateException("RoutingSlip has not been started: " + this);
-        }
-
-        Message message = exchange.getIn();
-        String[] recipients = recipients(message);
+        }        
+       
+        Object routingSlip = expression.evaluate(exchange, Object.class);
+        doRoutingSlip(exchange, routingSlip);        
+    }
+    
+    public void doRoutingSlip(Exchange exchange, Object routingSlip) throws Exception {
+        Iterator<Object> iter = ObjectHelper.createIterator(routingSlip, uriDelimiter);
         Exchange current = exchange;
 
-        for (String nextRecipient : recipients) {
+        while (iter.hasNext()) {
+            Object nextRecipient = iter.next();
             Endpoint endpoint;
             try {
-                endpoint = resolveEndpoint(exchange, nextRecipient.trim());
+                endpoint = resolveEndpoint(exchange, nextRecipient);
             } catch (Exception e) {
                 if (isIgnoreInvalidEndpoints()) {
                     LOG.info("Endpoint uri is invalid: " + nextRecipient + ". This exception will be ignored.", e);
@@ -104,7 +137,7 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
             }
 
             Exchange copy = new DefaultExchange(current);
-            updateRoutingSlip(current);
+            updateRoutingSlipHeader(current);
             copyOutToIn(copy, current);
 
             try {                
@@ -178,16 +211,19 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
         ServiceHelper.stopService(producerCache);
     }
 
-    private void updateRoutingSlip(Exchange current) {
-        Message message = getResultMessage(current);
-        String oldSlip = message.getHeader(header, String.class);
-        if (oldSlip != null) {
-            int delimiterIndex = oldSlip.indexOf(uriDelimiter);
-            String newSlip = delimiterIndex > 0 ? oldSlip.substring(delimiterIndex + 1) : "";
-            message.setHeader(header, newSlip);
+    private void updateRoutingSlipHeader(Exchange current) {
+        // only update the header value which used as the routingslip
+        if (header != null) {
+            Message message = getResultMessage(current);
+            String oldSlip = message.getHeader(header, String.class);
+            if (oldSlip != null) {
+                int delimiterIndex = oldSlip.indexOf(uriDelimiter);
+                String newSlip = delimiterIndex > 0 ? oldSlip.substring(delimiterIndex + 1) : "";
+                message.setHeader(header, newSlip);
+            }
         }
     }
-
+    
     /**
      * Returns the outbound message if available. Otherwise return the inbound
      * message.
@@ -201,17 +237,7 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
         }
     }
 
-    /**
-     * Return the list of recipients defined in the routing slip in the
-     * specified message.
-     */
-    private String[] recipients(Message message) {
-        Object headerValue = message.getHeader(header);
-        if (ObjectHelper.isNotEmpty(headerValue)) {
-            return headerValue.toString().split(uriDelimiter);
-        }
-        return new String[]{};
-    }
+    
 
     /**
      * Copy the outbound data in 'source' to the inbound data in 'result'.
