@@ -32,6 +32,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.Service;
+import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spring.util.ReflectionUtils;

@@ -18,18 +18,12 @@ package org.apache.camel.spring;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Endpoint;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.DefaultProducerTemplate;
-import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.core.xml.AbstractCamelProducerTemplateFactoryBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -45,95 +39,18 @@ import org.springframework.context.ApplicationContextAware;
  */
 @XmlRootElement(name = "template")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelProducerTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, DisposableBean, CamelContextAware, ApplicationContextAware {
-    @XmlTransient
-    private ProducerTemplate template;
-    @XmlAttribute(required = false)
-    private String defaultEndpoint;
-    @XmlAttribute
-    private String camelContextId;
-    @XmlTransient
-    private CamelContext camelContext;
+public class CamelProducerTemplateFactoryBean extends AbstractCamelProducerTemplateFactoryBean implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware {
+
     @XmlTransient
     private ApplicationContext applicationContext;
-    @XmlAttribute
-    private Integer maximumCacheSize;
 
-    public void afterPropertiesSet() throws Exception {
-        if (camelContext == null && camelContextId != null) {
-            camelContext = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
-        }
-        if (camelContext == null) {
-            throw new IllegalArgumentException("A CamelContext or a CamelContextId must be injected!");
-        }
-    }
-
-    public Object getObject() throws Exception {
-        CamelContext context = getCamelContext();
-        if (defaultEndpoint != null) {
-            Endpoint endpoint = context.getEndpoint(defaultEndpoint);
-            if (endpoint == null) {
-                throw new IllegalArgumentException("No endpoint found for URI: " + defaultEndpoint);
-            } else {
-                template = new DefaultProducerTemplate(context, endpoint);
-            }
-        } else {
-            template = new DefaultProducerTemplate(context);
-        }
-
-        // set custom cache size if provided
-        if (maximumCacheSize != null) {
-            template.setMaximumCacheSize(maximumCacheSize);
-        }
-
-        // must start it so its ready to use
-        ServiceHelper.startService(template);
-        return template;
-    }
-
-    public Class getObjectType() {
-        return DefaultProducerTemplate.class;
-    }
-
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public void destroy() throws Exception {
-        ServiceHelper.stopService(template);
-    }
-
-    // Properties
-    // -------------------------------------------------------------------------
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
-    /**
-     * Sets the default endpoint URI used by default for sending message exchanges
-     */
-    public void setDefaultEndpoint(String defaultEndpoint) {
-        this.defaultEndpoint = defaultEndpoint;
-    }
-
-    public void setCamelContextId(String camelContextId) {
-        this.camelContextId = camelContextId;
+    @Override
+    protected CamelContext getCamelContextWithId(String camelContextId) {
+        return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-    }
-
-    public Integer getMaximumCacheSize() {
-        return maximumCacheSize;
-    }
-
-    public void setMaximumCacheSize(Integer maximumCacheSize) {
-        this.maximumCacheSize = maximumCacheSize;
     }
 
 }

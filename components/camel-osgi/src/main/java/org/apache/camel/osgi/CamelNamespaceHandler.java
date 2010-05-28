@@ -19,6 +19,8 @@ package org.apache.camel.osgi;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.camel.osgi.CamelContextFactoryBean;
+
 public class CamelNamespaceHandler extends org.apache.camel.spring.handler.CamelNamespaceHandler {
 
     public void init() {
@@ -29,7 +31,7 @@ public class CamelNamespaceHandler extends org.apache.camel.spring.handler.Camel
     // It just add the package of the class for initiate the JAXB context
     protected Set<Class> getJaxbPackages() {
         Set<Class> classes = new HashSet<Class>();
-        classes.add(org.apache.camel.osgi.CamelContextFactoryBean.class);
+        classes.add(CamelContextFactoryBean.class);
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
         classes.add(org.apache.camel.ExchangePattern.class);
         classes.add(org.apache.camel.model.RouteDefinition.class);

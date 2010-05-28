@@ -26,6 +26,8 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.camel.core.xml.CamelJMXAgentDefinition;
+import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -39,9 +41,7 @@ import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelConsumerTemplateFactoryBean;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.CamelEndpointFactoryBean;
-import org.apache.camel.spring.CamelJMXAgentDefinition;
 import org.apache.camel.spring.CamelProducerTemplateFactoryBean;
-import org.apache.camel.spring.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.spring.CamelRouteContextFactoryBean;
 import org.apache.camel.spring.CamelThreadPoolFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
@@ -183,6 +183,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected Set<Class> getJaxbPackages() {
         Set<Class> classes = new HashSet<Class>();
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
+        classes.add(CamelJMXAgentDefinition.class);
         classes.add(org.apache.camel.ExchangePattern.class);
         classes.add(org.apache.camel.model.RouteDefinition.class);
         classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);

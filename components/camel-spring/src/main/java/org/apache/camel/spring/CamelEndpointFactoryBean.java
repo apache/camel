@@ -18,13 +18,12 @@ package org.apache.camel.spring;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
+import org.apache.camel.core.xml.AbstractCamelEndpointFactoryBean;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
@@ -33,8 +32,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 /**
  * A {@link FactoryBean} which instantiates {@link Endpoint} objects
  *
@@ -42,80 +39,17 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware, ApplicationContextAware {
-    @XmlAttribute
-    private String uri;
-    @XmlAttribute
-    private String camelContextId;
-    @XmlTransient
-    private CamelContext context;    
-    @XmlTransient
-    private Endpoint endpoint;
+public class CamelEndpointFactoryBean extends AbstractCamelEndpointFactoryBean implements FactoryBean, ApplicationContextAware {
     @XmlTransient
     private ApplicationContext applicationContext;
 
-    public Object getObject() throws Exception {
-        if (endpoint == null) {
-            endpoint = createEndpoint();
-        }
-        return endpoint;
-    }
-
-    public Class getObjectType() {
-        return Endpoint.class;
-    }
-    
-    public boolean isSingleton() {
-        return true;
-    }
-    
-    public CamelContext getCamelContext() {
-        return context;
-    }
-    
-
-    /**
-     * Sets the context to use to resolve endpoints
-     *
-     * @param context the context used to resolve endpoints
-     */
-    public void setCamelContext(CamelContext context) {
-        this.context = context;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    /**
-     * Sets the URI to use to resolve the endpoint
-     *
-     * @param uri the URI used to set the endpoint
-     */
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    protected Endpoint createEndpoint() {
-        if (context == null && camelContextId != null) {
-            context = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
-        }
-        notNull(context, "context");
-        notNull(uri, "uri");
-        
-        Endpoint endpoint = context.getEndpoint(uri);
-        if (endpoint == null) {
-            throw new NoSuchEndpointException(uri);
-        }
-        return endpoint;
+    @Override
+    protected CamelContext getCamelContextWithId(String camelContextId) {
+        return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
-    public void setCamelContextId(String camelContextId) {
-        this.camelContextId = camelContextId;
-    }
-   
 }

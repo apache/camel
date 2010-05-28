@@ -14,11 +14,8 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-#CamelBeanPostProcessor
 CamelConsumerTemplateFactoryBean
 CamelContextFactoryBean
 CamelEndpointFactoryBean
-CamelJMXAgentDefinition
 CamelProducerTemplateFactoryBean
-CamelProxyFactoryDefinition
-CamelServiceExporterDefinition
+CamelThreadPoolFactoryBean

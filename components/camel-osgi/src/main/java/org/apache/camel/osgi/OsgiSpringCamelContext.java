@@ -16,12 +16,8 @@
  */
 package org.apache.camel.osgi;
 
-import java.util.List;
-
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
-import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.converter.TypeConverterLoader;
+import org.apache.camel.core.osgi.OsgiCamelContextHelper;
 import org.apache.camel.spring.SpringCamelContext;
 import org.osgi.framework.BundleContext;
 import org.springframework.context.ApplicationContext;

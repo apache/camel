@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
 
-import org.apache.camel.spring.PatternBasedPackageScanFilter;
+import org.apache.camel.core.xml.scan.PatternBasedPackageScanFilter;
 import org.apache.camel.util.CollectionHelper;
 
 public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.scan.ScanTestSupport {

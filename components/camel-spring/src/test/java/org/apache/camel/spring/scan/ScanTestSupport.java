@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.TestCase;
-import org.apache.camel.spring.PatternBasedPackageScanFilter;
+import org.apache.camel.core.xml.scan.PatternBasedPackageScanFilter;
 
 public abstract class ScanTestSupport extends TestCase {
 

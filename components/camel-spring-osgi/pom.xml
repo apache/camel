@@ -20,7 +20,7 @@
         !org.apache.camel.component.event,
         !org.apache.camel.component.validator,
         !org.apache.camel.component.xslt,
-        !org.aapche.camel.osgi.*,
+        !org.apache.camel.osgi.*,
         org.apache.camel.*;${camel.osgi.import.strict.version},
         org.osgi.framework;version="[1.3,2)",
         org.springframework.osgi.*;version="[1.2,2)",
@@ -37,7 +37,7 @@
         org.apache.camel.component.xslt;${camel.osgi.split.pkg};${camel.osgi.version}
       </camel.osgi.export>
       <camel.osgi.activator>
-        org.apache.camel.osgi.Activator
+        org.apache.camel.core.osgi.Activator
       </camel.osgi.activator>
   </properties>
 
@@ -50,6 +50,15 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-osgi</artifactId>
     </dependency> 
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-core</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <resources>

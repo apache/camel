@@ -17,7 +17,6 @@
 package org.apache.camel.blueprint;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,18 +24,11 @@ public class BlueprintCamelContext extends DefaultCamelContext {
 
     private static final transient Log LOG = LogFactory.getLog(BlueprintCamelContext.class);
 
-    private boolean shouldStartContext = ObjectHelper.getSystemProperty("shouldStartContext", Boolean.TRUE);
-
     public void init() throws Exception {
         maybeStart();
     }
 
     private void maybeStart() throws Exception {
-        if (!getShouldStartContext()) {
-            LOG.info("Not starting Apache Camel as property ShouldStartContext is false");
-            return;
-        }
-
         if (!isStarted() && !isStarting()) {
             // Make sure we will not get into the endless loop of calling star
             LOG.info("Starting Apache Camel as property ShouldStartContext is true");
@@ -49,14 +41,6 @@ public class BlueprintCamelContext extends DefaultCamelContext {
 
     public void destroy() throws Exception {
         stop();
-    }
-
-    public void setShouldStartContext(boolean shouldStartContext) {
-        this.shouldStartContext = shouldStartContext;
-    }
-
-    public boolean getShouldStartContext() {
-        return shouldStartContext;
     }
 
 }

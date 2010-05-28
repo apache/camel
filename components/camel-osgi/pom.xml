@@ -26,26 +26,8 @@
   </parent>
 
   <artifactId>camel-osgi</artifactId>
-  <packaging>bundle</packaging>
   <name>Camel :: OSGi</name>
   <description>Camel OSGi support</description>
-
-  <properties>
-    <camel.osgi.export.pkg>
-        org.apache.camel.osgi.*
-    </camel.osgi.export.pkg>
-    <camel.osgi.import.pkg>
-        !org.apache.camel.osgi.*,
-        org.osgi.framework;version="[1.3,2)",
-        org.apache.camel.*;${camel.osgi.import.strict.version},
-        org.springframework.osgi.*;version="[1.2,2)",
-        ${camel.osgi.import.defaults},
-        *
-    </camel.osgi.import.pkg>
-    <camel.osgi.activator>
-        org.apache.camel.osgi.Activator
-    </camel.osgi.activator>
-  </properties>
 
   <dependencies>
 
@@ -58,31 +40,17 @@
       <artifactId>camel-spring</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>spring-osgi-core</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>org.springframework.aop</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>org.springframework.beans</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>org.springframework.context</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>org.springframework.core</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core-osgi</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.osgi.core</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-core</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.xml.bind</groupId>
@@ -144,41 +112,5 @@
       <url>http://repository.springsource.com/maven/bundles/external</url>
     </repository>
   </repositories>
-
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-    <plugins>
-	  <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>${basedir}/src/main/resources/camel-osgi.xsd</file>
-                  <type>xsd</type>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-    </plugins>
-  </build>
 
 </project>

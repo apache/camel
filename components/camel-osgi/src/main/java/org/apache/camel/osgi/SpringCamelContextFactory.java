@@ -17,6 +17,7 @@
 package org.apache.camel.osgi;
 
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.osgi.CamelContextFactory;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

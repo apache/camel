@@ -250,6 +250,16 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-core-xml</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-core-osgi</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-crypto</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1282,6 +1292,13 @@
         <groupId>org.apache.ftpserver</groupId>
         <artifactId>ftplet-api</artifactId>
         <version>${ftpserver-version}</version>
+      </dependency>
+
+      <!-- blueprint -->
+      <dependency>
+        <groupId>org.apache.aries.blueprint</groupId>
+        <artifactId>org.apache.aries.blueprint</artifactId>
+        <version>0.1-incubating</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
