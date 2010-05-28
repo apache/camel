@@ -120,11 +120,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public static JmsEndpoint newInstance(Destination destination) throws JMSException {
         if (destination instanceof TemporaryQueue) {
             return new JmsTemporaryQueueEndpoint((TemporaryQueue) destination);
-        }
-        if (destination instanceof TemporaryTopic) {
+        } else if (destination instanceof TemporaryTopic) {
             return new JmsTemporaryTopicEndpoint((TemporaryTopic) destination);
-        }
-        if (destination instanceof Queue) {
+        } else if (destination instanceof Queue) {
             return new JmsQueueEndpoint((Queue) destination);
         } else {
             return new JmsEndpoint((Topic) destination);
