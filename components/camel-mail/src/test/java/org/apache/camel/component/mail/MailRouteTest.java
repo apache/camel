@@ -62,6 +62,36 @@ public class MailRouteTest extends ContextTestSupport {
 
         assertMailboxReceivedMessages("route-test-copy@localhost");
     }
+    
+  
+    public void testMailSubjectWithUnicode() throws Exception {
+        Mailbox.clearAll();
+
+        String body = "Hello Camel Riders!";
+        String subject = "My Camel \u2122";
+        
+        System.setProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "US-ASCII");
+
+        try {
+            MockEndpoint mock = getMockEndpoint("mock:result");
+        
+            mock.expectedMessageCount(1);
+            // now we don't use the UTF-8 encoding
+            mock.expectedHeaderReceived("subject", "=?US-ASCII?Q?My_Camel_=3F?=");
+            mock.expectedBodiesReceived(body);
+    
+            template.sendBodyAndHeader("direct:a", body, "subject", subject);
+    
+            mock.assertIsSatisfied();
+    
+            assertFalse("Should not have attachements",
+                        mock.getExchanges().get(0).getIn().hasAttachments());
+        } finally {
+            System.clearProperty(Exchange.DEFAULT_CHARSET_PROPERTY);
+        }
+        
+    }
+
 
     protected void assertMailboxReceivedMessages(String name) throws IOException, MessagingException {
         Mailbox mailbox = Mailbox.get(name);
