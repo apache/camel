@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
-    private MySynchronization mySynchronization;
+    private MySynchronization mySynchronization = new MySynchronization();
 
     public void testConstructor() {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper();
@@ -72,7 +72,6 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     }
 
     public void testConsumeSynchronization() throws Exception {
-        mySynchronization = new MySynchronization();
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
         MyConsumeAndSynchronizationBean my = new MyConsumeAndSynchronizationBean();
@@ -86,7 +85,10 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should have invoked onDone", true, mySynchronization.isOnDone());
+        // give UoW a bit of time
+        Thread.sleep(500);
+
+        assertTrue("Should have invoked onDone", mySynchronization.isOnDone());
     }
 
     public void testEndpointInjectProducerTemplate() throws Exception {
