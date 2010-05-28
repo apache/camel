@@ -42,6 +42,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -91,7 +92,7 @@ public class MailBinding {
         // and headers the headers win.
         String subject = endpoint.getConfiguration().getSubject();
         if (subject != null) {
-            mimeMessage.setHeader("Subject", subject);
+            mimeMessage.setSubject(subject, IOConverter.getCharsetName(exchange));
         }
 
         // append the rest of the headers (no recipients) that could be subject, reply-to etc.
@@ -323,7 +324,10 @@ public class MailBinding {
             if (headerValue != null) {
                 if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
-
+                    if (headerName.equalsIgnoreCase("subject")) {
+                        mimeMessage.setSubject(asString(exchange, headerValue), IOConverter.getCharsetName(exchange));
+                        continue;
+                    }
                     if (isRecipientHeader(headerName)) {
                         // skip any recipients as they are handled specially
                         continue;
