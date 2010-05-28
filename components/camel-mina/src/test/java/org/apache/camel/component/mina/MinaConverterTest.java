@@ -52,6 +52,20 @@ public class MinaConverterTest extends TestCase {
         assertEquals("Hello World \u4f60\u597d", out);
     }
 
+    public void testToStringTwoTimes() throws UnsupportedEncodingException {
+        String in = "Hello World \u4f60\u597d";
+        ByteBuffer bb = ByteBuffer.wrap(in.getBytes("UTF-8"));
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
+
+        String out = MinaConverter.toString(bb, exchange);
+        assertEquals("Hello World \u4f60\u597d", out);
+
+        // should be possible to convert to string without affecting the ByteBuffer
+        out = MinaConverter.toString(bb, exchange);
+        assertEquals("Hello World \u4f60\u597d", out);
+    }
+
     public void testToInputStream() throws Exception {
         byte[] in = "Hello World".getBytes();
         ByteBuffer bb = ByteBuffer.wrap(in);
