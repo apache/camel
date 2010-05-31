@@ -35,6 +35,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
+import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -49,7 +50,6 @@ import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -75,7 +75,8 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("unused")
-public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<SpringCamelContext> implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
+public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<SpringCamelContext> 
+    implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
     private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
 
     @XmlAttribute(name = "depends-on", required = false)

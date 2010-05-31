@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.handler;
 
-import org.apache.camel.spring.ErrorHandlerType;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -24,8 +23,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.spring.ErrorHandlerType;
 import org.apache.camel.util.ObjectHelper;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;

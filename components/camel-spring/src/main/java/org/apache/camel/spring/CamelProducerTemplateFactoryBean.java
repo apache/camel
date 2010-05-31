@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.apache.camel.core.xml.AbstractCamelProducerTemplateFactoryBean;
+import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;

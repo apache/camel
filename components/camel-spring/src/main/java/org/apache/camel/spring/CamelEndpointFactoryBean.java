@@ -24,8 +24,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.core.xml.AbstractCamelEndpointFactoryBean;
-import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
