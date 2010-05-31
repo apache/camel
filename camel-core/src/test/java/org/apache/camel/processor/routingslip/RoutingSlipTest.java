@@ -17,6 +17,7 @@
 package org.apache.camel.processor.routingslip;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -30,12 +31,10 @@ public class RoutingSlipTest extends ContextTestSupport {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
         MockEndpoint z = getMockEndpoint("mock:z");
-
-        // at each destination, the routing slip should contain
-        // the remaining destinations
-        x.expectedHeaderReceived(ROUTING_SLIP_HEADER, "mock:y,mock:z");
-        y.expectedHeaderReceived(ROUTING_SLIP_HEADER, "mock:z");
-        z.expectedHeaderReceived(ROUTING_SLIP_HEADER, "");
+        
+        x.expectedBodiesReceived(ANSWER);
+        y.expectedBodiesReceived(ANSWER);
+        z.expectedBodiesReceived(ANSWER);
 
         sendBody("direct:a", ROUTING_SLIP_HEADER, ",");
 
@@ -47,11 +46,9 @@ public class RoutingSlipTest extends ContextTestSupport {
         MockEndpoint y = getMockEndpoint("mock:y");
         MockEndpoint z = getMockEndpoint("mock:z");
 
-        // at each destination, the routing slip should contain
-        // the remaining destinations
-        x.expectedHeaderReceived("aRoutingSlipHeader", "mock:y,mock:z");
-        y.expectedHeaderReceived("aRoutingSlipHeader", "mock:z");
-        z.expectedHeaderReceived("aRoutingSlipHeader", "");
+        x.expectedBodiesReceived(ANSWER);
+        y.expectedBodiesReceived(ANSWER);
+        z.expectedBodiesReceived(ANSWER);
 
         sendBody("direct:b", "aRoutingSlipHeader", ",");
 
@@ -63,15 +60,27 @@ public class RoutingSlipTest extends ContextTestSupport {
         MockEndpoint y = getMockEndpoint("mock:y");
         MockEndpoint z = getMockEndpoint("mock:z");
 
-        // at each destination, the routing slip should contain
-        // the remaining destinations
-        x.expectedHeaderReceived("aRoutingSlipHeader", "mock:y#mock:z");
-        y.expectedHeaderReceived("aRoutingSlipHeader", "mock:z");
-        z.expectedHeaderReceived("aRoutingSlipHeader", "");
+        x.expectedBodiesReceived(ANSWER);
+        y.expectedBodiesReceived(ANSWER);
+        z.expectedBodiesReceived(ANSWER);
 
         sendBody("direct:c", "aRoutingSlipHeader", "#");
 
         assertMockEndpointsSatisfied();
+    }
+    
+    public void testBodyExpression() throws Exception {
+        MockEndpoint x = getMockEndpoint("mock:x");
+        MockEndpoint y = getMockEndpoint("mock:y");
+        MockEndpoint z = getMockEndpoint("mock:z");
+        
+        x.expectedBodiesReceived("mock:x, mock:y,mock:z");
+        y.expectedBodiesReceived("mock:x, mock:y,mock:z");
+        z.expectedBodiesReceived("mock:x, mock:y,mock:z");
+        
+        template.sendBody("direct:d", "mock:x, mock:y,mock:z");
+        assertMockEndpointsSatisfied();
+
     }
 
     public void testMessagePassingThrough() throws Exception {
@@ -122,12 +131,16 @@ public class RoutingSlipTest extends ContextTestSupport {
                 // END SNIPPET: e1
 
                 // START SNIPPET: e2
-                from("direct:b").routingSlip("aRoutingSlipHeader");
+                from("direct:b").routingSlip(ExpressionBuilder.headerExpression("aRoutingSlipHeader"));
                 // END SNIPPET: e2
 
                 // START SNIPPET: e3
                 from("direct:c").routingSlip("aRoutingSlipHeader", "#");
                 // END SNIPPET: e3
+                
+                // START SNIPPET: e4
+                from("direct:d").routingSlip(ExpressionBuilder.bodyExpression());
+                // END SNIPPET: e4
             }
         };
     }

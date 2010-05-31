@@ -24,24 +24,38 @@
 
   <!--
     from("direct:a").routingSlip("myHeader").to("mock:end");
-    from("direct:b").routingSlip("aRoutingSlipHeader");
+    from("direct:b").routingSlip(ExpressionBuilder.headerExpression("aRoutingSlipHeader"));
     from("direct:c").routingSlip("aRoutingSlipHeader", "#");
+    from("direct:d").routingSlip(ExpressionBuilder.bodyExpression());
   -->
   <camelContext id="camel"
     xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:a" />
-      <routingSlip headerName="myHeader"/>
+      <routingSlip>
+      	<simple>${header.myHeader}</simple>
+      </routingSlip>
       <to uri="mock:end" />
     </route>
     <route>
       <from uri="direct:b" />
-      <routingSlip headerName="aRoutingSlipHeader" />
+      <routingSlip>
+      	<simple>${header.aRoutingSlipHeader}</simple>
+      </routingSlip>	
     </route>
     <route>
       <from uri="direct:c" />
-      <routingSlip headerName="aRoutingSlipHeader" uriDelimiter="#" />
+      <routingSlip uriDelimiter="#">
+         <simple>${header.aRoutingSlipHeader}</simple>
+      </routingSlip>
     </route>
+    <route>
+      <from uri="direct:d" />
+      <routingSlip>
+         <simple>${body}</simple>
+      </routingSlip>
+    </route>
+    
   </camelContext>
 
 </beans>
