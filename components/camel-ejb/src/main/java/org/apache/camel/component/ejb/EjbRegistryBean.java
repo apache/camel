@@ -28,13 +28,21 @@ import org.apache.camel.spi.Registry;
  */
 public class EjbRegistryBean extends RegistryBean {
 
+    private Registry registry;
+
     public EjbRegistryBean(Registry registry, CamelContext context, String name) {
-        super(registry, context, name);
+        super(context, name);
+        this.registry = registry;
     }
 
     @Override
     public String toString() {
         return "ejb: " + getName();
     }
-    
+
+    protected Object lookupBean() {
+        // TODO: override lookupBean to be backwards compatible with Camel 2.3.0
+        return registry.lookup(getName());
+    }
+
 }
