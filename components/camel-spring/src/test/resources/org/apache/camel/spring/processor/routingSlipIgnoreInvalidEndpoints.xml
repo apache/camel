@@ -25,7 +25,7 @@
     <route>
       <from uri="direct:a" />
       <routingSlip ignoreInvalidEndpoints="true">
-         <simple>${header.myHeader}</simple>
+         <header>myHeader</header>
       </routingSlip>
       <to uri="mock:end"/>     
     </route>

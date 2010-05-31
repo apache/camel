@@ -33,20 +33,20 @@
     <route>
       <from uri="direct:a" />
       <routingSlip>
-      	<simple>${header.myHeader}</simple>
+      	<header>myHeader</header>
       </routingSlip>
       <to uri="mock:end" />
     </route>
     <route>
       <from uri="direct:b" />
       <routingSlip>
-      	<simple>${header.aRoutingSlipHeader}</simple>
+      	<header>aRoutingSlipHeader</header>
       </routingSlip>	
     </route>
     <route>
       <from uri="direct:c" />
       <routingSlip uriDelimiter="#">
-         <simple>${header.aRoutingSlipHeader}</simple>
+         <header>aRoutingSlipHeader</header>
       </routingSlip>
     </route>
     <route>

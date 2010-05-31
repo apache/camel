@@ -139,7 +139,7 @@ public class RoutingSlipTest extends ContextTestSupport {
                 // END SNIPPET: e3
                 
                 // START SNIPPET: e4
-                from("direct:d").routingSlip(ExpressionBuilder.bodyExpression());
+                from("direct:d").routingSlip(body());
                 // END SNIPPET: e4
             }
         };
