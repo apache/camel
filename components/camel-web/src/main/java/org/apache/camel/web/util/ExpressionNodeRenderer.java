@@ -24,6 +24,7 @@ import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.LoopDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;
+import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SetOutHeaderDefinition;
@@ -59,7 +60,17 @@ public final class ExpressionNodeRenderer {
             buffer.append("(");
             ExpressionRenderer.render(buffer, expression);
             buffer.append(")");
-        } else if (expNode instanceof SetBodyDefinition) {
+        } else if (expNode instanceof RoutingSlipDefinition) {            
+            ExpressionDefinition expression = expNode.getExpression();
+            buffer.append("(");
+            ExpressionRenderer.render(buffer, expression);
+            if (((RoutingSlipDefinition)expNode).getUriDelimiter() != null) {
+                buffer.append(", \"");
+                buffer.append(((RoutingSlipDefinition)expNode).getUriDelimiter());
+                buffer.append("\"");
+            }
+            buffer.append(")");
+        } else if (expNode instanceof SetBodyDefinition) {        
             renderSetBody(buffer, expNode);
         } else if (expNode instanceof SetHeaderDefinition) {
             renderSetHeader(buffer, expNode);
