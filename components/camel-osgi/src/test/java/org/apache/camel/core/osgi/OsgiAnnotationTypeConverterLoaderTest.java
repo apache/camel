@@ -16,7 +16,6 @@
  */
 package org.apache.camel.core.osgi;
 
-import org.apache.camel.core.osgi.OsgiAnnotationTypeConverterLoader;
 import org.apache.camel.osgi.test.MockTypeConverterRegistry;
 import org.junit.Test;
 

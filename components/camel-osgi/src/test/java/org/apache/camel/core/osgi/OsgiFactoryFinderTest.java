@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.impl.DefaultClassResolver;
-import org.apache.camel.core.osgi.OsgiFactoryFinder;
 import org.junit.Test;
 
 public class OsgiFactoryFinderTest extends CamelOsgiTestSupport {

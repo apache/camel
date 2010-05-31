@@ -16,9 +16,6 @@
  */
 package org.apache.camel.core.osgi;
 
-import org.apache.camel.core.osgi.Activator;
-import org.apache.camel.core.osgi.OsgiClassResolver;
-import org.apache.camel.core.osgi.OsgiPackageScanClassResolver;
 import org.apache.camel.spi.ClassResolver;
 import org.junit.After;
 import org.junit.Assert;

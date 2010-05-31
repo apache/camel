@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.apache.camel.core.osgi.Activator;
 import org.springframework.osgi.mock.MockBundle;
 
 /**

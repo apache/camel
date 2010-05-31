@@ -19,8 +19,6 @@ package org.apache.camel.osgi;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.camel.osgi.CamelContextFactoryBean;
-
 public class CamelNamespaceHandler extends org.apache.camel.spring.handler.CamelNamespaceHandler {
 
     public void init() {

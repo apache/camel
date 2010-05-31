@@ -16,8 +16,8 @@
  */
 package org.apache.camel.osgi;
 
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;

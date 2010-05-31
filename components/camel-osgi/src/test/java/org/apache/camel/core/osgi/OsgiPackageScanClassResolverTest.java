@@ -21,8 +21,6 @@ import java.util.Set;
 
 import org.apache.camel.Converter;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.core.osgi.Activator;
-import org.apache.camel.core.osgi.OsgiPackageScanClassResolver;
 import org.apache.camel.osgi.test.MyRouteBuilder;
 import org.apache.camel.osgi.test.MyTypeConverter;
 import org.junit.Test;
