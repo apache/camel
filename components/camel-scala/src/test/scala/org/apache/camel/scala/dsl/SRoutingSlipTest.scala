@@ -32,6 +32,8 @@ class SRoutingSlipTest extends RoutingSlipTest with RouteBuilderSupport {
     }
 
     "direct:c" routingSlip("aRoutingSlipHeader", "#")
+    
+    "direct:d" routingSlip(_.in[String])
   }
 
 }
