@@ -43,6 +43,12 @@ public class RegistryBean implements BeanHolder {
         this.registry = context.getRegistry();
     }
 
+    public RegistryBean(Registry registry, CamelContext context, String name) {
+        this.registry = registry;
+        this.context = context;
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "bean: " + name;

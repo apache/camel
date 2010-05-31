@@ -46,6 +46,7 @@
     <module>camel-cxf</module>
     <module>camel-dozer</module>
     <module>camel-eclipse</module>
+    <module>camel-ejb</module>
     <module>camel-exec</module>
     <module>camel-flatpack</module>
     <module>camel-freemarker</module>
