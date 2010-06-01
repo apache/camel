@@ -262,10 +262,6 @@
                   <file>${project.build.directory}/schema/camel-spring.xsd</file>
                   <type>xsd</type>
                 </artifact>
-                <artifact>
-                  <file>${project.build.directory}/schema/camel-spring-v${camel.schema.version}</file>
-                  <type>xsd</type>
-                </artifact>
               </artifacts>
             </configuration>
           </execution>
