@@ -44,6 +44,9 @@
 			org.apache.camel.core.osgi*,
 			org.apache.camel.core.xml*
 		</camel.osgi.private.pkg>
+        <camel.osgi.activator>
+            org.apache.camel.core.osgi.Activator
+        </camel.osgi.activator>
     </properties>
 
     <dependencies>

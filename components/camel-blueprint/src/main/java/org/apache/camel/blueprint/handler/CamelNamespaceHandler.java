@@ -106,7 +106,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             factory2.setId(".camelBlueprint.factory." + contextId);
             factory2.setFactoryComponent(factory);
             factory2.setFactoryMethod("call");
-            factory2.setInitMethod("init");
+            factory2.setInitMethod("afterPropertiesSet");
             factory2.setDestroyMethod("destroy");
 
             MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
