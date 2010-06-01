@@ -81,6 +81,12 @@
             <artifactId>camel-spring</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax-mail-version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- to allow Spring annotations (jmx) to be tested -->
         <dependency>
             <groupId>org.springframework</groupId>

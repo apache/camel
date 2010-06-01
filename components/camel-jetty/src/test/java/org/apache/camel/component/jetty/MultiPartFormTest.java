@@ -70,8 +70,13 @@ public class MultiPartFormTest extends CamelTestSupport {
                         assertEquals("Get a wrong attachement size", 1, in.getAttachments().size());
                         // The file name is attachment id
                         DataHandler data = in.getAttachment("NOTICE.txt");
+
                         assertNotNull("Should get the DataHandle NOTICE.txt", data);
                         assertEquals("Get a wrong content type", "text/plain", data.getContentType());
+
+                        assertTrue("We should get the data from the DataHandle", data.getDataSource()
+                            .getInputStream().available() > 0);
+
                         // The other form date can be get from the message header
                         exchange.getOut().setBody(in.getHeader("comment"));
                     }
