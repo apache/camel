@@ -47,8 +47,6 @@
     <feature version='${spring-osgi-version}'>spring-dm</feature>
     <bundle>mvn:org.springframework/spring-tx/${spring3-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.camel/camel-core-xml/${pom.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-core-osgi/${pom.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-osgi/${pom.version}</bundle>
   </feature>
   <feature name='camel-test' version='${pom.version}'>

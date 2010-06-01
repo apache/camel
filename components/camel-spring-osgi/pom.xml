@@ -28,7 +28,6 @@
         *
       </camel.osgi.import>
       <camel.osgi.export>
-        org.apache.camel.osgi.*;${camel.osgi.version},
         org.apache.camel.spring.*;${camel.osgi.version},
         org.apache.camel.component;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
@@ -36,6 +35,10 @@
         org.apache.camel.component.validator;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.component.xslt;${camel.osgi.split.pkg};${camel.osgi.version}
       </camel.osgi.export>
+      <camel.osgi.private.pkg>
+        org.apache.camel.core.xml*,
+        org.apache.camel.core.osgi*
+      </camel.osgi.private.pkg>
       <camel.osgi.activator>
         org.apache.camel.core.osgi.Activator
       </camel.osgi.activator>
