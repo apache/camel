@@ -153,6 +153,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         return SpringCamelContext.class;
     }
 
+    @SuppressWarnings("unchecked")
     protected <S> S getBeanForType(Class<S> clazz) {
         S bean = null;
         String[] names = getApplicationContext().getBeanNamesForType(clazz, true, true);

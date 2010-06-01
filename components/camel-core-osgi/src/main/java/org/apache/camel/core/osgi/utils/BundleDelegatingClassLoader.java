@@ -53,6 +53,7 @@ public class BundleDelegatingClassLoader extends ClassLoader {
         return resource;
     }
 
+    @SuppressWarnings("unchecked")
     protected Enumeration findResources(String name) throws IOException {
         return bundle.getResources(name);
     }

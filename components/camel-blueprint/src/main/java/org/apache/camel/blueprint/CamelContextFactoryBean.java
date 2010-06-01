@@ -74,8 +74,6 @@ import org.osgi.framework.FrameworkUtil;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<BlueprintCamelContext> {
 
-    private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
-
     @XmlAttribute(name = "depends-on", required = false)
     private String dependsOn;
     @XmlAttribute(required = false)
@@ -194,7 +192,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     }
 
     @Override
-    protected Object getBeanForType(Class clazz) {
+    protected <S> S getBeanForType(Class<S> clazz) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

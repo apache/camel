@@ -69,6 +69,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         return getClass().getClassLoader().getResource("camel-blueprint.xsd");
     }
 
+    @SuppressWarnings("unchecked")
     public Set<Class> getManagedClasses() {
         return new HashSet<Class>(Arrays.asList(
                 BlueprintCamelContext.class
