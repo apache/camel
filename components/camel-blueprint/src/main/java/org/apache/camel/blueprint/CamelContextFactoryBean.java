@@ -188,27 +188,23 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     @Override
     protected void initCustomRegistry(BlueprintCamelContext context) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     protected <S> S getBeanForType(Class<S> clazz) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     protected void initBeanPostProcessor(BlueprintCamelContext context) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     protected void postProcessBeforeInit(RouteBuilder builder) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     protected void findRouteBuilders(String[] normalized, List<RoutesBuilder> builders) throws Exception {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public String getDependsOn() {

@@ -122,7 +122,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     public ComponentMetadata decorate(Node node, ComponentMetadata component, ParserContext context) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     protected Object parseUsingJaxb(Element element, ParserContext parserContext, Binder<Node> binder) {
