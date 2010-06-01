@@ -28,6 +28,7 @@
         *
       </camel.osgi.import>
       <camel.osgi.export>
+        org.apache.camel.osgi.*;${camel.osgi.version},
         org.apache.camel.spring.*;${camel.osgi.version},
         org.apache.camel.osgi.*;${camel.osgi.version},
         org.apache.camel.component;${camel.osgi.split.pkg};${camel.osgi.version},
