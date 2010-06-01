@@ -16,21 +16,16 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-public class JmsSelectorTest extends CamelTestSupport {
+public class SpringJmsSelectorTest extends CamelSpringTestSupport {
 
     @Test
     public void testJmsSelector() throws Exception {
@@ -47,21 +42,9 @@ public class JmsSelectorTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
-        JmsComponent component = jmsComponentTransacted(connectionFactory);
-        camelContext.addComponent("activemq", component);
-        return camelContext;
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/SpringJmsSelectorTest.xml");
     }
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:test.a").to("activemq:test.b");
-                from("activemq:test.b?selector=cheese='y'").to("mock:result");
-            }
-        };
-    }
 }

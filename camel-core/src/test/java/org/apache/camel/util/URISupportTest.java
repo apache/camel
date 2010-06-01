@@ -105,4 +105,11 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals("http://camel.apache.org?foo=123", s);
     }
 
+    public void testNormalizeEndpointWithEqualSignInParameter() throws Exception {
+        String out = URISupport.normalizeUri("jms:queue:foo?selector=somekey='somevalue'&foo=bar");
+        assertNotNull(out);
+        // Camel will safe encode the URI
+        assertEquals("jms://queue:foo?foo=bar&selector=somekey%3D%27somevalue%27", out);
+    }
+
 }
