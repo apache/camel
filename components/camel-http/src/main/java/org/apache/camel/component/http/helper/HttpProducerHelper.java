@@ -89,8 +89,7 @@ public final class HttpProducerHelper {
                 }
                 uri = uri.concat(path);
             }
-        }
-        System.out.println("The uri is " + uri);
+        }        
         return uri;
     }
 
