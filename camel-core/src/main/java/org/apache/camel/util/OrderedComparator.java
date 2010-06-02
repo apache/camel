@@ -14,40 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.util;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.Synchronization;
-import org.apache.camel.spi.SynchronizationVetoable;
-import org.apache.camel.util.Ordered;
+import java.util.Comparator;
 
 /**
- * Simple {@link Synchronization} adapter with empty methods for easier overriding
- * of single methods.
+ * A comparator to sort {@link Ordered}
  *
  * @version $Revision$
  */
-public class SynchronizationAdapter implements SynchronizationVetoable, Ordered {
+public final class OrderedComparator implements Comparator {
 
-    public void onComplete(Exchange exchange) {
-        onDone(exchange);
+    private final boolean reverse;
+
+    public OrderedComparator() {
+        this(false);
     }
 
-    public void onFailure(Exchange exchange) {
-        onDone(exchange);
+    public OrderedComparator(boolean reverse) {
+        this.reverse = reverse;
     }
 
-    public void onDone(Exchange exchange) {
-        // noop
-    }
-
-    public boolean allowHandover() {
-        // allow by default
-        return true;
-    }
-
-    public int getOrder() {
-        // no particular order by default
-        return 0;
+    public int compare(Object o1, Object o2) {
+        Integer num1 = 0;
+        Integer num2 = 0;
+        if (o1 instanceof Ordered) {
+            num1 = ((Ordered) o1).getOrder();
+        }
+        if (o2 instanceof Ordered) {
+            num2 = ((Ordered) o2).getOrder();
+        }
+        int answer = num1.compareTo(num2);
+        return reverse ? -1 * answer : answer;
     }
 }

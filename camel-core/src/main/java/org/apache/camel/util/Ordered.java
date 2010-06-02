@@ -14,40 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.Synchronization;
-import org.apache.camel.spi.SynchronizationVetoable;
-import org.apache.camel.util.Ordered;
+package org.apache.camel.util;
 
 /**
- * Simple {@link Synchronization} adapter with empty methods for easier overriding
- * of single methods.
+ * Interface to be implement by objects that should be orderable, such as in a {@link java.util.Collection}.
  *
  * @version $Revision$
  */
-public class SynchronizationAdapter implements SynchronizationVetoable, Ordered {
+public interface Ordered {
 
-    public void onComplete(Exchange exchange) {
-        onDone(exchange);
-    }
+    /**
+     * The highest precedence
+     */
+    int HIGHEST = Integer.MIN_VALUE;
 
-    public void onFailure(Exchange exchange) {
-        onDone(exchange);
-    }
+    /**
+     * The lowest precedence
+     */
+    int LOWEST = Integer.MAX_VALUE;
 
-    public void onDone(Exchange exchange) {
-        // noop
-    }
 
-    public boolean allowHandover() {
-        // allow by default
-        return true;
-    }
-
-    public int getOrder() {
-        // no particular order by default
-        return 0;
-    }
+    /**
+     * Gets the order.
+     * <p/>
+     * Use low numbers for higher priority. Normally the sorting will start from 0 and move upwards.
+     * So if you want to be last then use {@link Integer#MAX_VALUE}.
+     *
+     * @return the order
+     */
+    int getOrder();
 }

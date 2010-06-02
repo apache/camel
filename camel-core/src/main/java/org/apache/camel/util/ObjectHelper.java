@@ -220,19 +220,21 @@ public final class ObjectHelper {
         if (b == null) {
             return 1;
         }
+        if (a instanceof Ordered && b instanceof Ordered) {
+            return ((Ordered) a).getOrder() - ((Ordered) b).getOrder();
+        }
         if (ignoreCase && a instanceof String && b instanceof String) {
             return ((String) a).compareToIgnoreCase((String) b);
         }
         if (a instanceof Comparable) {
             Comparable comparable = (Comparable)a;
             return comparable.compareTo(b);
-        } else {
-            int answer = a.getClass().getName().compareTo(b.getClass().getName());
-            if (answer == 0) {
-                answer = a.hashCode() - b.hashCode();
-            }
-            return answer;
         }
+        int answer = a.getClass().getName().compareTo(b.getClass().getName());
+        if (answer == 0) {
+            answer = a.hashCode() - b.hashCode();
+        }
+        return answer;
     }
 
     public static Boolean toBoolean(Object value) {

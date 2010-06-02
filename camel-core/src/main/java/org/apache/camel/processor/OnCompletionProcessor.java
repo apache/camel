@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.Ordered;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -81,70 +82,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
         }
 
         // register callback
-        exchange.getUnitOfWork().addSynchronization(new SynchronizationAdapter() {
-            @Override
-            public void onComplete(final Exchange exchange) {
-                if (onFailureOnly) {
-                    return;
-                }
-
-                if (onWhen != null && !onWhen.matches(exchange)) {
-                    // predicate did not match so do not route the onComplete
-                    return;
-                }
-
-                // must use a copy as we dont want it to cause side effects of the original exchange
-                final Exchange copy = prepareExchange(exchange);
-
-                executorService.submit(new Callable<Exchange>() {
-                    public Exchange call() throws Exception {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Processing onComplete: " + copy);
-                        }
-                        doProcess(processor, copy);
-                        return copy;
-                    }
-                });
-            }
-
-            public void onFailure(final Exchange exchange) {
-                if (onCompleteOnly) {
-                    return;
-                }
-
-                if (onWhen != null && !onWhen.matches(exchange)) {
-                    // predicate did not match so do not route the onComplete
-                    return;
-                }
-
-                // must use a copy as we dont want it to cause side effects of the original exchange
-                final Exchange copy = prepareExchange(exchange);
-                // must remove exception otherwise onFailure routing will fail as well
-                // the caused exception is stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
-                copy.setException(null);
-
-                executorService.submit(new Callable<Exchange>() {
-                    public Exchange call() throws Exception {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Processing onFailure: " + copy);
-                        }
-                        doProcess(processor, copy);
-                        return null;
-                    }
-                });
-            }
-
-            @Override
-            public String toString() {
-                if (!onCompleteOnly && !onFailureOnly) {
-                    return "onCompleteOrFailure";
-                } else if (onCompleteOnly) {
-                    return "onCompleteOnly";
-                } else {
-                    return "onFailureOnly";
-                }
-            }
-        });
+        exchange.getUnitOfWork().addSynchronization(new OnCompletionSynchronization());
     }
 
     /**
@@ -195,6 +133,77 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
         answer.setProperty(Exchange.ON_COMPLETION, Boolean.TRUE);
 
         return answer;
+    }
+
+    private final class OnCompletionSynchronization extends SynchronizationAdapter implements Ordered {
+
+        public int getOrder() {
+            // we want to be last
+            return Ordered.LOWEST;
+        }
+
+        @Override
+        public void onComplete(final Exchange exchange) {
+            if (onFailureOnly) {
+                return;
+            }
+
+            if (onWhen != null && !onWhen.matches(exchange)) {
+                // predicate did not match so do not route the onComplete
+                return;
+            }
+
+            // must use a copy as we dont want it to cause side effects of the original exchange
+            final Exchange copy = prepareExchange(exchange);
+
+            executorService.submit(new Callable<Exchange>() {
+                public Exchange call() throws Exception {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Processing onComplete: " + copy);
+                    }
+                    doProcess(processor, copy);
+                    return copy;
+                }
+            });
+        }
+
+        public void onFailure(final Exchange exchange) {
+            if (onCompleteOnly) {
+                return;
+            }
+
+            if (onWhen != null && !onWhen.matches(exchange)) {
+                // predicate did not match so do not route the onComplete
+                return;
+            }
+
+            // must use a copy as we dont want it to cause side effects of the original exchange
+            final Exchange copy = prepareExchange(exchange);
+            // must remove exception otherwise onFailure routing will fail as well
+            // the caused exception is stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
+            copy.setException(null);
+
+            executorService.submit(new Callable<Exchange>() {
+                public Exchange call() throws Exception {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Processing onFailure: " + copy);
+                    }
+                    doProcess(processor, copy);
+                    return null;
+                }
+            });
+        }
+
+        @Override
+        public String toString() {
+            if (!onCompleteOnly && !onFailureOnly) {
+                return "onCompleteOrFailure";
+            } else if (onCompleteOnly) {
+                return "onCompleteOnly";
+            } else {
+                return "onFailureOnly";
+            }
+        }
     }
 
     @Override
