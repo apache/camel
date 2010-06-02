@@ -41,6 +41,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.BrowsableEndpoint;
@@ -254,6 +255,24 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     public void whenAnyExchangeReceived(Processor processor) {
         this.defaultProcessor = processor;
     }
+    
+    /**
+     * Set the expression which value will be set to the message body
+     * @param expression which is use to set the message body 
+     */
+    public void returnReplyBody(Expression expression) {
+        this.defaultProcessor = ProcessorBuilder.setBody(expression);
+    }
+    
+    /**
+     * Set the expression which value will be set to the message header
+     * @param headerName that will be set value
+     * @param expression which is use to set the message header 
+     */
+    public void returnReplyHeader(String headerName, Expression expression) {
+        this.defaultProcessor = ProcessorBuilder.setHeader(headerName, expression);
+    }
+    
 
     /**
      * Validates that all the available expectations on this endpoint are
