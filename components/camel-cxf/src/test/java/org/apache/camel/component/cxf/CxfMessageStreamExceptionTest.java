@@ -28,21 +28,16 @@ public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedException
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: onException
-                from("direct:start")
-                    .onException(SoapFault.class)
-                        .maximumRedeliveries(0)
-                        .handled(true)
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                SoapFault fault =
-                                    exchange.getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
-                                exchange.getOut().setBody(fault.getDetail().getTextContent());
-                            }
-                            
-                        })
-                        .to("mock:error")                        
-                        .end() 
-                    .to(SERVICE_URI);
+                from("direct:start").onException(SoapFault.class).maximumRedeliveries(0).handled(true)
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            SoapFault fault = exchange
+                                .getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
+                            exchange.getOut().setFault(true);
+                            exchange.getOut().setBody(fault);
+                        }
+
+                    }).end().to(SERVICE_URI);
                 // END SNIPPET: onException
                 // START SNIPPET: MessageStreamFault
                 from(routerEndpointURI).process(new Processor() {

@@ -28,6 +28,7 @@ import org.w3c.dom.Text;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -92,11 +93,11 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 SoapFault fault =
                                     exchange.getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
-                                exchange.getOut().setBody(fault.getDetail().getTextContent());
+                                exchange.getOut().setFault(true);
+                                exchange.getOut().setBody(fault);
                             }
                             
-                        })
-                        .to("mock:error")                        
+                        })                
                         .end() 
                     .to(SERVICE_URI);
                 // END SNIPPET: onException
@@ -114,10 +115,10 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
     
     @Test
     public void testInvokingServiceFromCamel() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:error");
-        mock.expectedBodiesReceived(DETAIL_TEXT);
-        template.sendBodyAndHeader("direct:start", "hello world" , CxfConstants.OPERATION_NAME, "echo");
-        mock.assertIsSatisfied();
+        Object result = template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world" , CxfConstants.OPERATION_NAME, "echo");
+        assertTrue("Exception is not instance of SoapFault", result instanceof SoapFault);
+        assertEquals("Expect to get right detail message", DETAIL_TEXT, ((SoapFault)result).getDetail().getTextContent());
+        assertEquals("Expect to get right fault-code", "{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault)result).getFaultCode().toString());
     }
 
     @Test
