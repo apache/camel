@@ -44,6 +44,7 @@ import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
 public class MailRouteTest extends OSGiIntegrationTestSupport {
@@ -141,6 +142,8 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
             // Added the mock_java_mail bundle for testing
             mavenBundle().groupId("org.apache.camel.tests").artifactId("org.apache.camel.tests.mock-javamail_1.7").versionAsInProject(),
             
+            workingDirectory("target/paxrunner/"),
+
             felix());
         
         return options;

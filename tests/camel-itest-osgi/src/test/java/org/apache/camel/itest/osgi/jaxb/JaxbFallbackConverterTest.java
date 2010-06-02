@@ -35,6 +35,7 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
 public class JaxbFallbackConverterTest extends OSGiIntegrationTestSupport {
@@ -76,6 +77,8 @@ public class JaxbFallbackConverterTest extends OSGiIntegrationTestSupport {
                          artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
                           "camel-core", "camel-spring-osgi", "camel-test", "camel-jaxb"),
             
+            workingDirectory("target/paxrunner/"),
+
             felix().version("2.0.1"));
         
         return options;

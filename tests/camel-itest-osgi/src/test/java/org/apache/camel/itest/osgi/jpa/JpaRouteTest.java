@@ -46,6 +46,7 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
 public class JpaRouteTest extends OSGiIntegrationTestSupport {
@@ -151,6 +152,8 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             mavenBundle().groupId("commons-pool").artifactId("commons-pool").version("1.4"),
             mavenBundle().groupId("org.apache.geronimo.specs").artifactId("geronimo-jms_1.1_spec").version("1.1.1"),*/
             mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"), 
+
+            workingDirectory("target/paxrunner/"),
 
             equinox());
         
