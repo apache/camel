@@ -37,7 +37,7 @@ public interface CxfConstants {
     String PORT_NAMESPACE = "endpointNamespace";
     String PROTOCOL_NAME_RES = "res";
     String OPERATION_NAME = "operationName";
-    String OPERATION_NAMESPACE = "operationNameSpace";
+    String OPERATION_NAMESPACE = "operationNamespace";
     String SPRING_CONTEXT_ENDPOINT = "bean:";
     String CAMEL_TRANSPORT_PREFIX = "camel:";
     String CXF_EXCHANGE = "org.apache.cxf.message.exchange";
