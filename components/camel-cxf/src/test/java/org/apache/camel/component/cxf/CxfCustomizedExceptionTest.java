@@ -48,6 +48,7 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
     protected static final String ROUTER_ADDRESS = "http://localhost:9002/router";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
     protected static String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
+    protected static final String SERVICE_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
     private static final String DETAIL_TEXT = "This is a detail text node";
     private static final SoapFault SOAP_FAULT;
@@ -97,7 +98,7 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
                         })
                         .to("mock:error")                        
                         .end() 
-                    .to(routerEndpointURI);
+                    .to(SERVICE_URI);
                 // END SNIPPET: onException
                 // START SNIPPET: ThrowFault
                 from(routerEndpointURI).setFaultBody(constant(SOAP_FAULT));

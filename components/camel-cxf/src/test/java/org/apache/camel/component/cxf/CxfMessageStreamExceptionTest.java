@@ -20,13 +20,31 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.cxf.binding.soap.SoapFault;
 
 public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedExceptionTest {
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-             // START SNIPPET: MessageStreamFault
+                // START SNIPPET: onException
+                from("direct:start")
+                    .onException(SoapFault.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                SoapFault fault =
+                                    exchange.getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
+                                exchange.getOut().setBody(fault.getDetail().getTextContent());
+                            }
+                            
+                        })
+                        .to("mock:error")                        
+                        .end() 
+                    .to(SERVICE_URI);
+                // END SNIPPET: onException
+                // START SNIPPET: MessageStreamFault
                 from(routerEndpointURI).process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
