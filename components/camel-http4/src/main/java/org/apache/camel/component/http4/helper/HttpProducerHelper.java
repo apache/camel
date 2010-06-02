@@ -46,7 +46,7 @@ public final class HttpProducerHelper {
             uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
         }
         if (uri == null) {
-            uri = endpoint.getHttpUri().toString();
+            uri = endpoint.getHttpUri().toASCIIString();
         }
 
         // append HTTP_PATH to HTTP_URI if it is provided in the header
@@ -65,7 +65,7 @@ public final class HttpProducerHelper {
                         }
                     }
                     baseURI = new URI(baseURIString);
-                    String basePath = baseURI.getPath();
+                    String basePath = baseURI.getRawPath();
                     if (path.startsWith(basePath)) {
                         path = path.substring(basePath.length());
                         if (path.startsWith("/")) {
@@ -89,7 +89,6 @@ public final class HttpProducerHelper {
                 uri = uri.concat(path);
             }
         }
-
         return uri;
     }
 
@@ -104,7 +103,7 @@ public final class HttpProducerHelper {
         // overrules endpoint)
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         if (queryString == null) {
-            queryString = endpoint.getHttpUri().getQuery();
+            queryString = endpoint.getHttpUri().getRawQuery();
         }
 
         // compute what method to use either GET or POST

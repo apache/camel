@@ -49,9 +49,21 @@ public class HttpQueryTest extends BaseHttpTest {
 
         assertExchange(exchange);
     }
+    
+    @Test
+    public void httpQueryWithEscapedCharacter() throws Exception {
+        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/test/?my=%40%20camel", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                
+            }
+        });
+
+        assertExchange(exchange);
+    }
 
     @Override
     protected void registerHandler(LocalTestServer server) {
         server.register("/", new BasicValidationHandler("GET", "hl=en&q=camel", null, getExpectedContent()));
+        server.register("/test/", new BasicValidationHandler("GET", "my=%40+camel", null, getExpectedContent()));
     }
 }

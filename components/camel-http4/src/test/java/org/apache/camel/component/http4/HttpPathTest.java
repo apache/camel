@@ -48,9 +48,20 @@ public class HttpPathTest extends BaseHttpTest {
 
         assertExchange(exchange);
     }
+    
+    @Test
+    public void httpEscapedCharacters() throws Exception {
+        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/test%20/path", new Processor() {
+            public void process(Exchange exchange) throws Exception {                
+            }
+        });
+
+        assertExchange(exchange);
+    }
 
     @Override
     protected void registerHandler(LocalTestServer server) {
         server.register("/search", new BasicValidationHandler("GET", null, null, getExpectedContent()));
+        server.register("/test%20/path", new BasicValidationHandler("GET", null, null, getExpectedContent()));
     }
 }

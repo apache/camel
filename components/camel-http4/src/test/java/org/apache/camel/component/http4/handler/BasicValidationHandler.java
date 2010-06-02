@@ -61,7 +61,7 @@ public class BasicValidationHandler implements HttpRequestHandler {
         }
 
         try {
-            String query = new URI(request.getRequestLine().getUri()).getQuery();
+            String query = new URI(request.getRequestLine().getUri()).getQuery();            
             if (expectedQuery != null && !expectedQuery.equals(query)) {
                 response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                 return;
