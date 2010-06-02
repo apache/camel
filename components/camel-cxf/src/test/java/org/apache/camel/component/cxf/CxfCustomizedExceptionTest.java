@@ -27,7 +27,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
@@ -79,6 +82,23 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // START SNIPPET: onException
+                from("direct:start")
+                    .onException(SoapFault.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                SoapFault fault =
+                                    exchange.getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
+                                exchange.getOut().setBody(fault.getDetail().getTextContent());
+                            }
+                            
+                        })
+                        .to("mock:error")                        
+                        .end() 
+                    .to(routerEndpointURI);
+                // END SNIPPET: onException
                 // START SNIPPET: ThrowFault
                 from(routerEndpointURI).setFaultBody(constant(SOAP_FAULT));
                 // END SNIPPET: ThrowFault
@@ -89,6 +109,14 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
+    }
+    
+    @Test
+    public void testInvokingServiceFromCamel() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:error");
+        mock.expectedBodiesReceived(DETAIL_TEXT);
+        template.sendBodyAndHeader("direct:start", "hello world" , CxfConstants.OPERATION_NAME, "echo");
+        mock.assertIsSatisfied();
     }
 
     @Test
