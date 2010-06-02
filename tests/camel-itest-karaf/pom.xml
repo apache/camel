@@ -119,7 +119,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
               <forkMode>pertest</forkMode>
-              <forkedProcessTimeoutInSeconds>60</forkedProcessTimeoutInSeconds>
+              <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
               <redirectTestOutputToFile>true</redirectTestOutputToFile>
               <argLine>-Xmx256m</argLine>
               <includes>

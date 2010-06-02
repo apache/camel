@@ -23,13 +23,13 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-public class CamelScriptTest extends AbstractFeatureTest {
+public class CamelLuceneTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelScriptTest.class);
+    public static final String COMPONENT = extractName(CamelLuceneTest.class);
 
     @Test
     public void test() throws Exception {
-        testLanguage(COMPONENT);
+        testComponent(COMPONENT);
     }
 
     @Configuration

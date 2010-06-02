@@ -16,6 +16,8 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -23,13 +25,17 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-public class CamelScriptTest extends AbstractFeatureTest {
+public class CamelCryptoTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelScriptTest.class);
+    public static final String COMPONENT = extractName(CamelCryptoTest.class);
+
+    protected DataFormatDefinition createDataformatDefinition(String format) {
+        return new CryptoDataFormat();
+    }
 
     @Test
     public void test() throws Exception {
-        testLanguage(COMPONENT);
+        testDataFormat(COMPONENT);
     }
 
     @Configuration

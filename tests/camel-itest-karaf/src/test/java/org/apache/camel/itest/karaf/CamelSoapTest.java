@@ -16,6 +16,8 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -23,13 +25,17 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-public class CamelScriptTest extends AbstractFeatureTest {
+public class CamelSoapTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelScriptTest.class);
+    public static final String COMPONENT = extractName(CamelSoapTest.class);
+
+    protected DataFormatDefinition createDataformatDefinition(String format) {
+        return new SoapJaxbDataFormat();
+    }
 
     @Test
     public void test() throws Exception {
-        testLanguage(COMPONENT);
+        testDataFormat(COMPONENT);
     }
 
     @Configuration

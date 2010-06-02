@@ -32,8 +32,7 @@ public class CamelFlatpackTest extends AbstractFeatureTest {
     protected DataFormatDefinition createDataformatDefinition(String format) {
         return new FlatpackDataFormat();
     }
-    
-    
+
     @Test
     public void test() throws Exception {
         testDataFormat(COMPONENT);

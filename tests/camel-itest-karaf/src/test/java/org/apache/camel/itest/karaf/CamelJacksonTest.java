@@ -16,6 +16,9 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.dataformat.JsonDataFormat;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -23,13 +26,17 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-public class CamelScriptTest extends AbstractFeatureTest {
+public class CamelJacksonTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelScriptTest.class);
+    public static final String COMPONENT = extractName(CamelJacksonTest.class);
+
+    protected DataFormatDefinition createDataformatDefinition(String format) {
+        return new JsonDataFormat(JsonLibrary.Jackson);
+    }
 
     @Test
     public void test() throws Exception {
-        testLanguage(COMPONENT);
+        testDataFormat(COMPONENT);
     }
 
     @Configuration
