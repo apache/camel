@@ -247,9 +247,10 @@ public class HttpProducer extends DefaultProducer {
         // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         if (queryString == null) {
-            queryString = getEndpoint().getHttpUri().getQuery();
+            queryString = getEndpoint().getHttpUri().getRawQuery();            
         }
         if (queryString != null) {
+            // need to make sure the queryString is URI safe
             method.setQueryString(queryString);
         }
 

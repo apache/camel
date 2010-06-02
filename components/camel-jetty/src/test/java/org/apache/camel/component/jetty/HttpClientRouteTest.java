@@ -67,6 +67,16 @@ public class HttpClientRouteTest extends CamelTestSupport {
         // should get the Content-Length
         assertNotNull("Should get the content-lenghth ", headers.get("Content-Length"));
     }
+    
+    @Test
+    public void testHttpRouteWithQuery() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
+        mockEndpoint.expectedBodiesReceived("%40 query");        
+        
+        template.sendBody("direct:start3", null);
+        mockEndpoint.assertIsSatisfied();        
+        
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -81,6 +91,7 @@ public class HttpClientRouteTest extends CamelTestSupport {
                 
                 from("direct:start").to("http://localhost:9080/hello").process(clientProc).convertBodyTo(String.class).to("mock:a");
                 from("direct:start2").to("http://localhost:9081/hello").to("mock:a");
+                from("direct:start3").to("http://localhost:9081/Query%20/test?myQuery=%40%20query").to("mock:a");
                 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -91,6 +102,14 @@ public class HttpClientRouteTest extends CamelTestSupport {
                 from("jetty:http://localhost:9080/hello").process(proc).setHeader(Exchange.HTTP_CHUNKED).constant(false);
                 
                 from("jetty:http://localhost:9081/hello?chunked=false").process(proc);
+                
+                from("jetty:http://localhost:9081/Query%20/test").process(new Processor() {
+
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setBody(exchange.getIn().getHeader("myQuery", String.class));                        
+                    }
+                    
+                });
             }
         };
     }    
