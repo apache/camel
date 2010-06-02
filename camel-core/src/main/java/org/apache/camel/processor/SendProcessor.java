@@ -71,19 +71,7 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
     }
 
     public void process(final Exchange exchange) throws Exception {
-        // the destination could since have been intercepted by a interceptSendToEndpoint so we got to
-        // init this before we can use the destination
-        if (!init) {
-            init = true;
-            Endpoint lookup = exchange.getContext().hasEndpoint(destination.getEndpointKey());
-            if (lookup instanceof InterceptSendToEndpoint) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("SendTo is intercepted using a interceptSendToEndpoint: " + lookup.getEndpointUri());
-                }
-                destination = lookup;
-            }
-        }
-
+        
         doProcess(exchange);
     }
 
@@ -133,6 +121,23 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
             camelContext.addService(producerCache);
         }
         ServiceHelper.startService(producerCache);
+        // the destination could since have been intercepted by a interceptSendToEndpoint so we got to
+        // init this before we can use the destination
+        if (!init) {
+            init = true;
+            Endpoint lookup = camelContext.hasEndpoint(destination.getEndpointKey());
+            if (lookup instanceof InterceptSendToEndpoint) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("SendTo is intercepted using a interceptSendToEndpoint: " + lookup.getEndpointUri());
+                }
+                destination = lookup;
+            }
+        }
+        // get the producer when the send processor is starting
+        Producer producer = producerCache.doGetProducer(destination, true);
+        if (producer == null) {            
+            throw new IllegalStateException("No producer, this processor has not been started: " + this);
+        }
     }
 
     protected void doStop() throws Exception {

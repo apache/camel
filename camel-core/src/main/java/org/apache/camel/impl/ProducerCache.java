@@ -238,7 +238,7 @@ public class ProducerCache extends ServiceSupport {
         });
     }
 
-    protected synchronized Producer doGetProducer(Endpoint endpoint, boolean pooled) {
+    public synchronized Producer doGetProducer(Endpoint endpoint, boolean pooled) {
         String key = endpoint.getEndpointUri();
         Producer answer = producers.get(key);
         if (pooled && answer == null) {
