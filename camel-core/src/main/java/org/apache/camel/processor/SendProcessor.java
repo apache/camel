@@ -42,7 +42,6 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
     protected ProducerCache producerCache;
     protected Endpoint destination;
     protected ExchangePattern pattern;
-    private boolean init;
 
     public SendProcessor(Endpoint destination) {
         ObjectHelper.notNull(destination, "destination");
@@ -61,9 +60,8 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
         return "sendTo(" + destination + (pattern != null ? " " + pattern : "") + ")";
     }
 
-    public synchronized void setDestination(Endpoint destination) {
+    public void setDestination(Endpoint destination) {
         this.destination = destination;
-        this.init = false;
     }
 
     public String getTraceLabel() {
@@ -71,7 +69,6 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
     }
 
     public void process(final Exchange exchange) throws Exception {
-        
         doProcess(exchange);
     }
 
@@ -121,23 +118,18 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
             camelContext.addService(producerCache);
         }
         ServiceHelper.startService(producerCache);
+
         // the destination could since have been intercepted by a interceptSendToEndpoint so we got to
         // init this before we can use the destination
-        if (!init) {
-            init = true;
-            Endpoint lookup = camelContext.hasEndpoint(destination.getEndpointKey());
-            if (lookup instanceof InterceptSendToEndpoint) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("SendTo is intercepted using a interceptSendToEndpoint: " + lookup.getEndpointUri());
-                }
-                destination = lookup;
+        Endpoint lookup = camelContext.hasEndpoint(destination.getEndpointKey());
+        if (lookup instanceof InterceptSendToEndpoint) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("SendTo is intercepted using a interceptSendToEndpoint: " + lookup.getEndpointUri());
             }
+            destination = lookup;
         }
-        // get the producer when the send processor is starting
-        Producer producer = producerCache.doGetProducer(destination, true);
-        if (producer == null) {            
-            throw new IllegalStateException("No producer, this processor has not been started: " + this);
-        }
+        // warm up the producer by starting it so we can fail fast if there was a problem
+        producerCache.startProducer(destination);
     }
 
     protected void doStop() throws Exception {

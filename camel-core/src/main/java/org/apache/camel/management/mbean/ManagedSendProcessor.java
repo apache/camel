@@ -46,6 +46,12 @@ public class ManagedSendProcessor extends ManagedProcessor {
         return processor.getDestination().getEndpointUri();
     }
 
+    @ManagedAttribute(description = "Destination as Endpoint Uri")
+    public void setDestination(String uri) {
+        Endpoint endpoint = getContext().getEndpoint(uri);
+        processor.setDestination(endpoint);
+    }
+
     @ManagedAttribute(description = "Message Exchange Pattern")
     public String getMessageExchangePattern() {
         if (processor.getPattern() != null) {
@@ -55,9 +61,4 @@ public class ManagedSendProcessor extends ManagedProcessor {
         }
     }
 
-    @ManagedOperation(description = "Change Destination Endpoint Uri")
-    public void changeDestination(String uri) throws Exception {
-        Endpoint endpoint = getContext().getEndpoint(uri);
-        processor.setDestination(endpoint);
-    }
 }

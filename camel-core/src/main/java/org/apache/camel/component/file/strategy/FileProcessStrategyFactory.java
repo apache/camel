@@ -93,7 +93,7 @@ public final class FileProcessStrategyFactory {
             return strategy;
         }
 
-        // no explicit stategy set then fallback to readLock option
+        // no explicit strategy set then fallback to readLock option
         String readLock = (String) params.get("readLock");
         if (ObjectHelper.isNotEmpty(readLock)) {
             if ("none".equals(readLock) || "false".equals(readLock)) {

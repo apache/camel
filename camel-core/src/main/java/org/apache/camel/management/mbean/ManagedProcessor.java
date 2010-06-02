@@ -23,7 +23,9 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.util.ServiceHelper;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
@@ -100,6 +102,16 @@ public class ManagedProcessor extends ManagedPerformanceCounter {
     @ManagedAttribute(description = "Processor id")
     public String getProcessorId() {
         return id;
+    }
+
+    @ManagedOperation(description = "Start Processor")
+    public void start() throws Exception {
+        ServiceHelper.startService(getProcessor());
+    }
+
+    @ManagedOperation(description = "Stop Processor")
+    public void stop() throws Exception {
+        ServiceHelper.stopService(getProcessor());
     }
 
 }

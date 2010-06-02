@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -76,8 +77,14 @@ public class ManagedSendProcessorTest extends ContextTestSupport {
         String pattern = (String) mbeanServer.getAttribute(on, "MessageExchangePattern");
         assertNull(pattern);
 
+        // we must stop it to change the destination
+        mbeanServer.invoke(on, "stop", null, null);
+
         // send it somewhere else
-        mbeanServer.invoke(on, "changeDestination", new Object[]{"direct:foo"}, new String[]{"java.lang.String"});
+        mbeanServer.setAttribute(on, new Attribute("Destination", "direct:foo"));
+
+        // start it
+        mbeanServer.invoke(on, "start", null, null);
 
         // prepare mocks
         result.reset();
