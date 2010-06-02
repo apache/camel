@@ -136,7 +136,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-spring-osgi", "camel-test", "camel-jpa"),
+                          "camel-core", "camel-spring", "camel-test", "camel-jpa"),
            
             /* This the camel-jpa needed bundles 
             mavenBundle().groupId("org.apache.servicemix.specs").artifactId("org.apache.servicemix.specs.java-persistence-api-1.1.1").version("1.4-SNAPSHOT"),

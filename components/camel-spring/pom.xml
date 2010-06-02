@@ -33,16 +33,20 @@
   <properties>
       <camel.osgi.import>
         !org.apache.camel.spring.*,
+        !org.apache.camel.osgi.*,
         !org.apache.camel.component,
         !org.apache.camel.component.event,
         !org.apache.camel.component.validator,
         !org.apache.camel.component.xslt,
         org.apache.camel.*;${camel.osgi.import.strict.version},
+        org.osgi.framework;version="[1.3,2)",
+        org.springframework.osgi.*;version="[1.2,2)",
         org.springframework.*;version="[2.5,4)",
         *
       </camel.osgi.import>
       <camel.osgi.export>
         org.apache.camel.spring.*;${camel.osgi.version},
+        org.apache.camel.osgi.*;${camel.osgi.version},
         org.apache.camel.component;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.component.test;${camel.osgi.split.pkg};${camel.osgi.version},
@@ -50,11 +54,12 @@
         org.apache.camel.component.xslt;${camel.osgi.split.pkg};${camel.osgi.version}
       </camel.osgi.export>
       <camel.osgi.private.pkg>
+        org.apache.camel.core.osgi*,
         org.apache.camel.core.xml*
       </camel.osgi.private.pkg>
-      <camel.osgi.dynamic>
-          org.apache.camel.osgi;${camel.osgi.import.strict.version}
-      </camel.osgi.dynamic>
+      <camel.osgi.activator>
+        org.apache.camel.core.osgi.Activator
+      </camel.osgi.activator>
   </properties>
 
   <dependencies>
@@ -66,6 +71,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-xml</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -78,6 +84,23 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core-osgi</artifactId>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-core</artifactId>
+      <optional>true</optional>
     </dependency>
 
     <!-- for testing -->
@@ -122,6 +145,11 @@
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-script</artifactId>
+      <scope>test</scope>
+    </dependency>
 
       <!-- for testing Spring AOP at class level -->
       <dependency>
@@ -146,6 +174,13 @@
         <groupId>asm</groupId>
         <artifactId>asm</artifactId>
         <version>3.1</version>
+        <scope>test</scope>
+      </dependency>
+
+      <!-- for testing with osgi -->
+      <dependency>
+        <groupId>org.springframework.osgi</groupId>
+        <artifactId>spring-osgi-mock</artifactId>
         <scope>test</scope>
       </dependency>
 

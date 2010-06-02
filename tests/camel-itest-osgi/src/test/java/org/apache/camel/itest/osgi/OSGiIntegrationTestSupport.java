@@ -71,7 +71,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-spring-osgi", "camel-test"),
+                          "camel-core", "camel-spring", "camel-test"),
             
             workingDirectory("target/paxrunner/"),
 
