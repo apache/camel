@@ -997,7 +997,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         // when using doTry .. doCatch .. doFinally we should always
         // end the try definition to avoid having to use 2 x end() in the route
         // this is counter intuitive for end users
-        if (this instanceof TryDefinition) {
+        ProcessorDefinition defn = (ProcessorDefinition) this;
+        if (defn instanceof TryDefinition) {
             popBlock();
         }
 
@@ -2185,7 +2186,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     public ExpressionClause<ProcessorDefinition<Type>> transform() {
         ExpressionClause<ProcessorDefinition<Type>> clause = 
-            new ExpressionClause<ProcessorDefinition<Type>>(this);
+            new ExpressionClause<ProcessorDefinition<Type>>((ProcessorDefinition<Type>) this);
         TransformDefinition answer = new TransformDefinition(clause);
         addOutput(answer);
         return clause;
