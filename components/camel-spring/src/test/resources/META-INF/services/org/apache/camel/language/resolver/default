@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.builder.script.ScriptLanguageResolver
+class=org.apache.camel.core.osgi.CamelMockLanguageResolver

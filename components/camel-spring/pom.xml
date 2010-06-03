@@ -145,11 +145,6 @@
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-script</artifactId>
-      <scope>test</scope>
-    </dependency>
 
       <!-- for testing Spring AOP at class level -->
       <dependency>
