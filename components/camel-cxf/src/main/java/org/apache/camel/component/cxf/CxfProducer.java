@@ -263,7 +263,7 @@ public class CxfProducer extends DefaultProducer {
         BindingOperationInfo answer = null;
         String lp = ex.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
         if (lp == null) {
-            lp = endpoint.getOperationName();
+            lp = endpoint.getDefaultOperationName();
         }
         if (lp == null) {
             if (LOG.isDebugEnabled()) {
@@ -281,7 +281,7 @@ public class CxfProducer extends DefaultProducer {
         } else {
             String ns = ex.getIn().getHeader(CxfConstants.OPERATION_NAMESPACE, String.class);
             if (ns == null) {
-                ns = endpoint.getOperationNamespace();
+                ns = endpoint.getDefaultOperationNamespace();
             }
             if (ns == null) {
                 ns = client.getEndpoint().getService().getName().getNamespaceURI();

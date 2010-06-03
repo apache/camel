@@ -21,7 +21,6 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
@@ -53,8 +52,8 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
         } catch (Exception e) {
             throw new Fault(e);
         } finally {
-            ObjectHelper.close(is, "input stream", null);
-            ObjectHelper.close(os, "output stream", null);
+            IOHelper.close(is, "input stream", null);
+            IOHelper.close(os, "output stream", null);
         }
     }
 }

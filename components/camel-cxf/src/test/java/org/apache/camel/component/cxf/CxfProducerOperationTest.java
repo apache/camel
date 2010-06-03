@@ -49,14 +49,14 @@ public class CxfProducerOperationTest extends CxfProducerTest {
     protected String getSimpleEndpointUri() {
         return "cxf://" + SIMPLE_SERVER_ADDRESS
             + "?serviceClass=org.apache.camel.component.cxf.HelloService" 
-            + "&" + CxfConstants.OPERATION_NAME + "=" + ECHO_OPERATION;
+            + "&defaultOperationName=" + ECHO_OPERATION;
     }
 
     protected String getJaxwsEndpointUri() {
         return "cxf://" + JAXWS_SERVER_ADDRESS
             + "?serviceClass=org.apache.hello_world_soap_http.Greeter"
-            + "&" + CxfConstants.OPERATION_NAME + "=" + GREET_ME_OPERATION
-            + "&" + CxfConstants.OPERATION_NAMESPACE + "=" + NAMESPACE;
+            + "&defaultOperationName=" + GREET_ME_OPERATION
+            + "&defaultOperationNamespace=" + NAMESPACE;
     }
 
     protected Exchange sendSimpleMessage() {

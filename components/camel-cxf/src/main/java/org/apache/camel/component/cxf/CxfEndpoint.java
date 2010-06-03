@@ -80,8 +80,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private String serviceClass;
     private String portName;
     private String serviceName;
-    private String operationName;
-    private String operationNamespace;
+    private String defaultOperationName;
+    private String defaultOperationNamespace;
     private DataFormat dataFormat = DataFormat.POJO;
     private boolean isWrapped;
     private boolean inOut = true;
@@ -415,20 +415,20 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         portName = port;
     }
     
-    public String getOperationName() {
-        return operationName;
+    public String getDefaultOperationName() {
+        return defaultOperationName;
     }
     
-    public void setOperationName(String name) {
-        operationName = name;
+    public void setDefaultOperationName(String name) {
+        defaultOperationName = name;
     }
     
-    public String getOperationNamespace() {
-        return operationNamespace;
+    public String getDefaultOperationNamespace() {
+        return defaultOperationNamespace;
     }
     
-    public void setOperationNamespace(String namespace) {
-        operationNamespace = namespace;
+    public void setDefaultOperationNamespace(String namespace) {
+        defaultOperationNamespace = namespace;
     }
 
     public boolean isInOut() {
