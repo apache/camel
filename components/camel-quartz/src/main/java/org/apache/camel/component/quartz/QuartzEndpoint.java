@@ -21,17 +21,18 @@ import java.util.Date;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 
@@ -40,27 +41,17 @@ import org.quartz.Trigger;
  * 
  * @version $Revision:520964 $
  */
-public class QuartzEndpoint extends DefaultEndpoint {
+public class QuartzEndpoint extends DefaultEndpoint implements Service {
     private static final transient Log LOG = LogFactory.getLog(QuartzEndpoint.class);
 
-    private Scheduler scheduler;
     private LoadBalancer loadBalancer;
     private Trigger trigger;
     private JobDetail jobDetail;
     private boolean started;
     private boolean stateful;
 
-    public QuartzEndpoint() {
-    }
-
-    public QuartzEndpoint(final String endpointUri, final QuartzComponent component, final Scheduler scheduler) {
+    public QuartzEndpoint(final String endpointUri, final QuartzComponent component) {
         super(endpointUri, component);
-        this.scheduler = scheduler;
-    }
-
-    public QuartzEndpoint(final String endpointUri, final Scheduler scheduler) {
-        super(endpointUri);
-        this.scheduler = scheduler;
     }
 
     public void addTrigger(final Trigger trigger, final JobDetail detail) throws SchedulerException {
@@ -83,11 +74,11 @@ public class QuartzEndpoint extends DefaultEndpoint {
         if (detail.getName() == null) {
             detail.setName(getEndpointUri());
         }
-        getScheduler().scheduleJob(detail, trigger);
+        getComponent().addJob(detail, trigger);
     }
 
-    public void removeTrigger(final Trigger trigger, final JobDetail jobDetail) throws SchedulerException {
-        getScheduler().unscheduleJob(trigger.getName(), trigger.getGroup());
+    public void removeTrigger(final Trigger trigger) throws SchedulerException {
+        getComponent().removeJob(trigger);
     }
 
     /**
@@ -150,10 +141,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public Scheduler getScheduler() {
-        return scheduler;
-    }
-
     public LoadBalancer getLoadBalancer() {
         if (loadBalancer == null) {
             loadBalancer = createLoadBalancer();
@@ -192,10 +179,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
         this.stateful = stateful;
     }
 
-    public void setScheduler(Scheduler scheduler) {
-        this.scheduler = scheduler;
-    }
-
     // Implementation methods
     // -------------------------------------------------------------------------
     public synchronized void consumerStarted(final QuartzConsumer consumer) throws SchedulerException {
@@ -213,7 +196,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         ObjectHelper.notNull(trigger, "trigger");
         getLoadBalancer().removeProcessor(consumer.getProcessor());
         if (getLoadBalancer().getProcessors().isEmpty() && started) {
-            removeTrigger(getTrigger(), getJobDetail());
+            removeTrigger(getTrigger());
             started = false;
         }
     }
@@ -224,6 +207,15 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     protected JobDetail createJobDetail() {
         return new JobDetail();
+    }
+
+    public void start() throws Exception {
+        ObjectHelper.notNull(getComponent(), "QuartzComponent", this);
+        ServiceHelper.startService(loadBalancer);
+    }
+
+    public void stop() throws Exception {
+        ServiceHelper.stopService(loadBalancer);
     }
 
 }

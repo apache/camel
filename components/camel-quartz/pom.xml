@@ -101,6 +101,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <forkMode>pertest</forkMode>
                     <childDelegation>false</childDelegation>
                     <useFile>true</useFile>
                     <excludes>
