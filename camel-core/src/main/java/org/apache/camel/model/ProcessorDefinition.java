@@ -216,7 +216,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         }
         addInterceptStrategies(routeContext, channel, this.getInterceptStrategies());
 
-        // must do this ugly cast to avoid compiler error on HP-UX
+        // must do this ugly cast to avoid compiler error on AIX/HP-UX
         ProcessorDefinition defn = (ProcessorDefinition) this;
 
         // set the child before init the channel
@@ -994,10 +994,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @return the builder
      */
     public ProcessorDefinition end() {
+        // must do this ugly cast to avoid compiler error on AIX/HP-UX
+        ProcessorDefinition defn = (ProcessorDefinition) this;
+        
         // when using doTry .. doCatch .. doFinally we should always
         // end the try definition to avoid having to use 2 x end() in the route
         // this is counter intuitive for end users
-        ProcessorDefinition defn = (ProcessorDefinition) this;
         if (defn instanceof TryDefinition) {
             popBlock();
         }
