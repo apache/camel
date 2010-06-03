@@ -324,10 +324,6 @@
     </dependency>	
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-osgi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-integration</artifactId>
     </dependency>
     <dependency>
