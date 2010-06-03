@@ -997,8 +997,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         // when using doTry .. doCatch .. doFinally we should always
         // end the try definition to avoid having to use 2 x end() in the route
         // this is counter intuitive for end users
-        ProcessorDefinition defn = (ProcessorDefinition) this;
-        if (defn instanceof TryDefinition) {
+        if (this instanceof TryDefinition) {
             popBlock();
         }
 
@@ -1370,7 +1369,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * Creates a routing slip allowing you to route a message consecutively through a series of processing
      * steps where the sequence of steps is not known at design time and can vary for each message.
      *
-     * @param expresion  to decide the destinations
+     * @param expression  to decide the destinations
      * @param uriDelimiter  is the delimiter that will be used to split up
      *                      the list of URIs in the routing slip.
      * 
@@ -1389,7 +1388,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * <p>
      * The list of URIs will be split based on the default delimiter {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
      *
-     * @param expresion  to decide the destinations
+     * @param expression  to decide the destinations
      * 
      * @return the builder
      */
@@ -2186,7 +2185,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     public ExpressionClause<ProcessorDefinition<Type>> transform() {
         ExpressionClause<ProcessorDefinition<Type>> clause = 
-            new ExpressionClause<ProcessorDefinition<Type>>((ProcessorDefinition<Type>) this);
+            new ExpressionClause<ProcessorDefinition<Type>>(this);
         TransformDefinition answer = new TransformDefinition(clause);
         addOutput(answer);
         return clause;
