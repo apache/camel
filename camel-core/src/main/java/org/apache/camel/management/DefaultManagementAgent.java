@@ -390,6 +390,10 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     }
 
     protected void createJmxConnector(String host) throws IOException {
+        ObjectHelper.notEmpty(serviceUrlPath, "serviceUrlPath");
+        ObjectHelper.notNull(registryPort, "registryPort");
+
+
         try {
             LocateRegistry.createRegistry(registryPort);
             if (LOG.isDebugEnabled()) {
@@ -399,14 +403,15 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             // The registry may had been created, we could get the registry instead
         }
 
+        // must start with leading slash
+        String path = serviceUrlPath.startsWith("/") ? serviceUrlPath : "/" + serviceUrlPath;
         // Create an RMI connector and start it
         final JMXServiceURL url;
         if (connectorPort > 0) {
             url = new JMXServiceURL("service:jmx:rmi://" + host + ":" + connectorPort + "/jndi/rmi://" + host
-                                    + ":" + registryPort + serviceUrlPath);
+                                    + ":" + registryPort + path);
         } else {
-            url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":" + registryPort
-                                    + serviceUrlPath);
+            url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":" + registryPort + path);
         }
 
         cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);

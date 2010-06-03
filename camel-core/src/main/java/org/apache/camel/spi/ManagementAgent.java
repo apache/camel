@@ -91,4 +91,33 @@ public interface ManagementAgent extends Service {
      */
     String getMBeanObjectDomainName();
 
+    void setRegistryPort(Integer value);
+
+    Integer getRegistryPort();
+
+    void setConnectorPort(Integer value);
+
+    Integer getConnectorPort();
+
+    void setMBeanServerDefaultDomain(String value);
+
+    String getMBeanServerDefaultDomain();
+
+    void setMBeanObjectDomainName(String value);
+
+    void setServiceUrlPath(String value);
+
+    String getServiceUrlPath();
+
+    void setCreateConnector(Boolean flag);
+
+    Boolean getCreateConnector();
+
+    void setUsePlatformMBeanServer(Boolean flag);
+
+    Boolean getUsePlatformMBeanServer();
+
+    Boolean getOnlyRegisterProcessorWithCustomId();
+
+    void setOnlyRegisterProcessorWithCustomId(Boolean onlyRegisterProcessorWithCustomId);
 }
