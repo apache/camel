@@ -36,6 +36,7 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 //import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.cleanCaches;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 public abstract class AbstractFeatureTest {
 
@@ -138,8 +139,8 @@ public abstract class AbstractFeatureTest {
 
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("apache-camel").versionAsInProject().type("xml/features"),
-                          "camel-spring-osgi", "camel-" + feature),
-                          //cleanCaches(),
+                          "camel-spring", "camel-" + feature),
+            workingDirectory("target/paxrunner/"),              
 
             felix());
             //equinox());
