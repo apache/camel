@@ -22,7 +22,6 @@
     </config>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty-bundle/${jetty6-bundle-version}</bundle>
-    <bundle>mvn:org.osgi/org.osgi.compendium/${osgi.compendium.version}</bundle>
     <bundle>mvn:org.ops4j.pax.web/pax-web-api/${pax.web.version}</bundle>
     <bundle>mvn:org.ops4j.pax.web/pax-web-spi/${pax.web.version}</bundle>
     <bundle>mvn:org.ops4j.pax.web/pax-web-runtime/${pax.web.version}</bundle>
@@ -51,7 +50,6 @@
   </feature>
   <feature name='camel-blueprint' version='${pom.version}'>
      <feature version='${pom.version}'>camel-core</feature>
-     <bundle>mvn:org.osgi/org.osgi.compendium/${osgi.compendium.version}</bundle>
      <bundle>mvn:org.apache.camel/camel-blueprint/${pom.version}</bundle>
      <bundle>mvn:org.apache.aries.blueprint/org.apache.aries.blueprint/${aries-blueprint-version}</bundle>
   </feature>
