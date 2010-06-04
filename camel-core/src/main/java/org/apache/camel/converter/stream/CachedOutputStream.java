@@ -191,12 +191,7 @@ public class CachedOutputStream extends OutputStream {
     private void cleanUpTempFile() {
         // cleanup temporary file
         if (tempFile != null) {
-            boolean deleted = tempFile.delete();
-            if (!deleted) {
-                LOG.warn("Cannot delete temporary cache file: " + tempFile);
-            } else if (LOG.isTraceEnabled()) {
-                LOG.trace("Deleted temporary cache file: " + tempFile);
-            }
+            FileUtil.deleteFile(tempFile);
             tempFile = null;
         }
     }
