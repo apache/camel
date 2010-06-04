@@ -22,12 +22,14 @@ import java.net.URI;
  * FTP Secure (FTP over SSL/TLS) configuration
  * 
  * @version $Revision$
- * @author muellerc
  */
 public class FtpsConfiguration extends FtpConfiguration {
 
     private String securityProtocol = "TLS";
     private boolean isImplicit;
+    private boolean useSecureDataChannel;
+    private String execProt = "P";
+    private long execPbsz;
 
     public FtpsConfiguration() {
         setProtocol("ftps");
@@ -70,5 +72,52 @@ public class FtpsConfiguration extends FtpConfiguration {
      */
     public void setIsImplicit(boolean isImplicit) {
         this.isImplicit = isImplicit;
+    }
+
+    public boolean isUseSecureDataChannel() {
+        return useSecureDataChannel;
+    }
+
+    /**
+     * Sets whether to use secure data channel when transferring file content
+     * <p/>
+     * Default is <tt>false</tt>
+     * @see #setExecPbsz(long)
+     * @see #setExecProt(String)
+     */
+    public void setUseSecureDataChannel(boolean useSecureDataChannel) {
+        this.useSecureDataChannel = useSecureDataChannel;
+    }
+
+    public String getExecProt() {
+        return execProt;
+    }
+
+    /**
+     * When using secure data channel you can set the exec protection level
+     * <p/>
+     * PROT command. C - Clear S - Safe(SSL protocol only) E - Confidential(SSL protocol only) P - Private
+     * <p/>
+     * Default value is <tt>P</tt>
+     * 
+     * @param execProt either C, S, E or P
+     */
+    public void setExecProt(String execProt) {
+        this.execProt = execProt;
+    }
+
+    public long getExecPbsz() {
+        return execPbsz;
+    }
+
+    /**
+     * When using secure data channel you can set the exec protection buffer size
+     * <p/>
+     * Default value is <tt>0</tt>
+     *
+     * @param execPbsz the buffer size
+     */
+    public void setExecPbsz(long execPbsz) {
+        this.execPbsz = execPbsz;
     }
 }

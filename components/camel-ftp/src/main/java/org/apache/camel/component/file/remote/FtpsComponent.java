@@ -27,10 +27,9 @@ import org.apache.commons.net.ftp.FTPFile;
 /**
  * FTP Secure (FTP over SSL/TLS) Component.
  * <p/>
- * If desired, the JVM property -Djavax.net.debug=all can be used to see wire-level SSL details.
+ * If desired, the JVM property <tt>-Djavax.net.debug=all</tt> can be used to see wire-level SSL details.
  * 
  * @version $Revision$
- * @author muellerc
  */
 public class FtpsComponent extends FtpComponent {
 

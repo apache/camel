@@ -25,8 +25,9 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPSClient;
 
@@ -34,7 +35,6 @@ import org.apache.commons.net.ftp.FTPSClient;
  * FTP Secure (FTP over SSL/TLS) endpoint
  * 
  * @version $Revision$
- * @author muellerc
  */
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     
@@ -108,6 +108,33 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         }
         
         return client;
+    }
+
+    @Override
+    protected RemoteFileOperations<FTPFile> createRemoteFileOperations() throws Exception {
+        // configure ftp client
+        FTPSClient client = getFtpsClient();
+
+        if (client == null) {
+            // must use a new client if not explicit configured to use a custom client
+            client = (FTPSClient) createFtpClient();
+        }
+
+        if (ftpClientParameters != null) {
+            IntrospectionSupport.setProperties(client, ftpClientParameters);
+        }
+
+        if (ftpClientConfigParameters != null) {
+            // client config is optional so create a new one if we have parameter for it
+            if (ftpClientConfig == null) {
+                ftpClientConfig = new FTPClientConfig();
+            }
+            IntrospectionSupport.setProperties(ftpClientConfig, ftpClientConfigParameters);
+        }
+
+        FtpsOperations operations = new FtpsOperations(client, getFtpClientConfig());
+        operations.setEndpoint(this);
+        return operations;
     }
 
     /**
