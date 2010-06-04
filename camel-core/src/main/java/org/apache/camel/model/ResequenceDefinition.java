@@ -168,6 +168,18 @@ public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinitio
     }
 
     /**
+     * Enables duplicates for the batch resequencer mode
+     * @return the builder
+     */
+    public ResequenceDefinition allowDuplicates() {
+        if (batchConfig == null) {
+            throw new IllegalStateException("allowDuplicates() only supported for batch resequencer");
+        }
+        batchConfig.setAllowDuplicates(true);
+        return this;
+    }
+
+    /**
      * Sets the comparator to use for stream resequencer
      *
      * @param comparator  the comparator
@@ -252,7 +264,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinitio
             BatchResequencerConfig config) throws Exception {
 
         Processor processor = this.createChildProcessor(routeContext, true);
-        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), processor, resolveExpressionList(routeContext));
+        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), processor, resolveExpressionList(routeContext), config.getAllowDuplicates());
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
         return resequencer;

@@ -19,6 +19,7 @@ package org.apache.camel.model.config;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -60,6 +61,9 @@ public class BatchResequencerConfig {
 
     @XmlAttribute
     private Long batchTimeout; // optional XML attribute requires wrapper object
+
+    @XmlAttribute
+    private Boolean allowDuplicates = Boolean.FALSE;
 
     /**
      * Creates a new {@link BatchResequencerConfig} instance using default
@@ -110,5 +114,12 @@ public class BatchResequencerConfig {
     public void setBatchTimeout(long batchTimeout) {
         this.batchTimeout = batchTimeout;
     }
-    
+
+    public Boolean getAllowDuplicates() {
+        return allowDuplicates;
+    }
+
+    public void setAllowDuplicates(Boolean allowDuplicates) {
+        this.allowDuplicates = allowDuplicates;
+    }
 }

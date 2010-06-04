@@ -14,33 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.spring.processor;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.BatchResequencerAllowDuplicatesTest;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * Interface to be implement by objects that should be orderable, such as in a {@link java.util.Collection}.
- *
  * @version $Revision$
  */
-public interface Ordered {
+public class SpringBatchResequencerAllowDuplicatesTest extends BatchResequencerAllowDuplicatesTest {
 
-    /**
-     * The highest precedence
-     */
-    int HIGHEST = Integer.MIN_VALUE;
-
-    /**
-     * The lowest precedence
-     */
-    int LOWEST = Integer.MAX_VALUE;
-
-
-    /**
-     * Gets the order.
-     * <p/>
-     * Use low numbers for higher priority. Normally the sorting will start from 0 and move upwards.
-     * So if you want to be last then use {@link Integer#MAX_VALUE} or eg {@link #LOWEST}.
-     *
-     * @return the order
-     */
-    int getOrder();
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/BatchResequencerAllowDuplicatesTest.xml");
+    }
 }
