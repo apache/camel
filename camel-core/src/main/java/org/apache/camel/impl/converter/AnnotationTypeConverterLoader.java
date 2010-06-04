@@ -52,8 +52,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
     private static final transient Log LOG = LogFactory.getLog(AnnotationTypeConverterLoader.class);
     protected PackageScanClassResolver resolver;
-    private Set<Class<?>> visitedClasses = new HashSet<Class<?>>();
-    private Set<URL> visitedURLs = new HashSet<URL>();
+    protected Set<Class<?>> visitedClasses = new HashSet<Class<?>>();
+    protected Set<URL> visitedURLs = new HashSet<URL>();
 
     public AnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
         this.resolver = resolver;

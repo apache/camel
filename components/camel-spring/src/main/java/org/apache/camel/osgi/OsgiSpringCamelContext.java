@@ -18,20 +18,33 @@ package org.apache.camel.osgi;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.OsgiCamelContextHelper;
+import org.apache.camel.core.osgi.OsgiTypeConverter;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.springframework.context.ApplicationContext;
 
 public class OsgiSpringCamelContext extends SpringCamelContext {
-    
+
+    private static final transient Log LOG = LogFactory.getLog(OsgiSpringCamelContext.class);
+
+    private final BundleContext bundleContext;
+
     public OsgiSpringCamelContext(ApplicationContext applicationContext, BundleContext bundleContext) {
         super(applicationContext);
+        this.bundleContext = bundleContext;
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
     }
     
     @Override    
     protected TypeConverter createTypeConverter() {
-        return OsgiCamelContextHelper.createTypeConverter(this);
+        return new OsgiTypeConverter(bundleContext, getInjector());
     }
 
+    @Override
+    protected Registry createRegistry() {
+        return OsgiCamelContextHelper.wrapRegistry(this, super.createRegistry(), bundleContext);
+    }
 }

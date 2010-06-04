@@ -31,8 +31,13 @@ import org.osgi.framework.BundleContext;
 
 public class OsgiFactoryFinder extends DefaultFactoryFinder {
 
-    public OsgiFactoryFinder(ClassResolver classResolver, String resourcePath) {
+    private final BundleContext bundleContext;
+    private final Bundle bundle;
+
+    public OsgiFactoryFinder(BundleContext bundleContext, ClassResolver classResolver, String resourcePath) {
         super(classResolver, resourcePath);
+        this.bundleContext = bundleContext;
+        this.bundle = bundleContext.getBundle();
     }
 
     private class BundleEntry {
@@ -48,9 +53,8 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
 
         Class clazz = classMap.get(propertyPrefix + key);
         if (clazz == null) {
-            BundleEntry entry = getResource(key);
-            if (entry != null) {
-                URL url = entry.url;
+            URL url = bundle.getEntry(getResourcePath() + key);
+            if (url != null) {
                 InputStream in = url.openStream();
                 // lets load the file
                 BufferedInputStream reader = null;
@@ -62,7 +66,7 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
                     if (className == null) {
                         throw new IOException("Expected property is missing: " + propertyPrefix + "class");
                     }
-                    clazz = entry.bundle.loadClass(className);
+                    clazz = bundle.loadClass(className);
                     classMap.put(propertyPrefix + key, clazz);
                 } finally {
                     IOHelper.close(reader, key, null);
@@ -77,30 +81,4 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
     }
     
        
-    public BundleEntry getResource(String name) {
-        BundleEntry entry = null;
-        Bundle[] bundles = null;       
-        BundleContext bundleContext = Activator.getBundle().getBundleContext();
-        if (bundleContext == null) {
-            // Bundle is not in STARTING|ACTIVE|STOPPING state
-            // (See OSGi 4.1 spec, section 4.3.17)
-            bundles = new Bundle[] {Activator.getBundle()};
-        } else {
-            bundles = bundleContext.getBundles();
-        }
-
-        URL url;
-        for (Bundle bundle : bundles) {
-            url = bundle.getEntry(getResourcePath() + name);
-            if (url != null) {
-                entry = new BundleEntry();
-                entry.url = url;
-                entry.bundle = bundle;
-                break;
-            }
-        }
-
-        return entry;
-    }
-
 }

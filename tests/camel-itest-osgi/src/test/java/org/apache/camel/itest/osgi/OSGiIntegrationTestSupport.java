@@ -75,7 +75,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             
             workingDirectory("target/paxrunner/"),
 
-            knopflerfish(), felix(), equinox());
+            felix(), equinox());
         
         return options;
     }

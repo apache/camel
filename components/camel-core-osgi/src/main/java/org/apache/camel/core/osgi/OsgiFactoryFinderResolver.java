@@ -19,18 +19,25 @@ package org.apache.camel.core.osgi;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.osgi.framework.BundleContext;
 
 /**
  * @version $Revision: 785599 $
  */
 public class OsgiFactoryFinderResolver implements FactoryFinderResolver {
 
-    public FactoryFinder resolveDefaultFactoryFinder(ClassResolver classResolver) {        
+    private final BundleContext bundleContext;
+
+    public OsgiFactoryFinderResolver(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
+    }
+
+    public FactoryFinder resolveDefaultFactoryFinder(ClassResolver classResolver) {
         return resolveFactoryFinder(classResolver, "META-INF/services/org/apache/camel/");
     }
 
     public FactoryFinder resolveFactoryFinder(ClassResolver classResolver, String resourcePath) {
-        return new OsgiFactoryFinder(classResolver, resourcePath);
+        return new OsgiFactoryFinder(bundleContext, classResolver, resourcePath);
     }
 
 }

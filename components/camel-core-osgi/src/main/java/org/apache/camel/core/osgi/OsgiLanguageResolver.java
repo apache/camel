@@ -17,26 +17,78 @@
 package org.apache.camel.core.osgi;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultLanguageResolver;
+import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.spi.Language;
+import org.apache.camel.spi.LanguageResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
-public class OsgiLanguageResolver extends DefaultLanguageResolver {
+public class OsgiLanguageResolver implements LanguageResolver {
+
     private static final transient Log LOG = LogFactory.getLog(OsgiLanguageResolver.class);
 
-    @Override
-    protected Log getLog() {
-        return LOG;
+    private final BundleContext bundleContext;
+
+    public OsgiLanguageResolver(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
-    
-    @Override
-    protected Class<?> findLanguage(String name, CamelContext context) throws Exception {
-        return Activator.getLanguage(name);
+
+    public Language resolveLanguage(String name, CamelContext context) {
+        // lookup in registry first
+        Object bean = null;
+        try {
+            bean = context.getRegistry().lookup(name);
+            if (bean != null && LOG.isDebugEnabled()) {
+                LOG.debug("Found language: " + name + " in registry: " + bean);
+            }
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
+            }
+        }
+        if (bean instanceof Language) {
+            return (Language)bean;
+        }
+        Language lang = getLanguage(name, context);
+        if (lang == null) {
+            return lang;
+        }
+        LanguageResolver resolver = getLanguageResolver("default", context);
+        if (resolver != null) {
+            return resolver.resolveLanguage(name, context);
+        }
+        throw new NoSuchLanguageException(name);
     }
-    
-    @Override
-    protected Class<?> findLanguageResolver(String name, CamelContext context) throws Exception {
-        return Activator.getLanguageResolver(name);
+
+    protected Language getLanguage(String name, CamelContext context) {
+        LOG.trace("Finding Language: " + name);
+        try {
+            ServiceReference[] refs = bundleContext.getServiceReferences(LanguageResolver.class.getName(), "(language=" + name + ")");
+            if (refs != null && refs.length > 0) {
+                LanguageResolver resolver = (LanguageResolver) bundleContext.getService(refs[0]);
+                return resolver.resolveLanguage(name, context);
+            }
+            return null;
+        } catch (InvalidSyntaxException e) {
+            throw new RuntimeException(e); // Should never happen
+        }
+    }
+
+    protected LanguageResolver getLanguageResolver(String name, CamelContext context) {
+        LOG.trace("Finding LanguageResolver: " + name);
+        try {
+            ServiceReference[] refs = bundleContext.getServiceReferences(LanguageResolver.class.getName(), "(resolver=" + name + ")");
+            if (refs != null && refs.length > 0) {
+                LanguageResolver resolver = (LanguageResolver) bundleContext.getService(refs[0]);
+                return resolver;
+            }
+            return null;
+        } catch (InvalidSyntaxException e) {
+            throw new RuntimeException(e); // Should never happen
+        }
     }
 
 }

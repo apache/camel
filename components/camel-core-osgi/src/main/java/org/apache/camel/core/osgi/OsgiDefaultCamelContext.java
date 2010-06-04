@@ -18,18 +18,27 @@ package org.apache.camel.core.osgi;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.Registry;
 import org.osgi.framework.BundleContext;
 
 public class OsgiDefaultCamelContext extends DefaultCamelContext {
-    
+
+    private final BundleContext bundleContext;
+
     public OsgiDefaultCamelContext(BundleContext bundleContext) {
         super();
+        this.bundleContext = bundleContext;
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
     }
-   
-    @Override    
+
+    @Override
+    protected Registry createRegistry() {
+        return OsgiCamelContextHelper.wrapRegistry(this, super.createRegistry(), bundleContext);
+    }
+
+    @Override
     protected TypeConverter createTypeConverter() {
-        return OsgiCamelContextHelper.createTypeConverter(this);
+        return new OsgiTypeConverter(bundleContext, getInjector());
     }
 
 }

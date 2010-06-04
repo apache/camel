@@ -44,9 +44,6 @@
 			org.apache.camel.core.osgi*,
 			org.apache.camel.core.xml*
 		</camel.osgi.private.pkg>
-        <camel.osgi.activator>
-            org.apache.camel.core.osgi.Activator
-        </camel.osgi.activator>
     </properties>
 
     <dependencies>
@@ -63,7 +60,7 @@
             <artifactId>camel-core-osgi</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.felix</groupId>
+            <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -74,6 +71,10 @@
         <dependency>
           <groupId>javax.xml.bind</groupId>
           <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
         </dependency>
 
         <!-- for testing -->
@@ -86,11 +87,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
             <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

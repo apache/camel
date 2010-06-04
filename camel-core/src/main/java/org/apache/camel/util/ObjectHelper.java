@@ -664,40 +664,12 @@ public final class ObjectHelper {
         // must clean the name so its pure java name, eg removing \n or whatever people can do in the Spring XML
         name = normalizeClassName(name);
 
-        // special for byte[] as its common to use
-        if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
-            return byte[].class;
-        // and these is common as well
-        } else if ("java.lang.String".equals(name) || "String".equals(name)) {
-            return String.class;
-        } else if ("java.lang.Integer".equals(name) || "Integer".equals(name)) {
-            return Integer.class;
-        } else if ("int".equals(name)) {
-            return int.class;
-        } else if ("java.lang.Long".equals(name) || "Long".equals(name)) {
-            return Long.class;
-        } else if ("long".equals(name)) {
-            return long.class;
-        } else if ("java.lang.Short".equals(name) || "Short".equals(name)) {
-            return Short.class;
-        } else if ("short".equals(name)) {
-            return long.class;
-        } else if ("java.lang.Byte".equals(name) || "Byte".equals(name)) {
-            return Byte.class;
-        } else if ("byte".equals(name)) {
-            return byte.class;
-        } else if ("java.lang.Float".equals(name) || "Float".equals(name)) {
-            return Float.class;
-        } else if ("float".equals(name)) {
-            return byte.class;
-        } else if ("java.lang.Double".equals(name) || "Double".equals(name)) {
-            return Double.class;
-        } else if ("double".equals(name)) {
-            return byte.class;
+        // Try simple type first
+        Class<?> clazz = loadSimpleType(name);
+        if (clazz == null) {
+            // try context class loader
+            clazz = doLoadClass(name, Thread.currentThread().getContextClassLoader());
         }
-
-        // try context class loader first
-        Class<?> clazz = doLoadClass(name, Thread.currentThread().getContextClassLoader());
         if (clazz == null) {
             // then the provided loader
             clazz = doLoadClass(name, loader);
@@ -716,6 +688,47 @@ public final class ObjectHelper {
         return clazz;
     }
 
+
+    /**
+     * Load a simple type
+     *
+     * @param name the name of the class to load
+     * @return the class or <tt>null</tt> if it could not be loaded
+     */
+    public static Class<?> loadSimpleType(String name) {
+        // special for byte[] as its common to use
+        if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
+            return byte[].class;
+        // and these is common as well
+        } else if ("java.lang.String".equals(name) || "String".equals(name)) {
+            return String.class;
+        } else if ("java.lang.Integer".equals(name) || "Integer".equals(name)) {
+            return Integer.class;
+        } else if ("int".equals(name)) {
+            return int.class;
+        } else if ("java.lang.Long".equals(name) || "Long".equals(name)) {
+            return Long.class;
+        } else if ("long".equals(name)) {
+            return long.class;
+        } else if ("java.lang.Short".equals(name) || "Short".equals(name)) {
+            return Short.class;
+        } else if ("short".equals(name)) {
+            return short.class;
+        } else if ("java.lang.Byte".equals(name) || "Byte".equals(name)) {
+            return Byte.class;
+        } else if ("byte".equals(name)) {
+            return byte.class;
+        } else if ("java.lang.Float".equals(name) || "Float".equals(name)) {
+            return Float.class;
+        } else if ("float".equals(name)) {
+            return float.class;
+        } else if ("java.lang.Double".equals(name) || "Double".equals(name)) {
+            return Double.class;
+        } else if ("double".equals(name)) {
+            return double.class;
+        }
+        return null;
+    }
     /**
      * Loads the given class with the provided classloader (may be null).
      * Will ignore any class not found and return null.

@@ -39,7 +39,12 @@ public class OsgiClassResolver extends DefaultClassResolver {
     }
     
     public Class<?> resolveClass(String name) {
-        return loadClass(name, bundleContext.getBundle());
+        name = ObjectHelper.normalizeClassName(name);
+        Class<?> clazz = ObjectHelper.loadSimpleType(name);
+        if (clazz == null) {
+            clazz = doLoadClass(name, bundleContext.getBundle());
+        }
+        return clazz;
     }
 
     public <T> Class<T> resolveClass(String name, Class<T> type) {
@@ -62,17 +67,10 @@ public class OsgiClassResolver extends DefaultClassResolver {
 
     public URL loadResourceAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
-        URL url = null;
-        for (Bundle bundle : bundleContext.getBundles()) {
-            url = bundle.getEntry(uri);
-            if (url != null) {
-                break;
-            }
-        }
-        return url;
+        return bundleContext.getBundle().getEntry(uri);
     }
 
-    protected Class<?> loadClass(String name, Bundle loader) {
+    protected Class<?> doLoadClass(String name, Bundle loader) {
         ObjectHelper.notEmpty(name, "name");
         Class<?> answer = null;
         // Try to use the camel context's bundle's classloader to load the class
@@ -85,19 +83,6 @@ public class OsgiClassResolver extends DefaultClassResolver {
                 }
             }
         }
-        // Load the class with bundle, if there are more than one version of the class the first one will be load
-        if (answer == null) {
-            for (Bundle bundle : bundleContext.getBundles()) {
-                try {
-                    answer = bundle.loadClass(name);                    
-                    if (answer != null) {
-                        break;
-                    }
-                } catch (Exception e) {
-                    // do nothing here
-                }
-            }
-        }        
         return answer;
     }
     

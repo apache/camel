@@ -18,7 +18,6 @@ package org.apache.camel.blueprint;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,36 +30,16 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.core.osgi.OsgiAnnotationTypeConverterLoader;
-import org.apache.camel.core.osgi.OsgiCamelContextHelper;
-import org.apache.camel.core.osgi.OsgiClassResolver;
-import org.apache.camel.core.osgi.OsgiComponentResolver;
-import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
-import org.apache.camel.core.osgi.OsgiLanguageResolver;
-import org.apache.camel.core.osgi.OsgiPackageScanClassResolver;
-import org.apache.camel.core.osgi.OsgiServiceRegistry;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
-import org.apache.camel.model.InterceptDefinition;
-import org.apache.camel.model.InterceptFromDefinition;
-import org.apache.camel.model.InterceptSendToEndpointDefinition;
-import org.apache.camel.model.OnCompletionDefinition;
-import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.PackageScanDefinition;
-import org.apache.camel.model.RouteBuilderDefinition;
-import org.apache.camel.model.RouteContextRefDefinition;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.ThreadPoolProfileDefinition;
+import org.apache.camel.model.*;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.blueprint.container.BlueprintContainer;
 
 /**
  * A bean to create and initialize a {@link BlueprintCamelContext}
@@ -143,6 +122,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 //    private ApplicationContext applicationContext;
 //    @XmlTransient
 //    private BeanPostProcessor beanPostProcessor;
+    @XmlTransient
+    private BlueprintContainer blueprintContainer;
+    @XmlTransient
+    private BundleContext bundleContext;
 
 
     public Class getObjectType() {
@@ -157,33 +140,16 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         return context;
     }
 
+    public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
+        this.blueprintContainer = blueprintContainer;
+    }
+
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
+    }
+
     protected BlueprintCamelContext createContext() {
-        BlueprintCamelContext ctx = new BlueprintCamelContext();
-        ctx.setName(getId());
-
-        // Adding discovery to this from camel-osgi
-
-        BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-
-        OsgiServiceRegistry registry = new OsgiServiceRegistry(bundleContext);
-        ctx.setRegistry(registry);
-
-        OsgiCamelContextHelper.updateRegistry(ctx, bundleContext);
-
-        ctx.setClassResolver(new OsgiClassResolver(bundleContext));
-        ctx.setFactoryFinderResolver(new OsgiFactoryFinderResolver());
-        ctx.setPackageScanClassResolver(new OsgiPackageScanClassResolver(bundleContext));
-        ctx.setComponentResolver(new OsgiComponentResolver());
-        ctx.setLanguageResolver(new OsgiLanguageResolver());
-
-        OsgiAnnotationTypeConverterLoader typeConverterLoader = new OsgiAnnotationTypeConverterLoader(new OsgiPackageScanClassResolver(bundleContext));
-        try {
-            typeConverterLoader.load(ctx.getTypeConverterRegistry());
-        } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
-
-        return ctx;
+        return new BlueprintCamelContext(bundleContext, blueprintContainer);
     }
 
     @Override

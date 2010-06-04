@@ -452,7 +452,7 @@
       <artifactId>spring-test</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.felix</groupId>
+      <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
       <optional>true</optional>      
     </dependency>

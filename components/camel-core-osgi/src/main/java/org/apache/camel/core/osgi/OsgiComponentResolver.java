@@ -16,15 +16,26 @@
  */
 package org.apache.camel.core.osgi;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 public class OsgiComponentResolver implements ComponentResolver {
     
     private static final transient Log LOG = LogFactory.getLog(OsgiComponentResolver.class);
+
+    private final BundleContext bundleContext;
+
+    public OsgiComponentResolver(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
+    }
 
     @SuppressWarnings("unchecked")
     public Component resolveComponent(String name, CamelContext context) throws Exception {
@@ -37,33 +48,26 @@ public class OsgiComponentResolver implements ComponentResolver {
         } catch (Exception e) {
             LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
         }
-        if (bean != null) {
-            if (bean instanceof Component) {
-                return (Component)bean;
-            }
-            // we do not throw the exception here and try to auto create a component
+        if (bean instanceof Component) {
+            return (Component)bean;
         }
 
         // Check in OSGi bundles
-        Class type;
-        try {
-            type = getComponent(name);
-        } catch (Throwable e) {
-            throw new IllegalArgumentException("Invalid URI, no Component registered for scheme : " + name, e);
-        }
-        if (type == null) {
-            return null;
-        }
-
-        if (Component.class.isAssignableFrom(type)) {
-            return (Component)context.getInjector().newInstance(type);
-        } else {
-            throw new IllegalArgumentException("Type is not a Component implementation. Found: " + type.getName());
-        }
+        return getComponent(name, context);
     }
 
-    protected Class getComponent(String name) throws Exception {
-        return Activator.getComponent(name);
+    protected Component getComponent(String name, CamelContext context) throws Exception {
+        LOG.trace("Finding Component: " + name);
+        try {
+            ServiceReference[] refs = bundleContext.getServiceReferences(ComponentResolver.class.getName(), "(component=" + name + ")");
+            if (refs != null && refs.length > 0) {
+                ComponentResolver resolver = (ComponentResolver) bundleContext.getService(refs[0]);
+                return resolver.resolveComponent(name, context);
+            }
+            return null;
+        } catch (InvalidSyntaxException e) {
+            throw new RuntimeException(e); // Should never happen
+        }
     }
 
 }

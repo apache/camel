@@ -18,10 +18,12 @@ package org.apache.camel.core.osgi;
 
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.TypeConverterLoader;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,52 +36,22 @@ public final class OsgiCamelContextHelper {
         // helper class
     }
     
-    public static DefaultTypeConverter createTypeConverter(DefaultCamelContext context) {
-        
-        DefaultTypeConverter answer = new DefaultTypeConverter(context.getPackageScanClassResolver(), context.getInjector(), context.getDefaultFactoryFinder());
-        List<TypeConverterLoader> typeConverterLoaders = answer.getTypeConverterLoaders();
-
-        // Remove the AnnotationTypeConverterLoader
-        TypeConverterLoader atLoader = null; 
-        for (TypeConverterLoader loader : typeConverterLoaders) {
-            if (loader instanceof AnnotationTypeConverterLoader) {
-                atLoader = loader;
-                break;
-            }
-        }
-        if (atLoader != null) {
-            typeConverterLoaders.remove(atLoader);
-        }
-
-        // add our osgi annotation loader
-        typeConverterLoaders.add(new OsgiAnnotationTypeConverterLoader(context.getPackageScanClassResolver()));
-        context.setTypeConverterRegistry(answer);
-        return answer;
-    }
-    
     public static void osgiUpdate(DefaultCamelContext camelContext, BundleContext bundleContext) {
-        if (bundleContext != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Using OSGi resolvers");
-            }
-            updateRegistry(camelContext, bundleContext);
-            LOG.debug("Using the OsgiClassResolver");
-            camelContext.setClassResolver(new OsgiClassResolver(bundleContext));
-            LOG.debug("Using OsgiFactoryFinderResolver");
-            camelContext.setFactoryFinderResolver(new OsgiFactoryFinderResolver());
-            LOG.debug("Using OsgiPackageScanClassResolver");
-            camelContext.setPackageScanClassResolver(new OsgiPackageScanClassResolver(bundleContext));
-            LOG.debug("Using OsgiComponentResolver");
-            camelContext.setComponentResolver(new OsgiComponentResolver());
-            LOG.debug("Using OsgiLanguageResolver");
-            camelContext.setLanguageResolver(new OsgiLanguageResolver());            
-        } else {
-            // TODO: should we not thrown an exception to not allow it to startup
-            LOG.warn("BundleContext not set, cannot run in OSGI container");
-        }
+        LOG.debug("Using the OsgiClassResolver");
+        camelContext.setClassResolver(new OsgiClassResolver(bundleContext));
+        LOG.debug("Using OsgiFactoryFinderResolver");
+        camelContext.setFactoryFinderResolver(new OsgiFactoryFinderResolver(bundleContext));
+        LOG.debug("Using OsgiPackageScanClassResolver");
+        camelContext.setPackageScanClassResolver(new OsgiPackageScanClassResolver(bundleContext));
+        LOG.debug("Using OsgiComponentResolver");
+        camelContext.setComponentResolver(new OsgiComponentResolver(bundleContext));
+        LOG.debug("Using OsgiLanguageResolver");
+        camelContext.setLanguageResolver(new OsgiLanguageResolver(bundleContext));
+        LOG.debug("Using OsgiDataFormatResolver");
+        camelContext.setDataFormatResolver(new OsgiDataFormatResolver(bundleContext));
     }
     
-    public static void updateRegistry(DefaultCamelContext camelContext, BundleContext bundleContext) {
+    public static Registry wrapRegistry(CamelContext camelContext, Registry registry, BundleContext bundleContext) {
         ObjectHelper.notNull(bundleContext, "BundleContext");
         LOG.debug("Setting the OSGi ServiceRegistry");
         OsgiServiceRegistry osgiServiceRegistry = new OsgiServiceRegistry(bundleContext);
@@ -87,8 +59,8 @@ public final class OsgiCamelContextHelper {
         camelContext.addLifecycleStrategy(osgiServiceRegistry);
         CompositeRegistry compositeRegistry = new CompositeRegistry();
         compositeRegistry.addRegistry(osgiServiceRegistry);
-        compositeRegistry.addRegistry(camelContext.getRegistry());
-        camelContext.setRegistry(compositeRegistry);        
+        compositeRegistry.addRegistry(registry);
+        return compositeRegistry;
     }
 
 }
