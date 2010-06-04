@@ -122,10 +122,6 @@ public class QuartzComponent extends DefaultComponent {
         if (scheduler == null) {
             scheduler = getScheduler();
         }
-        if (!scheduler.isStarted()) {
-            LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName());
-            scheduler.start();
-        }
     }
 
     @Override
@@ -178,6 +174,10 @@ public class QuartzComponent extends DefaultComponent {
     public synchronized Scheduler getScheduler() throws SchedulerException {
         if (scheduler == null) {
             scheduler = createScheduler();
+        }
+        if (!scheduler.isStarted()) {
+            LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName());
+            scheduler.start();
         }
         return scheduler;
     }
