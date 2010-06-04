@@ -58,6 +58,8 @@
       <fastinfoset-version>1.2.7_2</fastinfoset-version>
       <features.file>features.xml</features.file>
       <flatpack-bundle-version>3.1.1_3</flatpack-bundle-version>
+      <felix.configadmin.version>1.2.4</felix.configadmin.version>
+      <felix.framework.version>2.0.5</felix.framework.version>
       <freemarker-bundle-version>2.3.15_3</freemarker-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
       <geronimo-jsp-version>1.0.1</geronimo-jsp-version>
@@ -146,6 +148,7 @@
       </repository>   
     </repositories>
     
+    <!-- The validate plugin will export these provided dependencies bundles' export packages first -->  
     <dependencies>
     	<dependency>
     	    <groupId>org.osgi</groupId>
@@ -159,6 +162,18 @@
     	    <version>1.4</version>
     	    <scope>provided</scope>
     	</dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+            <version>${felix.framework.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.configadmin</artifactId>
+            <version>${felix.configadmin.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
