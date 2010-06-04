@@ -76,7 +76,9 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         String temp = toString((InputStream)cache);
 
         ((InputStream)cache).close();
+        assertEquals("we should have a temp file", files.length, 1);
         assertEquals("Cached a wrong file", temp, TEST_STRING);
+        exchange.getUnitOfWork().done(exchange);
 
         try {
             cache.reset();
@@ -91,7 +93,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertEquals("we should have no temp file", files.length, 0);
     }
     
-    public void testCacheStreamToFileAndNotCloseStream() throws IOException {
+    public void testCacheStreamToFileCloseStreamBeforeDone() throws IOException {
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
 
@@ -106,8 +108,9 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertEquals("Cached a wrong file", temp, TEST_STRING);
         cache.reset();
         temp = toString((InputStream)cache);
-        assertEquals("Cached a wrong file", temp, TEST_STRING);
-        
+        assertEquals("Cached a wrong file", temp, TEST_STRING);        
+        exchange.getUnitOfWork().done(exchange);
+        assertEquals("we should have a temp file", files.length, 1);
         ((InputStream)cache).close();
         
         files = file.list();

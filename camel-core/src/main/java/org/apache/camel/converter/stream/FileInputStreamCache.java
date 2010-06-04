@@ -44,9 +44,9 @@ public class FileInputStreamCache extends InputStream implements StreamCache {
             if (isSteamOpened()) {
                 getInputStream().close();
             }
-            // when close the FileInputStreamCache we should also close the cachedOutputStream
+            // Just remove the itself from cachedOutputStream
             if (cachedOutputStream != null) {
-                cachedOutputStream.close();
+                cachedOutputStream.releaseFileInputStream(this);
             }
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
