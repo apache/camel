@@ -65,6 +65,9 @@ public class BatchResequencerConfig {
     @XmlAttribute
     private Boolean allowDuplicates = Boolean.FALSE;
 
+    @XmlAttribute
+    private Boolean reverse = Boolean.FALSE;
+
     /**
      * Creates a new {@link BatchResequencerConfig} instance using default
      * values for <code>batchSize</code> (100) and <code>batchTimeout</code>
@@ -121,5 +124,13 @@ public class BatchResequencerConfig {
 
     public void setAllowDuplicates(Boolean allowDuplicates) {
         this.allowDuplicates = allowDuplicates;
+    }
+
+    public Boolean getReverse() {
+        return reverse;
+    }
+
+    public void setReverse(Boolean reverse) {
+        this.reverse = reverse;
     }
 }
