@@ -143,7 +143,13 @@ public class MailConfiguration implements Cloneable {
             answer.setSession(session);
         } else {
             // use our authenticator that does no live user interaction but returns the already configured username and password
-            Session session = Session.getDefaultInstance(answer.getJavaMailProperties(), getAuthenticator());
+            Session session;
+            try {
+                session = Session.getDefaultInstance(answer.getJavaMailProperties(), getAuthenticator());
+            } catch (Throwable t) {
+                // fallback as default instance may not be allowed on some systems
+                session = Session.getInstance(answer.getJavaMailProperties(), getAuthenticator());
+            }
             answer.setSession(session);
         }
         if (username != null) {
