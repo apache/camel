@@ -48,7 +48,9 @@ public class FtpsOperations extends FtpOperations {
                 if (log.isDebugEnabled()) {
                     log.debug("Secure data channel being initialized with execPbsz=" + config.getExecPbsz() + ", execPort=" + config.getExecProt());
                 }
-                getFtpClient().execPBSZ(config.getExecPbsz());
+                if (config.getExecPbsz() != null) {
+                    getFtpClient().execPBSZ(config.getExecPbsz());
+                }
                 getFtpClient().execPROT(config.getExecProt());
             } catch (SSLException e) {
                 throw new GenericFileOperationFailedException(client.getReplyCode(),

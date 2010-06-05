@@ -29,7 +29,7 @@ public class FtpsConfiguration extends FtpConfiguration {
     private boolean isImplicit;
     private boolean useSecureDataChannel;
     private String execProt = "P";
-    private long execPbsz;
+    private Long execPbsz;
 
     public FtpsConfiguration() {
         setProtocol("ftps");
@@ -82,7 +82,7 @@ public class FtpsConfiguration extends FtpConfiguration {
      * Sets whether to use secure data channel when transferring file content
      * <p/>
      * Default is <tt>false</tt>
-     * @see #setExecPbsz(long)
+     * @see #setExecPbsz(Long)
      * @see #setExecProt(String)
      */
     public void setUseSecureDataChannel(boolean useSecureDataChannel) {
@@ -106,7 +106,7 @@ public class FtpsConfiguration extends FtpConfiguration {
         this.execProt = execProt;
     }
 
-    public long getExecPbsz() {
+    public Long getExecPbsz() {
         return execPbsz;
     }
 
@@ -117,7 +117,7 @@ public class FtpsConfiguration extends FtpConfiguration {
      *
      * @param execPbsz the buffer size
      */
-    public void setExecPbsz(long execPbsz) {
+    public void setExecPbsz(Long execPbsz) {
         this.execPbsz = execPbsz;
     }
 }
