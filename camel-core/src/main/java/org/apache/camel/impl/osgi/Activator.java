@@ -101,11 +101,11 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public void removedBundle(Bundle bundle, BundleEvent event, Object object) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Bundle stopped: " + bundle.getSymbolicName());
-            List<BaseService> r = resolvers.remove(bundle.getBundleId());
-            if (r != null) {
-                for (BaseService service : r) {
-                    service.unregister();
-                }
+        }
+        List<BaseService> r = resolvers.remove(bundle.getBundleId());
+        if (r != null) {
+            for (BaseService service : r) {
+                service.unregister();
             }
         }
     }
@@ -275,9 +275,12 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         }
 
         class Loader extends AnnotationTypeConverterLoader {
+
             Loader() {
                 super(null);
             }
+
+            @SuppressWarnings("unchecked")
             public void load(TypeConverterRegistry registry) throws Exception {
                 PackageScanFilter test = new AnnotatedWithPackageScanFilter(Converter.class, true);
                 Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
@@ -317,7 +320,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     }
 
-    protected static abstract class BaseResolver<T> extends BaseService {
+    protected abstract static class BaseResolver<T> extends BaseService {
 
         private final Class<T> type;
 
@@ -337,6 +340,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             return createInstance(name, url, context.getInjector());
         }
 
+        @SuppressWarnings("unchecked")
         protected T createInstance(String name, URL url, Injector injector) {
             try {
                 Properties properties = loadProperties(url);
@@ -353,7 +357,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     }
 
-    protected static abstract class BaseService {
+    protected abstract static class BaseService {
 
         protected final Bundle bundle;
         private ServiceRegistration reg;
@@ -396,12 +400,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (Exception ignore) {
-            }
+            IOHelper.close(reader, "properties", LOG);
         }
         return properties;
     }
@@ -444,9 +443,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             } catch (Exception ignore) {
                 // Do nothing here
             } finally {
-                if (reader != null) {
-                    IOHelper.close(reader, null, LOG);
-                }
+                IOHelper.close(reader, null, LOG);
             }
         }
         return packages;
