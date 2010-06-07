@@ -91,10 +91,9 @@ public class EventNotifierEventsTest extends ContextTestSupport {
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(4));
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(5));
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
-        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(7));
-
         // this is the sent using the produce template to start the test
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(8));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
+        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(8));
 
         context.stop();
 
@@ -119,10 +118,10 @@ public class EventNotifierEventsTest extends ContextTestSupport {
         assertIsInstanceOf(RouteStartedEvent.class, events.get(1));
         assertIsInstanceOf(RouteStartedEvent.class, events.get(2));
         assertIsInstanceOf(CamelContextStartedEvent.class, events.get(3));
-        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(4));
-        assertIsInstanceOf(ExchangeFailureEvent.class, events.get(5));
+        assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(4));        
         // this is the sent using the produce template to start the test
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(5));
+        assertIsInstanceOf(ExchangeFailureEvent.class, events.get(6));
 
         context.stop();
 

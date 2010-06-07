@@ -334,14 +334,17 @@ public class NotifyBuilderTest extends ContextTestSupport {
     }
 
     public void testWhenExchangeDoneWithDelay() throws Exception {
+        // There are two done event, one for the exchange which is created by DefaultProducerTemplate
+        // the other is for the exchange which is created by route context
         NotifyBuilder notify = new NotifyBuilder(context)
-                .whenDone(1)
+                .whenDone(2)
                 .create();
 
         long start = System.currentTimeMillis();
         template.sendBody("seda:cheese", "Hello Cheese");
         long end = System.currentTimeMillis();
         assertTrue("Should be faster than: " + (end - start), (end - start) < 2000);
+        
 
         assertEquals(false, notify.matches());
 
@@ -353,8 +356,10 @@ public class NotifyBuilderTest extends ContextTestSupport {
     }
 
     public void testWhenExchangeDoneAndTimeoutWithDelay() throws Exception {
+        // There are two done event, one for the exchange which is created by DefaultProducerTemplate
+        // the other is for the exchange which is created by route context
         NotifyBuilder notify = new NotifyBuilder(context)
-                .whenDone(1)
+                .whenDone(2)
                 .create();
 
         template.sendBody("seda:cheese", "Hello Cheese");
