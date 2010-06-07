@@ -21,12 +21,12 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultUnitOfWork;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,10 +46,19 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
 
     @Test
     public void testGetWithRelativePath() throws Exception {
-        
-        String response = template.requestBody("http://localhost:8201/clipboard/download/file", "   ", String.class);
-        assertEquals("should get the right response", TEST_STRING, response);
-        
+        // use HttpClient for testing so we wont use Camel to send the request as well, which
+        // may trigger using stream caching as well and store stream to file
+
+        HttpClient client = new DefaultHttpClient();
+        HttpGet get = new HttpGet("http://localhost:8201/clipboard/download/file");
+
+        HttpResponse response = client.execute(get);
+        assertNotNull(response);
+        assertEquals(200, response.getStatusLine().getStatusCode());
+
+        String reply = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
+        assertEquals("should get the right response", TEST_STRING, reply);
+
         File file = new File("./target/cachedir");
         String[] files = file.list();
         assertTrue("There should not have any temp file", files.length == 0);
@@ -61,21 +70,15 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
-
                 from("jetty:http://localhost:8201/clipboard/download?chunked=true&matchOnUriPrefix=true")
                     .to("http://localhost:9101?bridgeEndpoint=true");
                 
                 from("jetty:http://localhost:9101?chunked=true&matchOnUriPrefix=true")
                     .process(new Processor() {
-
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().setBody(TEST_STRING);
                         }
-                        
                     });
-
-               
             }
         };
     }
