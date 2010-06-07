@@ -36,6 +36,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     protected FTPClientConfig ftpClientConfig;
     protected Map<String, Object> ftpClientParameters;
     protected Map<String, Object> ftpClientConfigParameters;
+    protected int soTimeout;
 
     public FtpEndpoint() {
     }
@@ -76,6 +77,11 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         }
 
         if (ftpClientParameters != null) {
+            // setting soTimeout has to be done later on FTPClient (after it has connected)
+            Object timeout = ftpClientParameters.remove("soTimeout");
+            if (timeout != null) {
+                soTimeout = getCamelContext().getTypeConverter().convertTo(int.class, timeout);
+            }
             IntrospectionSupport.setProperties(client, ftpClientParameters);
         }
         
@@ -124,5 +130,16 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
      */
     void setFtpClientConfigParameters(Map<String, Object> ftpClientConfigParameters) {
         this.ftpClientConfigParameters = ftpClientConfigParameters;
+    }
+
+    public int getSoTimeout() {
+        return soTimeout;
+    }
+
+    /**
+     * Sets the soTimeout option to be used by FTPClient.
+     */
+    public void setSoTimeout(int soTimeout) {
+        this.soTimeout = soTimeout;
     }
 }

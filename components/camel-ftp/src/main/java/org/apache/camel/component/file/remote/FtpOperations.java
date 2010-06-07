@@ -130,6 +130,19 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             client.enterLocalPassiveMode();
         }
 
+        // must set soTimeout after connect
+        if (endpoint instanceof FtpEndpoint) {
+            FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
+            if (ftpEndpoint.getSoTimeout() > 0) {
+                log.trace("Using SoTimeout=" + ftpEndpoint.getSoTimeout());
+                try {
+                    client.setSoTimeout(ftpEndpoint.getSoTimeout());
+                } catch (IOException e) {
+                    throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+                }
+            }
+        }
+
         try {
             boolean login;
             if (username != null) {

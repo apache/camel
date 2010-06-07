@@ -121,6 +121,11 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         }
 
         if (ftpClientParameters != null) {
+            // setting soTimeout has to be done later on FTPClient (after it has connected)
+            Object timeout = ftpClientParameters.remove("soTimeout");
+            if (timeout != null) {
+                soTimeout = getCamelContext().getTypeConverter().convertTo(int.class, timeout);
+            }
             IntrospectionSupport.setProperties(client, ftpClientParameters);
         }
 
