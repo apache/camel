@@ -20,12 +20,16 @@ import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +48,14 @@ public final class IntrospectionSupport {
     private static final transient Log LOG = LogFactory.getLog(IntrospectionSupport.class);
     private static final Pattern GETTER_PATTERN = Pattern.compile("(get|is)[A-Z].*");
     private static final Pattern SETTER_PATTERN = Pattern.compile("set[A-Z].*");
+    private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
+
+    static {
+        // exclude all java.lang.Object methods as we dont want to invoke them
+        EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getMethods()));
+        // exclude all java.lang.reflect.Proxy methods as we dont want to invoke them
+        EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getMethods()));
+    }
 
     /**
      * Utility classes should not have a public constructor.
@@ -85,6 +97,20 @@ public final class IntrospectionSupport {
         return name;
     }
 
+    public static String getSetterShorthandName(Method method) {
+        if (!isSetter(method)) {
+            return method.getName();
+        }
+
+        String name = method.getName();
+        if (name.startsWith("set")) {
+            name = name.substring(3);
+            name = name.substring(0, 1).toLowerCase() + name.substring(1);
+        }
+
+        return name;
+    }
+
     public static boolean isSetter(Method method) {
         String name = method.getName();
         Class<?> type = method.getReturnType();
@@ -100,8 +126,7 @@ public final class IntrospectionSupport {
     /**
      * Will inspect the target for properties.
      * <p/>
-     * <b>Notice:</b> only properties which is convertable to String will be selected,
-     * other properties will be skipped.
+     * Notice a property must have both a getter/setter method to be included.
      *
      * @param target         the target bean
      * @param properties     the map to fill in found properties
@@ -120,32 +145,42 @@ public final class IntrospectionSupport {
         Class clazz = target.getClass();
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
-            String name = method.getName();
-            Class type = method.getReturnType();
-            Class params[] = method.getParameterTypes();
-            if (name.startsWith("get") && params.length == 0 && type != null && isSettableType(type)) {
-                try {
+            if (EXCLUDED_METHODS.contains(method)) {
+                continue;
+            }
+            try {
+                // must be properties which have setters
+                if (isGetter(method) && hasSetter(target, method)) {
                     Object value = method.invoke(target);
-                    if (value == null) {
-                        continue;
-                    }
-
-                    // TODO: Why must the found property be convertable to String?
-                    String strValue = convertToString(value, type);
-                    if (strValue == null) {
-                        continue;
-                    }
-
-                    name = name.substring(3, 4).toLowerCase() + name.substring(4);
-                    properties.put(optionPrefix + name, strValue);
+                    String name = getGetterShorthandName(method);
+                    properties.put(optionPrefix + name, value);
                     rc = true;
-                } catch (Exception ignore) {
-                    // ignore
                 }
+            } catch (Exception e) {
+                // ignore
             }
         }
 
         return rc;
+    }
+
+    public static boolean hasSetter(Object target, Method getter) {
+        String name = getGetterShorthandName(getter);
+
+        Class clazz = target.getClass();
+        Method[] methods = clazz.getMethods();
+        for (Method method : methods) {
+            if (EXCLUDED_METHODS.contains(method)) {
+                continue;
+            }
+            if (isSetter(method)) {
+                if (name.equals(getSetterShorthandName(method))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public static boolean hasProperties(Map<String, Object> properties, String optionPrefix) {
@@ -177,7 +212,23 @@ public final class IntrospectionSupport {
     }
 
     public static Method getPropertyGetter(Class<?> type, String propertyName) throws NoSuchMethodException {
-        return type.getMethod("get" + ObjectHelper.capitalize(propertyName));
+        if (isPropertyIsGetter(type, propertyName)) {
+            return type.getMethod("is" + ObjectHelper.capitalize(propertyName));
+        } else {
+            return type.getMethod("get" + ObjectHelper.capitalize(propertyName));
+        }
+    }
+
+    public static boolean isPropertyIsGetter(Class<?> type, String propertyName) {
+        try {
+            Method method = type.getMethod("is" + ObjectHelper.capitalize(propertyName));
+            if (method != null) {
+                return method.getReturnType().isAssignableFrom(boolean.class) || method.getReturnType().isAssignableFrom(Boolean.class);
+            }
+        } catch (NoSuchMethodException e) {
+            // ignore
+        }
+        return false;
     }
 
     public static boolean setProperties(Object target, Map<String, Object> properties, String optionPrefix) throws Exception {
@@ -227,7 +278,7 @@ public final class IntrospectionSupport {
 
         for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, Object> entry = iter.next();
-            if (setProperty(typeConverter, target, (String)entry.getKey(), entry.getValue())) {
+            if (setProperty(typeConverter, target, entry.getKey(), entry.getValue())) {
                 iter.remove();
                 rc = true;
             }
@@ -317,6 +368,7 @@ public final class IntrospectionSupport {
         return null;
     }
 
+    @Deprecated
     private static String convertToString(Object value, Class<?> type) throws URISyntaxException {
         PropertyEditor editor = PropertyEditorManager.findEditor(type);
         if (editor != null) {
@@ -329,6 +381,7 @@ public final class IntrospectionSupport {
         return null;
     }
 
+    @Deprecated
     private static Set<Method> findSetterMethods(TypeConverter typeConverter, Class<?> clazz, String name, Object value) {
         Set<Method> candidates = new LinkedHashSet<Method>();
 
@@ -383,6 +436,7 @@ public final class IntrospectionSupport {
         }
     }
 
+    @Deprecated
     private static boolean isSettableType(Class<?> clazz) {
         // TODO: Why limit to what the JDK property editor can set?
         if (PropertyEditorManager.findEditor(clazz) != null) {
