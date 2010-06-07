@@ -107,9 +107,8 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertEquals("mock://dead", send.getDestination().getEndpointUri());
 
         // dead letter channel will mark the exchange as completed
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
-        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(7));
-        
+        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(6));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
     }
 
     public void testExchangeOnException() throws Exception {
@@ -138,8 +137,8 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertEquals("should NOT be DLC", false, e.isDeadLetterChannel());
 
         // dead letter channel will mark the exchange as completed
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
-        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(7));
+        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(6));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
     }
 
 }

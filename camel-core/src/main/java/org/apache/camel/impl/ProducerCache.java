@@ -28,7 +28,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.spi.ServicePool;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;
@@ -226,21 +225,11 @@ public class ProducerCache extends ServiceSupport {
                 if (exchange == null) {
                     exchange = pattern != null ? producer.createExchange(pattern) : producer.createExchange();
                 }
-                
+
                 if (processor != null) {
                     // lets populate using the processor callback
                     processor.process(exchange);
                 }
-                
-                // create the unit of work 
-                DefaultUnitOfWork uow = new DefaultUnitOfWork(exchange);
-                try {
-                    uow.start();
-                } catch (Exception e) {
-                    throw wrapRuntimeCamelException(e);
-                }
-                exchange.setUnitOfWork(uow);
-                
 
                 // now lets dispatch
                 if (LOG.isDebugEnabled()) {
@@ -254,20 +243,10 @@ public class ProducerCache extends ServiceSupport {
                 StopWatch watch = new StopWatch();
                 try {
                     producer.process(exchange);
-                } finally {                    
+                } finally {
                     // emit event that the exchange was sent to the endpoint
                     long timeTaken = watch.stop();
                     EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
-                    if (exchange.getUnitOfWork() != null) {
-                        exchange.getUnitOfWork().done(exchange);
-                    }
-                    try {
-                        uow.stop();
-                    } catch (Exception e) {
-                        LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: " + exchange
-                            + ". This exception will be ignored.");
-                    }
-                    exchange.setUnitOfWork(null);
                 }
                 return exchange;
             }
