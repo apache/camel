@@ -73,6 +73,13 @@ public class BeanInfo {
     private MethodInfo defaultMethod;
     private BeanInfo superBeanInfo;
 
+    static {
+        // exclude all java.lang.Object methods as we dont want to invoke them
+        EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getMethods()));
+        // exclude all java.lang.reflect.Proxy methods as we dont want to invoke them
+        EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getMethods()));
+    }
+
     public BeanInfo(CamelContext camelContext, Class<?> type) {
         this(camelContext, type, createParameterMappingStrategy(camelContext));
     }
@@ -81,16 +88,6 @@ public class BeanInfo {
         this.camelContext = camelContext;
         this.type = type;
         this.strategy = strategy;
-
-        // configure the default excludes methods
-        synchronized (EXCLUDED_METHODS) {
-            if (EXCLUDED_METHODS.size() == 0) {
-                // exclude all java.lang.Object methods as we dont want to invoke them
-                EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getMethods()));
-                // exclude all java.lang.reflect.Proxy methods as we dont want to invoke them
-                EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getMethods()));
-            }
-        }
 
         introspect(getType());
         // if there are only 1 method with 1 operation then select it as a default/fallback method

@@ -368,20 +368,6 @@ public final class IntrospectionSupport {
         return null;
     }
 
-    @Deprecated
-    private static String convertToString(Object value, Class<?> type) throws URISyntaxException {
-        PropertyEditor editor = PropertyEditorManager.findEditor(type);
-        if (editor != null) {
-            editor.setValue(value);
-            return editor.getAsText();
-        }
-        if (type == URI.class) {
-            return value.toString();
-        }
-        return null;
-    }
-
-    @Deprecated
     private static Set<Method> findSetterMethods(TypeConverter typeConverter, Class<?> clazz, String name, Object value) {
         Set<Method> candidates = new LinkedHashSet<Method>();
 
@@ -398,7 +384,7 @@ public final class IntrospectionSupport {
                     Class<?> paramType = params[0];
                     if (paramType.equals(Object.class)) {                        
                         objectSetMethod = method;
-                    } else if (typeConverter != null || isSettableType(paramType) || paramType.isInstance(value)) {
+                    } else if (typeConverter != null || isSetter(method) || paramType.isInstance(value)) {
                         candidates.add(method);
                     }
                 }
@@ -436,18 +422,4 @@ public final class IntrospectionSupport {
         }
     }
 
-    @Deprecated
-    private static boolean isSettableType(Class<?> clazz) {
-        // TODO: Why limit to what the JDK property editor can set?
-        if (PropertyEditorManager.findEditor(clazz) != null) {
-            return true;
-        }
-        if (clazz == URI.class) {
-            return true;
-        }
-        if (clazz == Boolean.class) {
-            return true;
-        }
-        return false;
-    }
 }
