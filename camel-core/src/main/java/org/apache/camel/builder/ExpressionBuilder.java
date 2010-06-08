@@ -253,6 +253,33 @@ public final class ExpressionBuilder {
             }
         };
     }
+    
+    /**
+     * Returns the expression for the exchanges exception invoking methods defined
+     * in a simple OGNL notation
+     *
+     * @param ognl  methods to invoke on the body in a simple OGNL syntax
+     */
+    public static Expression exchangeExceptionOgnlExpression(final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Object exception = exchange.getException();
+                if (exception == null) {
+                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                }
+                
+                if (exception == null) {
+                    return null;
+                }
+                return new MethodCallExpression(exception, ognl).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeExceptionOgnl(" + ognl + ")";
+            }
+        };
+    }
 
     /**
      * Returns an expression for the type converter

@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelAuthorizationException;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.LanguageTestSupport;
@@ -265,6 +267,14 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("${in.body.getName}", "Camel");
         assertExpression("${in.body.getAge}", 6);
+    }
+    
+    public void testExceptionOGNLSimple() throws Exception {
+        exchange.getIn().setHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, "myPolicy");
+        Exception exception = new CamelAuthorizationException("The camel authorization exception", exchange);
+        exchange.setException(exception);
+        
+        assertExpression("${exception.getPolicyId}", "myPolicy");
     }
 
     public void testBodyOGNLSimpleShorthand() throws Exception {

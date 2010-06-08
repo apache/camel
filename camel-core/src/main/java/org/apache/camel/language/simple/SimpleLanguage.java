@@ -91,8 +91,9 @@ public class SimpleLanguage extends SimpleLanguageSupport {
     public static Expression simple(String expression) {
         return SIMPLE.createExpression(expression);
     }
+    
+    protected Expression createSimpleExpressionDirectly(String expression) {
 
-    protected Expression createSimpleExpression(String expression, boolean strict) {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return ExpressionBuilder.bodyExpression();
         } else if (ObjectHelper.equal(expression, "out.body")) {
@@ -101,12 +102,25 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             return ExpressionBuilder.messageIdExpression();
         } else if (ObjectHelper.equal(expression, "exchangeId")) {
             return ExpressionBuilder.exchangeIdExpression();
+        } else if (ObjectHelper.equal(expression, "exception")) {
+            return ExpressionBuilder.exchangeExceptionExpression();
         } else if (ObjectHelper.equal(expression, "exception.message")) {
             return ExpressionBuilder.exchangeExceptionMessageExpression();
         } else if (ObjectHelper.equal(expression, "threadName")) {
             return ExpressionBuilder.threadNameExpression();
         }
 
+        return null;
+    }
+
+    protected Expression createSimpleExpression(String expression, boolean strict) {
+        
+        // return the expression directly if we can create expression without analyzing the prefix
+        Expression answer = createSimpleExpressionDirectly(expression);
+        if (answer != null) {
+            return answer;
+        }
+        
         // bodyAs
         String remainder = ifStartsWithReturnRemainder("bodyAs", expression);
         if (remainder != null) {
@@ -128,6 +142,16 @@ public class SimpleLanguage extends SimpleLanguageSupport {
                 throw new ExpressionIllegalSyntaxException("Valid syntax: ${body.OGNL} was: " + expression);
             }
             return ExpressionBuilder.bodyOgnlExpression(remainder);
+        }
+        
+        // Exception OGNL
+        remainder = ifStartsWithReturnRemainder("exception", expression);
+        if (remainder != null) {
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new ExpressionIllegalSyntaxException("Valid syntax: ${exception.OGNL} was: " + expression);
+            }
+            return ExpressionBuilder.exchangeExceptionOgnlExpression(remainder);        
         }
 
         // in header expression
