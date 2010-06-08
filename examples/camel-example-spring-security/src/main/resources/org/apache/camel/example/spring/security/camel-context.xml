@@ -58,7 +58,7 @@
                 <constant>true</constant>
             </handled>
             <transform>
-                <constant>Access Denied!</constant>
+                <simple>Access Denied with the Policy of ${exception.policyId} !</simple>
             </transform>
         </onException>
 

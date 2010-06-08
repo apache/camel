@@ -18,13 +18,20 @@
 package org.apache.camel;
 
 public class CamelAuthorizationException extends CamelExchangeException {
-
+    private final String policyId;
+    
     public CamelAuthorizationException(String message, Exchange exchange) {
         super(message, exchange);
+        policyId = exchange.getIn().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, String.class);        
     }
     
     public CamelAuthorizationException(String message, Exchange exchange, Throwable cause) {
         super(message, exchange, cause);
+        policyId = exchange.getIn().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, String.class);
+    }
+    
+    public String getPolicyId() {
+        return policyId;
     }
 
 }

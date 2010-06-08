@@ -22,6 +22,7 @@ import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.RouteContext;
@@ -42,7 +43,7 @@ import org.springframework.security.event.authorization.AuthorizationFailureEven
 import org.springframework.security.event.authorization.AuthorizedEvent;
 import org.springframework.util.Assert;
 
-public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, InitializingBean, ApplicationEventPublisherAware {
+public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements AuthorizationPolicy, InitializingBean, ApplicationEventPublisherAware {
     private static final transient Log LOG = LogFactory.getLog(SpringSecurityAuthorizationPolicy.class);
     private AccessDecisionManager accessDecisionManager;
     private AuthenticationManager authenticationManager;
@@ -76,6 +77,7 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
             try {
                 this.accessDecisionManager.decide(authenticated, exchange, attributes);
             } catch (AccessDeniedException accessDeniedException) {
+                exchange.getIn().setHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, getId());
                 AuthorizationFailureEvent event = new AuthorizationFailureEvent(exchange, attributes, authenticated,
                         accessDeniedException);
                 publishEvent(event);
@@ -123,7 +125,6 @@ public class SpringSecurityAuthorizationPolicy implements AuthorizationPolicy, I
         Assert.notNull(this.authenticationManager, "An AuthenticationManager is required");
         Assert.notNull(this.accessDecisionManager, "An AccessDecisionManager is required");
         Assert.notNull(this.accessPolicy, "The accessPolicy is required");
-        
     }
     
     private Authentication authenticateIfRequired(Authentication authentication) {
