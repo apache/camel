@@ -20,9 +20,9 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -59,13 +59,9 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
         final Car car = createCar("BMW", null);
         
         try {
-            template.request(url, new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setBody(car);
-                }
-            });
-            fail("RuntimeCamelException expected");
-        } catch (RuntimeCamelException e) {
+            template.requestBody(url, car);
+            fail("should throw exception");
+        } catch (CamelExecutionException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
             
             BeanValidationException exception = (BeanValidationException) e.getCause();
@@ -95,13 +91,9 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
         final Car car = createCar("BMW", null);
         
         try {
-            template.request(url, new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setBody(car);
-                }
-            });
-            fail("RuntimeCamelException expected");
-        } catch (RuntimeCamelException e) {
+            template.requestBody(url, car);
+            fail("should throw exception");
+        } catch (CamelExecutionException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
             
             BeanValidationException exception = (BeanValidationException) e.getCause();
@@ -131,13 +123,9 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
         final Car car = createCar("BMW", "D-A");
         
         try {
-            template.request(url, new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setBody(car);
-                }
-            });
-            fail("RuntimeCamelException expected");
-        } catch (RuntimeCamelException e) {
+            template.requestBody(url, car);
+            fail("should throw exception");
+        } catch (CamelExecutionException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
             
             BeanValidationException exception = (BeanValidationException) e.getCause();
@@ -167,13 +155,9 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
         final Car car = createCar(null, "D-A");
         
         try {
-            template.request(url, new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setBody(car);
-                }
-            });
-            fail("RuntimeCamelException expected");
-        } catch (RuntimeCamelException e) {
+            template.requestBody(url, car);
+            fail("should throw exception");
+        } catch (CamelExecutionException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
             
             BeanValidationException exception = (BeanValidationException) e.getCause();
@@ -189,13 +173,9 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
         car.setManufacturer("BMW");
         
         try {
-            template.request(url, new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setBody(car);
-                }
-            });
-            fail("RuntimeCamelException expected");
-        } catch (RuntimeCamelException e) {
+            template.requestBody(url, car);
+            fail("should throw exception");
+        } catch (CamelExecutionException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
             
             BeanValidationException exception = (BeanValidationException) e.getCause();
@@ -239,12 +219,9 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
         final Car car = new CarWithRedefinedDefaultGroup(null, "D-A");
         
         try {
-            template.request(url, new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setBody(car);
-                }
-            });
-        } catch (RuntimeCamelException e) {
+            template.requestBody(url, car);
+            fail("should throw exception");
+        } catch (CamelExecutionException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
             
             BeanValidationException exception = (BeanValidationException) e.getCause();
