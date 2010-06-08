@@ -1,0 +1,10 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+        <route>
+            <from uri="direct:start"/>
+            <to uri="smtp://james@localhost"/>
+        </route>
+    </camelContext>
+
+</blueprint>
