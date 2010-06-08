@@ -27,6 +27,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
+import org.apache.camel.processor.UnitOfWorkProcessor;
+import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EventHelper;
@@ -242,7 +244,9 @@ public class ProducerCache extends ServiceSupport {
                 // send the exchange using the processor
                 StopWatch watch = new StopWatch();
                 try {
-                    producer.process(exchange);
+                    // ensure we run in an unit of work
+                    Producer target = new UnitOfWorkProducer(producer);
+                    target.process(exchange);
                 } finally {
                     // emit event that the exchange was sent to the endpoint
                     long timeTaken = watch.stop();

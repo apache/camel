@@ -23,23 +23,20 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.junit.Test;
 
-
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
+
     protected String[] getApplicationContextFiles() {
         return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouter.xml"};
     }
 
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
-
         CxfEndpointBean routerEndpoint = (CxfEndpointBean)ctx.getBean("routerEndpoint");
         assertEquals("Got the wrong endpoint address", routerEndpoint.getAddress(), "http://localhost:9000/router");
         assertEquals("Got the wrong endpont service class", routerEndpoint.getServiceClass().getCanonicalName(), "org.apache.camel.component.cxf.HelloService");
-
     }
 
     @Test
@@ -47,20 +44,18 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         // get the camelContext from application context
         CamelContext camelContext = (CamelContext) ctx.getBean("camel");
         ProducerTemplate template = camelContext.createProducerTemplate();
-        try {
-            template.send("cxf:bean:serviceEndpoint", new Processor() {
-                public void process(final Exchange exchange) {
-                    final List<String> params = new ArrayList<String>();
-                    params.add("hello");
-                    exchange.getIn().setBody(params);
-                    exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");
-                }
-            });
-            fail("should get the exception here");
-        } catch (RuntimeCamelException ex) {
-            assertTrue("Should get the fault here ", ex.getCause() instanceof org.apache.cxf.interceptor.Fault);
-            // do nothing here;
-        }
-    }    
+
+        Exchange reply = template.request("cxf:bean:serviceEndpoint", new Processor() {
+            public void process(final Exchange exchange) {
+                final List<String> params = new ArrayList<String>();
+                params.add("hello");
+                exchange.getIn().setBody(params);
+                exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");
+            }
+        });
+
+        Exception ex = reply.getException();
+        assertTrue("Should get the fault here", ex instanceof org.apache.cxf.interceptor.Fault);
+    }
    
 }

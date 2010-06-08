@@ -19,12 +19,10 @@ package org.apache.camel.component.cxf;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
 import org.junit.BeforeClass;
@@ -60,13 +58,10 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
     }
     
     protected void sendTimeOutMessage(String endpointUri) throws Exception {
-        try {
-            sendJaxWsMessage(endpointUri);
-            fail("Expecting the exception here");
-        } catch (RuntimeCamelException e) {
-            assertNotNull("We should get the exception cause here", e.getCause());
-            assertTrue("We should get the socket time out exception here", e.getCause().getCause() instanceof SocketTimeoutException);            
-        }
+        Exchange reply = sendJaxWsMessage(endpointUri);
+        Exception e = reply.getException();
+        assertNotNull("We should get the exception cause here", e.getCause());
+        assertTrue("We should get the socket time out exception here", e.getCause().getCause() instanceof SocketTimeoutException);
     }
 
     protected Exchange sendJaxWsMessage(String endpointUri) {

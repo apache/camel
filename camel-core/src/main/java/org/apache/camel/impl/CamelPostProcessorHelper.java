@@ -33,7 +33,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
+import org.apache.camel.component.seda.CollectionProducer;
 import org.apache.camel.processor.UnitOfWorkProcessor;
+import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -220,7 +222,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         try {
             Producer producer = endpoint.createProducer();
             startService(producer, bean, beanName);
-            return producer;
+            return new UnitOfWorkProducer(producer);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }

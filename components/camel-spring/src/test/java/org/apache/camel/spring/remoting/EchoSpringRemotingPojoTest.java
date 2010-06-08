@@ -46,8 +46,8 @@ public class EchoSpringRemotingPojoTest extends SpringTestSupport {
             template.requestBody("direct:start", "Kabom", String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            assertIsInstanceOf(MyEchoRuntimeException.class, e.getCause().getCause());
-            assertEquals("Damn something went wrong", e.getCause().getCause().getMessage());
+            MyEchoRuntimeException cause = assertIsInstanceOf(MyEchoRuntimeException.class, e.getCause());
+            assertEquals("Damn something went wrong", cause.getMessage());
         }
     }
 

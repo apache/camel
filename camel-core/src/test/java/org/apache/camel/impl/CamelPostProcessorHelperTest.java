@@ -24,6 +24,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Produce;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -82,6 +84,26 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello World");
 
         template.sendBody("seda:foo", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // give UoW a bit of time
+        Thread.sleep(500);
+
+        assertTrue("Should have invoked onDone", mySynchronization.isOnDone());
+    }
+
+    public void testProduceSynchronization() throws Exception {
+        MyProduceAndSynchronizationBean my = new MyProduceAndSynchronizationBean();
+
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+        Producer producer = helper.createInjectionProducer(context.getEndpoint("mock:result"), my, "foo");
+        my.setProducer(producer);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        my.produceSomething("Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -286,6 +308,25 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
             exchange.addOnCompletion(mySynchronization);
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);
+        }
+    }
+
+    public class MyProduceAndSynchronizationBean {
+
+        @Produce(uri = "mock:result")
+        Producer producer;
+
+        public void produceSomething(String body) throws Exception {
+            assertEquals("Hello World", body);
+
+            Exchange exchange = producer.createExchange();
+            exchange.addOnCompletion(mySynchronization);
+            exchange.getIn().setBody(body);
+            producer.process(exchange);
+        }
+
+        public void setProducer(Producer producer) {
+            this.producer = producer;
         }
     }
 

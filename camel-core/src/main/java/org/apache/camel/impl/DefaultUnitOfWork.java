@@ -56,6 +56,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     public DefaultUnitOfWork(Exchange exchange) {
         tracedRouteNodes = new DefaultTracedRouteNodes();
 
+        // TODO: the copy on facade strategy will help us here in the future
         // TODO: optimize to only copy original message if enabled to do so in the route
         // special for JmsMessage as it can cause it to loose headers later.
         // This will be resolved when we get the message facade with copy on write implemented

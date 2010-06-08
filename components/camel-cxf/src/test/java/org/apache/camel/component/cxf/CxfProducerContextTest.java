@@ -50,7 +50,6 @@ public class CxfProducerContextTest extends CxfProducerTest {
         assertNotNull(requestContext);
         String actualValue = (String)requestContext.get(TEST_KEY);
         assertEquals("exchange property should get propagated to the request context", TEST_VALUE, actualValue);
-
     }
 
     @Override   
@@ -84,7 +83,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
     
     @Override   
     protected Exchange sendJaxWsMessage() {
-        Exchange exchange = (Exchange)template.send(getJaxwsEndpointUri(), new Processor() {
+        Exchange exchange = template.send(getJaxwsEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
                 final List<String> params = new ArrayList<String>();
                 params.add(TEST_MESSAGE);

@@ -25,7 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -98,17 +97,12 @@ public class CxfProducerTest extends Assert {
         // check the other camel header copying
         String fileName = out.getHeader(Exchange.FILE_NAME, String.class);
         assertEquals("Should get the file name from out message header", "testFile", fileName);
-
     }
 
     @Test
     public void testInvokingAWrongServer() throws Exception {
-        try {
-            sendSimpleMessage(getWrongEndpointUri());
-            fail("We should get the exception here");
-        } catch (RuntimeCamelException ex) {
-            // only catch the RuntimeCamelException
-        }
+        Exchange reply = sendSimpleMessage(getWrongEndpointUri());
+        assertNotNull("We should get the exception here", reply.getException());
     }
 
     @Test
@@ -146,7 +140,7 @@ public class CxfProducerTest extends Assert {
     }
 
     private Exchange sendSimpleMessage(String endpointUri) {
-        Exchange exchange = template.send(endpointUri, new Processor() {
+        Exchange exchange = template.request(endpointUri, new Processor() {
             public void process(final Exchange exchange) {
                 final List<String> params = new ArrayList<String>();
                 params.add(TEST_MESSAGE);
@@ -159,7 +153,7 @@ public class CxfProducerTest extends Assert {
 
     }
     protected Exchange sendJaxWsMessage() {
-        Exchange exchange = template.send(getJaxwsEndpointUri(), new Processor() {
+        Exchange exchange = template.request(getJaxwsEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
                 final List<String> params = new ArrayList<String>();
                 params.add(TEST_MESSAGE);

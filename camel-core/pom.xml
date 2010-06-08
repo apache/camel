@@ -152,8 +152,7 @@
           <forkMode>pertest</forkMode>
           <excludes>
             <!-- TODO FIXME ASAP -->
-	    <!-- need to fix this issue when we rewrite the stream cache-->
-            <exclude>**/SplitterStreamCacheTest.*</exclude>            
+            <exclude>**/XXXTest.*</exclude>            
           </excludes>
         </configuration>
       </plugin>

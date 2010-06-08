@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -42,8 +43,9 @@ public class FileProducerFileExistFailTest extends ContextTestSupport {
         try {
             template.sendBodyAndHeader("file://target/file?fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");
             fail("Should have thrown a GenericFileOperationFailedException");
-        } catch (GenericFileOperationFailedException e) {
-            assertEquals(FileUtil.normalizePath("File already exist: target/file/hello.txt. Cannot write new file."), e.getMessage());
+        } catch (CamelExecutionException e) {
+            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+            assertEquals(FileUtil.normalizePath("File already exist: target/file/hello.txt. Cannot write new file."), cause.getMessage());
         }
 
         assertMockEndpointsSatisfied();

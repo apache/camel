@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.junit.Test;
@@ -115,8 +116,9 @@ public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
         try {
             template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");
             fail("Should have thrown an exception");
-        } catch (GenericFileOperationFailedException e) {
-            assertTrue(e.getMessage().startsWith("File already exist"));
+        } catch (CamelExecutionException e) {
+            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+            assertTrue(cause.getMessage().startsWith("File already exist"));
         }
 
         Thread.sleep(500);

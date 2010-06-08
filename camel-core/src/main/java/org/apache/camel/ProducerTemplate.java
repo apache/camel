@@ -79,6 +79,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends the exchange to the default endpoint
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is <b>not</b> thrown from this method, but you can access it from the returned exchange using
+     * {@link org.apache.camel.Exchange#getException()}.
      *
      * @param exchange the exchange to send
      * @return the returned exchange
@@ -87,6 +90,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends an exchange to the default endpoint using a supplied processor
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is <b>not</b> thrown from this method, but you can access it from the returned exchange using
+     * {@link org.apache.camel.Exchange#getException()}.
      *
      * @param processor the transformer used to populate the new exchange
      * {@link Processor} to populate the exchange
@@ -103,7 +109,7 @@ public interface ProducerTemplate extends Service {
      * @param body the payload to send
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBody(Object body);
+    void sendBody(Object body) throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint with a specified header and header
@@ -117,7 +123,7 @@ public interface ProducerTemplate extends Service {
      * @param headerValue the header value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndHeader(Object body, String header, Object headerValue);
+    void sendBodyAndHeader(Object body, String header, Object headerValue) throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint with a specified property and property
@@ -131,7 +137,7 @@ public interface ProducerTemplate extends Service {
      * @param propertyValue the property value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndProperty(Object body, String property, Object propertyValue);
+    void sendBodyAndProperty(Object body, String property, Object propertyValue) throws CamelExecutionException;
     
     /**
      * Sends the body to the default endpoint with the specified headers and
@@ -144,13 +150,16 @@ public interface ProducerTemplate extends Service {
      * @param headers      the headers
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndHeaders(Object body, Map<String, Object> headers);
+    void sendBodyAndHeaders(Object body, Map<String, Object> headers) throws CamelExecutionException;
 
     // Allow sending to arbitrary endpoints
     // -----------------------------------------------------------------------
 
     /**
      * Sends the exchange to the given endpoint
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is <b>not</b> thrown from this method, but you can access it from the returned exchange using
+     * {@link org.apache.camel.Exchange#getException()}.
      *
      * @param endpointUri the endpoint URI to send the exchange to
      * @param exchange    the exchange to send
@@ -160,6 +169,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is <b>not</b> thrown from this method, but you can access it from the returned exchange using
+     * {@link org.apache.camel.Exchange#getException()}.
      *
      * @param endpointUri the endpoint URI to send the exchange to
      * @param processor   the transformer used to populate the new exchange
@@ -170,6 +182,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is <b>not</b> thrown from this method, but you can access it from the returned exchange using
+     * {@link org.apache.camel.Exchange#getException()}.
      *
      * @param endpointUri the endpoint URI to send the exchange to
      * @param pattern     the message {@link ExchangePattern} such as
@@ -182,6 +197,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends the exchange to the given endpoint
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is <b>not</b> thrown from this method, but you can access it from the returned exchange using
+     * {@link org.apache.camel.Exchange#getException()}.
      *
      * @param endpoint the endpoint to send the exchange to
      * @param exchange the exchange to send
@@ -191,6 +209,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is <b>not</b> thrown from this method, but you can access it from the returned exchange using
+     * {@link org.apache.camel.Exchange#getException()}.
      *
      * @param endpoint  the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
@@ -201,6 +222,9 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is <b>not</b> thrown from this method, but you can access it from the returned exchange using
+     * {@link org.apache.camel.Exchange#getException()}.
      *
      * @param endpoint  the endpoint to send the exchange to
      * @param pattern   the message {@link ExchangePattern} such as
@@ -221,7 +245,7 @@ public interface ProducerTemplate extends Service {
      * @param body       the payload
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBody(Endpoint endpoint, Object body);
+    void sendBody(Endpoint endpoint, Object body) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint
@@ -233,7 +257,7 @@ public interface ProducerTemplate extends Service {
      * @param body          the payload
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBody(String endpointUri, Object body);
+    void sendBody(String endpointUri, Object body) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint with the given {@link ExchangePattern}
@@ -249,7 +273,7 @@ public interface ProducerTemplate extends Service {
      * @return the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Object sendBody(Endpoint endpoint, ExchangePattern pattern, Object body);
+    Object sendBody(Endpoint endpoint, ExchangePattern pattern, Object body) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body
@@ -264,7 +288,7 @@ public interface ProducerTemplate extends Service {
      * @return the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Object sendBody(String endpointUri, ExchangePattern pattern, Object body);
+    Object sendBody(String endpointUri, ExchangePattern pattern, Object body) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with a specified header and header value
@@ -278,7 +302,7 @@ public interface ProducerTemplate extends Service {
      * @param headerValue the header value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndHeader(String endpointUri, Object body, String header, Object headerValue);
+    void sendBodyAndHeader(String endpointUri, Object body, String header, Object headerValue) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with a specified header and header value
@@ -292,7 +316,7 @@ public interface ProducerTemplate extends Service {
      * @param headerValue the header value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue);
+    void sendBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with a specified header and header value
@@ -313,7 +337,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     Object sendBodyAndHeader(Endpoint endpoint, ExchangePattern pattern, Object body,
-                             String header, Object headerValue);
+                             String header, Object headerValue) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with a specified header and header value
@@ -331,7 +355,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     Object sendBodyAndHeader(String endpoint, ExchangePattern pattern, Object body,
-                             String header, Object headerValue);
+                             String header, Object headerValue) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with a specified property and property value
@@ -345,7 +369,7 @@ public interface ProducerTemplate extends Service {
      * @param propertyValue the property value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndProperty(String endpointUri, Object body, String property, Object propertyValue);
+    void sendBodyAndProperty(String endpointUri, Object body, String property, Object propertyValue) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with a specified property and property value
@@ -359,7 +383,7 @@ public interface ProducerTemplate extends Service {
      * @param propertyValue the property value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndProperty(Endpoint endpoint, Object body, String property, Object propertyValue);
+    void sendBodyAndProperty(Endpoint endpoint, Object body, String property, Object propertyValue) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with a specified property and property value
@@ -377,7 +401,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     Object sendBodyAndProperty(Endpoint endpoint, ExchangePattern pattern, Object body,
-                               String property, Object propertyValue);
+                               String property, Object propertyValue) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with a specified property and property value
@@ -395,7 +419,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     Object sendBodyAndProperty(String endpoint, ExchangePattern pattern, Object body,
-                               String property, Object propertyValue);
+                               String property, Object propertyValue) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with the specified headers and header values
@@ -408,7 +432,7 @@ public interface ProducerTemplate extends Service {
      * @param headers headers
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers);
+    void sendBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with the specified headers and header values
@@ -421,7 +445,7 @@ public interface ProducerTemplate extends Service {
      * @param headers headers
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
+    void sendBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with the specified headers and header values
@@ -438,7 +462,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     Object sendBodyAndHeaders(String endpointUri, ExchangePattern pattern, Object body,
-                              Map<String, Object> headers);
+                              Map<String, Object> headers) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with the specified headers and header values
@@ -455,7 +479,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, Object body,
-                              Map<String, Object> headers);
+                              Map<String, Object> headers) throws CamelExecutionException;
 
 
     // Methods using an InOut ExchangePattern
@@ -464,6 +488,9 @@ public interface ProducerTemplate extends Service {
     /**
      * Sends an exchange to an endpoint using a supplied processor
      * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is <b>not</b> thrown from this method, but you can access it from the returned exchange using
+     * {@link org.apache.camel.Exchange#getException()}.
      *
      * @param endpoint  the Endpoint to send to
      * @param processor the processor which will populate the exchange before sending
@@ -474,6 +501,9 @@ public interface ProducerTemplate extends Service {
     /**
      * Sends an exchange to an endpoint using a supplied processor
      * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is <b>not</b> thrown from this method, but you can access it from the returned exchange using
+     * {@link org.apache.camel.Exchange#getException()}.
      *
      * @param endpointUri the endpoint URI to send to
      * @param processor the processor which will populate the exchange before sending
@@ -492,7 +522,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Object requestBody(Object body);
+    Object requestBody(Object body) throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint and returns the result content
@@ -506,7 +536,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T requestBody(Object body, Class<T> type);
+    <T> T requestBody(Object body, Class<T> type) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -520,7 +550,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Object requestBody(Endpoint endpoint, Object body);
+    Object requestBody(Endpoint endpoint, Object body) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -535,7 +565,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T requestBody(Endpoint endpoint, Object body, Class<T> type);
+    <T> T requestBody(Endpoint endpoint, Object body, Class<T> type) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -549,7 +579,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Object requestBody(String endpointUri, Object body);
+    Object requestBody(String endpointUri, Object body) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -564,7 +594,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T requestBody(String endpointUri, Object body, Class<T> type);
+    <T> T requestBody(String endpointUri, Object body, Class<T> type) throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint and returns the result content
@@ -579,7 +609,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Object requestBodyAndHeader(Object body, String header, Object headerValue);
+    Object requestBodyAndHeader(Object body, String header, Object headerValue) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -595,7 +625,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Object requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue);
+    Object requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -612,7 +642,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type);
+    <T> T requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -628,7 +658,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Object requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue);
+    Object requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -645,7 +675,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type);
+    <T> T requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with the specified headers and header values.
@@ -660,7 +690,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers);
+    Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with the specified headers and header values.
@@ -676,7 +706,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type);
+    <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with the specified headers and header values.
@@ -691,7 +721,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Object requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
+    Object requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers) throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint and returns the result content
@@ -705,7 +735,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Object requestBodyAndHeaders(Object body, Map<String, Object> headers);
+    Object requestBodyAndHeaders(Object body, Map<String, Object> headers) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with the specified headers and header values.
@@ -721,7 +751,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type);
+    <T> T requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type) throws CamelExecutionException;
 
 
     // Asynchronous methods
@@ -939,7 +969,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T extractFutureBody(Future<Object> future, Class<T> type);
+    <T> T extractFutureBody(Future<Object> future, Class<T> type) throws CamelExecutionException;
 
     /**
      * Gets the response body from the future handle, will wait at most the given time for the response to be ready.
@@ -955,7 +985,7 @@ public interface ProducerTemplate extends Service {
      * @throws java.util.concurrent.TimeoutException if the wait timed out
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T extractFutureBody(Future<Object> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException;
+    <T> T extractFutureBody(Future<Object> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException, CamelExecutionException;
 
     // Asynchronous methods with callback
     // -----------------------------------------------------------------------

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.spring;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
@@ -33,8 +32,7 @@ public class CxfEndpointBeanWithBusTest extends CxfEndpointBeanTest {
     
     @Before
     public void setUp() throws Exception {
-        ctx =  new ClassPathXmlApplicationContext(
-                new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml"});
+        ctx = new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml"});
     }
     
     @Test

@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 
@@ -115,8 +116,9 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
         try {
             template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo&fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");
             fail("Should have thrown an exception");
-        } catch (GenericFileOperationFailedException e) {
-            assertTrue(e.getMessage().startsWith("File already exist"));
+        } catch (CamelExecutionException e) {
+            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+            assertTrue(cause.getMessage().startsWith("File already exist"));
         }
 
         Thread.sleep(200);

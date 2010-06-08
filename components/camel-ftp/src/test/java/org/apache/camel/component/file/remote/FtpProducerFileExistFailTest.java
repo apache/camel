@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
@@ -49,9 +50,10 @@ public class FtpProducerFileExistFailTest extends FtpServerTestSupport {
 
         try {
             template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
-            fail("Should have thrown a GenericFileOperationFailedException");
-        } catch (GenericFileOperationFailedException e) {
-            assertEquals("File already exist: exist/hello.txt. Cannot write new file.", e.getMessage());
+            fail("Should have thrown an exception");
+        } catch (CamelExecutionException e) {
+            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+            assertEquals("File already exist: exist/hello.txt. Cannot write new file.", cause.getMessage());
         }
 
         assertMockEndpointsSatisfied();
