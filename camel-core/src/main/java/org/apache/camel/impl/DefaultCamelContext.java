@@ -19,13 +19,13 @@ package org.apache.camel.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -97,6 +97,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -163,6 +164,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private ExecutorServiceStrategy executorServiceStrategy = new DefaultExecutorServiceStrategy(this);
     private final StopWatch stopWatch = new StopWatch(false);
+    private Date startDate;
 
     public DefaultCamelContext() {
         super();
@@ -899,6 +901,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return producerServicePool;
     }
 
+    public String getUptime() {
+        // compute and log uptime
+        if (startDate == null) {
+            return "not started";
+        }
+        long delta = new Date().getTime() - startDate.getTime();
+        return TimeUtils.printDuration(delta);
+    }
+
     public void start() throws Exception {
         boolean doNotStart = !firstStartDone && !isAutoStartup();
         firstStartDone = true;
@@ -1030,6 +1041,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     // -----------------------------------------------------------------------
 
     protected synchronized void doStart() throws Exception {
+        startDate = new Date();
         stopWatch.restart();
         LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
 
@@ -1152,6 +1164,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         // shutdown management as the last one
         shutdownServices(managementStrategy);
+
+        LOG.info("Uptime: " + getUptime());
+        // and clear start date
+        startDate = null;
 
         LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + stopWatch.stop() + " millis");
     }

@@ -74,6 +74,13 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      */
     ServiceStatus getStatus();
 
+    /**
+     * Gets the uptime in a human readable format
+     *
+     * @return the uptime in days/hours/minutes
+     */
+    String getUptime();
+
     // Service Methods
     //-----------------------------------------------------------------------
 

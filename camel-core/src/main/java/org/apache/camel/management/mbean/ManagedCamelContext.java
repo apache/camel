@@ -69,6 +69,11 @@ public class ManagedCamelContext {
         return status.name();
     }
 
+    @ManagedAttribute(description = "Uptime")
+    public String getUptime() {
+        return context.getUptime();
+    }
+
     @ManagedAttribute(description = "Camel Properties")
     public Map<String, String> getProperties() {
         if (context.getProperties().isEmpty()) {
