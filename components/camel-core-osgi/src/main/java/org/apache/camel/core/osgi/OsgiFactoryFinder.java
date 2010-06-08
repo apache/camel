@@ -40,11 +40,6 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
         this.bundle = bundleContext.getBundle();
     }
 
-    private class BundleEntry {
-        URL url;
-        Bundle bundle;
-    }
-
     @Override
     public Class<?> findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
         if (propertyPrefix == null) {

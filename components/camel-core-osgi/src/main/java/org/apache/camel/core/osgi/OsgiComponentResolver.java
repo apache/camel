@@ -36,8 +36,7 @@ public class OsgiComponentResolver implements ComponentResolver {
     public OsgiComponentResolver(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
-
-    @SuppressWarnings("unchecked")
+    
     public Component resolveComponent(String name, CamelContext context) throws Exception {
         Object bean = null;
         try {

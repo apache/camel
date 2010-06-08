@@ -96,7 +96,9 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     public DefaultTypeConverter getRegistry() {
         if (registry == null) {
             synchronized (this) {
-                if (registry == null) {
+                if (registry != null) {
+                    return registry;
+                } else {
                     registry = createRegistry();
                 }
             }
