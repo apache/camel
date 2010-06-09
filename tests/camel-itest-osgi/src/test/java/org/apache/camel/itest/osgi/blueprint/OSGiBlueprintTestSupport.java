@@ -109,17 +109,17 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
 
             bundle(newBundle()
                     .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-1.xml"))
-                    .set( Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle1" )
+                    .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle1")
                     .build()).noStart(),
 
             bundle(newBundle()
                     .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-2.xml"))
-                    .set( Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle2" )
+                    .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle2")
                     .build()).noStart(),
 
             bundle(newBundle()
                     .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-3.xml"))
-                    .set( Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle3" )
+                    .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle3")
                     .build()).noStart(),
 
             // install the spring dm profile
@@ -150,8 +150,8 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
             byte[] buf = new byte[8192];
             int bytesRead = input.read(buf);
             while (bytesRead != -1) {
-              output.write(buf, 0, bytesRead);
-              bytesRead = input.read(buf);
+                output.write(buf, 0, bytesRead);
+                bytesRead = input.read(buf);
             }
             output.flush();
         } finally {
@@ -174,7 +174,7 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
 
     private static UrlProvisionOption bundle(final InputStream stream) throws IOException {
         Store<InputStream> store = StoreFactory.defaultStore();
-        return new UrlProvisionOption( store.getLocation( store.store( stream ) ).toURL().toExternalForm() ) ;
+        return new UrlProvisionOption(store.getLocation(store.store(stream)).toURL().toExternalForm());
     }
 
 

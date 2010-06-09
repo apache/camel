@@ -21,14 +21,10 @@ import org.apache.camel.core.osgi.OsgiCamelContextHelper;
 import org.apache.camel.core.osgi.OsgiTypeConverter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.springframework.context.ApplicationContext;
 
 public class OsgiSpringCamelContext extends SpringCamelContext {
-
-    private static final transient Log LOG = LogFactory.getLog(OsgiSpringCamelContext.class);
 
     private final BundleContext bundleContext;
 

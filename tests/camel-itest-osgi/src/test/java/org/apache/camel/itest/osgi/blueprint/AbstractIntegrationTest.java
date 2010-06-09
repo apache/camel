@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -127,7 +127,7 @@ public abstract class AbstractIntegrationTest extends TestSupport {
     /*
      * Provides an iterable collection of references, even if the original array is null
      */
-    private static final Collection<ServiceReference> asCollection(ServiceReference[] references) {
+    private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
         return references != null ? Arrays.asList(references) : Collections.<ServiceReference>emptyList();
     }
 

@@ -23,9 +23,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import org.apache.aries.blueprint.NamespaceHandler;
 import org.apache.aries.blueprint.ParserContext;
@@ -36,9 +42,22 @@ import org.apache.aries.blueprint.mutable.MutableReferenceMetadata;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.blueprint.CamelContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
-import org.apache.camel.model.*;
+import org.apache.camel.model.AggregateDefinition;
+import org.apache.camel.model.CatchDefinition;
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.ExpressionSubElementDefinition;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.MarshalDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ResequenceDefinition;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.SortDefinition;
+import org.apache.camel.model.UnmarshalDefinition;
+import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.LanguageResolver;
@@ -51,10 +70,6 @@ import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.ComponentDefinitionException;
 import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.osgi.service.blueprint.reflect.Metadata;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class CamelNamespaceHandler implements NamespaceHandler {
 
@@ -63,10 +78,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final String BLUEPRINT_NS = "http://camel.apache.org/schema/blueprint";
 
-    private JAXBContext jaxbContext;
-
     private static final transient Log LOG = LogFactory.getLog(CamelNamespaceHandler.class);
 
+    private JAXBContext jaxbContext;
+    
     public static void renameNamespaceRecursive(Node node) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Document doc = node.getOwnerDocument();
@@ -212,8 +227,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                     }
                 }
             } catch (UnsupportedOperationException e) {
-                LOG.warn("Unable to add dependencies on to camel components OSGi services.  " +
-                         "The Apache Aries blueprint implementation used it too old and the blueprint bundle can not see the org.apache.camel.spi package.");
+                LOG.warn("Unable to add dependencies on to camel components OSGi services.  "
+                         + "The Apache Aries blueprint implementation used it too old and the blueprint bundle can not see the org.apache.camel.spi package.");
                 components.clear();
                 languages.clear();
                 dataformats.clear();
@@ -250,6 +265,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void findOutputComponents(List<ProcessorDefinition> defs, Set<String> components, Set<String> languages, Set<String> dataformats) {
         if (defs != null) {
             for (ProcessorDefinition def : defs) {
