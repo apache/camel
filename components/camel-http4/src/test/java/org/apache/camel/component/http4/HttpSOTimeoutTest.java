@@ -18,7 +18,6 @@ package org.apache.camel.component.http4;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http4.handler.DelayValidationHandler;
 import org.apache.http.localserver.LocalTestServer;
 import org.junit.Test;
@@ -41,15 +40,12 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
 
     @Test
     public void httpGetShouldThrowASocketTimeoutException() throws Exception {
-        try {
-            template.request("http4://" + getHostName() + ":" + getPort() + "?httpClient.soTimeout=1000", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                }
-            });
-            fail("Should throw a RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            // expected
-        }
+        Exchange reply = template.request("http4://" + getHostName() + ":" + getPort() + "?httpClient.soTimeout=1000", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+            }
+        });
+        Exception e = reply.getException();
+        assertNotNull("Should have thrown an exception", e);
     }
 
     @Override

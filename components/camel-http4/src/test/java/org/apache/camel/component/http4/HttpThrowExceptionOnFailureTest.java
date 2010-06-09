@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.http.HttpStatus;
 import org.apache.http.localserver.LocalTestServer;
@@ -52,18 +51,15 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
 
     @Test
     public void httpGetWhichReturnsHttp501ShouldThrowAnException() throws Exception {
-        try {
-            template.request("http4://" + getHostName() + ":" + getPort() + "/XXX?throwExceptionOnFailure=true", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                }
-            });
-            fail("RuntimeCamelException expected");
-        } catch (RuntimeCamelException e) {
-            // expected
-            HttpOperationFailedException ex = (HttpOperationFailedException) e.getCause();
-            assertEquals(501, ex.getStatusCode());
-        }
+        Exchange reply = template.request("http4://" + getHostName() + ":" + getPort() + "/XXX?throwExceptionOnFailure=true", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+            }
+        });
 
+        Exception e = reply.getException();
+        assertNotNull("Should have thrown an exception", e);
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e);
+        assertEquals(501, cause.getStatusCode());
     }
 
     @Override

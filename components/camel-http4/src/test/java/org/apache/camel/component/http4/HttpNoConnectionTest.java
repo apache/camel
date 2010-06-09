@@ -20,7 +20,6 @@ import java.net.ConnectException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.localserver.LocalTestServer;
@@ -47,13 +46,11 @@ public class HttpNoConnectionTest extends BaseHttpTest {
         // stop server so there are no connection
         localServer.stop();
 
-        try {
-            template.request(url, null);
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            HttpHostConnectException cause = assertIsInstanceOf(HttpHostConnectException.class, e.getCause());
-            assertIsInstanceOf(ConnectException.class, cause.getCause());
-        }
+        Exchange reply = template.request(url, null);
+        Exception e = reply.getException();
+        assertNotNull("Should have thrown an exception", e);
+        HttpHostConnectException cause = assertIsInstanceOf(HttpHostConnectException.class, e);
+        assertIsInstanceOf(ConnectException.class, cause.getCause());
     }
 
     @Override
