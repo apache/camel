@@ -36,6 +36,7 @@ public class GroovySetHeaderTest extends ContextTestSupport {
         mock.expectedHeaderReceived("two", "twei");
         mock.expectedHeaderReceived("beer", "Carlsberg");
         mock.expectedHeaderReceived("drink", "Carlsberg");
+        mock.expectedHeaderReceived("camelId", "camel-1");
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("one", "einz");
@@ -52,9 +53,14 @@ public class GroovySetHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                
                 from("direct:start")
                     .setHeader("drink").groovy("request.headers.beer")
+                    // shows how to access the camelContext value
+                    .setHeader("camelId").groovy("camelContext.name")
                     .to("mock:result");
+                
+                
             }
         };
     }
