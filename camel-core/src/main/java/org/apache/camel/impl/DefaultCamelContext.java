@@ -1031,9 +1031,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
         }
 
-        LOG.info("Started " + getRoutes().size() + " routes");
-
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started in " + stopWatch.stop() + " millis");
+        stopWatch.stop();
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Started " + getRoutes().size() + " routes");
+            LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started in " + TimeUtils.printDuration(stopWatch.taken()));
+        }
         EventHelper.notifyCamelContextStarted(this);
     }
 
@@ -1165,11 +1167,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // shutdown management as the last one
         shutdownServices(managementStrategy);
 
-        LOG.info("Uptime: " + getUptime());
+        stopWatch.stop();
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Uptime: " + getUptime());
+            LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + TimeUtils.printDuration(stopWatch.taken()));
+        }
+
         // and clear start date
         startDate = null;
-
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + stopWatch.stop() + " millis");
     }
 
     private void shutdownServices(Object service) {

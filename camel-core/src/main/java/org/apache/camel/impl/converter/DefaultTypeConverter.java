@@ -39,6 +39,7 @@ import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -387,7 +388,9 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
         LOG.debug("Loading type converters done");
 
         // report how long time it took to load
-        LOG.info("Loaded " + typeMappings.size() + " type converters in " + watch.stop() + " millis");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Loaded " + typeMappings.size() + " type converters in " + TimeUtils.printDuration(watch.stop()));
+        }
     }
 
     protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
