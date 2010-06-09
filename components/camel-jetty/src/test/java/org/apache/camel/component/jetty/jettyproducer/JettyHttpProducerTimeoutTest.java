@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -38,13 +39,11 @@ public class JettyHttpProducerTimeoutTest extends CamelTestSupport {
         // give Jetty time to startup properly
         Thread.sleep(1000);
 
-        try {
-            template.request(url, null);
-            fail("Should have thrown a timeout exception");
-        } catch (Exception e) {
-            ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
-            assertEquals(2000, cause.getTimeout());
-        }
+        Exchange reply = template.request(url, null);
+        Exception e = reply.getException();
+        assertNotNull("Should have thrown an exception", e);
+        ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e);
+        assertEquals(2000, cause.getTimeout());
     }
 
     @Override
