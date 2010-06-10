@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 
@@ -44,6 +45,14 @@ public class HelloServiceImpl implements HelloService {
 
     public Boolean echoBoolean(Boolean bool) {
         return bool;
+    }
+
+    public String complexParameters(List<String> par1, List<String> par2) {
+        String result = "param";
+        if (par1 != null && par2 != null) {
+            result = result + ":" + par1.get(0) + par2.get(0);
+        }
+        return result;
     }
 
 

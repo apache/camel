@@ -21,12 +21,14 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class CxfProducerOperationTest extends CxfProducerTest {
     private static final String NAMESPACE = "http://apache.org/hello_world_soap_http";
+
    
     protected String getSimpleEndpointUri() {
         return "cxf://" + SIMPLE_SERVER_ADDRESS
@@ -57,6 +59,7 @@ public class CxfProducerOperationTest extends CxfProducerTest {
         return exchange;
 
     }
+    
     protected Exchange sendJaxWsMessage() {
         Exchange exchange = template.send(getJaxwsEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
@@ -67,5 +70,32 @@ public class CxfProducerOperationTest extends CxfProducerTest {
             }
         });
         return exchange;
+    }
+    
+    @Test
+    public void testSendingComplexParameter() throws Exception {
+        Exchange exchange = template.send(getSimpleEndpointUri(), new Processor() {
+            public void process(final Exchange exchange) {
+                // we need to override the operation name first                
+                final List<String> para1 = new ArrayList<String>();
+                para1.add("para1");
+                final List<String> para2 = new ArrayList<String>();
+                para2.add("para2");                
+                List<List> parameters = new ArrayList<List>();
+                parameters.add(para1);
+                parameters.add(para2);
+                // The object array version is working too
+                // Object[] parameters = new Object[] {para1, para2};
+                exchange.getIn().setBody(parameters);
+                exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "complexParameters");
+            }
+        });
+        
+        if (exchange.getException() != null) {
+            throw exchange.getException();
+        }
+        
+        assertEquals("Get a wrong response.", "param:para1para2", exchange.getOut().getBody(String.class));
+        
     }
 }

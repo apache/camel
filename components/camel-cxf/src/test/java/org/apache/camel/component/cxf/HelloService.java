@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.List;
+
 public interface HelloService {
     String sayHello();
 
@@ -26,5 +28,7 @@ public interface HelloService {
     String echo(String text) throws Exception;
 
     Boolean echoBoolean(Boolean bool);
+    
+    String complexParameters(List<String> par1, List<String> par2);
     
 }
