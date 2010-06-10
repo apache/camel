@@ -94,4 +94,10 @@ public @interface DataField {
      */
     boolean required() default false;
 
+    /**
+     * Indicates if the value should be trimed
+     * 
+     * @return boolean
+     */
+    boolean trim() default false;
 }

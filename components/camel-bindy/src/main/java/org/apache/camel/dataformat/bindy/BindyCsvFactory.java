@@ -154,6 +154,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             DataField dataField = dataFields.get(pos);
             ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field : " + data + ", line : " + line);
 
+            if (dataField.trim()) {
+                data = data.trim();
+            }
+            
             if (dataField.required()) {
                 // Increment counter of mandatory fields
                 ++counterMandatoryFields;
