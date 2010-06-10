@@ -53,7 +53,7 @@ public class OsgiLanguageResolver implements LanguageResolver {
             return (Language)bean;
         }
         Language lang = getLanguage(name, context);
-        if (lang == null) {
+        if (lang != null) {
             return lang;
         }
         LanguageResolver resolver = getLanguageResolver("default", context);
