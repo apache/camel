@@ -193,12 +193,6 @@ public class JettyHttpComponent extends HttpComponent {
                 }
                 connector.setPort(endpoint.getPort());
                 connector.setHost(endpoint.getHttpUri().getHost());
-                if (endpoint.getRequestBufferSize() > 0) {
-                    connector.setRequestBufferSize(endpoint.getRequestBufferSize());
-                }
-                if (endpoint.getResponseBufferSize() > 0) {
-                    connector.setResponseBufferSize(endpoint.getResponseBufferSize());
-                }
                 if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
                     LOG.warn("You use localhost interface! It means that no external connections will be available."
                             + " Don't you want to use 0.0.0.0 instead (all network interfaces)? " + endpoint);
