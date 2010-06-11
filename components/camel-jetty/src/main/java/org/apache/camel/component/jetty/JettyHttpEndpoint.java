@@ -38,6 +38,8 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private HttpClient client;
     private JettyHttpBinding jettyBinding;
     private boolean enableJmx;
+    private int requestBufferSize;
+    private int responseBufferSize;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -66,6 +68,22 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     public boolean isSessionSupport() {
         return sessionSupport;
+    }
+    
+    public void setRequestBufferSize(int bufferSize) {
+        requestBufferSize = bufferSize;
+    }
+    
+    public int getRequestBufferSize() {
+        return requestBufferSize;
+    }
+    
+    public void setResponseBufferSize(int bufferSize) {
+        responseBufferSize = bufferSize;
+    }
+    
+    public int getResponseBufferSize() {
+        return responseBufferSize;
     }
 
     public List<Handler> getHandlers() {

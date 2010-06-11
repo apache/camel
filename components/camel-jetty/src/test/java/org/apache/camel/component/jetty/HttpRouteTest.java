@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -148,6 +150,16 @@ public class HttpRouteTest extends CamelTestSupport {
         
         assertEquals("Get a wrong output ", "OK", response);
     }
+    
+    @Test
+    public void testRequestBufferSize() throws Exception {
+        InputStream in = this.getClass().getResourceAsStream("/META-INF/LICENSE.txt");
+        int fileSize = in.available();
+        String response = 
+            template.requestBodyAndHeader("http://localhost:9084/requestBufferSize", 
+                                          in, Exchange.CONTENT_TYPE, "application/txt", String.class);
+        assertEquals("Got a wrong response.", fileSize, response.length());        
+    }
 
 
     protected void invokeHttpEndpoint() throws IOException {
@@ -223,8 +235,18 @@ public class HttpRouteTest extends CamelTestSupport {
                         InputStream is = (InputStream)exchange.getIn().getBody();                        
                         assertTrue("It should be a raw inputstream", is instanceof org.eclipse.jetty.server.HttpInput);
                         String request = exchange.getIn().getBody(String.class);
-                        assertEquals("Get a wrong request", "This is a test", request);
+                        assertEquals("Got a wrong request", "This is a test", request);
                         exchange.getOut().setBody("OK");
+                    }
+                    
+                });
+                
+                
+                from("jetty:http://localhost:9084/requestBufferSize").process(new Processor() {
+
+                    public void process(Exchange exchange) throws Exception {
+                        String string = exchange.getIn().getBody(String.class);
+                        exchange.getOut().setBody(string);
                     }
                     
                 });
