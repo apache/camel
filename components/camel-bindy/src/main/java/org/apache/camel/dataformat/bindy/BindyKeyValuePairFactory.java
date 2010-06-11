@@ -479,6 +479,11 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     // and the position of the field
                     Integer key1 = sections.get(obj.getClass().getName());
                     Integer key2 = keyValuePairField.position();
+                    
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Key of the section : " + key1 + ", and the field  : " + key2);
+                    }   
+                 
                     Integer keyGenerated = generateKey(key1, key2);
 
                     if (LOG.isDebugEnabled()) {

@@ -30,6 +30,7 @@ public class CommonBindyTest extends AbstractJUnit4SpringContextTests {
     public static final String URI_MOCK_ERROR = "mock:error";
     public static final String URI_DIRECT_START = "direct:start";
     public static final String URI_FILE_FIX = "file://src/test/data/fix?noop=true";
+    public static final String URI_FILE_FIX_SIMPLE = "file://src/test/data/fix_simple?noop=true";
     public static final String URI_FILE_FIX_TAB = "file://src/test/data/fix_tab?noop=true";
 
     protected static final transient Log LOG = LogFactory.getLog(CommonBindyTest.class);
