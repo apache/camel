@@ -38,6 +38,7 @@ public interface Injector {
      * Instantiates a new instance of the given object type possibly injecting values
      * into the object in the process
      *
+     * @param type the type of object to create
      * @param instance an instance of the type to create
      * @return a newly created instance
      */
