@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -473,8 +475,13 @@ public class JettyHttpComponent extends HttpComponent {
         CamelContext camelContext = this.getCamelContext();
         FilterHolder filterHolder = new FilterHolder();
         filterHolder.setInitParameter("deleteFiles", "true");
-        if (camelContext.getProperties().get(TMP_DIR) != null) {
-            context.setAttribute("javax.servlet.context.tempdir", camelContext.getProperties().get(TMP_DIR));
+        if (ObjectHelper.isNotEmpty(camelContext.getProperties().get(TMP_DIR))) {
+            File file =  new File(camelContext.getProperties().get(TMP_DIR));            
+            if (!file.isDirectory()) {
+                throw new RuntimeCamelException("The temp file directory of camel-jetty is not exists, please recheck it with directory name :"
+                                                + camelContext.getProperties().get(TMP_DIR));
+            }
+            context.setAttribute("javax.servlet.context.tempdir", file);
         }
         filterHolder.setFilter(new MultiPartFilter());
         //add the default MultiPartFilter filter for it

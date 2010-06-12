@@ -63,6 +63,10 @@ public class MultiPartFormTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
+                // Set the jetty temp directory which store the file 
+                // camel-jetty will clean up the file after it handled the request.
+                getContext().getProperties().put("CamelJettyTempDir", "target");
+                
                 from("jetty://http://localhost:9080/test").process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
