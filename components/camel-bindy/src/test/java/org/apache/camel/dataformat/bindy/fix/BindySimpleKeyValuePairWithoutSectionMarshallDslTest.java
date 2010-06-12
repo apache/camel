@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.fix;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,13 +28,9 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
-import org.apache.camel.dataformat.bindy.csv.BindySimpleCsvUnmarshallBadIntegerTest;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.withoutsection.Order;
-import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.processor.interceptor.Tracer;
-import org.apache.camel.test.junit4.TestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -44,12 +38,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration
 public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest extends AbstractJUnit4SpringContextTests {
-	
+
     private static final transient Log LOG = LogFactory.getLog(BindySimpleKeyValuePairWithoutSectionMarshallDslTest.class);
-	
+
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
@@ -61,7 +56,7 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest extends Abstra
 
     @EndpointInject(uri = URI_MOCK_RESULT)
     private MockEndpoint result;
-    
+
     @EndpointInject(uri = URI_MOCK_ERROR)
     private MockEndpoint error;
 
@@ -78,15 +73,12 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest extends Abstra
 
         result.assertIsSatisfied();
         error.assertIsSatisfied();
-        
+
         // and check that we have the caused exception stored
         Exchange exch = error.getReceivedExchanges().get(0);
-        /**
         Exception cause = exch.getProperty(Exchange.EXCEPTION_CAUGHT, IllegalArgumentException.class);
-        TestSupport.assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-
+        assertNotNull(cause);
         assertEquals("@Section and/or @KeyValuePairDataField have not been defined !", cause.getMessage());
-        **/
     }
 
     public List<Map<String, Object>> generateModel() {
@@ -107,11 +99,11 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest extends Abstra
     }
 
     public static class ContextConfig extends RouteBuilder {
-    	
-    	BindyKeyValuePairDataFormat orderBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.withoutsection");
-        
+
+        BindyKeyValuePairDataFormat orderBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.withoutsection");
+
         public void configure() {
-        	
+
             Tracer tracer = new Tracer();
             tracer.setLogLevel(LoggingLevel.FATAL);
             tracer.setLogName("org.apache.camel.bindy");
@@ -119,12 +111,12 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest extends Abstra
             tracer.setTraceExceptions(true);
 
             getContext().addInterceptStrategy(tracer);
-        	
+
             // default should errors go to mock:error
             errorHandler(deadLetterChannel(URI_MOCK_ERROR));
 
             onException(IllegalArgumentException.class).maximumRedeliveries(0).handled(true);
-        	
+
             from(URI_DIRECT_START).marshal(orderBindyDataFormat).to(URI_MOCK_RESULT);
         }
 

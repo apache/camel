@@ -18,7 +18,6 @@ package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,14 +31,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * The BindyAbstractFactory implements what its common to all the formats
+ * The {@link BindyAbstractFactory} implements what its common to all the formats
  * supported by camel bindy
  */
 public abstract class BindyAbstractFactory implements BindyFactory {
     private static final transient Log LOG = LogFactory.getLog(BindyAbstractFactory.class);
     protected Set<Class<?>> models;
     protected Map<String, List<Field>> annotedLinkFields = new LinkedHashMap<String, List<Field>>();
-    protected List<Field> linkFields = new ArrayList<Field>();
     protected String crlf;
 
     private AnnotationModelLoader modelsLoader;
@@ -62,7 +60,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      * method uses to initialize the model representing the classes who will
      * bind the data. This process will scan for classes according to the
      * package name provided, check the annotated classes and fields.
-     * 
+     *
      * @throws Exception
      */
     public void initModel() throws Exception {
@@ -78,7 +76,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     }
 
     /**
-     * Find fields annoted in each class of the model
+     * Find fields annotated in each class of the model
      */
     public abstract void initAnnotedFields() throws Exception;
 
@@ -107,7 +105,6 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
                 ObjectHelper.notNull(to, "No @link annotation has been defined for the oject to link");
                 field.set(model.get(field.getDeclaringClass().getName()), to);
-
             }
         }
     }
@@ -115,7 +112,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     /**
      * Factory method generating new instances of the model and adding them to a
      * HashMap
-     * 
+     *
      * @return Map is a collection of the objects used to bind data from
      *         records, messages
      * @throws Exception can be thrown
@@ -135,31 +132,26 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
     /**
      * Generate a unique key
-     * 
+     *
      * @param key1 The key of the section number
      * @param key2 The key of the position of the field
      * @return the key generated
      */
     protected static Integer generateKey(Integer key1, Integer key2) {
-    	
         String key2Formated;
         String keyGenerated;
-    	
+
         // Test added for ticket - camel-2773
-        
         if ((key1 != null) && (key2 != null)) {
-        	key2Formated = getNumberFormat().format((long)key2);
-        	keyGenerated = String.valueOf(key1) + key2Formated;
+            key2Formated = getNumberFormat().format((long) key2);
+            keyGenerated = String.valueOf(key1) + key2Formated;
         } else {
-        	throw new IllegalArgumentException("@Section and/or @KeyValuePairDataField have not been defined !");
+            throw new IllegalArgumentException("@Section and/or @KeyValuePairDataField have not been defined !");
         }
 
         return Integer.valueOf(keyGenerated);
     }
 
-    /**
-     * @return NumberFormat
-     */
     private static NumberFormat getNumberFormat() {
         // Get instance of NumberFormat
         NumberFormat nf = NumberFormat.getInstance();
@@ -171,15 +163,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         return nf;
     }
 
-    /**
-     * Return Default value for primitive type
-     * 
-     * @param clazz
-     * @return
-     * @throws Exception
-     */
-    public static Object getDefaultValueforPrimitive(Class<?> clazz) throws Exception {
-
+    public static Object getDefaultValueForPrimitive(Class<?> clazz) throws Exception {
         if (clazz == byte.class) {
             return Byte.MIN_VALUE;
         } else if (clazz == short.class) {

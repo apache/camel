@@ -200,7 +200,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     throw new IllegalArgumentException("Parsing error detected for field defined at the position : " + pos + ", line : " + line, e);
                 }
             } else {
-                value = getDefaultValueforPrimitive(field.getType());
+                value = getDefaultValueForPrimitive(field.getType());
             }
 
             field.set(modelField, value);

@@ -21,7 +21,7 @@ import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
 
 // No section has been defined
-@Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type = "FIX", version = "4.1", isOrdered=true)
+@Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type = "FIX", version = "4.1", isOrdered = true)
 public class Order {
 
     @KeyValuePairField(tag = 1)
@@ -98,10 +98,8 @@ public class Order {
 
     @Override
     public String toString() {
-
-        return Order.class.getName() + " --> 1: " + this.account + ", 11: " + this.clOrdId + ", 22: " + this.iDSource + ", 48: " + this.securityId + ", 54: " + this.side
-               + ", 58: " + this.text;
-
+        return Order.class.getName() + " --> 1: " + this.account + ", 11: " + this.clOrdId + ", 22: " + this.iDSource
+            + ", 48: " + this.securityId + ", 54: " + this.side + ", 58: " + this.text;
     }
 
 }
