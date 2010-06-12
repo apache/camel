@@ -63,8 +63,9 @@ public class MultiPartFormTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // Set the jetty temp directory which store the file 
+                // Set the jetty temp directory which store the file for multi part form
                 // camel-jetty will clean up the file after it handled the request.
+                // The option works rightly from Camel 2.4.0
                 getContext().getProperties().put("CamelJettyTempDir", "target");
                 
                 from("jetty://http://localhost:9080/test").process(new Processor() {
