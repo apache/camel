@@ -66,6 +66,8 @@ public class SmppConfigurationTest {
         assertEquals(0x00, configuration.getNumberingPlanIndicator());
         assertEquals(0x00, configuration.getTypeOfNumber());
         assertEquals(false, configuration.getUsingSSL());
+        assertEquals(5000, configuration.getInitialReconnectDelay());
+        assertEquals(5000, configuration.getReconnectDelay());
     }
     
     @Test
@@ -94,6 +96,8 @@ public class SmppConfigurationTest {
         assertEquals(0x08, configuration.getNumberingPlanIndicator());
         assertEquals(0x02, configuration.getTypeOfNumber());
         assertEquals(true, configuration.getUsingSSL());
+        assertEquals(5001, configuration.getInitialReconnectDelay());
+        assertEquals(5002, configuration.getReconnectDelay());
     }
 
     @Test
@@ -132,6 +136,9 @@ public class SmppConfigurationTest {
         assertEquals(config.getNumberingPlanIndicator(), configuration.getNumberingPlanIndicator());
         assertEquals(config.getTypeOfNumber(), configuration.getTypeOfNumber());
         assertEquals(config.getUsingSSL(), configuration.getUsingSSL());
+        assertEquals(config.getInitialReconnectDelay(), configuration.getInitialReconnectDelay());
+        assertEquals(config.getReconnectDelay(), configuration.getReconnectDelay());
+        
     }
     
     @Test
@@ -157,7 +164,9 @@ public class SmppConfigurationTest {
                 + "sourceAddr=1616, "
                 + "destAddr=1717, "
                 + "typeOfNumber=0, "
-                + "numberingPlanIndicator=0]";
+                + "numberingPlanIndicator=0, "
+                + "initialReconnectDelay=5000, "
+                + "reconnectDelay=5000]";
         assertEquals(expected, configuration.toString());
     }
 
@@ -184,5 +193,7 @@ public class SmppConfigurationTest {
         config.setNumberingPlanIndicator(NumberingPlanIndicator.NATIONAL.value());
         config.setTypeOfNumber(TypeOfNumber.NATIONAL.value());
         config.setUsingSSL(true);
+        config.setInitialReconnectDelay(5001);
+        config.setReconnectDelay(5002);
     }
 }

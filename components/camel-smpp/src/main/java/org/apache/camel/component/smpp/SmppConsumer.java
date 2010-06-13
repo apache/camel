@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.io.IOException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -31,11 +33,13 @@ import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.ProcessRequestException;
+import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.Session;
+import org.jsmpp.session.SessionStateListener;
 import org.jsmpp.util.DefaultComposer;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.MessageId;
@@ -53,27 +57,28 @@ public class SmppConsumer extends DefaultConsumer {
 
     private SmppConfiguration configuration;
     private SMPPSession session;
+    private MessageReceiverListener messageReceiverListener;
+    private SessionStateListener sessionStateListener;
 
     /**
-     * The constructor which gets a smpp endpoint, a smpp configuration and a processor
+     * The constructor which gets a smpp endpoint, a smpp configuration and a
+     * processor
      */
-    public SmppConsumer(SmppEndpoint endpoint, SmppConfiguration configuration, Processor processor) {
+    public SmppConsumer(SmppEndpoint endpoint, SmppConfiguration config, Processor processor) {
         super(endpoint, processor);
-        this.configuration = configuration;
-    }
 
-    @Override
-    protected void doStart() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Connecting to: " + getEndpoint().getConnectionString() + "...");
-        }
-
-        super.doStart();
-
-        session = createSMPPSession();
-        session.setEnquireLinkTimer(this.configuration.getEnquireLinkTimer());
-        session.setTransactionTimer(this.configuration.getTransactionTimer());
-        session.setMessageReceiverListener(new MessageReceiverListener() {
+        this.configuration = config;
+        this.sessionStateListener = new SessionStateListener() {
+            public void onStateChange(SessionState newState, SessionState oldState, Object source) {
+                if (newState.equals(SessionState.CLOSED)) {
+                    LOG.warn("Loost connection to: " + getEndpoint().getConnectionString()
+                            + " - trying to reconnect...");
+                    closeSession(session);
+                    reconnect(configuration.getInitialReconnectDelay());
+                }
+            }
+        };
+        this.messageReceiverListener = new MessageReceiverListener() {
             private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
 
             public void onAcceptAlertNotification(AlertNotification alertNotification) {
@@ -82,7 +87,8 @@ public class SmppConsumer extends DefaultConsumer {
                 }
 
                 try {
-                    Exchange exchange = getEndpoint().createOnAcceptAlertNotificationExchange(alertNotification);
+                    Exchange exchange = getEndpoint().createOnAcceptAlertNotificationExchange(
+                            alertNotification);
 
                     LOG.trace("Processing the new smpp exchange...");
                     getProcessor().process(exchange);
@@ -108,15 +114,17 @@ public class SmppConsumer extends DefaultConsumer {
                 }
             }
 
-            public DataSmResult onAcceptDataSm(DataSm dataSm, Session session)  throws ProcessRequestException {
+            public DataSmResult onAcceptDataSm(DataSm dataSm, Session session)
+                throws ProcessRequestException {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Received a dataSm " + dataSm);
                 }
 
                 MessageId newMessageId = messageIDGenerator.newMessageId();
-                
+
                 try {
-                    Exchange exchange = getEndpoint().createOnAcceptDataSm(dataSm, newMessageId.getValue());
+                    Exchange exchange = getEndpoint().createOnAcceptDataSm(dataSm,
+                            newMessageId.getValue());
 
                     LOG.trace("processing the new smpp exchange...");
                     getProcessor().process(exchange);
@@ -125,26 +133,37 @@ public class SmppConsumer extends DefaultConsumer {
                     getExceptionHandler().handleException(e);
                     throw new ProcessRequestException(e.getMessage(), 255, e);
                 }
-                
+
                 return new DataSmResult(newMessageId, dataSm.getOptionalParametes());
             }
-        });
+        };
+    }
 
-        session.connectAndBind(
-                this.configuration.getHost(),
-                this.configuration.getPort(),
-                new BindParameter(
-                        BindType.BIND_RX,
-                        this.configuration.getSystemId(),
-                        this.configuration.getPassword(),
-                        this.configuration.getSystemType(),
-                        TypeOfNumber.UNKNOWN,
-                        NumberingPlanIndicator.UNKNOWN,
-                        ""));
+    @Override
+    protected void doStart() throws Exception {
+        LOG.debug("Connecting to: " + getEndpoint().getConnectionString() + "...");
+
+        super.doStart();
+        session = createSession();
 
         LOG.info("Connected to: " + getEndpoint().getConnectionString());
     }
 
+    private SMPPSession createSession() throws IOException {
+        SMPPSession session = createSMPPSession();
+        session = createSMPPSession();
+        session.setEnquireLinkTimer(configuration.getEnquireLinkTimer());
+        session.setTransactionTimer(configuration.getTransactionTimer());
+        session.addSessionStateListener(sessionStateListener);
+        session.setMessageReceiverListener(messageReceiverListener);
+        session.connectAndBind(this.configuration.getHost(), this.configuration.getPort(),
+                new BindParameter(BindType.BIND_RX, this.configuration.getSystemId(),
+                        this.configuration.getPassword(), this.configuration.getSystemType(),
+                        TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, ""));
+        
+        return session;
+    }
+    
     /**
      * Factory method to easily instantiate a mock SMPPSession
      * 
@@ -152,8 +171,9 @@ public class SmppConsumer extends DefaultConsumer {
      */
     SMPPSession createSMPPSession() {
         if (configuration.getUsingSSL()) {
-            return new SMPPSession(new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())),
-                new DefaultPDUReader(), SmppSSLConnectionFactory.getInstance());
+            return new SMPPSession(new SynchronizedPDUSender(new DefaultPDUSender(
+                    new DefaultComposer())), new DefaultPDUReader(), SmppSSLConnectionFactory
+                    .getInstance());
         } else {
             return new SMPPSession();
         }
@@ -164,13 +184,46 @@ public class SmppConsumer extends DefaultConsumer {
         LOG.debug("Disconnecting from: " + getEndpoint().getConnectionString() + "...");
 
         super.doStop();
+        closeSession(session);
 
+        LOG.info("Disconnected from: " + getEndpoint().getConnectionString());
+    }
+
+    private void closeSession(SMPPSession session) {
         if (session != null) {
+            session.removeSessionStateListener(this.sessionStateListener);
             session.close();
             session = null;
         }
+    }
 
-        LOG.info("Disconnected from: " + getEndpoint().getConnectionString());
+    private void reconnect(final long initialReconnectDelay) {
+        new Thread() {
+            @Override
+            public void run() {
+                LOG.info("Schedule reconnect after " + initialReconnectDelay + " millis");
+                try {
+                    Thread.sleep(initialReconnectDelay);
+                } catch (InterruptedException e) {
+                }
+
+                int attempt = 0;
+                while (!(isStopping() || isStopped()) && (session == null || session.getSessionState().equals(SessionState.CLOSED))) {
+                    try {
+                        LOG.info("Trying to reconnect to " + getEndpoint().getConnectionString() + " - attempt #" + (++attempt) + "...");
+                        session = createSession();
+                    } catch (IOException e) {
+                        LOG.info("Failed to reconnect to " + getEndpoint().getConnectionString());
+                        closeSession(session);
+                        try {
+                            Thread.sleep(configuration.getReconnectDelay());
+                        } catch (InterruptedException ee) {
+                        }
+                    }
+                }
+                LOG.info("Reconnected to " + getEndpoint().getConnectionString());
+            }
+        }.start();
     }
 
     @Override
@@ -191,5 +244,4 @@ public class SmppConsumer extends DefaultConsumer {
     public SmppConfiguration getConfiguration() {
         return configuration;
     }
-
 }

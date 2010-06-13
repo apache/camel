@@ -23,6 +23,7 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.SessionStateListener;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -68,6 +69,7 @@ public class SmppConsumerTest {
             .times(2);
         session.setEnquireLinkTimer(5000); //expectation
         session.setTransactionTimer(10000); //expectation
+        session.addSessionStateListener(isA(SessionStateListener.class));
         session.setMessageReceiverListener(isA(MessageReceiverListener.class)); //expectation
         expect(session.connectAndBind(
                 "localhost",
@@ -110,6 +112,7 @@ public class SmppConsumerTest {
         expect(endpoint.getConnectionString())
             .andReturn("smpp://smppclient@localhost:2775")
             .times(3);
+        session.removeSessionStateListener(isA(SessionStateListener.class));
         session.close();
         
         replay(session, endpoint);

@@ -24,8 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
-import org.jsmpp.InvalidResponseException;
-import org.jsmpp.PDUException;
 import org.jsmpp.SynchronizedPDUSender;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.BindType;
@@ -36,10 +34,10 @@ import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
-import org.jsmpp.extra.NegativeResponseException;
-import org.jsmpp.extra.ResponseTimeoutException;
+import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.SessionStateListener;
 import org.jsmpp.util.DefaultComposer;
 
 /**
@@ -54,23 +52,37 @@ public class SmppProducer extends DefaultProducer {
 
     private SmppConfiguration configuration;
     private SMPPSession session;
+    private SessionStateListener sessionStateListener;
 
-    public SmppProducer(SmppEndpoint endpoint, SmppConfiguration configuration) {
+    public SmppProducer(SmppEndpoint endpoint, SmppConfiguration config) {
         super(endpoint);
-        this.configuration = configuration;
+        this.configuration = config;
+        this.sessionStateListener = new SessionStateListener() { 
+            public void onStateChange(SessionState newState, SessionState oldState, Object source) {
+                if (newState.equals(SessionState.CLOSED)) {
+                    LOG.warn("Loosing connection to: " + getEndpoint().getConnectionString() + " - trying to reconnect...");
+                    closeSession(session);
+                    reconnect(configuration.getInitialReconnectDelay());
+                }
+            }
+        };
     }
 
     @Override
     protected void doStart() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Connecting to: " + getEndpoint().getConnectionString() + "...");
-        }
+        LOG.debug("Connecting to: " + getEndpoint().getConnectionString() + "...");
 
         super.doStart();
+        session = createSession();
 
-        session = createSMPPSession();
+        LOG.info("Connected to: " + getEndpoint().getConnectionString());
+    }
+    
+    private SMPPSession createSession() throws IOException {
+        SMPPSession session = createSMPPSession();
         session.setEnquireLinkTimer(this.configuration.getEnquireLinkTimer());
         session.setTransactionTimer(this.configuration.getTransactionTimer());
+        session.addSessionStateListener(sessionStateListener);
         session.connectAndBind(
                 this.configuration.getHost(),
                 this.configuration.getPort(),
@@ -82,8 +94,8 @@ public class SmppProducer extends DefaultProducer {
                         TypeOfNumber.valueOf(configuration.getTypeOfNumber()),
                         NumberingPlanIndicator.valueOf(configuration.getNumberingPlanIndicator()),
                         ""));
-
-        LOG.info("Connected to: " + getEndpoint().getConnectionString());
+        
+        return session;
     }
     
     /**
@@ -105,45 +117,13 @@ public class SmppProducer extends DefaultProducer {
             LOG.debug("Sending a short message for exchange id '"
                     + exchange.getExchangeId() + "'...");
         }
+        
+        // only possible by trying to reconnect 
+        if (this.session == null) {
+            throw new IOException("Lost connection to " + getEndpoint().getConnectionString() + " and yet not reconnected");
+        }
 
         SubmitSm submitSm = getEndpoint().getBinding().createSubmitSm(exchange);
-        String messageId;
-        try {
-            messageId = doProcess(submitSm);
-        } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Caught exception while trying to send short message for exchange id '"
-                        + exchange.getExchangeId() + "', retrying...", e);
-            }
-            doStop();
-            doStart();
-            
-            messageId = doProcess(submitSm);
-        }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sent a short message for exchange id '"
-                    + exchange.getExchangeId() + "' and received message id '"
-                    + messageId + "'");
-        }
-
-        if (exchange.getPattern().isOutCapable()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Exchange is out capable, setting headers on out exchange...");
-            }
-            exchange.getOut().setHeader(SmppBinding.ID, messageId);
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Exchange is not out capable, setting headers on in exchange...");
-            }
-            exchange.getIn().setHeader(SmppBinding.ID, messageId);
-        }
-    }
-
-    private String doProcess(SubmitSm submitSm) throws PDUException,
-            ResponseTimeoutException, InvalidResponseException,
-            NegativeResponseException, IOException {
-
         String messageId = session.submitShortMessage(
                 submitSm.getServiceType(), 
                 TypeOfNumber.valueOf(submitSm.getSourceAddrTon()),
@@ -167,25 +147,72 @@ public class SmppProducer extends DefaultProducer {
                 (byte) 0,
                 submitSm.getShortMessage());
 
-        return messageId;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Sent a short message for exchange id '"
+                    + exchange.getExchangeId() + "' and received message id '"
+                    + messageId + "'");
+        }
+
+        if (exchange.getPattern().isOutCapable()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Exchange is out capable, setting headers on out exchange...");
+            }
+            exchange.getOut().setHeader(SmppBinding.ID, messageId);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Exchange is not out capable, setting headers on in exchange...");
+            }
+            exchange.getIn().setHeader(SmppBinding.ID, messageId);
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Disconnecting from: " + getEndpoint().getConnectionString() + "...");
-        }
+        LOG.debug("Disconnecting from: " + getEndpoint().getConnectionString() + "...");
 
         super.doStop();
-
-        if (session != null) {
-            session.close();
-            session = null;
-        }
+        closeSession(session);
 
         LOG.info("Disconnected from: " + getEndpoint().getConnectionString());
     }
+    
+    private void closeSession(SMPPSession session) {
+        if (session != null) {
+            session.removeSessionStateListener(this.sessionStateListener);
+            session.close();
+            session = null;
+        }
+    }
 
+    private void reconnect(final long initialReconnectDelay) {
+        new Thread() {
+            @Override
+            public void run() {
+                LOG.info("Schedule reconnect after " + initialReconnectDelay + " millis");
+                try {
+                    Thread.sleep(initialReconnectDelay);
+                } catch (InterruptedException e) {
+                }
+
+                int attempt = 0;
+                while (!(isStopping() || isStopped()) && (session == null || session.getSessionState().equals(SessionState.CLOSED))) {
+                    try {
+                        LOG.info("Trying to reconnect to " + getEndpoint().getConnectionString() + " - attempt #" + (++attempt) + "...");
+                        session = createSession();
+                    } catch (IOException e) {
+                        LOG.info("Failed to reconnect to " + getEndpoint().getConnectionString());
+                        closeSession(session);
+                        try {
+                            Thread.sleep(configuration.getReconnectDelay());
+                        } catch (InterruptedException ee) {
+                        }
+                    }
+                }
+                LOG.info("Reconnected to " + getEndpoint().getConnectionString());
+            }
+        }.start();
+    }
+    
     @Override
     public SmppEndpoint getEndpoint() {
         return (SmppEndpoint) super.getEndpoint();
@@ -204,5 +231,4 @@ public class SmppProducer extends DefaultProducer {
     public String toString() {
         return "SmppProducer[" + getEndpoint().getConnectionString() + "]";
     }
-
 }

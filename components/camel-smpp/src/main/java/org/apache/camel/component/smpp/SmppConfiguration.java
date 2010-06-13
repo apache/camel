@@ -54,6 +54,8 @@ public class SmppConfiguration implements Cloneable {
     private byte typeOfNumber = TypeOfNumber.UNKNOWN.value();
     private byte numberingPlanIndicator = NumberingPlanIndicator.UNKNOWN.value();
     private boolean usingSSL;
+    private long initialReconnectDelay = 5000;
+    private long reconnectDelay = 5000;
 
     /**
      * A POJO which contains all necessary configuration parameters for the SMPP connection
@@ -248,9 +250,25 @@ public class SmppConfiguration implements Cloneable {
     public boolean getUsingSSL() {
         return usingSSL;
     }
-
+    
     public void setUsingSSL(boolean usingSSL) {
         this.usingSSL = usingSSL;
+    }
+    
+    public long getInitialReconnectDelay() {
+        return initialReconnectDelay;
+    }
+
+    public void setInitialReconnectDelay(long initialReconnectDelay) {
+        this.initialReconnectDelay = initialReconnectDelay;
+    }
+
+    public long getReconnectDelay() {
+        return reconnectDelay;
+    }
+
+    public void setReconnectDelay(long reconnectDelay) {
+        this.reconnectDelay = reconnectDelay;
     }
 
     @Override
@@ -275,6 +293,9 @@ public class SmppConfiguration implements Cloneable {
             + ", sourceAddr=" + sourceAddr 
             + ", destAddr=" + destAddr 
             + ", typeOfNumber=" + typeOfNumber 
-            + ", numberingPlanIndicator=" + numberingPlanIndicator + "]";
+            + ", numberingPlanIndicator=" + numberingPlanIndicator
+            + ", initialReconnectDelay=" + initialReconnectDelay
+            + ", reconnectDelay=" + reconnectDelay
+            + "]";
     }
 }
