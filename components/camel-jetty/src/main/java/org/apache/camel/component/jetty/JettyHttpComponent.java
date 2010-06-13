@@ -206,6 +206,10 @@ public class JettyHttpComponent extends HttpComponent {
                 server.addConnector(connector);
 
                 connectorRef = new ConnectorRef(server, connector, createServletForConnector(server, connector, endpoint.getHandlers()));
+                // must enable session before we start
+                if (endpoint.isSessionSupport()) {
+                    enableSessionSupport(connectorRef.server, connectorKey);
+                }
                 connectorRef.server.start();
                 
                 CONNECTORS.put(connectorKey, connectorRef);
@@ -215,8 +219,8 @@ public class JettyHttpComponent extends HttpComponent {
                 connectorRef.increment();
             }
             // check the session support
-            if (endpoint.isSessionSupport()) {                
-                enableSessionSupport(connectorRef.server);
+            if (endpoint.isSessionSupport()) {
+                enableSessionSupport(connectorRef.server, connectorKey);
             }
             connectorRef.servlet.connect(consumer);
         }
@@ -233,15 +237,12 @@ public class JettyHttpComponent extends HttpComponent {
         }
     }
 
-    private void enableSessionSupport(Server server) throws Exception {
+    private void enableSessionSupport(Server server, String connectorKey) throws Exception {
         ServletContextHandler context = (ServletContextHandler)server.getChildHandlerByClass(ServletContextHandler.class);
         if (context.getSessionHandler() == null) {
             SessionHandler sessionHandler = new SessionHandler();
             if (context.isStarted()) {
-                // restart the context
-                context.stop();
-                context.setSessionHandler(sessionHandler);
-                context.start();
+                throw new IllegalStateException("Server has already been started. Cannot enabled sessionSupport on " + connectorKey);
             } else {
                 context.setSessionHandler(sessionHandler);
             }

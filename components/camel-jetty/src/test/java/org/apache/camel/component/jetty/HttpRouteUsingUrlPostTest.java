@@ -18,9 +18,12 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
+
 /**
  * @version $Revision$
  */
+@Ignore
 public class HttpRouteUsingUrlPostTest extends HttpRouteTest {
 
     protected void invokeHttpEndpoint() throws IOException {

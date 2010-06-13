@@ -77,7 +77,7 @@ public class HttpRouteTest extends CamelTestSupport {
     @Test
     public void testHelloEndpoint() throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        InputStream is = new URL("http://localhost:9280/hello").openStream();
+        InputStream is = new URL("http://localhost:9281/hello").openStream();
         int c;
         while ((c = is.read()) >= 0) {
             os.write(c);
@@ -199,7 +199,7 @@ public class HttpRouteTest extends CamelTestSupport {
                         cache.reset();
                     }
                 };
-                from("jetty:http://localhost:9280/hello?sessionSupport=true").process(proc);
+                from("jetty:http://localhost:9281/hello?sessionSupport=true").process(proc);
 
                 from("jetty:http://localhost:9280/echo").process(printProcessor).process(printProcessor);
 
