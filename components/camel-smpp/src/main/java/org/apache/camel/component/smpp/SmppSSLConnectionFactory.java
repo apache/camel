@@ -32,6 +32,7 @@ import org.jsmpp.session.connection.socket.SocketConnection;
  * @version $Revision$
  */
 public final class SmppSSLConnectionFactory implements ConnectionFactory {
+
     private static final SmppSSLConnectionFactory CONN_FACTORY = new SmppSSLConnectionFactory();
 
     private SmppSSLConnectionFactory() {
@@ -51,6 +52,5 @@ public final class SmppSSLConnectionFactory implements ConnectionFactory {
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         }
-
     }
 }

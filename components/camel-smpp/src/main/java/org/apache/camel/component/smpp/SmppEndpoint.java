@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.jsmpp.bean.AlertNotification;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 
 /**
@@ -115,6 +116,34 @@ public class SmppEndpoint extends DefaultEndpoint {
         Exchange exchange = createExchange(exchangePattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
         exchange.setIn(getBinding().createSmppMessage(deliverSm));
+        return exchange;
+    }
+    
+    /**
+     * Create a new exchange for communicating with this endpoint from a SMSC
+     *
+     * @param dataSm the received message from the SMSC
+     * @param smppMessageId the smpp message id which will be used in the response
+     * @return a new exchange
+     */
+    public Exchange createOnAcceptDataSm(DataSm dataSm, String smppMessageId) {
+        return createOnAcceptDataSm(getExchangePattern(), dataSm, smppMessageId);
+    }
+    
+    /**
+     * Create a new exchange for communicating with this endpoint from a SMSC
+     * with the specified {@link ExchangePattern} such as whether its going
+     * to be an {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut} exchange
+     *
+     * @param exchangePattern the message exchange pattern for the exchange
+     * @param dataSm the received message from the SMSC
+     * @param smppMessageId the smpp message id which will be used in the response
+     * @return a new exchange
+     */
+    public Exchange createOnAcceptDataSm(ExchangePattern exchangePattern, DataSm dataSm, String smppMessageId) {
+        Exchange exchange = createExchange(exchangePattern);
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(getBinding().createSmppMessage(dataSm, smppMessageId));
         return exchange;
     }
 

@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.SubmitSm;
@@ -176,10 +177,10 @@ public class SmppBinding {
         smppMessage.setHeader(COMMAND_STATUS, alertNotification.getCommandStatus());
         smppMessage.setHeader(SOURCE_ADDR, alertNotification.getSourceAddr());
         smppMessage.setHeader(SOURCE_ADDR_NPI, alertNotification.getSourceAddrNpi());
-        smppMessage.setHeader(SOURCE_ADDR_TON, alertNotification.getSourceAddrNpi());
+        smppMessage.setHeader(SOURCE_ADDR_TON, alertNotification.getSourceAddrTon());
         smppMessage.setHeader(ESME_ADDR, alertNotification.getEsmeAddr());
         smppMessage.setHeader(ESME_ADDR_NPI, alertNotification.getEsmeAddrNpi());
-        smppMessage.setHeader(ESME_ADDR_TON, alertNotification.getEsmeAddrNpi());
+        smppMessage.setHeader(ESME_ADDR_TON, alertNotification.getEsmeAddrTon());
 
         return smppMessage;
     }
@@ -213,7 +214,27 @@ public class SmppBinding {
             smppMessage.setHeader(DEST_ADDR, deliverSm.getDestAddress());
             smppMessage.setHeader(SCHEDULE_DELIVERY_TIME, deliverSm.getScheduleDeliveryTime());
             smppMessage.setHeader(VALIDITY_PERIOD, deliverSm.getValidityPeriod());
+            smppMessage.setHeader(SERVICE_TYPE, deliverSm.getServiceType());
         }
+
+        return smppMessage;
+    }
+    
+    public SmppMessage createSmppMessage(DataSm dataSm, String smppMessageId) {
+        SmppMessage smppMessage = new SmppMessage(dataSm, configuration);
+
+        smppMessage.setHeader(ID, smppMessageId);
+        smppMessage.setHeader(SEQUENCE_NUMBER, dataSm.getSequenceNumber());
+        smppMessage.setHeader(COMMAND_ID, dataSm.getCommandId());
+        smppMessage.setHeader(COMMAND_STATUS, dataSm.getCommandStatus());
+        smppMessage.setHeader(SOURCE_ADDR, dataSm.getSourceAddr());
+        smppMessage.setHeader(SOURCE_ADDR_NPI, dataSm.getSourceAddrNpi());
+        smppMessage.setHeader(SOURCE_ADDR_TON, dataSm.getSourceAddrTon());
+        smppMessage.setHeader(DEST_ADDR, dataSm.getDestAddress());
+        smppMessage.setHeader(DEST_ADDR_NPI, dataSm.getDestAddrNpi());
+        smppMessage.setHeader(DEST_ADDR_TON, dataSm.getDestAddrTon());
+        smppMessage.setHeader(SERVICE_TYPE, dataSm.getServiceType());
+        smppMessage.setHeader(REGISTERED_DELIVERY, dataSm.getRegisteredDelivery());
 
         return smppMessage;
     }

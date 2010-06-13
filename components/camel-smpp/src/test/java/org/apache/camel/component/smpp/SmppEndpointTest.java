@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.smpp;
 
-import junit.framework.TestCase;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -24,15 +23,20 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.jsmpp.bean.AlertNotification;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -41,7 +45,7 @@ import static org.easymock.classextension.EasyMock.verify;
  * @version $Revision$
  * @author muellerc
  */
-public class SmppEndpointTest extends TestCase {
+public class SmppEndpointTest {
     
     private SmppEndpoint endpoint;
     private SmppConfiguration configuration;
@@ -70,6 +74,7 @@ public class SmppEndpointTest extends TestCase {
 
     @Test
     public void createEndpointUriShouldReturnTheEndpointUri() {
+        expect(configuration.getUsingSSL()).andReturn(false);
         expect(configuration.getSystemId()).andReturn("smppclient");
         expect(configuration.getHost()).andReturn("localhost");
         expect(configuration.getPort()).andReturn(new Integer(2775));
@@ -95,14 +100,14 @@ public class SmppEndpointTest extends TestCase {
     }
 
     @Test
-    public void vreateProducerShouldReturnASmppProducer() throws Exception {
+    public void createProducerShouldReturnASmppProducer() throws Exception {
         Producer producer = endpoint.createProducer();
         
         assertTrue(producer instanceof SmppProducer);
     }
 
     @Test
-    public void createOnAcceptAlertNotificationExchangeAlertNotification() {
+    public void createOnAcceptAlertNotificationExchange() {
         AlertNotification alertNotification = createMock(AlertNotification.class);
         SmppMessage message = createMock(SmppMessage.class);
         expect(binding.createSmppMessage(alertNotification)).andReturn(message);
@@ -120,7 +125,7 @@ public class SmppEndpointTest extends TestCase {
     }
 
     @Test
-    public void testCreateOnAcceptAlertNotificationExchangeExchangePatternAlertNotification() {
+    public void createOnAcceptAlertNotificationExchangeWithExchangePattern() {
         AlertNotification alertNotification = createMock(AlertNotification.class);
         SmppMessage message = createMock(SmppMessage.class);
         expect(binding.createSmppMessage(alertNotification)).andReturn(message);
@@ -138,7 +143,7 @@ public class SmppEndpointTest extends TestCase {
     }
 
     @Test
-    public void testCreateOnAcceptDeliverSmExchangeDeliverSm() throws Exception {
+    public void createOnAcceptDeliverSmExchange() throws Exception {
         DeliverSm deliverSm = createMock(DeliverSm.class);
         SmppMessage message = createMock(SmppMessage.class);
         expect(binding.createSmppMessage(deliverSm)).andReturn(message);
@@ -156,7 +161,7 @@ public class SmppEndpointTest extends TestCase {
     }
 
     @Test
-    public void testCreateOnAcceptDeliverSmExchangeExchangePatternDeliverSm() throws Exception {
+    public void createOnAcceptDeliverSmWithExchangePattern() throws Exception {
         DeliverSm deliverSm = createMock(DeliverSm.class);
         SmppMessage message = createMock(SmppMessage.class);
         expect(binding.createSmppMessage(deliverSm)).andReturn(message);
@@ -172,9 +177,46 @@ public class SmppEndpointTest extends TestCase {
         assertSame(message, exchange.getIn());
         assertSame(ExchangePattern.InOut, exchange.getPattern());
     }
+    
+    @Test
+    public void createOnAcceptDataSm() throws Exception {
+        DataSm dataSm = createMock(DataSm.class);
+        SmppMessage message = createMock(SmppMessage.class);
+        expect(binding.createSmppMessage(eq(dataSm), isA(String.class))).andReturn(message);
+        message.setExchange(isA(Exchange.class));
+        
+        replay(dataSm, binding, message);
+        
+        Exchange exchange = endpoint.createOnAcceptDataSm(dataSm, "1");
+        
+        verify(dataSm, binding, message);
+        
+        assertSame(binding, exchange.getProperty(Exchange.BINDING));
+        assertSame(message, exchange.getIn());
+        assertSame(ExchangePattern.InOnly, exchange.getPattern());
+    }
+    
+    @Test
+    public void createOnAcceptDataSmWithExchangePattern() throws Exception {
+        DataSm dataSm = createMock(DataSm.class);
+        SmppMessage message = createMock(SmppMessage.class);
+        expect(binding.createSmppMessage(eq(dataSm), isA(String.class))).andReturn(message);
+        message.setExchange(isA(Exchange.class));
+        
+        replay(dataSm, binding, message);
+        
+        Exchange exchange = endpoint.createOnAcceptDataSm(ExchangePattern.InOut, dataSm, "1");
+        
+        verify(dataSm, binding, message);
+        
+        assertSame(binding, exchange.getProperty(Exchange.BINDING));
+        assertSame(message, exchange.getIn());
+        assertSame(ExchangePattern.InOut, exchange.getPattern());
+    }
 
     @Test
     public void getConnectionStringShouldReturnTheConnectionString() {
+        expect(configuration.getUsingSSL()).andReturn(false);
         expect(configuration.getSystemId()).andReturn("smppclient");
         expect(configuration.getHost()).andReturn("localhost");
         expect(configuration.getPort()).andReturn(new Integer(2775));
@@ -190,5 +232,4 @@ public class SmppEndpointTest extends TestCase {
     public void getConfigurationShouldReturnTheSetValue() {
         assertSame(configuration, endpoint.getConfiguration());
     }
-
 }

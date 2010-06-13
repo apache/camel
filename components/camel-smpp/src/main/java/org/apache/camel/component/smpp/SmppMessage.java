@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import org.apache.camel.impl.DefaultMessage;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.MessageRequest;
 
@@ -46,6 +47,11 @@ public class SmppMessage extends DefaultMessage {
     
     public SmppMessage(DeliverSm command, SmppConfiguration configuration) {
         this.command = command;
+        this.configuration = configuration;
+    }
+
+    public SmppMessage(DataSm dataSm, SmppConfiguration configuration) {
+        this.command = dataSm;
         this.configuration = configuration;
     }
 

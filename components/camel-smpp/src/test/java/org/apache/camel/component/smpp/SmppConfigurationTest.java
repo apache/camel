@@ -133,6 +133,33 @@ public class SmppConfigurationTest {
         assertEquals(config.getTypeOfNumber(), configuration.getTypeOfNumber());
         assertEquals(config.getUsingSSL(), configuration.getUsingSSL());
     }
+    
+    @Test
+    public void toStringShouldListAllInstanceVariables() {
+        String expected = "SmppConfiguration["
+                + "usingSSL=false, "
+                + "enquireLinkTimer=5000, "
+                + "host=localhost, "
+                + "password=password, "
+                + "port=2775, "
+                + "systemId=smppclient, "
+                + "systemType=cp, "
+                + "transactionTimer=10000, "
+                + "registeredDelivery=1, "
+                + "serviceType=CMT, "
+                + "sourceAddrTon=0, "
+                + "destAddrTon=0, "
+                + "sourceAddrNpi=0, "
+                + "destAddrNpi=0, "
+                + "protocolId=0, "
+                + "priorityFlag=1, "
+                + "replaceIfPresentFlag=0, "
+                + "sourceAddr=1616, "
+                + "destAddr=1717, "
+                + "typeOfNumber=0, "
+                + "numberingPlanIndicator=0]";
+        assertEquals(expected, configuration.toString());
+    }
 
     private void setNoneDefaultValues(SmppConfiguration config) {
         config.setDestAddr("1919");

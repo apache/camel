@@ -255,17 +255,26 @@ public class SmppConfiguration implements Cloneable {
 
     @Override
     public String toString() {
-        return "SmppConfiguration[" + "enquireLinkTimer=" + enquireLinkTimer
-                + ", host=" + host + ", password=" + password + ", port="
-                + port + ", systemId=" + systemId + ", systemType="
-                + systemType + ", transactionTimer=" + transactionTimer
-                + ", registeredDelivery=" + registeredDelivery
-                + ", serviceType=" + serviceType + ", sourceAddrTon="
-                + sourceAddrTon + ", destAddrTon=" + destAddrTon
-                + ", sourceAddrNpi=" + sourceAddrNpi + ", destAddrNpi="
-                + destAddrNpi + ", protocolId=" + protocolId
-                + ", priorityFlag=" + priorityFlag + ", replaceIfPresentFlag="
-                + replaceIfPresentFlag + ", sourceAddr=" + sourceAddr 
-                + ", destAddr=" + destAddr + "]";
+        return "SmppConfiguration[usingSSL=" + usingSSL 
+            + ", enquireLinkTimer=" + enquireLinkTimer
+            + ", host=" + host 
+            + ", password=" + password 
+            + ", port=" + port 
+            + ", systemId=" + systemId 
+            + ", systemType=" + systemType 
+            + ", transactionTimer=" + transactionTimer
+            + ", registeredDelivery=" + registeredDelivery
+            + ", serviceType=" + serviceType 
+            + ", sourceAddrTon=" + sourceAddrTon 
+            + ", destAddrTon=" + destAddrTon
+            + ", sourceAddrNpi=" + sourceAddrNpi 
+            + ", destAddrNpi=" + destAddrNpi 
+            + ", protocolId=" + protocolId
+            + ", priorityFlag=" + priorityFlag 
+            + ", replaceIfPresentFlag=" + replaceIfPresentFlag 
+            + ", sourceAddr=" + sourceAddr 
+            + ", destAddr=" + destAddr 
+            + ", typeOfNumber=" + typeOfNumber 
+            + ", numberingPlanIndicator=" + numberingPlanIndicator + "]";
     }
 }

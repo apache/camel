@@ -26,13 +26,20 @@ import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.SynchronizedPDUSender;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.session.BindParameter;
+import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.Session;
 import org.jsmpp.util.DefaultComposer;
+import org.jsmpp.util.MessageIDGenerator;
+import org.jsmpp.util.MessageId;
+import org.jsmpp.util.RandomMessageIDGenerator;
 
 /**
  * An implementation of @{link Consumer} which use the SMPP protocol
@@ -67,6 +74,8 @@ public class SmppConsumer extends DefaultConsumer {
         session.setEnquireLinkTimer(this.configuration.getEnquireLinkTimer());
         session.setTransactionTimer(this.configuration.getTransactionTimer());
         session.setMessageReceiverListener(new MessageReceiverListener() {
+            private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
+
             public void onAcceptAlertNotification(AlertNotification alertNotification) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Received an alertNotification " + alertNotification);
@@ -99,6 +108,26 @@ public class SmppConsumer extends DefaultConsumer {
                 }
             }
 
+            public DataSmResult onAcceptDataSm(DataSm dataSm, Session session)  throws ProcessRequestException {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Received a dataSm " + dataSm);
+                }
+
+                MessageId newMessageId = messageIDGenerator.newMessageId();
+                
+                try {
+                    Exchange exchange = getEndpoint().createOnAcceptDataSm(dataSm, newMessageId.getValue());
+
+                    LOG.trace("processing the new smpp exchange...");
+                    getProcessor().process(exchange);
+                    LOG.trace("processed the new smpp exchange");
+                } catch (Exception e) {
+                    getExceptionHandler().handleException(e);
+                    throw new ProcessRequestException(e.getMessage(), 255, e);
+                }
+                
+                return new DataSmResult(newMessageId, dataSm.getOptionalParametes());
+            }
         });
 
         session.connectAndBind(

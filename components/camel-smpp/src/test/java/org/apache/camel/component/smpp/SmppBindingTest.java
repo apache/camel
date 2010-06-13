@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.jsmpp.bean.AlertNotification;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.SubmitSm;
@@ -155,10 +156,10 @@ public class SmppBindingTest {
         assertEquals(0, smppMessage.getHeader(SmppBinding.COMMAND_STATUS));
         assertEquals("1616", smppMessage.getHeader(SmppBinding.SOURCE_ADDR));
         assertEquals((byte) 8, smppMessage.getHeader(SmppBinding.SOURCE_ADDR_NPI));
-        assertEquals((byte) 8, smppMessage.getHeader(SmppBinding.SOURCE_ADDR_TON));
+        assertEquals((byte) 2, smppMessage.getHeader(SmppBinding.SOURCE_ADDR_TON));
         assertEquals("1717", smppMessage.getHeader(SmppBinding.ESME_ADDR));
         assertEquals((byte) 8, smppMessage.getHeader(SmppBinding.ESME_ADDR_NPI));
-        assertEquals((byte) 8, smppMessage.getHeader(SmppBinding.ESME_ADDR_TON));
+        assertEquals((byte) 2, smppMessage.getHeader(SmppBinding.ESME_ADDR_TON));
     }
 
     @Test
@@ -190,16 +191,50 @@ public class SmppBindingTest {
         deliverSm.setDestAddress("1919");
         deliverSm.setScheduleDeliveryTime("090831230627004+");
         deliverSm.setValidityPeriod("090901230627004+");
+        deliverSm.setServiceType("WAP");
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
-        assertEquals(6, smppMessage.getHeaders().size());
+        assertEquals(7, smppMessage.getHeaders().size());
         assertEquals(1, smppMessage.getHeader(SmppBinding.SEQUENCE_NUMBER));
         assertEquals(1, smppMessage.getHeader(SmppBinding.COMMAND_ID));
         assertEquals("1818", smppMessage.getHeader(SmppBinding.SOURCE_ADDR));
         assertEquals("1919", smppMessage.getHeader(SmppBinding.DEST_ADDR));
         assertEquals("090831230627004+", smppMessage.getHeader(SmppBinding.SCHEDULE_DELIVERY_TIME));
         assertEquals("090901230627004+", smppMessage.getHeader(SmppBinding.VALIDITY_PERIOD));
+        assertEquals("WAP", smppMessage.getHeader(SmppBinding.SERVICE_TYPE));
+    }
+    
+    @Test
+    public void createSmppMessageFromDataSmShouldReturnASmppMessage() throws Exception {
+        DataSm dataSm = new DataSm();
+        dataSm.setSequenceNumber(1);
+        dataSm.setCommandId(1);
+        dataSm.setCommandStatus(0);
+        dataSm.setSourceAddr("1818");
+        dataSm.setSourceAddrNpi(NumberingPlanIndicator.NATIONAL.value());
+        dataSm.setSourceAddrTon(TypeOfNumber.NATIONAL.value());
+        dataSm.setDestAddress("1919");
+        dataSm.setDestAddrNpi(NumberingPlanIndicator.NATIONAL.value());
+        dataSm.setDestAddrTon(TypeOfNumber.NATIONAL.value());
+        dataSm.setServiceType("WAP");
+        dataSm.setRegisteredDelivery((byte) 0);
+        SmppMessage smppMessage = binding.createSmppMessage(dataSm, "1");
+        
+        assertNull(smppMessage.getBody());
+        assertEquals(12, smppMessage.getHeaders().size());
+        assertEquals("1", smppMessage.getHeader(SmppBinding.ID));
+        assertEquals(1, smppMessage.getHeader(SmppBinding.SEQUENCE_NUMBER));
+        assertEquals(1, smppMessage.getHeader(SmppBinding.COMMAND_ID));
+        assertEquals(0, smppMessage.getHeader(SmppBinding.COMMAND_STATUS));
+        assertEquals("1818", smppMessage.getHeader(SmppBinding.SOURCE_ADDR));
+        assertEquals((byte) 8, smppMessage.getHeader(SmppBinding.SOURCE_ADDR_NPI));
+        assertEquals((byte) 2, smppMessage.getHeader(SmppBinding.SOURCE_ADDR_TON));
+        assertEquals("1919", smppMessage.getHeader(SmppBinding.DEST_ADDR));
+        assertEquals((byte) 8, smppMessage.getHeader(SmppBinding.DEST_ADDR_NPI));
+        assertEquals((byte) 2, smppMessage.getHeader(SmppBinding.DEST_ADDR_TON));
+        assertEquals("WAP", smppMessage.getHeader(SmppBinding.SERVICE_TYPE));
+        assertEquals((byte) 0, smppMessage.getHeader(SmppBinding.REGISTERED_DELIVERY));
     }
 
     @Test
