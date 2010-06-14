@@ -16,10 +16,7 @@
  */
 package org.apache.camel.itest.osgi;
 
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

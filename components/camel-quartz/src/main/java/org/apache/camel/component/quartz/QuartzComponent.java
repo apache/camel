@@ -134,7 +134,7 @@ public class QuartzComponent extends DefaultComponent {
             if (number == 0) {
                 // no more jobs then shutdown the scheduler
                 LOG.info("There are no more jobs registered, so shutting down Quartz scheduler: " + scheduler.getSchedulerName());
-                scheduler.shutdown();
+                scheduler.standby();               
             }
         }
         super.doStop();
