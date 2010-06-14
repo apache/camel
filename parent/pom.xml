@@ -82,7 +82,7 @@
     <jaxb-version>2.1.12</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
     <jaxen-version>1.1.1</jaxen-version>
-    <jetty-version>7.0.1.v20091125</jetty-version>
+    <jetty-version>7.1.4.v20100610</jetty-version>
     <jettison-version>1.2</jettison-version>
     <jruby-version>1.4.0</jruby-version>
     <juel-version>2.1.2</juel-version>
