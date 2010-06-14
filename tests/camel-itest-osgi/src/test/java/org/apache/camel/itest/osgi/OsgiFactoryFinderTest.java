@@ -20,29 +20,26 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
 public class OsgiFactoryFinderTest extends OSGiIntegrationTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(OsgiFactoryFinderTest.class);
     
     @Test
     public void testFileProducer() throws Exception {        
         Class<?> factory = null;
         FactoryFinder finder = context.getFactoryFinder("META-INF/services/org/apache/camel/component/");
         factory = finder.findClass("file", "strategy.factory.");
-        LOG.info("*** The factory is " + factory);
+        assertNotNull("We should find the factory here.", factory);
     }
-        
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:simple").to("mock:result");
-            }
-        };
+  
+    @Before
+    public void setUp() throws Exception {
+        setUseRouteBuilder(false);
+        super.setUp();        
     }
-    
     
 }
