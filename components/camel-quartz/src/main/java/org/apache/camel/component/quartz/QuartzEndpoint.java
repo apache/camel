@@ -197,7 +197,6 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
         getLoadBalancer().removeProcessor(consumer.getProcessor());
         if (getLoadBalancer().getProcessors().isEmpty() && started) {
             removeTrigger(getTrigger());
-            System.out.println("Remove the trigger");
             started = false;
         }
     }

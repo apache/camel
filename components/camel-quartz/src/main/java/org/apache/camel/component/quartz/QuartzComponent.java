@@ -134,7 +134,8 @@ public class QuartzComponent extends DefaultComponent {
             if (number == 0) {
                 // no more jobs then shutdown the scheduler
                 LOG.info("There are no more jobs registered, so shutting down Quartz scheduler: " + scheduler.getSchedulerName());
-                scheduler.standby();               
+                scheduler.shutdown();
+                scheduler = null;
             }
         }
         super.doStop();
@@ -175,7 +176,7 @@ public class QuartzComponent extends DefaultComponent {
         if (scheduler == null) {
             scheduler = createScheduler();
         }
-        if (!scheduler.isStarted()) {
+        if (!scheduler.isStarted()) {            
             LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName());
             scheduler.start();
         }

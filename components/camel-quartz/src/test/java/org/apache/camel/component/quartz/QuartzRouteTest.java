@@ -56,22 +56,6 @@ public class QuartzRouteTest extends CamelTestSupport {
         }
     }
     
-    @Test
-    public void testStartAndStopCamelContext() throws Exception {
-        System.out.println("Routes " + context.getRoutes());
-        System.out.println("The endpoints" + context.getEndpoints());
-        //context.stopRoute("myRoute");
-        context.stop();
-        System.out.println("Routes " + context.getRoutes());
-        Thread.sleep(2000);
-        
-        context.start();
-        System.out.println("Routes " + context.getRoutes());
-        context.addRoutes(createRouteBuilder());
-        
-        testQuartzRoute();
-        
-    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
