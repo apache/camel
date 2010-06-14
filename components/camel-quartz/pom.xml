@@ -49,10 +49,11 @@
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>opensymphony</groupId>
+            <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>${quartz-version}</version>
         </dependency>
+        
         <!-- commons-collections is needed at runtime by quartz -->
         <dependency>
             <groupId>commons-collections</groupId>

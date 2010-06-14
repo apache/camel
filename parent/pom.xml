@@ -100,7 +100,7 @@
     <pax-exam-version>1.2.0</pax-exam-version>
     <pax-tiny-bundle-version>1.2.0</pax-tiny-bundle-version>
     <qpid-version>0.5.0</qpid-version>
-    <quartz-version>1.6.6</quartz-version>
+    <quartz-version>1.8.1</quartz-version>
     <restlet-version>1.1.9</restlet-version>
     <saxon-version>9.1.0.8</saxon-version>
     <scala-version>2.7.7</scala-version>
