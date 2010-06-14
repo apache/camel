@@ -30,14 +30,16 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 public class OsgiFactoryFinder extends DefaultFactoryFinder {
-
-    private final BundleContext bundleContext;
-    private final Bundle bundle;
+    private BundleContext bundleContext;
 
     public OsgiFactoryFinder(BundleContext bundleContext, ClassResolver classResolver, String resourcePath) {
         super(classResolver, resourcePath);
         this.bundleContext = bundleContext;
-        this.bundle = bundleContext.getBundle();
+    }
+
+    private class BundleEntry {
+        URL url;
+        Bundle bundle;
     }
 
     @Override
@@ -48,8 +50,9 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
 
         Class clazz = classMap.get(propertyPrefix + key);
         if (clazz == null) {
-            URL url = bundle.getEntry(getResourcePath() + key);
-            if (url != null) {
+            BundleEntry entry = getResource(key);
+            if (entry != null) {
+                URL url = entry.url;
                 InputStream in = url.openStream();
                 // lets load the file
                 BufferedInputStream reader = null;
@@ -61,7 +64,7 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
                     if (className == null) {
                         throw new IOException("Expected property is missing: " + propertyPrefix + "class");
                     }
-                    clazz = bundle.loadClass(className);
+                    clazz = entry.bundle.loadClass(className);
                     classMap.put(propertyPrefix + key, clazz);
                 } finally {
                     IOHelper.close(reader, key, null);
@@ -75,5 +78,27 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
         return clazz;
     }
     
-       
+    // As the META-INF of the Factory could not be export,
+    // we need to go through the bundles to look for it
+    // NOTE, the first found factory will be return
+    public BundleEntry getResource(String name) {
+        BundleEntry entry = null;
+        Bundle[] bundles = null; 
+        
+        bundles = bundleContext.getBundles();
+        
+        URL url;
+        for (Bundle bundle : bundles) {
+            url = bundle.getEntry(getResourcePath() + name);
+            if (url != null) {
+                entry = new BundleEntry();
+                entry.url = url;
+                entry.bundle = bundle;
+                break;
+            }
+        }
+
+        return entry;
+    }
+
 }
