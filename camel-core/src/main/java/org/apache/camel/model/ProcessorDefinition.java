@@ -141,6 +141,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return children;
     }
 
+    /**
+     * A helper method to add an output node to this processor definition which can avoid the use of hairy generics
+     * when using Scala code
+     */
+    public boolean addOutputObject(Object node) {
+        if (node instanceof ProcessorDefinition) {
+            addOutput((ProcessorDefinition) node);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public void addOutput(ProcessorDefinition processorType) {
         processorType.setParent(this);
         configureChild(processorType);
