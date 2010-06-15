@@ -32,9 +32,9 @@ import org.junit.Test;
  * @version $Revision: $
  */
 public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
-	
-	@EndpointInject(uri = "mock:result")
-	private MockEndpoint result;
+
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint result;
 
     @Test
     public void testCsvMarshal() throws Exception {
@@ -44,15 +44,16 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String body = result.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        String body = result.getReceivedExchanges().get(0).getIn().getBody(
+                String.class);
         String[] lines = body.split("\n");
         assertEquals(2, lines.length);
         assertEquals("123|Camel in Action|1", lines[0]);
         assertEquals("124|ActiveMQ in Action|2", lines[1]);
     }
 
-	private List<Map<String, Object>> createBody() {
-	    List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+    private List<Map<String, Object>> createBody() {
+        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 
         Map<String, Object> row1 = new LinkedHashMap<String, Object>();
         row1.put("orderId", 123);
@@ -65,7 +66,7 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
         row2.put("item", "ActiveMQ in Action");
         row2.put("amount", 2);
         data.add(row2);
-	    return data;
+        return data;
     }
 
     @Override
@@ -73,15 +74,13 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-            	CsvDataFormat csv = new CsvDataFormat();
-            	CSVConfig config = new CSVConfig();
-            	config.setDelimiter('|');
-            	csv.setConfig(config);
-            	
-                from("direct:start")
-                    .marshal(csv)
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                CsvDataFormat csv = new CsvDataFormat();
+                CSVConfig config = new CSVConfig();
+                config.setDelimiter('|');
+                csv.setConfig(config);
+
+                from("direct:start").marshal(csv).convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
