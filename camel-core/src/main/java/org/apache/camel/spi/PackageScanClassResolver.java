@@ -77,13 +77,13 @@ public interface PackageScanClassResolver {
     Set<Class<?>> findImplementations(Class<?> parent, String... packageNames);
 
     /**
-     * Attemsp to discover classes filter by the provided filter
+     * Attempts to discover classes filter by the provided filter
      *
-     * @param fiter  filter to filter desired classes.
+     * @param filter  filter to filter desired classes.
      * @param packageNames one or more package names to scan (including subpackages) for classes
      * @return the classes found, returns an empty set if none found
      */
-    Set<Class<?>> findByFilter(PackageScanFilter fiter, String... packageNames);
+    Set<Class<?>> findByFilter(PackageScanFilter filter, String... packageNames);
     
     /**
      * Add a filter that will be applied to all scan operations
@@ -91,4 +91,11 @@ public interface PackageScanClassResolver {
      * @param filter filter to filter desired classes in all scan operations
      */
     void addFilter(PackageScanFilter filter);
+
+    /**
+     * Removes the filter
+     *
+     * @param filter filter to filter desired classes in all scan operations
+     */
+    void removeFilter(PackageScanFilter filter);
 }

@@ -24,14 +24,15 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: e1 -->
     <!-- enable Spring @Component scan -->
-    <context:component-scan base-package="org.apache.camel.spring.issues.componentscan"/>
+    <context:component-scan base-package="org.apache.camel.spring.issues.contextscan2"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <!-- and then let Camel find the route builders as well -->
-        <package>org.apache.camel.spring.issues.componentscan</package>
+        <!-- and then let Camel use those @Component scanned route builders -->
+        <contextScan>
+            <!-- and you can use includes/excludes to filter which classes to match -->
+            <includes>org.apache.camel.spring.issues.contextscan2.*</includes>
+        </contextScan>
     </camelContext>
-    <!-- END SNIPPET: e1 -->
 
 </beans>

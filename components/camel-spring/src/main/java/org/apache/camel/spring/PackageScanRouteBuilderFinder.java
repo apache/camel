@@ -22,30 +22,27 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 /**
  * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} instances on the classpath
  *
  * @version $Revision$
  */
-public class RouteBuilderFinder {
-    private static final transient Log LOG = LogFactory.getLog(RouteBuilderFinder.class);
+public class PackageScanRouteBuilderFinder {
+    private static final transient Log LOG = LogFactory.getLog(PackageScanRouteBuilderFinder.class);
     private final SpringCamelContext camelContext;
     private final String[] packages;
-    private PackageScanClassResolver resolver;
-    private ApplicationContext applicationContext;    
-    private BeanPostProcessor beanPostProcessor;
+    private final PackageScanClassResolver resolver;
+    private final ApplicationContext applicationContext;
+    private final BeanPostProcessor beanPostProcessor;
 
-    public RouteBuilderFinder(SpringCamelContext camelContext, String[] packages, ClassLoader classLoader,
-                              BeanPostProcessor postProcessor, PackageScanClassResolver resolver) {
+    public PackageScanRouteBuilderFinder(SpringCamelContext camelContext, String[] packages, ClassLoader classLoader,
+                                         BeanPostProcessor postProcessor, PackageScanClassResolver resolver) {
         this.camelContext = camelContext;
         this.applicationContext = camelContext.getApplicationContext();
         this.packages = packages;
@@ -65,16 +62,6 @@ public class RouteBuilderFinder {
                 LOG.trace("Found RouteBuilder class: " + aClass);
             }
 
-            // check whether the class has already been instantiate by Spring as it was @Component annotated
-            // and its already enlisted in the Spring registry
-            RouteBuilder existing = isRouteBuilderAlreadyRegisteredByComponentAnnotation(aClass);
-            if (existing != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Adding existing @Component annotated RouteBuilder: " + aClass);
-                }
-                list.add(existing);
-                continue;
-            }
             // certain beans should be ignored
             if (shouldIgnoreBean(aClass)) {
                 if (LOG.isDebugEnabled()) {
@@ -101,43 +88,6 @@ public class RouteBuilderFinder {
             }
             list.add(builder);
         }
-    }
-
-    /**
-     * Lookup if the given class has already been enlisted in Spring registry since the class
-     * has been @Component annotated.
-     * 
-     * @param type  the class type
-     * @return the existing route builder instance, or <tt>null</tt> if none existed
-     */
-    protected RouteBuilder isRouteBuilderAlreadyRegisteredByComponentAnnotation(Class<?> type) {
-        Component ann = type.getAnnotation(Component.class);
-        if (ann != null) {
-            String id = ann.value();
-            if (ObjectHelper.isEmpty(id)) {
-                // no explicit id set, so Spring auto assigns the id, so lets try to find that id then
-                String[] names = applicationContext.getBeanNamesForType(type, true, true);
-                if (names != null && names.length == 1) {
-                    id = names[0];
-                }
-            }
-            if (ObjectHelper.isNotEmpty(id)) {
-                boolean match = applicationContext.isTypeMatch(id, type);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Is there already a RouteBuilder registering in Spring with id " + id + ": " + match);
-                }
-                if (match) {
-                    Object existing = applicationContext.getBean(id, type);
-                    if (existing instanceof RouteBuilder) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Found existing @Component annotated RouteBuilder with id " + id);
-                        }
-                        return RouteBuilder.class.cast(existing);
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     /**

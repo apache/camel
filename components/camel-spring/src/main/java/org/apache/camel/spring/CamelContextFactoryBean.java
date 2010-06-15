@@ -18,7 +18,6 @@ package org.apache.camel.spring;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -37,6 +36,7 @@ import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
+import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
@@ -49,6 +49,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,8 +76,8 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("unused")
-public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<SpringCamelContext> 
-    implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
+public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<SpringCamelContext>
+        implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
     private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
 
     @XmlAttribute(name = "depends-on", required = false)
@@ -105,15 +106,17 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String[] packages = {};
     @XmlElement(name = "packageScan", type = PackageScanDefinition.class, required = false)
     private PackageScanDefinition packageScan;
+    @XmlElement(name = "contextScan", type = ContextScanDefinition.class, required = false)
+    private ContextScanDefinition contextScan;
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class, required = false)
     private CamelJMXAgentDefinition camelJMXAgent;
     @XmlElements({
-        @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
-        @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
-        @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
-        @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
-        @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false),
-        @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class, required = false)})
+            @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
+            @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
+            @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
+            @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
+            @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false),
+            @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class, required = false)})
     private List beans;
     @XmlElement(name = "routeBuilder", required = false)
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
@@ -172,19 +175,32 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         return bean;
     }
 
-    protected void findRouteBuilders(String[] normalized, List<RoutesBuilder> builders) throws Exception {
-        RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), normalized, getContextClassLoaderOnStart(),
-                getBeanPostProcessor(), getContext().getPackageScanClassResolver());
+    @Override
+    protected void findRouteBuildersByPackageScan(String[] packages, PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception {
+        // add filter to class resolver which then will filter
+        getContext().getPackageScanClassResolver().addFilter(filter);
+
+        PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(getContext(), packages, getContextClassLoaderOnStart(),
+                                                                                 getBeanPostProcessor(), getContext().getPackageScanClassResolver());
+        finder.appendBuilders(builders);
+
+        // and remove the filter
+        getContext().getPackageScanClassResolver().removeFilter(filter);
+    }
+
+    @Override
+    protected void findRouteBuildersByContextScan(PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception {
+        ContextScanRouteBuilderFinder finder = new ContextScanRouteBuilderFinder(getContext(), filter);
         finder.appendBuilders(builders);
     }
 
     protected void initBeanPostProcessor(SpringCamelContext context) {
         if (beanPostProcessor != null) {
             if (beanPostProcessor instanceof ApplicationContextAware) {
-                ((ApplicationContextAware)beanPostProcessor).setApplicationContext(applicationContext);
+                ((ApplicationContextAware) beanPostProcessor).setApplicationContext(applicationContext);
             }
             if (beanPostProcessor instanceof CamelBeanPostProcessor) {
-                ((CamelBeanPostProcessor)beanPostProcessor).setCamelContext(getContext());
+                ((CamelBeanPostProcessor) beanPostProcessor).setCamelContext(getContext());
             }
         }
     }
@@ -233,6 +249,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     // Properties
     // -------------------------------------------------------------------------
+
     public ApplicationContext getApplicationContext() {
         if (applicationContext == null) {
             throw new IllegalArgumentException("No applicationContext has been injected!");
@@ -243,7 +260,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
-    
+
     public void setBeanPostProcessor(BeanPostProcessor postProcessor) {
         this.beanPostProcessor = postProcessor;
     }
@@ -351,6 +368,21 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setPackageScan(PackageScanDefinition packageScan) {
         this.packageScan = packageScan;
+    }
+
+    public ContextScanDefinition getContextScan() {
+        return contextScan;
+    }
+
+    /**
+     * Sets the context scanning (eg Spring's ApplicationContext) information.
+     * Context scanning allows for the automatic discovery of Camel routes runtime for inclusion
+     * e.g. {@link org.apache.camel.builder.RouteBuilder} implementations
+     *
+     * @param contextScan the context scan
+     */
+    public void setContextScan(ContextScanDefinition contextScan) {
+        this.contextScan = contextScan;
     }
 
     public CamelPropertyPlaceholderDefinition getCamelPropertyPlaceholder() {

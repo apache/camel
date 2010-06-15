@@ -14,19 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.issues.componentscan2;
+package org.apache.camel.spring.issues.contextscan;
 
-import org.apache.camel.spring.SpringRouteBuilder;
-import org.springframework.stereotype.Component;
+import org.apache.camel.spring.SpringTestSupport;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-@Component("coolRoute")
-public class MyOtherRoute extends SpringRouteBuilder {
+public class SpringRouteIsComponentAnnotatedTest extends SpringTestSupport {
 
     @Override
-    public void configure() throws Exception {
-        from("direct:start").to("mock:result");
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/contextscan/SpringRouteIsComponentAnnotatedTest.xml");
     }
+
+    public void testSpringRouteIsComponentAnnotated() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
 }

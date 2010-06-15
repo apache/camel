@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.issues.componentscan2;
+package org.apache.camel.spring.issues.contextscan2;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -27,7 +27,7 @@ public class SpringRouteIsComponentAnnotated2Test extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/componentscan2/SpringRouteIsComponentAnnotated2Test.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/contextscan2/SpringRouteIsComponentAnnotated2Test.xml");
     }
 
     public void testSpringRouteIsComponentAnnotated() throws Exception {

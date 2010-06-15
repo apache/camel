@@ -17,6 +17,8 @@
 package org.apache.camel.core.xml;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,7 @@ import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.ManagedManagementStrategy;
+import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
@@ -72,6 +75,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.CamelContextHelper;
@@ -90,71 +94,8 @@ import org.apache.commons.logging.LogFactory;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> extends IdentifiedType implements RouteContainer {
-
     private static final Log LOG = LogFactory.getLog(AbstractCamelContextFactoryBean.class);
 
-//    @XmlAttribute(name = "depends-on", required = false)
-//    private String dependsOn;
-//    @XmlAttribute(required = false)
-//    private String trace;
-//    @XmlAttribute(required = false)
-//    private String streamCache = "false";
-//    @XmlAttribute(required = false)
-//    private String delayer;
-//    @XmlAttribute(required = false)
-//    private String handleFault;
-//    @XmlAttribute(required = false)
-//    private String errorHandlerRef;
-//    @XmlAttribute(required = false)
-//    private String autoStartup = "true";
-//    @XmlAttribute(required = false)
-//    private ShutdownRoute shutdownRoute;
-//    @XmlAttribute(required = false)
-//    private ShutdownRunningTask shutdownRunningTask;
-//    @XmlElement(name = "properties", required = false)
-//    private PropertiesDefinition properties;
-//    @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class, required = false)
-//    private CamelPropertyPlaceholderDefinition camelPropertyPlaceholder;
-//    @XmlElement(name = "package", required = false)
-//    private String[] packages = {};
-//    @XmlElement(name = "packageScan", type = PackageScanDefinition.class, required = false)
-//    private PackageScanDefinition packageScan;
-//    @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class, required = false)
-//    private CamelJMXAgentDefinition camelJMXAgent;
-////    @XmlElements({
-////        @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
-////        @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
-////        @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
-////        @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
-////        @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false),
-////        @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class, required = false)})
-////    private List beans;
-//    @XmlElement(name = "routeBuilder", required = false)
-//    private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
-//    @XmlElement(name = "routeContextRef", required = false)
-//    private List<RouteContextRefDefinition> routeRefs = new ArrayList<RouteContextRefDefinition>();
-//    @XmlElement(name = "threadPoolProfile", required = false)
-//    private List<ThreadPoolProfileDefinition> threadPoolProfiles;
-////    @XmlElement(name = "threadPool", required = false)
-////    private List<AbstractCamelThreadPoolFactoryBean> threadPools;
-////    @XmlElement(name = "endpoint", required = false)
-////    private List<AbstractCamelEndpointFactoryBean> endpoints;
-//    @XmlElement(name = "dataFormats", required = false)
-//    private DataFormatsDefinition dataFormats;
-//    @XmlElement(name = "onException", required = false)
-//    private List<OnExceptionDefinition> onExceptions = new ArrayList<OnExceptionDefinition>();
-//    @XmlElement(name = "onCompletion", required = false)
-//    private List<OnCompletionDefinition> onCompletions = new ArrayList<OnCompletionDefinition>();
-//    @XmlElement(name = "intercept", required = false)
-//    private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
-//    @XmlElement(name = "interceptFrom", required = false)
-//    private List<InterceptFromDefinition> interceptFroms = new ArrayList<InterceptFromDefinition>();
-//    @XmlElement(name = "interceptSendToEndpoint", required = false)
-//    private List<InterceptSendToEndpointDefinition> interceptSendToEndpoints = new ArrayList<InterceptSendToEndpointDefinition>();
-//    @XmlElement(name = "route", required = false)
-//    private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
-//    @XmlTransient
-//    private T context;
     @XmlTransient
     private List<RoutesBuilder> builders = new ArrayList<RoutesBuilder>();
     @XmlTransient
@@ -692,6 +633,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
 
     public abstract void setPackageScan(PackageScanDefinition packageScan);
 
+    public abstract ContextScanDefinition getContextScan();
+
+    public abstract void setContextScan(ContextScanDefinition contextScan);
+
     public abstract CamelPropertyPlaceholderDefinition getCamelPropertyPlaceholder();
 
     public abstract String getTrace();
@@ -846,9 +791,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
      * Strategy method to try find {@link org.apache.camel.builder.RouteBuilder} instances on the classpath
      */
     protected void findRouteBuilders() throws Exception {
-        PackageScanClassResolver resolver = getContext().getPackageScanClassResolver();
+        // package scan
         addPackageElementContentsToScanDefinition();
-
         PackageScanDefinition packageScanDef = getPackageScan();
         if (packageScanDef != null && packageScanDef.getPackages().size() > 0) {
             // use package scan filter
@@ -862,14 +806,32 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
                 exclude = getContext().resolvePropertyPlaceholders(exclude);
                 filter.addExcludePattern(exclude);
             }
-            resolver.addFilter(filter);
 
             String[] normalized = normalizePackages(getContext(), packageScanDef.getPackages());
-            findRouteBuilders(normalized, builders);
+            findRouteBuildersByPackageScan(normalized, filter, builders);
+        }
+
+        // context scan
+        ContextScanDefinition contextScanDef = getContextScan();
+        if (contextScanDef != null) {
+            // use package scan filter
+            PatternBasedPackageScanFilter filter = new PatternBasedPackageScanFilter();
+            // support property placeholders in include and exclude
+            for (String include : contextScanDef.getIncludes()) {
+                include = getContext().resolvePropertyPlaceholders(include);
+                filter.addIncludePattern(include);
+            }
+            for (String exclude : contextScanDef.getExcludes()) {
+                exclude = getContext().resolvePropertyPlaceholders(exclude);
+                filter.addExcludePattern(exclude);
+            }
+            findRouteBuildersByContextScan(filter, builders);
         }
     }
 
-    protected abstract void findRouteBuilders(String[] normalized, List<RoutesBuilder> builders) throws Exception;
+    protected abstract void findRouteBuildersByPackageScan(String[] packages, PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception;
+
+    protected abstract void findRouteBuildersByContextScan(PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception;
 
     private void addPackageElementContentsToScanDefinition() {
         PackageScanDefinition packageScanDef = getPackageScan();

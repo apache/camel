@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.issues.componentscan;
+package org.apache.camel.spring.issues.contextscan2;
 
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.springframework.stereotype.Component;
@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
 /**
  * @version $Revision$
  */
-@Component
-public class MyRoute extends SpringRouteBuilder {
+@Component("coolRoute")
+public class MyOtherRoute extends SpringRouteBuilder {
 
     @Override
     public void configure() throws Exception {

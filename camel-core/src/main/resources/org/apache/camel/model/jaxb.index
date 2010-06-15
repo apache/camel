@@ -20,6 +20,7 @@ BeanDefinition
 CatchDefinition
 ChoiceDefinition
 ConvertBodyDefinition
+ContextScanDefinition
 DataFormatDefinition
 DelayDefinition
 DescriptionDefinition

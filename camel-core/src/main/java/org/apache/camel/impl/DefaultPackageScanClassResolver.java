@@ -65,6 +65,12 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         scanFilters.add(filter);
     }
 
+    public void removeFilter(PackageScanFilter filter) {
+        if (scanFilters != null) {
+            scanFilters.remove(filter);
+        }
+    }
+
     public Set<ClassLoader> getClassLoaders() {
         if (classLoaders == null) {
             classLoaders = new HashSet<ClassLoader>();

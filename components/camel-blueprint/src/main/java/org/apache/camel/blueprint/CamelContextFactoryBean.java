@@ -36,6 +36,7 @@ import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
+import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
@@ -48,6 +49,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.spi.PackageScanFilter;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
@@ -89,6 +91,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private String[] packages = {};
     @XmlElement(name = "packageScan", type = PackageScanDefinition.class, required = false)
     private PackageScanDefinition packageScan;
+    @XmlElement(name = "contextScan", type = ContextScanDefinition.class, required = false)
+    private ContextScanDefinition contextScan;
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class, required = false)
     private CamelJMXAgentDefinition camelJMXAgent;
     @XmlElements({
@@ -180,7 +184,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     }
 
     @Override
-    protected void findRouteBuilders(String[] normalized, List<RoutesBuilder> builders) throws Exception {
+    protected void findRouteBuildersByPackageScan(String[] packages, PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception {
+    }
+
+    @Override
+    protected void findRouteBuildersByContextScan(PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception {
     }
 
     public String getDependsOn() {
@@ -309,6 +317,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setPackageScan(PackageScanDefinition packageScan) {
         this.packageScan = packageScan;
+    }
+
+    public ContextScanDefinition getContextScan() {
+        return contextScan;
+    }
+
+    public void setContextScan(ContextScanDefinition contextScan) {
+        this.contextScan = contextScan;
     }
 
     public CamelJMXAgentDefinition getCamelJMXAgent() {
