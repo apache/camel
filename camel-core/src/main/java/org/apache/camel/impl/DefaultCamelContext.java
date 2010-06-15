@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -552,7 +553,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     public synchronized void startRoute(String routeId) throws Exception {
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
-            routeService.start();
+            startRouteService(routeService);
         }
     }
 
@@ -926,102 +927,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         // the context is now considered started (i.e. isStarted() == true))
         // starting routes is done after, not during context startup
-        synchronized (this) {
-            // list of inputs to start when all the routes have been prepared for starting
-            // we use a tree map so the routes will be ordered according to startup order defined on the route
-            Map<Integer, DefaultRouteStartupOrder> inputs = new TreeMap<Integer, DefaultRouteStartupOrder>();
-
-            // figure out the order in which the routes should be started
-            for (RouteService routeService : routeServices.values()) {
-                Boolean autoStart = routeService.getRouteDefinition().isAutoStartup();
-                if (autoStart == null || autoStart) {
-                    try {
-                        // add the inputs from this route service to the list to start afterwards
-                        // should be ordered according to the startup number
-                        Integer startupOrder = routeService.getRouteDefinition().getStartupOrder();
-                        if (startupOrder == null) {
-                            // auto assign a default startup order
-                            startupOrder = defaultRouteStartupOrder++;
-                        }
-
-                        // create holder object that contains information about this route to be started
-                        Route route = routeService.getRoutes().iterator().next();
-                        DefaultRouteStartupOrder holder = new DefaultRouteStartupOrder(startupOrder, route, routeService);
-
-                        // check for clash by startupOrder id
-                        DefaultRouteStartupOrder other = inputs.get(startupOrder);
-                        if (other != null) {
-                            String otherId = other.getRoute().getId();
-                            throw new FailedToStartRouteException(holder.getRoute().getId(), "startupOrder clash. Route " + otherId + " already has startupOrder "
-                                + startupOrder + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
-                        } else {
-                            // no clash then add the holder to the existing inputs of routes to be started
-                            inputs.put(startupOrder, holder);
-                        }
-                    } catch (FailedToStartRouteException e) {
-                        throw e;
-                    } catch (Exception e) {
-                        throw new FailedToStartRouteException(e);
-                    }
-                } else {
-                    // should not start on startup
-                    LOG.info("Cannot start route " + routeService.getId() + " as it is configured with auto startup disabled.");
-                }
-            }
-
-            // now prepare the routes by starting its services before we start the input
-            for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
-                // defer starting inputs till later as we want to prepare the routes by starting
-                // all their processors and child services etc.
-                // then later we open the floods to Camel by starting the inputs
-                // what this does is to ensure Camel is more robust on starting routes as all routes
-                // will then be prepared in time before we start inputs which will consume messages to be routed
-                RouteService routeService = entry.getValue().getRouteService();
-                routeService.startInputs(false);
-                try {
-                    routeService.start();
-                } finally {
-                    routeService.startInputs(true);
-                }
-            }
-
-            // check for clash with multiple consumers of the same endpoints which is not allowed
-            List<Endpoint> routeInputs = new ArrayList<Endpoint>();
-            for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
-                Integer order = entry.getKey();
-                Route route = entry.getValue().getRoute();
-
-                RouteService routeService = entry.getValue().getRouteService();
-                for (Consumer consumer : routeService.getInputs().values()) {
-                    Endpoint endpoint = consumer.getEndpoint();
-
-                    // is multiple consumers supported
-                    boolean multipleConsumersSupported = false;
-                    if (endpoint instanceof MultipleConsumersSupport) {
-                        multipleConsumersSupported = ((MultipleConsumersSupport) endpoint).isMultipleConsumersSupported();
-                    }
-
-                    if (!multipleConsumersSupported && routeInputs.contains(endpoint)) {
-                        throw new FailedToStartRouteException(routeService.getId(),
-                            "Multiple consumers for the same endpoint is not allowed: " + endpoint);
-                    } else {
-                        // start the consumer on the route
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Starting consumer (order: " + order + ") on route: " + route.getId());
-                        }
-                        for (LifecycleStrategy strategy : lifecycleStrategies) {
-                            strategy.onServiceAdd(this, consumer, route);
-                        }
-                        ServiceHelper.startService(consumer);
-
-                        routeInputs.add(endpoint);
-
-                        // add to the order which they was started, so we know how to stop them in reverse order
-                        routeStartupOrder.add(entry.getValue());
-                    }
-                }
-            }
-        }
+        safelyStartRouteServices(false, routeServices.values());
 
         for (int i = 0; i < getRoutes().size(); i++) {
             Route route = getRoutes().get(i);
@@ -1246,9 +1152,165 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         } else {
             routeServices.put(key, routeService);
             if (shouldStartRoutes()) {
-                routeService.start();
+                safelyStartRouteServices(true, routeService);
             }
         }
+    }
+
+    /**
+     * Starts the routes services in a proper manner which ensures the routes will be started in correct order,
+     * check for clash and that the routes will also be shutdown in correct order as well.
+     * <p/>
+     * This method <b>must</b> be used to start routes in a safe manner.
+     *
+     * @param forceAutoStart whether to force auto starting the routes, despite they may be configured not do do so
+     * @param routeServices  the routes
+     * @throws Exception is thrown if error starting the routes
+     */
+    protected synchronized void safelyStartRouteServices(boolean forceAutoStart, Collection<RouteService> routeServices) throws Exception {
+        // list of inputs to start when all the routes have been prepared for starting
+        // we use a tree map so the routes will be ordered according to startup order defined on the route
+        Map<Integer, DefaultRouteStartupOrder> inputs = new TreeMap<Integer, DefaultRouteStartupOrder>();
+
+        // figure out the order in which the routes should be started
+        for (RouteService routeService : routeServices) {
+            DefaultRouteStartupOrder order = doPrepareRouteToBeStarted(routeService, forceAutoStart);
+            // check for clash before we add it as input
+            if (order != null && doCheckStartupOrderClash(order, inputs)) {
+                inputs.put(order.getStartupOrder(), order);
+            }
+        }
+
+        // warm up routes before we start them
+        doWarmUpRoutes(inputs);
+
+        // and now start the routes
+        // and check for clash with multiple consumers of the same endpoints which is not allowed
+        List<Endpoint> routeInputs = new ArrayList<Endpoint>();
+        doStartRoutes(inputs, routeInputs);
+        // inputs no longer needed
+        inputs.clear();
+    }
+
+    protected synchronized void safelyStartRouteServices(boolean forceAutoStart, RouteService... routeServices) throws Exception {
+        safelyStartRouteServices(forceAutoStart, Arrays.asList(routeServices));
+    }
+
+    private DefaultRouteStartupOrder doPrepareRouteToBeStarted(RouteService routeService, boolean forceAutoStart) throws Exception {
+        DefaultRouteStartupOrder answer = null;
+
+        Boolean autoStart = routeService.getRouteDefinition().isAutoStartup();
+        if (autoStart == null || autoStart || forceAutoStart) {
+            try {
+                // add the inputs from this route service to the list to start afterwards
+                // should be ordered according to the startup number
+                Integer startupOrder = routeService.getRouteDefinition().getStartupOrder();
+                if (startupOrder == null) {
+                    // auto assign a default startup order
+                    startupOrder = defaultRouteStartupOrder++;
+                }
+
+                // create holder object that contains information about this route to be started
+                Route route = routeService.getRoutes().iterator().next();
+                answer = new DefaultRouteStartupOrder(startupOrder, route, routeService);
+            } catch (Exception e) {
+                throw new FailedToStartRouteException(e);
+            }
+        } else {
+            // should not start on startup
+            LOG.info("Cannot start route " + routeService.getId() + " as it is configured with auto startup disabled.");
+        }
+
+        return answer;
+    }
+
+    private boolean doCheckStartupOrderClash(DefaultRouteStartupOrder answer, Map<Integer, DefaultRouteStartupOrder> inputs) throws FailedToStartRouteException {
+        // check for clash by startupOrder id
+        DefaultRouteStartupOrder other = inputs.get(answer.getStartupOrder());
+        if (other != null && answer != other) {
+            String otherId = other.getRoute().getId();
+            throw new FailedToStartRouteException(answer.getRoute().getId(), "startupOrder clash. Route " + otherId + " already has startupOrder "
+                + answer.getStartupOrder() + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
+        }
+        // check in existing already started as well
+        for (RouteStartupOrder order : routeStartupOrder) {
+            String otherId = order.getRoute().getId();
+            if (answer.getStartupOrder() == order.getStartupOrder()) {
+                throw new FailedToStartRouteException(answer.getRoute().getId(), "startupOrder clash. Route " + otherId + " already has startupOrder "
+                    + answer.getStartupOrder() + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
+            }
+        }
+        return true;
+    }
+
+    private void doWarmUpRoutes(Map<Integer, DefaultRouteStartupOrder> inputs) throws Exception {
+        // now prepare the routes by starting its services before we start the input
+        for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
+            // defer starting inputs till later as we want to prepare the routes by starting
+            // all their processors and child services etc.
+            // then later we open the floods to Camel by starting the inputs
+            // what this does is to ensure Camel is more robust on starting routes as all routes
+            // will then be prepared in time before we start inputs which will consume messages to be routed
+            RouteService routeService = entry.getValue().getRouteService();
+            routeService.startInputs(false);
+            try {
+                routeService.start();
+            } finally {
+                routeService.startInputs(true);
+            }
+        }
+    }
+
+    private void doStartRoutes(Map<Integer, DefaultRouteStartupOrder> inputs, List<Endpoint> routeInputs) throws Exception {
+        for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
+            Integer order = entry.getKey();
+            Route route = entry.getValue().getRoute();
+
+            RouteService routeService = entry.getValue().getRouteService();
+            for (Consumer consumer : routeService.getInputs().values()) {
+                Endpoint endpoint = consumer.getEndpoint();
+
+                // check multiple consumer violation
+                if (!doCheckMultipleConsumerSupportClash(endpoint, routeInputs)) {
+                    throw new FailedToStartRouteException(routeService.getId(),
+                        "Multiple consumers for the same endpoint is not allowed: " + endpoint);
+                }
+
+                // start the consumer on the route
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Starting consumer (order: " + order + ") on route: " + route.getId());
+                }
+                for (LifecycleStrategy strategy : lifecycleStrategies) {
+                    strategy.onServiceAdd(this, consumer, route);
+                }
+                ServiceHelper.startService(consumer);
+
+                routeInputs.add(endpoint);
+
+                // add to the order which they was started, so we know how to stop them in reverse order
+                routeStartupOrder.add(entry.getValue());
+            }
+        }
+    }
+
+    private boolean doCheckMultipleConsumerSupportClash(Endpoint endpoint, List<Endpoint> routeInputs) {
+        // is multiple consumers supported
+        boolean multipleConsumersSupported = false;
+        if (endpoint instanceof MultipleConsumersSupport) {
+            multipleConsumersSupported = ((MultipleConsumersSupport) endpoint).isMultipleConsumersSupported();
+        }
+
+        if (multipleConsumersSupported) {
+            // multiple consumer allowed, so return true
+            return true;
+        }
+
+        // check in progress list
+        if (routeInputs.contains(endpoint)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
