@@ -32,8 +32,9 @@ import javax.xml.bind.annotation.XmlValue;
 public class DescriptionDefinition {
     @XmlAttribute(required = false)
     private String lang;
-    @XmlValue()
-    private Object text;
+
+    @XmlValue
+    private String text;
 
     public String getLang() {
         return lang;
@@ -43,11 +44,11 @@ public class DescriptionDefinition {
         this.lang = lang;
     }
 
-    public Object getText() {
+    public String getText() {
         return text;
     }
 
-    public void setText(Object text) {
+    public void setText(String text) {
         this.text = text;
     }
 }
