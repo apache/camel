@@ -150,7 +150,18 @@ public class BindyCsvDataFormat implements DataFormat {
 
                 // Create POJO where CSV data will be stored
                 model = factory.factory();
-
+                
+                // Added for camel- jira ticket
+                // We will remove the first and last character  of the line
+                // when the separator contains quotes, double quotes 
+                // e.g. ',' or "," ...
+                // REMARK : We take the assumption that the data fields are
+                // quoted or double quoted like that 
+                // e.g : "1 ", "street 1, NY", "USA"
+                if (separator.length() > 1) {
+                	String tempLine = line.substring(1, line.length()-1);
+                	line = tempLine;
+                }
                 // Split the CSV record according to the separator defined in
                 // annotated class @CSVRecord
                 String[] tokens = line.split(separator, -1);
