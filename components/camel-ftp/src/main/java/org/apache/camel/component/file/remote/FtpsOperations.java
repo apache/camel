@@ -44,8 +44,8 @@ public class FtpsOperations extends FtpOperations {
             try {
                 String execProt = config.getExecProt();
                 Long execPbsz = config.getExecPbsz();
-                // if using secure channel then ensure prot and pbsz have default values if unassigned
-                if (config.isUseSecureDataChannel()) {
+                // use default values for prop and pbsz, unless told to not do so
+                if (!config.isDisableSecureDataChannelDefaults()) {
                     if (ObjectHelper.isEmpty(execProt)) {
                         execProt = "P";
                     }

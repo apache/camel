@@ -27,7 +27,7 @@ public class FtpsConfiguration extends FtpConfiguration {
 
     private String securityProtocol = "TLS";
     private boolean isImplicit;
-    private boolean useSecureDataChannel = true;
+    private boolean disableSecureDataChannelDefaults;
     private String execProt;
     private Long execPbsz;
 
@@ -74,19 +74,21 @@ public class FtpsConfiguration extends FtpConfiguration {
         this.isImplicit = isImplicit;
     }
 
-    public boolean isUseSecureDataChannel() {
-        return useSecureDataChannel;
+    public boolean isDisableSecureDataChannelDefaults() {
+        return disableSecureDataChannelDefaults;
     }
 
     /**
-     * Sets whether to use secure data channel when transferring file content
+     * Use this option to disable default options when using secure data channel.
      * <p/>
-     * Default is <tt>true</tt>
+     * This allows you to be in full control what the execPbsz and execProt setting should be used.
+     * <p/>
+     * Default is <tt>false</tt>
      * @see #setExecPbsz(Long)
      * @see #setExecProt(String)
      */
-    public void setUseSecureDataChannel(boolean useSecureDataChannel) {
-        this.useSecureDataChannel = useSecureDataChannel;
+    public void setDisableSecureDataChannelDefaults(boolean disableSecureDataChannelDefaults) {
+        this.disableSecureDataChannelDefaults = disableSecureDataChannelDefaults;
     }
 
     public String getExecProt() {
