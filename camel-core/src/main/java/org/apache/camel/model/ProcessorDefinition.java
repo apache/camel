@@ -149,8 +149,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         if (node instanceof ProcessorDefinition) {
             addOutput((ProcessorDefinition) node);
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
