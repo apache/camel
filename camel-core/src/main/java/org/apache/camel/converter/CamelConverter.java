@@ -22,6 +22,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.model.DescriptionDefinition;
 
 /**
  * Some useful converters for Camel APIs such as to convert a {@link Predicate} or {@link Expression}
@@ -55,5 +56,12 @@ public class CamelConverter {
                 out.setBody(answer);
             }
         };
+    }
+
+    @Converter
+    public DescriptionDefinition toDefinition(String descriptionText) {
+        DescriptionDefinition answer = new DescriptionDefinition();
+        answer.setText(descriptionText);
+        return answer;
     }
 }
