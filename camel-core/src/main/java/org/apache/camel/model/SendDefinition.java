@@ -60,9 +60,10 @@ public abstract class SendDefinition<Type extends ProcessorDefinition> extends P
 
     public Endpoint resolveEndpoint(RouteContext context) {
         if (endpoint == null) {
-            endpoint = context.resolveEndpoint(getUri(), getRef());
+            return context.resolveEndpoint(getUri(), getRef());
+        } else {
+            return endpoint;
         }
-        return endpoint;
     }
 
     // Properties

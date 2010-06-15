@@ -29,16 +29,16 @@ public class RandomLoadBalanceTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        x = getMockEndpoint("mock:x");
-        y = getMockEndpoint("mock:y");
-        z = getMockEndpoint("mock:z");
+        x = getMockEndpoint("mock://x");
+        y = getMockEndpoint("mock://y");
+        z = getMockEndpoint("mock://z");
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").loadBalance().
-                random().to("mock:x", "mock:y", "mock:z");
+                from("direct://start").loadBalance().
+                random().to("mock://x", "mock://y", "mock://z");
             }
         };
     }

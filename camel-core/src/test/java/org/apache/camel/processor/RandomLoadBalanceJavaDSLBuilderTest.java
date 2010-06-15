@@ -60,7 +60,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         RouteDefinition route = context.getRouteDefinitions().get(0);
 
         // the start of the route
-        sb.append("from(\"" + route.getInputs().get(0).getEndpoint().getEndpointUri() + "\")");
+        sb.append("from(\"" + route.getInputs().get(0).getUri() + "\")");
 
         // navigate the route and add Java DSL to the sb
         navigateDefinition(route, sb);
@@ -102,7 +102,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
 
         if (defn instanceof SendDefinition) {
             SendDefinition send = (SendDefinition) defn;
-            sb.append(".to(\"" + send.getEndpoint().getEndpointUri() + "\")");
+            sb.append(".to(\"" + send.getUri() + "\")");
         }
 
         List<ProcessorDefinition> children = defn.getOutputs();
