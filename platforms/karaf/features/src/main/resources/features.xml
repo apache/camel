@@ -227,7 +227,6 @@
     <bundle>mvn:org.eclipse.jetty/jetty-servlet/${jetty-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cometd-java-server/${cometd-java-server-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
-    <feature version='${pom.version}'>camel-stream</feature>
     <bundle>mvn:org.apache.camel/camel-cometd/${pom.version}</bundle>
   </feature>
   <feature name='camel-csv' version='${pom.version}'>

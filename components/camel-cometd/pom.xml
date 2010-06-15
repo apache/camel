@@ -40,16 +40,16 @@
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-stream</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.cometd.java</groupId>
@@ -68,11 +68,15 @@
             <artifactId>junit</artifactId>            
             <scope>test</scope>
         </dependency>
+        <!-- stream is used for interactive test -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-stream</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
-        <defaultGoal>install</defaultGoal>
-
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
