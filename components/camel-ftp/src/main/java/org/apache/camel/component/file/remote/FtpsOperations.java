@@ -40,18 +40,32 @@ public class FtpsOperations extends FtpOperations {
         boolean answer = super.connect(configuration);
 
         FtpsConfiguration config = (FtpsConfiguration) configuration;
-        if (answer && config.isUseSecureDataChannel()) {
+        if (answer) {
             try {
-                // execProt must be configured
-                ObjectHelper.notEmpty(config.getExecProt(), "execProt", config);
+                String execProt = config.getExecProt();
+                Long execPbsz = config.getExecPbsz();
+                // if using secure channel then ensure prot and pbsz have default values if unassigned
+                if (config.isUseSecureDataChannel()) {
+                    if (ObjectHelper.isEmpty(execProt)) {
+                        execProt = "P";
+                    }
+                    if (ObjectHelper.isEmpty(execPbsz)) {
+                        execPbsz = 0L;
+                    }
+                }
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Secure data channel being initialized with execPbsz=" + config.getExecPbsz() + ", execPort=" + config.getExecProt());
+                if (execPbsz != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("FTPClient initializing with execPbsz=" + execPbsz);
+                    }
+                    getFtpClient().execPBSZ(execPbsz);
                 }
-                if (config.getExecPbsz() != null) {
-                    getFtpClient().execPBSZ(config.getExecPbsz());
+                if (execProt != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("FTPClient initializing with execProt=" + execProt);
+                    }
+                    getFtpClient().execPROT(execProt);
                 }
-                getFtpClient().execPROT(config.getExecProt());
             } catch (SSLException e) {
                 throw new GenericFileOperationFailedException(client.getReplyCode(),
                         client.getReplyString(), e.getMessage(), e);

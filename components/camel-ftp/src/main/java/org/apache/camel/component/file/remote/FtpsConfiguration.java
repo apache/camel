@@ -27,8 +27,8 @@ public class FtpsConfiguration extends FtpConfiguration {
 
     private String securityProtocol = "TLS";
     private boolean isImplicit;
-    private boolean useSecureDataChannel;
-    private String execProt = "P";
+    private boolean useSecureDataChannel = true;
+    private String execProt;
     private Long execPbsz;
 
     public FtpsConfiguration() {
@@ -81,7 +81,7 @@ public class FtpsConfiguration extends FtpConfiguration {
     /**
      * Sets whether to use secure data channel when transferring file content
      * <p/>
-     * Default is <tt>false</tt>
+     * Default is <tt>true</tt>
      * @see #setExecPbsz(Long)
      * @see #setExecProt(String)
      */
@@ -94,12 +94,10 @@ public class FtpsConfiguration extends FtpConfiguration {
     }
 
     /**
-     * When using secure data channel you can set the exec protection level
+     * The exec protection level
      * <p/>
      * PROT command. C - Clear S - Safe(SSL protocol only) E - Confidential(SSL protocol only) P - Private
-     * <p/>
-     * Default value is <tt>P</tt>
-     * 
+     *
      * @param execProt either C, S, E or P
      */
     public void setExecProt(String execProt) {
@@ -112,8 +110,6 @@ public class FtpsConfiguration extends FtpConfiguration {
 
     /**
      * When using secure data channel you can set the exec protection buffer size
-     * <p/>
-     * Default value is <tt>0</tt>
      *
      * @param execPbsz the buffer size
      */
