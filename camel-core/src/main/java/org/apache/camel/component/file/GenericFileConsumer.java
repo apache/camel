@@ -251,7 +251,14 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
                 log.trace("Retrieving file: " + name + " from: " + endpoint);
             }
 
-            operations.retrieveFile(name, exchange);
+            // retrieve the file and check it was a success
+            boolean retrieved = operations.retrieveFile(name, exchange);
+            if (!retrieved) {
+                // throw exception to handle the problem with retrieving the file
+                // then if the method return false or throws an exception is handled the same in here
+                // as in both cases an exception is being thrown
+                throw new GenericFileOperationFailedException("Cannot retrieve file: " + file + " from: " + endpoint);
+            }
 
             if (log.isTraceEnabled()) {
                 log.trace("Retrieved file: " + name + " from: " + endpoint);
