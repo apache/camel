@@ -24,6 +24,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
@@ -31,6 +32,7 @@ import static org.apache.camel.language.simple.SimpleLanguage.simple;
 /**
  * @version $Revision$
  */
+@Ignore
 public class JettyHttpProducerSuspendWhileInProgressTest extends CamelTestSupport {
 
     private String serverUri = "jetty://http://localhost:9285/cool";

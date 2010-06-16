@@ -23,11 +23,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
+@Ignore
 public class JettyHttpProducerSlowResponseTest extends CamelTestSupport {
 
     private String url = "jetty://http://0.0.0.0:9321/foo";
