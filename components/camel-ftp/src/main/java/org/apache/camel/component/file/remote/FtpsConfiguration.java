@@ -39,11 +39,6 @@ public class FtpsConfiguration extends FtpConfiguration {
         super(uri);
     }
 
-    @Override
-    protected void setDefaultPort() {
-        setPort(2222);
-    }
-
     /**
      * Returns the underlying security protocol.
      */

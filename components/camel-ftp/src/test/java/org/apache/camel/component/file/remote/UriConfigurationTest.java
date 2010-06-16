@@ -16,20 +16,16 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 
 /**
  * @version $Revision$
  */
 public class UriConfigurationTest extends CamelTestSupport {
-    protected CamelContext context = new DefaultCamelContext();
 
     @Test
     public void testFtpConfigurationDefaults() {
@@ -70,11 +66,28 @@ public class UriConfigurationTest extends CamelTestSupport {
 
         assertEquals("ftps", config.getProtocol());
         assertEquals("hostname", config.getHost());
-        assertEquals(2222, config.getPort());
+        assertEquals(21, config.getPort());
         assertNull(config.getUsername());
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
         assertEquals(false, config.isImplicit());
+        assertEquals("TLS", config.getSecurityProtocol());
+    }
+
+    @Test
+    public void testFtpsExplicitConfigurationDefaults() {
+        Endpoint endpoint = context.getEndpoint("ftps://hostname:990?isImplicit=true");
+        assertIsInstanceOf(FtpsEndpoint.class, endpoint);
+        FtpsEndpoint ftpsEndpoint = (FtpsEndpoint) endpoint;
+        FtpsConfiguration config = (FtpsConfiguration) ftpsEndpoint.getConfiguration();
+
+        assertEquals("ftps", config.getProtocol());
+        assertEquals("hostname", config.getHost());
+        assertEquals(990, config.getPort());
+        assertNull(config.getUsername());
+        assertNull(config.getPassword());
+        assertEquals(false, config.isBinary());
+        assertEquals(true, config.isImplicit());
         assertEquals("TLS", config.getSecurityProtocol());
     }
 
