@@ -176,8 +176,8 @@ public class JettyContentExchange extends ContentExchange {
                 }
             }
         } finally {
-            // now invoke callback
-            callback.onTaskCompleted(exchange);
+            // now invoke callback to indicate we are done async
+            callback.done(false);
         }
     }
 
@@ -191,7 +191,8 @@ public class JettyContentExchange extends ContentExchange {
         }
 
         if (callback != null) {
-            callback.onTaskCompleted(exchange);
+            // now invoke callback to indicate we are done async
+            callback.done(false);
         }
     }
 
