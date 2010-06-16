@@ -470,6 +470,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             }
             return false;
         } catch (SftpException e) {
+            // or an exception can be thrown with id 2 which means file does not exists
+            if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {
+                return false;
+            }
+            // otherwise its a more serious error so rethrow
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         }
     }
