@@ -20,6 +20,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AlreadyStoppedException;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
@@ -33,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public abstract class DelayProcessorSupport extends DelegateProcessor {
+public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
     protected final transient Log log = LogFactory.getLog(getClass());
     private final CountDownLatch stoppedLatch = new CountDownLatch(1);
     private boolean fastStop = true;
@@ -42,9 +43,14 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
         super(processor);
     }
 
-    public void process(Exchange exchange) throws Exception {
-        delay(exchange);
-        super.process(exchange);
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            delay(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        return super.process(exchange, callback);
     }
 
     public boolean isFastStop() {

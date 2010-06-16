@@ -16,24 +16,25 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.MessageHelper;
 
 /**
- * {@link DelegateProcessor} that converts a message into a re-readable format
+ * An interceptor that converts streams messages into a re-readable format
+ * by wrapping the stream into a {@link StreamCache}.
  */
-public class StreamCachingInterceptor extends DelegateProcessor {
+public class StreamCachingInterceptor extends DelegateAsyncProcessor {
 
     public StreamCachingInterceptor() {
         super();
     }
 
     public StreamCachingInterceptor(Processor processor) {
-        this();
-        setProcessor(processor);
+        super(processor);
     }
 
     @Override
@@ -42,14 +43,14 @@ public class StreamCachingInterceptor extends DelegateProcessor {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
         if (newBody != null) {
             exchange.getIn().setBody(newBody);
         }
         MessageHelper.resetStreamCache(exchange.getIn());
 
-        getProcessor().process(exchange);
+        return getProcessor().process(exchange, callback);
     }
 
 }

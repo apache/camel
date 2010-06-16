@@ -29,19 +29,24 @@ import org.apache.camel.model.ProcessorDefinition;
  */
 public interface InterceptStrategy {
 
+    // TODO: We should force this strategy to return AsyncProcessor so custom interceptors work nicely with async
+
     /**
      * This method is invoked by
      * {@link ProcessorDefinition#wrapProcessor(RouteContext, Processor)}
      * to give the implementor an opportunity to wrap the target processor
      * in a route.
+     * <p/>
+     * Its adviced to use an {@link org.apache.camel.AsyncProcessor} as the returned wrapped
+     * {@link Processor} which ensures the interceptor works well with the asynchronous routing engine.
      *
      * @param context       Camel context
      * @param definition    the model this interceptor represents
      * @param target        the processor to be wrapped
      * @param nextTarget    the next processor to be routed to
-     * @return processor wrapped with an interceptor or not wrapped
+     * @return processor    wrapped with an interceptor or not wrapped.
      * @throws Exception can be thrown
      */
-    Processor wrapProcessorInInterceptors(CamelContext context, 
-            ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception;
+    Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, 
+                                          Processor target, Processor nextTarget) throws Exception;
 }

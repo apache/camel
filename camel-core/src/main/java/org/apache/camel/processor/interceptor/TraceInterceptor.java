@@ -32,7 +32,6 @@ import org.apache.camel.impl.DoCatchRouteNode;
 import org.apache.camel.impl.DoFinallyRouteNode;
 import org.apache.camel.impl.OnCompletionRouteNode;
 import org.apache.camel.impl.OnExceptionRouteNode;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.FinallyDefinition;
@@ -47,7 +46,6 @@ import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -73,7 +71,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     private String jpaTraceEventMessageClassName;
 
     public TraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer) {
-        super(AsyncProcessorTypeConverter.convert(target));
+        super(target);
         this.tracer = tracer;
         this.node = node;
         this.formatter = formatter;
@@ -92,10 +90,6 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
 
     public void setRouteContext(RouteContext routeContext) {
         this.routeContext = routeContext;
-    }
-
-    public void process(final Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override
@@ -178,7 +172,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
                 // process the exchange
                 try {
                     sync = super.process(exchange, callback);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     exchange.setException(e);
                 }
             } finally {
@@ -188,7 +182,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
                     traceExchangeOut(exchange, traceState);
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             // some exception occurred in trace logic
             if (shouldLogException(exchange)) {
                 logException(exchange, e);
@@ -196,7 +190,6 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
             exchange.setException(e);
         }
 
-        callback.done(sync);
         return sync;
     }
 

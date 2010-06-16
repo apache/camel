@@ -16,9 +16,10 @@
  */
 package org.apache.camel.management;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class InstrumentationProcessor extends DelegateProcessor {
+public class InstrumentationProcessor extends DelegateAsyncProcessor {
 
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
     private PerformanceCounter counter;
@@ -54,26 +55,30 @@ public class InstrumentationProcessor extends DelegateProcessor {
         }
     }
 
-    public void process(Exchange exchange) throws Exception {
-        if (processor != null) {
-
-            // use nano time as its more accurate
-            long startTime = -1;
-            if (counter != null && counter.isStatisticsEnabled()) {
-                startTime = System.nanoTime();
-            }
-
-            try {
-                processor.process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
-
-            if (startTime != -1) {
-                long diff = (System.nanoTime() - startTime) / 1000000;
-                recordTime(exchange, diff);
-            }
+    @Override
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        // use nano time as its more accurate
+        // and only record time if stats is enabled
+        long start = -1;
+        if (counter != null && counter.isStatisticsEnabled()) {
+            start = System.nanoTime();
         }
+        final long startTime = start;
+
+        return super.process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                try {
+                    // record end time
+                    if (startTime > -1) {
+                        long diff = (System.nanoTime() - startTime) / 1000000;
+                        recordTime(exchange, diff);
+                    }
+                } finally {
+                    // and let the original callback know we are done as well
+                    callback.done(doneSync);
+                }
+            }
+        });
     }
 
     protected void recordTime(Exchange exchange, long duration) {

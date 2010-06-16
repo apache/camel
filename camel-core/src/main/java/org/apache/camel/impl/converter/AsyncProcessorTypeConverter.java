@@ -41,6 +41,11 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
         }
 
         public boolean process(Exchange exchange, AsyncCallback callback) {
+            if (processor == null) {
+                // no processor then we are done
+                callback.done(true);
+                return true;
+            }
             try {
                 processor.process(exchange);
             } catch (Throwable e) {

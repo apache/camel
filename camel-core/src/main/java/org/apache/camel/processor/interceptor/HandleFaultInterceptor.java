@@ -16,20 +16,20 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 
-public class HandleFaultInterceptor extends DelegateProcessor {
+public class HandleFaultInterceptor extends DelegateAsyncProcessor {
 
     public HandleFaultInterceptor() {
         super();
     }
 
     public HandleFaultInterceptor(Processor processor) {
-        this();
-        setProcessor(processor);
+        super(processor);
     }
 
     @Override
@@ -38,18 +38,18 @@ public class HandleFaultInterceptor extends DelegateProcessor {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        if (processor == null) {
-            return;
-        }
-
-        try {
-            processor.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
-
-        handleFault(exchange);
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        return getProcessor().process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                try {
+                    // handle fault after we are done
+                    handleFault(exchange);
+                } finally {
+                    // and let the original callback know we are done as well
+                    callback.done(doneSync);
+                }
+            }
+        });
     }
 
     /**
@@ -62,8 +62,8 @@ public class HandleFaultInterceptor extends DelegateProcessor {
             if (faultBody != null && exchange.getException() == null) {
                 // remove fault as we are converting it to an exception
                 exchange.setOut(null);
-                if (faultBody instanceof Exception) {
-                    exchange.setException((Exception) faultBody);
+                if (faultBody instanceof Throwable) {
+                    exchange.setException((Throwable) faultBody);
                 } else {
                     // wrap it in an exception
                     exchange.setException(new CamelException(faultBody.toString()));

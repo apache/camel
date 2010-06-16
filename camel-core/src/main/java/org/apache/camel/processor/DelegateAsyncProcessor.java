@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 
@@ -48,6 +49,10 @@ public class DelegateAsyncProcessor extends ServiceSupport implements AsyncProce
         this.processor = processor;
     }
 
+    public DelegateAsyncProcessor(Processor processor) {
+        this(AsyncProcessorTypeConverter.convert(processor));
+    }
+
     @Override
     public String toString() {
         return "DelegateAsync[" + processor + "]";
@@ -55,6 +60,14 @@ public class DelegateAsyncProcessor extends ServiceSupport implements AsyncProce
 
     public AsyncProcessor getProcessor() {
         return processor;
+    }
+
+    public void setProcessor(AsyncProcessor processor) {
+        this.processor = processor;
+    }
+
+    public void setProcessor(Processor processor) {
+        this.processor = AsyncProcessorTypeConverter.convert(processor);
     }
 
     protected void doStart() throws Exception {
@@ -66,6 +79,11 @@ public class DelegateAsyncProcessor extends ServiceSupport implements AsyncProce
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        if (processor == null) {
+            // no processor then we are done
+            callback.done(true);
+            return true;
+        }
         return processor.process(exchange, callback);
     }
 

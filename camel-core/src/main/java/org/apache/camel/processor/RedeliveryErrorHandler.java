@@ -131,6 +131,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     // okay we want to continue then prepare the exchange for that as well
                     prepareExchangeForContinue(exchange, data);
                 }
+
+                // we are breaking out so invoke the callback
+                callback.done(data.sync);
                 // and then return
                 return data.sync;
             }

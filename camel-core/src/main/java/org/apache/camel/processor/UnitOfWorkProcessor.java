@@ -21,7 +21,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultUnitOfWork;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +37,7 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
     private final RouteContext routeContext;
 
     public UnitOfWorkProcessor(Processor processor) {
-        this(null, AsyncProcessorTypeConverter.convert(processor));
+        this(null, processor);
     }
 
     public UnitOfWorkProcessor(AsyncProcessor processor) {
@@ -46,7 +45,8 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
     }
 
     public UnitOfWorkProcessor(RouteContext routeContext, Processor processor) {
-        this(routeContext, AsyncProcessorTypeConverter.convert(processor));
+        super(processor);
+        this.routeContext = routeContext;
     }
 
     public UnitOfWorkProcessor(RouteContext routeContext, AsyncProcessor processor) {
@@ -81,8 +81,11 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
                 public void done(boolean doneSync) {
                     // Order here matters. We need to complete the callbacks
                     // since they will likely update the exchange with some final results.
-                    callback.done(doneSync);
-                    doneUow(uow, exchange);
+                    try {
+                        callback.done(doneSync);
+                    } finally {
+                        doneUow(uow, exchange);
+                    }
                 }
             });
         } else {
