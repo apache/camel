@@ -45,12 +45,12 @@ public class SqlComponent extends DefaultComponent {
         if (dataSourceRef != null) {
             dataSource = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
         }
+        String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
         
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
 
-        String query = remaining.replaceAll("#", "?");
-
+        String query = remaining.replaceAll(parameterPlaceholderSubstitute, "?");
         return new SqlEndpoint(uri, this, jdbcTemplate, query);
     }
 

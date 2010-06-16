@@ -153,6 +153,19 @@ public class SqlRouteTest extends CamelTestSupport {
     }
     
     @Test
+    public void testHashesInQuery() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        template.sendBody("direct:no-param-insert", "GPL");
+        mock.assertIsSatisfied();
+        Number received = assertIsInstanceOf(Number.class, mock.getReceivedExchanges().get(0).getIn().getHeader(SqlConstants.SQL_UPDATE_COUNT));
+        assertEquals(1, received.intValue());
+        Map projectNameInserted = jdbcTemplate.queryForMap("select project, license from projects where id = 5");
+        assertEquals("#", projectNameInserted.get("PROJECT"));
+        assertEquals("GPL", projectNameInserted.get("LICENSE"));
+    }
+    
+    @Test
     public void testBodyButNoParams() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -208,6 +221,8 @@ public class SqlRouteTest extends CamelTestSupport {
                 from("direct:insert").to("sql:insert into projects values (#, #, #)").to("mock:result");
                 
                 from("direct:no-param").to("sql:select * from projects order by id").to("mock:result");
+                
+                from("direct:no-param-insert").to("sql:insert into projects values (5, '#', param)?placeholder=param").to("mock:result");
             }
         };
     }
