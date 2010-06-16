@@ -36,22 +36,19 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware {
         this.endpoint = (DirectEndpoint) endpoint;
     }
 
-    @Override
     public void start() throws Exception {
-        // only add as consumer if not already registered
-        if (!endpoint.getConsumers().contains(this)) {
-            if (!endpoint.getConsumers().isEmpty()) {
-                throw new IllegalStateException("Endpoint " + endpoint.getEndpointUri() + " only allows 1 active consumer but you attempted to start a 2nd consumer.");
-            }
-            endpoint.getConsumers().add(this);
+        // add consumer to endpoint
+        if (endpoint.getConsumer() != null && endpoint.getConsumer() != this) {
+            throw new IllegalArgumentException("Endpoint " + endpoint + " only allows one consumer. Existing: " + endpoint.getConsumer() + " and this: " + this);
         }
+        endpoint.setConsumer(this);
         super.start();
     }
 
     @Override
     public void stop() throws Exception {
+        endpoint.setConsumer(null);
         super.stop();
-        endpoint.getConsumers().remove(this);
     }
 
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {

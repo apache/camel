@@ -22,6 +22,7 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.DefaultErrorHandler;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spring.spi.TransactionErrorHandler;
@@ -91,6 +92,9 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
             } else if (processor instanceof DelegateProcessor) {
                 // TransactionInterceptor is a DelegateProcessor
                 processor = ((DelegateProcessor)processor).getProcessor();
+            } else if (processor instanceof DelegateAsyncProcessor) {
+                // TransactionInterceptor is a DelegateProcessor
+                processor = ((DelegateAsyncProcessor)processor).getProcessor();
             } else if (processor instanceof Pipeline) {
                 for (Processor p : ((Pipeline)processor).getProcessors()) {
                     p = findProcessorByClass(p, findClass);

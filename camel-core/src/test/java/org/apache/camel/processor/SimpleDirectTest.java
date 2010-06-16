@@ -16,23 +16,22 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
-public class DefaultErrorHandlerCatchThrowableTest extends ContextTestSupport {
+/**
+ * @version $Revision$
+ */
+public class SimpleDirectTest extends ContextTestSupport {
 
-    public void testDefaultErrorHandlerCatchThrowable() throws Exception {
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertEquals("Hello World", e.getExchange().getIn().getBody());
-            NoSuchMethodError cause = assertIsInstanceOf(NoSuchMethodError.class, e.getCause());
-            assertEquals("This is an Error not an Exception", cause.getMessage());
-        }
+    public void testSimpleDirect() throws Exception {
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -40,14 +39,10 @@ public class DefaultErrorHandlerCatchThrowableTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                final String exceptionString = "This is an Error not an Exception";
+                from("direct:start").to("direct:foo").to("direct:bar").to("mock:result");
 
-                from("direct:start")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new NoSuchMethodError(exceptionString);
-                        }
-                    });
+                from("direct:foo").to("mock:foo");
+                from("direct:bar").to("mock:bar");
             }
         };
     }

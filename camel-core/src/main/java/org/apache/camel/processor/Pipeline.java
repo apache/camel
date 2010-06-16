@@ -20,10 +20,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,7 +38,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class Pipeline extends MulticastProcessor implements Processor, Traceable {
+public class Pipeline extends MulticastProcessor implements AsyncProcessor, Traceable {
     private static final transient Log LOG = LogFactory.getLog(Pipeline.class);
 
     public Pipeline(CamelContext camelContext, Collection<Processor> processors) {
@@ -51,6 +55,10 @@ public class Pipeline extends MulticastProcessor implements Processor, Traceable
     }
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         Iterator<Processor> processors = getProcessors().iterator();
         Exchange nextExchange = exchange;
         boolean first = true;
@@ -66,15 +74,21 @@ public class Pipeline extends MulticastProcessor implements Processor, Traceable
             // get the next processor
             Processor processor = processors.next();
 
-            // process the next exchange
-            try {
+            AsyncProcessor async = AsyncProcessorTypeConverter.convert(processor);
+            boolean sync = process(exchange, nextExchange, callback, processors, async);
+
+            // continue as long its being processed synchronously
+            if (!sync) {
                 if (LOG.isTraceEnabled()) {
-                    // this does the actual processing so log at trace level
-                    LOG.trace("Processing exchangeId: " + nextExchange.getExchangeId() + " >>> " + nextExchange);
+                    LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
                 }
-                processor.process(nextExchange);
-            } catch (Exception e) {
-                nextExchange.setException(e);
+                // the remainder of the pipeline will be completed async
+                // so we break out now, then the callback will be invoked which then continue routing from where we left here
+                return false;
+            }
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
             }
 
             // check for error if so we should break out
@@ -112,6 +126,72 @@ public class Pipeline extends MulticastProcessor implements Processor, Traceable
 
         // copy results back to the original exchange
         ExchangeHelper.copyResults(exchange, nextExchange);
+
+        callback.done(true);
+        return true;
+
+    }
+
+    private boolean process(final Exchange original, final Exchange exchange, final AsyncCallback callback,
+                            final Iterator<Processor> processors, final AsyncProcessor asyncProcessor) {
+        if (LOG.isTraceEnabled()) {
+            // this does the actual processing so log at trace level
+            LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
+        }
+
+        // implement asynchronous routing logic in callback so we can have the callback being
+        // triggered and then continue routing where we left
+        boolean sync = asyncProcessor.process(exchange, new AsyncCallback() {
+            public void done(boolean sync) {
+                // we only have to handle async completion of the pipeline
+                if (sync) {
+                    return;
+                }
+
+                // continue processing the pipeline asynchronously
+                Exchange nextExchange = exchange;
+                while (processors.hasNext()) {
+                    AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
+
+                    // check for error if so we should break out
+                    boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(nextExchange);
+                    if (nextExchange.isFailed() || nextExchange.isRollbackOnly() || exceptionHandled) {
+                        // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
+                        // by the error handler. It's still an exception, the exchange still failed.
+                        if (LOG.isDebugEnabled()) {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("Message exchange has failed so breaking out of pipeline: ").append(nextExchange);
+                            if (nextExchange.isRollbackOnly()) {
+                                sb.append(" Marked as rollback only.");
+                            }
+                            if (nextExchange.getException() != null) {
+                                sb.append(" Exception: ").append(nextExchange.getException());
+                            }
+                            if (nextExchange.hasOut() && nextExchange.getOut().isFault()) {
+                                sb.append(" Fault: ").append(nextExchange.getOut());
+                            }
+                            if (exceptionHandled) {
+                                sb.append(" Handled by the error handler.");
+                            }
+                            LOG.debug(sb.toString());
+                        }
+                        break;
+                    }
+
+                    nextExchange = createNextExchange(nextExchange);
+                    sync = process(original, nextExchange, callback, processors, processor);
+                    if (!sync) {
+                        return;
+                    }
+                }
+
+                ExchangeHelper.copyResults(original, nextExchange);
+                callback.done(false);
+            }
+        });
+
+
+        return sync;
     }
 
     private static boolean hasExceptionBeenHandledByErrorHandler(Exchange nextExchange) {

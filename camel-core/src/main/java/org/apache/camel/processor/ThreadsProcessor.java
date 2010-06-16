@@ -40,6 +40,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class ThreadsProcessor extends DelegateProcessor implements Processor {
 
+    // TODO: Should leverage AsyncProcessor
+
     protected final CamelContext camelContext;
     protected final ExecutorService executorService;
     protected WaitForTaskToComplete waitForTaskToComplete;

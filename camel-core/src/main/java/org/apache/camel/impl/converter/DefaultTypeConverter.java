@@ -75,6 +75,8 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
         addFallbackTypeConverter(new PropertyEditorTypeConverter(), false);
         // and future should also not allowed to be promoted
         addFallbackTypeConverter(new FutureTypeConverter(this), false);
+        // add sync processor to async processor converter is to be promoted
+        addFallbackTypeConverter(new AsyncProcessorTypeConverter(), true);
     }
 
     public List<TypeConverterLoader> getTypeConverterLoaders() {

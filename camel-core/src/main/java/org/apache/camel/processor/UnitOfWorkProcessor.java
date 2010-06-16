@@ -16,29 +16,40 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultUnitOfWork;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
-/** 
+/**
  * Handles calling the UnitOfWork.done() method when processing of an exchange
  * is complete.
  */
-public final class UnitOfWorkProcessor extends DelegateProcessor {
+public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
 
     private static final transient Log LOG = LogFactory.getLog(UnitOfWorkProcessor.class);
     private final RouteContext routeContext;
 
     public UnitOfWorkProcessor(Processor processor) {
+        this(null, AsyncProcessorTypeConverter.convert(processor));
+    }
+
+    public UnitOfWorkProcessor(AsyncProcessor processor) {
         this(null, processor);
     }
 
     public UnitOfWorkProcessor(RouteContext routeContext, Processor processor) {
+        this(routeContext, AsyncProcessorTypeConverter.convert(processor));
+    }
+
+    public UnitOfWorkProcessor(RouteContext routeContext, AsyncProcessor processor) {
         super(processor);
         this.routeContext = routeContext;
     }
@@ -47,13 +58,13 @@ public final class UnitOfWorkProcessor extends DelegateProcessor {
     public String toString() {
         return "UnitOfWork(" + processor + ")";
     }
-    
+
     public RouteContext getRouteContext() {
         return routeContext;
     }
 
     @Override
-    protected void processNext(Exchange exchange) throws Exception {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         if (exchange.getUnitOfWork() == null) {
             // If there is no existing UoW, then we should start one and
             // terminate it once processing is completed for the exchange.
@@ -66,29 +77,29 @@ public final class UnitOfWorkProcessor extends DelegateProcessor {
             }
 
             // process the exchange
-            try {
-                processor.process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            } finally {
-                // must always done unit of work
-                done(uow, exchange);
-            }
+            return processor.process(exchange, new AsyncCallback() {
+                public void done(boolean doneSync) {
+                    // Order here matters. We need to complete the callbacks
+                    // since they will likely update the exchange with some final results.
+                    callback.done(doneSync);
+                    doneUow(uow, exchange);
+                }
+            });
         } else {
             // There was an existing UoW, so we should just pass through..
             // so that the guy the initiated the UoW can terminate it.
-            processor.process(exchange);
+            return processor.process(exchange, callback);
         }
     }
 
-    private void done(DefaultUnitOfWork uow, Exchange exchange) {
+    private void doneUow(DefaultUnitOfWork uow, Exchange exchange) {
         // unit of work is done
         exchange.getUnitOfWork().done(exchange);
         try {
             uow.stop();
         } catch (Exception e) {
             LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: " + exchange
-                + ". This exception will be ignored.");
+                    + ". This exception will be ignored.");
         }
         exchange.setUnitOfWork(null);
     }

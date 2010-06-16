@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -66,36 +67,54 @@ public class WireTapProcessor extends SendProcessor {
         return "wireTap(" + destination.getEndpointUri() + ")";
     }
 
-    public void process(Exchange exchange) throws Exception {
-        producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
-            public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
-                Exchange wireTapExchange = configureExchange(exchange, pattern);
-                processWireTap(producer, wireTapExchange);
-                return wireTapExchange;
-            }
+    public void process(final Exchange exchange) throws Exception {
+        if (!isStarted()) {
+            throw new IllegalStateException("WireTapProcessor has not been started: " + this);
+        }
+
+        // send the exchange to the destination using an executor service
+        executorService.submit(new Callable<Exchange>() {
+            public Exchange call() throws Exception {
+                return producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
+                    public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
+                        exchange = configureExchange(exchange, pattern);
+                        if (log.isDebugEnabled()) {
+                            log.debug(">>>> (wiretap) " + destination + " " + exchange);
+                        }
+                        producer.process(exchange);
+                        return exchange;
+                    }
+                });
+            };
         });
     }
 
-    /**
-     * Wiretaps the exchange.
-     *
-     * @param producer  the producer
-     * @param exchange  the exchange to wire tap
-     */
-    protected void processWireTap(final Producer producer, final Exchange exchange) {
-        // use submit instead of execute to force it to use a new thread, execute might
-        // decide to use current thread, so we must submit a new task
-        // as we don't care for the response we dont hold the future object and wait for the result
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        if (!isStarted()) {
+            throw new IllegalStateException("WireTapProcessor has not been started: " + this);
+        }
+
+        // send the exchange to the destination using an executor service
         executorService.submit(new Callable<Exchange>() {
             public Exchange call() throws Exception {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Processing wiretap: " + exchange);
-                }
-                producer.process(exchange);
-                return exchange;
-            }
+                return producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
+                    public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
+                        exchange = configureExchange(exchange, pattern);
+                        if (log.isDebugEnabled()) {
+                            log.debug(">>>> (wiretap) " + destination + " " + exchange);
+                        }
+                        producer.process(exchange);
+                        return exchange;
+                    }
+                });
+            };
         });
+
+        // continue routing this synchronously
+        callback.done(true);
+        return true;
     }
+
 
     @Override
     protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) {

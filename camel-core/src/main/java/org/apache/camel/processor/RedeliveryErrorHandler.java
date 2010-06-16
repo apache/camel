@@ -16,13 +16,16 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.CamelExchangeException;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
@@ -37,11 +40,12 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision$
  */
-public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements Processor {
+public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements AsyncProcessor {
 
     protected final Processor deadLetter;
     protected final String deadLetterUri;
     protected final Processor output;
+    protected final AsyncProcessor outputAsync;
     protected final Processor redeliveryProcessor;
     protected final RedeliveryPolicy redeliveryPolicy;
     protected final Predicate handledPolicy;
@@ -49,6 +53,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final boolean useOriginalMessagePolicy;
 
     protected class RedeliveryData {
+        boolean sync = true;
         int redeliveryCounter;
         long redeliveryDelay;
         Predicate retryUntilPredicate;
@@ -69,6 +74,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.redeliveryProcessor = redeliveryProcessor;
         this.deadLetter = deadLetter;
         this.output = output;
+        this.outputAsync = AsyncProcessorTypeConverter.convert(output);
         this.redeliveryPolicy = redeliveryPolicy;
         this.logger = logger;
         this.deadLetterUri = deadLetterUri;
@@ -85,14 +91,17 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // no output then just return
             return;
         }
+        AsyncProcessorHelper.process(this, exchange);
+    }
 
-        processErrorHandler(exchange, new RedeliveryData());
+    public boolean process(Exchange exchange, final AsyncCallback callback) {
+        return processErrorHandler(exchange, callback, new RedeliveryData());
     }
 
     /**
      * Processes the exchange decorated with this dead letter channel.
      */
-    protected void processErrorHandler(final Exchange exchange, final RedeliveryData data) throws Exception {
+    protected boolean processErrorHandler(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
         while (true) {
 
             // did previous processing cause an exception?
@@ -123,7 +132,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     prepareExchangeForContinue(exchange, data);
                 }
                 // and then return
-                return;
+                return data.sync;
             }
 
             if (shouldRedeliver && data.redeliveryCounter > 0) {
@@ -147,18 +156,34 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
 
             // process the exchange (also redelivery)
-            try {
-                processExchange(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            } catch (Throwable t) {
-                // let Camel error handle take care of all kind of exceptions now
-                exchange.setException(new CamelExchangeException("Error processing Exchange", exchange, t));
+            boolean sync = outputAsync.process(exchange, new AsyncCallback() {
+                public void done(boolean sync) {
+                    // this callback should only handle the async case
+                    if (sync) {
+                        return;
+                    }
+
+                    // mark we are in async mode now
+                    data.sync = false;
+                    // only process if the exchange hasn't failed
+                    // and it has not been handled by the error processor
+                    if (!isDone(exchange)) {
+                        // TODO: async process redelivery (eg duplicate the error handler logic)
+                        // And have a timer task scheduled when redelivery should occur to avoid blocking thread
+                    } else {
+                        callback.done(sync);
+                    }
+                }
+            });
+            if (!sync) {
+                // the remainder of the Exchange is being processed asynchronously so we should return
+                return false;
             }
 
             boolean done = isDone(exchange);
             if (done) {
-                return;
+                callback.done(true);
+                return true;
             }
             // error occurred so loop back around.....
         }
@@ -175,20 +200,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     /**
-     * Strategy to process the given exchange to the designated output.
-     * <p/>
-     * This happens when the exchange is processed the first time and also for redeliveries
-     * to the same destination.
-     */
-    protected void processExchange(Exchange exchange) throws Exception {
-        // process the exchange (also redelivery)
-        output.process(exchange);
-    }
-
-    /**
      * Strategy to determine if the exchange is done so we can continue
      */
-    protected boolean isDone(Exchange exchange) throws Exception {
+    protected boolean isDone(Exchange exchange) {
         // only done if the exchange hasn't failed
         // and it has not been handled by the failure processor
         // or we are exhausted
@@ -379,7 +393,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     protected void prepareExchangeAfterFailure(final Exchange exchange, final RedeliveryData data) {
-        // TODO: setting failure handled should only be if we used a failure processor
         // we could not process the exchange so we let the failure processor handled it
         ExchangeHelper.setFailureHandled(exchange);
 
@@ -546,12 +559,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(output, deadLetter);
+        ServiceHelper.startServices(output, outputAsync, deadLetter);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(deadLetter, output);
+        ServiceHelper.stopServices(deadLetter, output, outputAsync);
     }
 
 }

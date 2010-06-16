@@ -14,15 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.processor.async;
+
+import java.util.Map;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
- * Callback when processing an {@link Exchange} using {@link org.apache.camel.AsyncProcessor}
- * and the {@link Exchange} have received the data and is ready to be routed.
- *
  * @version $Revision$
  */
-public interface AsyncCallback {
+public class MyAsyncComponent extends DefaultComponent {
 
-    void done(boolean doneSync);
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        return new MyAsyncEndpoint(uri, this);
+    }
 }

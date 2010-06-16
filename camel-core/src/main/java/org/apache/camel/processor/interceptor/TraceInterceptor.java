@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,6 +32,7 @@ import org.apache.camel.impl.DoCatchRouteNode;
 import org.apache.camel.impl.DoFinallyRouteNode;
 import org.apache.camel.impl.OnCompletionRouteNode;
 import org.apache.camel.impl.OnExceptionRouteNode;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.FinallyDefinition;
@@ -39,12 +41,13 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -56,7 +59,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class TraceInterceptor extends DelegateProcessor implements ExchangeFormatter {
+public class TraceInterceptor extends DelegateAsyncProcessor implements ExchangeFormatter {
     private static final transient Log LOG = LogFactory.getLog(TraceInterceptor.class);
 
     private Logger logger;
@@ -70,7 +73,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     private String jpaTraceEventMessageClassName;
 
     public TraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer) {
-        super(target);
+        super(AsyncProcessorTypeConverter.convert(target));
         this.tracer = tracer;
         this.node = node;
         this.formatter = formatter;
@@ -92,18 +95,21 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     }
 
     public void process(final Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         // do not trace if tracing is disabled
         if (!tracer.isEnabled() || (routeContext != null && !routeContext.isTracing())) {
-            super.proceed(exchange);
-            return;
+            return super.process(exchange, callback);
         }
 
         // interceptor will also trace routes supposed only for TraceEvents so we need to skip
         // logging TraceEvents to avoid infinite looping
         if (exchange.getProperty(Exchange.TRACE_EVENT, false, Boolean.class)) {
             // but we must still process to allow routing of TraceEvents to eg a JPA endpoint
-            super.process(exchange);
-            return;
+            return super.process(exchange, callback);
         }
 
         boolean shouldLog = shouldLogNode(node) && shouldLogExchange(exchange);
@@ -111,6 +117,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         // whether we should trace it or not, some nodes should be skipped as they are abstract
         // intermediate steps for instance related to on completion
         boolean trace = true;
+        boolean sync = true;
 
         // okay this is a regular exchange being routed we might need to log and trace
         try {
@@ -170,7 +177,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
                 // process the exchange
                 try {
-                    super.proceed(exchange);
+                    sync = super.process(exchange, callback);
                 } catch (Exception e) {
                     exchange.setException(e);
                 }
@@ -186,8 +193,11 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             if (shouldLogException(exchange)) {
                 logException(exchange, e);
             }
-            throw e;
+            exchange.setException(e);
         }
+
+        callback.done(sync);
+        return sync;
     }
 
     private void traceOnCompletion(TracedRouteNodes traced, Exchange exchange) {

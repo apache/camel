@@ -302,6 +302,13 @@ public interface Exchange {
     void setException(Exception e);
 
     /**
+     * Sets the exception associated with this exchange
+     *
+     * @param t  the caused exception
+     */
+    void setException(Throwable t);
+
+    /**
      * Returns true if this exchange failed due to either an exception or fault
      *
      * @return true if this exchange failed due to either an exception or fault

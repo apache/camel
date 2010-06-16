@@ -16,16 +16,19 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.AsyncProducerCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -36,8 +39,8 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class SendProcessor extends ServiceSupport implements Processor, Traceable {
-    protected static final transient Log LOG = LogFactory.getLog(SendProcessor.class);
+public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+    protected final transient Log log = LogFactory.getLog(getClass());
     protected final CamelContext camelContext;
     protected ProducerCache producerCache;
     protected Endpoint destination;
@@ -69,27 +72,36 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
     }
 
     public void process(final Exchange exchange) throws Exception {
-        doProcess(exchange);
-    }
-
-    /**
-     * Strategy to process the exchange
-     *
-     * @param exchange the exchange
-     * @throws Exception can be thrown if error processing exchange
-     * @return the exchange that was processed
-     */
-    public Exchange doProcess(final Exchange exchange) throws Exception {
         if (!isStarted()) {
             throw new IllegalStateException("SendProcessor has not been started: " + this);
         }
 
         // send the exchange to the destination using a producer
-        return producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
+        producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 exchange = configureExchange(exchange, pattern);
+                if (log.isDebugEnabled()) {
+                    log.debug(">>>> " + destination + " " + exchange);
+                }
                 producer.process(exchange);
                 return exchange;
+            }
+        });
+    }
+
+    public boolean process(Exchange exchange, final AsyncCallback callback) {
+        if (!isStarted()) {
+            throw new IllegalStateException("SendProcessor has not been started: " + this);
+        }
+
+        // send the exchange to the destination using a producer
+        return producerCache.doInAsyncProducer(destination, exchange, pattern, callback, new AsyncProducerCallback() {
+            public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, Exchange exchange, ExchangePattern pattern, AsyncCallback callback) {
+                exchange = configureExchange(exchange, pattern);
+                if (log.isDebugEnabled()) {
+                    log.debug(">>>> " + destination + " " + exchange);
+                }
+                return asyncProducer.process(exchange, callback);
             }
         });
     }
@@ -120,11 +132,11 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
         ServiceHelper.startService(producerCache);
 
         // the destination could since have been intercepted by a interceptSendToEndpoint so we got to
-        // init this before we can use the destination
+        // lookup this before we can use the destination
         Endpoint lookup = camelContext.hasEndpoint(destination.getEndpointKey());
         if (lookup instanceof InterceptSendToEndpoint) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("SendTo is intercepted using a interceptSendToEndpoint: " + lookup.getEndpointUri());
+            if (log.isDebugEnabled()) {
+                log.debug("Intercepted sending to " + destination.getEndpointUri() + " -> " + lookup.getEndpointUri());
             }
             destination = lookup;
         }

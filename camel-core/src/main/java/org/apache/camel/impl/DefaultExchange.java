@@ -252,6 +252,15 @@ public final class DefaultExchange implements Exchange {
         this.exception = exception;
     }
 
+    public void setException(Throwable t) {
+        if (t instanceof Exception) {
+            this.exception = (Exception) t;
+        } else {
+            // wrap throwable into an exception
+            this.exception = ObjectHelper.wrapCamelExecutionException(this, t);
+        }
+    }
+
     public ExchangePattern getPattern() {
         return pattern;
     }

@@ -14,39 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.loadbalancer;
+package org.apache.camel.processor.async;
 
-import java.util.List;
-
+import org.apache.camel.Component;
+import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultEndpoint;
 
 /**
- * A strategy for load balancing across a number of {@link Processor} instances
- *
  * @version $Revision$
  */
-public interface LoadBalancer extends Processor {
+public class MyAsyncEndpoint extends DefaultEndpoint {
 
-    // TODO: Should leverage AsyncProcessor
+    public MyAsyncEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
+    }
 
-    /**
-     * Adds a new processor to the load balancer
-     *
-     * @param processor the processor to be added to the load balancer
-     */
-    void addProcessor(Processor processor);
+    public Producer createProducer() throws Exception {
+        return new MyAsyncProducer(this);
+    }
 
-    /**
-     * Removes the given processor from the load balancer
-     *
-     * @param processor the processor to be removed from the load balancer
-     */
-    void removeProcessor(Processor processor);
+    public Consumer createConsumer(Processor processor) throws Exception {
+        throw new UnsupportedOperationException("Consumer not supported");
+    }
 
-    /**
-     * Returns the current processors available to this load balancer
-     *
-     * @return the processors available
-     */
-    List<Processor> getProcessors();
+    public boolean isSingleton() {
+        return false;
+    }
 }

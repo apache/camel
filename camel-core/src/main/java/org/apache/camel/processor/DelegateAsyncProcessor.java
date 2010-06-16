@@ -19,53 +19,42 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * A Delegate pattern which delegates processing to a nested {@link Processor} which can
+ * A Delegate pattern which delegates processing to a nested {@link AsyncProcessor} which can
  * be useful for implementation inheritance when writing an {@link org.apache.camel.spi.Policy}
- * 
+ *
  * @version $Revision$
- * @see org.apache.camel.processor.DelegateAsyncProcessor
+ * @see org.apache.camel.processor.DelegateProcessor
  */
-public class DelegateProcessor extends ServiceSupport implements Processor, Navigate<Processor> {
-    protected Processor processor;
+public class DelegateAsyncProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor> {
+    protected AsyncProcessor processor;
 
-    public DelegateProcessor() {
+    public DelegateAsyncProcessor() {
     }
 
-    public DelegateProcessor(Processor processor) {
+    public DelegateAsyncProcessor(AsyncProcessor processor) {
         if (processor == this) {
-            throw new IllegalArgumentException("Recursive DelegateProcessor!");
+            throw new IllegalArgumentException("Recursive DelegateAsyncProcessor!");
         }
         this.processor = processor;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        processNext(exchange);
-    }
-
-    protected void processNext(Exchange exchange) throws Exception {
-        if (processor != null) {
-            processor.process(exchange);
-        }
     }
 
     @Override
     public String toString() {
-        return "Delegate[" + processor + "]";
+        return "DelegateAsync[" + processor + "]";
     }
 
-    public Processor getProcessor() {
+    public AsyncProcessor getProcessor() {
         return processor;
-    }
-
-    public void setProcessor(Processor processor) {
-        this.processor = processor;
     }
 
     protected void doStart() throws Exception {
@@ -76,11 +65,12 @@ public class DelegateProcessor extends ServiceSupport implements Processor, Navi
         ServiceHelper.stopServices(processor);
     }
 
-    /**
-     * Proceed with the underlying delegated processor
-     */
-    public void proceed(Exchange exchange) throws Exception {
-        processNext(exchange);
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        return processor.process(exchange, callback);
+    }
+
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean hasNext() {
@@ -95,4 +85,5 @@ public class DelegateProcessor extends ServiceSupport implements Processor, Navi
         answer.add(processor);
         return answer;
     }
+
 }

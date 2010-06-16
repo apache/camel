@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.direct;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -27,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DirectProducer extends DefaultProducer {
+public class DirectProducer extends DefaultProducer implements AsyncProcessor {
     private static final transient Log LOG = LogFactory.getLog(DirectProducer.class);
     private DirectEndpoint endpoint;
 
@@ -37,12 +39,22 @@ public class DirectProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (endpoint.getConsumers().isEmpty()) {
+        if (endpoint.getConsumer() == null) {
             LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
         } else {
-            for (DefaultConsumer consumer : endpoint.getConsumers()) {
-                consumer.getProcessor().process(exchange);
-            }
+            endpoint.getConsumer().getProcessor().process(exchange);
+        }
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        if (endpoint.getConsumer() == null) {
+            LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
+            // indicate its done synchronously
+            callback.done(true);
+            return true;
+        } else {
+            AsyncProcessor processor = AsyncProcessorTypeConverter.convert(endpoint.getConsumer().getProcessor());
+            return processor.process(exchange, callback);
         }
     }
 

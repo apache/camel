@@ -16,23 +16,19 @@
  */
 package org.apache.camel.component.direct;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
- * Represents a direct endpoint that synchronously invokes the consumers of the
+ * Represents a direct endpoint that synchronously invokes the consumer of the
  * endpoint when a producer sends a message to it.
  *
  * @version $Revision$
  */
 public class DirectEndpoint extends DefaultEndpoint {
-    private final CopyOnWriteArrayList<DefaultConsumer> consumers = new CopyOnWriteArrayList<DefaultConsumer>();
+    private DirectConsumer consumer;
 
     public DirectEndpoint() {
     }
@@ -57,7 +53,11 @@ public class DirectEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public List<DefaultConsumer> getConsumers() {
-        return consumers;
+    public DirectConsumer getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(DirectConsumer consumer) {
+        this.consumer = consumer;
     }
 }

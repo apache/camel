@@ -53,7 +53,7 @@ public class HttpAsyncTest extends CamelTestSupport {
         // (waiting if needed) and then return a string body response.
         // This allows us to do this in a single code line instead of using the
         // JDK Future API to get hold of it, but you can also use that if you want
-        String response = (String)template.extractFutureBody(future, String.class);
+        String response = template.extractFutureBody(future, String.class);
         assertEquals("Bye World", response);
 
         assertMockEndpointsSatisfied();
@@ -68,7 +68,7 @@ public class HttpAsyncTest extends CamelTestSupport {
                 // START SNIPPET: e1
                 // The mocks are here for unit test
 
-                // Some other service to return a name, this is invoked synhronously
+                // Some other service to return a name, this is invoked synchronously
                 from("direct:name").transform(constant("Claus")).to("mock:result");
 
                 // Simulate a slow http service (delaying 1 sec) we want to invoke async

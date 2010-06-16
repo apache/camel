@@ -20,12 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.TraceInterceptor;
@@ -33,6 +36,7 @@ import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,7 +53,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DefaultChannel extends ServiceSupport implements Processor, Channel {
+public class DefaultChannel extends ServiceSupport implements AsyncProcessor, Channel {
 
     private static final transient Log LOG = LogFactory.getLog(DefaultChannel.class);
 
@@ -217,22 +221,32 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
     }
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        Processor processor = getOutput();
+        if (processor == null || !continueProcessing(exchange)) {
+            return true;
+        }
+
         // push the current route context
         if (exchange.getUnitOfWork() != null) {
             exchange.getUnitOfWork().pushRouteContext(routeContext);
         }
 
-        Processor processor = getOutput();
-        try {
-            if (processor != null && continueProcessing(exchange)) {
-                processor.process(exchange);
+        AsyncProcessor async = AsyncProcessorTypeConverter.convert(processor);
+        boolean sync = async.process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                // pop the route context we just used
+                if (exchange.getUnitOfWork() != null) {
+                    exchange.getUnitOfWork().popRouteContext();
+                }
+                callback.done(doneSync);
             }
-        } finally {
-            // pop the route context we just used
-            if (exchange.getUnitOfWork() != null) {
-                exchange.getUnitOfWork().popRouteContext();
-            }
-        }
+        });
+
+        return sync;
     }
 
     /**
