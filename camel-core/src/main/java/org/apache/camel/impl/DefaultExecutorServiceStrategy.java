@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -336,7 +337,15 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
             }
         }
         executorServices.clear();
-        threadPoolProfiles.clear();
+
+        // do not clear the default profile as we could potential be restarted
+        Iterator<ThreadPoolProfile> it = threadPoolProfiles.values().iterator();
+        while (it.hasNext()) {
+            ThreadPoolProfile profile = it.next();
+            if (!profile.isDefaultProfile()) {
+                it.remove();
+            }
+        }
     }
 
 }
