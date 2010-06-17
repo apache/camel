@@ -122,12 +122,12 @@ public class CxfClient extends ClientImpl {
         PhaseInterceptorChain chain = setupInterceptorChain(getEndpoint());
 
         message.setInterceptorChain(chain);
-        modifyChain(chain, requestContext);
+        modifyChain(chain, message, false);
         chain.setFaultObserver(outFaultObserver);
         // setup conduit selector
         prepareConduitSelector(message);
 
-        modifyChain(chain, null);
+        modifyChain(chain, null, false);
         // execute chain
 
         chain.doIntercept(message);

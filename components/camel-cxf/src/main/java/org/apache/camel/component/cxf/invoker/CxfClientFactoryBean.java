@@ -62,9 +62,8 @@ public class CxfClientFactoryBean extends ClientFactoryBean {
         }    
     }
             
-    protected void createClient(Endpoint ep) {
-        CxfClient client = new CxfClient(getBus(), ep);
-        setClient(client);
+    protected Client createClient(Endpoint ep) {
+        return new CxfClient(getBus(), ep);
     }
     
     

@@ -89,7 +89,7 @@ public class CxfWsdlFirstPayloadModeTest extends CxfWsdlFirstTest {
         assertEquals(0, fromHandler.getFaultCount());
         assertEquals(6, fromHandler.getMessageCount());
 
-        assertEquals(8, toHandler.getGetHeadersCount());
+        assertEquals(22, toHandler.getGetHeadersCount());
         assertEquals(10, toHandler.getMessageCount());
         assertEquals(6, toHandler.getFaultCount());
 
