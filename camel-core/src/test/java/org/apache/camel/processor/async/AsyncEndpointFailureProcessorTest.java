@@ -24,19 +24,18 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version $Revision$
  */
-public class AsyncEndpointFailedAfterOnExceptionTest extends ContextTestSupport {
+public class AsyncEndpointFailureProcessorTest extends ContextTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
 
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
-        getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
-        getMockEndpoint("mock:error").expectedBodiesReceived("Bye Camel");
+        getMockEndpoint("mock:after").expectedBodiesReceived("MyFailureHandler");
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
-        assertEquals("FAIL", reply);
+        assertEquals("Bye Camel", reply);
 
         assertMockEndpointsSatisfied();
 
@@ -50,9 +49,8 @@ public class AsyncEndpointFailedAfterOnExceptionTest extends ContextTestSupport 
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                onException(IllegalArgumentException.class).handled(true).to("mock:error").transform(constant("FAIL"));
-
-                from("direct:start")
+                // the onException can be asynchronous as well so we have to test for that
+                onException(IllegalArgumentException.class).handled(true)
                         .to("mock:before")
                         .to("log:before")
                         .process(new Processor() {
@@ -60,7 +58,7 @@ public class AsyncEndpointFailedAfterOnExceptionTest extends ContextTestSupport 
                                 beforeThreadName = Thread.currentThread().getName();
                             }
                         })
-                        .to("async:Bye Camel")
+                        .to("async:MyFailureHandler")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();
@@ -68,6 +66,9 @@ public class AsyncEndpointFailedAfterOnExceptionTest extends ContextTestSupport 
                         })
                         .to("log:after")
                         .to("mock:after")
+                        .transform(constant("Bye Camel"));
+
+                from("direct:start")
                         .throwException(new IllegalArgumentException("Damn"))
                         .to("mock:result");
             }

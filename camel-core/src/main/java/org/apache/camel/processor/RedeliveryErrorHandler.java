@@ -117,25 +117,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // or the dead letter queue
                 Processor target = data.failureProcessor != null ? data.failureProcessor : data.deadLetterProcessor;
                 // deliver to the failure processor (either an on exception or dead letter queue
-                deliverToFailureProcessor(target, exchange, data);
-                // prepare the exchange for failure before returning
-                prepareExchangeAfterFailure(exchange, data);
-                // fire event if we had a failure processor to handle it
-                if (target != null) {
-                    boolean deadLetterChannel = target == data.deadLetterProcessor && data.deadLetterProcessor != null;
-                    EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, target, deadLetterChannel);
-                }
-
-                boolean shouldContinue = shouldContinue(exchange, data);
-                if (shouldContinue) {
-                    // okay we want to continue then prepare the exchange for that as well
-                    prepareExchangeForContinue(exchange, data);
-                }
-
-                // we are breaking out so invoke the callback
-                callback.done(data.sync);
-                // and then return
-                return data.sync;
+                boolean sync = deliverToFailureProcessor(target, exchange, data, callback);
+                // we are breaking out
+                return sync;
             }
 
             if (shouldRedeliver && data.redeliveryCounter > 0) {
@@ -173,6 +157,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     if (!isDone(exchange)) {
                         // TODO: async process redelivery (eg duplicate the error handler logic)
                         // And have a timer task scheduled when redelivery should occur to avoid blocking thread
+                        log.debug("Not done continuing error handling asynchronously: " + exchange);
                     } else {
                         callback.done(sync);
                     }
@@ -325,6 +310,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     + " before its redelivered");
         }
 
+        // run this synchronously as its just a Processor
         try {
             data.onRedeliveryProcessor.process(exchange);
         } catch (Exception e) {
@@ -336,8 +322,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     /**
      * All redelivery attempts failed so move the exchange to the dead letter queue
      */
-    protected void deliverToFailureProcessor(final Processor processor, final Exchange exchange,
-                                             final RedeliveryData data) {
+    protected boolean deliverToFailureProcessor(final Processor processor, final Exchange exchange,
+                                                final RedeliveryData data, final AsyncCallback callback) {
+        boolean sync = true;
 
         Exception caught = exchange.getException();
 
@@ -346,7 +333,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         exchange.setException(null);
 
         boolean handled = false;
-        if (data.handledPredicate != null && data.handledPredicate.matches(exchange)) {
+        // regard both handled or continued as being handled
+        if (shouldHandled(exchange, data) || shouldContinue(exchange, data)) {
             // its handled then remove traces of redelivery attempted
             exchange.getIn().removeHeader(Exchange.REDELIVERED);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
@@ -357,10 +345,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             decrementRedeliveryCounter(exchange);
         }
 
-        // reset cached streams so they can be read again
-        MessageHelper.resetStreamCache(exchange.getIn());
-
+        // is the a failure processor to process the Exchange
         if (processor != null) {
+
+            // reset cached streams so they can be read again
+            MessageHelper.resetStreamCache(exchange.getIn());
+
             // prepare original IN body if it should be moved instead of current body
             if (data.useOriginalInMessage) {
                 if (log.isTraceEnabled()) {
@@ -374,14 +364,38 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             if (log.isTraceEnabled()) {
                 log.trace("Failure processor " + processor + " is processing Exchange: " + exchange);
             }
+
+            // store the last to endpoint as the failure endpoint
+            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+
+            // the failure processor could also be asynchronous
+            AsyncProcessor afp = AsyncProcessorTypeConverter.convert(processor);
+            sync = afp.process(exchange, new AsyncCallback() {
+                public void done(boolean sync) {
+                    if (log.isTraceEnabled()) {
+                        log.trace("Failure processor done: " + processor + " processing Exchange: " + exchange);
+                    }
+                    try {
+                        prepareExchangeAfterFailure(exchange, data);
+                        // fire event as we had a failure processor to handle it
+                        boolean deadLetterChannel = processor == data.deadLetterProcessor && data.deadLetterProcessor != null;
+                        EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel);
+                    } finally {
+                        // if the fault was handled asynchronously, this should be reflected in the callback as well
+                        data.sync &= sync;
+                        callback.done(data.sync);
+                    }
+                }
+            });
+        } else {
             try {
-                // store the last to endpoint as the failure endpoint
-                exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
-                processor.process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
+                // no processor but we need to prepare after failure as well
+                prepareExchangeAfterFailure(exchange, data);
+            } finally {
+                // indicate we are done synchronously
+                data.sync = true;
+                callback.done(data.sync);
             }
-            log.trace("Failure processor done");
         }
 
         // create log message
@@ -393,6 +407,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         // log that we failed delivery as we are exhausted
         logFailedDelivery(false, handled, false, exchange, msg, data, null);
+
+        return sync;
     }
 
     protected void prepareExchangeAfterFailure(final Exchange exchange, final RedeliveryData data) {
@@ -417,21 +433,26 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             return;
         }
 
-        Predicate handledPredicate = data.handledPredicate;
-        if (handledPredicate == null || !handledPredicate.matches(exchange)) {
+        if (shouldHandled(exchange, data)) {
             if (log.isDebugEnabled()) {
-                log.debug("This exchange is not handled so its marked as failed: " + exchange);
+                log.debug("This exchange is handled so its marked as not failed: " + exchange);
+            }
+            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.TRUE);
+        } else if (shouldContinue(exchange, data)) {
+            if (log.isDebugEnabled()) {
+                log.debug("This exchange is continued: " + exchange);
+            }
+            // okay we want to continue then prepare the exchange for that as well
+            prepareExchangeForContinue(exchange, data);
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("This exchange is not handled or continued so its marked as failed: " + exchange);
             }
             // exception not handled, put exception back in the exchange
             exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.FALSE);
             exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
             // and put failure endpoint back as well
             exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("This exchange is handled so its marked as not failed: " + exchange);
-            }
-            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.TRUE);
         }
     }
 
@@ -523,6 +544,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             return data.continuedPredicate.matches(exchange);
         }
         // do not continue by default
+        return false;
+    }
+
+    /**
+     * Determines whether or not to handle if we are exhausted.
+     *
+     * @param exchange the current exchange
+     * @param data     the redelivery data
+     * @return <tt>true</tt> to handle, or <tt>false</tt> to exhaust.
+     */
+    private boolean shouldHandled(Exchange exchange, RedeliveryData data) {
+        if (data.handledPredicate != null) {
+            return data.handledPredicate.matches(exchange);
+        }
+        // do not handle by default
         return false;
     }
 
