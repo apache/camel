@@ -24,13 +24,15 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version $Revision$
  */
-public class AsyncEndpointWithStreamCachingTest extends ContextTestSupport {
+public class AsyncTwoEndpointTest extends ContextTestSupport {
 
     private static String beforeThreadName;
+    private static String middleThreadName;
     private static String afterThreadName;
 
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint("mock:middle").expectedBodiesReceived("Hi Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
@@ -39,6 +41,8 @@ public class AsyncEndpointWithStreamCachingTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(middleThreadName));
+        assertFalse("Should use different threads", middleThreadName.equalsIgnoreCase(afterThreadName));
         assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
@@ -49,8 +53,7 @@ public class AsyncEndpointWithStreamCachingTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                // enable stream caching to ensure it works using async API
-                from("direct:start").streamCaching().tracing()
+                from("direct:start")
                         .to("mock:before")
                         .to("log:before")
                         .process(new Processor() {
@@ -58,6 +61,14 @@ public class AsyncEndpointWithStreamCachingTest extends ContextTestSupport {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
                         })
+                        .to("async:Hi Camel")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                middleThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("log:middle")
+                        .to("mock:middle")
                         .to("async:Bye Camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

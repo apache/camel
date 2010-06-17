@@ -65,7 +65,7 @@ public class AsyncEndpointWithHandleFaultTest extends ContextTestSupport {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
                         })
-                        .to("async:foo")
+                        .to("async:Bye Camel")
                         .to("log:after")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

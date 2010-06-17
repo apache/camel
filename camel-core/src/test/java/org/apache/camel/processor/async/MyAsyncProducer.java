@@ -22,7 +22,6 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
@@ -54,7 +53,8 @@ public class MyAsyncProducer implements AsyncProcessor, Producer {
                 LOG.info("Simulating a task which takes 2 sec to reply");
 
                 Thread.sleep(2000);
-                exchange.getOut().setBody("Bye Camel");
+                String reply = endpoint.getReply();
+                exchange.getOut().setBody(reply);
 
                 LOG.info("Callback done(false)");
                 callback.done(false);

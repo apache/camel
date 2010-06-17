@@ -28,6 +28,10 @@ public class MyAsyncComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return new MyAsyncEndpoint(uri, this);
+        MyAsyncEndpoint answer = new MyAsyncEndpoint(uri, this);
+        answer.setReply(remaining);
+        setProperties(answer, parameters);
+        return answer;
     }
+
 }

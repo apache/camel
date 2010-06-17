@@ -49,7 +49,7 @@ public class AsyncProducerTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
-                Producer myAsyncProducer = context.getEndpoint("async:foo").createProducer();
+                Producer myAsyncProducer = context.getEndpoint("async:Bye Camel").createProducer();
 
                 from("direct:start")
                     .to("mock:before")

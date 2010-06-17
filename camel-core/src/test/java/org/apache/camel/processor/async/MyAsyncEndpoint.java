@@ -27,6 +27,8 @@ import org.apache.camel.impl.DefaultEndpoint;
  */
 public class MyAsyncEndpoint extends DefaultEndpoint {
 
+    private String reply;
+
     public MyAsyncEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
@@ -41,5 +43,13 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
 
     public boolean isSingleton() {
         return false;
+    }
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
     }
 }
