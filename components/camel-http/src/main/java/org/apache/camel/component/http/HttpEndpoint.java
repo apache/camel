@@ -48,6 +48,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
     private HttpClientParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpConnectionManager httpConnectionManager;
+    private boolean chunked = true;
 
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpConnectionManager httpConnectionManager) throws URISyntaxException {
         this(endPointURI, component, httpURI, new HttpClientParams(), httpConnectionManager, null);
@@ -152,6 +153,14 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
      */
     public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
         this.httpClientConfigurer = httpClientConfigurer;
+    }
+    
+    public boolean isChunked() {
+        return this.chunked;
+    }
+    
+    public void setChunked(boolean chunked) {
+        this.chunked = chunked;
     }
 
     public HttpBinding getBinding() {

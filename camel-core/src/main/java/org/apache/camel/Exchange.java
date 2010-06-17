@@ -38,6 +38,10 @@ public interface Exchange {
     String AGGREGATED_COUNT = "org.apache.camel.Exchange.AggregatedCount";
 
     String EXCEPTION_HANDLED_PROPERTY = "CamelExceptionHandled";
+    
+    String HTTP_CHUNKED  = "CamelHttpChunked";
+    
+    String TRANSFER_ENCODING     = "Transfer-Encoding";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.

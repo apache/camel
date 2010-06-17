@@ -39,8 +39,17 @@ import org.apache.commons.httpclient.ChunkedInputStream;
 import org.apache.commons.httpclient.ChunkedOutputStream;
 
 public class HttpClientRouteTest extends ContextTestSupport {
+    
+    public void testHttpRouteWithMessageHeader() throws Exception {
+        invokeHttpClient("direct:start");
+    }
+    
+    
+    public void testHttpRouteWithOption() throws Exception {
+        invokeHttpClient("direct:start2");
+    }
 
-    public void testHttpClient() throws Exception {
+    private void invokeHttpClient(String uri) throws Exception {
         System.getProperties().put("HTTPClient.dontChunkRequests", "yes");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
@@ -61,6 +70,9 @@ public class HttpClientRouteTest extends ContextTestSupport {
         log.info("Headers: " + headers);
 
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
+        // should get the Content-Length
+        assertNotNull("Should get the content-lenghth ", headers.get("Content-Length"));
+        System.getProperties().remove("HTTPClient.dontChunkRequests");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -77,6 +89,8 @@ public class HttpClientRouteTest extends ContextTestSupport {
                 
                 from("direct:start").to("http://localhost:9080/hello").process(clientProc).intercept(new StreamCachingInterceptor()).convertBodyTo(String.class).to("mock:a");
                
+                from("direct:start2").to("http://localhost:9081/hello").to("mock:a");
+                
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());                        
@@ -84,7 +98,9 @@ public class HttpClientRouteTest extends ContextTestSupport {
                         exchange.getOut(true).setBody(bis);
                     }
                 };
-                from("jetty:http://localhost:9080/hello").process(proc);
+                from("jetty:http://localhost:9080/hello").process(proc).setHeader(Exchange.HTTP_CHUNKED).constant(false);
+                
+                from("jetty:http://localhost:9081/hello?chunked=false").process(proc);
                 
                 noStreamCaching();
             }

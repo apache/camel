@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpExchange;
@@ -51,6 +52,9 @@ public class CamelContinuationServlet extends CamelServlet {
 
                 // Have the camel process the HTTP exchange.
                 final HttpExchange exchange = new HttpExchange(consumer.getEndpoint(), request, response);
+                if (!consumer.getEndpoint().isChunked()) {
+                    exchange.getIn().setHeader(Exchange.HTTP_CHUNKED, false);
+                }
                 boolean sync = consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
                         if (sync) {

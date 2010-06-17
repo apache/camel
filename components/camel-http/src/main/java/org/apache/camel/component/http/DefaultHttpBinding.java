@@ -25,6 +25,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.InvalidTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.helper.GZIPHelper;
@@ -114,7 +115,20 @@ public class DefaultHttpBinding implements HttpBinding {
         if (request.getHeader(GZIPHelper.CONTENT_ENCODING) != null) {
             String contentEncoding = request.getHeader(GZIPHelper.CONTENT_ENCODING, String.class);
             response.setHeader(GZIPHelper.CONTENT_ENCODING, contentEncoding);
-        }        
+        }
+        if (checkChunked(response)) {
+            response.setHeader(Exchange.TRANSFER_ENCODING, "chunked");
+        }
+    }
+    
+    protected boolean checkChunked(Message message) {
+        // set the default value to be true
+        boolean answer = true;
+        if (message.getHeader(Exchange.HTTP_CHUNKED) != null) {
+            
+            answer = message.getHeader(Exchange.HTTP_CHUNKED, boolean.class);
+        }
+        return answer;
     }
 
     public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
@@ -163,7 +177,10 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     protected void doWriteDirectResponse(Message message, HttpServletResponse response) throws IOException {
-        InputStream is = message.getBody(InputStream.class);
+        InputStream is = null;
+        if (checkChunked(message)) {
+            is = message.getBody(InputStream.class);
+        }
         if (is != null) {
             ServletOutputStream os = response.getOutputStream();
             try {
