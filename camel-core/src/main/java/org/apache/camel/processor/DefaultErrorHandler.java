@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -31,6 +32,7 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
     /**
      * Creates the default error handler.
      *
+     * @param camelContext              the camel context
      * @param output                    outer processor that should use this default error handler
      * @param logger                    logger to use for logging failures and redelivery attempts
      * @param redeliveryProcessor       an optional processor to run before redelivery attempt
@@ -38,9 +40,9 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
      * @param handledPolicy             policy for handling failed exception that are moved to the dead letter queue
      * @param exceptionPolicyStrategy   strategy for onException handling
      */
-    public DefaultErrorHandler(Processor output, Logger logger, Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
-                               Predicate handledPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        super(output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false);
+    public DefaultErrorHandler(CamelContext camelContext, Processor output, Logger logger, Processor redeliveryProcessor,
+                               RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy) {
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false);
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 

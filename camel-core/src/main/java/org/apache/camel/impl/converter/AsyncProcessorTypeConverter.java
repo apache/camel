@@ -57,6 +57,15 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
             }
             return true;
         }
+
+        @Override
+        public String toString() {
+            if (processor != null) {
+                return processor.toString();
+            } else {
+                return "Processor is null";
+            }
+        }
     }
 
     public <T> T convertTo(Class<T> type, Object value) {

@@ -52,8 +52,8 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        DefaultErrorHandler answer = new DefaultErrorHandler(processor, getLogger(), getOnRedelivery(), getRedeliveryPolicy(),
-                getHandledPolicy(), getExceptionPolicyStrategy());
+        DefaultErrorHandler answer = new DefaultErrorHandler(routeContext.getCamelContext(), processor, getLogger(),
+                getOnRedelivery(), getRedeliveryPolicy(), getHandledPolicy(), getExceptionPolicyStrategy());
         // configure error handler before we can use it
         configure(answer);
         return answer;

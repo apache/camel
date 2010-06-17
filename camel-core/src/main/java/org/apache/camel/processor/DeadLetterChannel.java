@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -34,6 +35,7 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
     /**
      * Creates the dead letter channel.
      *
+     * @param camelContext              the camel context
      * @param output                    outer processor that should use this dead letter channel
      * @param logger                    logger to use for logging failures and redelivery attempts
      * @param redeliveryProcessor       an optional processor to run before redelivery attempt
@@ -44,10 +46,10 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
      * @param deadLetterUri             an optional uri for logging purpose
      * @param useOriginalBodyPolicy     should the original IN body be moved to the dead letter queue or the current exchange IN body?
      */
-    public DeadLetterChannel(Processor output, Logger logger, Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
+    public DeadLetterChannel(CamelContext camelContext, Processor output, Logger logger, Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
                              Predicate handledPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy,
                              Processor deadLetter, String deadLetterUri, boolean useOriginalBodyPolicy) {
-        super(output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, deadLetter, deadLetterUri, useOriginalBodyPolicy);
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, deadLetter, deadLetterUri, useOriginalBodyPolicy);
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
