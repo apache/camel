@@ -21,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
+import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.dataformat.bindy.annotation.Section;
@@ -42,6 +43,7 @@ public class AnnotationModelLoader {
         annotations.add(Link.class);
         annotations.add(Message.class);
         annotations.add(Section.class);
+        annotations.add(FixedLengthRecord.class);
     }
 
     public Set<Class<?>> loadModels(String... packageNames) throws Exception {

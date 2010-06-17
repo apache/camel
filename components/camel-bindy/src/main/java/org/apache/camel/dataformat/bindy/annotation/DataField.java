@@ -66,12 +66,18 @@ public @interface DataField {
     String pattern() default "";
 
     /**
-     * length of the data block (useful for the fixedlength record) (optional in
-     * this version)
+     * length of the data block (useful for the fixedlength record) 
      * 
      * @return int
      */
     int length() default 0;
+    
+    /**
+     * align the text to the RIGHT or to LEFT part 
+     * 
+     * @return String
+     */
+    String align() default "R";
 
     /**
      * precision of the BigDecimal number to be created

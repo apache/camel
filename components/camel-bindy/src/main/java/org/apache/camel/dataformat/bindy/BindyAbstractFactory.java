@@ -81,7 +81,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     public abstract void initAnnotedFields() throws Exception;
 
     public abstract void bind(List<String> data, Map<String, Object> model, int line) throws Exception;
-
+    
     public abstract String unbind(Map<String, Object> model) throws Exception;
 
     /**
