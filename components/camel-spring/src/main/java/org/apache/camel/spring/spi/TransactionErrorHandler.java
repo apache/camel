@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.spi;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -43,6 +44,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     /**
      * Creates the transaction error handler.
      *
+     * @param camelContext            the camel context
      * @param output                  outer processor that should use this default error handler
      * @param logger                  logger to use for logging failures and redelivery attempts
      * @param redeliveryProcessor     an optional processor to run before redelivery attempt
@@ -51,10 +53,10 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param exceptionPolicyStrategy strategy for onException handling
      * @param transactionTemplate     the transaction template
      */
-    public TransactionErrorHandler(Processor output, Logger logger, Processor redeliveryProcessor,
+    public TransactionErrorHandler(CamelContext camelContext, Processor output, Logger logger, Processor redeliveryProcessor,
                                    RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy,
                                    ExceptionPolicyStrategy exceptionPolicyStrategy, TransactionTemplate transactionTemplate) {
-        super(output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false);
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false);
         setExceptionPolicy(exceptionPolicyStrategy);
         this.transactionTemplate = transactionTemplate;
     }
