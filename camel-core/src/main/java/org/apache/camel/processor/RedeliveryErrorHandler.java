@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.RejectedExecutionException;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -104,6 +106,15 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected boolean processErrorHandler(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
         while (true) {
 
+            // can we still run
+            if (!isRunAllowed()) {
+                if (exchange.getException() == null) {
+                    exchange.setException(new RejectedExecutionException());
+                }
+                callback.done(data.sync);
+                return data.sync;
+            }
+
             // did previous processing cause an exception?
             boolean handle = shouldHandleException(exchange);
             if (handle) {
@@ -154,13 +165,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     data.sync = false;
                     // only process if the exchange hasn't failed
                     // and it has not been handled by the error processor
-                    if (!isDone(exchange)) {
-                        // TODO: async process redelivery (eg duplicate the error handler logic)
-                        // And have a timer task scheduled when redelivery should occur to avoid blocking thread
-                        log.debug("Not done continuing error handling asynchronously: " + exchange);
-                    } else {
+                    if (isDone(exchange)) {
                         callback.done(sync);
+                        return;
                     }
+                    // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
+                    processAsyncErrorHandler(exchange, callback, data);
                 }
             });
             if (!sync) {
@@ -168,6 +178,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 return false;
             }
 
+            // we route synchronously
             boolean done = isDone(exchange);
             if (done) {
                 callback.done(true);
@@ -176,6 +187,78 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // error occurred so loop back around.....
         }
 
+    }
+
+    protected void processAsyncErrorHandler(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
+        // can we still run
+        if (!isRunAllowed()) {
+            if (exchange.getException() == null) {
+                exchange.setException(new RejectedExecutionException());
+            }
+            callback.done(data.sync);
+            return;
+        }
+
+        // did previous processing cause an exception?
+        boolean handle = shouldHandleException(exchange);
+        if (handle) {
+            handleException(exchange, data);
+        }
+
+        // compute if we should redeliver or not
+        boolean shouldRedeliver = shouldRedeliver(exchange, data);
+        if (!shouldRedeliver) {
+            // no we should not redeliver to the same output so either try an onException (if any given)
+            // or the dead letter queue
+            Processor target = data.failureProcessor != null ? data.failureProcessor : data.deadLetterProcessor;
+            // deliver to the failure processor (either an on exception or dead letter queue
+            deliverToFailureProcessor(target, exchange, data, callback);
+            // we are breaking out
+            return;
+        }
+
+        // TODO: Use a scheduler to schedule the redelivery delay
+        // which contains the outputAsync task being executed
+        // we can optimize and only use the scheduler if there is a delay
+        if (shouldRedeliver && data.redeliveryCounter > 0) {
+            // prepare for redelivery
+            prepareExchangeForRedelivery(exchange);
+
+            // if we are redelivering then sleep before trying again
+            // wait until we should redeliver
+            try {
+                data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay, data.redeliveryCounter);
+            } catch (InterruptedException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                }
+                return;
+            }
+
+            // letting onRedeliver be executed
+            deliverToRedeliveryProcessor(exchange, data);
+        }
+
+        // process the exchange (also redelivery)
+        outputAsync.process(exchange, new AsyncCallback() {
+            public void done(boolean sync) {
+                // this callback should only handle the async case
+                if (sync) {
+                    return;
+                }
+
+                // mark we are in async mode now
+                data.sync = false;
+                // only process if the exchange hasn't failed
+                // and it has not been handled by the error processor
+                if (isDone(exchange)) {
+                    callback.done(sync);
+                    return;
+                }
+                // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
+                processAsyncErrorHandler(exchange, callback, data);
+            }
+        });
     }
 
     /**
@@ -392,8 +475,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // no processor but we need to prepare after failure as well
                 prepareExchangeAfterFailure(exchange, data);
             } finally {
-                // indicate we are done synchronously
-                data.sync = true;
+                // callback we are done
                 callback.done(data.sync);
             }
         }

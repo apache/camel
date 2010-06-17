@@ -67,17 +67,19 @@ public class WireTapProcessor extends SendProcessor {
         return "wireTap(" + destination.getEndpointUri() + ")";
     }
 
-    public void process(final Exchange exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception {
         if (!isStarted()) {
             throw new IllegalStateException("WireTapProcessor has not been started: " + this);
         }
 
+        // must configure the wire tap beforehand
+        final Exchange wireTapExchange = configureExchange(exchange, pattern);
+
         // send the exchange to the destination using an executor service
         executorService.submit(new Callable<Exchange>() {
             public Exchange call() throws Exception {
-                return producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
+                return producerCache.doInProducer(destination, wireTapExchange, pattern, new ProducerCallback<Exchange>() {
                     public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
-                        exchange = configureExchange(exchange, pattern);
                         if (log.isDebugEnabled()) {
                             log.debug(">>>> (wiretap) " + destination + " " + exchange);
                         }
@@ -89,17 +91,19 @@ public class WireTapProcessor extends SendProcessor {
         });
     }
 
-    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+    public boolean process(Exchange exchange, final AsyncCallback callback) {
         if (!isStarted()) {
             throw new IllegalStateException("WireTapProcessor has not been started: " + this);
         }
 
+        // must configure the wire tap beforehand
+        final Exchange wireTapExchange = configureExchange(exchange, pattern);
+
         // send the exchange to the destination using an executor service
         executorService.submit(new Callable<Exchange>() {
             public Exchange call() throws Exception {
-                return producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
+                return producerCache.doInProducer(destination, wireTapExchange, pattern, new ProducerCallback<Exchange>() {
                     public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
-                        exchange = configureExchange(exchange, pattern);
                         if (log.isDebugEnabled()) {
                             log.debug(">>>> (wiretap) " + destination + " " + exchange);
                         }

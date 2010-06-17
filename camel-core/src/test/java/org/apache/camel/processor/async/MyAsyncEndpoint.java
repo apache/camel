@@ -29,6 +29,7 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
 
     private String reply;
     private long delay = 500;
+    private int failFirstAttempts;
 
     public MyAsyncEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -60,5 +61,13 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
 
     public void setDelay(long delay) {
         this.delay = delay;
+    }
+
+    public int getFailFirstAttempts() {
+        return failFirstAttempts;
+    }
+
+    public void setFailFirstAttempts(int failFirstAttempts) {
+        this.failFirstAttempts = failFirstAttempts;
     }
 }

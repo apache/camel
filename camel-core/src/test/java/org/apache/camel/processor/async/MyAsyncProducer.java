@@ -19,9 +19,11 @@ package org.apache.camel.processor.async;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
@@ -38,6 +40,7 @@ public class MyAsyncProducer implements AsyncProcessor, Producer {
     private static final Log LOG = LogFactory.getLog(MyAsyncProducer.class);
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final MyAsyncEndpoint endpoint;
+    private final AtomicInteger counter = new AtomicInteger();
 
     public MyAsyncProducer(MyAsyncEndpoint endpoint) {
         this.endpoint = endpoint;
@@ -51,10 +54,17 @@ public class MyAsyncProducer implements AsyncProcessor, Producer {
         executor.submit(new Callable<Object>() {
             public Object call() throws Exception {
                 LOG.info("Simulating a task which takes " + endpoint.getDelay() + " millis to reply");
-
                 Thread.sleep(endpoint.getDelay());
-                String reply = endpoint.getReply();
-                exchange.getOut().setBody(reply);
+
+                int count = counter.incrementAndGet();
+                if (endpoint.getFailFirstAttempts() >= count) {
+                    LOG.info("Simulating a failure at attempt " + count);
+                    exchange.setException(new CamelExchangeException("Simulated error at attempt " + count, exchange));
+                } else {
+                    String reply = endpoint.getReply();
+                    exchange.getOut().setBody(reply);
+                    LOG.info("Setting reply " + reply);
+                }
 
                 LOG.info("Callback done(false)");
                 callback.done(false);
