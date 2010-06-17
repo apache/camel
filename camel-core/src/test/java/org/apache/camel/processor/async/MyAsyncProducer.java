@@ -50,9 +50,9 @@ public class MyAsyncProducer implements AsyncProcessor, Producer {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         executor.submit(new Callable<Object>() {
             public Object call() throws Exception {
-                LOG.info("Simulating a task which takes 2 sec to reply");
+                LOG.info("Simulating a task which takes " + endpoint.getDelay() + " millis to reply");
 
-                Thread.sleep(2000);
+                Thread.sleep(endpoint.getDelay());
                 String reply = endpoint.getReply();
                 exchange.getOut().setBody(reply);
 

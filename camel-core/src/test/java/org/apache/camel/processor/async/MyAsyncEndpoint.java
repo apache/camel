@@ -28,6 +28,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 public class MyAsyncEndpoint extends DefaultEndpoint {
 
     private String reply;
+    private long delay = 500;
 
     public MyAsyncEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -51,5 +52,13 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
 
     public void setReply(String reply) {
         this.reply = reply;
+    }
+
+    public long getDelay() {
+        return delay;
+    }
+
+    public void setDelay(long delay) {
+        this.delay = delay;
     }
 }

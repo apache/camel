@@ -97,10 +97,15 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
 
     private void doneUow(DefaultUnitOfWork uow, Exchange exchange) {
         // unit of work is done
-        exchange.getUnitOfWork().done(exchange);
+        try {
+            exchange.getUnitOfWork().done(exchange);
+        } catch (Throwable e) {
+            LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
+                    + ". This exception will be ignored.");
+        }
         try {
             uow.stop();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: " + exchange
                     + ". This exception will be ignored.");
         }
