@@ -30,7 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.processor.interceptor.HandleFault;
 
 /**
  * Test cases for dealing with stream types in an exception handler
@@ -96,11 +95,13 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
+                // enable support for handling faults and stream caching
+                context.setHandleFault(true);
+                context.setStreamCaching(true);
+
                 onException(Exception.class).handled(true).to("mock:exception");
-                intercept().addInterceptStrategy(new HandleFault());
 
                 from("direct:start").process(new Processor() {
-
                     public void process(Exchange exchange) throws Exception {
                         String message = exchange.getIn().getBody(String.class);
 
@@ -114,7 +115,6 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
                             throw new RuntimeException(message);
                         }
                     }
-
                 }).to("mock:success");
             }
         };
