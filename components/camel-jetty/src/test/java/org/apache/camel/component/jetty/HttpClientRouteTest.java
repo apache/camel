@@ -55,7 +55,7 @@ public class HttpClientRouteTest extends ContextTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
         mockEndpoint.expectedBodiesReceived("<b>Hello World</b>");
 
-        template.sendBodyAndHeader("direct:start", new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml");
+        template.sendBodyAndHeader(uri, new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml");
         
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();

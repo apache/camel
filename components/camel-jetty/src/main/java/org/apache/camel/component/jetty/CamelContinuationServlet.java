@@ -52,9 +52,7 @@ public class CamelContinuationServlet extends CamelServlet {
 
                 // Have the camel process the HTTP exchange.
                 final HttpExchange exchange = new HttpExchange(consumer.getEndpoint(), request, response);
-                if (!consumer.getEndpoint().isChunked()) {
-                    exchange.getIn().setHeader(Exchange.HTTP_CHUNKED, false);
-                }
+                
                 boolean sync = consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
                         if (sync) {
@@ -75,7 +73,12 @@ public class CamelContinuationServlet extends CamelServlet {
                 // HC: The getBinding() is interesting because it illustrates the
                 // impedance miss-match between HTTP's stream oriented protocol, and
                 // Camels more message oriented protocol exchanges.
-
+                
+                // set the header value from endpoint
+                if (exchange.getOut().getHeader(Exchange.HTTP_CHUNKED) == null) {
+                    exchange.getOut().setHeader(Exchange.HTTP_CHUNKED, consumer.getEndpoint().isChunked());
+                }
+                
                 // now lets output to the response
                 consumer.getBinding().writeResponse(exchange, response);
                 return;

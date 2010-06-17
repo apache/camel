@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.Exchange;
+
 /**
  * @version $Revision$
  */
@@ -46,13 +48,18 @@ public class CamelServlet extends HttpServlet {
             }
 
             // Have the camel process the HTTP exchange.
-            HttpExchange exchange = new HttpExchange(consumer.getEndpoint(), request, response);
+            HttpExchange exchange = new HttpExchange(consumer.getEndpoint(), request, response);                        
             consumer.getProcessor().process(exchange);
 
             // HC: The getBinding() is interesting because it illustrates the
             // impedance miss-match between
             // HTTP's stream oriented protocol, and Camels more message oriented
             // protocol exchanges.
+            
+            // set the header value from endpoint
+            if (exchange.getOut().getHeader(Exchange.HTTP_CHUNKED) == null) {
+                exchange.getOut().setHeader(Exchange.HTTP_CHUNKED, consumer.getEndpoint().isChunked());
+            }
 
             // now lets output to the response
             consumer.getBinding().writeResponse(exchange, response);
