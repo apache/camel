@@ -45,7 +45,9 @@ import org.springframework.orm.jpa.JpaTemplate;
  * @version $Revision$
  */
 public class JpaWithNamedQueryTest extends Assert {
-    private static final transient Log LOG = LogFactory.getLog(JpaWithNamedQueryTest.class);
+    
+    protected final transient Log LOG = LogFactory.getLog(this.getClass());
+    
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template;
     protected JpaEndpoint endpoint;
@@ -101,10 +103,7 @@ public class JpaWithNamedQueryTest extends Assert {
         boolean received = latch.await(50, TimeUnit.SECONDS);
         assertTrue("Did not receive the message!", received);
 
-        assertNotNull(receivedExchange);
-        MultiSteps result = receivedExchange.getIn().getBody(MultiSteps.class);
-        assertNotNull("Received a POJO", result);
-        assertEquals("address property", "foo@bar.com", result.getAddress());
+        assertReceivedResult(receivedExchange);
 
         // lets now test that the database is updated
         // we need to sleep as we will be invoked from inside the transaction!
@@ -125,7 +124,7 @@ public class JpaWithNamedQueryTest extends Assert {
                     if (row.getAddress().equals("foo@bar.com")) {
                         LOG.info("Found updated row: " + row);
 
-                        assertEquals("Updated row step for: " + row, 2, row.getStep());
+                        assertEquals("Updated row step for: " + row, getUpdatedStepValue(), row.getStep());
                     } else {
                         // dummy row
                         assertEquals("dummy row step for: " + row, 4, row.getStep());
@@ -136,6 +135,21 @@ public class JpaWithNamedQueryTest extends Assert {
         });
 
         JpaConsumer jpaConsumer = (JpaConsumer) consumer;
+        assertURIQueryOption(jpaConsumer);
+    }
+
+    protected void assertReceivedResult(Exchange exchange) {
+        assertNotNull(exchange);
+        MultiSteps result = exchange.getIn().getBody(MultiSteps.class);
+        assertNotNull("Received a POJO", result);
+        assertEquals("address property", "foo@bar.com", result.getAddress());
+    }
+    
+    protected int getUpdatedStepValue() {
+        return 2;
+    }
+    
+    protected void assertURIQueryOption(JpaConsumer jpaConsumer) {
         assertEquals("step1", jpaConsumer.getNamedQuery());
     }
 
