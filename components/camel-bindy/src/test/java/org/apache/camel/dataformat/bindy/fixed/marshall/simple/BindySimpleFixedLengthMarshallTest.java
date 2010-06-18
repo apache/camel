@@ -14,37 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.fixed;
+package org.apache.camel.dataformat.bindy.fixed.marshall.simple;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
-import org.apache.camel.test.junit4.TestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
+import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
+import org.apache.camel.processor.interceptor.Tracer;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-
 @ContextConfiguration
-public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringContextTests {
-
-    private static final transient Log LOG = LogFactory.getLog(BindySimpleFixedLengthUnmarshallTest.class);
-
+public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringContextTests {
+    
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
+
+    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private String expected;
 
     @Produce(uri = URI_DIRECT_START)
     private ProducerTemplate template;
@@ -55,32 +60,65 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
     @EndpointInject(uri = URI_MOCK_ERROR)
     private MockEndpoint error;
 
-    private String expected;
-
     @Test
     @DirtiesContext
-    public void testUnMarshallMessage() throws Exception {
+    public void testMarshallMessage() throws Exception {
 
-    	expected = "10A9PaulineMISINXD12345678BUYShare2500.45USD08-01-2009";
+        expected = "10A9  PaulineM    ISINXD12345678BUYShare2500.45USD01-08-2009\r\n";
+        result.expectedBodiesReceived(expected);
 
-        template.sendBody(expected);
-
-        result.expectedMessageCount(1);
+        template.sendBody(generateModel());
         result.assertIsSatisfied();
     }
 
+    public List<Map<String, Object>> generateModel() {
+        Map<String, Object> modelObjects = new HashMap<String, Object>();
+
+        Order order = new Order();
+        order.setOrderNr(10);
+        order.setOrderType("BUY");
+        order.setClientNr("A9");
+        order.setFirstName("Pauline");
+        order.setLastName("M");
+        order.setAmount(new BigDecimal("2500.45"));
+        order.setInstrumentCode("ISIN");
+        order.setInstrumentNumber("XD12345678");
+        order.setInstrumentType("Share");
+        order.setCurrency("USD");
+
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(2009, 7, 1);
+        order.setOrderDate(calendar.getTime());
+
+        modelObjects.put(order.getClass().getName(), order);
+
+        models.add(modelObjects);
+
+        return models;
+    }
+
     public static class ContextConfig extends RouteBuilder {
-        BindyFixedLengthDataFormat camelDataFormat = new BindyFixedLengthDataFormat("org.apache.camel.dataformat.bindy.fixed");
+    	BindyFixedLengthDataFormat camelDataFormat = new BindyFixedLengthDataFormat("org.apache.camel.dataformat.bindy.fixed.marshall.simple");
 
         public void configure() {
-            from(URI_DIRECT_START)
-            .unmarshal(camelDataFormat)
-            .to(URI_MOCK_RESULT);
+
+            Tracer tracer = new Tracer();
+            tracer.setLogLevel(LoggingLevel.FATAL);
+            tracer.setLogName("org.apache.camel.bindy");
+
+            getContext().addInterceptStrategy(tracer);
+
+            // default should errors go to mock:error
+            errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliverDelay(0));
+
+            onException(Exception.class).maximumRedeliveries(0).handled(true);
+
+            from(URI_DIRECT_START).marshal(camelDataFormat).to(URI_MOCK_RESULT);
         }
 
     }
-    
-    @FixedLengthRecord(length=55, paddingChar=' ')
+
+    @FixedLengthRecord(length=60, paddingChar=' ')
     public static class Order {
 
         @DataField(pos = 1, length=2)
@@ -89,31 +127,31 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
         @DataField(pos = 3, length=2)
         private String clientNr;
 
-        @DataField(pos = 5, length=7)
+        @DataField(pos = 5, length=9)
         private String firstName;
 
-        @DataField(pos = 12, length=1)
+        @DataField(pos = 14, length=5, align="L")
         private String lastName;
 
-        @DataField(pos = 13, length=4)
+        @DataField(pos = 19, length=4)
         private String instrumentCode;
 
-        @DataField(pos = 17, length=10)
+        @DataField(pos = 23, length=10)
         private String instrumentNumber;
 
-        @DataField(pos = 27, length=3)
+        @DataField(pos = 33, length=3)
         private String orderType;
 
-        @DataField(pos = 30, length=5)
+        @DataField(pos = 36, length=5)
         private String instrumentType;
 
-        @DataField(pos = 35, precision = 2, length=7)
+        @DataField(pos = 41, precision = 2, length=7)
         private BigDecimal amount;
 
-        @DataField(pos = 42, length=3)
+        @DataField(pos = 48, length=3)
         private String currency;
 
-        @DataField(pos = 45, length=10, pattern = "dd-MM-yyyy")
+        @DataField(pos = 51, length=10, pattern = "dd-MM-yyyy")
         private Date orderDate;
 
         public int getOrderNr() {
@@ -211,5 +249,6 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
                    + String.valueOf(this.orderDate);
         }
     }
+
 
 }

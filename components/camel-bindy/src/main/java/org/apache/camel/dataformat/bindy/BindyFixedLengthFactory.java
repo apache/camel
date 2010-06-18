@@ -255,67 +255,56 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder buffer = new StringBuilder();
+        results = new HashMap<Integer, List>();
 
+        for (Class clazz : models) {
+
+            if (model.containsKey(clazz.getName())) {
+
+                Object obj = model.get(clazz.getName());
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Model object : " + obj + ", class : " + obj.getClass().getName());
+                }
+
+                if (obj != null) {
+
+                    // Generate Fixed Length table
+                	// containing the positions of the fields
+                    generateFixedLengthPositionMap(clazz, obj);
+
+                }
+            }
+        }
+
+        // Convert Map<Integer, List> into List<List>
+        TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(results);
+        List<String> temp = new ArrayList<String>();
+
+        for (Integer key : sortValues.keySet()) {
+
+            // Get list of values
+            List<String> val = sortValues.get(key);
+            String value = (String)val.get(0);
+            
+            buffer.append(value);
+
+        }
+        
         return buffer.toString();
 
     }
 
-    private List<List> product(Map<Integer, List> values) {
-
-        TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(values);
-
-        List<List> product = new ArrayList<List>();
-        Map<Integer, Integer> index = new HashMap<Integer, Integer>();
-
-        boolean cont = true;
-        int idx = 0;
-        int idxSize;
-
-        do {
-
-            idxSize = 0;
-            List v = new ArrayList();
-
-            for (int ii = 1; ii <= sortValues.lastKey(); ii++) {
-
-                List l = values.get(ii);
-
-                if (l == null) {
-                    v.add("");
-                    ++idxSize;
-                    continue;
-                }
-
-                if (l.size() >= idx + 1) {
-                    v.add(l.get(idx));
-                    index.put(ii, idx);
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value : " + l.get(idx) + ", pos : " + ii + ", at :" + idx);
-                    }
-
-                } else {
-                    v.add(l.get(0));
-                    index.put(ii, 0);
-                    ++idxSize;
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value : " + l.get(0) + ", pos : " + ii + ", at index : " + 0);
-                    }
-                }
-
-            }
-
-            if (idxSize != sortValues.lastKey()) {
-                product.add(v);
-            }
-            ++idx;
-
-        } while (idxSize != sortValues.lastKey());
-
-        return product;
-    }
-    
     /**
-    private void generateCsvPositionMap(Class clazz, Object obj) throws Exception {
+     * 
+     * Generate a table containing the data formated and sorted with their position/offset
+     * The result is placed in the Map<Integer, List> results
+     * 
+     * @param clazz
+     * @param obj
+     * @throws Exception
+     */
+    private void generateFixedLengthPositionMap(Class clazz, Object obj) throws Exception {
 
         String result = "";
 
@@ -342,6 +331,34 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     Object value = field.get(obj);
 
                     result = formatString(format, value);
+                    
+                    // Get length of the field, alignment (LEFT or RIGHT)
+                    int fieldLength = datafield.length();
+                    String align = datafield.align();
+                    
+                    if (fieldLength > 0) {
+                       
+                    	StringBuilder temp = new StringBuilder();
+                    	
+                       // Check if we must padd
+                       if (result.length() < fieldLength ) {
+	                    	if (align.contains("R")) {
+	                    		temp.append(generatePaddingChars(paddingChar, fieldLength, result.length()));
+	                    		temp.append(result);
+	                    	} else if (align.contains("L")) {
+	                    		temp.append(result);
+	                    		temp.append(generatePaddingChars(paddingChar, fieldLength, result.length()));
+	                    	} else {
+	                    		throw new IllegalArgumentException("Alignement for the " + field.getName() + " must be equal to R for RIGHT or L for LEFT !");
+	                    	}
+	                    	
+	                    	result = temp.toString();	                	
+	                    }                         
+                        
+                       
+                    } else {
+                    	throw new IllegalArgumentException("Lenght of the field : " + field.getName() + " is a mandatory field and cannot be equal to zero or to be negative !");
+                    }
 
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Value to be formatted : " + value + ", position : " + datafield.pos() + ", and its formated value : " + result);
@@ -352,25 +369,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 }
 
                 Integer key;
-
-                if (isMessageOrdered()) {
-
-                    // Generate a key using the number of the section
-                    // and the position of the field
-                    Integer key1 = sections.get(obj.getClass().getName());
-                    Integer key2 = datafield.position();
-                    Integer keyGenerated = generateKey(key1, key2);
-
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : " + key1);
-                    }
-
-                    key = keyGenerated;
-
-                } else {
-
-                    key = datafield.pos();
-                }
+                key = datafield.pos();
 
                 if (!results.containsKey(key)) {
 
@@ -386,56 +385,19 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
             }
 
-            OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-            if (oneToMany != null) {
-
-                // Set global variable
-                // Will be used during generation of CSV
-                isOneToMany = true;
-
-                ArrayList list = (ArrayList)field.get(obj);
-
-                if (list != null) {
-
-                    Iterator it = list.iterator();
-
-                    while (it.hasNext()) {
-
-                        Object target = it.next();
-                        generateCsvPositionMap(target.getClass(), target);
-
-                    }
-
-                } else {
-
-                    // Call this function to add empty value
-                    // in the table
-                    generateCsvPositionMap(field.getClass(), null);
-                }
-
-            }
-        }
+         }
 
     }
-    **/
     
-    private String formatString(Format format, Object value) throws Exception {
+    private String generatePaddingChars(char pad, int lengthField, int lengthString) {
+    	
+    	StringBuilder buffer = new StringBuilder();
+    	int size = lengthField - lengthString;
 
-        String strValue = "";
-
-        if (value != null) {
-
-            // Format field value
-            try {
-                strValue = format.format(value);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Formatting error detected for the value : " + value, e);
-            }
-
-        }
-
-        return strValue;
-
+    	for(int i=0; i<size; i++) {
+    		buffer.append(Character.toString(pad));
+    	}
+    	return buffer.toString();
     }
 
     /**

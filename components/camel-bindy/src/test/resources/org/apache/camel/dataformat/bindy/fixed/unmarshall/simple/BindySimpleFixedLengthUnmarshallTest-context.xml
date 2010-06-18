@@ -27,6 +27,6 @@
 		<routeBuilder ref="myBuilder" /> 
 	</camelContext>
 	
-	<bean id="myBuilder" class="org.apache.camel.dataformat.bindy.fixed.BindySimpleFixedLengthUnmarshallTest$ContextConfig"/>
+	<bean id="myBuilder" class="org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.BindySimpleFixedLengthUnmarshallTest$ContextConfig"/>
 	
 </beans>

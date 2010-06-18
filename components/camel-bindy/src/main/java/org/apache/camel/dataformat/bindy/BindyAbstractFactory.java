@@ -192,4 +192,31 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     public String getCarriageReturn() {
         return crlf;
     }
+    
+    /**
+     * Format the object into a string according to the format rue defined
+     * 
+     * @param format
+     * @param value
+     * @return String
+     * @throws Exception
+     */
+    public String formatString(Format format, Object value) throws Exception {
+
+        String strValue = "";
+
+        if (value != null) {
+
+            // Format field value
+            try {
+                strValue = format.format(value);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Formatting error detected for the value : " + value, e);
+            }
+
+        }
+
+        return strValue;
+
+    }
 }

@@ -379,6 +379,17 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         return product;
     }
 
+    /**
+     * 
+     * Generate a table containing the data formated and sorted with their position/offset
+     * If the model is Ordered than a key is created combining the annotation @Section and Position of the field
+     * If a relation @OneToMany is defined, than we iterate recursivelu through this function
+     * The result is placed in the Map<Integer, List> results
+     * 
+     * @param clazz
+     * @param obj
+     * @throws Exception
+     */
     private void generateCsvPositionMap(Class clazz, Object obj) throws Exception {
 
         String result = "";
@@ -481,26 +492,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
 
     }
-
-    private String formatString(Format format, Object value) throws Exception {
-
-        String strValue = "";
-
-        if (value != null) {
-
-            // Format field value
-            try {
-                strValue = format.format(value);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Formatting error detected for the value : " + value, e);
-            }
-
-        }
-
-        return strValue;
-
-    }
-
+    
+    /**
+     * Generate for the first line the headers of the columns
+     * 
+     * @return the headers columns
+     */
     public String generateHeader() {
 
         Map<Integer, DataField> dataFieldsSorted = new TreeMap<Integer, DataField>(dataFields);
@@ -534,7 +531,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
 
     /**
-     * Get paramaters defined in @Csvrecord annotation
+     * Get parameters defined in @Csvrecord annotation
      */
     private void initCsvRecordParameters() {
         if (separator == null) {

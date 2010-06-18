@@ -130,7 +130,7 @@ public class BindyFixedLengthDataFormat implements DataFormat {
                 
                 // Check if the record length corresponds to the parameter
                 // provided in the @FixedLengthRecord
-                if (line.length() != factory.recordLength()-1) {
+                if ((line.length() < factory.recordLength()) || (line.length() > factory.recordLength())){
                 	throw new java.lang.IllegalArgumentException("Size of the record : " + line.length() + " is not equal to the value provided in the model : " + factory.recordLength() + " !");
                 }
 
