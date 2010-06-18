@@ -14,32 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.seda;
+package org.apache.camel.impl;
 
-import java.util.Collection;
-
-import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
- * A simple {@link org.apache.camel.Producer} which just appends to a {@link Collection} the {@link Exchange} object.
+ * A default implementation of {@link org.apache.camel.Producer} for implementation inheritance,
+ * which can process {@link Exchange}s asynchronously.
  *
  * @version $Revision$
  */
-public class CollectionProducer extends DefaultAsyncProducer {
-    protected final Collection<Exchange> queue;
+public abstract class DefaultAsyncProducer extends DefaultProducer implements AsyncProcessor {
 
-    public CollectionProducer(Endpoint endpoint, Collection<Exchange> queue) {
+    public DefaultAsyncProducer(Endpoint endpoint) {
         super(endpoint);
-        this.queue = queue;
     }
 
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        Exchange copy = exchange.copy();
-        queue.add(copy);
-        callback.done(true);
-        return true;
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
     }
 }

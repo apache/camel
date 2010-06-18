@@ -27,7 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * Helper methods for AsyncProcessor objects.
+ * Helper methods for {@link AsyncProcessor} objects.
  */
 public final class AsyncProcessorHelper {
 
@@ -43,8 +43,8 @@ public final class AsyncProcessorHelper {
     public static void process(AsyncProcessor processor, Exchange exchange) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         boolean sync = processor.process(exchange, new AsyncCallback() {
-            public void done(boolean sync) {
-                if (!sync) {
+            public void done(boolean doneSync) {
+                if (!doneSync) {
                     latch.countDown();
                 }
             }
@@ -61,7 +61,9 @@ public final class AsyncProcessorHelper {
      * @param processor the processor
      * @param exchange  the exchange
      * @return a future handle for the task being executed asynchronously
+     * @deprecated will be removed in Camel 2.5
      */
+    @Deprecated
     public static Future<Exchange> asyncProcess(final ExecutorService executor, final Processor processor, final Exchange exchange) {
         Callable<Exchange> task = new Callable<Exchange>() {
             public Exchange call() throws Exception {

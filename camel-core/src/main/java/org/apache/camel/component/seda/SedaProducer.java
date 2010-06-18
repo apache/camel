@@ -20,6 +20,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.WaitForTaskToComplete;
@@ -42,7 +43,7 @@ public class SedaProducer extends CollectionProducer {
     }
 
     @Override
-    public void process(final Exchange exchange) throws Exception {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // use a new copy of the exchange to route async and handover the on completion to the new copy
         // so its the new copy that performs the on completion callback when its done
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, true);
@@ -103,7 +104,12 @@ public class SedaProducer extends CollectionProducer {
                     log.trace("Waiting for task to complete using timeout (ms): " + timeout + " at [" + endpoint.getEndpointUri() + "]");
                 }
                 // lets see if we can get the task done before the timeout
-                boolean done = latch.await(timeout, TimeUnit.MILLISECONDS);
+                boolean done = false;
+                try {
+                    done = latch.await(timeout, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
                 if (!done) {
                     exchange.setException(new ExchangeTimedOutException(exchange, timeout));
                     // count down to indicate timeout
@@ -114,12 +120,21 @@ public class SedaProducer extends CollectionProducer {
                     log.trace("Waiting for task to complete (blocking) at [" + endpoint.getEndpointUri() + "]");
                 }
                 // no timeout then wait until its done
-                latch.await();
+                try {
+                    latch.await();
+                } catch (InterruptedException e) {
+                    // ignore
+                }
             }
         } else {
             // no wait, eg its a InOnly then just add to queue and return
             queue.add(copy);
         }
+
+        // we use OnCompletion on the Exchange to callback and wait for the Exchange to be done
+        // so we should just signal the callback we are done synchronously
+        callback.done(true);
+        return true;
     }
 
     @Override

@@ -22,46 +22,41 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
-public class MyAsyncProducer implements AsyncProcessor, Producer {
+public class MyAsyncProducer extends DefaultAsyncProducer {
 
     private static final Log LOG = LogFactory.getLog(MyAsyncProducer.class);
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final MyAsyncEndpoint endpoint;
     private final AtomicInteger counter = new AtomicInteger();
 
     public MyAsyncProducer(MyAsyncEndpoint endpoint) {
-        this.endpoint = endpoint;
+        super(endpoint);
     }
 
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
+    public MyAsyncEndpoint getEndpoint() {
+        return (MyAsyncEndpoint) super.getEndpoint();
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         executor.submit(new Callable<Object>() {
             public Object call() throws Exception {
-                LOG.info("Simulating a task which takes " + endpoint.getDelay() + " millis to reply");
-                Thread.sleep(endpoint.getDelay());
+                LOG.info("Simulating a task which takes " + getEndpoint().getDelay() + " millis to reply");
+                Thread.sleep(getEndpoint().getDelay());
 
                 int count = counter.incrementAndGet();
-                if (endpoint.getFailFirstAttempts() >= count) {
+                if (getEndpoint().getFailFirstAttempts() >= count) {
                     LOG.info("Simulating a failure at attempt " + count);
                     exchange.setException(new CamelExchangeException("Simulated error at attempt " + count, exchange));
                 } else {
-                    String reply = endpoint.getReply();
+                    String reply = getEndpoint().getReply();
                     exchange.getOut().setBody(reply);
                     LOG.info("Setting reply " + reply);
                 }
@@ -77,29 +72,4 @@ public class MyAsyncProducer implements AsyncProcessor, Producer {
         return false;
     }
 
-    public MyAsyncEndpoint getEndpoint() {
-        return endpoint;
-    }
-
-    public Exchange createExchange() {
-        return new DefaultExchange(endpoint);
-    }
-
-    public Exchange createExchange(ExchangePattern pattern) {
-        return new DefaultExchange(endpoint, pattern);
-    }
-
-    public Exchange createExchange(Exchange exchange) {
-        return new DefaultExchange(exchange);
-    }
-
-    public void start() throws Exception {
-    }
-
-    public void stop() throws Exception {
-    }
-
-    public boolean isSingleton() {
-        return true;
-    }
 }

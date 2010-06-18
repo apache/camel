@@ -288,7 +288,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         // produce it async so we use a helper
         Producer producer = endpoint.createProducer();
-        // normally you will use a shared exectutor service with pools
+        // normally you will use a shared executor service with pools
         ExecutorService executor = Executors.newSingleThreadExecutor();
         // send it async with the help of this helper
         Future<Exchange> future = AsyncProcessorHelper.asyncProcess(executor, producer, exchange);
