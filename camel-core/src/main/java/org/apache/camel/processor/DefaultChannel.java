@@ -179,6 +179,12 @@ public class DefaultChannel extends ServiceSupport implements Channel {
                 continue;
             }
             target = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, target, next);
+            if (!(target instanceof AsyncProcessor)) {
+                // warn if interceptor is not async compatible
+                LOG.warn("Interceptor: " + strategy + " at: " + outputDefinition + " does not return an AsyncProcessor instance."
+                    + " This causes the asynchronous routing engine to not work as optimal as possible."
+                    + " See more details at the InterceptStrategy javadoc.");
+            }
         }
 
         // sets the delegate to our wrapped output
