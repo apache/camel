@@ -576,12 +576,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             // indicate it was completed by timeout
             answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
 
-            lock.lock();
-            try {
-                onCompletion(key, answer, true);
-            } finally {
-                lock.unlock();
-            }
+            // do not acquire locks as we already have a lock on the timeout map
+            // and we want to avoid a dead lock if another thread (currently aggregating)
+            // which wants to put into the timeout map as well (CAMEL-2824)
+            // and running the on completion logic can occur concurrently, its just the aggregation logic
+            // which is preferred to run non concurrent.
+            onCompletion(key, answer, true);
         }
     }
 
@@ -713,13 +713,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Delivery attempt: " + data.redeliveryCounter + " to recover aggregated exchange with id: " + exchangeId + "");
                             }
+
                             // not exhaust so resubmit the recovered exchange
-                            lock.lock();
-                            try {
-                                onSubmitCompletion(key, exchange);
-                            } finally {
-                                lock.unlock();
-                            }
+                            onSubmitCompletion(key, exchange);
                         }
                     }
                 }
