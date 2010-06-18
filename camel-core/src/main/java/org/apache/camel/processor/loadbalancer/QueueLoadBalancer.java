@@ -18,8 +18,12 @@ package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * A base class for {@link LoadBalancer} implementations which choose a single
@@ -29,7 +33,9 @@ import org.apache.camel.Processor;
  */
 public abstract class QueueLoadBalancer extends LoadBalancerSupport {
 
-    public void process(Exchange exchange) throws Exception {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        boolean sync;
+
         List<Processor> list = getProcessors();
         if (list.isEmpty()) {
             throw new IllegalStateException("No processors available to process " + exchange);
@@ -38,8 +44,23 @@ public abstract class QueueLoadBalancer extends LoadBalancerSupport {
         if (processor == null) {
             throw new IllegalStateException("No processors could be chosen to process " + exchange);
         } else {
-            processor.process(exchange);
+            AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);
+            sync = albp.process(exchange, new AsyncCallback() {
+                public void done(boolean doneSync) {
+                    // only handle the async case
+                    if (doneSync) {
+                        return;
+                    }
+                    callback.done(false);
+                }
+            });
         }
+
+        return sync;
+    }
+
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
     }
 
     protected abstract Processor chooseProcessor(List<Processor> processors, Exchange exchange);

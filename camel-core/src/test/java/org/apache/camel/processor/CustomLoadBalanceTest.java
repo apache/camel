@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -65,15 +66,21 @@ public class CustomLoadBalanceTest extends ContextTestSupport {
 
     private class MyLoadBalancer extends LoadBalancerSupport {
 
-        public void process(Exchange exchange) throws Exception {
+        public boolean process(Exchange exchange, AsyncCallback callback) {
             String body = exchange.getIn().getBody(String.class);
-            if ("x".equals(body)) {
-                getProcessors().get(0).process(exchange);
-            } else if ("y".equals(body)) {
-                getProcessors().get(1).process(exchange);
-            } else {
-                getProcessors().get(2).process(exchange);
+            try {
+                if ("x".equals(body)) {
+                    getProcessors().get(0).process(exchange);
+                } else if ("y".equals(body)) {
+                    getProcessors().get(1).process(exchange);
+                } else {
+                    getProcessors().get(2).process(exchange);
+                }
+            } catch (Throwable e) {
+                exchange.setException(e);
             }
+            callback.done(true);
+            return true;
         }
     }
 

@@ -18,30 +18,43 @@ package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
  * A {@link LoadBalancer} implementations which sends to all destinations
- * (rather like JMS Topics).  
- * 
+ * (rather like JMS Topics).
+ * <p/>
+ * The {@link org.apache.camel.processor.MulticastProcessor} is more powerful as it offers
+ * option to run in parallel and decide whether or not to stop on failure etc.
+ *
  * @version $Revision$
  */
 public class TopicLoadBalancer extends LoadBalancerSupport {
 
-    public void process(Exchange exchange) throws Exception {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         List<Processor> list = getProcessors();
+        // too hard to do multiple async, so we do it sync
         for (Processor processor : list) {
-            Exchange copy = copyExchangeStrategy(processor, exchange);
-            processor.process(copy);
+            try {
+                Exchange copy = copyExchangeStrategy(processor, exchange);
+                processor.process(copy);
+            } catch (Throwable e) {
+                exchange.setException(e);
+                // stop on failure
+                break;
+            }
         }
+        callback.done(true);
+        return true;
     }
 
     /**
      * Strategy method to copy the exchange before sending to another endpoint.
      * Derived classes such as the {@link org.apache.camel.processor.Pipeline Pipeline}
      * will not clone the exchange
-     * 
+     *
      * @param processor the processor that will send the exchange
      * @param exchange  the exchange
      * @return the current exchange if no copying is required such as for a
@@ -54,5 +67,4 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
     public String toString() {
         return "TopicLoadBalancer";
     }
-
 }

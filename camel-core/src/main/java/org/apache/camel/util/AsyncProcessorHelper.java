@@ -40,13 +40,18 @@ public final class AsyncProcessorHelper {
      * for it to complete before returning. This can be used by {@link AsyncProcessor}
      * objects to implement their sync version of the process method.
      */
-    public static void process(AsyncProcessor processor, Exchange exchange) throws Exception {
+    public static void process(final AsyncProcessor processor, final Exchange exchange) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 if (!doneSync) {
                     latch.countDown();
                 }
+            }
+
+            @Override
+            public String toString() {
+                return "Done " + processor;
             }
         });
         if (!sync) {
