@@ -53,7 +53,7 @@ public class VmShouldNotUseSameThreadTest extends ContextTestSupport {
                 from("vm:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals(null, local.get());
-                        assertNotSame("Thead is should not be same", id, Thread.currentThread().getId());
+                        assertNotSame("Thread is should not be same", id, Thread.currentThread().getId());
                     }
                 }).to("mock:result");
             }

@@ -548,6 +548,32 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals(7, ORDER.get());
     }
 
+    public void testAsyncCallbackThreadsInOutProcessor() throws Exception {
+        ORDER.set(0);
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        template.asyncCallback("direct:threads", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Bye");
+                exchange.setPattern(ExchangePattern.InOut);
+            }
+        }, new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                ORDER.addAndGet(2);
+                assertEquals("ByeBye", exchange.getOut().getBody());
+                latch.countDown();
+            }
+        });
+
+        ORDER.addAndGet(1);
+        latch.await(10, TimeUnit.SECONDS);
+        ORDER.addAndGet(4);
+
+        assertEquals(7, ORDER.get());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -566,6 +592,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
                     });
 
                 from("direct:echo").transform(body().append(body()));
+
+                from("direct:threads").threads(5).transform(body().append(body()));
             }
         };
     }

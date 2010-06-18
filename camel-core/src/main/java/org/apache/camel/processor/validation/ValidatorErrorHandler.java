@@ -42,7 +42,7 @@ public interface ValidatorErrorHandler extends ErrorHandler {
      * @param exchange the exchange
      * @param schema   the schema
      * @param result   the result
-     * @throws ValidationException is thrown in case of validatation errors
+     * @throws ValidationException is thrown in case of validation errors
      */
     void handleErrors(Exchange exchange, Schema schema, Result result) throws ValidationException;
 }
