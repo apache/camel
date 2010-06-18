@@ -53,7 +53,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DefaultChannel extends ServiceSupport implements AsyncProcessor, Channel {
+public class DefaultChannel extends ServiceSupport implements Channel {
 
     private static final transient Log LOG = LogFactory.getLog(DefaultChannel.class);
 
@@ -227,6 +227,8 @@ public class DefaultChannel extends ServiceSupport implements AsyncProcessor, Ch
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         Processor processor = getOutput();
         if (processor == null || !continueProcessing(exchange)) {
+            // we should not continue routing so we are done
+            callback.done(true);
             return true;
         }
 

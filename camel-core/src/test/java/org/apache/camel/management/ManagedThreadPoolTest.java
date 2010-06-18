@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.util.Iterator;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -48,7 +49,16 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
-        ObjectName on = set.iterator().next();
+        Iterator<ObjectName> it = set.iterator();
+        ObjectName on = null;
+        while (it.hasNext()) {
+            on = it.next();
+            if (on.getCanonicalName().contains("ScheduledThreadPoolExecutor")) {
+                continue;
+            }
+            // find the first non scheduled
+            break;
+        }
 
         Boolean shutdown = (Boolean) mbeanServer.getAttribute(on, "Shutdown");
         assertEquals(false, shutdown.booleanValue());

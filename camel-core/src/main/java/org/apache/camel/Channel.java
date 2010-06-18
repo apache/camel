@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version $Revision$
  */
-public interface Channel extends Processor, Navigate<Processor> {
+public interface Channel extends AsyncProcessor, Navigate<Processor> {
 
     /**
      * Sets the processor that the channel should route the {@link Exchange} to.
