@@ -16,6 +16,10 @@
  */
 package org.apache.camel.processor;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
@@ -24,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.model.LoggingLevel;
 
 /**
@@ -48,7 +53,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testLotsOfAttemptsFail() throws Exception {
+    public void testLotsOfAttemptsFailWithInputStreamPayload() throws Exception {
         failUntilAttempt = 5;
 
         deadEndpoint.expectedBodiesReceived(body);
@@ -56,7 +61,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         deadEndpoint.message(0).header(DeadLetterChannel.REDELIVERY_COUNTER).isEqualTo(2);
         successEndpoint.expectedMessageCount(0);
 
-        sendBody("direct:start", body);
+        sendBody("direct:start", new ByteArrayInputStream(body.getBytes()));
 
         assertMockEndpointsSatisfied();
 
@@ -82,6 +87,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
             public void process(Exchange exchange) {
                 Integer counter = exchange.getIn().getHeader(DeadLetterChannel.REDELIVERY_COUNTER,
                                                              Integer.class);
+                checkBody(exchange.getIn().getBody());
                 int attempt = (counter == null) ? 1 : counter + 1;
                 if (attempt < failUntilAttempt) {
                     throw new RuntimeException("Failed to process due to attempt: " + attempt
@@ -92,6 +98,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
             public boolean process(Exchange exchange, AsyncCallback callback) {                
                 Integer counter = exchange.getIn().getHeader(DeadLetterChannel.REDELIVERY_COUNTER,
                                                              Integer.class);
+                checkBody(exchange.getIn().getBody());
                 int attempt = (counter == null) ? 1 : counter + 1;
                 if (attempt > 1) {
                     assertEquals("Now we should use TimerThread to call the process", Thread.currentThread().getName(), "Camel DeadLetterChannel Redeliver Timer");
@@ -105,6 +112,17 @@ public class DeadLetterChannelTest extends ContextTestSupport {
                 callback.done(false);
                 return false;
             }
+            
+            private void checkBody(Object body) {
+                try {
+                    assertEquals("Ensure message re-readability in the error handler",
+                                 DeadLetterChannelTest.this.body,
+                                 (body instanceof InputStream) ? new String(IOConverter.toBytes((InputStream)body)) : body);
+                } catch (IOException e) {
+                    fail(e.getMessage());
+                }
+            }
+            
         };
 
         return new RouteBuilder() {

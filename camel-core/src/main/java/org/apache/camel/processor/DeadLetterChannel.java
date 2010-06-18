@@ -255,6 +255,10 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             if (exchange.getException() != null) {
                 exchange.setException(null);
             }
+            
+            // reset cached streams so they can be read again
+            MessageHelper.resetStreamCache(exchange.getIn());
+            
             // wait until we should redeliver
             data.redeliveryDelay = data.currentRedeliveryPolicy.getRedeliveryDelay(data.redeliveryDelay);
             timer.schedule(new RedeliverTimerTask(exchange, callback, data), data.redeliveryDelay);
