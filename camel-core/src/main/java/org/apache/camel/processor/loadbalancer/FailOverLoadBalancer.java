@@ -17,6 +17,7 @@
 package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -35,7 +36,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
     private int maximumFailoverAttempts = -1;
 
     // stateful counter
-    private int counter = -1;
+    private final AtomicInteger counter = new AtomicInteger(-1);
 
     public FailOverLoadBalancer() {
         this.exceptions = null;
@@ -104,23 +105,23 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
             throw new IllegalStateException("No processors available to process " + exchange);
         }
 
-        int index = 0;
-        int attempts = 0;
+        final AtomicInteger index = new AtomicInteger();
+        final AtomicInteger attempts = new AtomicInteger();
 
         // pick the first endpoint to use
         if (isRoundRobin()) {
-            if (++counter >= processors.size()) {
-                counter = 0;
+            if (counter.incrementAndGet() >= processors.size()) {
+                counter.set(0);
             }
-            index = counter;
+            index.set(counter.get());
         }
         if (log.isDebugEnabled()) {
             log.debug("Failover starting with endpoint index " + index);
         }
 
-        Processor processor = processors.get(index);
+        Processor processor = processors.get(index.get());
 
-        // process the first time, which indicate if we should continue synchronously or not
+        // process the failover
         sync = processExchange(processor, exchange, attempts, index, callback, processors);
 
         // continue as long its being processed synchronously
@@ -131,57 +132,6 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
             // the remainder of the failover will be completed async
             // so we break out now, then the callback will be invoked which then continue routing from where we left here
             return false;
-        }
-
-        if (log.isTraceEnabled()) {
-            log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
-        }
-
-        // loop while we should fail over
-        while (shouldFailOver(exchange)) {
-            attempts++;
-            // are we exhausted by attempts?
-            if (maximumFailoverAttempts > -1 && attempts > maximumFailoverAttempts) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Braking out of failover after " + attempts + " failover attempts");
-                }
-                break;
-            }
-
-            index++;
-            counter++;
-
-            if (index >= processors.size()) {
-                // out of bounds
-                if (isRoundRobin()) {
-                    log.debug("Failover is round robin enabled and therefore starting from the first endpoint");
-                    index = 0;
-                    counter = 0;
-                } else {
-                    // no more processors to try
-                    log.debug("Braking out of failover as we reach the end of endpoints to use for failover");
-                    break;
-                }
-            }
-
-            // try again but prepare exchange before we failover
-            prepareExchangeForFailover(exchange);
-            processor = processors.get(index);
-            sync = processExchange(processor, exchange, attempts, index, callback, processors);
-
-            // continue as long its being processed synchronously
-            if (!sync) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
-                }
-                // the remainder of the failover will be completed async
-                // so we break out now, then the callback will be invoked which then continue routing from where we left here
-                return false;
-            }
-
-            if (log.isTraceEnabled()) {
-                log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
-            }
         }
 
         callback.done(true);
@@ -203,10 +153,9 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
     }
 
-    private boolean processExchange(final Processor processor, final Exchange exchange,
-                                    final int attempts, final int index, final AsyncCallback callback, final List<Processor> processors) {
-        boolean sync;
-
+    private boolean processExchange(Processor processor, Exchange exchange,
+                                    AtomicInteger attempts, AtomicInteger index,
+                                    AsyncCallback callback, List<Processor> processors) {
         if (processor == null) {
             throw new IllegalStateException("No processors could be chosen to process " + exchange);
         }
@@ -215,8 +164,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         }
 
         AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);
-        sync = albp.process(exchange, new FailOverAsyncCallback(exchange, attempts, index, callback, processors));
-
+        boolean sync = albp.process(exchange, new FailOverAsyncCallback(exchange, attempts, index, callback, processors));
         return sync;
     }
 
@@ -227,12 +175,12 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
     private final class FailOverAsyncCallback implements AsyncCallback {
 
         private final Exchange exchange;
-        private int attempts;
-        private int index;
+        private final AtomicInteger attempts;
+        private final AtomicInteger index;
         private final AsyncCallback callback;
         private final List<Processor> processors;
 
-        private FailOverAsyncCallback(Exchange exchange, int attempts, int index, AsyncCallback callback, List<Processor> processors) {
+        private FailOverAsyncCallback(Exchange exchange, AtomicInteger attempts, AtomicInteger index, AsyncCallback callback, List<Processor> processors) {
             this.exchange = exchange;
             this.attempts = attempts;
             this.index = index;
@@ -243,34 +191,35 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         public void done(boolean doneSync) {
             // should we failover?
             if (shouldFailOver(exchange)) {
-                attempts++;
+                attempts.incrementAndGet();
                 // are we exhausted by attempts?
-                if (maximumFailoverAttempts > -1 && attempts > maximumFailoverAttempts) {
+                if (maximumFailoverAttempts > -1 && attempts.get() > maximumFailoverAttempts) {
                     if (log.isDebugEnabled()) {
                         log.debug("Braking out of failover after " + attempts + " failover attempts");
                     }
-                    callback.done(false);
+                    callback.done(doneSync);
+                    return;
                 }
 
-                index++;
-                counter++;
+                index.incrementAndGet();
+                counter.incrementAndGet();
 
-                if (index >= processors.size()) {
+                if (index.get() >= processors.size()) {
                     // out of bounds
                     if (isRoundRobin()) {
                         log.debug("Failover is round robin enabled and therefore starting from the first endpoint");
-                        index = 0;
-                        counter = 0;
+                        index.set(0);
+                        counter.set(0);
                     } else {
                         // no more processors to try
                         log.debug("Braking out of failover as we reach the end of endpoints to use for failover");
-                        callback.done(false);
+                        callback.done(doneSync);
                     }
                 }
 
                 // try again but prepare exchange before we failover
                 prepareExchangeForFailover(exchange);
-                Processor processor = processors.get(index);
+                Processor processor = processors.get(index.get());
 
                 // try to failover using the next processor
                 AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);

@@ -66,6 +66,7 @@ public class FailOverLoadBalanceWrappedExceptionNoLuckTest extends ContextTestSu
 
         try {
             template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             assertEquals("Forced", e.getCause().getMessage());
             assertIsInstanceOf(IOException.class, e.getCause());
