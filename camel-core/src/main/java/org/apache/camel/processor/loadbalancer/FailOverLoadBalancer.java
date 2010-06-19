@@ -214,6 +214,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
                         // no more processors to try
                         log.debug("Braking out of failover as we reach the end of endpoints to use for failover");
                         callback.done(doneSync);
+                        return;
                     }
                 }
 
