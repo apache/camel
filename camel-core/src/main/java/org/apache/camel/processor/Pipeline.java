@@ -181,6 +181,9 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
                     nextExchange = createNextExchange(nextExchange);
                     sync = process(original, nextExchange, callback, processors, processor);
                     if (!sync) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
+                        }
                         return;
                     }
                 }

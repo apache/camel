@@ -24,14 +24,14 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version $Revision$
  */
-public class AsyncEndpointFailOverLoadBalanceMixed2Test extends ContextTestSupport {
+public class AsyncEndpointFailOverLoadBalanceMixed3Test extends ContextTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
 
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
-        getMockEndpoint("mock:fail").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint("mock:ok").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
@@ -60,8 +60,8 @@ public class AsyncEndpointFailOverLoadBalanceMixed2Test extends ContextTestSuppo
                         })
                         .loadBalance()
                         .failover()
-                            // first is sync, the 2nd is async based
-                            .to("direct:fail", "async:Bye World")
+                            // first is async, the 2nd is sync based
+                            .to("async:Bye World?failFirstAttempts=5", "direct:ok")
                         .end()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
@@ -73,10 +73,10 @@ public class AsyncEndpointFailOverLoadBalanceMixed2Test extends ContextTestSuppo
                         .to("mock:after")
                         .to("mock:result");
 
-                from("direct:fail")
-                        .to("log:fail")
-                        .to("mock:fail")
-                        .throwException(new IllegalArgumentException("Damn"));
+                from("direct:ok")
+                        .to("log:pok")
+                        .to("mock:ok")
+                        .transform(constant("Bye World"));
             }
         };
     }

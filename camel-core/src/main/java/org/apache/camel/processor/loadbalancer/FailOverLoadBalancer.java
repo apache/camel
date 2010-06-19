@@ -28,6 +28,10 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * This FailOverLoadBalancer will failover to use next processor when an exception occurred
+ * <p/>
+ * This implementation mirrors the logic from the {@link org.apache.camel.processor.Pipeline} in the async variation
+ * as the failover load balancer is a specialized pipeline. So the trick is to keep doing the same as the
+ * pipeline to ensure it works the same and the async routing engine is flawless.
  */
 public class FailOverLoadBalancer extends LoadBalancerSupport {
 
@@ -45,6 +49,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
     public FailOverLoadBalancer(List<Class<?>> exceptions) {
         this.exceptions = exceptions;
 
+        // validate its all exception types
         for (Class<?> type : exceptions) {
             if (!ObjectHelper.isAssignableFrom(Throwable.class, type)) {
                 throw new IllegalArgumentException("Class is not an instance of Throwable: " + type);
@@ -98,17 +103,13 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        boolean sync;
-
-        List<Processor> processors = getProcessors();
-        if (processors.isEmpty()) {
-            throw new IllegalStateException("No processors available to process " + exchange);
-        }
+        final List<Processor> processors = getProcessors();
 
         final AtomicInteger index = new AtomicInteger();
         final AtomicInteger attempts = new AtomicInteger();
+        boolean first = true;
 
-        // pick the first endpoint to use
+        // get the next processor
         if (isRoundRobin()) {
             if (counter.incrementAndGet() >= processors.size()) {
                 counter.set(0);
@@ -119,19 +120,64 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
             log.debug("Failover starting with endpoint index " + index);
         }
 
-        Processor processor = processors.get(index.get());
+        while (first || shouldFailOver(exchange)) {
+            if (!first) {
+                attempts.incrementAndGet();
+                // are we exhausted by attempts?
+                if (maximumFailoverAttempts > -1 && attempts.get() > maximumFailoverAttempts) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Braking out of failover after " + attempts + " failover attempts");
+                    }
+                    break;
+                }
 
-        // process the failover
-        sync = processExchange(processor, exchange, attempts, index, callback, processors);
-
-        // continue as long its being processed synchronously
-        if (!sync) {
-            if (log.isTraceEnabled()) {
-                log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
+                index.incrementAndGet();
+                counter.incrementAndGet();
+            } else {
+                // flip first switch
+                first = false;
             }
-            // the remainder of the failover will be completed async
-            // so we break out now, then the callback will be invoked which then continue routing from where we left here
-            return false;
+
+            if (index.get() >= processors.size()) {
+                // out of bounds
+                if (isRoundRobin()) {
+                    log.debug("Failover is round robin enabled and therefore starting from the first endpoint");
+                    index.set(0);
+                    counter.set(0);
+                } else {
+                    // no more processors to try
+                    log.debug("Braking out of failover as we reach the end of endpoints to use for failover");
+                    break;
+                }
+            }
+
+            // try again but prepare exchange before we failover
+            prepareExchangeForFailover(exchange);
+            Processor processor = processors.get(index.get());
+
+            // process the exchange
+            boolean sync = processExchange(processor, exchange, attempts, index, callback, processors);
+
+            // continue as long its being processed synchronously
+            if (!sync) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
+                }
+                // the remainder of the pipeline will be completed async
+                // so we break out now, then the callback will be invoked which then continue routing from where we left here
+                return false;
+            }
+
+            if (log.isTraceEnabled()) {
+                log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
+            }
+        }
+
+        if (log.isTraceEnabled()) {
+            // logging nextExchange as it contains the exchange that might have altered the payload and since
+            // we are logging the completion if will be confusing if we log the original instead
+            // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
+            log.trace("Failover complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
         }
 
         callback.done(true);
@@ -164,8 +210,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         }
 
         AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);
-        boolean sync = albp.process(exchange, new FailOverAsyncCallback(exchange, attempts, index, callback, processors));
-        return sync;
+        return albp.process(exchange, new FailOverAsyncCallback(exchange, attempts, index, callback, processors));
     }
 
     /**
@@ -189,16 +234,19 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         }
 
         public void done(boolean doneSync) {
-            // should we failover?
-            if (shouldFailOver(exchange)) {
+            // we only have to handle async completion of the pipeline
+            if (doneSync) {
+                return;
+            }
+
+            while (shouldFailOver(exchange)) {
                 attempts.incrementAndGet();
                 // are we exhausted by attempts?
                 if (maximumFailoverAttempts > -1 && attempts.get() > maximumFailoverAttempts) {
                     if (log.isDebugEnabled()) {
                         log.debug("Braking out of failover after " + attempts + " failover attempts");
                     }
-                    callback.done(doneSync);
-                    return;
+                    break;
                 }
 
                 index.incrementAndGet();
@@ -213,8 +261,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
                     } else {
                         // no more processors to try
                         log.debug("Braking out of failover as we reach the end of endpoints to use for failover");
-                        callback.done(doneSync);
-                        return;
+                        break;
                     }
                 }
 
@@ -223,13 +270,20 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
                 Processor processor = processors.get(index.get());
 
                 // try to failover using the next processor
-                AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);
-                albp.process(exchange, this);
-            } else {
-                // we are done doing failover
-                callback.done(doneSync);
+                doneSync = processExchange(processor, exchange, attempts, index, callback, processors);
+                if (!doneSync) {
+                    if (log.isTraceEnabled()) {
+                        log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
+                    }
+                    // the remainder of the pipeline will be completed async
+                    // so we break out now, then the callback will be invoked which then continue routing from where we left here
+                    return;
+                }
             }
-        }
+
+            // signal callback we are done
+            callback.done(false);
+        };
     }
 
     public String toString() {
