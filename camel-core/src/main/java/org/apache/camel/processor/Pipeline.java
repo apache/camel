@@ -245,7 +245,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
 
     @Override
     public String toString() {
-        return "Pipeline" + getProcessors();
+        return "Pipeline[" + getProcessors() + "]";
     }
 
     @Override

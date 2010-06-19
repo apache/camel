@@ -58,8 +58,6 @@ class RichExchange(val exchange : Exchange) extends Exchange {
 
   def setExchangeId(id: String) = exchange.setExchangeId(id)
 
-  def setException(e: Exception) = exchange.setException(e)
-  
   def setException(t: Throwable) = exchange.setException(t)
 
   def removeProperty(name: String) = exchange.removeProperty(name)

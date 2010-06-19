@@ -395,9 +395,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     protected void prepareExchangeForRedelivery(Exchange exchange) {
         // okay we will give it another go so clear the exception so we can try again
-        if (exchange.getException() != null) {
-            exchange.setException(null);
-        }
+        exchange.setException(null);
 
         // clear rollback flags
         exchange.setProperty(Exchange.ROLLBACK_ONLY, null);
@@ -457,7 +455,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // run this synchronously as its just a Processor
         try {
             data.onRedeliveryProcessor.process(exchange);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exchange.setException(e);
         }
         log.trace("Redelivery processor done");
@@ -748,7 +746,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         if (executorService == null || executorService.isShutdown()) {
             // camel context will shutdown the executor when it shutdown so no need to shut it down when stopping
             executorService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this,
-                    getClass().getSimpleName() + "-AsyncRedeliveryTask", poolSize);
+                    "RedeliveryErrorHandler-AsyncRedeliveryTask", poolSize);
         }
     }
 

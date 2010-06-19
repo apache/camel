@@ -248,12 +248,10 @@ public final class DefaultExchange implements Exchange {
         return ObjectHelper.getException(type, exception);
     }
 
-    public void setException(Exception exception) {
-        this.exception = exception;
-    }
-
     public void setException(Throwable t) {
-        if (t instanceof Exception) {
+        if (t == null) {
+            this.exception = null;
+        } else if (t instanceof Exception) {
             this.exception = (Exception) t;
         } else {
             // wrap throwable into an exception

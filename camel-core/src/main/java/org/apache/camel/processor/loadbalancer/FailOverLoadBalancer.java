@@ -24,6 +24,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.processor.Traceable;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -33,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  * as the failover load balancer is a specialized pipeline. So the trick is to keep doing the same as the
  * pipeline to ensure it works the same and the async routing engine is flawless.
  */
-public class FailOverLoadBalancer extends LoadBalancerSupport {
+public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceable {
 
     private final List<Class<?>> exceptions;
     private boolean roundRobin;
@@ -163,7 +164,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
                 if (log.isTraceEnabled()) {
                     log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
                 }
-                // the remainder of the pipeline will be completed async
+                // the remainder of the failover will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
@@ -174,9 +175,6 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         }
 
         if (log.isTraceEnabled()) {
-            // logging nextExchange as it contains the exchange that might have altered the payload and since
-            // we are logging the completion if will be confusing if we log the original instead
-            // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
             log.trace("Failover complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
         }
 
@@ -206,7 +204,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
             throw new IllegalStateException("No processors could be chosen to process " + exchange);
         }
         if (log.isDebugEnabled()) {
-            log.debug("Processing failover at attempt " + attempts + " for exchange: " + exchange);
+            log.debug("Processing failover at attempt " + attempts + " for " + exchange);
         }
 
         AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);
@@ -275,7 +273,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
                     if (log.isTraceEnabled()) {
                         log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
                     }
-                    // the remainder of the pipeline will be completed async
+                    // the remainder of the failover will be completed async
                     // so we break out now, then the callback will be invoked which then continue routing from where we left here
                     return;
                 }
@@ -287,7 +285,10 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
     }
 
     public String toString() {
-        return "FailoverLoadBalancer";
+        return "FailoverLoadBalancer[" + getProcessors() + "]";
     }
 
+    public String getTraceLabel() {
+        return "failover";
+    }
 }

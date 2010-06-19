@@ -296,13 +296,9 @@ public interface Exchange {
 
     /**
      * Sets the exception associated with this exchange
-     *
-     * @param e  the caused exception
-     */
-    void setException(Exception e);
-
-    /**
-     * Sets the exception associated with this exchange
+     * <p/>
+     * Camel will wrap {@link Throwable} into {@link Exception} type to
+     * accommodate for the {@link #getException()} method returning a plain {@link Exception} type.
      *
      * @param t  the caused exception
      */
