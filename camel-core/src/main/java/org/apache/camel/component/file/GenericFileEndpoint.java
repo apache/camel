@@ -212,7 +212,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     /**
      * Sets the move failure expression based on
-     * {@link org.apache.camel.language.simple.FileLanguage}
+     * {@link org.apache.camel.language.simple.SimpleLanguage}
      */
     public void setMoveFailed(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
@@ -229,7 +229,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     /**
      * Sets the move expression based on
-     * {@link org.apache.camel.language.simple.FileLanguage}
+     * {@link org.apache.camel.language.simple.SimpleLanguage}
      */
     public void setMove(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
@@ -246,7 +246,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     /**
      * Sets the pre move expression based on
-     * {@link org.apache.camel.language.simple.FileLanguage}
+     * {@link org.apache.camel.language.simple.SimpleLanguage}
      */
     public void setPreMove(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
@@ -263,7 +263,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     /**
      * Sets the file expression based on
-     * {@link org.apache.camel.language.simple.FileLanguage}
+     * {@link org.apache.camel.language.simple.SimpleLanguage}
      */
     public void setFileName(String fileLanguageExpression) {
         this.fileName = createFileLanguageExpression(fileLanguageExpression);

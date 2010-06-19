@@ -264,7 +264,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
     }
 
-    @Deprecated
     public Component removeComponent(String componentName) {
         synchronized (components) {
             Component answer = components.remove(componentName);

@@ -71,12 +71,6 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
         return properties;
     }
 
-    public List<Service> getServicesForRoute() throws Exception {
-        List<Service> servicesForRoute = new ArrayList<Service>(getServices());
-        addServices(servicesForRoute);
-        return servicesForRoute;
-    }
-
     public void onStartingServices(List<Service> services) throws Exception {
         addServices(services);
     }

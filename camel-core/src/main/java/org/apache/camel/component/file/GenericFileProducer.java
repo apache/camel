@@ -232,7 +232,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // whatever configured on the endpoint
             if (name.indexOf("${") > -1) {
                 if (log.isDebugEnabled()) {
-                    log.debug(Exchange.FILE_NAME + " contains a FileLanguage expression: " + name);
+                    log.debug(Exchange.FILE_NAME + " contains a Simple expression: " + name);
                 }
                 Language language = getEndpoint().getCamelContext().resolveLanguage("file");
                 expression = language.createExpression(name);

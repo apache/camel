@@ -50,11 +50,6 @@ public class StaxConverter {
         return getOutputFactory().createXMLEventWriter(out, IOConverter.getCharsetName(exchange));
     }
     
-    @Deprecated
-    public XMLEventWriter createXMLEventWriter(OutputStream out) throws XMLStreamException {
-        return getOutputFactory().createXMLEventWriter(out);
-    }
-
     @Converter
     public XMLEventWriter createXMLEventWriter(Writer writer) throws XMLStreamException {
         return getOutputFactory().createXMLEventWriter(writer);
@@ -65,11 +60,6 @@ public class StaxConverter {
         return getOutputFactory().createXMLEventWriter(result);
     }
     
-    @Deprecated
-    public XMLStreamWriter createXMLStreamWriter(OutputStream outputStream) throws XMLStreamException {
-        return getOutputFactory().createXMLStreamWriter(outputStream);
-    }
-
     @Converter
     public XMLStreamWriter createXMLStreamWriter(OutputStream outputStream, Exchange exchange) throws XMLStreamException {
         return getOutputFactory().createXMLStreamWriter(outputStream, IOConverter.getCharsetName(exchange));

@@ -31,15 +31,13 @@ import org.apache.camel.spi.UnitOfWork;
  */
 public interface Exchange {
 
-    String AUTHENTICATION             = "CamelAuthentication";
+    String AUTHENTICATION                   = "CamelAuthentication";
     String AUTHENTICATION_FAILURE_POLICY_ID = "CamelAuthenticationFailurePolicyId";
-    String ACCEPT_CONTENT_TYPE        = "CamelAcceptContentType";
-    @Deprecated
-    String AGGREGATED_INDEX           = "CamelAggregatedIndex";
-    String AGGREGATED_SIZE            = "CamelAggregatedSize";
-    String AGGREGATED_COMPLETED_BY    = "CamelAggregatedCompletedBy";
-    String AGGREGATED_CORRELATION_KEY = "CamelAggregatedCorrelationKey";
-    String ASYNC_WAIT                 = "CamelAsyncWait";
+    String ACCEPT_CONTENT_TYPE              = "CamelAcceptContentType";
+    String AGGREGATED_SIZE                  = "CamelAggregatedSize";
+    String AGGREGATED_COMPLETED_BY          = "CamelAggregatedCompletedBy";
+    String AGGREGATED_CORRELATION_KEY       = "CamelAggregatedCorrelationKey";
+    String ASYNC_WAIT                       = "CamelAsyncWait";
 
     String BATCH_INDEX    = "CamelBatchIndex";
     String BATCH_SIZE     = "CamelBatchSize";

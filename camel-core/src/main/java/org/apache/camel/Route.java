@@ -64,19 +64,6 @@ public interface Route {
     RouteContext getRouteContext();
 
     /**
-     * This property map is used to associate information about
-     * the route. Gets all the services for this routes
-     * </p>
-     * This implementation is used for initialization
-     *
-     * @return the services
-     * @throws Exception is thrown in case of error
-     * @deprecated will be removed in Camel 2.2
-     */
-    @Deprecated
-    List<Service> getServicesForRoute() throws Exception;
-
-    /**
      * A strategy callback allowing special initialization when services is starting.
      *
      * @param services the service

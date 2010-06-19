@@ -23,6 +23,7 @@ import org.apache.camel.impl.EventDrivenPollingConsumer;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
@@ -111,7 +112,7 @@ public class PollEnricher extends ServiceSupport implements Processor {
      * @param exchange input data.
      */
     public void process(Exchange exchange) throws Exception {
-        preChceckPoll(exchange);
+        preCheckPoll(exchange);
 
         Exchange resourceExchange;
         if (timeout < 0) {
@@ -167,7 +168,7 @@ public class PollEnricher extends ServiceSupport implements Processor {
      *
      * @param exchange the current exchange
      */
-    protected void preChceckPoll(Exchange exchange) throws Exception {
+    protected void preCheckPoll(Exchange exchange) throws Exception {
         // cannot poll a file endpoint if already consuming from a file endpoint (CAMEL-1895)
         if (consumer instanceof EventDrivenPollingConsumer) {
             EventDrivenPollingConsumer edpc = (EventDrivenPollingConsumer) consumer;
@@ -198,11 +199,11 @@ public class PollEnricher extends ServiceSupport implements Processor {
     }
 
     protected void doStart() throws Exception {
-        consumer.start();
+        ServiceHelper.startService(consumer);
     }
 
     protected void doStop() throws Exception {
-        consumer.stop();
+        ServiceHelper.stopService(consumer);
     }
 
     private static class CopyAggregationStrategy implements AggregationStrategy {

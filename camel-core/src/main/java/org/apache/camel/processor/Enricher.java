@@ -24,6 +24,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ServiceHelper;
 
 import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
 
@@ -146,11 +147,11 @@ public class Enricher extends ServiceSupport implements Processor {
     }
 
     protected void doStart() throws Exception {
-        producer.start();
+        ServiceHelper.startService(producer);
     }
 
     protected void doStop() throws Exception {
-        producer.stop();
+        ServiceHelper.stopService(producer);
     }
 
     private static class CopyAggregationStrategy implements AggregationStrategy {

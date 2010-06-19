@@ -59,13 +59,17 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
         this.camelContext = camelContext;
     }
 
-    // This method will be replaced by the construction method with the expression
+    /**
+     * Will be removed in Camel 2.5
+     */
     @Deprecated
     public RoutingSlip(CamelContext camelContext, String header) {
         this(camelContext, header, RoutingSlipDefinition.DEFAULT_DELIMITER);
     }
 
- // This method will be replaced by the construction method with the expression
+    /**
+     * Will be removed in Camel 2.5
+     */
     @Deprecated
     public RoutingSlip(CamelContext camelContext, String header, String uriDelimiter) {
         notNull(camelContext, "camelContext");
