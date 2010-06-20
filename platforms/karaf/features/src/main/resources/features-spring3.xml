@@ -118,14 +118,6 @@
     <bundle>mvn:commons-codec/commons-codec/${commons-codec}</bundle>
     <bundle>mvn:org.apache.camel/camel-crypto/${pom.version}</bundle>
   </feature>
-  <feature name='camel-dozer' version='${pom.version}'>
-    <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
-    <bundle>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dozer/${dozer-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-dozer/${pom.version}</bundle>
-  </feature>
   <feature name='camel-http' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-codec/${commons-codec-bundle-version}</bundle>
@@ -233,6 +225,11 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-csv/${commons-csv-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-csv/${pom.version}</bundle>
+  </feature>
+  <feature name='camel-dozer' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:net.sf.dozer/dozer-osgi/${dozer-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-dozer/${pom.version}</bundle>
   </feature>
   <feature name='camel-flatpack' version='${pom.version}'>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>

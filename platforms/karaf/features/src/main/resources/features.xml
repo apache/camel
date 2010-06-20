@@ -120,10 +120,7 @@
   </feature>
   <feature name='camel-dozer' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
-    <bundle>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dozer/${dozer-bundle-version}</bundle>
+    <bundle>mvn:net.sf.dozer/dozer-osgi/${dozer-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-dozer/${pom.version}</bundle>
   </feature>
   <feature name='camel-http' version='${pom.version}'>
@@ -211,6 +208,12 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-bam/${pom.version}</bundle>
   </feature>
+  <feature name='camel-bean-validator' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr303-api-1.0.0/${servicemix-specs-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hibernate-validator/${hibernate-validator-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-bean-validator/${pom.version}</bundle>
+  </feature>
   <feature name='camel-bindy' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-bindy/${pom.version}</bundle>
@@ -267,6 +270,11 @@
     <bundle>mvn:org.codehaus.groovy/groovy-all/${groovy-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-groovy/${pom.version}</bundle>
   </feature>
+  <feature name='camel-hawtdb' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>  
+    <bundle>mvn:${hawtdb-maven-repo-url}!org.fusesource.hawtdb/hawtdb/${hawtdb-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-hawtdb/${pom.version}</bundle>
+  </feature>	  
   <feature name='camel-hl7' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
@@ -280,11 +288,6 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/${mina-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hl7/${pom.version}</bundle>
   </feature>
-  <feature name='camel-hawtdb' version='${pom.version}'>
-    <feature version='${pom.version}'>camel-core</feature>  
-    <bundle>mvn:${hawtdb-maven-repo-url}!org.fusesource.hawtdb/hawtdb/${hawtdb-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-hawtdb/${pom.version}</bundle>
-  </feature>	  
   <feature name='camel-ibatis' version='${pom.version}'>
     <feature version='${pom.version}'>camel-spring</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool/${commons-pool-bundle-version}</bundle>
@@ -300,21 +303,25 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-irc/${pom.version}</bundle>
   </feature>
+  <feature name='camel-jaxb' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-jaxb/${pom.version}</bundle>
+  </feature>
   <feature name='camel-jackson' version='${pom.version}'>
     <bundle>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
     <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jackson/${pom.version}</bundle>
   </feature>    
-  <feature name='camel-jaxb' version='${pom.version}'>
-    <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.camel/camel-jaxb/${pom.version}</bundle>
-  </feature>
   <feature name='camel-jcr' version='${pom.version}'>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jcr-api/${jcr-bundle-version}</bundle>
     <bundle>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/${jackrabbit-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jcr/${pom.version}</bundle>
+  </feature>
+  <feature name='camel-jdbc' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-jdbc/${pom.version}</bundle>
   </feature>
   <feature name='camel-jing' version='${pom.version}'>
     <feature version='${pom.version}'>camel-spring</feature>
@@ -322,10 +329,6 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.isorelax/${isorelax-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jing/${jing-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jing/${pom.version}</bundle>
-  </feature>
-  <feature name='camel-jdbc' version='${pom.version}'>
-    <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.camel/camel-jdbc/${pom.version}</bundle>
   </feature>
   <feature name='camel-josql' version='${pom.version}'>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.josql/${josql-bundle-version}</bundle>
@@ -350,6 +353,13 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jpa/${pom.version}</bundle>
   </feature>
+  <feature name='camel-juel' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <feature version='${pom.version}'>http</feature>
+    <bundle>mvn:org.ops4j.pax.web/pax-web-jsp/${pax.web.version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.juel/${juel-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-juel/${pom.version}</bundle>
+  </feature>
   <feature name='camel-jxpath' version='${pom.version}'>
     <!-- All those bundles should be optional I think, but the commons-jxpath osgi metadata is not really good -->
     <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
@@ -360,13 +370,6 @@
     <bundle>mvn:commons-jxpath/commons-jxpath/${commons-jxpath-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jxpath/${pom.version}</bundle>
-  </feature>
-  <feature name='camel-juel' version='${pom.version}'>
-    <feature version='${pom.version}'>camel-core</feature>
-    <feature version='${pom.version}'>http</feature>
-    <bundle>mvn:org.ops4j.pax.web/pax-web-jsp/${pax.web.version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.juel/${juel-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-juel/${pom.version}</bundle>
   </feature>
   <feature name='camel-ldap' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
@@ -559,11 +562,5 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/${dom4j-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xstream/${pom.version}</bundle>
-  </feature>
-  <feature name='camel-bean-validator' version='${pom.version}'>
-    <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr303-api-1.0.0/${servicemix-specs-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hibernate-validator/${hibernate-validator-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-bean-validator/${pom.version}</bundle>
   </feature>
 </features>
