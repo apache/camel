@@ -35,7 +35,6 @@ public class ManagementExampleTest extends CamelSpringTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testManagementExample() throws Exception {
         // Give it a bit of time to run
         Thread.sleep(2000);

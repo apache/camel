@@ -53,7 +53,8 @@ public class HttpAsyncTest extends CamelTestSupport {
         // (waiting if needed) and then return a string body response.
         // This allows us to do this in a single code line instead of using the
         // JDK Future API to get hold of it, but you can also use that if you want
-        String response = template.extractFutureBody(future, String.class);
+        // Adding the (String) To make the CS happy
+        String response = (String) template.extractFutureBody(future, String.class);
         assertEquals("Bye World", response);
 
         assertMockEndpointsSatisfied();

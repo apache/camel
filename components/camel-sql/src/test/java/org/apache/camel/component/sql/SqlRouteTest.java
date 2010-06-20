@@ -156,13 +156,13 @@ public class SqlRouteTest extends CamelTestSupport {
     public void testHashesInQuery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        template.sendBody("direct:no-param-insert", "GPL");
+        template.sendBody("direct:no-param-insert", "XGPL");
         mock.assertIsSatisfied();
         Number received = assertIsInstanceOf(Number.class, mock.getReceivedExchanges().get(0).getIn().getHeader(SqlConstants.SQL_UPDATE_COUNT));
         assertEquals(1, received.intValue());
         Map projectNameInserted = jdbcTemplate.queryForMap("select project, license from projects where id = 5");
         assertEquals("#", projectNameInserted.get("PROJECT"));
-        assertEquals("GPL", projectNameInserted.get("LICENSE"));
+        assertEquals("XGPL", projectNameInserted.get("LICENSE"));
     }
     
     @Test

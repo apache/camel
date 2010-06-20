@@ -18,7 +18,6 @@ package org.apache.camel.dataformat.xmlsecurity;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringWriter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -27,11 +26,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.xml.security.encryption.XMLCipher;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.junit.Test;
+
 
 /**
  * Unit test of the encryptXML data format.
@@ -233,10 +232,8 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
             Document d = createDocumentfromInputStream(new ByteArrayInputStream(body));
 
             // write to a string
-            StringWriter sw = new StringWriter();
-            XMLSerializer ser = new XMLSerializer(sw, new OutputFormat(d));
-            ser.serialize(d.getDocumentElement());
-            String xmlStr = sw.toString();
+            XmlConverter converter = new XmlConverter();
+            String xmlStr = converter.toString(d, exchange);
             System.out.println("\n\nIn EncryptedXMLMessageProcessor:" + xmlStr);
 
             NodeList nodeList = d.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
@@ -256,10 +253,9 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
             Document d = createDocumentfromInputStream(new ByteArrayInputStream(body));
 
             // write to a string
-            StringWriter sw = new StringWriter();
-            XMLSerializer ser = new XMLSerializer(sw, new OutputFormat(d));
-            ser.serialize(d.getDocumentElement());
-            String xmlStr = sw.toString();
+            XmlConverter converter = new XmlConverter();
+            String xmlStr = converter.toString(d, exchange);
+            
             System.out.println("\n\nIn DecryptedXMLMessageProcessor:" + xmlStr);
 
             NodeList nodeList = d.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
