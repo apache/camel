@@ -57,7 +57,7 @@ public class BindyFixedLengthDataFormat implements DataFormat {
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
 
-    	BindyFixedLengthFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyFixedLengthFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
         ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
@@ -94,7 +94,7 @@ public class BindyFixedLengthDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-    	BindyFixedLengthFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyFixedLengthFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
         ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
@@ -113,7 +113,7 @@ public class BindyFixedLengthDataFormat implements DataFormat {
         try {
 
             // TODO Test if we have a Header
-        	// TODO Test if we have a Footer (containing by example checksum)
+            // TODO Test if we have a Footer (containing by example checksum)
 
             while (scanner.hasNextLine()) {
 
@@ -130,8 +130,8 @@ public class BindyFixedLengthDataFormat implements DataFormat {
                 
                 // Check if the record length corresponds to the parameter
                 // provided in the @FixedLengthRecord
-                if ((line.length() < factory.recordLength()) || (line.length() > factory.recordLength())){
-                	throw new java.lang.IllegalArgumentException("Size of the record : " + line.length() + " is not equal to the value provided in the model : " + factory.recordLength() + " !");
+                if ((line.length() < factory.recordLength()) || (line.length() > factory.recordLength())) {
+                    throw new java.lang.IllegalArgumentException("Size of the record : " + line.length() + " is not equal to the value provided in the model : " + factory.recordLength() + " !");
                 }
 
                 // Create POJO where Fixed data will be stored

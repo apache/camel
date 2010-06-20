@@ -146,12 +146,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     // Will not be used in the case of a Fixed Length record
     // as we provide the content of the record and 
     // we don't split it as this is the case for a CSV record
-	@Override
-	public void bind(List<String> data, Map<String, Object> model, int line)
-			throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void bind(List<String> data, Map<String, Object> model, int line) throws Exception {
+        // TODO Auto-generated method stub
+
+    }
 
     public void bind(String record, Map<String, Object> model, int line) throws Exception {
 
@@ -171,30 +170,33 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         Collection c = dataFields.values();
         Iterator itr = c.iterator();
 
-        while(itr.hasNext()) {
-        	dataField = (DataField) itr.next();
+        while (itr.hasNext()) {
+            dataField = (DataField)itr.next();
             offset = dataField.pos();
             length = dataField.length();
-            
-            ObjectHelper.notNull(offset, "Position/offset is not defined for  the  field " + dataField.toString());
+
+            ObjectHelper.notNull(offset, "Position/offset is not defined for  the  field "
+                                         + dataField.toString());
             ObjectHelper.notNull(offset, "Length is not defined for the  field " + dataField.toString());
-            
-            if (offset-1 <= -1 ) {
-            	throw new IllegalArgumentException("Offset / Position of the field " + dataField.toString() + " cannot be negative !");
+
+            if (offset - 1 <= -1) {
+                throw new IllegalArgumentException("Offset / Position of the field " + dataField.toString()
+                                                   + " cannot be negative !");
             }
-            
-        	token = record.substring(offset-1, offset+length-1);
-        	
-        	// Check mandatory field
+
+            token = record.substring(offset - 1, offset + length - 1);
+
+            // Check mandatory field
             if (dataField.required()) {
-            	
+
                 // Increment counter of mandatory fields
                 ++counterMandatoryFields;
 
                 // Check if content of the field is empty
                 // This is not possible for mandatory fields
                 if (token.equals("")) {
-                    throw new IllegalArgumentException("The mandatory field defined at the position " + pos + " is empty for the line : " + line);
+                    throw new IllegalArgumentException("The mandatory field defined at the position " + pos
+                                                       + " is empty for the line : " + line);
                 }
             }
             
@@ -235,7 +237,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             field.set(modelField, value);
 
             ++pos;
-        	
+        
         }
 
         if (LOG.isDebugEnabled()) {
@@ -250,7 +252,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             throw new IllegalArgumentException("Some mandatory fields are missing, line : " + line);
         }  
         
-   }
+    }
 
     public String unbind(Map<String, Object> model) throws Exception {
 
@@ -270,7 +272,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 if (obj != null) {
 
                     // Generate Fixed Length table
-                	// containing the positions of the fields
+                    // containing the positions of the fields
                     generateFixedLengthPositionMap(clazz, obj);
 
                 }
@@ -338,26 +340,29 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     
                     if (fieldLength > 0) {
                        
-                    	StringBuilder temp = new StringBuilder();
-                    	
-                       // Check if we must padd
-                       if (result.length() < fieldLength ) {
-	                    	if (align.contains("R")) {
-	                    		temp.append(generatePaddingChars(paddingChar, fieldLength, result.length()));
-	                    		temp.append(result);
-	                    	} else if (align.contains("L")) {
-	                    		temp.append(result);
-	                    		temp.append(generatePaddingChars(paddingChar, fieldLength, result.length()));
-	                    	} else {
-	                    		throw new IllegalArgumentException("Alignement for the " + field.getName() + " must be equal to R for RIGHT or L for LEFT !");
-	                    	}
-	                    	
-	                    	result = temp.toString();	                	
-	                    }                         
-                        
-                       
+                        StringBuilder temp = new StringBuilder();
+
+                        // Check if we must padd
+                        if (result.length() < fieldLength) {
+                            if (align.contains("R")) {
+                                temp.append(generatePaddingChars(paddingChar, fieldLength, result.length()));
+                                temp.append(result);
+                            } else if (align.contains("L")) {
+                                temp.append(result);
+                                temp.append(generatePaddingChars(paddingChar, fieldLength, result.length()));
+                            } else {
+                                throw new IllegalArgumentException("Alignement for the "
+                                                                       + field.getName()
+                                                                       + " must be equal to R for RIGHT or L for LEFT !");
+                            }
+
+                            result = temp.toString();
+                        }
+
                     } else {
-                    	throw new IllegalArgumentException("Lenght of the field : " + field.getName() + " is a mandatory field and cannot be equal to zero or to be negative !");
+                        throw new IllegalArgumentException("Lenght of the field : "
+                                                               + field.getName()
+                                                               + " is a mandatory field and cannot be equal to zero or to be negative !");
                     }
 
                     if (LOG.isDebugEnabled()) {
@@ -385,19 +390,19 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
             }
 
-         }
+        }
 
     }
     
     private String generatePaddingChars(char pad, int lengthField, int lengthString) {
-    	
-    	StringBuilder buffer = new StringBuilder();
-    	int size = lengthField - lengthString;
 
-    	for(int i=0; i<size; i++) {
-    		buffer.append(Character.toString(pad));
-    	}
-    	return buffer.toString();
+        StringBuilder buffer = new StringBuilder();
+        int size = lengthField - lengthString;
+
+        for (int i = 0; i < size; i++) {
+            buffer.append(Character.toString(pad));
+        }
+        return buffer.toString();
     }
 
     /**
@@ -405,48 +410,47 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      */
     private void initFixedLengthRecordParameters() {
 
-            for (Class<?> cl : models) {
+        for (Class<?> cl : models) {
 
-                // Get annotation @FixedLengthRecord from the class
-            	FixedLengthRecord record = cl.getAnnotation(FixedLengthRecord.class);
+            // Get annotation @FixedLengthRecord from the class
+            FixedLengthRecord record = cl.getAnnotation(FixedLengthRecord.class);
 
-                if (record != null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Fixed length record : " + record.toString());
-                    }
-
-                    // Get carriage return parameter
-                    crlf = record.crlf();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Carriage return defined for the CSV : " + crlf);
-                    }
-
-                    // Get hasHeader parameter
-                    hasHeader = record.hasHeader();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Has Header :  " + hasHeader);
-                    }
-                    
-                    // Get hasFooter parameter
-                    hasFooter = record.hasFooter();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Has Footer :  " + hasFooter);
-                    }
-                    
-                    // Get padding character
-                    paddingChar = record.paddingChar();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Padding char :  " + paddingChar);
-                    }                    
-                    
-                    // Get length of the record
-                    recordLength = record.length();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Length of the record :  " + recordLength);
-                    } 
-                    
-
+            if (record != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Fixed length record : " + record.toString());
                 }
+
+                // Get carriage return parameter
+                crlf = record.crlf();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Carriage return defined for the CSV : " + crlf);
+                }
+
+                // Get hasHeader parameter
+                hasHeader = record.hasHeader();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Has Header :  " + hasHeader);
+                }
+
+                // Get hasFooter parameter
+                hasFooter = record.hasFooter();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Has Footer :  " + hasFooter);
+                }
+
+                // Get padding character
+                paddingChar = record.paddingChar();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Padding char :  " + paddingChar);
+                }
+
+                // Get length of the record
+                recordLength = record.length();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Length of the record :  " + recordLength);
+                }
+
+            }
         }
     }
 
@@ -474,11 +478,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      * @return char
      */
     public char paddingchar() {
-    	return paddingChar;
+        return paddingChar;
     }
-    
+
     public int recordLength() {
-    	return recordLength;
+        return recordLength;
     }
 
 }

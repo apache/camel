@@ -60,7 +60,7 @@ public class BindyDoubleQuotesCsvUnmarshallTest extends AbstractJUnit4SpringCont
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
 
-    	expected = "\"10\",\"A9\",\"Pauline\",\"M\",\"ISIN\",\"XD12345678\",\"BUY\",\"Share\",\"2500.45\",\"USD,08-01-2009\"";
+        expected = "\"10\",\"A9\",\"Pauline\",\"M\",\"ISIN\",\"XD12345678\",\"BUY\",\"Share\",\"2500.45\",\"USD,08-01-2009\"";
 
         template.sendBody(expected);
 
@@ -72,9 +72,7 @@ public class BindyDoubleQuotesCsvUnmarshallTest extends AbstractJUnit4SpringCont
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.csv");
 
         public void configure() {
-            from(URI_DIRECT_START)
-            .unmarshal(camelDataFormat)
-            .to(URI_MOCK_RESULT);
+            from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);
         }
 
     }

@@ -159,8 +159,8 @@ public class BindyCsvDataFormat implements DataFormat {
                 // quoted or double quoted like that 
                 // e.g : "1 ", "street 1, NY", "USA"
                 if (separator.length() > 1) {
-                	String tempLine = line.substring(1, line.length()-1);
-                	line = tempLine;
+                    String tempLine = line.substring(1, line.length() - 1);
+                    line = tempLine;
                 }
                 // Split the CSV record according to the separator defined in
                 // annotated class @CSVRecord
