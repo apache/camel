@@ -16,16 +16,9 @@
  */
 package org.apache.camel.processor.resequencer;
 
-import java.util.List;
-
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.management.JmxSystemPropertyKeys;
-import org.apache.camel.processor.interceptor.StreamCaching;
 
 /**
  * @version $Revision$
@@ -43,7 +36,7 @@ public class ResequencerFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").resequence(new MyFileNameExpression()).stream().to("mock:result");
+                from("direct:start").resequence(new MyFileNameExpression()).stream().timeout(500).to("mock:result");
                 // END SNIPPET: example
             }
         };
@@ -51,11 +44,15 @@ public class ResequencerFileNameTest extends ContextTestSupport {
 
     public void testStreamResequence() throws Exception {
         resultEndpoint.expectedBodiesReceived("20090612-D001", "20090612-D003", "20090612-D002", "20090615-D001");
+
         template.requestBody("direct:start", "20090612-D003");
         template.requestBody("direct:start", "20090612-D001");
+
         Thread.sleep(2000);
+
         template.requestBody("direct:start", "20090615-D001");
         template.requestBody("direct:start", "20090612-D002");
+
         resultEndpoint.assertIsSatisfied();
     }
 }

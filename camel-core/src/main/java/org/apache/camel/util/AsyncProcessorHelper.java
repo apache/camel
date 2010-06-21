@@ -25,11 +25,15 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Helper methods for {@link AsyncProcessor} objects.
  */
 public final class AsyncProcessorHelper {
+
+    private static final transient Log LOG = LogFactory.getLog(AsyncProcessorHelper.class);
 
     private AsyncProcessorHelper() {
         // utility class
@@ -45,6 +49,9 @@ public final class AsyncProcessorHelper {
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 if (!doneSync) {
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("Asynchronous callback received for exchangeId: " + exchange.getExchangeId());
+                    }
                     latch.countDown();
                 }
             }
@@ -55,6 +62,9 @@ public final class AsyncProcessorHelper {
             }
         });
         if (!sync) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Waiting for asynchronous callback before continuing for exchangeId: " + exchange.getExchangeId());
+            }
             latch.await();
         }
     }

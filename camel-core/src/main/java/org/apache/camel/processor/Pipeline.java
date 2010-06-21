@@ -129,7 +129,6 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
 
         callback.done(true);
         return true;
-
     }
 
     private boolean process(final Exchange original, final Exchange exchange, final AsyncCallback callback,
@@ -189,10 +188,12 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
                 }
 
                 ExchangeHelper.copyResults(original, nextExchange);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing complete for exchangeId: " + original.getExchangeId() + " >>> " + original);
+                }
                 callback.done(false);
             }
         });
-
 
         return sync;
     }

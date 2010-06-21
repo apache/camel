@@ -16,10 +16,9 @@
  */
 package org.apache.camel.processor.resequencer;
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+
 //START SNIPPET: example
 public class MyFileNameExpression implements Expression {
     

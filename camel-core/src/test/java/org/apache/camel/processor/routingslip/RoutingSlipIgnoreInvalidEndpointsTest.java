@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 public class RoutingSlipIgnoreInvalidEndpointsTest extends ContextTestSupport {
     
-    public void testEndpontResolvedFailedWithIgnoreInvalidEndpoints() throws Exception {
+    public void testEndpointResolvedFailedWithIgnoreInvalidEndpoints() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
         MockEndpoint end = getMockEndpoint("mock:end");
