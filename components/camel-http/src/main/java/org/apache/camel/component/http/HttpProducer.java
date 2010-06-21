@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -27,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.helper.GZIPHelper;
 import org.apache.camel.component.http.helper.HttpProducerHelper;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -36,6 +38,8 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
+import org.apache.commons.httpclient.methods.FileRequestEntity;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
@@ -278,14 +282,20 @@ public class HttpProducer extends DefaultProducer {
             return null;
         }
 
-        RequestEntity answer = in.getBody(RequestEntity.class);        
+        RequestEntity answer = in.getBody(RequestEntity.class);
         if (answer == null) {
             try {
-                String data = in.getBody(String.class);
+                Object data = in.getBody();
                 if (data != null) {
                     String contentType = ExchangeHelper.getContentType(exchange);
-                    String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-                    answer = new StringRequestEntity(data, contentType, charset);
+                    if (data instanceof File) {
+                        answer = new FileRequestEntity((File)data, contentType);                        
+                    } else if (data instanceof String) {
+                        String charset = IOConverter.getCharsetName(exchange);
+                        answer = new StringRequestEntity((String)data, contentType, charset);
+                    } else {
+                        answer = new InputStreamRequestEntity(in.getBody(InputStream.class), contentType);
+                    }
                 }
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeCamelException(e);

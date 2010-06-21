@@ -31,7 +31,7 @@ import org.junit.Test;
 public class JettyFileConsumerTest extends CamelTestSupport {
     
     private void testingSendingFile(File src) throws Exception {
-        deleteDirectory("target/file");
+        deleteDirectory("target/test");
         FileInputStream fis = new FileInputStream(src);
         String response = template.requestBody("http://localhost:9080/myapp/myservice", fis, String.class);
         assertEquals("Response should be OK ", "OK", response);
@@ -54,6 +54,17 @@ public class JettyFileConsumerTest extends CamelTestSupport {
         testingSendingFile(src);
     }
     
+    @Test
+    public void testSendBinaryFile() throws Exception {
+        deleteDirectory("target/test");
+        File jpg = new File("src/test/resources/java.jpg");
+        String response = template.requestBody("http://localhost:9080/myapp/myservice2", jpg, String.class);
+        assertEquals("Response should be OK ", "OK", response);
+        File des = new File("target/test/java.jpg");
+        assertTrue("The uploaded file should exists", des.exists());
+        assertEquals("This two file should have same size", jpg.length(), des.length());
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -61,7 +72,10 @@ public class JettyFileConsumerTest extends CamelTestSupport {
                 from("jetty:http://localhost:9080/myapp/myservice")
                     .to("file://target/test?fileName=temp.xml")
                     .setBody(constant("OK"));
-                    
+                
+                from("jetty:http://localhost:9080/myapp/myservice2")
+                    .to("file://target/test?fileName=java.jpg")
+                    .setBody(constant("OK"));
             }
         };
     }   
