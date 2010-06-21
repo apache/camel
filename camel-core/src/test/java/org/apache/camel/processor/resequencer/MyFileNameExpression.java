@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-
+//START SNIPPET: example
 public class MyFileNameExpression implements Expression {
     
     public String getFileName(Exchange exchange) {
@@ -28,6 +28,7 @@ public class MyFileNameExpression implements Expression {
     }
     
     public Object evaluate(Exchange exchange) {
+        // parser the file name with YYYYMMDD-DNNN pattern
         String fileName = getFileName(exchange);
         String[] files = fileName.split("-D");
         Long answer = Long.parseLong(files[0]) * 1000 + Long.parseLong(files[1]);
@@ -41,3 +42,4 @@ public class MyFileNameExpression implements Expression {
     }
 
 }
+//END SNIPPET: example
