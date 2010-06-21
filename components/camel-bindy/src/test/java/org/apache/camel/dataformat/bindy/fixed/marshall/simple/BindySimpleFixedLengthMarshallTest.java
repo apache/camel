@@ -64,7 +64,7 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
     @DirtiesContext
     public void testMarshallMessage() throws Exception {
 
-        expected = "10A9  PaulineM    ISINXD12345678BUYShare2500.45USD01-08-2009\r\n";
+        expected = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009\r\n";
         result.expectedBodiesReceived(expected);
 
         template.sendBody(generateModel());
@@ -118,7 +118,7 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
 
     }
 
-    @FixedLengthRecord(length = 60, paddingChar = ' ')
+    @FixedLengthRecord(length = 65, paddingChar = ' ')
     public static class Order {
 
         @DataField(pos = 1, length = 2)
@@ -145,14 +145,15 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
         @DataField(pos = 36, length = 5)
         private String instrumentType;
 
-        @DataField(pos = 41, precision = 2, length = 7)
+        @DataField(pos = 41, precision = 2, length = 12, paddingChar = '0')
         private BigDecimal amount;
 
-        @DataField(pos = 48, length = 3)
+        @DataField(pos = 53, length = 3)
         private String currency;
 
-        @DataField(pos = 51, length = 10, pattern = "dd-MM-yyyy")
+        @DataField(pos = 56, length = 10, pattern = "dd-MM-yyyy")
         private Date orderDate;
+
 
         public int getOrderNr() {
             return orderNr;

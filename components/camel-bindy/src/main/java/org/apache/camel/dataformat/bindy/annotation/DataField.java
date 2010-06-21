@@ -78,6 +78,14 @@ public @interface DataField {
      * @return String
      */
     String align() default "R";
+    
+    /**
+     * The char to pad with.
+     * @return the char to pad with if the record is set to a fixed length;
+     * 
+     * @return char
+     */
+    char paddingChar() default ' ';
 
     /**
      * precision of the BigDecimal number to be created

@@ -334,9 +334,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                     result = formatString(format, value);
                     
-                    // Get length of the field, alignment (LEFT or RIGHT)
+                    // Get length of the field, alignment (LEFT or RIGHT), pad
                     int fieldLength = datafield.length();
                     String align = datafield.align();
+                    char paddCharField = datafield.paddingChar();
+                    char paddChar;
                     
                     if (fieldLength > 0) {
                        
@@ -344,12 +346,21 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                         // Check if we must padd
                         if (result.length() < fieldLength) {
+                        	
+                        	// No padding defined for the field
+                        	if ( paddCharField == 0 ) {
+                        		// We use the padding defined for the Record
+                        		paddChar = paddingChar;
+                        	} else {
+                        		paddChar = paddCharField;
+                        	}
+                        	
                             if (align.contains("R")) {
-                                temp.append(generatePaddingChars(paddingChar, fieldLength, result.length()));
+                                temp.append(generatePaddingChars(paddChar, fieldLength, result.length()));
                                 temp.append(result);
                             } else if (align.contains("L")) {
                                 temp.append(result);
-                                temp.append(generatePaddingChars(paddingChar, fieldLength, result.length()));
+                                temp.append(generatePaddingChars(paddChar, fieldLength, result.length()));
                             } else {
                                 throw new IllegalArgumentException("Alignement for the "
                                                                        + field.getName()
