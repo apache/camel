@@ -44,7 +44,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     protected boolean prePollCheck() throws Exception {
-        connectIfNecessary();
+        recoverableConnectIfNecessary();
         if (!loggedIn) {
             String message = "Could not connect/login to: " + remoteServer() + ". Will skip this poll.";
             log.warn(message);
@@ -82,6 +82,26 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
             log.warn(e.getMessage());
+        }
+    }
+
+    protected void recoverableConnectIfNecessary() throws Exception {
+        try {
+            connectIfNecessary();
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not connect to: " + getEndpoint() + ". Will try to recover.", e);
+            }
+            loggedIn = false;
+        }
+
+        // recover by re-creating operations which should most likely be able to recover
+        if (!loggedIn) {
+            if (log.isDebugEnabled()) {
+                log.debug("Trying to recover connection to: " + getEndpoint() + " with a fresh client.");
+            }
+            setOperations(getEndpoint().createRemoteFileOperations());
+            connectIfNecessary();
         }
     }
 

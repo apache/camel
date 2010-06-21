@@ -112,6 +112,14 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     protected abstract GenericFileProducer<T> buildProducer();
 
     /**
+     * Creates the operations to be used by the consumer or producer.
+     *
+     * @return a new created operations
+     * @throws Exception is thrown if error creating operations.
+     */
+    protected abstract RemoteFileOperations<T> createRemoteFileOperations() throws Exception;
+
+    /**
      * Returns human readable server information for logging purpose
      */
     public String remoteServerInformation() {

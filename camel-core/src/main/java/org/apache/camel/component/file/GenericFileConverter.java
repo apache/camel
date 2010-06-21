@@ -63,7 +63,7 @@ public final class GenericFileConverter {
     @Converter
     public static InputStream genericFileToInputStream(GenericFile<?> file, Exchange exchange) throws IOException {
         if (exchange != null) {
-            // ensure the body is loaded as we do not want a toString of java.io.File handle returned, but the file content
+            // ensure the body is loaded as we want the input stream of the body
             file.getBinding().loadContent(exchange, file);
             return exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, file.getBody());
         } else {

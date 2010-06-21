@@ -23,8 +23,7 @@ import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * Remote file producer. Handles connecting and disconnecting if we are not.
- * Generic type F is the remote system implementation of a file.
+ * Generic remote file producer for all the FTP variations.
  */
 public class RemoteFileProducer<T> extends GenericFileProducer<T> implements ServicePoolAware {
 
@@ -120,7 +119,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
             }
         }
 
-        connectIfNecessary();
+        recoverableConnectIfNecessary();
         if (!loggedIn) {
             // must be logged in to be able to upload the file
             String message = "Cannot connect/login to: " + getEndpoint().remoteServerInformation();
@@ -159,6 +158,26 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
             log.debug("Exception occurred during disconnecting from: " + getEndpoint() + " " + e.getMessage());
         }
         super.doStop();
+    }
+
+    protected void recoverableConnectIfNecessary() throws Exception {
+        try {
+            connectIfNecessary();
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not connect to: " + getEndpoint() + ". Will try to recover.", e);
+            }
+            loggedIn = false;
+        }
+
+        // recover by re-creating operations which should most likely be able to recover
+        if (!loggedIn) {
+            if (log.isDebugEnabled()) {
+                log.debug("Trying to recover connection to: " + getEndpoint() + " with a fresh client.");
+            }
+            setOperations(getEndpoint().createRemoteFileOperations());
+            connectIfNecessary();
+        }
     }
 
     protected void connectIfNecessary() throws GenericFileOperationFailedException {

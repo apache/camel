@@ -205,6 +205,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     protected abstract void pollDirectory(String fileName, List<GenericFile<T>> fileList);
 
     /**
+     * Sets the operations to be used.
+     * <p/>
+     * Can be used to set a fresh operations in case of recovery attempts
+     *
+     * @param operations the operations
+     */
+    public void setOperations(GenericFileOperations<T> operations) {
+        this.operations = operations;
+    }
+
+    /**
      * Processes the exchange
      *
      * @param exchange the exchange

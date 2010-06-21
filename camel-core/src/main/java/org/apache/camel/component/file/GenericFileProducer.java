@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
 public class GenericFileProducer<T> extends DefaultProducer {
     protected final transient Log log = LogFactory.getLog(getClass());
     protected final GenericFileEndpoint<T> endpoint;
-    protected final GenericFileOperations<T> operations;
+    protected GenericFileOperations<T> operations;
     
     protected GenericFileProducer(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
         super(endpoint);
@@ -56,6 +56,17 @@ public class GenericFileProducer<T> extends DefaultProducer {
         Exchange fileExchange = endpoint.createExchange(exchange);
         processExchange(fileExchange);
         ExchangeHelper.copyResults(exchange, fileExchange);
+    }
+
+    /**
+     * Sets the operations to be used.
+     * <p/>
+     * Can be used to set a fresh operations in case of recovery attempts
+     *
+     * @param operations the operations
+     */
+    public void setOperations(GenericFileOperations<T> operations) {
+        this.operations = operations;
     }
 
     /**
