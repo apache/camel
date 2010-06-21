@@ -141,9 +141,9 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
         // implement asynchronous routing logic in callback so we can have the callback being
         // triggered and then continue routing where we left
         boolean sync = asyncProcessor.process(exchange, new AsyncCallback() {
-            public void done(boolean sync) {
+            public void done(boolean doneSync) {
                 // we only have to handle async completion of the pipeline
-                if (sync) {
+                if (doneSync) {
                     return;
                 }
 
@@ -178,8 +178,8 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
                     }
 
                     nextExchange = createNextExchange(nextExchange);
-                    sync = process(original, nextExchange, callback, processors, processor);
-                    if (!sync) {
+                    doneSync = process(original, nextExchange, callback, processors, processor);
+                    if (!doneSync) {
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
                         }

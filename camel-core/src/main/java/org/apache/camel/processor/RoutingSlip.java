@@ -47,6 +47,10 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Implements a <a href="http://camel.apache.org/routing-slip.html">Routing Slip</a>
  * pattern where the list of actual endpoints to send a message exchange to are
  * dependent on the value of a message header.
+ * <p/>
+ * This implementation mirrors the logic from the {@link org.apache.camel.processor.Pipeline} in the async variation
+ * as the failover load balancer is a specialized pipeline. So the trick is to keep doing the same as the
+ * pipeline to ensure it works the same and the async routing engine is flawless.
  */
 public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Traceable {
     private static final transient Log LOG = LogFactory.getLog(RoutingSlip.class);
@@ -163,7 +167,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
                 }
-                // the remainder of the pipeline will be completed async
+                // the remainder of the routing slip will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
@@ -372,7 +376,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
     }
 
     private void updateRoutingSlipHeader(Exchange current) {
-        // only update the header value which used as the routingslip
+        // only update the header value which used as the routing slip
         if (header != null) {
             Message message = getResultMessage(current);
             String oldSlip = message.getHeader(header, String.class);
