@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http4;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -29,6 +30,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http4.helper.GZIPHelper;
 import org.apache.camel.component.http4.helper.HttpProducerHelper;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -43,6 +45,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HTTP;
 
@@ -296,18 +300,23 @@ public class HttpProducer extends DefaultProducer {
         HttpEntity answer = in.getBody(HttpEntity.class);
         if (answer == null) {
             try {
-                String data = in.getBody(String.class);
+                Object data = in.getBody();
                 if (data != null) {
                     String contentType = ExchangeHelper.getContentType(exchange);
-                    String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-                    if (charset == null) {
-                        charset = HTTP.DEFAULT_CONTENT_CHARSET;
-                    }
-
-                    answer = new StringEntity(data, charset);
-                    ((StringEntity) answer).setContentEncoding(charset);
-                    if (contentType != null) {
-                        ((StringEntity) answer).setContentType(contentType);
+                    if (data instanceof File) {
+                        answer = new FileEntity((File)data, contentType);
+                    } else if (data instanceof String) {
+                        String charset = IOConverter.getCharsetName(exchange);
+                        answer = new StringEntity((String)data, charset);
+                        ((StringEntity) answer).setContentEncoding(charset);
+                        if (contentType != null) {
+                            ((StringEntity) answer).setContentType(contentType);
+                        }
+                    } else {                        
+                        answer = new InputStreamEntity(in.getBody(InputStream.class), -1);
+                        if (contentType != null) {
+                            ((InputStreamEntity)answer).setContentType(contentType);
+                        }
                     }
                 }
             } catch (UnsupportedEncodingException e) {
