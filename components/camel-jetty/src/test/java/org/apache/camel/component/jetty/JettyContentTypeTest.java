@@ -43,7 +43,6 @@ public class JettyContentTypeTest extends CamelTestSupport {
         template.send(endpoint, exchange);
 
         String body = exchange.getOut().getBody(String.class);
-        // System.out.print("The out message header is " + exchange.getOut().getHeaders());
         assertEquals("<order>OK</order>", body);
         assertEquals("Get a wrong content-type ", MessageHelper.getContentType(exchange.getOut()), "text/xml");
     }
@@ -82,9 +81,10 @@ public class JettyContentTypeTest extends CamelTestSupport {
 
     public class MyBookService implements Processor {
         public void process(Exchange exchange) throws Exception {
-            if ("Claus".equals(exchange.getIn().getHeader("User", String.class))
-                && exchange.getIn().getBody(String.class).equals("<order>123</order>")
-                && "text/xml".equals(ExchangeHelper.getContentType(exchange))) {
+            String user = exchange.getIn().getHeader("User", String.class);
+            String contentType = ExchangeHelper.getContentType(exchange);
+            String body = exchange.getIn().getBody(String.class);
+            if ("Claus".equals(user) && contentType.startsWith("text/xml") && body.equals("<order>123</order>")) {
                 assertEquals("test", exchange.getIn().getHeader("SOAPAction", String.class));
                 exchange.getOut().setBody("<order>OK</order>");
                 exchange.getOut().setHeader("Content-Type", "text/xml");

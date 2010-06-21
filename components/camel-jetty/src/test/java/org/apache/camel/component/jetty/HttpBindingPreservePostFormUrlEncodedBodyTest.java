@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
-import org.apache.camel.component.jetty.HttpCharacterEncodingTest.MyBookService;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -47,7 +46,6 @@ public class HttpBindingPreservePostFormUrlEncodedBodyTest extends CamelTestSupp
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("jetty:http://localhost:9080/myapp/myservice").process(new Processor() {
-
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         
@@ -60,9 +58,7 @@ public class HttpBindingPreservePostFormUrlEncodedBodyTest extends CamelTestSupp
                         
                         // send a response
                         exchange.getOut().setBody("Request message is OK");
-                        
                     }
-                
                 });
             }
         };

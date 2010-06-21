@@ -44,7 +44,6 @@ public final class GZIPHelper {
     }
     
     public static InputStream compressGzip(String contentEncoding, InputStream in) throws IOException {
-
         if (isGzip(contentEncoding)) {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             GZIPOutputStream gzip = new GZIPOutputStream(os);
@@ -59,7 +58,6 @@ public final class GZIPHelper {
         } else {
             return in;
         }
-
     }
 
     public static InputStream compressGzip(String contentEncoding, byte[] data) throws IOException {

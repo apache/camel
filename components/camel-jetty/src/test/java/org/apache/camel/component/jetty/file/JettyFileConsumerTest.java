@@ -20,16 +20,21 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 
 public class JettyFileConsumerTest extends CamelTestSupport {
-    
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        deleteDirectory("target/binary");
+        deleteDirectory("target/test");
+        super.setUp();
+    }
+
     private void testingSendingFile(File src) throws Exception {
         deleteDirectory("target/test");
         FileInputStream fis = new FileInputStream(src);
@@ -39,13 +44,11 @@ public class JettyFileConsumerTest extends CamelTestSupport {
         assertTrue("The uploaded file should exists", des.exists());
         assertEquals("This two file should have same size", src.length(), des.length());
     }
-    
-    
+
     @Test
     public void testSending4K() throws Exception {
         File src = new File("src/main/java/org/apache/camel/component/jetty/CamelContinuationServlet.java");
         testingSendingFile(src);
-        
     }
     
     @Test
@@ -65,6 +68,21 @@ public class JettyFileConsumerTest extends CamelTestSupport {
         assertEquals("This two file should have same size", jpg.length(), des.length());
     }
     
+    @Test
+    public void testSendBinaryFileUsingCamelRoute() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        File jpg = new File("src/test/resources/java.jpg");
+        template.sendBodyAndHeader("file://target/binary", jpg, Exchange.FILE_NAME, "java.jpg");
+
+        assertMockEndpointsSatisfied();
+        Thread.sleep(1000);
+
+        File des = new File("target/test/java.jpg");
+        assertTrue("The uploaded file should exists", des.exists());
+        assertEquals("This two file should have same size", jpg.length(), des.length());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -74,8 +92,13 @@ public class JettyFileConsumerTest extends CamelTestSupport {
                     .setBody(constant("OK"));
                 
                 from("jetty:http://localhost:9080/myapp/myservice2")
+                    .to("log:foo?showAll=true")
                     .to("file://target/test?fileName=java.jpg")
                     .setBody(constant("OK"));
+
+                from("file://target/binary?noop=true")
+                    .to("http://localhost:9080/myapp/myservice2")
+                    .to("mock:result");
             }
         };
     }   

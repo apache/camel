@@ -327,13 +327,28 @@ public final class IOConverter {
     }
 
     public static String getCharsetName(Exchange exchange) {
+        return getCharsetName(exchange, true);
+    }
+
+    /**
+     * Gets the charset name if set as property {@link Exchange#CHARSET_NAME}.
+     *
+     * @param exchange  the exchange
+     * @param useDefault should we fallback and use JVM default charset if no property existed?
+     * @return the charset, or <tt>null</tt> if no found
+     */
+    public static String getCharsetName(Exchange exchange, boolean useDefault) {
         if (exchange != null) {
             String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
             if (charsetName != null) {
                 return charsetName;
             }
         }
-        return getDefaultCharsetName();
+        if (useDefault) {
+            return getDefaultCharsetName();
+        } else {
+            return null;
+        }
     }
     
     public static String getDefaultCharsetName() {

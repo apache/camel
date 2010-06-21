@@ -24,8 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.http.helper.GZIPHelper;
 import org.apache.camel.component.http.helper.HttpProducerHelper;
 import org.apache.camel.converter.IOConverter;
@@ -239,8 +241,10 @@ public class HttpProducer extends DefaultProducer {
      *
      * @param exchange  the exchange
      * @return the created method as either GET or POST
+     * @throws org.apache.camel.InvalidPayloadException is thrown if message body cannot
+     * be converted to a type supported by HttpClient
      */
-    protected HttpMethod createMethod(Exchange exchange) {
+    protected HttpMethod createMethod(Exchange exchange) throws InvalidPayloadException {
 
         String url = HttpProducerHelper.createURL(exchange, getEndpoint());
 
@@ -275,8 +279,10 @@ public class HttpProducer extends DefaultProducer {
      *
      * @param exchange  the exchange with the IN message with data to send
      * @return the data holder
+     * @throws org.apache.camel.InvalidPayloadException is thrown if message body cannot
+     * be converted to a type supported by HttpClient
      */
-    protected RequestEntity createRequestEntity(Exchange exchange) {
+    protected RequestEntity createRequestEntity(Exchange exchange) throws InvalidPayloadException {
         Message in = exchange.getIn();
         if (in.getBody() == null) {
             return null;
@@ -288,13 +294,26 @@ public class HttpProducer extends DefaultProducer {
                 Object data = in.getBody();
                 if (data != null) {
                     String contentType = ExchangeHelper.getContentType(exchange);
-                    if (data instanceof File) {
-                        answer = new FileRequestEntity((File)data, contentType);                        
+
+                    // file based (could potentially also be a FTP file etc)
+                    if (data instanceof File || data instanceof GenericFile) {
+                        File file = in.getBody(File.class);
+                        if (file != null) {
+                            answer = new FileRequestEntity(file, contentType);
+                        }
                     } else if (data instanceof String) {
-                        String charset = IOConverter.getCharsetName(exchange);
+                        // be a bit careful with String as any type can most likely be converted to String
+                        // so we only do an instanceof check and accept String if the body is really a String
+                        // do not fallback to use the default charset as it can influence the request
+                        // (for example application/x-www-form-urlencoded forms being sent)
+                        String charset = IOConverter.getCharsetName(exchange, false);
                         answer = new StringRequestEntity((String)data, contentType, charset);
-                    } else {
-                        answer = new InputStreamRequestEntity(in.getBody(InputStream.class), contentType);
+                    }
+                    // fallback as input stream
+                    if (answer == null) {
+                        // force the body as an input stream since this is the fallback
+                        InputStream is = in.getMandatoryBody(InputStream.class);
+                        answer = new InputStreamRequestEntity(is, contentType);
                     }
                 }
             } catch (UnsupportedEncodingException e) {

@@ -26,8 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.http4.helper.GZIPHelper;
 import org.apache.camel.component.http4.helper.HttpProducerHelper;
 import org.apache.camel.converter.IOConverter;
@@ -48,7 +50,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HTTP;
 
 /**
  * @version $Revision$
@@ -242,8 +243,10 @@ public class HttpProducer extends DefaultProducer {
      * @param exchange the exchange
      * @return the created method as either GET or POST
      * @throws URISyntaxException is thrown if the URI is invalid
+     * @throws org.apache.camel.InvalidPayloadException is thrown if message body cannot
+     * be converted to a type supported by HttpClient
      */
-    protected HttpRequestBase createMethod(Exchange exchange) throws URISyntaxException {
+    protected HttpRequestBase createMethod(Exchange exchange) throws URISyntaxException, InvalidPayloadException {
         String url = HttpProducerHelper.createURL(exchange, getEndpoint());
         URI uri = new URI(url);
 
@@ -290,8 +293,10 @@ public class HttpProducer extends DefaultProducer {
      *
      * @param exchange the exchange with the IN message with data to send
      * @return the data holder
+     * @throws org.apache.camel.InvalidPayloadException is thrown if message body cannot
+     * be converted to a type supported by HttpClient
      */
-    protected HttpEntity createRequestEntity(Exchange exchange) {
+    protected HttpEntity createRequestEntity(Exchange exchange) throws InvalidPayloadException {
         Message in = exchange.getIn();
         if (in.getBody() == null) {
             return null;
@@ -303,16 +308,29 @@ public class HttpProducer extends DefaultProducer {
                 Object data = in.getBody();
                 if (data != null) {
                     String contentType = ExchangeHelper.getContentType(exchange);
-                    if (data instanceof File) {
-                        answer = new FileEntity((File)data, contentType);
-                    } else if (data instanceof String) {
-                        String charset = IOConverter.getCharsetName(exchange);
-                        answer = new StringEntity((String)data, charset);
-                        ((StringEntity) answer).setContentEncoding(charset);
-                        if (contentType != null) {
-                            ((StringEntity) answer).setContentType(contentType);
+
+                    // file based (could potentially also be a FTP file etc)
+                    if (data instanceof File || data instanceof GenericFile) {
+                        File file = in.getBody(File.class);
+                        if (file != null) {
+                            answer = new FileEntity(file, contentType);
                         }
-                    } else {                        
+                    } else if (data instanceof String) {
+                        // be a bit careful with String as any type can most likely be converted to String
+                        // so we only do an instanceof check and accept String if the body is really a String
+                        // do not fallback to use the default charset as it can influence the request
+                        // (for example application/x-www-form-urlencoded forms being sent)
+                        String charset = IOConverter.getCharsetName(exchange, false);
+                        answer = new StringEntity((String)data, charset);
+                        if (contentType != null) {
+                            ((StringEntity)answer).setContentType(contentType);
+                        }
+                    }
+
+                    // fallback as input stream
+                    if (answer == null) {
+                        // force the body as an input stream since this is the fallback
+                        InputStream is = in.getMandatoryBody(InputStream.class);
                         answer = new InputStreamEntity(in.getBody(InputStream.class), -1);
                         if (contentType != null) {
                             ((InputStreamEntity)answer).setContentType(contentType);
