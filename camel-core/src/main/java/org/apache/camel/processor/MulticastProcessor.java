@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -28,6 +29,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
@@ -37,9 +40,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -59,44 +64,55 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @see Pipeline
  * @version $Revision$
  */
-public class MulticastProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
+public class MulticastProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
 
     private static final transient Log LOG = LogFactory.getLog(MulticastProcessor.class);
 
     /**
      * Class that represent each step in the multicast route to do
      */
-    static final class ProcessorExchangePair {
+    static final class DefaultProcessorExchangePair implements ProcessorExchangePair {
+        private final int index;
         private final Processor processor;
         private final Processor prepared;
         private final Exchange exchange;
 
-        /**
-         * Private constructor as you must use the static creator
-         * {@link org.apache.camel.processor.MulticastProcessor#createProcessorExchangePair(org.apache.camel.Processor,
-         *        org.apache.camel.Exchange)} which prepares the processor before its ready to be used.
-         *
-         * @param processor  the original processor
-         * @param prepared   the prepared processor
-         * @param exchange   the exchange
-         */
-        private ProcessorExchangePair(Processor processor, Processor prepared, Exchange exchange) {
+        private DefaultProcessorExchangePair(int index, Processor processor, Processor prepared, Exchange exchange) {
+            this.index = index;
             this.processor = processor;
             this.prepared = prepared;
             this.exchange = exchange;
         }
 
-        public Processor getProcessor() {
-            return processor;
-        }
-
-        public Processor getPrepared() {
-            return prepared;
+        public int getIndex() {
+            return index;
         }
 
         public Exchange getExchange() {
             return exchange;
         }
+
+        public Producer getProducer() {
+            if (processor instanceof Producer) {
+                return (Producer) processor;
+            }
+            return null;
+        }
+
+        public Processor getProcessor() {
+            return prepared;
+        }
+
+        public void begin() {
+            // noop
+            LOG.trace("ProcessorExchangePair #" + index + " begin: " + exchange);
+        }
+
+        public void done() {
+            // noop
+            LOG.trace("ProcessorExchangePair #" + index + " done: " + exchange);
+        }
+
     }
 
     private final CamelContext camelContext;
@@ -118,7 +134,6 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
                               boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException) {
         notNull(camelContext, "camelContext");
-        notNull(processors, "processors");
         this.camelContext = camelContext;
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
@@ -143,33 +158,51 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     }
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        boolean sync = true;
+
         final AtomicExchange result = new AtomicExchange();
-        final Iterable<ProcessorExchangePair> pairs = createProcessorExchangePairs(exchange);
+        final Iterable<ProcessorExchangePair> pairs;
 
         // multicast uses fine grained error handling on the output processors
         // so use try .. catch to cater for this
         try {
+            pairs = createProcessorExchangePairs(exchange);
             if (isParallelProcessing()) {
                 // ensure an executor is set when running in parallel
                 ObjectHelper.notNull(executorService, "executorService", this);
-                doProcessParallel(result, pairs, isStreaming());
+                doProcessParallel(exchange, result, pairs, isStreaming(), callback);
             } else {
-                doProcessSequential(result, pairs);
+                sync = doProcessSequential(exchange, result, pairs, callback);
             }
 
+            if (!sync) {
+                // the remainder of the multicast will be completed async
+                // so we break out now, then the callback will be invoked which then continue routing from where we left here
+                return false;
+            }
+
+            // copy results back to the original exchange
             if (result.get() != null) {
                 ExchangeHelper.copyResults(exchange, result.get());
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             // multicast uses error handling on its output processors and they have tried to redeliver
             // so we shall signal back to the other error handlers that we are exhausted and they should not
             // also try to redeliver as we will then do that twice
             exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
             exchange.setException(e);
         }
+
+        callback.done(true);
+        return true;
     }
 
-    protected void doProcessParallel(final AtomicExchange result, Iterable<ProcessorExchangePair> pairs, boolean streaming) throws InterruptedException, ExecutionException {
+    protected void doProcessParallel(final Exchange original, final AtomicExchange result, Iterable<ProcessorExchangePair> pairs,
+                                     boolean streaming, final AsyncCallback callback) throws InterruptedException, ExecutionException {
         final CompletionService<Exchange> completion;
         final AtomicBoolean running = new AtomicBoolean(true);
 
@@ -183,9 +216,9 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
         final AtomicInteger total = new AtomicInteger(0);
 
-        for (ProcessorExchangePair pair : pairs) {
-            final Processor processor = pair.getProcessor();
-            final Processor prepared = pair.getPrepared();
+        final Iterator<ProcessorExchangePair> it = pairs.iterator();
+        while (it.hasNext()) {
+            final ProcessorExchangePair pair = it.next();
             final Exchange subExchange = pair.getExchange();
             updateNewExchange(subExchange, total.intValue(), pairs);
 
@@ -196,7 +229,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                         return subExchange;
                     }
 
-                    doProcess(processor, prepared, subExchange);
+                    doProcess(original, result, it, pair, callback);
 
                     // should we stop in case of an exception occurred during processing?
                     if (stopOnException && subExchange.getException() != null) {
@@ -228,16 +261,28 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         }
     }
 
-    protected void doProcessSequential(AtomicExchange result, Iterable<ProcessorExchangePair> pairs) throws Exception {
+    protected boolean doProcessSequential(Exchange original, AtomicExchange result, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) throws Exception {
         int total = 0;
+        Iterator<ProcessorExchangePair> it = pairs.iterator();
 
-        for (ProcessorExchangePair pair : pairs) {
-            Processor processor = pair.getProcessor();
-            Processor prepared = pair.getPrepared();
+        while (it.hasNext()) {
+            ProcessorExchangePair pair = it.next();
             Exchange subExchange = pair.getExchange();
             updateNewExchange(subExchange, total, pairs);
 
-            doProcess(processor, prepared, subExchange);
+            boolean sync = doProcess(original, result, it, pair, callback);
+            if (!sync) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing exchangeId: " + pair.getExchange().getExchangeId() + " is continued being processed asynchronously");
+                }
+                // the remainder of the multicast will be completed async
+                // so we break out now, then the callback will be invoked which then continue routing from where we left here
+                return false;
+            }
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchangeId: " + pair.getExchange().getExchangeId() + " is continued being processed synchronously");
+            }
 
             // should we stop in case of an exception occurred during processing?
             if (stopOnException && subExchange.getException() != null) {
@@ -257,14 +302,23 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         if (LOG.isDebugEnabled()) {
             LOG.debug("Done sequential processing " + total + " exchanges");
         }
+
+        return true;
     }
 
-    private void doProcess(Processor processor, Processor prepared, Exchange exchange) {
+    private boolean doProcess(final Exchange original, final AtomicExchange result, final Iterator<ProcessorExchangePair> it,
+                              final ProcessorExchangePair pair, final AsyncCallback callback) {
+        boolean sync = true;
+
+        final Exchange exchange = pair.getExchange();
+        Processor processor = pair.getProcessor();
+        Producer producer = pair.getProducer();
+
         TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
 
         // compute time taken if sending to another endpoint
         StopWatch watch = null;
-        if (processor instanceof Producer) {
+        if (producer != null) {
             watch = new StopWatch();
         }
 
@@ -275,21 +329,86 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
             }
 
             // let the prepared process it
-            prepared.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
+            AsyncProcessor async = AsyncProcessorTypeConverter.convert(processor);
+            pair.begin();
+            sync = async.process(exchange, new AsyncCallback() {
+                public void done(boolean doneSync) {
+                    pair.done();
+
+                    // we only have to handle async completion of the routing slip
+                    if (doneSync) {
+                        return;
+                    }
+
+                    // TODO: total number
+                    // continue processing the multicast asynchronously
+                    Exchange subExchange = exchange;
+                    int total = 0;
+
+                    while (it.hasNext()) {
+
+                        if (stopOnException && exchange.getException() != null) {
+                            // wrap in exception to explain where it failed
+                            exchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException()));
+                            callback.done(false);
+                            return;
+                        }
+
+                        if (aggregationStrategy != null) {
+                            doAggregate(result, subExchange);
+                        }
+
+                        if (it.hasNext()) {
+                            // prepare and run the next
+                            ProcessorExchangePair pair = it.next();
+                            subExchange = pair.getExchange();
+                            updateNewExchange(subExchange, total, null);
+                            boolean sync = doProcess(original, result, it, pair, callback);
+
+                            if (!sync) {
+                                if (LOG.isTraceEnabled()) {
+                                    LOG.trace("Processing exchangeId: " + original.getExchangeId() + " is continued being processed asynchronously");
+                                }
+                                return;
+                            }
+
+                            total++;
+                        }
+                    }
+
+                    // remember to test for stop on exception and aggregate before copying back results
+                    if (stopOnException && exchange.getException() != null) {
+                        // wrap in exception to explain where it failed
+                        exchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException()));
+                        callback.done(false);
+                        return;
+                    }
+
+                    if (aggregationStrategy != null) {
+                        doAggregate(result, subExchange);
+                    }
+
+                    // copy results back to the original exchange
+                    if (result.get() != null) {
+                        ExchangeHelper.copyResults(original, result.get());
+                    }
+                    callback.done(false);
+                }
+            });
         } finally {
             // pop the block so by next round we have the same staring point and thus the tracing looks accurate
             if (traced != null) {
                 traced.popBlock();
             }
-            if (processor instanceof Producer) {
+            if (producer != null) {
                 long timeTaken = watch.stop();
-                Endpoint endpoint = ((Producer) processor).getEndpoint();
+                Endpoint endpoint = producer.getEndpoint();
                 // emit event that the exchange was sent to the endpoint
                 EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
             }
         }
+
+        return sync;
     }
 
     /**
@@ -314,9 +433,10 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
         List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>(processors.size());
 
+        int index = 0;
         for (Processor processor : processors) {
             Exchange copy = exchange.copy();
-            result.add(createProcessorExchangePair(processor, copy));
+            result.add(createProcessorExchangePair(index++, processor, copy));
         }
 
         return result;
@@ -332,7 +452,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
      * @param exchange   the exchange
      * @return prepared for use
      */
-    protected static ProcessorExchangePair createProcessorExchangePair(Processor processor, Exchange exchange) {
+    protected ProcessorExchangePair createProcessorExchangePair(int index, Processor processor, Exchange exchange) {
         Processor prepared = processor;
 
         // set property which endpoint we send to
@@ -355,7 +475,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
             }
         }
 
-        return new ProcessorExchangePair(processor, prepared, exchange);
+        return new DefaultProcessorExchangePair(index, processor, prepared, exchange);
     }
 
     protected void doStart() throws Exception {
@@ -369,7 +489,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         ServiceHelper.stopServices(processors);
     }
 
-    private static void setToEndpoint(Exchange exchange, Processor processor) {
+    protected static void setToEndpoint(Exchange exchange, Processor processor) {
         if (processor instanceof Producer) {
             Producer producer = (Producer) processor;
             exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());

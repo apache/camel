@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -43,7 +45,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  *
  * @version $Revision$
  */
-public class Splitter extends MulticastProcessor implements Processor, Traceable {
+public class Splitter extends MulticastProcessor implements AsyncProcessor, Traceable {
     private final Expression expression;
 
     public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
@@ -70,8 +72,8 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        AggregationStrategy strategy = getAggregationStrategy();
+    public boolean process(Exchange exchange, final AsyncCallback callback) {
+        final AggregationStrategy strategy = getAggregationStrategy();
 
         // if original aggregation strategy then store exchange
         // on it as the original exchange
@@ -81,11 +83,14 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
             original.setOriginal(exchange);
         }
 
-        super.process(exchange);
-
-        if (original != null) {
-            // and remove the reference when we are done (due to thread local stuff)
-            original.setOriginal(null);
+        // TODO: we will lose the original in the async routing engine when it return false
+        try {
+            return super.process(exchange, callback);
+        } finally {
+            if (original != null) {
+                // and remove the reference when we are done (due to thread local stuff)
+                original.setOriginal(null);
+            }
         }
     }
 
@@ -108,6 +113,8 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
             public Iterator iterator() {
                 return new Iterator() {
 
+                    private int index;
+
                     public boolean hasNext() {
                         return iterator.hasNext();
                     }
@@ -121,7 +128,7 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
                             Message in = newExchange.getIn();
                             in.setBody(part);
                         }
-                        return createProcessorExchangePair(getProcessors().iterator().next(), newExchange);
+                        return createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange);
                     }
 
                     public void remove() {
@@ -141,6 +148,8 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
         } else {
             result = new ArrayList<ProcessorExchangePair>();
         }
+
+        int index = 0;
         Iterator<Object> iter = ObjectHelper.createIterator(value);
         while (iter.hasNext()) {
             Object part = iter.next();
@@ -151,7 +160,7 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
                 Message in = newExchange.getIn();
                 in.setBody(part);
             }
-            result.add(createProcessorExchangePair(getProcessors().iterator().next(), newExchange));
+            result.add(createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange));
         }
         return result;
     }

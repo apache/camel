@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version $Revision$
  */
-public class AsyncEndpointRecipientList3Test extends ContextTestSupport {
+public class AsyncEndpointRecipientList4Test extends ContextTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
@@ -57,7 +57,7 @@ public class AsyncEndpointRecipientList3Test extends ContextTestSupport {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
                         })
-                        .recipientList(constant("async:Hi Camel,direct:foo"));
+                        .recipientList(constant("async:Hi Camel,async:Hi World,direct:foo"));
 
                 from("direct:foo")
                         .process(new Processor() {

@@ -23,16 +23,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -49,7 +50,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  *
  * @version $Revision$
  */
-public class RecipientList extends ServiceSupport implements Processor {
+public class RecipientList extends ServiceSupport implements AsyncProcessor {
     private static final transient Log LOG = LogFactory.getLog(RecipientList.class);
     private final CamelContext camelContext;
     private ProducerCache producerCache;
@@ -93,53 +94,40 @@ public class RecipientList extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         if (!isStarted()) {
             throw new IllegalStateException("RecipientList has not been started: " + this);
         }
 
         Object recipientList = expression.evaluate(exchange, Object.class);
-        sendToRecipientList(exchange, recipientList);
+        return sendToRecipientList(exchange, recipientList, callback);
+    }
+
+    public boolean sendToRecipientList(Exchange exchange, Object routingSlip) {
+        // this method is invoked from @RecipientList so we bridge with an empty callback
+        // TODO: Have @RecipientList support async out of the box
+        return sendToRecipientList(exchange, routingSlip, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                // noop
+            }
+        });
     }
 
     /**
      * Sends the given exchange to the recipient list
      */
-    public void sendToRecipientList(Exchange exchange, Object recipientList) throws Exception {
+    public boolean sendToRecipientList(Exchange exchange, Object recipientList, AsyncCallback callback) {
         Iterator<Object> iter = ObjectHelper.createIterator(recipientList, delimiter);
 
-        // we should acquire and release the producers we need so we can leverage the producer
-        // cache to the fullest
-        Map<Endpoint, Producer> producers = new LinkedHashMap<Endpoint, Producer>();
-        try {
-            List<Processor> processors = new ArrayList<Processor>();
-            while (iter.hasNext()) {
-                Object recipient = iter.next();
-                try {
-                    Endpoint endpoint = resolveEndpoint(exchange, recipient);
-                    // acquire producer which we then release later
-                    Producer producer = producerCache.acquireProducer(endpoint);
-                    processors.add(producer);
-                    producers.put(endpoint, producer);
-                } catch (Exception e) {
-                    if (isIgnoreInvalidEndpoints()) {
-                        LOG.info("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
-                    } else {
-                        throw e;
-                    }
-                }
-            }
+        RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
+                                                                isParallelProcessing(), getExecutorService(), false, isStopOnException());
+        rlp.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
 
-            MulticastProcessor mp = new MulticastProcessor(exchange.getContext(), processors, getAggregationStrategy(),
-                                                           isParallelProcessing(), getExecutorService(), false, isStopOnException());
-
-            // now let the multicast process the exchange
-            mp.process(exchange);
-        } finally {
-            // and release the producers back to the producer cache
-            for (Map.Entry<Endpoint, Producer> entry : producers.entrySet()) {
-                producerCache.releaseProducer(entry.getKey(), entry.getValue());
-            }
-        }
+        // now let the multicast process the exchange
+        return rlp.process(exchange, callback);
     }
 
     protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
@@ -162,7 +150,7 @@ public class RecipientList extends ServiceSupport implements Processor {
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
     }
-    
+
     public boolean isIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }

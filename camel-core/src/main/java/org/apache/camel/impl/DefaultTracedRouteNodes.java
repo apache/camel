@@ -74,7 +74,9 @@ public class DefaultTracedRouteNodes implements TracedRouteNodes {
     }
 
     public void popBlock() {
-        routeNodes.pop();
+        if (!routeNodes.isEmpty()) {
+            routeNodes.pop();
+        }
     }
 
     public void pushBlock() {

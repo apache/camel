@@ -37,8 +37,7 @@ public class AsyncEndpointRecipientListTest extends ContextTestSupport {
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
         assertEquals("Bye Camel", reply);
 
-        // should use same threads (recipient list is not async supported yet)
-        assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
     @Override
