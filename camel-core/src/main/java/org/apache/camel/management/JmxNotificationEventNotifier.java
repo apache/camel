@@ -34,16 +34,20 @@ public class JmxNotificationEventNotifier extends EventNotifierSupport implement
     private static final transient Log LOG = LogFactory.getLog(JmxNotificationEventNotifier.class);
     private final AtomicLong counter = new AtomicLong();
     private NotificationBroadcasterSupport notificationBroadcaster;
-    
+    private String source = "Camel";
+
     public void setNotificationBroadcaster(NotificationBroadcasterSupport broadcaster) {
         notificationBroadcaster = broadcaster;
     }
 
     public void notify(EventObject event) throws Exception {
         if (notificationBroadcaster != null) {
-            // use simple class name as the type
+            // its recommended to send light weight events and we don't want to have the entire Exchange/CamelContext etc
+            // serialized as these are the typical source of the EventObject. So we use our own source which is just
+            // a human readable name, which can be configured.
             String type = event.getClass().getSimpleName();
-            Notification notification = new Notification(type, event, counter.getAndIncrement());
+            String message = event.toString();
+            Notification notification = new Notification(type, source, counter.getAndIncrement(), message);
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Broadcasting JMX notification: " + notification);
@@ -62,5 +66,22 @@ public class JmxNotificationEventNotifier extends EventNotifierSupport implement
 
     protected void doStop() throws Exception {
         // noop
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    /**
+     * Sets the source to be used when broadcasting events.
+     * The source is just a readable identifier which helps the receiver see where the event is coming from.
+     * You can assign a value such a server or application name etc.
+     * <p/>
+     * By default <tt>Camel</tt> will be used as source.
+     *
+     * @param source  the source
+     */
+    public void setSource(String source) {
+        this.source = source;
     }
 }

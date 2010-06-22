@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import java.util.Set;
-
 import javax.management.Notification;
 import javax.management.NotificationFilter;
 import javax.management.NotificationListener;
@@ -27,7 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.CastUtils;
 
 /**
  * @version $Revision$
@@ -44,6 +41,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         notifier = new JmxNotificationEventNotifier();
+        notifier.setSource("MyCamel");
         notifier.setIgnoreCamelContextEvents(true);
         notifier.setIgnoreRouteEvents(true);
         notifier.setIgnoreServiceEvents(true);

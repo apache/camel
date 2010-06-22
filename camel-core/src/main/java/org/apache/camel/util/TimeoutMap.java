@@ -60,7 +60,8 @@ public interface TimeoutMap<K, V> extends Runnable {
      *
      * @param key the key
      * @param value the value
-     * @return <tt>true</tt> to remove the evicted value, or <tt>false</tt> to veto the veto and thus keep the value.
+     * @return <tt>true</tt> to remove the evicted value,
+     *         or <tt>false</tt> to veto the eviction and thus keep the value.
      */
     boolean onEviction(K key, V value);
 
