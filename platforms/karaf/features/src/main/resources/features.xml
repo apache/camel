@@ -120,13 +120,14 @@
   </feature>
   <feature name='camel-dozer' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
+    <feature version='${pom.version}'>http</feature>
+    <bundle>mvn:org.ops4j.pax.web/pax-web-jsp/${pax.web.version}</bundle>
     <bundle>mvn:net.sf.dozer/dozer-osgi/${dozer-bundle-version}</bundle>
-	<bundle>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
-	<bundle>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
+    <bundle>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
+    <bundle>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlbeans/${xmlbeans-bundle-version}</bundle>
-	<bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
-    <bundle>mvn:http://repository.springsource.com/maven/bundles/external!javax.el/com.springsource.javax.el/${javax.el-bundle-version}</bundle>
-	<bundle>mvn:org.apache.camel/camel-dozer/${pom.version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-dozer/${pom.version}</bundle>
   </feature>
   <feature name='camel-http' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
