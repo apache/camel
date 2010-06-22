@@ -40,6 +40,8 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        // START SNIPPET: e1
+        // Set up the JmxNotificationEventNotifier
         notifier = new JmxNotificationEventNotifier();
         notifier.setSource("MyCamel");
         notifier.setIgnoreCamelContextEvents(true);
@@ -49,24 +51,28 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
         CamelContext context = new DefaultCamelContext(createRegistry());
         context.getManagementStrategy().addEventNotifier(notifier);
 
+        // Set up the ManagementNamingStrategy
         DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
         naming.setHostName("localhost");
         naming.setDomainName("org.apache.camel");
-
+        // END SNIPPET: e2
         return context;
     }
 
     public void testExchangeDone() throws Exception {
+        // START SNIPPET: e2
+        // register the NotificationListener
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=eventnotifiers,name=JmxEventNotifier");
         MyNotificationListener listener = new MyNotificationListener();   
         context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotificationListener(on,
             listener,                                                                                         
             new NotificationFilter() {
                 public boolean isNotificationEnabled(Notification notification) {
-                    return true;
+                    return notification.getSource().equals("MyCamel");
                 }
             }, null);
 
+        // END SNIPPET: e2
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
