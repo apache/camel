@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel
+package scala
+package dsl
 
 import org.apache.camel.model.DataFormatDefinition
 import org.apache.camel.builder.PredicateBuilder.toPredicate
@@ -42,8 +44,8 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
     uris.length match {
       case 1 => target.to(uris(0))
       case _ => {
-        val multicast = target.multicast
-        uris.foreach(multicast.to(_))
+        val multi = multicast
+        uris.foreach(multi.to(_))
       }
     }
     this

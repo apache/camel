@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel
+package scala.dsl;
 
-import org.w3c.dom.Document
-import scala.dsl.builder.RouteBuilder
+import builder.RouteBuilder
 import junit.framework.Assert._
 
 /**
@@ -41,7 +41,7 @@ class ExceptionHandlerTest extends ScalaTestSupport {
   val builder =
     new RouteBuilder {
        val failingProcessor = (exchange: Exchange) => {
-         exchange.in match {
+         exchange.in[AnyRef] match {
            case text: String => //graciously do nothing
            case symbol: Symbol => throw new UnsupportedOperationException("We don't know how to deal with this symbolically correct")
            case _ => throw new RuntimeException("Strings are good, the rest is bad")

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.scala.dsl;
  
-import scala.dsl.builder.RouteBuilder
+import builder.RouteBuilder
 
 class FilterRouteBuilderTest extends ScalaTestSupport {
 

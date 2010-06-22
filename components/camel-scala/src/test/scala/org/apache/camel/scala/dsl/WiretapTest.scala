@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel
+package scala.dsl
  
 import org.apache.camel.scala.test.Adult
 import org.w3c.dom.Document
-import scala.dsl.builder.RouteBuilder
+import builder.RouteBuilder
 
 /**
  * Test case for wiretap

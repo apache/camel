@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala
+package org.apache.camel
+package scala
 
 import reflect.Manifest
 import org.apache.camel.spi.{UnitOfWork, Synchronization}
@@ -26,12 +27,11 @@ import java.lang.{Exception, String, Class}
  */
 class RichExchange(val exchange : Exchange) extends Exchange {
 
-  def in : Any = exchange.getIn().getBody()
-  
   def in_=(message: Any) = exchange.getIn().setBody(message)
 
   def in(header:String) : Any = exchange.getIn().getHeader(header)
 
+  def in = exchange.getIn().getBody()
   def in[T](implicit manifest: Manifest[T]) : T = exchange.getIn().getBody(manifest.erasure).asInstanceOf[T]
 
   def out : Any = exchange.getOut().getBody()

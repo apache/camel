@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel
+package scala.dsl
 
 import builder.{RouteBuilderSupport, RouteBuilder}
 import org.apache.camel.processor.MulticastParallelTest
@@ -56,7 +57,7 @@ class SMulticastParallelTest extends MulticastParallelTest with RouteBuilderSupp
       if (oldExchange == null) {
         newExchange
       } else {
-        oldExchange.in = oldExchange.in[String] + newExchange.in[String]
+        oldExchange.in= oldExchange.in[String] + newExchange.in[String]
         oldExchange
       }
     }

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.scala.dsl;
  
-import scala.dsl.builder.RouteBuilder
+import builder.RouteBuilder
 
 /**
  * Test for looping from the Scala DSL

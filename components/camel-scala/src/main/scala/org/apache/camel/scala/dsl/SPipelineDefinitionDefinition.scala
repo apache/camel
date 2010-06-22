@@ -24,7 +24,15 @@ import org.apache.camel.model.PipelineDefinition
  */
 case class SPipelineDefinition(override val target: PipelineDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[PipelineDefinition] {
 
-  override def to(uris: String*) = wrap(uris.foreach(target.to(_)))
+  override def to(uris: String*) : SPipelineDefinition = {
+    uris.length match {
+      case 1 => target.to(uris(0))
+      case _ => {
+        for (uri <- uris) this.to(uri)
+      }
+    }
+    this
+  }
 
   override def apply(block: => Unit) = wrap(super.apply(block))
 

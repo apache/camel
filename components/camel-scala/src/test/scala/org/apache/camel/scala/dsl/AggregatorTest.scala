@@ -18,7 +18,7 @@ package org.apache.camel.scala.dsl;
  
 import org.w3c.dom.Document
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import scala.dsl.builder.RouteBuilder
+import builder.RouteBuilder
 
 /**
  * Test case for message aggregator

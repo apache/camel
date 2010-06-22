@@ -16,8 +16,7 @@
  */
 package org.apache.camel.scala.dsl;
  
-import org.w3c.dom.Document
-import scala.dsl.builder.RouteBuilder
+import builder.RouteBuilder
 
 /**
  * Test case for message delayer

@@ -17,8 +17,6 @@
 package org.apache.camel.scala.dsl;
 
 import builder.RouteBuilder
-import org.w3c.dom.Document
-import scala.dsl.builder.RouteBuilder
 
 /**
  * Test case for message load balancer

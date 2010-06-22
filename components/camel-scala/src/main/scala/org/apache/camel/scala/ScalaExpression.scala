@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel
+package scala.dsl
 
 /**
  * Scala implementation for an Apache Camel Expression
  */
-class ScalaExpression(val expression: Exchange => Any) extends Expression[Exchange] {
+class ScalaExpression(val expression: Exchange => Any) extends Expression {
   
   def evaluate(exchange: Exchange) = expression(exchange).asInstanceOf[Object]
 

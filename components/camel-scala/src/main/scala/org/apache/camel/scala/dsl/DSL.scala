@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl 
+package org.apache.camel
+package scala
+package dsl 
 
 import org.apache.camel.model.DataFormatDefinition
 import reflect.Manifest;

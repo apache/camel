@@ -43,7 +43,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 @XmlRootElement(name = "onCompletion")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
+public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
 
     @XmlAttribute(required = false)
     private Boolean onCompleteOnly = Boolean.FALSE;

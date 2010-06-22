@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala
+package dsl
 
-import scala.dsl.builder.RouteBuilder
-import scala.test.{Adult, Toddler, Envelope}
+import builder.RouteBuilder
+import test.{Adult, Toddler, Envelope}
  
 class RecipientListRouteTest extends ScalaTestSupport {
   
@@ -47,7 +48,7 @@ class RecipientListRouteTest extends ScalaTestSupport {
     //END SNIPPET: simple
       
     //START SNIPPET: pattern 
-    "direct:b" recipients(_.in match {
+    "direct:b" recipients(_.getIn().getBody() match {
       case Toddler(_) => "mock:playgarden"
       case _ => "mock:work"
     })

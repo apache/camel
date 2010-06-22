@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala;
+package org.apache.camel
+package scala
 
 /**
  * Trait containing common implicit conversion definitions
  */
 trait Preamble {
 
-  implicit def exchangeWrapper(exchange: Exchange[T] forSome {type T}) = new RichExchange(exchange)
+  implicit def exchangeWrapper(exchange: Exchange) = new RichExchange(exchange)
   implicit def enrichInt(int: Int) = new RichInt(int)
 
 }

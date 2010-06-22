@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala
+package dsl;
  
 import org.w3c.dom.Document
-import scala.dsl.builder.RouteBuilder
-import scala.test.Adult
+import builder.RouteBuilder
+import test.Adult
 
 /**
  * Test case for working with data formats
