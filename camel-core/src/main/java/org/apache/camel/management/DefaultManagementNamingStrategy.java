@@ -33,6 +33,7 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -54,6 +55,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public static final String TYPE_ROUTE = "routes";
     public static final String TYPE_COMPONENT = "components";
     public static final String TYPE_TRACER = "tracer";
+    public static final String TYPE_EVENT_NOTIFIER = "eventnotifiers";
     public static final String TYPE_ERRORHANDLER = "errorhandlers";
     public static final String TYPE_THREAD_POOL = "threadpools";
     public static final String TYPE_SERVICE = "services";
@@ -204,6 +206,24 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_NAME + "=")
             .append("Tracer")
             .append("(").append(ObjectHelper.getIdentityHashCode(tracer)).append(")");
+        return createObjectName(buffer);
+    }
+
+    public ObjectName getObjectNameForEventNotifier(CamelContext context, EventNotifier eventNotifier) throws MalformedObjectNameException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
+        buffer.append(KEY_TYPE + "=" + TYPE_EVENT_NOTIFIER + ",");
+
+        if (eventNotifier instanceof JmxNotificationEventNotifier) {
+            // JMX notifier shall have an easy to use name
+            buffer.append(KEY_NAME + "=").append("JmxEventNotifier");
+        } else {
+            // others can be per instance
+            buffer.append(KEY_NAME + "=")
+                .append("EventNotifier")
+                .append("(").append(ObjectHelper.getIdentityHashCode(eventNotifier)).append(")");
+        }
         return createObjectName(buffer);
     }
 

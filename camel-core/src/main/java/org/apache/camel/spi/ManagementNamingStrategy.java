@@ -60,4 +60,5 @@ public interface ManagementNamingStrategy {
 
     ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool) throws MalformedObjectNameException;
 
+    ObjectName getObjectNameForEventNotifier(CamelContext context, EventNotifier eventNotifier) throws MalformedObjectNameException;
 }

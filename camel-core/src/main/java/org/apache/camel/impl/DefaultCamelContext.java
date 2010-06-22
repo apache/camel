@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
@@ -72,6 +73,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExecutorServiceStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -134,6 +136,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private AtomicBoolean managementStrategyInitialized = new AtomicBoolean(false);
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
+    
     private boolean firstStartDone;
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
@@ -605,7 +608,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
         startServices(object);
     }
-
+   
     public boolean hasService(Object object) {
         if (object instanceof Service) {
             return servicesToClose.contains(object);
@@ -1010,6 +1013,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
         }
 
+        // start notifiers as services
+        for (EventNotifier notifier : getManagementStrategy().getEventNotifiers()) {
+            if (notifier instanceof Service) {
+                Service service = (Service) notifier;
+                for (LifecycleStrategy strategy : lifecycleStrategies) {
+                    strategy.onServiceAdd(this, service, null);
+                }
+            }
+            startServices(notifier);
+        }
+
         // must let some bootstrap service be started before we can notify the starting event
         EventHelper.notifyCamelContextStarting(this);
 
@@ -1068,6 +1082,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         // must notify that we are stopped before stopping the management strategy
         EventHelper.notifyCamelContextStopped(this);
+        
+        // stop the notifier service
+        for (EventNotifier notifier : getManagementStrategy().getEventNotifiers()) {
+            shutdownServices(notifier);
+        }
 
         // shutdown management as the last one
         shutdownServices(managementStrategy);
@@ -1627,6 +1646,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         if (answer == null) {
             LOG.warn("Cannot use JMX. Fallback to using DefaultManagementStrategy (non JMX).");
             answer = new DefaultManagementStrategy();
+        }
+
+        // inject CamelContext
+        if (answer instanceof CamelContextAware) {
+            CamelContextAware aware = (CamelContextAware) answer;
+            aware.setCamelContext(this);
         }
 
         return answer;

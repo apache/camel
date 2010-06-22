@@ -46,8 +46,7 @@ public class ManagedCamelContextTracerTest extends ContextTestSupport {
         naming.setDomainName("org.apache.camel");
         return context;
     }
-
-    @SuppressWarnings("unchecked")
+    
     public void testCamelContextTracing() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

@@ -39,8 +39,7 @@ public class ManagedDualCamelContextTest extends TestSupport {
         context.addRoutes(createRouteBuilder());
         return context;
     }
-
-    @SuppressWarnings("unchecked")
+    
     public void testDualCamelContext() throws Exception {
         CamelContext camel1 = createCamelContext();
         camel1.start();

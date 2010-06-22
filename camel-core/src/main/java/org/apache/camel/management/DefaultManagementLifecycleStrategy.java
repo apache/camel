@@ -20,11 +20,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 import javax.management.JMException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -48,6 +45,7 @@ import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedErrorHandler;
+import org.apache.camel.management.mbean.ManagedEventNotifier;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
@@ -73,6 +71,7 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAware;
 import org.apache.camel.spi.ManagementStrategy;
@@ -297,6 +296,11 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             ManagedTracer mt = new ManagedTracer(context, (Tracer) service);
             mt.init(getManagementStrategy());
             return mt;
+        } else if (service instanceof EventNotifier) {
+            // special for event notifier
+            ManagedEventNotifier men = new ManagedEventNotifier(context, (EventNotifier) service);
+            men.init(getManagementStrategy());
+            return men;            
         } else if (service instanceof Producer) {
             answer = new ManagedProducer(context, (Producer) service);
         } else if (service instanceof ScheduledPollConsumer) {

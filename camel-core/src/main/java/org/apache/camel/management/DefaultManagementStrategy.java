@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.EventFactory;
@@ -43,7 +45,7 @@ import org.fusesource.commons.management.Statistic;
  * @see ManagedManagementStrategy
  * @version $Revision$
  */
-public class DefaultManagementStrategy implements ManagementStrategy {
+public class DefaultManagementStrategy implements ManagementStrategy, CamelContextAware {
 
     private List<EventNotifier> eventNotifiers = new ArrayList<EventNotifier>();
     private EventFactory eventFactory = new DefaultEventFactory();
@@ -51,6 +53,7 @@ public class DefaultManagementStrategy implements ManagementStrategy {
     private boolean onlyManageProcessorWithCustomId;
     private ManagementAgent managementAgent;
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
+    private CamelContext camelContext;
 
     public List<EventNotifier> getEventNotifiers() {
         return eventNotifiers;
@@ -127,6 +130,14 @@ public class DefaultManagementStrategy implements ManagementStrategy {
     public boolean isManaged(Object managedObject, Object name) {
         // noop
         return false;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public void notify(EventObject event) throws Exception {

@@ -42,7 +42,7 @@ public class ManagedTracer {
         // do nothing
     }
 
-    public CamelContext getCamelContext() {
+    public CamelContext getContext() {
         return camelContext;
     }
 

@@ -25,6 +25,7 @@ import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedErrorHandler;
+import org.apache.camel.management.mbean.ManagedEventNotifier;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
@@ -32,6 +33,7 @@ import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -110,10 +112,13 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
             objectName = getManagementNamingStrategy().getObjectNameForProducer(ms.getContext(), ms.getProducer());
         } else if (managedObject instanceof ManagedTracer) {
             ManagedTracer mt = (ManagedTracer) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForTracer(mt.getCamelContext(), mt.getTracer());
+            objectName = getManagementNamingStrategy().getObjectNameForTracer(mt.getContext(), mt.getTracer());
+        } else if (managedObject instanceof ManagedEventNotifier) {
+            ManagedEventNotifier men = (ManagedEventNotifier) managedObject;
+            objectName = getManagementNamingStrategy().getObjectNameForEventNotifier(men.getContext(), men.getEventNotifier());
         } else if (managedObject instanceof ManagedThreadPool) {
             ManagedThreadPool mes = (ManagedThreadPool) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForThreadPool(mes.getCamelContext(), mes.getThreadPool());
+            objectName = getManagementNamingStrategy().getObjectNameForThreadPool(mes.getContext(), mes.getThreadPool());
         } else if (managedObject instanceof ManagedService) {
             // check for managed service should be last
             ManagedService ms = (ManagedService) managedObject;
