@@ -160,15 +160,20 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
                     }
                 });
 
+                List<K> evicts = new ArrayList<K>(expired.size());
                 try {
                     // now fire eviction notification
                     for (TimeoutMapEntry<K, V> entry : expired) {
-                        onEviction(entry.getKey(), entry.getValue());
+                        boolean evict = onEviction(entry.getKey(), entry.getValue());
+                        if (evict) {
+                            // okay this entry should be evicted
+                            evicts.add(entry.getKey());
+                        }
                     }
                 } finally {
                     // and must remove from list after we have fired the notifications
-                    for (TimeoutMapEntry<K, V> entry : expired) {
-                        map.remove(entry.getKey());
+                    for (K key : evicts) {
+                        map.remove(key);
                     }
                 }
             }
@@ -207,8 +212,8 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
         return true;
     }
 
-    public void onEviction(K key, V value) {
-        // noop
+    public boolean onEviction(K key, V value) {
+        return true;
     }
 
     protected void updateExpireTime(TimeoutMapEntry entry) {

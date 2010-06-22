@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class AggregateFromWireTapTest extends ContextTestSupport {
@@ -30,12 +29,16 @@ public class AggregateFromWireTapTest extends ContextTestSupport {
         end.expectedBodiesReceived("A", "B");
 
         MockEndpoint aggregated = getMockEndpoint("mock:aggregated");
-        aggregated.expectedBodiesReceived("AB");
+        aggregated.expectedMessageCount(1);
 
         template.sendBody("direct:start", "A");
         template.sendBody("direct:start", "B");
 
         assertMockEndpointsSatisfied();
+
+        String body = aggregated.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        // should be either AB or BA (wiretap can be run out of order)
+        assertTrue("Should be AB or BA, was: " + body, "AB".equals(body) || "BA".equals(body));
     }
 
     @Override

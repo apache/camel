@@ -16,26 +16,11 @@
  */
 package org.apache.camel.management;
 
-import java.util.ArrayList;
 import java.util.EventObject;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.management.Attribute;
-import javax.management.AttributeList;
-import javax.management.AttributeNotFoundException;
-import javax.management.DynamicMBean;
-import javax.management.InvalidAttributeValueException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanConstructorInfo;
-import javax.management.MBeanException;
-import javax.management.MBeanInfo;
-import javax.management.MBeanNotificationInfo;
-import javax.management.MBeanOperationInfo;
 import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
-import javax.management.ReflectionException;
 
-import org.apache.camel.Service;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,26 +31,24 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class JmxNotificationEventNotifier extends EventNotifierSupport implements JmxNotificationBroadcasterAware {
-
-    private static final Log LOG = LogFactory.getLog(JmxNotificationEventNotifier.class);
+    private static final transient Log LOG = LogFactory.getLog(JmxNotificationEventNotifier.class);
     private final AtomicLong counter = new AtomicLong();
-    private NotificationBroadcasterSupport notificationBroadcaseter;
+    private NotificationBroadcasterSupport notificationBroadcaster;
     
-    
-    public void setNotificationBroadcaster(NotificationBroadcasterSupport broadcaseter) {
-        notificationBroadcaseter = broadcaseter;
+    public void setNotificationBroadcaster(NotificationBroadcasterSupport broadcaster) {
+        notificationBroadcaster = broadcaster;
     }
 
     public void notify(EventObject event) throws Exception {
-        // use simple class name as the type
-        String type = event.getClass().getSimpleName();
-        Notification notification = new Notification(type, event, counter.getAndIncrement());
+        if (notificationBroadcaster != null) {
+            // use simple class name as the type
+            String type = event.getClass().getSimpleName();
+            Notification notification = new Notification(type, event, counter.getAndIncrement());
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Broadcasting JMX notification " + notification);
-        }
-        if (notificationBroadcaseter != null) {
-            notificationBroadcaseter.sendNotification(notification);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Broadcasting JMX notification: " + notification);
+            }
+            notificationBroadcaster.sendNotification(notification);
         }
     }
 
@@ -73,14 +56,11 @@ public class JmxNotificationEventNotifier extends EventNotifierSupport implement
         return true;
     }
 
-    @Override
     protected void doStart() throws Exception {
         counter.set(0);
     }
 
-    @Override
     protected void doStop() throws Exception {
-        // TODO Auto-generated method stub
-        
+        // noop
     }
 }

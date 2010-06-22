@@ -75,9 +75,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     private static final Log LOG = LogFactory.getLog(AggregateProcessor.class);
 
-    // use a fair lock so timeout checker will have a chance to acquire the lock if
-    // a lot of new messages keep arriving
-    private final Lock lock = new ReentrantLock(true);
+    private final Lock lock = new ReentrantLock();
     private final CamelContext camelContext;
     private final Processor processor;
     private final AggregationStrategy aggregationStrategy;
@@ -90,6 +88,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private AggregationRepository aggregationRepository = new MemoryAggregationRepository();
     private Map<Object, Object> closedCorrelationKeys;
     private Set<String> batchConsumerCorrelationKeys = new LinkedHashSet<String>();
+    private Set<String> arrivedCorrelationKeys = new LinkedHashSet<String>();
     private final Set<String> inProgressCompleteExchanges = new HashSet<String>();
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<String, RedeliveryData>();
     // optional dead letter channel for exhausted recovered exchanges
@@ -179,8 +178,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // improve performance as we can run aggregation repository get/add in parallel
         lock.lock();
         try {
+            // keep track on the arrived keys
+            arrivedCorrelationKeys.add(key);
             doAggregation(key, exchange);
         } finally {
+            arrivedCorrelationKeys.remove(key);
             lock.unlock();
         }
     }
@@ -194,6 +196,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * @param key      the correlation key
      * @param exchange the exchange
      * @return the aggregated exchange
+     * @throws org.apache.camel.CamelExchangeException is thrown if error aggregating
      */
     private Exchange doAggregation(String key, Exchange exchange) throws CamelExchangeException {
         if (LOG.isTraceEnabled()) {
@@ -379,11 +382,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
                 try {
                     processor.process(exchange);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     exchange.setException(e);
-                } catch (Throwable t) {
-                    // must catch throwable so we will handle all exceptions as the executor service will by default ignore them
-                    exchange.setException(new CamelExchangeException("Error processing aggregated exchange", exchange, t));
                 }
 
                 // log exception if there was a problem
@@ -556,18 +556,27 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         @Override
-        public void onEviction(String key, String exchangeId) {
+        public boolean onEviction(String key, String exchangeId) {
             if (log.isDebugEnabled()) {
                 log.debug("Completion timeout triggered for correlation key: " + key);
             }
 
-            // double check that its not already in progress
+            // double check that its not already arrived or in progress
+            boolean arrived = arrivedCorrelationKeys.contains(key);
+            if (arrived) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("A new Exchange with correlation key: " + key + " has just arrived,"
+                        + " which postpones the timeout condition for aggregated exchange id: " + exchangeId);
+                }
+                // do not evict the entry as a new exchange has arrived with the same correlation key
+                return false;
+            }
             boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
             if (inProgress) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Aggregated exchange with id: " + exchangeId + " is already in progress.");
                 }
-                return;
+                return true;
             }
 
             // get the aggregated exchange
@@ -582,6 +591,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             // and running the on completion logic can occur concurrently, its just the aggregation logic
             // which is preferred to run non concurrent.
             onCompletion(key, answer, true);
+            return true;
         }
     }
 
@@ -612,11 +622,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                             LOG.trace("Completion interval triggered for correlation key: " + key);
                         }
                         Exchange exchange = aggregationRepository.get(camelContext, key);
-
-                        // indicate it was completed by interval
-                        exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "interval");
-
-                        onCompletion(key, exchange, false);
+                        if (exchange != null) {
+                            // indicate it was completed by interval
+                            exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "interval");
+                            onCompletion(key, exchange, false);
+                        }
                     }
                 } finally {
                     lock.unlock();
@@ -687,7 +697,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                                 exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
                                 exchange.getIn().setHeader(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
                                 deadLetterProcessor.process(exchange);
-                            } catch (Exception e) {
+                            } catch (Throwable e) {
                                 exchange.setException(e);
                             }
 
@@ -808,6 +818,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
         batchConsumerCorrelationKeys.clear();
         redeliveryState.clear();
+        arrivedCorrelationKeys.clear();
     }
 
     @Override

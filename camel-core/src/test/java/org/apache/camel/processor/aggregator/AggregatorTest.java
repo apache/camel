@@ -92,8 +92,6 @@ public class AggregatorTest extends ContextTestSupport {
                     .aggregate(header("cheese"), new MyAggregationStrategy())
                         .eagerCheckCompletion()
                         .completionPredicate(header("bar").isEqualTo("viper bar"))
-                        // or complete with a timeout
-                        .completionTimeout(1000L)
                         .to("mock:result");
                 // END SNIPPET: ex
             }

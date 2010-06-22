@@ -126,9 +126,10 @@ public class DefaultTimeoutMapTest extends TestCase {
 
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>() {
             @Override
-            public void onEviction(String key, Integer value) {
+            public boolean onEviction(String key, Integer value) {
                 keys.add(key);
                 values.add(value);
+                return true;
             }
         };
         assertEquals(0, map.size());
@@ -158,6 +159,46 @@ public class DefaultTimeoutMapTest extends TestCase {
         assertEquals(1, values.get(4).intValue());
 
         assertEquals(1, map.size());
+    }
+
+    public void testExpiredNotEvicted() throws Exception {
+        final List<String> keys = new ArrayList<String>();
+        final List<Integer> values = new ArrayList<Integer>();
+
+        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>() {
+            @Override
+            public boolean onEviction(String key, Integer value) {
+                // do not evict special key
+                if ("gold".equals(key)) {
+                    return false;
+                }
+                keys.add(key);
+                values.add(value);
+                return true;
+            }
+        };
+        assertEquals(0, map.size());
+
+        map.put("A", 1, 900);
+        map.put("B", 2, 1000);
+        map.put("gold", 9, 1100);
+        map.put("C", 3, 1200);
+
+        Thread.sleep(2000);
+
+        // force purge
+        map.purge();
+
+        assertEquals("A", keys.get(0));
+        assertEquals(1, values.get(0).intValue());
+        assertEquals("B", keys.get(1));
+        assertEquals(2, values.get(1).intValue());
+        assertEquals("C", keys.get(2));
+        assertEquals(3, values.get(2).intValue());
+
+        // and keep the gold in the map
+        assertEquals(1, map.size());
+        assertEquals(Integer.valueOf(9), map.get("gold"));
     }
 
 }

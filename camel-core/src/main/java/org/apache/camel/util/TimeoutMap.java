@@ -17,8 +17,7 @@
 package org.apache.camel.util;
 
 /**
- * Represents a thread safe map of values which timeout after a period of
- * inactivity.
+ * Represents a thread safe map of values which timeout after a period of inactivity.
  *
  * @version $Revision$
  */
@@ -61,8 +60,9 @@ public interface TimeoutMap<K, V> extends Runnable {
      *
      * @param key the key
      * @param value the value
+     * @return <tt>true</tt> to remove the evicted value, or <tt>false</tt> to veto the veto and thus keep the value.
      */
-    void onEviction(K key, V value);
+    boolean onEviction(K key, V value);
 
     /**
      * Removes the object with the given key
