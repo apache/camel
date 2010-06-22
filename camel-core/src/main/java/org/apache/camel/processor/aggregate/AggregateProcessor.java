@@ -88,7 +88,6 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private AggregationRepository aggregationRepository = new MemoryAggregationRepository();
     private Map<Object, Object> closedCorrelationKeys;
     private Set<String> batchConsumerCorrelationKeys = new LinkedHashSet<String>();
-    private Set<String> arrivedCorrelationKeys = new LinkedHashSet<String>();
     private final Set<String> inProgressCompleteExchanges = new HashSet<String>();
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<String, RedeliveryData>();
     // optional dead letter channel for exhausted recovered exchanges
@@ -178,11 +177,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // improve performance as we can run aggregation repository get/add in parallel
         lock.lock();
         try {
-            // keep track on the arrived keys
-            arrivedCorrelationKeys.add(key);
             doAggregation(key, exchange);
         } finally {
-            arrivedCorrelationKeys.remove(key);
             lock.unlock();
         }
     }
@@ -552,7 +548,19 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private final class AggregationTimeoutMap extends DefaultTimeoutMap<String, String> {
 
         private AggregationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
-            super(executor, requestMapPollTimeMillis);
+            // do NOT use locking on the timeout map as this aggregator has its own shared lock we will use instead
+            super(executor, requestMapPollTimeMillis, false);
+        }
+
+        @Override
+        public void purge() {
+            // must acquire the shared aggregation lock to be able to purge
+            lock.lock();
+            try {
+                super.purge();
+            } finally {
+                lock.unlock();
+            }
         }
 
         @Override
@@ -561,16 +569,6 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 log.debug("Completion timeout triggered for correlation key: " + key);
             }
 
-            // double check that its not already arrived or in progress
-            boolean arrived = arrivedCorrelationKeys.contains(key);
-            if (arrived) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("A new Exchange with correlation key: " + key + " has just arrived,"
-                        + " which postpones the timeout condition for aggregated exchange id: " + exchangeId);
-                }
-                // do not evict the entry as a new exchange has arrived with the same correlation key
-                return false;
-            }
             boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
             if (inProgress) {
                 if (LOG.isTraceEnabled()) {
@@ -581,16 +579,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
             // get the aggregated exchange
             Exchange answer = aggregationRepository.get(camelContext, key);
-
-            // indicate it was completed by timeout
-            answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
-
-            // do not acquire locks as we already have a lock on the timeout map
-            // and we want to avoid a dead lock if another thread (currently aggregating)
-            // which wants to put into the timeout map as well (CAMEL-2824)
-            // and running the on completion logic can occur concurrently, its just the aggregation logic
-            // which is preferred to run non concurrent.
-            onCompletion(key, answer, true);
+            if (answer != null) {
+                // indicate it was completed by timeout
+                answer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
+                onCompletion(key, answer, true);
+            }
             return true;
         }
     }
@@ -615,14 +608,15 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             Set<String> keys = aggregationRepository.getKeys();
 
             if (keys != null && !keys.isEmpty()) {
+                // must acquire the shared aggregation lock to be able to trigger interval completion
                 lock.lock();
                 try {
                     for (String key : keys) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Completion interval triggered for correlation key: " + key);
-                        }
                         Exchange exchange = aggregationRepository.get(camelContext, key);
                         if (exchange != null) {
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Completion interval triggered for correlation key: " + key);
+                            }
                             // indicate it was completed by interval
                             exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "interval");
                             onCompletion(key, exchange, false);
@@ -818,7 +812,6 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
         batchConsumerCorrelationKeys.clear();
         redeliveryState.clear();
-        arrivedCorrelationKeys.clear();
     }
 
     @Override

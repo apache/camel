@@ -35,6 +35,9 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Default implementation of the {@link TimeoutMap}.
+ * <p/>
+ * This implementation supports thread safe and non thread safe, in the manner you can enable locking or not.
+ * By default locking is enabled and thus we are thread safe.
  *
  * @version $Revision$
  */
@@ -47,20 +50,32 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
     private final long purgePollTime;
     private final long initialDelay = 1000L;
     private final Lock lock = new ReentrantLock();
+    private boolean useLock = true;
 
     public DefaultTimeoutMap() {
         this(null, 1000L);
     }
 
+    public DefaultTimeoutMap(boolean useLock) {
+        this(null, 1000L, useLock);
+    }
+
     public DefaultTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
+        this(executor, requestMapPollTimeMillis, true);
+    }
+
+    public DefaultTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, boolean useLock) {
         this.executor = executor;
         this.purgePollTime = requestMapPollTimeMillis;
+        this.useLock = useLock;
         schedulePoll();
     }
 
     public V get(K key) {
         TimeoutMapEntry<K, V> entry;
-        lock.lock();
+        if (useLock) {
+            lock.lock();
+        }
         try {
             entry = map.get(key);
             if (entry == null) {
@@ -68,40 +83,54 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
             }
             updateExpireTime(entry);
         } finally {
-            lock.unlock();
+            if (useLock) {
+                lock.unlock();
+            }
         }
         return entry.getValue();
     }
 
     public void put(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<K, V>(key, value, timeoutMillis);
-        lock.lock();
+        if (useLock) {
+            lock.lock();
+        }
         try {
             map.put(key, entry);
             updateExpireTime(entry);
         } finally {
-            lock.unlock();
+            if (useLock) {
+                lock.unlock();
+            }
         }
     }
 
     public void remove(K id) {
-        lock.lock();
+        if (useLock) {
+            lock.lock();
+        }
         try {
             map.remove(id);
         } finally {
-            lock.unlock();
+            if (useLock) {
+                lock.unlock();
+            }
         }
     }
 
     public Object[] getKeys() {
         Object[] keys;
-        lock.lock();
+        if (useLock) {
+            lock.lock();
+        }
         try {
             Set<K> keySet = map.keySet();
             keys = new Object[keySet.size()];
             keySet.toArray(keys);
         } finally {
-            lock.unlock();
+            if (useLock) {
+                lock.unlock();
+            }
         }
         return keys;
     }
@@ -133,7 +162,9 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
 
         List<TimeoutMapEntry<K, V>> expired = new ArrayList<TimeoutMapEntry<K, V>>();
 
-        lock.lock();
+        if (useLock) {
+            lock.lock();
+        }
         try {
             // need to find the expired entries and add to the expired list
             for (Map.Entry<K, TimeoutMapEntry<K, V>> entry : map.entrySet()) {
@@ -178,7 +209,9 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
                 }
             }
         } finally {
-            lock.unlock();
+            if (useLock) {
+                lock.unlock();
+            }
         }
     }
 

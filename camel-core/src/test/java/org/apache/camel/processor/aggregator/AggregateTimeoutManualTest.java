@@ -22,21 +22,26 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
- * Unit test to verify that aggregate by timeout only also works.
- * 
+ * To be run manually when testing the timeout aggregator
+ *
  * @version $Revision$
  */
-public class AggregateTimeoutOnlyTest extends ContextTestSupport {
+public class AggregateTimeoutManualTest extends ContextTestSupport {
 
-    public void testAggregateTimeoutOnly() throws Exception {
+    public void testDisabled() throws Exception {
+        // noop
+    }
+
+    public void xxxtestAggregateTimeoutManual() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        // by default the use latest aggregation strategy is used so we get message 9
-        result.expectedBodiesReceived("Message 9");
-        // should take 3 seconds to complete this one
+        // by default the use latest aggregation strategy
+        result.expectedBodiesReceived("Message 1999");
+        // should take at least 3 seconds to complete this one
         result.setMinimumResultWaitTime(2500);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2000; i++) {
             template.sendBodyAndHeader("direct:start", "Message " + i, "id", "1");
+            Thread.sleep(3);
         }
 
         assertMockEndpointsSatisfied();
@@ -49,7 +54,7 @@ public class AggregateTimeoutOnlyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // aggregate timeout after 3th seconds
+                    // timeout after 3 seconds
                     .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(3000)
                     .to("mock:result");
                 // END SNIPPET: e1
