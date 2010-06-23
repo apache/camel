@@ -32,7 +32,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.UserInfo;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.FileComponent;
@@ -115,6 +114,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
     protected Session createSession(final RemoteFileConfiguration configuration) throws JSchException {
         final JSch jsch = new JSch();
+        JSch.setLogger(new JSchLogger());
 
         SftpConfiguration sftpConfig = (SftpConfiguration) configuration;
 
@@ -168,6 +168,44 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             }
         });
         return session;
+    }
+
+    private static final class JSchLogger implements com.jcraft.jsch.Logger {
+
+        public boolean isEnabled(int level) {
+            switch (level) {
+            case FATAL:
+                return LOG.isFatalEnabled();
+            case ERROR:
+                return LOG.isErrorEnabled();
+            case WARN:
+                return LOG.isWarnEnabled();
+            case INFO:
+                return LOG.isInfoEnabled();
+            default:
+                return LOG.isDebugEnabled();
+            }
+        }
+
+        public void log(int level, String message) {
+            switch (level) {
+            case FATAL:
+                LOG.fatal("JSCH -> " + message);
+                break;
+            case ERROR:
+                LOG.error("JSCH -> " + message);
+                break;
+            case WARN:
+                LOG.warn("JSCH -> " + message);
+                break;
+            case INFO:
+                LOG.info("JSCH -> " + message);
+                break;
+            default:
+                LOG.debug("JSCH -> " + message);
+                break;
+            }
+        }
     }
 
     public boolean isConnected() throws GenericFileOperationFailedException {
@@ -307,7 +345,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             // can return either null or an empty list depending on FTP servers
             if (files != null) {
                 for (Object file : files) {
-                    list.add((ChannelSftp.LsEntry)file);
+                    list.add((ChannelSftp.LsEntry) file);
                 }
             }
             return list;
@@ -332,7 +370,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         try {
             os = new ByteArrayOutputStream();
             GenericFile<ChannelSftp.LsEntry> target =
-                (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+                    (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             target.setBody(os);
             channel.get(name, os);
@@ -349,8 +387,8 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         File temp;
         File local = new File(endpoint.getLocalWorkDirectory());
         OutputStream os;
-        GenericFile<ChannelSftp.LsEntry> file = 
-            (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        GenericFile<ChannelSftp.LsEntry> file =
+                (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         ObjectHelper.notNull(file, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
         try {
             // use relative filename in local work directory
