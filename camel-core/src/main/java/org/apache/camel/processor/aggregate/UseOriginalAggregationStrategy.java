@@ -17,50 +17,35 @@
 package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * An {@link org.apache.camel.processor.aggregate.AggregationStrategy} which just uses the original exchange
- * which can be needed when you want to preserve the original Exchange. For example when splitting an Exchange
- * and then you may want to keep routing using the original Exchange.
- * <p/>
- * You must call {@link #setOriginal(org.apache.camel.Exchange)} before this aggregation strategy can be used,
- * as it needs to have a reference to the original exchange.
+ * which can be needed when you want to preserve the original Exchange. For example when splitting an {@link Exchange}
+ * and then you may want to keep routing using the original {@link Exchange}.
  *
  * @see org.apache.camel.processor.Splitter
  * @version $Revision$
  */
 public class UseOriginalAggregationStrategy implements AggregationStrategy {
 
-    // must use a thread local to cater for concurrency
-    private final ThreadLocal<Exchange> original = new ThreadLocal<Exchange>();
+    private final Exchange original;
     private final boolean propagateException;
 
-    public UseOriginalAggregationStrategy(boolean propagateException) {
+    public UseOriginalAggregationStrategy(Exchange original, boolean propagateException) {
+        ObjectHelper.notNull(original, "Original Exchange");
+        this.original = original;
         this.propagateException = propagateException;
     }
 
-    public void setOriginal(Exchange exchange) {
-        if (exchange == null) {
-            // clear it
-            this.original.remove();
-        } else {
-            this.original.set(exchange);
-        }
-    }
-
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        Exchange answer = original.get();
-        if (answer == null) {
-            throw new IllegalStateException("Original Exchange has not been set");
-        }
-
         if (propagateException) {
             Exception exception = checkException(oldExchange, newExchange);
             if (exception != null) {
-                answer.setException(exception);
+                original.setException(exception);
             }
         }
-        return answer;
+        return original;
     }
 
     protected Exception checkException(Exchange oldExchange, Exchange newExchange) {

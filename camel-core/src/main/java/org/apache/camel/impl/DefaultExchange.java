@@ -109,7 +109,7 @@ public final class DefaultExchange implements Exchange {
     }
 
     public Object getProperty(String name) {
-        if (properties != null) {
+        if (hasProperties()) {
             return properties.get(name);
         }
         return null;
@@ -117,7 +117,7 @@ public final class DefaultExchange implements Exchange {
 
     public Object getProperty(String name, Object defaultValue) {
         Object answer = null;
-        if (properties != null) {
+        if (hasProperties()) {
             answer = properties.get(name);
         }
         return answer != null ? answer : defaultValue;
@@ -160,6 +160,9 @@ public final class DefaultExchange implements Exchange {
     }
 
     public Object removeProperty(String name) {
+        if (!hasProperties()) {
+            return null;
+        }
         return getProperties().remove(name);
     }
 

@@ -29,7 +29,6 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
@@ -105,10 +104,6 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         AggregationStrategy strategy = getAggregationStrategy();
         if (strategy == null && strategyRef != null) {
             strategy = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), strategyRef, AggregationStrategy.class);
-        }
-        if (strategy == null) {
-            // fallback to keep the original exchange strategy
-            strategy = new UseOriginalAggregationStrategy(true);
         }
         return strategy;
     }        

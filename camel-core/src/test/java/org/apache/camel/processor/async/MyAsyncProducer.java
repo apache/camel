@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 public class MyAsyncProducer extends DefaultAsyncProducer {
 
     private static final Log LOG = LogFactory.getLog(MyAsyncProducer.class);
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newCachedThreadPool();
     private final AtomicInteger counter = new AtomicInteger();
 
     public MyAsyncProducer(MyAsyncEndpoint endpoint) {

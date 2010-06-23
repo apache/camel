@@ -197,6 +197,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             exchange.setException(e);
         }
 
+        // cleanup any per exchange aggregation strategy
+        exchange.removeProperty(Exchange.AGGREGATION_STRATEGY);
+
         callback.done(true);
         return true;
     }
@@ -229,7 +232,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         return subExchange;
                     }
 
-                    doProcess(original, result, it, pair, callback);
+                    doProcess(original, result, it, pair, callback, total);
 
                     // should we stop in case of an exception occurred during processing?
                     if (stopOnException && subExchange.getException() != null) {
@@ -251,9 +254,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         for (int i = 0; i < total.intValue(); i++) {
             Future<Exchange> future = completion.take();
             Exchange subExchange = future.get();
-            if (aggregationStrategy != null) {
-                doAggregate(result, subExchange);
-            }
+            doAggregate(getAggregationStrategy(subExchange), result, subExchange);
         }
 
         if (LOG.isDebugEnabled()) {
@@ -262,15 +263,15 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     protected boolean doProcessSequential(Exchange original, AtomicExchange result, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) throws Exception {
-        int total = 0;
+        AtomicInteger total = new AtomicInteger();
         Iterator<ProcessorExchangePair> it = pairs.iterator();
 
         while (it.hasNext()) {
             ProcessorExchangePair pair = it.next();
             Exchange subExchange = pair.getExchange();
-            updateNewExchange(subExchange, total, pairs);
+            updateNewExchange(subExchange, total.get(), pairs);
 
-            boolean sync = doProcess(original, result, it, pair, callback);
+            boolean sync = doProcess(original, result, it, pair, callback, total);
             if (!sync) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing exchangeId: " + pair.getExchange().getExchangeId() + " is continued being processed asynchronously");
@@ -286,17 +287,15 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
             // should we stop in case of an exception occurred during processing?
             if (stopOnException && subExchange.getException() != null) {
-                throw new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException());
+                throw new CamelExchangeException("Sequential processing failed for number " + total.get(), subExchange, subExchange.getException());
             }
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Sequential processing complete for number " + total + " exchange: " + subExchange);
             }
 
-            if (aggregationStrategy != null) {
-                doAggregate(result, subExchange);
-            }
-            total++;
+            doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+            total.incrementAndGet();
         }
 
         if (LOG.isDebugEnabled()) {
@@ -307,7 +306,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     private boolean doProcess(final Exchange original, final AtomicExchange result, final Iterator<ProcessorExchangePair> it,
-                              final ProcessorExchangePair pair, final AsyncCallback callback) {
+                              final ProcessorExchangePair pair, final AsyncCallback callback, final AtomicInteger total) {
         boolean sync = true;
 
         final Exchange exchange = pair.getExchange();
@@ -328,11 +327,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 traced.pushBlock();
             }
 
-            // let the prepared process it
+            // let the prepared process it, remember to begin the exchange pair
             AsyncProcessor async = AsyncProcessorTypeConverter.convert(processor);
             pair.begin();
             sync = async.process(exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
+                    // we are done with the exchange pair
                     pair.done();
 
                     // we only have to handle async completion of the routing slip
@@ -340,55 +340,98 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         return;
                     }
 
-                    // TODO: total number
                     // continue processing the multicast asynchronously
                     Exchange subExchange = exchange;
-                    int total = 0;
-
-                    while (it.hasNext()) {
-
-                        if (stopOnException && exchange.getException() != null) {
-                            // wrap in exception to explain where it failed
-                            exchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException()));
-                            callback.done(false);
-                            return;
-                        }
-
-                        if (aggregationStrategy != null) {
-                            doAggregate(result, subExchange);
-                        }
-
-                        if (it.hasNext()) {
-                            // prepare and run the next
-                            ProcessorExchangePair pair = it.next();
-                            subExchange = pair.getExchange();
-                            updateNewExchange(subExchange, total, null);
-                            boolean sync = doProcess(original, result, it, pair, callback);
-
-                            if (!sync) {
-                                if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Processing exchangeId: " + original.getExchangeId() + " is continued being processed asynchronously");
-                                }
-                                return;
-                            }
-
-                            total++;
-                        }
-                    }
 
                     // remember to test for stop on exception and aggregate before copying back results
-                    if (stopOnException && exchange.getException() != null) {
+                    if (stopOnException && subExchange.getException() != null) {
                         // wrap in exception to explain where it failed
-                        exchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException()));
+                        subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException()));
+                        // multicast uses error handling on its output processors and they have tried to redeliver
+                        // so we shall signal back to the other error handlers that we are exhausted and they should not
+                        // also try to redeliver as we will then do that twice
+                        exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
+                        // and copy the current result to original so it will contain this exception
+                        // cleanup any per exchange aggregation strategy
+                        original.removeProperty(Exchange.AGGREGATION_STRATEGY);
+                        ExchangeHelper.copyResults(original, subExchange);
                         callback.done(false);
                         return;
                     }
 
-                    if (aggregationStrategy != null) {
-                        doAggregate(result, subExchange);
+                    try {
+                        doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+                    } catch (Throwable e) {
+                        // wrap in exception to explain where it failed
+                        subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, e));
+                        // multicast uses error handling on its output processors and they have tried to redeliver
+                        // so we shall signal back to the other error handlers that we are exhausted and they should not
+                        // also try to redeliver as we will then do that twice
+                        original.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
+                        // cleanup any per exchange aggregation strategy
+                        original.removeProperty(Exchange.AGGREGATION_STRATEGY);
+                        // and copy the current result to original so it will contain this exception
+                        ExchangeHelper.copyResults(original, subExchange);
+                        callback.done(false);
+                        return;
                     }
 
-                    // copy results back to the original exchange
+                    total.incrementAndGet();
+
+                    // maybe there are more processors to multicast
+                    while (it.hasNext()) {
+
+                        // prepare and run the next
+                        ProcessorExchangePair pair = it.next();
+                        subExchange = pair.getExchange();
+                        updateNewExchange(subExchange, total.get(), null);
+                        boolean sync = doProcess(original, result, it, pair, callback, total);
+
+                        if (!sync) {
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Processing exchangeId: " + original.getExchangeId() + " is continued being processed asynchronously");
+                            }
+                            return;
+                        }
+
+                        if (stopOnException && subExchange.getException() != null) {
+                            // wrap in exception to explain where it failed
+                            subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException()));
+                            // multicast uses error handling on its output processors and they have tried to redeliver
+                            // so we shall signal back to the other error handlers that we are exhausted and they should not
+                            // also try to redeliver as we will then do that twice
+                            original.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
+                            // cleanup any per exchange aggregation strategy
+                            original.removeProperty(Exchange.AGGREGATION_STRATEGY);
+                            // and copy the current result to original so it will contain this exception
+                            ExchangeHelper.copyResults(original, subExchange);
+                            callback.done(false);
+                            return;
+                        }
+
+                        try {
+                            doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+                        } catch (Throwable e) {
+                            // wrap in exception to explain where it failed
+                            subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, e));
+                            // multicast uses error handling on its output processors and they have tried to redeliver
+                            // so we shall signal back to the other error handlers that we are exhausted and they should not
+                            // also try to redeliver as we will then do that twice
+                            original.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
+                            // cleanup any per exchange aggregation strategy
+                            original.removeProperty(Exchange.AGGREGATION_STRATEGY);
+                            // and copy the current result to original so it will contain this exception
+                            ExchangeHelper.copyResults(original, subExchange);
+                            callback.done(false);
+                            return;
+                        }
+
+                        total.incrementAndGet();
+                    }
+
+                    // cleanup any per exchange aggregation strategy
+                    original.removeProperty(Exchange.AGGREGATION_STRATEGY);
+                    // multicasting complete so copy results back to the original exchange
                     if (result.get() != null) {
                         ExchangeHelper.copyResults(original, result.get());
                     }
@@ -414,15 +457,16 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     /**
      * Aggregate the {@link Exchange} with the current result
      *
+     * @param strategy the aggregation strategy to use
      * @param result the current result
      * @param exchange the exchange to be added to the result
      */
-    protected synchronized void doAggregate(AtomicExchange result, Exchange exchange) {
-        if (aggregationStrategy != null) {
+    protected synchronized void doAggregate(AggregationStrategy strategy, AtomicExchange result, Exchange exchange) {
+        if (strategy != null) {
             // prepare the exchanges for aggregation
             Exchange oldExchange = result.get();
             ExchangeHelper.prepareAggregation(oldExchange, exchange);
-            result.set(aggregationStrategy.aggregate(oldExchange, exchange));
+            result.set(strategy.aggregate(oldExchange, exchange));
         }
     }
 
@@ -496,6 +540,16 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
     }
 
+    protected AggregationStrategy getAggregationStrategy(Exchange exhange) {
+        // prefer to use per Exchange aggregation strategy over a global strategy
+        AggregationStrategy answer = exhange.getProperty(Exchange.AGGREGATION_STRATEGY, AggregationStrategy.class);
+        if (answer == null) {
+            // fallback to global strategy
+            answer = getAggregationStrategy();
+        }
+        return answer;
+    }
+
     /**
      * Is the multicast processor working in streaming mode?
      * 
@@ -524,6 +578,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         return processors;
     }
 
+    /**
+     * Use {@link #getAggregationStrategy(org.apache.camel.Exchange)} instead.
+     */
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;
     }

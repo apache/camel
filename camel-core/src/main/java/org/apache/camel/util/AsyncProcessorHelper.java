@@ -43,14 +43,18 @@ public final class AsyncProcessorHelper {
      * Calls the async version of the processor's process method and waits
      * for it to complete before returning. This can be used by {@link AsyncProcessor}
      * objects to implement their sync version of the process method.
+     *
+     * @param processor the processor
+     * @param exchange  the exchange
+     * @throws Exception can be thrown if waiting is interrupted
      */
     public static void process(final AsyncProcessor processor, final Exchange exchange) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 if (!doneSync) {
-                    if (LOG.isWarnEnabled()) {
-                        LOG.warn("Asynchronous callback received for exchangeId: " + exchange.getExchangeId());
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Asynchronous callback received for exchangeId: " + exchange.getExchangeId());
                     }
                     latch.countDown();
                 }
@@ -62,10 +66,13 @@ public final class AsyncProcessorHelper {
             }
         });
         if (!sync) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Waiting for asynchronous callback before continuing for exchangeId: " + exchange.getExchangeId());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
             }
             latch.await();
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Asynchronous callback received, will continue routing exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
+            }
         }
     }
 
