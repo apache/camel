@@ -378,6 +378,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         Exchange exchange = template.request(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(cxfPayload);
+                exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "inoutHeader");
                 exchange.getIn().setHeader(Header.HEADER_LIST, headers);
             }
 
