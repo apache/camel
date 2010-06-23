@@ -28,7 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
 
-public class CxfConsumerPayloadTest extends CxfConsumerTest {
+public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
         
     private static final String ECHO_RESPONSE = "<ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
             + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"

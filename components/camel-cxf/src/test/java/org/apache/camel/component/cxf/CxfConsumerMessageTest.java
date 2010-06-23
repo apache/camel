@@ -21,8 +21,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.frontend.ClientFactoryBean;
+import org.apache.cxf.frontend.ClientProxyFactoryBean;
+import org.junit.Test;
 
-public class CxfConsumerMessageTest extends CxfConsumerTest {
+public class CxfConsumerMessageTest extends CamelTestSupport {
+    protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:28080/test";
+    protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
+        + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+    
+    private static final String TEST_MESSAGE = "Hello World!";
+    
     private static final String ECHO_METHOD = "ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\"";
 
     private static final String ECHO_RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
@@ -56,6 +67,25 @@ public class CxfConsumerMessageTest extends CxfConsumerTest {
                 });
             }
         };
+    }
+    
+    @Test
+    public void testInvokingServiceFromCXFClient() throws Exception {
+        ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
+        ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
+        clientBean.setAddress(SIMPLE_ENDPOINT_ADDRESS);
+        clientBean.setServiceClass(HelloService.class);
+        clientBean.setBus(BusFactory.getDefaultBus());
+
+        HelloService client = (HelloService) proxyFactory.create();
+
+        String result = client.echo(TEST_MESSAGE);
+        assertEquals("We should get the echo string result from router", result, "echo " + TEST_MESSAGE);
+
+        Boolean bool = client.echoBoolean(Boolean.TRUE);
+        assertNotNull("The result should not be null", bool);
+        assertEquals("We should get the echo boolean result from router ", bool.toString(), "true");
+
     }
 
 

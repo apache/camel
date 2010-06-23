@@ -287,11 +287,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // make sure the "requestor role" property does not get propagated as we do switch role
         responseContext.remove(Message.REQUESTOR_ROLE);
         
-        // propagate contexts
-        if (dataFormat != DataFormat.POJO) {
-            // copying response context to out message seems to cause problem in POJO mode
-            outMessage.putAll(responseContext);
-        }
+        outMessage.putAll(responseContext);
+        
+        // Do we still need to put the response context back like this
         outMessage.put(Client.RESPONSE_CONTEXT, responseContext);      
         
         if (LOG.isTraceEnabled()) {

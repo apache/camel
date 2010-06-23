@@ -17,7 +17,9 @@
 
 package org.apache.camel.component.cxf;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -25,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.Test;
@@ -34,6 +37,9 @@ public class CxfConsumerTest extends CamelTestSupport {
     protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:28080/test";
     protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
         + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+    private static final String ECHO_REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        + "<soap:Body><ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+        + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">Hello World!</arg0></ns1:echo></soap:Body></soap:Envelope>";
 
     private static final String ECHO_OPERATION = "echo";
     private static final String ECHO_BOOLEAN_OPERATION = "echoBoolean";
@@ -54,6 +60,10 @@ public class CxfConsumerTest extends CamelTestSupport {
                         Object result = operation + " " + (String)parameter.get(0);
                         // Put the result back
                         exchange.getOut().setBody(result);
+                        // set up the response context which force start document
+                        Map<String, Object> map = new HashMap<String, Object>();
+                        map.put("org.apache.cxf.stax.force-start-document", Boolean.TRUE);
+                        exchange.getOut().setHeader(Client.RESPONSE_CONTEXT, map);
                     }
                 })
                 .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_BOOLEAN_OPERATION)).process(new Processor() {
@@ -87,7 +97,12 @@ public class CxfConsumerTest extends CamelTestSupport {
         Boolean bool = client.echoBoolean(Boolean.TRUE);
         assertNotNull("The result should not be null", bool);
         assertEquals("We should get the echo boolean result from router ", bool.toString(), "true");
-
+    }
+    
+    @Test
+    public void testXmlDeclaration() throws Exception {
+        String response = template.requestBody(SIMPLE_ENDPOINT_ADDRESS, ECHO_REQUEST, String.class);
+        assertTrue("Can't find the xml declaration.", response.startsWith("<?xml version='1.0' encoding="));
     }
 
 
