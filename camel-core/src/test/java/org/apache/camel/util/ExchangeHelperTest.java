@@ -148,6 +148,30 @@ public class ExchangeHelperTest extends ContextTestSupport {
         assertSame(exchange.getContext(), map.get("camelContext"));
     }
 
+    public void testCreateVariableMapNoExistingOut() throws Exception {
+        exchange.setPattern(ExchangePattern.InOut);
+        exchange.getIn().setBody("bar");
+        exchange.getIn().setHeader("quote", "Camel rocks");
+        assertFalse(exchange.hasOut());
+
+        Map map = ExchangeHelper.createVariableMap(exchange);
+
+        // there should still be 8 in the map
+        assertEquals(8, map.size());
+        assertSame(exchange, map.get("exchange"));
+        assertSame(exchange.getIn(), map.get("in"));
+        assertSame(exchange.getIn(), map.get("request"));
+        assertSame(exchange.getIn(), map.get("out"));
+        assertSame(exchange.getIn(), map.get("response"));
+        assertSame(exchange.getIn().getHeaders(), map.get("headers"));
+        assertSame(exchange.getIn().getBody(), map.get("body"));
+        assertSame(exchange.getContext(), map.get("camelContext"));
+
+        // but the Exchange does still not have an OUT message to avoid
+        // causing side effects with the createVariableMap method
+        assertFalse(exchange.hasOut());
+    }
+
     public void testGetContentType() throws Exception {
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml");
         assertEquals("text/xml", ExchangeHelper.getContentType(exchange));

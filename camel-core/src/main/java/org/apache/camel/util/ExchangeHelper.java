@@ -318,9 +318,12 @@ public final class ExchangeHelper {
         map.put("headers", in.getHeaders());
         map.put("body", in.getBody());
         if (isOutCapable(exchange)) {
-            Message out = exchange.getOut();
-            map.put("out", out);
-            map.put("response", out);
+            // if we are out capable then set out and response as well
+            // however only grab OUT if it exists, otherwise reuse IN
+            // this prevents side effects to alter the Exchange if we force creating an OUT message
+            Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+            map.put("out", msg);
+            map.put("response", msg);
         }
         map.put("camelContext", exchange.getContext());
     }
