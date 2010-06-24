@@ -223,7 +223,9 @@ public class QuartzComponent extends DefaultComponent {
     protected Properties loadProperties() throws SchedulerException {
         Properties answer = getProperties();
         if (answer == null && getPropertiesFile() != null) {
-            LOG.info("Loading Quartz properties file from classpath: " + getPropertiesFile());
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Loading Quartz properties file from classpath: " + getPropertiesFile());
+            }
             InputStream is = getCamelContext().getClassResolver().loadResourceAsStream(getPropertiesFile());
             if (is == null) {
                 throw new SchedulerException("Quartz properties file not found in classpath: " + getPropertiesFile());
@@ -232,7 +234,7 @@ public class QuartzComponent extends DefaultComponent {
             try {
                 answer.load(is);
             } catch (IOException e) {
-                throw new SchedulerException("Error loading Quartz properties file from: " + getPropertiesFile(), e);
+                throw new SchedulerException("Error loading Quartz properties file from classpath: " + getPropertiesFile(), e);
             }
         }
         return answer;
@@ -241,6 +243,9 @@ public class QuartzComponent extends DefaultComponent {
     protected SchedulerFactory createSchedulerFactory() throws SchedulerException {
         Properties prop = loadProperties();
         if (prop != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating SchedulerFactory with properties: " + prop);
+            }
             return new StdSchedulerFactory(prop);
         } else {
             return new StdSchedulerFactory();
