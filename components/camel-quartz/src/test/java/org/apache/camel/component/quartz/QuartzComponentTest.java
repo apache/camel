@@ -28,7 +28,7 @@ import org.quartz.impl.StdSchedulerFactory;
 public class QuartzComponentTest extends CamelTestSupport {
 
     @Test
-    public void testQuartzComponentCustomScheuduler() throws Exception {
+    public void testQuartzComponentCustomScheduler() throws Exception {
         QuartzComponent comp = new QuartzComponent();
         comp.setCamelContext(context);
 

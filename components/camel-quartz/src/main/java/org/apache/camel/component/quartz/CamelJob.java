@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.io.Serializable;
+
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -23,7 +25,7 @@ import org.quartz.JobExecutionException;
 /**
  * @version $Revision$
  */
-public class CamelJob implements Job {
+public class CamelJob implements Job, Serializable {
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
         QuartzEndpoint endpoint = (QuartzEndpoint) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT);

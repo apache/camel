@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.quartz;
 
-import junit.framework.TestCase;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;

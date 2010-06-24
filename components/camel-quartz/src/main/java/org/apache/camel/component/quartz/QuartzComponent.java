@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
@@ -42,7 +45,7 @@ import org.quartz.impl.StdSchedulerFactory;
  * <p/>
  * For a brief tutorial on setting cron expression see
  * <a href="http://www.opensymphony.com/quartz/wikidocs/CronTriggers%20Tutorial.html">Quartz cron tutorial</a>.
- * 
+ *
  * @version $Revision:520964 $
  */
 public class QuartzComponent extends DefaultComponent {
@@ -50,6 +53,8 @@ public class QuartzComponent extends DefaultComponent {
     private static final AtomicInteger JOBS = new AtomicInteger();
     private static Scheduler scheduler;
     private SchedulerFactory factory;
+    private Properties properties;
+    private String propertiesFile;
 
     public QuartzComponent() {
     }
@@ -82,7 +87,7 @@ public class QuartzComponent extends DefaultComponent {
 
         Map<String, Object> triggerParameters = IntrospectionSupport.extractProperties(parameters, "trigger.");
         Map<String, Object> jobParameters = IntrospectionSupport.extractProperties(parameters, "job.");
-        
+
         // create the trigger either cron or simple
         Trigger trigger;
         if (ObjectHelper.isNotEmpty(cron)) {
@@ -101,7 +106,7 @@ public class QuartzComponent extends DefaultComponent {
 
         trigger.setName(name);
         trigger.setGroup(group);
-        
+
         setProperties(trigger, triggerParameters);
         setProperties(answer.getJobDetail(), jobParameters);
 
@@ -145,17 +150,17 @@ public class QuartzComponent extends DefaultComponent {
         JOBS.incrementAndGet();
 
         if (getScheduler().getTrigger(trigger.getName(), trigger.getGroup()) == null) {
-        	if (LOG.isDebugEnabled()) {
-        		LOG.debug("Adding job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
-        	}
-        	getScheduler().scheduleJob(job, trigger);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Adding job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
+            }
+            getScheduler().scheduleJob(job, trigger);
         } else {
-        	if (LOG.isDebugEnabled()) {
-        		LOG.debug("Resuming job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
-        	}
-        	getScheduler().resumeTrigger(trigger.getName(), trigger.getGroup());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Resuming job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
+            }
+            getScheduler().resumeTrigger(trigger.getName(), trigger.getGroup());
         }
-        
+
     }
 
     public void removeJob(Trigger trigger) throws SchedulerException {
@@ -169,7 +174,8 @@ public class QuartzComponent extends DefaultComponent {
 
     // Properties
     // -------------------------------------------------------------------------
-    public SchedulerFactory getFactory() {
+
+    public SchedulerFactory getFactory() throws SchedulerException {
         if (factory == null) {
             factory = createSchedulerFactory();
         }
@@ -184,7 +190,7 @@ public class QuartzComponent extends DefaultComponent {
         if (scheduler == null) {
             scheduler = createScheduler();
         }
-        if (!scheduler.isStarted()) {            
+        if (!scheduler.isStarted()) {
             LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName());
             scheduler.start();
         }
@@ -195,10 +201,50 @@ public class QuartzComponent extends DefaultComponent {
         QuartzComponent.scheduler = scheduler;
     }
 
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
+
+    public String getPropertiesFile() {
+        return propertiesFile;
+    }
+
+    public void setPropertiesFile(String propertiesFile) {
+        this.propertiesFile = propertiesFile;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected SchedulerFactory createSchedulerFactory() {
-        return new StdSchedulerFactory();
+
+    protected Properties loadProperties() throws SchedulerException {
+        Properties answer = getProperties();
+        if (answer == null && getPropertiesFile() != null) {
+            LOG.info("Loading Quartz properties file from classpath: " + getPropertiesFile());
+            InputStream is = getCamelContext().getClassResolver().loadResourceAsStream(getPropertiesFile());
+            if (is == null) {
+                throw new SchedulerException("Quartz properties file not found in classpath: " + getPropertiesFile());
+            }
+            answer = new Properties();
+            try {
+                answer.load(is);
+            } catch (IOException e) {
+                throw new SchedulerException("Error loading Quartz properties file from: " + getPropertiesFile(), e);
+            }
+        }
+        return answer;
+    }
+
+    protected SchedulerFactory createSchedulerFactory() throws SchedulerException {
+        Properties prop = loadProperties();
+        if (prop != null) {
+            return new StdSchedulerFactory(prop);
+        } else {
+            return new StdSchedulerFactory();
+        }
     }
 
     protected Scheduler createScheduler() throws SchedulerException {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.io.Serializable;
+
 import org.apache.camel.CamelContext;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -26,7 +28,7 @@ import org.quartz.StatefulJob;
 /**
  * Stateful job
  */
-public class StatefulCamelJob implements StatefulJob {
+public class StatefulCamelJob implements StatefulJob, Serializable {
 
     public void execute(final JobExecutionContext context) throws JobExecutionException {
         SchedulerContext schedulerContext;
