@@ -161,7 +161,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
                 }
-                // the remainder of the routing slip will be completed async
+                // the remainder of the routing will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }

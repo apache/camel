@@ -51,6 +51,30 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
         assertTrue(bar.endsWith(" - bar"));
     }
 
+    public void testGetThreadNameCustomPatternLongName() throws Exception {
+        context.getExecutorServiceStrategy().setThreadNamePattern("#${counter} - ${longName}");
+        String foo = context.getExecutorServiceStrategy().getThreadName("foo?beer=Carlsberg");
+        String bar = context.getExecutorServiceStrategy().getThreadName("bar");
+
+        assertNotSame(foo, bar);
+        assertTrue(foo.startsWith("#"));
+        assertTrue(foo.endsWith(" - foo?beer=Carlsberg"));
+        assertTrue(bar.startsWith("#"));
+        assertTrue(bar.endsWith(" - bar"));
+    }
+
+    public void testGetThreadNameCustomPatternWithParameters() throws Exception {
+        context.getExecutorServiceStrategy().setThreadNamePattern("#${counter} - ${name}");
+        String foo = context.getExecutorServiceStrategy().getThreadName("foo?beer=Carlsberg");
+        String bar = context.getExecutorServiceStrategy().getThreadName("bar");
+
+        assertNotSame(foo, bar);
+        assertTrue(foo.startsWith("#"));
+        assertTrue(foo.endsWith(" - foo"));
+        assertTrue(bar.startsWith("#"));
+        assertTrue(bar.endsWith(" - bar"));
+    }
+
     public void testGetThreadNameCustomPatternNoCounter() throws Exception {
         context.getExecutorServiceStrategy().setThreadNamePattern("Cool ${name}");
         String foo = context.getExecutorServiceStrategy().getThreadName("foo");

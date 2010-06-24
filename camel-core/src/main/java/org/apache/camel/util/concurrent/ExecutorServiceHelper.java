@@ -69,8 +69,13 @@ public final class ExecutorServiceHelper {
             pattern = DEFAULT_PATTERN;
         }
 
+        // we support ${longName} and ${name} as name placeholders
+        String longName = name;
+        String shortName = name.contains("?") ? ObjectHelper.before(name, "?") : name;
+
         String answer = pattern.replaceFirst("\\$\\{counter\\}", "" + nextThreadCounter());
-        answer = answer.replaceFirst("\\$\\{name\\}", name);
+        answer = answer.replaceFirst("\\$\\{longName\\}", longName);
+        answer = answer.replaceFirst("\\$\\{name\\}", shortName);
         if (answer.indexOf("$") > -1 || answer.indexOf("${") > -1 || answer.indexOf("}") > -1) {
             throw new IllegalArgumentException("Pattern is invalid: " + pattern);
         }
