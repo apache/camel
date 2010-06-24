@@ -60,6 +60,37 @@ public class ScanStreamFileTest extends CamelTestSupport {
         fos.close();
     }
 
+    @Test
+    public void testScanRefreshedFile() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello", "there", "World", "!");
+
+        FileOutputStream fos = refreshFile(null);
+        fos.write("Hello\n".getBytes());
+        Thread.sleep(150);
+        fos.write("there\n".getBytes());
+        fos = refreshFile(fos);
+        Thread.sleep(150);
+        fos.write("World\n".getBytes());
+        Thread.sleep(150);
+        fos = refreshFile(fos);
+        Thread.sleep(150);
+        fos.write("!\n".getBytes());
+
+        assertMockEndpointsSatisfied();
+
+        fos.close();
+    }
+
+    private FileOutputStream refreshFile(FileOutputStream fos) throws Exception {
+        if (fos != null) {
+            fos.close();
+        }
+        file.delete();
+        file.createNewFile();
+        return new FileOutputStream(file);
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

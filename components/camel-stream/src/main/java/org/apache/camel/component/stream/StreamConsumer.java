@@ -64,13 +64,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     protected void doStart() throws Exception {
         super.doStart();
 
-        if ("in".equals(uri)) {
-            inputStream = System.in;
-        } else if ("file".equals(uri)) {
-            inputStream = resolveStreamFromFile();
-        } else if ("url".equals(uri)) {
-            inputStream = resolveStreamFromUrl();
-        }
+        initializeStream();
 
         executor = endpoint.getCamelContext().getExecutorServiceStrategy().newSingleThreadExecutor(this, endpoint.getEndpointUri());
         executor.execute(this);
@@ -95,10 +89,22 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         }
     }
 
-    private void readFromStream() throws Exception {
+    private BufferedReader initializeStream() throws Exception {
+        if ("in".equals(uri)) {
+            inputStream = System.in;
+        } else if ("file".equals(uri)) {
+            inputStream = resolveStreamFromFile();
+        } else if ("url".equals(uri)) {
+            inputStream = resolveStreamFromUrl();
+        }
         Charset charset = endpoint.getCharset();
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset));
+        return br;
+    }
+
+    private void readFromStream() throws Exception {
         String line;
+        BufferedReader br = initializeStream();
 
         if (endpoint.isScanStream()) {
             // repeat scanning from stream
@@ -110,6 +116,9 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 boolean eos = line == null;
                 if (!eos && isRunAllowed()) {
                     processLine(line);
+                } else if (eos && isRunAllowed()) {
+                    //try and re-open stream
+                    br = initializeStream();
                 }
                 try {
                     Thread.sleep(endpoint.getScanStreamDelay());
