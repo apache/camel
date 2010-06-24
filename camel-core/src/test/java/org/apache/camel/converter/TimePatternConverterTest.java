@@ -114,7 +114,7 @@ public class TimePatternConverterTest extends ContextTestSupport {
     public void testIllegalHMSTimePattern() {
         String source = new String("36h88m5s");
         try {
-            long milliseconds = TimePatternConverter.toMilliSeconds(source);
+            TimePatternConverter.toMilliSeconds(source);
             fail("Should throw IllegalArgumentException");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalArgumentException.class, e);
@@ -125,7 +125,7 @@ public class TimePatternConverterTest extends ContextTestSupport {
     public void testIllegalMSTimePattern() {
         String source = new String("55m75s");
         try {
-            long milliseconds = TimePatternConverter.toMilliSeconds(source);
+            TimePatternConverter.toMilliSeconds(source);
             fail("Should throw IllegalArgumentException");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalArgumentException.class, e);
@@ -136,7 +136,7 @@ public class TimePatternConverterTest extends ContextTestSupport {
     public void testIllegalHMTimePattern() throws Exception {
         String source = new String("1h89s");
         try {
-            long milliseconds = TimePatternConverter.toMilliSeconds(source);
+            TimePatternConverter.toMilliSeconds(source);
             fail("Should throw IllegalArgumentException");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalArgumentException.class, e);

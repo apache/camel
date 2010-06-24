@@ -346,15 +346,15 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                         // Check if we must padd
                         if (result.length() < fieldLength) {
-                        	
-                        	// No padding defined for the field
-                        	if ( paddCharField == 0 ) {
-                        		// We use the padding defined for the Record
-                        		paddChar = paddingChar;
-                        	} else {
-                        		paddChar = paddCharField;
-                        	}
-                        	
+
+                            // No padding defined for the field
+                            if (paddCharField == 0) {
+                                // We use the padding defined for the Record
+                                paddChar = paddingChar;
+                            } else {
+                                paddChar = paddCharField;
+                            }
+
                             if (align.contains("R")) {
                                 temp.append(generatePaddingChars(paddChar, fieldLength, result.length()));
                                 temp.append(result);
