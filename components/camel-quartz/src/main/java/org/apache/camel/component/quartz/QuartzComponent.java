@@ -144,10 +144,18 @@ public class QuartzComponent extends DefaultComponent {
     public void addJob(JobDetail job, Trigger trigger) throws SchedulerException {
         JOBS.incrementAndGet();
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Adding job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
+        if (getScheduler().getTrigger(trigger.getName(), trigger.getGroup()) == null) {
+        	if (LOG.isDebugEnabled()) {
+        		LOG.debug("Adding job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
+        	}
+        	getScheduler().scheduleJob(job, trigger);
+        } else {
+        	if (LOG.isDebugEnabled()) {
+        		LOG.debug("Resuming job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
+        	}
+        	getScheduler().resumeTrigger(trigger.getName(), trigger.getGroup());
         }
-        getScheduler().scheduleJob(job, trigger);
+        
     }
 
     public void removeJob(Trigger trigger) throws SchedulerException {
