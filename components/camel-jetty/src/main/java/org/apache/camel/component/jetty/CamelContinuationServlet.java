@@ -17,14 +17,17 @@
 package org.apache.camel.component.jetty;
 
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpConsumer;
+import org.apache.camel.component.http.HttpMessage;
+import org.apache.camel.impl.DefaultExchange;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
 
@@ -35,12 +38,8 @@ import org.eclipse.jetty.continuation.ContinuationSupport;
  */
 public class CamelContinuationServlet extends CamelServlet {
 
-    // TODO: We should look into what we can do to introduce back Jetty Continuations
-    // and it should be documented how it works and to be used
-    // and end users should be able to decide if they want to leverage it or not
-
     private static final long serialVersionUID = 1L;
-        
+
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
@@ -51,47 +50,78 @@ public class CamelContinuationServlet extends CamelServlet {
                 return;
             }
 
+            // are we suspended?
+            if (consumer.isSuspended()) {
+                response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                return;
+            }
+
             final Continuation continuation = ContinuationSupport.getContinuation(request);
             if (continuation.isInitial()) {
-                // Have the camel process the HTTP exchange.
-                // final DefaultExchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
-                // exchange.setProperty(HttpConstants.SERVLET_REQUEST, request);
-                // exchange.setProperty(HttpConstants.SERVLET_RESPONSE, response);
-                // exchange.setIn(new HttpMessage(exchange, request));
-                // boolean sync = consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
-                //     public void done(boolean sync) {
-                //        if (sync) {
-                //            return;
-                //        }
-                //        continuation.setObject(exchange);
-                //        continuation.resume();
-                //    }
-                //});
 
-                //if (!sync) {
-                    // Wait for the exchange to get processed.
-                    // This might block until it completes or it might return via an exception and
+                // a new request so create an exchange
+                final Exchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
+                if (consumer.getEndpoint().isBridgeEndpoint()) {
+                    exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+                }
+                if (consumer.getEndpoint().isDisableStreamCache()) {
+                    exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
+                }
+                exchange.setIn(new HttpMessage(exchange, request, response));
+
+                // use the asynchronous API to process the exchange
+                boolean sync = consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
+                    public void done(boolean doneSync) {
+                        // we only have to handle async completion
+                        if (doneSync) {
+                            return;
+                        }
+
+                        // we should resume the continuation now that we are done asynchronously
+                        if (log.isTraceEnabled()) {
+                            log.trace("Resuming continuation of exchangeId: " + exchange.getExchangeId());
+                        }
+                        continuation.setAttribute("CamelExchange", exchange);
+                        continuation.resume();
+                    }
+                });
+
+                if (!sync) {
+                    // wait for the exchange to get processed.
+                    // this might block until it completes or it might return via an exception and
                     // then this method is re-invoked once the the exchange has finished processing
-                //    continuation.suspend(0);
-                //}
-
-                // HC: The getBinding() is interesting because it illustrates the
-                // impedance miss-match between HTTP's stream oriented protocol, and
-                // Camels more message oriented protocol exchanges.
+                    if (log.isTraceEnabled()) {
+                        log.trace("Suspending continuation of exchangeId: " + exchange.getExchangeId());
+                    }
+                    continuation.suspend(response);
+                    return;
+                }
 
                 // now lets output to the response
-                //consumer.getBinding().writeResponse(exchange, response);
+                if (log.isTraceEnabled()) {
+                    log.trace("Writing response of exchangeId: " + exchange.getExchangeId());
+                }
+                consumer.getBinding().writeResponse(exchange, response);
                 return;
             }
 
             if (continuation.isResumed()) {
-                Exchange exchange = (Exchange)continuation.getAttribute("result");
+                Exchange exchange = (Exchange) continuation.getAttribute("CamelExchange");
+                if (log.isTraceEnabled()) {
+                    log.trace("Resuming continuation of exchangeId: " + exchange.getExchangeId());
+                }
+
                 // now lets output to the response
+                if (log.isTraceEnabled()) {
+                    log.trace("Writing response of exchangeId: " + exchange.getExchangeId());
+                }
                 consumer.getBinding().writeResponse(exchange, response);
                 return;
             }
         } catch (Exception e) {
+            log.error("Error processing request", e);
             throw new ServletException(e);
         }
     }
+
 }

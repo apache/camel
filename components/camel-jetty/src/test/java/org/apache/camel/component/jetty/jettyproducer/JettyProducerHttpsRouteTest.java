@@ -22,7 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class JettyProducerHttpsRouteTest extends HttpsRouteTest {
 
     public String getHttpProducerScheme() {

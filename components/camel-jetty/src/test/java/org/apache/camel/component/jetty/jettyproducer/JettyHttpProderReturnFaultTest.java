@@ -26,7 +26,6 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettyHttpProderReturnFaultTest extends CamelTestSupport {
 
     @Test

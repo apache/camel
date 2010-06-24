@@ -29,7 +29,6 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettyHttpProducerAsynchronousTest extends CamelTestSupport {
 
     private static String thread1;

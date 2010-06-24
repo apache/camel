@@ -27,7 +27,6 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettyHttpProducerSimulate404ErrorTest extends CamelTestSupport {
 
     private String url = "jetty://http://0.0.0.0:9123/bar";

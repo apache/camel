@@ -26,7 +26,6 @@ import org.junit.Test;
 /**
  * Unit test to verify that we can have URI options for external system (endpoint is lenient)
  */
-@Ignore
 public class JettyHttpProducerGetWithParamAsExchangeHeaderTest extends CamelTestSupport {
 
     private String serverUri = "jetty://http://localhost:9088/myservice";

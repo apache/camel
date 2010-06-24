@@ -25,7 +25,6 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettyHttpProducerGoogleAsynchronousTest extends CamelTestSupport {
 
     @Test

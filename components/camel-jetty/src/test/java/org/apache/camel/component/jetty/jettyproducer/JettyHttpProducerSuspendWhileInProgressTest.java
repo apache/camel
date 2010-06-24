@@ -32,7 +32,6 @@ import static org.apache.camel.language.simple.SimpleLanguage.simple;
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettyHttpProducerSuspendWhileInProgressTest extends CamelTestSupport {
 
     private String serverUri = "jetty://http://localhost:9285/cool";

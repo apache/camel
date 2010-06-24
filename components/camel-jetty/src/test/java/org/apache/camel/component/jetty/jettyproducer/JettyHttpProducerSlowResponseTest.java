@@ -29,7 +29,6 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettyHttpProducerSlowResponseTest extends CamelTestSupport {
 
     private String url = "jetty://http://0.0.0.0:9321/foo";

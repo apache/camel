@@ -30,7 +30,6 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettyHttpProducerSendFileTest extends CamelTestSupport {
 
     @Test

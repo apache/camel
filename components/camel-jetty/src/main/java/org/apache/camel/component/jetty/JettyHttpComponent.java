@@ -470,7 +470,8 @@ public class JettyHttpComponent extends HttpComponent {
             }
         }
 
-        CamelServlet camelServlet = new CamelServlet();
+        // use Jetty continuations
+        CamelServlet camelServlet = new CamelContinuationServlet();
         ServletHolder holder = new ServletHolder();
         holder.setServlet(camelServlet);
         CamelContext camelContext = this.getCamelContext();

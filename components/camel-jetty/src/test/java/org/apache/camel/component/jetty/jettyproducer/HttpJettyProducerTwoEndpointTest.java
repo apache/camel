@@ -26,7 +26,6 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-@Ignore
 public class HttpJettyProducerTwoEndpointTest extends CamelTestSupport {
 
     @Test

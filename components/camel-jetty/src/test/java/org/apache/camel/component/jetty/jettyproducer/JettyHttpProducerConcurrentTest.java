@@ -35,7 +35,6 @@ import org.junit.Test;
  *
  * @version $Revision$
  */
-@Ignore
 public class JettyHttpProducerConcurrentTest extends CamelTestSupport {
 
     @Test

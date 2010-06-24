@@ -14,20 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty.jettyproducer;
+package org.apache.camel.component.jetty.async;
 
-import org.apache.camel.component.jetty.JettyHandle404Test;
-import org.junit.Ignore;
+import java.util.Map;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
- * Based on end user on forum how to get the 404 error code in his enrich aggregator
- *
  * @version $Revision$
  */
-public class JettyProducerHandle404Test extends JettyHandle404Test {
+public class MyAsyncComponent extends DefaultComponent {
 
-    public String getProducerUrl() {
-        return "jetty://http://localhost:8123/myserver?user=Camel";
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        MyAsyncEndpoint answer = new MyAsyncEndpoint(uri, this);
+        answer.setReply(remaining);
+        setProperties(answer, parameters);
+        return answer;
     }
 
 }

@@ -26,7 +26,6 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettyHttpProducerTimeoutTest extends CamelTestSupport {
 
     private String url = "jetty://http://0.0.0.0:9123/timeout?httpClient.timeout=2000";

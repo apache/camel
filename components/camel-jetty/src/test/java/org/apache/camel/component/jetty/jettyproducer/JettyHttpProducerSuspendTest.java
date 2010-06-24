@@ -26,7 +26,6 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettyHttpProducerSuspendTest extends CamelTestSupport {
 
     private String serverUri = "jetty://http://localhost:9287/cool";

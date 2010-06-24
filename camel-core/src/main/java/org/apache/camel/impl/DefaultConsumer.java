@@ -16,9 +16,11 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -33,6 +35,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
     protected final transient Log log = LogFactory.getLog(getClass());
     private final Endpoint endpoint;
     private final Processor processor;
+    private AsyncProcessor asyncProcessor;
     private ExceptionHandler exceptionHandler;
 
     public DefaultConsumer(Endpoint endpoint, Processor processor) {
@@ -51,6 +54,18 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
 
     public Processor getProcessor() {
         return processor;
+    }
+
+    /**
+     * Provides an {@link org.apache.camel.AsyncProcessor} interface to the configured
+     * processor on the consumer. If the processor does not implement the interface,
+     * it will be adapted so that it does.
+     */
+    public AsyncProcessor getAsyncProcessor() {
+        if (asyncProcessor == null) {
+            asyncProcessor = AsyncProcessorTypeConverter.convert(processor);
+        }
+        return asyncProcessor;
     }
 
     public ExceptionHandler getExceptionHandler() {

@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
 public class CamelServlet extends HttpServlet {
 
     private static final long serialVersionUID = -7061982839117697829L;
-    private static final transient Log LOG = LogFactory.getLog(CamelServlet.class);
+    protected final transient Log log = LogFactory.getLog(getClass());
 
     private ConcurrentHashMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
    
@@ -74,7 +74,7 @@ public class CamelServlet extends HttpServlet {
             consumer.getBinding().writeResponse(exchange, response);
 
         } catch (Exception e) {
-            LOG.error("Error processing request", e);
+            log.error("Error processing request", e);
             throw new ServletException(e);
         }
     }

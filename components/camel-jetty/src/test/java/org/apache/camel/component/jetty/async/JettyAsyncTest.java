@@ -14,28 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty.jettyproducer;
+package org.apache.camel.component.jetty.async;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerGoogleTest extends CamelTestSupport {
+public class JettyAsyncTest extends CamelTestSupport {
 
     @Test
-    @Ignore("ignore online tests, will be improved in Camel 2.3")
-    public void testGoogleFrontPage() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
+    public void testJettyAsync() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        String reply = template.requestBody("direct:start", null, String.class);
-        assertNotNull(reply);
+        String reply = template.requestBody("http://localhost:8877/myservice", null, String.class);
+        assertEquals("Bye World", reply);
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -43,10 +40,12 @@ public class JettyHttpProducerGoogleTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // to prevent redirect being thrown as an exception
-                from("direct:start").to("jetty://http://www.google.com?throwExceptionOnFailure=false");
+                context.addComponent("async", new MyAsyncComponent());
+
+                from("jetty:http://localhost:8877/myservice")
+                    .to("async:Bye World")
+                    .to("mock:result");
             }
         };
     }
 }
-

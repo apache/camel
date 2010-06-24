@@ -224,8 +224,8 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
         client.start();
+        super.doStart();
     }
 
     @Override

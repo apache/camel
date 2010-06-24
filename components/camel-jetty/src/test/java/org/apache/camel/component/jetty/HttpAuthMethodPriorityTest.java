@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
@@ -84,8 +85,9 @@ public class HttpAuthMethodPriorityTest extends CamelTestSupport {
         try {
             template.requestBody("http://localhost:9080/test?authMethod=Basic&authMethodPriority=Basic,foo&authUsername=donald&authPassword=duck", "Hello World", String.class);
             fail("Should have thrown an exception");
-        } catch (FailedToCreateProducerException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        } catch (CamelExecutionException e) {
+            FailedToCreateProducerException failed = assertIsInstanceOf(FailedToCreateProducerException.class, e.getCause());
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, failed.getCause());
             assertEquals("Unknown authMethod: foo in authMethodPriority: Basic,foo", cause.getMessage());
         }
     }
