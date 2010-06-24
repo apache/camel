@@ -41,7 +41,7 @@ import org.apache.camel.util.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.util.ObjectHelper.wrapCamelExecutionException;
 
 /**
  * Cache containing created {@link Producer}.
@@ -121,8 +121,12 @@ public class ProducerCache extends ServiceSupport {
     public void send(Endpoint endpoint, Exchange exchange) {
         try {
             sendExchange(endpoint, null, null, exchange);
+            // ensure that CamelExecutionException is always thrown
+            if (exchange.getException() != null) {
+                throw wrapCamelExecutionException(exchange, exchange.getException());
+            }
         } catch (Exception e) {
-            throw wrapRuntimeCamelException(e);
+            throw wrapCamelExecutionException(exchange, e);
         }
     }
 
@@ -153,7 +157,7 @@ public class ProducerCache extends ServiceSupport {
         try {
             return sendExchange(endpoint, null, processor, null);
         } catch (Exception e) {
-            throw wrapRuntimeCamelException(e);
+            throw wrapCamelExecutionException(null, e);
         }
     }
 
@@ -171,7 +175,7 @@ public class ProducerCache extends ServiceSupport {
         try {
             return sendExchange(endpoint, pattern, processor, null);
         } catch (Exception e) {
-            throw wrapRuntimeCamelException(e);
+            throw wrapCamelExecutionException(null, e);
         }
     }
 

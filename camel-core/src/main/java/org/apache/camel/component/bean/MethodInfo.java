@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -155,7 +157,7 @@ public class MethodInfo {
                 return arguments;
             }
 
-            public Object proceed() throws Exception {
+            public Object proceed(AsyncCallback callback, AtomicBoolean doneSync) throws Exception {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace(">>>> invoking: " + method + " on bean: " + pojo + " with arguments: " + asString(arguments) + " for exchange: " + exchange);
                 }
@@ -165,7 +167,9 @@ public class MethodInfo {
                     if (!recipientList.isStarted()) {
                         ServiceHelper.startService(recipientList);
                     }
-                    recipientList.sendToRecipientList(exchange, result);
+                    boolean sync = recipientList.sendToRecipientList(exchange, result, callback);
+                    // must remember the done sync returned from the recipient list
+                    doneSync.set(sync);
                     // we don't want to return the list of endpoints
                     // return Void to indicate to BeanProcessor that there is no reply
                     return Void.TYPE;
@@ -174,7 +178,9 @@ public class MethodInfo {
                     if (!routingSlip.isStarted()) {
                         ServiceHelper.startService(routingSlip);
                     }
-                    routingSlip.doRoutingSlip(exchange, result);
+                    boolean sync = routingSlip.doRoutingSlip(exchange, result, callback);
+                    // must remember the done sync returned from the routing slip
+                    doneSync.set(sync);
                     return Void.TYPE;
                 }
                 return result;

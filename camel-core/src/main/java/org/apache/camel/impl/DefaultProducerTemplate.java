@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -118,18 +119,18 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return extractResultBody(result, pattern);
     }
 
-    public void sendBody(Endpoint endpoint, Object body) {
+    public void sendBody(Endpoint endpoint, Object body) throws CamelExecutionException {
         Exchange result = send(endpoint, createSetBodyProcessor(body));
         // must invoke extract result body in case of exception to be rethrown
         extractResultBody(result);
     }
 
-    public void sendBody(String endpointUri, Object body) {
+    public void sendBody(String endpointUri, Object body) throws CamelExecutionException {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         sendBody(endpoint, body);
     }
 
-    public Object sendBody(String endpointUri, ExchangePattern pattern, Object body) {
+    public Object sendBody(String endpointUri, ExchangePattern pattern, Object body) throws CamelExecutionException {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         Object result = sendBody(endpoint, pattern, body);
         if (pattern.isOutCapable()) {
@@ -140,18 +141,18 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         }
     }
 
-    public void sendBodyAndHeader(String endpointUri, final Object body, final String header, final Object headerValue) {
+    public void sendBodyAndHeader(String endpointUri, final Object body, final String header, final Object headerValue) throws CamelExecutionException {
         sendBodyAndHeader(resolveMandatoryEndpoint(endpointUri), body, header, headerValue);
     }
 
-    public void sendBodyAndHeader(Endpoint endpoint, final Object body, final String header, final Object headerValue) {
+    public void sendBodyAndHeader(Endpoint endpoint, final Object body, final String header, final Object headerValue) throws CamelExecutionException {
         Exchange result = send(endpoint, createBodyAndHeaderProcessor(body, header, headerValue));
         // must invoke extract result body in case of exception to be rethrown
         extractResultBody(result);
     }
 
     public Object sendBodyAndHeader(Endpoint endpoint, ExchangePattern pattern, final Object body,
-                                    final String header, final Object headerValue) {
+                                    final String header, final Object headerValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
         Object result = extractResultBody(exchange, pattern);
         if (pattern.isOutCapable()) {
@@ -163,7 +164,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public Object sendBodyAndHeader(String endpoint, ExchangePattern pattern, final Object body,
-                                    final String header, final Object headerValue) {
+                                    final String header, final Object headerValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
         Object result = extractResultBody(exchange, pattern);
         if (pattern.isOutCapable()) {
@@ -175,19 +176,19 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public void sendBodyAndProperty(String endpointUri, final Object body,
-                                      final String property, final Object propertyValue) {
+                                      final String property, final Object propertyValue) throws CamelExecutionException {
         sendBodyAndProperty(resolveMandatoryEndpoint(endpointUri), body, property, propertyValue);
     }    
     
     public void sendBodyAndProperty(Endpoint endpoint, final Object body,
-                                      final String property, final Object propertyValue) {
+                                      final String property, final Object propertyValue) throws CamelExecutionException {
         Exchange result = send(endpoint, createBodyAndPropertyProcessor(body, property, propertyValue));
         // must invoke extract result body in case of exception to be rethrown
         extractResultBody(result);
     }
     
     public Object sendBodyAndProperty(Endpoint endpoint, ExchangePattern pattern, final Object body,
-                                      final String property, final Object propertyValue) {
+                                      final String property, final Object propertyValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
         Object result = extractResultBody(exchange, pattern);
         if (pattern.isOutCapable()) {
@@ -199,7 +200,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public Object sendBodyAndProperty(String endpoint, ExchangePattern pattern, final Object body,
-                                      final String property, final Object propertyValue) {
+                                      final String property, final Object propertyValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
         Object result = extractResultBody(exchange, pattern);
         if (pattern.isOutCapable()) {
@@ -210,11 +211,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         }
     }
     
-    public void sendBodyAndHeaders(String endpointUri, final Object body, final Map<String, Object> headers) {
+    public void sendBodyAndHeaders(String endpointUri, final Object body, final Map<String, Object> headers) throws CamelExecutionException {
         sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
     }
 
-    public void sendBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers) {
+    public void sendBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers) throws CamelExecutionException {
         Exchange result = send(endpoint, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -228,11 +229,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         extractResultBody(result);
     }
 
-    public Object sendBodyAndHeaders(String endpointUri, ExchangePattern pattern, Object body, Map<String, Object> headers) {
+    public Object sendBodyAndHeaders(String endpointUri, ExchangePattern pattern, Object body, Map<String, Object> headers) throws CamelExecutionException {
         return sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), pattern, body, headers);
     }
 
-    public Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, final Object body, final Map<String, Object> headers) {
+    public Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, final Object body, final Map<String, Object> headers) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
@@ -258,31 +259,31 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return send(endpoint, ExchangePattern.InOut, processor);
     }
 
-    public Object requestBody(Object body) {
+    public Object requestBody(Object body) throws CamelExecutionException {
         return sendBody(getMandatoryDefaultEndpoint(), ExchangePattern.InOut, body);
     }
 
-    public Object requestBody(Endpoint endpoint, Object body) {
+    public Object requestBody(Endpoint endpoint, Object body) throws CamelExecutionException {
         return sendBody(endpoint, ExchangePattern.InOut, body);
     }
 
-    public Object requestBodyAndHeader(Object body, String header, Object headerValue) {
+    public Object requestBodyAndHeader(Object body, String header, Object headerValue) throws CamelExecutionException {
         return sendBodyAndHeader(getMandatoryDefaultEndpoint(), ExchangePattern.InOut, body, header, headerValue);
     }
 
-    public Object requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue) {
+    public Object requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue) throws CamelExecutionException {
         return sendBodyAndHeader(endpoint, ExchangePattern.InOut, body, header, headerValue);
     }
 
-    public Exchange request(String endpoint, Processor processor) {
+    public Exchange request(String endpoint, Processor processor) throws CamelExecutionException {
         return send(endpoint, ExchangePattern.InOut, processor);
     }
 
-    public Object requestBody(String endpoint, Object body) {
+    public Object requestBody(String endpoint, Object body) throws CamelExecutionException {
         return sendBody(endpoint, ExchangePattern.InOut, body);
     }
 
-    public Object requestBodyAndHeader(String endpoint, Object body, String header, Object headerValue) {
+    public Object requestBodyAndHeader(String endpoint, Object body, String header, Object headerValue) throws CamelExecutionException {
         return sendBodyAndHeader(endpoint, ExchangePattern.InOut, body, header, headerValue);
     }
 

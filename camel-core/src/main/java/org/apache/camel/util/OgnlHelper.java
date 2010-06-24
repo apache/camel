@@ -90,7 +90,7 @@ public final class OgnlHelper {
      * @param ognlExpression the Camel OGNL expression
      * @return <tt>true</tt> if the elvis operator is used, otherwise <tt>false</tt>.
      */
-    public static boolean isElvis(String ognlExpression) {
+    public static boolean isNullSafeOperator(String ognlExpression) {
         if (ObjectHelper.isEmpty(ognlExpression)) {
             return false;
         }

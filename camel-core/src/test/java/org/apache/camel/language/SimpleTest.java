@@ -271,9 +271,8 @@ public class SimpleTest extends LanguageTestSupport {
     
     public void testExceptionOGNLSimple() throws Exception {
         exchange.getIn().setHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, "myPolicy");
-        Exception exception = new CamelAuthorizationException("The camel authorization exception", exchange);
-        exchange.setException(exception);
-        
+        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, new CamelAuthorizationException("The camel authorization exception", exchange));
+
         assertExpression("${exception.getPolicyId}", "myPolicy");
     }
 
@@ -513,7 +512,7 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
-    public void testBodyOGNLOrderListOutOfBoundsWithElvis() throws Exception {
+    public void testBodyOGNLOrderListOutOfBoundsWithNullSafe() throws Exception {
         List<OrderLine> lines = new ArrayList<OrderLine>();
         lines.add(new OrderLine(123, "Camel in Action"));
         lines.add(new OrderLine(456, "ActiveMQ in Action"));
@@ -524,7 +523,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.body?.getLines[3].getId}", null);
     }
 
-    public void testBodyOGNLOrderListOutOfBoundsWithElvisShorthand() throws Exception {
+    public void testBodyOGNLOrderListOutOfBoundsWithNullSafeShorthand() throws Exception {
         List<OrderLine> lines = new ArrayList<OrderLine>();
         lines.add(new OrderLine(123, "Camel in Action"));
         lines.add(new OrderLine(456, "ActiveMQ in Action"));
@@ -535,7 +534,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.body?.lines[3].id}", null);
     }
 
-    public void testBodyOGNLOrderListNoMethodNameWithElvis() throws Exception {
+    public void testBodyOGNLOrderListNoMethodNameWithNullSafe() throws Exception {
         List<OrderLine> lines = new ArrayList<OrderLine>();
         lines.add(new OrderLine(123, "Camel in Action"));
         lines.add(new OrderLine(456, "ActiveMQ in Action"));
@@ -552,7 +551,7 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
-    public void testBodyOGNLOrderListNoMethodNameWithElvisShorthand() throws Exception {
+    public void testBodyOGNLOrderListNoMethodNameWithNullSafeShorthand() throws Exception {
         List<OrderLine> lines = new ArrayList<OrderLine>();
         lines.add(new OrderLine(123, "Camel in Action"));
         lines.add(new OrderLine(456, "ActiveMQ in Action"));

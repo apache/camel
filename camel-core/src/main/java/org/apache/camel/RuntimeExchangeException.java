@@ -37,6 +37,8 @@ public class RuntimeExchangeException extends RuntimeCamelException {
 
     /**
      * Returns the exchange which caused the exception
+     * <p/>
+     * Can be <tt>null</tt>
      */
     public Exchange getExchange() {
         return exchange;

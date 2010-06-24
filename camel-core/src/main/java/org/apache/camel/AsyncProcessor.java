@@ -38,7 +38,7 @@ public interface AsyncProcessor extends Processor {
      * @param callback the {@link AsyncCallback} will be invoked when the processing of the exchange is completed.
      *                 If the exchange is completed synchronously, then the callback is also invoked synchronously.
      *                 The callback should therefore be careful of starting recursive loop.
-     * @return <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
+     * @return (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
      */
     boolean process(Exchange exchange, AsyncCallback callback);
 }

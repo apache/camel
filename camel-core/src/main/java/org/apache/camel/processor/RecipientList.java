@@ -16,11 +16,7 @@
  */
 package org.apache.camel.processor;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
@@ -104,16 +100,6 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
         Object recipientList = expression.evaluate(exchange, Object.class);
         return sendToRecipientList(exchange, recipientList, callback);
-    }
-
-    public boolean sendToRecipientList(Exchange exchange, Object routingSlip) {
-        // this method is invoked from @RecipientList so we bridge with an empty callback
-        // TODO: Have @RecipientList support async out of the box
-        return sendToRecipientList(exchange, routingSlip, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                // noop
-            }
-        });
     }
 
     /**

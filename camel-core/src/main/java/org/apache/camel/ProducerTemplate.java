@@ -29,14 +29,14 @@ import org.apache.camel.spi.Synchronization;
  * et al) for working with Camel and sending {@link Message} instances in an
  * {@link Exchange} to an {@link Endpoint}.
  * <p/>
- * <b>All</b> methods throws {@link RuntimeCamelException} if processing of
- * the {@link Exchange} failed and an Exception occurred. The <tt>getCause</tt>
- * method on {@link RuntimeCamelException} returns the wrapper original caused
+ * <b>All</b> methods throws {@link CamelExecutionException} if processing of
+ * the {@link Exchange} failed and an {@link Exception} occurred. The <tt>getCause</tt>
+ * method on {@link CamelExecutionException} returns the wrapper original caused
  * exception.
  * <p/>
  * All the send<b>Body</b> methods will return the content according to this strategy
  * <ul>
- *   <li>throws {@link RuntimeCamelException} as stated above</li>
+ *   <li>throws {@link org.apache.camel.CamelExecutionException} as stated above</li>
  *   <li>The <tt>fault.body</tt> if there is a fault message set and its not <tt>null</tt></li>
  *   <li>Either <tt>IN</tt> or <tt>OUT</tt> body according to the message exchange pattern. If the pattern is
  *   Out capable then the <tt>OUT</tt> body is returned, otherwise <tt>IN</tt>.
@@ -85,8 +85,9 @@ public interface ProducerTemplate extends Service {
      *
      * @param exchange the exchange to send
      * @return the returned exchange
+     * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Exchange send(Exchange exchange);
+    Exchange send(Exchange exchange) throws CamelExecutionException;
 
     /**
      * Sends an exchange to the default endpoint using a supplied processor
@@ -97,8 +98,9 @@ public interface ProducerTemplate extends Service {
      * @param processor the transformer used to populate the new exchange
      * {@link Processor} to populate the exchange
      * @return the returned exchange
+     * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Exchange send(Processor processor);
+    Exchange send(Processor processor) throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint
@@ -164,8 +166,9 @@ public interface ProducerTemplate extends Service {
      * @param endpointUri the endpoint URI to send the exchange to
      * @param exchange    the exchange to send
      * @return the returned exchange
+     * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Exchange send(String endpointUri, Exchange exchange);
+    Exchange send(String endpointUri, Exchange exchange) throws CamelExecutionException;
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
@@ -177,8 +180,9 @@ public interface ProducerTemplate extends Service {
      * @param processor   the transformer used to populate the new exchange
      * {@link Processor} to populate the exchange
      * @return the returned exchange
+     * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Exchange send(String endpointUri, Processor processor);
+    Exchange send(String endpointUri, Processor processor) throws CamelExecutionException;
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
@@ -192,8 +196,9 @@ public interface ProducerTemplate extends Service {
      * @param processor   the transformer used to populate the new exchange
      * {@link Processor} to populate the exchange
      * @return the returned exchange
+     * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Exchange send(String endpointUri, ExchangePattern pattern, Processor processor);
+    Exchange send(String endpointUri, ExchangePattern pattern, Processor processor) throws CamelExecutionException;
 
     /**
      * Sends the exchange to the given endpoint
@@ -204,8 +209,9 @@ public interface ProducerTemplate extends Service {
      * @param endpoint the endpoint to send the exchange to
      * @param exchange the exchange to send
      * @return the returned exchange
+     * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Exchange send(Endpoint endpoint, Exchange exchange);
+    Exchange send(Endpoint endpoint, Exchange exchange) throws CamelExecutionException;
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
@@ -217,8 +223,9 @@ public interface ProducerTemplate extends Service {
      * @param processor the transformer used to populate the new exchange
      * {@link Processor} to populate the exchange
      * @return the returned exchange
+     * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Exchange send(Endpoint endpoint, Processor processor);
+    Exchange send(Endpoint endpoint, Processor processor) throws CamelExecutionException;
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
@@ -232,8 +239,9 @@ public interface ProducerTemplate extends Service {
      * @param processor the transformer used to populate the new exchange
      * {@link Processor} to populate the exchange
      * @return the returned exchange
+     * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor);
+    Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint
@@ -495,8 +503,9 @@ public interface ProducerTemplate extends Service {
      * @param endpoint  the Endpoint to send to
      * @param processor the processor which will populate the exchange before sending
      * @return the result (see class javadoc)
+     * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Exchange request(Endpoint endpoint, Processor processor);
+    Exchange request(Endpoint endpoint, Processor processor) throws CamelExecutionException;
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
@@ -508,8 +517,9 @@ public interface ProducerTemplate extends Service {
      * @param endpointUri the endpoint URI to send to
      * @param processor the processor which will populate the exchange before sending
      * @return the result (see class javadoc)
+     * @throws CamelExecutionException if the processing of the exchange failed
      */
-    Exchange request(String endpointUri, Processor processor);
+    Exchange request(String endpointUri, Processor processor) throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint and returns the result content

@@ -16,8 +16,10 @@
  */
 package org.apache.camel.spring.bind;
 
-import junit.framework.TestCase;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import junit.framework.TestCase;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
@@ -25,36 +27,36 @@ import org.apache.camel.component.bean.DefaultParameterMappingStrategy;
 import org.apache.camel.component.bean.MethodInvocation;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class BeanInfoTest extends TestCase {
-    private static final Log LOG = LogFactory.getLog(BeanInfoTest.class);
     protected DefaultCamelContext camelContext = new DefaultCamelContext();
     protected Exchange exchange = new DefaultExchange(camelContext);
     protected DefaultParameterMappingStrategy strategy = new DefaultParameterMappingStrategy();
     protected ExampleBean bean = new ExampleBean();
     protected BeanInfo info;
 
-
-
     public void testFindsSingleMethodMatchingBody() throws Throwable {
         MethodInvocation invocation = info.createInvocation(bean, exchange);
         assertNotNull("Should have found a method invocation!", invocation);
 
-        Object value = invocation.proceed();
+        AtomicBoolean sync = new AtomicBoolean(true);
+        Object value = invocation.proceed(new AsyncCallback() {
+            public void done(boolean doneSync) {
+                // nnop
+            }
+        }, sync);
 
-        LOG.info("Value: " + value);
+        assertEquals(true, sync.get());
+        assertEquals("Hello James!", value);
     }
 
     public void testBeanProcessor() throws Exception {
         BeanProcessor processor = new BeanProcessor(bean, info);
         processor.process(exchange);
-
-        LOG.info("Exchange is: " + exchange);
+        assertEquals("Hello James!", exchange.getIn().getBody());
     }
 
     protected void setUp() throws Exception {

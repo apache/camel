@@ -66,7 +66,7 @@ public class BeanExpression implements Expression, Predicate {
         } else {
             holder = new ConstantBeanHolder(bean, exchange.getContext());
         }
-        
+
         // invoking the bean can either be the easy way or using OGNL
 
         // validate OGNL
@@ -135,6 +135,11 @@ public class BeanExpression implements Expression, Predicate {
                 resultExchange.setPattern(ExchangePattern.InOut);
                 processor.process(resultExchange);
                 result = resultExchange.getOut().getBody();
+
+                // propagate exceptions
+                if (resultExchange.getException() != null) {
+                    exchange.setException(resultExchange.getException());
+                }
             } catch (Exception e) {
                 throw new RuntimeBeanExpressionException(exchange, beanName, methodName, e);
             }
@@ -179,8 +184,8 @@ public class BeanExpression implements Expression, Predicate {
             for (String methodName : methods) {
                 BeanHolder holder = new ConstantBeanHolder(beanToCall, exchange.getContext());
 
-                // support the elvis operator
-                boolean elvis = OgnlHelper.isElvis(methodName);
+                // support the null safe operator
+                boolean nullSafe = OgnlHelper.isNullSafeOperator(methodName);
 
                 // keep up with how far are we doing
                 ognlPath += methodName;
@@ -200,16 +205,22 @@ public class BeanExpression implements Expression, Predicate {
                 if (methodName != null) {
                     InvokeProcessor invoke = new InvokeProcessor(holder, methodName);
                     invoke.process(resultExchange);
+
+                    // check for exception and rethrow if we failed
+                    if (resultExchange.getException() != null) {
+                        throw new RuntimeBeanExpressionException(exchange, beanName, methodName, resultExchange.getException());
+                    }
+
                     result = invoke.getResult();
                 }
 
                 // if there was a key then we need to lookup using the key
                 if (key != null) {
-                    result = lookupResult(resultExchange, key, result, elvis, ognlPath, holder.getBean());
+                    result = lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean());
                 }
 
-                // check elvis for null results
-                if (result == null && elvis) {
+                // check null safe for null results
+                if (result == null && nullSafe) {
                     return;
                 }
 
@@ -218,7 +229,7 @@ public class BeanExpression implements Expression, Predicate {
             }
         }
 
-        private Object lookupResult(Exchange exchange, String key, Object result, boolean elvis, String ognlPath, Object bean) {
+        private Object lookupResult(Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean) {
             // trim key
             key = key.trim();
 
@@ -252,7 +263,7 @@ public class BeanExpression implements Expression, Predicate {
                     if (num != null && num >= 0 && list.size() > num - 1) {
                         return list.get(num);
                     }
-                    if (!elvis) {
+                    if (!nullSafe) {
                         // not elvis then its mandatory so thrown out of bounds exception
                         throw new IndexOutOfBoundsException("Index: " + num + ", Size: " + list.size()
                                 + " out of bounds with List from bean: " + bean + "using OGNL path [" + ognlPath + "]");
@@ -260,11 +271,11 @@ public class BeanExpression implements Expression, Predicate {
                 }
             }
 
-            if (!elvis) {
+            if (!nullSafe) {
                 throw new IndexOutOfBoundsException("Key: " + key + " not found in bean: " + bean + " of type: "
                         + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath + "]");
             } else {
-                // elvis so we can return null
+                // null safe so we can return null
                 return null;
             }
         }

@@ -18,12 +18,16 @@ package org.apache.camel.component.bean;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -35,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class BeanProcessor extends ServiceSupport implements Processor {
+public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     private static final transient Log LOG = LogFactory.getLog(BeanProcessor.class);
 
     private boolean multiParameterArray;
@@ -67,6 +71,10 @@ public class BeanProcessor extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         // do we have an explicit method name we always should invoke
         boolean isExplicitMethod = ObjectHelper.isNotEmpty(method);
 
@@ -80,8 +88,13 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using a custom adapter as bean invocation: " + processor);
             }
-            processor.process(exchange);
-            return;
+            try {
+                processor.process(exchange);
+            } catch (Throwable e) {
+                exchange.setException(e);
+            }
+            callback.done(true);
+            return true;
         }
 
         Message in = exchange.getIn();
@@ -105,7 +118,8 @@ public class BeanProcessor extends ServiceSupport implements Processor {
                 beanInvoke.invoke(bean, exchange);
                 // propagate headers
                 exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-                return;
+                callback.done(true);
+                return true;
             }
         }
 
@@ -124,7 +138,13 @@ public class BeanProcessor extends ServiceSupport implements Processor {
                 prevMethod = in.getHeader(Exchange.BEAN_METHOD_NAME, String.class);
                 in.setHeader(Exchange.BEAN_METHOD_NAME, method);
             }
-            invocation = beanInfo.createInvocation(bean, exchange);
+            try {
+                invocation = beanInfo.createInvocation(bean, exchange);
+            } catch (Throwable e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
         }
         if (invocation == null) {
             throw new IllegalStateException("No method invocation could be created, no matching method could be found on: " + bean);
@@ -135,17 +155,29 @@ public class BeanProcessor extends ServiceSupport implements Processor {
 
         Object value = null;
         try {
-            value = invocation.proceed();
-        } catch (InvocationTargetException e) {
-            // lets unwrap the exception
-            Throwable throwable = e.getCause();
-            if (throwable instanceof Exception) {
-                Exception exception = (Exception)throwable;
-                throw exception;
-            } else {
-                Error error = (Error)throwable;
-                throw error;
+            AtomicBoolean sync = new AtomicBoolean(true);
+            value = invocation.proceed(callback, sync);
+            if (!sync.get()) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
+                }
+                // the remainder of the routing slip will be completed async
+                // so we break out now, then the callback will be invoked which then continue routing from where we left here
+                return false;
             }
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
+            }
+        } catch (InvocationTargetException e) {
+            // lets unwrap the exception when its an invocation target exception
+            exchange.setException(e.getCause());
+            callback.done(true);
+            return true;
+        } catch (Throwable e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         } finally {
             if (isExplicitMethod) {
                 in.setHeader(Exchange.BEAN_METHOD_NAME, prevMethod);
@@ -170,6 +202,9 @@ public class BeanProcessor extends ServiceSupport implements Processor {
                 exchange.getIn().setBody(value);
             }
         }
+
+        callback.done(true);
+        return true;
     }
 
     protected Processor getProcessor() {

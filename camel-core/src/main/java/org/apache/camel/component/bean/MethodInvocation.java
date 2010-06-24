@@ -18,6 +18,9 @@ package org.apache.camel.component.bean;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.camel.AsyncCallback;
 
 /**
  * Information used by Camel to perform method invocation.
@@ -30,7 +33,7 @@ public interface MethodInvocation {
 
     Object[] getArguments();
 
-    Object proceed() throws Exception;
+    Object proceed(AsyncCallback callback, AtomicBoolean doneSync) throws Exception;
 
     Object getThis();
 

@@ -55,7 +55,7 @@ public final class ExchangeHelper {
      * Extracts the Exchange.BINDING of the given type or null if not present
      *
      * @param exchange the message exchange
-     * @param type the expected binding type
+     * @param type     the expected binding type
      * @return the binding object of the given type or null if it could not be found or converted
      */
     public static <T> T getBinding(Exchange exchange, Class<T> type) {
@@ -66,17 +66,16 @@ public final class ExchangeHelper {
      * Attempts to resolve the endpoint for the given value
      *
      * @param exchange the message exchange being processed
-     * @param value the value which can be an {@link Endpoint} or an object
-     *                which provides a String representation of an endpoint via
-     *                {@link #toString()}
-     *
+     * @param value    the value which can be an {@link Endpoint} or an object
+     *                 which provides a String representation of an endpoint via
+     *                 {@link #toString()}
      * @return the endpoint
      * @throws NoSuchEndpointException if the endpoint cannot be resolved
      */
     public static Endpoint resolveEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
         Endpoint endpoint;
         if (value instanceof Endpoint) {
-            endpoint = (Endpoint)value;
+            endpoint = (Endpoint) value;
         } else {
             String uri = value.toString().trim();
             endpoint = CamelContextHelper.getMandatoryEndpoint(exchange.getContext(), uri);
@@ -192,7 +191,7 @@ public final class ExchangeHelper {
         // --------------------------------------------------------------------
         //  TODO: merge logic with that of copyResultsPreservePattern()
         // --------------------------------------------------------------------
-        
+
         if (result != source) {
             result.setException(source.getException());
             if (source.hasOut()) {
@@ -223,8 +222,8 @@ public final class ExchangeHelper {
 
     /**
      * Copies the <code>source</code> exchange to <code>target</code> exchange
-     * preserving the {@link ExchangePattern} of <code>target</code>.  
-     * 
+     * preserving the {@link ExchangePattern} of <code>target</code>.
+     *
      * @param source source exchange.
      * @param result target exchange.
      */
@@ -233,7 +232,7 @@ public final class ExchangeHelper {
         // --------------------------------------------------------------------
         //  TODO: merge logic with that of copyResults()
         // --------------------------------------------------------------------
-        
+
         if (source == result) {
             // no need to copy
             return;
@@ -241,7 +240,7 @@ public final class ExchangeHelper {
 
         // copy in message
         result.getIn().copyFrom(source.getIn());
-    
+
         // copy out message
         if (source.hasOut()) {
             // exchange pattern sensitive
@@ -251,7 +250,7 @@ public final class ExchangeHelper {
 
         // copy exception
         result.setException(source.getException());
-        
+
         // copy properties
         if (source.hasProperties()) {
             result.getProperties().putAll(source.getProperties());
@@ -261,7 +260,7 @@ public final class ExchangeHelper {
     /**
      * Returns the message where to write results in an
      * exchange-pattern-sensitive way.
-     * 
+     *
      * @param exchange message exchange.
      * @return result message.
      */
@@ -278,7 +277,7 @@ public final class ExchangeHelper {
      *
      * @param exchange the exchange to interrogate
      * @return true if the exchange is defined as an {@link ExchangePattern} which supports
-     * OUT messages
+     *         OUT messages
      */
     public static boolean isOutCapable(Exchange exchange) {
         ExchangePattern pattern = exchange.getPattern();
@@ -332,7 +331,7 @@ public final class ExchangeHelper {
      * Returns the MIME content type on the input message or null if one is not defined
      */
     public static String getContentType(Exchange exchange) {
-        return MessageHelper.getContentType(exchange.getIn());        
+        return MessageHelper.getContentType(exchange.getIn());
     }
 
     /**
@@ -398,8 +397,8 @@ public final class ExchangeHelper {
      * This implementation will copy the OUT body to the IN body so when you do
      * aggregation the body is <b>only</b> in the IN body to avoid confusing end users.
      *
-     * @param oldExchange  the old exchange
-     * @param newExchange  the new exchange
+     * @param oldExchange the old exchange
+     * @param newExchange the new exchange
      */
     public static void prepareAggregation(Exchange oldExchange, Exchange newExchange) {
         // move body/header from OUT to IN
@@ -438,10 +437,10 @@ public final class ExchangeHelper {
      * If the exchange pattern is provided it will try to honor it and retrieve the body
      * from either IN or OUT according to the pattern.
      *
-     * @param exchange   the exchange
-     * @param pattern    exchange pattern if given, can be <tt>null</tt>
+     * @param exchange the exchange
+     * @param pattern  exchange pattern if given, can be <tt>null</tt>
      * @return the result body, can be <tt>null</tt>.
-     * @throws CamelExecutionException if the processing of the exchange failed
+     * @throws CamelExecutionException is thrown if the processing of the exchange failed
      */
     public static Object extractResultBody(Exchange exchange, ExchangePattern pattern) {
         Object answer = null;
@@ -478,7 +477,7 @@ public final class ExchangeHelper {
     /**
      * Tests whether the exchange has a fault message set and that its not null.
      *
-     * @param exchange  the exchange
+     * @param exchange the exchange
      * @return <tt>true</tt> if fault message exists
      */
     public static boolean hasFaultMessage(Exchange exchange) {
@@ -491,10 +490,10 @@ public final class ExchangeHelper {
      * Will wait until the future task is complete.
      *
      * @param context the camel context
-     * @param future the future handle
-     * @param type the expected body response type
+     * @param future  the future handle
+     * @param type    the expected body response type
      * @return the result body, can be <tt>null</tt>.
-     * @throws CamelExecutionException if the processing of the exchange failed
+     * @throws CamelExecutionException is thrown if the processing of the exchange failed
      */
     public static <T> T extractFutureBody(CamelContext context, Future<Object> future, Class<T> type) {
         try {
@@ -518,13 +517,14 @@ public final class ExchangeHelper {
      * Will wait for the future task to complete, but waiting at most the timeout value.
      *
      * @param context the camel context
-     * @param future the future handle
+     * @param future  the future handle
      * @param timeout timeout value
      * @param unit    timeout unit
-     * @param type the expected body response type
+     * @param type    the expected body response type
      * @return the result body, can be <tt>null</tt>.
-     * @throws CamelExecutionException if the processing of the exchange failed
-     * @throws java.util.concurrent.TimeoutException is thrown if a timeout triggered
+     * @throws CamelExecutionException is thrown if the processing of the exchange failed
+     * @throws java.util.concurrent.TimeoutException
+     *                                 is thrown if a timeout triggered
      */
     public static <T> T extractFutureBody(CamelContext context, Future<Object> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
         try {
@@ -534,7 +534,8 @@ public final class ExchangeHelper {
                 return doExtractFutureBody(context, future.get(), type);
             }
         } catch (InterruptedException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            // execution failed due interruption so rethrow the cause
+            throw ObjectHelper.wrapCamelExecutionException(null, e);
         } catch (ExecutionException e) {
             // execution failed due to an exception so rethrow the cause
             throw ObjectHelper.wrapCamelExecutionException(null, e.getCause());
@@ -566,9 +567,9 @@ public final class ExchangeHelper {
      * <p/>
      * All fields is optional so you can pass in only an exception, or just a message etc. or any combination.
      *
-     * @param message the message
+     * @param message  the message
      * @param exchange the exchange
-     * @param cause the caused exception
+     * @param cause    the caused exception
      * @return an error message (without stacktrace from exception)
      */
     public static String createExceptionMessage(String message, Exchange exchange, Throwable cause) {

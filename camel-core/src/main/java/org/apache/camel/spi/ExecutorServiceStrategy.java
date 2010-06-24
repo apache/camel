@@ -89,7 +89,7 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
     /**
      * Sets the thread name pattern used for creating the full thread name.
      * <p/>
-     * The default pattern is: <tt>Camel Thread ${counter} - ${suffix}</tt>
+     * The default pattern is: <tt>Camel Thread ${counter} - ${name}</tt>
      * </br>
      * Where <tt>${counter}</tt> is a unique incrementing counter.
      * And <tt>${name}</tt> is the thread name.
