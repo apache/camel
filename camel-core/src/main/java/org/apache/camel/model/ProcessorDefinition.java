@@ -854,22 +854,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * Leverages a thread pool for multi threading processing exchanges.
-     * <p/>
-     * The caller thread will either wait for the async route
-     * to complete or immediately continue. If continue the OUT message will
-     * contain a {@link java.util.concurrent.Future} handle so you can get the real response
-     * later using this handle.
-     * <p/>
-     * Will default <tt>Always</tt> wait for the async route to complete, but this behavior can be overriden by:
-     * <ul>
-     *   <li>Configuring the <tt>waitForTaskToComplete</tt> option</li>
-     *   <li>Provide an IN header with the key {@link org.apache.camel.Exchange#ASYNC_WAIT} with the
-     * value containing a type {@link org.apache.camel.WaitForTaskToComplete}. The header will take precedence, if provided.</li>
-     * </ul>
-     * <p/>
-     * If no <tt>corePoolSize</tt> is set then a default CachedExecutorService is used which automatic grown and shrinks.
-     * If no <tt>maxPoolSize</tt> is set, then the <tt>corePoolSize</tt> is used as max.
+     * Continues processing the {@link org.apache.camel.Exchange} using asynchronous routing engine.
      *
      * @return the builder
      */
@@ -880,10 +865,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * Leverages a thread pool for multi threading processing exchanges.
-     * <p/>
-     * See {@link #threads()} for more details.
-     * If no <tt>maxPoolSize</tt> is set, then the <tt>corePoolSize</tt> is used as max.
+     * Continues processing the {@link org.apache.camel.Exchange} using asynchronous routing engine.
      *
      * @param poolSize the core pool size
      * @return the builder
@@ -895,9 +877,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * Leverages a thread pool for multi threading processing exchanges.
-     * <p/>
-     * See {@link #threads()} for more details.
+     * Continues processing the {@link org.apache.camel.Exchange} using asynchronous routing engine.
      *
      * @param poolSize    the core pool size
      * @param maxPoolSize the maximum pool size
@@ -914,7 +894,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * Wraps the sub route using AOP allowing you to do before and after work (AOP around).
      *
      * @return the builder
+     * @deprecated (to be removed in the future)
      */
+    @Deprecated
     public AOPDefinition aop() {
         AOPDefinition answer = new AOPDefinition();
         addOutput(answer);

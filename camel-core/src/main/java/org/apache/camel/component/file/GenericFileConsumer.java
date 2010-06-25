@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -283,8 +284,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
                 log.debug("About to process file: " + target + " using exchange: " + exchange);
             }
 
-            // process the exchange
-            getProcessor().process(exchange);
+            // process the exchange using the async consumer to support async routing engine
+            // which can be supported by this file consumer as all the done work is
+            // provided in the GenericFileOnCompletion
+            getAsyncProcessor().process(exchange, new AsyncCallback() {
+                public void done(boolean doneSync) {
+                    // noop
+                    if (log.isTraceEnabled()) {
+                        log.trace("Done processing file: " + target + (doneSync ? " synchronously" : " asynchronously"));
+                    }
+                }
+            });
 
         } catch (Exception e) {
             // remove file from the in progress list due to failure

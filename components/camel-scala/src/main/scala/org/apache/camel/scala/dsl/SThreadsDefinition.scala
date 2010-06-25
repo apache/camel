@@ -28,8 +28,6 @@ case class SThreadsDefinition(override val target: ThreadsDefinition)(implicit v
 
   def poolSize(size: Int) = wrap(target.poolSize(size))
 
-  def waitForTaskToComplete(wait: WaitForTaskToComplete) = wrap(target.waitForTaskToComplete(wait))
-
   override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SThreadsDefinition]
 
 }

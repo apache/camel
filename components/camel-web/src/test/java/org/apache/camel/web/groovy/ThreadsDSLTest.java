@@ -41,17 +41,4 @@ public class ThreadsDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl));
     }
 
-    @Test
-    public void testThreadsAsyncRouteNoWait() throws Exception {
-        String dsl = "from(\"direct:start\").transform(body().append(\" World\")).threads().waitForTaskToComplete(WaitForTaskToComplete.Never).to(\"mock:result\")";
-        assertEquals(dsl, render(dsl));
-    }
-
-    @Test
-    public void testThreadsAsyncRouteWaitIfReplyExpected() throws Exception {
-        String dsl = "from(\"direct:start\").transform(body().append(\" World\")).threads().waitForTaskToComplete(WaitForTaskToComplete.IfReplyExpected).to(\"mock:result\")";
-        String expected = "from(\"direct:start\").transform(body().append(\" World\")).threads().to(\"mock:result\")";
-
-        assertEquals(expected, render(dsl));
-    }
 }

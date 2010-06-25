@@ -24,25 +24,16 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version $Revision$
  */
-public class ThreadsCorePoolTest extends ContextTestSupport {
+public class ThreadsRequestReplyTest extends ContextTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
 
-    public void testThreadsCorePool() throws Exception {
+    public void testThreadsInOut() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
-    }
-
-    public void testThreadsCorePoolBuilder() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        template.sendBody("direct:foo", "Hello World");
+        String reply = template.requestBody("direct:start", "Hello World", String.class);
+        assertEquals("Bye World", reply);
 
         assertMockEndpointsSatisfied();
 
@@ -63,7 +54,6 @@ public class ThreadsCorePoolTest extends ContextTestSupport {
                             beforeThreadName = Thread.currentThread().getName();
                         }
                     })
-                    // will use a a custom thread pool with 5 in core and 5 as max
                     .threads(5)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
@@ -71,12 +61,8 @@ public class ThreadsCorePoolTest extends ContextTestSupport {
                         }
                     })
                     .to("log:after")
-                    .to("mock:result");
-
-                from("direct:foo")
-                    // using the builder style
-                    .threads().poolSize(5)
-                    .to("mock:result");
+                    .to("mock:result")
+                    .transform(constant("Bye World"));
             }
         };
     }

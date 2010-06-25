@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.DataFormatDefinition;
@@ -212,11 +211,6 @@ public final class OutputDefinitionRenderer {
             buffer.append(threads.getPoolSize());
         }
         buffer.append(")");
-
-        WaitForTaskToComplete wait = threads.getWaitForTaskToComplete();
-        if (wait != WaitForTaskToComplete.IfReplyExpected) {
-            buffer.append(".waitForTaskToComplete(WaitForTaskToComplete.").append(wait).append(")");
-        }
     }
 
     private static void renderTransacted(StringBuilder buffer, OutputDefinition out) {

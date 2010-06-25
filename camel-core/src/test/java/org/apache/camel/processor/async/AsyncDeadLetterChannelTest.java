@@ -72,35 +72,4 @@ public class AsyncDeadLetterChannelTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testAsyncErrorHandlerNoWait() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
-
-                from("direct:in")
-                    .threads(2).waitForTaskToComplete(WaitForTaskToComplete.Never)
-                    .to("mock:foo")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new Exception("Forced exception by unit test");
-                        }
-                    });
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
-
-        MockEndpoint mock = getMockEndpoint("mock:dead");
-        mock.expectedMessageCount(1);
-        // no traces of redelivery as the dead letter channel will handle the exception when moving the DLQ
-        mock.message(0).header(Exchange.REDELIVERED).isNull();
-        mock.message(0).header(Exchange.REDELIVERY_COUNTER).isNull();
-
-        template.requestBody("direct:in", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
 }

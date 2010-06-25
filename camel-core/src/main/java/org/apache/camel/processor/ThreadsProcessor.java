@@ -16,15 +16,16 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.WaitForTaskToComplete;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -38,73 +39,70 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class ThreadsProcessor extends DelegateProcessor implements Processor {
+public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
 
-    // TODO: Should leverage AsyncProcessor
+    private final CamelContext camelContext;
+    private final ExecutorService executorService;
+    private final AtomicBoolean shutdown = new AtomicBoolean(true);
 
-    protected final CamelContext camelContext;
-    protected final ExecutorService executorService;
-    protected WaitForTaskToComplete waitForTaskToComplete;
+    private final class ProcessCall implements Runnable {
+        private final Exchange exchange;
+        private final AsyncCallback callback;
 
-    public ThreadsProcessor(CamelContext camelContext, Processor output, ExecutorService executorService, WaitForTaskToComplete waitForTaskToComplete) {
-        super(output);
+        public ProcessCall(Exchange exchange, AsyncCallback callback) {
+            this.exchange = exchange;
+            this.callback = callback;
+        }
+
+        public void run() {
+            if (shutdown.get()) {
+                exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running."));
+            }
+            callback.done(false);
+        }
+    }
+
+    public ThreadsProcessor(CamelContext camelContext, ExecutorService executorService) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(executorService, "executorService");
         this.camelContext = camelContext;
         this.executorService = executorService;
-        this.waitForTaskToComplete = waitForTaskToComplete;
+        // TODO: if rejection policy of executor service is caller runs then we need to tap into it
+        // so we can invoke the callback.done(true) to continue routing synchronously
     }
 
     public void process(final Exchange exchange) throws Exception {
-        final Processor output = getProcessor();
-        if (output == null) {
-            // no output then return
-            return;
-        }
-
-        // use a new copy of the exchange to route async and handover the on completion to the new copy
-        // so its the new copy that performs the on completion callback when its done
-        final Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, true);
-
-        // let it execute async and return the Future
-        Callable<Exchange> task = createTask(output, copy);
-
-        // submit the task
-        Future<Exchange> future = executorService.submit(task);
-
-        // compute if we should wait for task to complete or not
-        WaitForTaskToComplete wait = waitForTaskToComplete;
-        if (exchange.getProperty(Exchange.ASYNC_WAIT) != null) {
-            wait = exchange.getProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.class);
-        }
-
-        if (wait == WaitForTaskToComplete.Always) {
-            // wait for task to complete
-            Exchange response = future.get();
-            ExchangeHelper.copyResults(exchange, response);
-        } else if (wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange)) {
-            // wait for task to complete as we expect a reply
-            Exchange response = future.get();
-            ExchangeHelper.copyResults(exchange, response);
-        } else {
-            // no we do not expect a reply so lets continue, set a handle to the future task
-            // in case end user need it later
-            exchange.getOut().setBody(future);
-        }
+        AsyncProcessorHelper.process(this, exchange);
     }
 
-    protected Callable<Exchange> createTask(final Processor output, final Exchange copy) {
-        return new Callable<Exchange>() {
-            public Exchange call() throws Exception {
-                // must use a copy of the original exchange for processing async
-                output.process(copy);
-                return copy;
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        if (shutdown.get()) {
+            throw new IllegalStateException("ThreadsProcessor is not running.");
+        }
+
+        ProcessCall call = new ProcessCall(exchange, callback);
+        try {
+            executorService.submit(call);
+            return false;
+        } catch (RejectedExecutionException e) {
+            if (shutdown.get()) {
+                exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running.", e));
+            } else {
+                exchange.setException(e);
             }
-        };
+        }
+        return true;
     }
 
     public String toString() {
         return "Threads";
     }
 
+    protected void doStart() throws Exception {
+        shutdown.set(false);
+    }
+
+    protected void doStop() throws Exception {
+        shutdown.set(true);
+    }
 }

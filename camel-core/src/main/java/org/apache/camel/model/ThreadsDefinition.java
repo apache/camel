@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
@@ -28,10 +30,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.Processor;
 import org.apache.camel.ThreadPoolRejectedPolicy;
-import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
+import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ThreadsProcessor;
-import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
@@ -65,9 +66,6 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
     @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy;
 
-    @XmlAttribute
-    private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
-
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // The threads name
@@ -97,12 +95,15 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
                                         .newThreadPool(this, name, poolSize, max, keepAlive, tu, maxQueue, rejected, true);
             }
         }
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
 
-        // wrap it in a unit of work so the route that comes next is also done in a unit of work
-        UnitOfWorkProcessor uow = new UnitOfWorkProcessor(routeContext, childProcessor);
+        ThreadsProcessor thread = new ThreadsProcessor(routeContext.getCamelContext(), executorService);
+        Processor childProcessor = createChildProcessor(routeContext, true);
 
-        return new ThreadsProcessor(routeContext.getCamelContext(), uow, executorService, waitForTaskToComplete);
+        List<Processor> pipe = new ArrayList<Processor>(2);
+        pipe.add(thread);
+        pipe.add(childProcessor);
+        // wrap in nested pipeline so this appears as one processor
+        return new Pipeline(routeContext.getCamelContext(), pipe);
     }
 
     @Override
@@ -210,19 +211,6 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
         return this;
     }
 
-    /**
-     * Setting to whether to wait for async tasks to be complete before continuing original route.
-     * <p/>
-     * Is default <tt>IfReplyExpected</tt>
-     *
-     * @param wait the wait option
-     * @return the builder
-     */
-    public ThreadsDefinition waitForTaskToComplete(WaitForTaskToComplete wait) {
-        setWaitForTaskToComplete(wait);
-        return this;
-    }
-
     public ExecutorService getExecutorService() {
         return executorService;
     }
@@ -245,14 +233,6 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
 
     public void setPoolSize(Integer poolSize) {
         this.poolSize = poolSize;
-    }
-
-    public WaitForTaskToComplete getWaitForTaskToComplete() {
-        return waitForTaskToComplete;
-    }
-
-    public void setWaitForTaskToComplete(WaitForTaskToComplete waitForTaskToComplete) {
-        this.waitForTaskToComplete = waitForTaskToComplete;
     }
 
     public Integer getMaxPoolSize() {

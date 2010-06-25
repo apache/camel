@@ -63,29 +63,4 @@ public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testAsyncDefaultErrorHandlerNoWait() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:in")
-                    .threads(2).waitForTaskToComplete(WaitForTaskToComplete.Never)
-                    .to("mock:foo")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new Exception("Forced exception by unit test");
-                        }
-                    });
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
-
-        // as it turns into async and we do not wait for the task to complete
-        // we will not get notified of the exception
-        template.requestBody("direct:in", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
 }

@@ -17,11 +17,27 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.ThreadsCorePoolTest;
+import org.apache.camel.ContextTestSupport;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-public class SpringThreadsCorePoolTest extends ThreadsCorePoolTest {
+public class SpringThreadsCorePoolTest extends ContextTestSupport {
+
+    public void testThreadsCorePool() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testThreadsCorePoolBuilder() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:foo", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
 
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/ThreadsCorePoolTest.xml");

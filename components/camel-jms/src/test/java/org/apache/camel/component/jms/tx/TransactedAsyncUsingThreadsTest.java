@@ -18,7 +18,6 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Before;
@@ -98,10 +97,8 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
                     })
                     // use transacted routing
                     .transacted()
-                    // use async threads to process the exchange from this point forward
-                    // but let the consumer wait until the async routing is complete
-                    // so we can let the transaction commit or rollback depending how it went
-                    .threads(5).waitForTaskToComplete(WaitForTaskToComplete.Always)
+                    // and route async from this point forward
+                    .threads(5)
                     // send to mock for verification
                     .to("mock:async")
                     .process(new Processor() {
