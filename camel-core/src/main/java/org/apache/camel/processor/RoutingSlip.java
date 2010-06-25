@@ -132,14 +132,6 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
         return doRoutingSlip(exchange, routingSlip, callback);
     }
 
-    public boolean doRoutingSlip(Exchange exchange, Object routingSlip) {
-        return doRoutingSlip(exchange, routingSlip, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                // noop
-            }
-        });
-    }
-
     public boolean doRoutingSlip(Exchange exchange, Object routingSlip, AsyncCallback callback) {
         Iterator<Object> iter = ObjectHelper.createIterator(routingSlip, uriDelimiter);
         Exchange current = exchange;

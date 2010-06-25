@@ -24,8 +24,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -53,6 +55,7 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.StartupListener;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -123,6 +126,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private final Map<String, Component> components = new HashMap<String, Component>();
     private List<Route> routes;
     private final List<Service> servicesToClose = new ArrayList<Service>();
+    private final Set<StartupListener> startupListeners = new LinkedHashSet<StartupListener>();
     private TypeConverter typeConverter;
     private TypeConverterRegistry typeConverterRegistry;
     private Injector injector;
@@ -136,7 +140,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private AtomicBoolean managementStrategyInitialized = new AtomicBoolean(false);
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
-    
+
     private boolean firstStartDone;
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
@@ -608,12 +612,16 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
         startServices(object);
     }
-   
+
     public boolean hasService(Object object) {
         if (object instanceof Service) {
             return servicesToClose.contains(object);
         }
         return false;
+    }
+
+    public void addStartupListener(StartupListener listener) {
+        startupListeners.add(listener);
     }
 
     // Helper methods
@@ -864,7 +872,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         answer.setMaximumCacheSize(maximumCacheSize);
         // start it so its ready to use
         try {
-            answer.start();
+            startServices(answer);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -881,7 +889,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         answer.setMaximumCacheSize(maximumCacheSize);
         // start it so its ready to use
         try {
-            answer.start();
+            startServices(answer);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -937,6 +945,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Route " + i + ": " + getRoutes().get(i));
             }
+        }
+
+        // now notify any startup aware listeners as all the routes etc has been started.
+        for (StartupListener startup : startupListeners) {
+            startup.onCamelContextStarted(this);
         }
 
         stopWatch.stop();
@@ -1079,10 +1092,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // shutdown services as late as possible
         shutdownServices(servicesToClose);
         servicesToClose.clear();
+        startupListeners.clear();
 
         // must notify that we are stopped before stopping the management strategy
         EventHelper.notifyCamelContextStopped(this);
-        
+
         // stop the notifier service
         for (EventNotifier notifier : getManagementStrategy().getEventNotifiers()) {
             shutdownServices(notifier);
@@ -1133,6 +1147,20 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     private void startServices(Object service) throws Exception {
+        // it can be a collection so ensure we look inside it
+        if (service instanceof Collection) {
+            for (Object element : (Collection)service) {
+                startServices(element);
+            }
+        }
+
+        // and register startup aware so they can be notified when
+        // camel context has been started
+        if (service instanceof StartupListener) {
+            startupListeners.add((StartupListener) service);
+        }
+
+        // and then start the service
         ServiceHelper.startService(service);
     }
 
@@ -1301,7 +1329,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                 for (LifecycleStrategy strategy : lifecycleStrategies) {
                     strategy.onServiceAdd(this, consumer, route);
                 }
-                ServiceHelper.startService(consumer);
+                startServices(consumer);
 
                 routeInputs.add(endpoint);
 
@@ -1664,7 +1692,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     /**
      * Reset CONTEXT_COUNTER to a preset value. Mostly used for tests to ensure a predictable getName()
-     * 
+     *
      * @param value new value for the CONTEXT_COUNTER
      */
     public static void setContextCounter(int value) {

@@ -102,6 +102,15 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      */
     boolean hasService(Object object);
 
+    /**
+     * Adds the given listener to be invoked when {@link CamelContext} have just been started.
+     * <p/>
+     * This allows listeners to do any custom work after the routes and other services have been started and are running.
+     *
+     * @param listener the listener
+     */
+    void addStartupListener(StartupListener listener);
+
     // Component Management Methods
     //-----------------------------------------------------------------------
 

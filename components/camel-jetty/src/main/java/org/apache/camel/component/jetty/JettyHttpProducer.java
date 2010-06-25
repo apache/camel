@@ -24,22 +24,20 @@ import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.HttpMethods;
 import org.apache.camel.component.http.helper.HttpProducerHelper;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpExchange;
 import org.eclipse.jetty.io.ByteArrayBuffer;
 
 /**
@@ -61,74 +59,28 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
     }
 
     public void process(Exchange exchange) throws Exception {
-        HttpClient client = getEndpoint().getClient();
-
-        JettyContentExchange httpExchange = createHttpExchange(exchange);
-        sendSynchronous(exchange, client, httpExchange);
+        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         HttpClient client = getEndpoint().getClient();
 
         try {
-            JettyContentExchange httpExchange = createHttpExchange(exchange);
-            sendAsynchronous(exchange, client, httpExchange, callback);
+            JettyContentExchange httpExchange = createHttpExchange(exchange, callback);
+            doSendExchange(client, httpExchange);
         } catch (Exception e) {
+            // error occurred before we had a chance to go async
+            // so set exception and invoke callback true
             exchange.setException(e);
+            callback.done(true);
+            return true;
         }
 
         // we should continue processing this asynchronously
         return false;
     }
 
-    protected void sendAsynchronous(final Exchange exchange, final HttpClient client, final JettyContentExchange httpExchange,
-                                    final AsyncCallback callback) throws IOException {
-
-        // set the callback for the async mode
-        httpExchange.setCallback(callback);
-
-        doSendExchange(client, httpExchange);
-
-        // the callback will handle all the response handling logic
-    }
-
-    protected void sendSynchronous(Exchange exchange, HttpClient client, JettyContentExchange httpExchange) throws Exception {
-        doSendExchange(client, httpExchange);
-
-        // we send synchronous so wait for it to be done
-        // must use our own lock detection as Jettys waitForDone will wait forever in case of connection issues
-        try {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Waiting for HTTP exchange to be done");
-            }
-            int exchangeState = httpExchange.waitForDoneOrFailure();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("HTTP exchange is done with state " + exchangeState);
-            }
-            if (exchangeState == HttpExchange.STATUS_COMPLETED) {
-                // process the response as the state is ok
-                getBinding().populateResponse(exchange, httpExchange);
-            } else if (exchangeState == HttpExchange.STATUS_EXPIRED) {
-                // we did timeout
-                throw new ExchangeTimedOutException(exchange, client.getTimeout());
-            } else {
-                // some kind of other error
-                if (exchange.getException() != null) {
-                    throw exchange.getException();
-                } else {
-                    exchange.setException(new CamelExchangeException("JettyClient failed with state " + exchangeState, exchange));
-                }
-            }
-        } catch (InterruptedException e) {
-            // are we shutting down?
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Interrupted waiting for async reply, are we stopping? " + (isStopping() || isStopped()));
-            }
-            exchange.setException(e);
-        }
-    }
-
-    protected JettyContentExchange createHttpExchange(Exchange exchange) throws Exception {
+    protected JettyContentExchange createHttpExchange(Exchange exchange, AsyncCallback callback) throws Exception {
         String url = HttpProducerHelper.createURL(exchange, getEndpoint());
         HttpMethods methodToUse = HttpProducerHelper.createMethod(exchange, getEndpoint(), exchange.getIn().getBody() != null);
         String method = methodToUse.createMethod(url).getName();
@@ -176,6 +128,8 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
             }
         }
 
+        // set the callback, which will handle all the response logic
+        httpExchange.setCallback(callback);
         return httpExchange;
     }
 

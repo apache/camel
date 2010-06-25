@@ -26,6 +26,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.StartupListener;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -48,7 +49,7 @@ import org.quartz.impl.StdSchedulerFactory;
  *
  * @version $Revision:520964 $
  */
-public class QuartzComponent extends DefaultComponent {
+public class QuartzComponent extends DefaultComponent implements StartupListener {
     private static final transient Log LOG = LogFactory.getLog(QuartzComponent.class);
     private static final AtomicInteger JOBS = new AtomicInteger();
     private static Scheduler scheduler;
@@ -122,6 +123,19 @@ public class QuartzComponent extends DefaultComponent {
         return cron;
     }
 
+    public void onCamelContextStarted(CamelContext camelContext) throws Exception {
+        // only start scheduler when CamelContext have finished starting
+        if (!scheduler.isStarted()) {
+            if (getStartDelayedSeconds() > 0) {
+                LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName() + " delayed: " + getStartDelayedSeconds() + " seconds.");
+                scheduler.startDelayed(getStartDelayedSeconds());
+            } else {
+                LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName());
+                scheduler.start();
+            }
+        }
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -135,7 +149,7 @@ public class QuartzComponent extends DefaultComponent {
         if (scheduler != null) {
             int number = JOBS.get();
             if (number > 0) {
-                LOG.info("There are still " + number + " jobs registered in the Quartz scheduler: " + scheduler.getSchedulerName());
+                LOG.info("Cannot shutdown Quartz scheduler: " + scheduler.getSchedulerName() + " as there are still " + number + " jobs registered.");
             }
             if (number == 0) {
                 // no more jobs then shutdown the scheduler
@@ -161,7 +175,6 @@ public class QuartzComponent extends DefaultComponent {
             }
             getScheduler().resumeTrigger(trigger.getName(), trigger.getGroup());
         }
-
     }
 
     public void removeJob(JobDetail job, Trigger trigger) throws SchedulerException {
@@ -200,15 +213,6 @@ public class QuartzComponent extends DefaultComponent {
     public synchronized Scheduler getScheduler() throws SchedulerException {
         if (scheduler == null) {
             scheduler = createScheduler();
-        }
-        if (!scheduler.isStarted()) {
-            if (getStartDelayedSeconds() > 0) {
-                LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName() + " delayed: " + getStartDelayedSeconds() + " seconds.");
-                scheduler.startDelayed(getStartDelayedSeconds());
-            } else {
-                LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName());
-                scheduler.start();
-            }
         }
         return scheduler;
     }
