@@ -55,6 +55,7 @@ public class QuartzComponent extends DefaultComponent {
     private SchedulerFactory factory;
     private Properties properties;
     private String propertiesFile;
+    private int startDelayedSeconds;
 
     public QuartzComponent() {
     }
@@ -198,8 +199,13 @@ public class QuartzComponent extends DefaultComponent {
             scheduler = createScheduler();
         }
         if (!scheduler.isStarted()) {
-            LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName());
-            scheduler.start();
+            if (getStartDelayedSeconds() > 0) {
+                LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName() + " delayed: " + getStartDelayedSeconds() + " seconds.");
+                scheduler.startDelayed(getStartDelayedSeconds());
+            } else {
+                LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName());
+                scheduler.start();
+            }
         }
         return scheduler;
     }
@@ -222,6 +228,14 @@ public class QuartzComponent extends DefaultComponent {
 
     public void setPropertiesFile(String propertiesFile) {
         this.propertiesFile = propertiesFile;
+    }
+
+    public int getStartDelayedSeconds() {
+        return startDelayedSeconds;
+    }
+
+    public void setStartDelayedSeconds(int startDelayedSeconds) {
+        this.startDelayedSeconds = startDelayedSeconds;
     }
 
     // Implementation methods
