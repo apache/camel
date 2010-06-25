@@ -18,23 +18,20 @@ package org.apache.camel.processor.async;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 
 /**
- * Using a custom interceptor which is not a {@link org.apache.camel.AsyncProcessor} which Camel
- * detects and uses a bridge to adapt to so the asynchronous engine can still run. Albeit not
- * the most optimal solution but it runs. Camel will log a WARN so user can see the issue
- * and change his interceptor to comply.
- *
  * @version $Revision$
  */
-public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
+public class AsyncEndpointCustomAsyncInterceptorTest extends ContextTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
@@ -91,13 +88,18 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
         public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition<?> definition,
                                                      final Processor target, final Processor nextTarget) throws Exception {
 
-            return new Processor() {
-                public void process(Exchange exchange) throws Exception {
+            // use DelegateAsyncProcessor to ensure the interceptor works well with the asynchronous routing
+            // engine in Camel.
+            // The target is the processor to continue routing to, which we must provide
+            // in the constructor of the DelegateAsyncProcessor
+            return new DelegateAsyncProcessor(target) {
+                @Override
+                public boolean process(Exchange exchange, AsyncCallback callback) {
                     // we just want to count number of interceptions
                     counter.incrementAndGet();
 
-                    // and continue processing the exchange
-                    target.process(exchange);
+                    // invoke super to continue routing the message
+                    return super.process(exchange, callback);
                 }
             };
         }

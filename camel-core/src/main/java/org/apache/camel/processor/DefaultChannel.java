@@ -178,13 +178,22 @@ public class DefaultChannel extends ServiceSupport implements Channel {
             if (strategy instanceof Tracer) {
                 continue;
             }
-            target = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, target, next);
-            if (!(target instanceof AsyncProcessor)) {
-                // warn if interceptor is not async compatible
+            Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, target, next); 
+            if (!(wrapped instanceof AsyncProcessor)) {
                 LOG.warn("Interceptor: " + strategy + " at: " + outputDefinition + " does not return an AsyncProcessor instance."
                     + " This causes the asynchronous routing engine to not work as optimal as possible."
-                    + " See more details at the InterceptStrategy javadoc.");
+                    + " See more details at the InterceptStrategy javadoc."
+                    + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
+                    + " but its not the most optimal solution. Please consider changing your interceptor to comply.");
+
+                // use a bridge and wrap again which allows us to adapt and leverage the asynchronous routing engine anyway
+                // however its not the most optimal solution, but we can still run.
+                InterceptorToAsyncProcessorBridge bridge = new InterceptorToAsyncProcessorBridge(target);
+                wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, bridge, next);
+                bridge.setTarget(wrapped);
+                wrapped = bridge;
             }
+            target = wrapped;
         }
 
         // sets the delegate to our wrapped output
