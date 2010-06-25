@@ -20,14 +20,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class QuartzTwoCamelContextTest extends Assert {
+public class QuartzTwoCamelContextRestartTest {
 
     private DefaultCamelContext camel1;
     private DefaultCamelContext camel2;
@@ -62,7 +61,7 @@ public class QuartzTwoCamelContextTest extends Assert {
     }
 
     @Test
-    public void testTwoCamelContext() throws Exception {
+    public void testTwoCamelContextRestart() throws Exception {
         MockEndpoint mock1 = camel1.getEndpoint("mock:one", MockEndpoint.class);
         mock1.expectedMinimumMessageCount(2);
 
@@ -74,30 +73,13 @@ public class QuartzTwoCamelContextTest extends Assert {
 
         mock2.assertIsSatisfied();
 
-        camel2.stop();        
+        // should resume triggers when we start camel 1 again
+        mock1.reset();
+        mock1.expectedMinimumMessageCount(2);
+        camel1.start();
+
+        mock1.assertIsSatisfied();
     }
-    
-    @Test
-    public void testThirdCamelContext() throws Exception {
-        camel1.stop();
-        
-        camel2.stop();
-                
-        DefaultCamelContext camel3 = new DefaultCamelContext();
-        camel3.setName("camel-3");
-        camel3.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("quartz://myThirdGroup/myThirdTimerName?cron=0/1+*+*+*+*+?").to("mock:three");
-            }
-        });
-        camel3.start();
-        
-        MockEndpoint mock3 = camel3.getEndpoint("mock:three", MockEndpoint.class);
-        mock3.expectedMinimumMessageCount(2);
-        
-        mock3.assertIsSatisfied();
-        camel3.stop();
-    }
+
 
 }
