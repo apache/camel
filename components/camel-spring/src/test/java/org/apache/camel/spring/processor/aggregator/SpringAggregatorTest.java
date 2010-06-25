@@ -24,6 +24,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  * @version $Revision$
  */
 public class SpringAggregatorTest extends AggregatorTest {
+
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator.xml");
     }
