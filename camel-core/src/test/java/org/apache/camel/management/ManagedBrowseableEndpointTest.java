@@ -56,7 +56,7 @@ public class ManagedBrowseableEndpointTest extends ContextTestSupport {
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("mock://result", uri);
 
-        Long size = (Long) mbeanServer.invoke(name, "qeueSize", null, null);
+        Long size = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(2, size.longValue());
 
         String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});

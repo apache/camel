@@ -39,7 +39,7 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint {
     }
 
     @ManagedOperation(description = "Current number of Exchanges in Queue")
-    public long qeueSize() {
+    public long queueSize() {
         return endpoint.getExchanges().size();
     }
 
