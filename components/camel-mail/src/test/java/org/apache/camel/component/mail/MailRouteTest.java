@@ -24,8 +24,8 @@ import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 
-
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -51,7 +51,8 @@ public class MailRouteTest extends CamelTestSupport {
         // lets test the first sent worked
         assertMailboxReceivedMessages("route-test-james@localhost");
 
-        // lets sleep to check that the mail poll does not redeliver duplicate mails
+        // lets sleep to check that the mail poll does not redeliver duplicate
+        // mails
         Thread.sleep(3000);
 
         // lets test the receive worked
@@ -64,36 +65,35 @@ public class MailRouteTest extends CamelTestSupport {
 
         assertMailboxReceivedMessages("route-test-copy@localhost");
     }
-    
+
     @Test
     public void testMailSubjectWithUnicode() throws Exception {
         Mailbox.clearAll();
 
-        String body = "Hello Camel Riders!";
-        String subject = "My Camel \u2122";
-        
-        System.setProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "US-ASCII");
+        final String body = "Hello Camel Riders!";
+        final String subject = "My Camel \u2122";
 
-        try {
-            MockEndpoint mock = getMockEndpoint("mock:result");
-        
-            mock.expectedMessageCount(1);
-            // now we don't use the UTF-8 encoding
-            mock.expectedHeaderReceived("subject", "=?US-ASCII?Q?My_Camel_=3F?=");
-            mock.expectedBodiesReceived(body);
-    
-            template.sendBodyAndHeader("direct:a", body, "subject", subject);
-    
-            mock.assertIsSatisfied();
-    
-            assertFalse("Should not have attachements",
-                        mock.getExchanges().get(0).getIn().hasAttachments());
-        } finally {
-            System.clearProperty(Exchange.DEFAULT_CHARSET_PROPERTY);
-        }
-        
+        MockEndpoint mock = getMockEndpoint("mock:result");
+
+        mock.expectedMessageCount(1);
+        // now we don't use the UTF-8 encoding
+        mock.expectedHeaderReceived("subject", "=?US-ASCII?Q?My_Camel_=3F?=");
+        mock.expectedBodiesReceived(body);
+
+        template.send("direct:a", new Processor() {
+
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(body);
+                exchange.getIn().setHeader("subject", subject);
+                exchange.setProperty(Exchange.CHARSET_NAME, "US-ASCII");
+            }
+        });
+
+        mock.assertIsSatisfied();
+
+        assertFalse("Should not have attachements", mock.getExchanges().get(0).getIn().hasAttachments());
+
     }
-
 
     protected void assertMailboxReceivedMessages(String name) throws IOException, MessagingException {
         Mailbox mailbox = Mailbox.get(name);
@@ -116,19 +116,21 @@ public class MailRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://route-test-james@localhost?consumer.delay=1000")
-                    .to("direct:a");
+                from("pop3://route-test-james@localhost?consumer.delay=1000").to("direct:a");
 
-                // must use fixed to option to send the mail to the given reciever, as we have polled
-                // a mail from a mailbox where it already has the 'old' To as header value
-                // here we send the mail to 2 recievers. notice we can use a plain string with semi colon
+                // must use fixed to option to send the mail to the given
+                // reciever, as we have polled
+                // a mail from a mailbox where it already has the 'old' To as
+                // header value
+                // here we send the mail to 2 recievers. notice we can use a
+                // plain string with semi colon
                 // to seperate the mail addresses
                 from("direct:a")
                     .setHeader("to", constant("route-test-result@localhost; route-test-copy@localhost"))
                     .to("smtp://localhost");
 
-                from("pop3://route-test-result@localhost?consumer.delay=1000")
-                    .convertBodyTo(String.class).to("mock:result");
+                from("pop3://route-test-result@localhost?consumer.delay=1000").convertBodyTo(String.class)
+                    .to("mock:result");
             }
         };
     }

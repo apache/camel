@@ -92,7 +92,7 @@ public class MailBinding {
         // and headers the headers win.
         String subject = endpoint.getConfiguration().getSubject();
         if (subject != null) {
-            mimeMessage.setSubject(subject, IOConverter.getCharsetName(exchange));
+            mimeMessage.setSubject(subject, IOConverter.getCharsetName(exchange, false));
         }
 
         // append the rest of the headers (no recipients) that could be subject, reply-to etc.
@@ -325,7 +325,7 @@ public class MailBinding {
                 if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
                     if (headerName.equalsIgnoreCase("subject")) {
-                        mimeMessage.setSubject(asString(exchange, headerValue), IOConverter.getCharsetName(exchange));
+                        mimeMessage.setSubject(asString(exchange, headerValue), IOConverter.getCharsetName(exchange, false));
                         continue;
                     }
                     if (isRecipientHeader(headerName)) {
