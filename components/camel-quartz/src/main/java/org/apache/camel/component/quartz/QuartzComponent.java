@@ -163,13 +163,20 @@ public class QuartzComponent extends DefaultComponent {
 
     }
 
-    public void removeJob(Trigger trigger) throws SchedulerException {
+    public void removeJob(JobDetail job, Trigger trigger) throws SchedulerException {
         JOBS.decrementAndGet();
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Removing job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
+        // only un schedule volatile jobs
+        if (job.isVolatile()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Removing job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
+            }
+            getScheduler().unscheduleJob(trigger.getName(), trigger.getGroup());
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Keeping volatile job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
+            }
         }
-        getScheduler().unscheduleJob(trigger.getName(), trigger.getGroup());
     }
 
     // Properties

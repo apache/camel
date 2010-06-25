@@ -77,8 +77,8 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
         getComponent().addJob(detail, trigger);
     }
 
-    public void removeTrigger(final Trigger trigger) throws SchedulerException {
-        getComponent().removeJob(trigger);
+    public void removeTrigger(final Trigger trigger, final JobDetail detail) throws SchedulerException {
+        getComponent().removeJob(detail, trigger);
     }
 
     /**
@@ -196,7 +196,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
         ObjectHelper.notNull(trigger, "trigger");
         getLoadBalancer().removeProcessor(consumer.getProcessor());
         if (getLoadBalancer().getProcessors().isEmpty() && started) {
-            removeTrigger(getTrigger());
+            removeTrigger(getTrigger(), getJobDetail());
             started = false;
         }
     }
