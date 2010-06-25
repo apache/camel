@@ -174,9 +174,12 @@ public class QuartzComponent extends DefaultComponent {
             }
             getScheduler().unscheduleJob(trigger.getName(), trigger.getGroup());
         } else {
+            // but pause jobs so they wont trigger in case an application is being stopped or re-started
+            // while this component is still running (eg as it can do in OSGi)
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Keeping volatile job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
+                LOG.debug("Pausing job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
             }
+            getScheduler().pauseTrigger(trigger.getName(), trigger.getGroup());
         }
     }
 
