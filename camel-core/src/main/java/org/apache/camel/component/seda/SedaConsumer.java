@@ -22,6 +22,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -29,6 +31,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
@@ -45,14 +48,14 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     private static final transient Log LOG = LogFactory.getLog(SedaConsumer.class);
 
     private SedaEndpoint endpoint;
-    private Processor processor;
+    private AsyncProcessor processor;
     private ExecutorService executor;
-    private Processor multicast;
+    private MulticastProcessor multicast;
     private ExceptionHandler exceptionHandler;
 
     public SedaConsumer(SedaEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
-        this.processor = processor;
+        this.processor = AsyncProcessorTypeConverter.convert(processor);
     }
 
     @Override
@@ -153,15 +156,25 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             }
 
             // use a multicast processor to process it
-            Processor mp = getMulticastProcessor();
-            mp.process(exchange);
+            MulticastProcessor mp = getMulticastProcessor();
+
+            // and use the asynchronous routing engine to support it
+            mp.process(exchange, new AsyncCallback() {
+                public void done(boolean doneSync) {
+                    // noop
+                }
+            });
         } else {
-            // use the regular processor
-            processor.process(exchange);
+            // use the regular processor and use the asynchronous routing engine to support it
+            processor.process(exchange, new AsyncCallback() {
+                public void done(boolean doneSync) {
+                    // noop
+                }
+            });
         }
     }
 
-    protected synchronized Processor getMulticastProcessor() {
+    protected synchronized MulticastProcessor getMulticastProcessor() {
         if (multicast == null) {
             int size = endpoint.getConsumers().size();
 

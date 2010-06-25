@@ -44,6 +44,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
     private final CamelContext camelContext;
     private final ExecutorService executorService;
     private final AtomicBoolean shutdown = new AtomicBoolean(true);
+    private boolean callerRunsWhenRejected = true;
 
     private final class ProcessCall implements Runnable {
         private final Exchange exchange;
@@ -67,8 +68,6 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
         ObjectHelper.notNull(executorService, "executorService");
         this.camelContext = camelContext;
         this.executorService = executorService;
-        // TODO: if rejection policy of executor service is caller runs then we need to tap into it
-        // so we can invoke the callback.done(true) to continue routing synchronously
     }
 
     public void process(final Exchange exchange) throws Exception {
@@ -85,13 +84,25 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
             executorService.submit(call);
             return false;
         } catch (RejectedExecutionException e) {
-            if (shutdown.get()) {
-                exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running.", e));
+            if (isCallerRunsWhenRejected()) {
+                if (shutdown.get()) {
+                    exchange.setException(new RejectedExecutionException());
+                } else {
+                    callback.done(true);
+                }
             } else {
                 exchange.setException(e);
             }
+            return true;
         }
-        return true;
+    }
+
+    public boolean isCallerRunsWhenRejected() {
+        return callerRunsWhenRejected;
+    }
+
+    public void setCallerRunsWhenRejected(boolean callerRunsWhenRejected) {
+        this.callerRunsWhenRejected = callerRunsWhenRejected;
     }
 
     public String toString() {

@@ -65,6 +65,8 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
     private String threadName;
     @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy;
+    @XmlAttribute
+    private Boolean callerRunsWhenRejected = Boolean.TRUE;
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
@@ -97,11 +99,13 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
         }
 
         ThreadsProcessor thread = new ThreadsProcessor(routeContext.getCamelContext(), executorService);
-        Processor childProcessor = createChildProcessor(routeContext, true);
+        if (getCallerRunsWhenRejected() != null) {
+            thread.setCallerRunsWhenRejected(getCallerRunsWhenRejected());
+        }
 
         List<Processor> pipe = new ArrayList<Processor>(2);
         pipe.add(thread);
-        pipe.add(childProcessor);
+        pipe.add(createChildProcessor(routeContext, true));
         // wrap in nested pipeline so this appears as one processor
         return new Pipeline(routeContext.getCamelContext(), pipe);
     }
@@ -211,6 +215,19 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
         return this;
     }
 
+    /**
+     * Whether or not the caller should run the task when it was rejected by the thread pool.
+     * <p/>
+     * Is by default <tt>true</tt>
+     *
+     * @param callerRunsWhenRejected whether or not the caller should run
+     * @return the builder
+     */
+    public ThreadsDefinition callerRunsWhenRejected(boolean callerRunsWhenRejected) {
+        setCallerRunsWhenRejected(callerRunsWhenRejected);
+        return this;
+    }
+
     public ExecutorService getExecutorService() {
         return executorService;
     }
@@ -281,5 +298,13 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
 
     public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
+    }
+
+    public Boolean getCallerRunsWhenRejected() {
+        return callerRunsWhenRejected;
+    }
+
+    public void setCallerRunsWhenRejected(Boolean callerRunsWhenRejected) {
+        this.callerRunsWhenRejected = callerRunsWhenRejected;
     }
 }
