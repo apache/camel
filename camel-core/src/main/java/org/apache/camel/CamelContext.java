@@ -106,10 +106,14 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * Adds the given listener to be invoked when {@link CamelContext} have just been started.
      * <p/>
      * This allows listeners to do any custom work after the routes and other services have been started and are running.
+     * <p/><b>Important:</b> The listener will always be invoked, also if the {@link CamelContext} has already been
+     * started, see the {@link org.apache.camel.StartupListener#onCamelContextStarted(CamelContext, boolean)} method.
      *
      * @param listener the listener
+     * @throws Exception can be thrown if {@link CamelContext} is already started and the listener is invoked
+     *                   and cause an exception to be thrown
      */
-    void addStartupListener(StartupListener listener);
+    void addStartupListener(StartupListener listener) throws Exception;
 
     // Component Management Methods
     //-----------------------------------------------------------------------

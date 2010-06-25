@@ -124,7 +124,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         return cron;
     }
 
-    public void onCamelContextStarted(CamelContext camelContext) throws Exception {
+    public void onCamelContextStarted(CamelContext camelContext, boolean alreadyStarted) throws Exception {
         // if not configure to auto start then don't start it
         if (!isAutoStartScheduler()) {
             LOG.info("QuartzComponent configured to not auto start Quartz scheduler.");
@@ -228,7 +228,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
      * @throws SchedulerException can be thrown if error starting
      */
     public void startScheduler() throws SchedulerException {
-        if (!scheduler.isStarted()) {
+        if (scheduler != null && !scheduler.isStarted()) {
             if (getStartDelayedSeconds() > 0) {
                 LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName() + " delayed: " + getStartDelayedSeconds() + " seconds.");
                 scheduler.startDelayed(getStartDelayedSeconds());

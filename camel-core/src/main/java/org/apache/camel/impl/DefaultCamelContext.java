@@ -615,13 +615,20 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public boolean hasService(Object object) {
         if (object instanceof Service) {
-            return servicesToClose.contains(object);
+            Service service = (Service) object;
+            return servicesToClose.contains(service);
         }
         return false;
     }
 
-    public void addStartupListener(StartupListener listener) {
-        startupListeners.add(listener);
+    public void addStartupListener(StartupListener listener) throws Exception {
+        // either add to listener so we can invoke then later when CamelContext has been started
+        // or invoke the callback right now
+        if (isStarted()) {
+            listener.onCamelContextStarted(this, true);
+        } else {
+            startupListeners.add(listener);
+        }
     }
 
     // Helper methods
@@ -949,8 +956,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         // now notify any startup aware listeners as all the routes etc has been started.
         for (StartupListener startup : startupListeners) {
-            startup.onCamelContextStarted(this);
+            startup.onCamelContextStarted(this, false);
         }
+        // and then get rid of the list as we dont need it anymore
+        startupListeners.clear();
 
         stopWatch.stop();
         if (LOG.isInfoEnabled()) {
@@ -1157,7 +1166,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // and register startup aware so they can be notified when
         // camel context has been started
         if (service instanceof StartupListener) {
-            startupListeners.add((StartupListener) service);
+            StartupListener listener = (StartupListener) service;
+            addStartupListener(listener);
         }
 
         // and then start the service

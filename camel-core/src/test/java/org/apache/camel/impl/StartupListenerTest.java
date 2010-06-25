@@ -38,9 +38,11 @@ public class StartupListenerTest extends ContextTestSupport {
     private class MyStartupListener implements StartupListener {
 
         private int invoked;
+        private boolean alreadyStarted;
 
-        public void onCamelContextStarted(CamelContext context) throws Exception {
+        public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
             invoked++;
+            this.alreadyStarted = alreadyStarted;
 
             // the route should have been started
             assertTrue(context.getRouteStatus("foo").isStarted());
@@ -48,6 +50,10 @@ public class StartupListenerTest extends ContextTestSupport {
 
         public int getInvoked() {
             return invoked;
+        }
+
+        public boolean isAlreadyStarted() {
+            return alreadyStarted;
         }
     }
 
@@ -59,6 +65,21 @@ public class StartupListenerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(1, my.getInvoked());
+        assertFalse(my.isAlreadyStarted());
+    }
+
+    public void testStartupListenerComponentAlreadyStarted() throws Exception {
+        MyStartupListener other = new MyStartupListener();
+        context.addStartupListener(other);
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:foo", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(1, other.getInvoked());
+        assertTrue(other.isAlreadyStarted());
     }
 
     @Override

@@ -43,7 +43,7 @@ public class StartupListenerComponentTest extends ContextTestSupport {
 
         private int invoked;
 
-        public void onCamelContextStarted(CamelContext context) throws Exception {
+        public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
             invoked++;
 
             // the routes should have been started
