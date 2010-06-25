@@ -57,6 +57,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     private Properties properties;
     private String propertiesFile;
     private int startDelayedSeconds;
+    private boolean autoStartScheduler = true;
 
     public QuartzComponent() {
     }
@@ -124,16 +125,14 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     }
 
     public void onCamelContextStarted(CamelContext camelContext) throws Exception {
-        // only start scheduler when CamelContext have finished starting
-        if (!scheduler.isStarted()) {
-            if (getStartDelayedSeconds() > 0) {
-                LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName() + " delayed: " + getStartDelayedSeconds() + " seconds.");
-                scheduler.startDelayed(getStartDelayedSeconds());
-            } else {
-                LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName());
-                scheduler.start();
-            }
+        // if not configure to auto start then don't start it
+        if (!isAutoStartScheduler()) {
+            LOG.info("QuartzComponent configured to not auto start Quartz scheduler.");
+            return;
         }
+
+        // only start scheduler when CamelContext have finished starting
+        startScheduler();
     }
 
     @Override
@@ -146,19 +145,19 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
     @Override
     protected void doStop() throws Exception {
+        super.doStop();
+
         if (scheduler != null) {
             int number = JOBS.get();
             if (number > 0) {
                 LOG.info("Cannot shutdown Quartz scheduler: " + scheduler.getSchedulerName() + " as there are still " + number + " jobs registered.");
-            }
-            if (number == 0) {
+            } else {
                 // no more jobs then shutdown the scheduler
                 LOG.info("There are no more jobs registered, so shutting down Quartz scheduler: " + scheduler.getSchedulerName());
                 scheduler.shutdown();
                 scheduler = null;
             }
         }
-        super.doStop();
     }
 
     public void addJob(JobDetail job, Trigger trigger) throws SchedulerException {
@@ -180,19 +179,63 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     public void removeJob(JobDetail job, Trigger trigger) throws SchedulerException {
         JOBS.decrementAndGet();
 
-        // only un schedule volatile jobs
+        if (isClustered()) {
+            // do not remove jobs which are clustered, as we want the jobs to continue running on the other nodes
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Cannot removing job using trigger: " + trigger.getGroup() + "/" + trigger.getName() + " as the JobStore is clustered.");
+            }
+            return;
+        }
+
+        // only unschedule volatile jobs
         if (job.isVolatile()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Removing job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
             }
             getScheduler().unscheduleJob(trigger.getName(), trigger.getGroup());
         } else {
-            // but pause jobs so they wont trigger in case an application is being stopped or re-started
-            // while this component is still running (eg as it can do in OSGi)
+            // but pause jobs so we can resume them if the application restarts
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Pausing job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
             }
             getScheduler().pauseTrigger(trigger.getName(), trigger.getGroup());
+        }
+    }
+
+    /**
+     * To force shutdown the quartz scheduler
+     *
+     * @throws SchedulerException can be thrown if error shutting down
+     */
+    public void shutdownScheduler() throws SchedulerException {
+        if (scheduler != null) {
+            LOG.info("Forcing shutdown of Quartz scheduler: " + scheduler.getSchedulerName());
+            scheduler.shutdown();
+            scheduler = null;
+        }
+    }
+
+    /**
+     * Is the quartz scheduler clustered?
+     */
+    public boolean isClustered() throws SchedulerException {
+        return getScheduler().getMetaData().isJobStoreClustered();
+    }
+
+    /**
+     * To force starting the quartz scheduler
+     *
+     * @throws SchedulerException can be thrown if error starting
+     */
+    public void startScheduler() throws SchedulerException {
+        if (!scheduler.isStarted()) {
+            if (getStartDelayedSeconds() > 0) {
+                LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName() + " delayed: " + getStartDelayedSeconds() + " seconds.");
+                scheduler.startDelayed(getStartDelayedSeconds());
+            } else {
+                LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName());
+                scheduler.start();
+            }
         }
     }
 
@@ -243,6 +286,14 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
     public void setStartDelayedSeconds(int startDelayedSeconds) {
         this.startDelayedSeconds = startDelayedSeconds;
+    }
+
+    public boolean isAutoStartScheduler() {
+        return autoStartScheduler;
+    }
+
+    public void setAutoStartScheduler(boolean autoStartScheduler) {
+        this.autoStartScheduler = autoStartScheduler;
     }
 
     // Implementation methods
