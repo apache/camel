@@ -148,11 +148,53 @@ public final class EndpointHelper {
             return true;
         }
 
+        if (matchWildcard(name, pattern)) {
+            return true;
+        }
+
+        if (matchRegex(name, pattern)) {
+            return true;
+        }
+
+        // no match
+        return false;
+    }
+
+    /**
+     * Matches the name with the given pattern.
+     * <p/>
+     * The match rules are applied in this order:
+     * <ul>
+     *   <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
+     *   <li>otherwise returns false</li>
+     * </ul>
+     *
+     * @param name    the name
+     * @param pattern a pattern to match
+     * @return <tt>true</tt> if match, <tt>false</tt> otherwise.
+     */
+    private static boolean matchWildcard(String name, String pattern) {
         // we have wildcard support in that hence you can match with: file* to match any file endpoints
         if (pattern.endsWith("*") && name.startsWith(pattern.substring(0, pattern.length() - 1))) {
             return true;
         }
+        return false;
+    }
 
+    /**
+     * Matches the name with the given pattern.
+     * <p/>
+     * The match rules are applied in this order:
+     * <ul>
+     *   <li>regular expression match, returns true</li>
+     *   <li>otherwise returns false</li>
+     * </ul>
+     *
+     * @param name    the name
+     * @param pattern a pattern to match
+     * @return <tt>true</tt> if match, <tt>false</tt> otherwise.
+     */
+    private static boolean matchRegex(String name, String pattern) {
         // match by regular expression
         try {
             if (name.matches(pattern)) {
@@ -161,8 +203,6 @@ public final class EndpointHelper {
         } catch (PatternSyntaxException e) {
             // ignore
         }
-
-        // no match
         return false;
     }
 
