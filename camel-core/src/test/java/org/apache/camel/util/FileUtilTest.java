@@ -37,8 +37,20 @@ public class FileUtilTest extends TestCase {
         assertEquals(null, FileUtil.stripLeadingSeparator(null));
         assertEquals("foo", FileUtil.stripLeadingSeparator("foo"));
         assertEquals("foo/bar", FileUtil.stripLeadingSeparator("foo/bar"));
-        assertEquals("foo", FileUtil.stripLeadingSeparator("foo"));
+        assertEquals("foo/", FileUtil.stripLeadingSeparator("foo/"));
         assertEquals("foo/bar", FileUtil.stripLeadingSeparator("/foo/bar"));
+        assertEquals("foo/bar", FileUtil.stripLeadingSeparator("//foo/bar"));
+        assertEquals("foo/bar", FileUtil.stripLeadingSeparator("///foo/bar"));
+    }
+
+    public void testStripFirstLeadingSeparator() {
+        assertEquals(null, FileUtil.stripFirstLeadingSeparator(null));
+        assertEquals("foo", FileUtil.stripFirstLeadingSeparator("foo"));
+        assertEquals("foo/bar", FileUtil.stripFirstLeadingSeparator("foo/bar"));
+        assertEquals("foo/", FileUtil.stripFirstLeadingSeparator("foo/"));
+        assertEquals("foo/bar", FileUtil.stripFirstLeadingSeparator("/foo/bar"));
+        assertEquals("/foo/bar", FileUtil.stripFirstLeadingSeparator("//foo/bar"));
+        assertEquals("//foo/bar", FileUtil.stripFirstLeadingSeparator("///foo/bar"));
     }
 
     public void testStripTrailingSeparator() {
@@ -47,8 +59,10 @@ public class FileUtilTest extends TestCase {
         assertEquals("foo/bar", FileUtil.stripTrailingSeparator("foo/bar"));
         assertEquals("foo", FileUtil.stripTrailingSeparator("foo/"));
         assertEquals("foo/bar", FileUtil.stripTrailingSeparator("foo/bar/"));
-        assertEquals("/foo/bar", FileUtil.stripTrailingSeparator("/foo/bar/"));
         assertEquals("/foo/bar", FileUtil.stripTrailingSeparator("/foo/bar"));
+        assertEquals("/foo/bar", FileUtil.stripTrailingSeparator("/foo/bar/"));
+        assertEquals("/foo/bar", FileUtil.stripTrailingSeparator("/foo/bar//"));
+        assertEquals("/foo/bar", FileUtil.stripTrailingSeparator("/foo/bar///"));
     }
 
     public void testStripPath() {

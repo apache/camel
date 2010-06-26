@@ -90,6 +90,19 @@ public final class FileUtil {
     }
 
     /**
+     * Strip first leading separator
+     */
+    public static String stripFirstLeadingSeparator(String name) {
+        if (name == null) {
+            return null;
+        }
+        if (name.startsWith("/") || name.startsWith(File.separator)) {
+            name = name.substring(1);
+        }
+        return name;
+    }
+
+    /**
      * Strip any trailing separators
      */
     public static String stripTrailingSeparator(String name) {

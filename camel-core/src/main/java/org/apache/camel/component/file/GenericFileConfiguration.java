@@ -22,14 +22,17 @@ import org.apache.camel.util.FileUtil;
 
 public class GenericFileConfiguration {
 
-    private String directory;
+    protected String directory;
 
     public boolean needToNormalize() {
         return true;
     }
 
     public void configure(URI uri) {
-        setDirectory(uri.getPath());
+        String path = uri.getPath();
+        // strip tailing slash which the uri path may append
+        path = FileUtil.stripFirstLeadingSeparator(path);
+        setDirectory(path);
     }
 
     public String getDirectory() {
@@ -47,9 +50,6 @@ public class GenericFileConfiguration {
         if (this.directory == null) {
             this.directory = "";
         }
-        
-        // strip tailing slash
-        this.directory = FileUtil.stripTrailingSeparator(this.directory);
     }
 
     public String toString() {
