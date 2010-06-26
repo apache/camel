@@ -30,7 +30,7 @@ public class GenericFileConfiguration {
 
     public void configure(URI uri) {
         String path = uri.getPath();
-        // strip tailing slash which the uri path may append
+        // strip tailing slash which URI path always start with
         path = FileUtil.stripFirstLeadingSeparator(path);
         setDirectory(path);
     }

@@ -19,8 +19,6 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 
 import org.apache.camel.component.file.GenericFileConfiguration;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Configuration of the FTP server
