@@ -22,14 +22,13 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.MyAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  * @version $Revision$
  */
 public class AggregatorTest extends ContextTestSupport {
-    protected int messageCount = 50;
+    protected int messageCount = 100;
 
     public void testSendingLotsOfMessagesGetAggregatedToTheLatestMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -54,29 +53,32 @@ public class AggregatorTest extends ContextTestSupport {
         headers.put("bar", "viper bar");
 
         template.sendBodyAndHeaders("direct:predicate", "test", headers);
+
         resultEndpoint.assertIsSatisfied();
     }
 
     public void testBatchTimeoutExpiry() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
+
         template.sendBodyAndHeader("direct:start", "message:1", "cheese", 123);
+
         resultEndpoint.assertIsSatisfied();
     }
-
 
     public void testAggregatorNotAtStart() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("visited").isNotNull();
+
         template.sendBodyAndHeader("seda:header", "message:1", "cheese", 123);
+
         resultEndpoint.assertIsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-
                 // START SNIPPET: ex
                 // in this route we aggregate all from direct:state based on the header id cheese
                 from("direct:start")
@@ -87,11 +89,10 @@ public class AggregatorTest extends ContextTestSupport {
                     .aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(1000L)
                         .to("mock:result");
 
-                // in this sample we aggregate using our own strategy with a completion predicate
+                // in this sample we aggregate with a completion predicate
                 from("direct:predicate")
-                    .aggregate(header("cheese"), new MyAggregationStrategy())
-                        .eagerCheckCompletion()
-                        .completionPredicate(header("bar").isEqualTo("viper bar"))
+                    .aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(1000L)
+                        .completionPredicate(header("cheese").isEqualTo(123))
                         .to("mock:result");
                 // END SNIPPET: ex
             }

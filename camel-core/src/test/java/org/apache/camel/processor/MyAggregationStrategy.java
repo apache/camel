@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Header;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
@@ -37,13 +36,4 @@ public class MyAggregationStrategy extends UseLatestAggregationStrategy {
         return result;
     }
 
-    /**
-     * An expression used to determine if the aggregation is complete
-     */
-    public boolean isCompleted(@Header("aggregated") Integer aggregated) {
-        if (aggregated == null) {
-            return false;
-        }
-        return aggregated == 5;
-    }
 }
