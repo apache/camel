@@ -16,75 +16,60 @@
  */
 package org.apache.camel.dataformat.csv;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.csv.writer.CSVConfig;
+import org.apache.camel.test.CamelTestSupport;
+import org.apache.commons.csv.CSVStrategy;
 import org.junit.Test;
 
 /**
+ * Spring based integration test for the <code>CsvDataFormat</code>
  * @version $Revision: $
+ * @author cmueller
  */
-public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
+public class CsvUnmarshalPipeDelimiterTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testCsvMarshal() throws Exception {
         result.expectedMessageCount(1);
 
-        template.sendBody("direct:start", createBody());
+        template.sendBody("direct:start", "123|Camel in Action|1\n124|ActiveMQ in Action|2");
 
         assertMockEndpointsSatisfied();
 
-        String body = result.getReceivedExchanges().get(0).getIn().getBody(
-                String.class);
-        String[] lines = body.split("\n");
-        assertEquals(2, lines.length);
-        assertEquals("123|Camel in Action|1", lines[0]);
-        assertEquals("124|ActiveMQ in Action|2", lines[1]);
+        List<List<String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertEquals(2, body.size());
+        assertEquals("123", body.get(0).get(0));
+        assertEquals("Camel in Action", body.get(0).get(1));
+        assertEquals("1", body.get(0).get(2));
+        assertEquals("124", body.get(1).get(0));
+        assertEquals("ActiveMQ in Action", body.get(1).get(1));
+        assertEquals("2", body.get(1).get(2));        
     }
-
-    private List<Map<String, Object>> createBody() {
-        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-
-        Map<String, Object> row1 = new LinkedHashMap<String, Object>();
-        row1.put("orderId", 123);
-        row1.put("item", "Camel in Action");
-        row1.put("amount", 1);
-        data.add(row1);
-
-        Map<String, Object> row2 = new LinkedHashMap<String, Object>();
-        row2.put("orderId", 124);
-        row2.put("item", "ActiveMQ in Action");
-        row2.put("amount", 2);
-        data.add(row2);
-        return data;
-    }
-
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 CsvDataFormat csv = new CsvDataFormat();
-                CSVConfig config = new CSVConfig();
-                config.setDelimiter('|');
-                csv.setConfig(config);
+                CSVStrategy strategy = CSVStrategy.DEFAULT_STRATEGY;
+                strategy.setDelimiter('|');
+                csv.setStrategy(strategy);
                 
                 // also possible
                 // CsvDataFormat csv = new CsvDataFormat();
                 // csv.setDelimiter("|");
 
-                from("direct:start").marshal(csv).convertBodyTo(String.class)
-                        .to("mock:result");
+                from("direct:start").unmarshal(csv)
+                    .to("mock:result");
             }
         };
     }

@@ -22,16 +22,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.csv.writer.CSVConfig;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
+ * Spring based integration test for the <code>CsvDataFormat</code>
  * @version $Revision: $
+ * @author cmueller
  */
-public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
+public class CsvMarshalPipeDelimiterSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
@@ -70,22 +71,7 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                CsvDataFormat csv = new CsvDataFormat();
-                CSVConfig config = new CSVConfig();
-                config.setDelimiter('|');
-                csv.setConfig(config);
-                
-                // also possible
-                // CsvDataFormat csv = new CsvDataFormat();
-                // csv.setDelimiter("|");
-
-                from("direct:start").marshal(csv).convertBodyTo(String.class)
-                        .to("mock:result");
-            }
-        };
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvMarshalPipeDelimiterSpringTest-context.xml");
     }
 }

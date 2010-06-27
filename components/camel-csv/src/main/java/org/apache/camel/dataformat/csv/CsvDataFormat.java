@@ -30,7 +30,6 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVStrategy;
 import org.apache.commons.csv.writer.CSVConfig;
@@ -52,9 +51,12 @@ public class CsvDataFormat implements DataFormat {
     private CSVStrategy strategy = CSVStrategy.DEFAULT_STRATEGY;
     private CSVConfig config = new CSVConfig();
     private boolean autogenColumns = true;
+    private String delimiter;
 
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
-        ObjectHelper.notNull(config, "config");
+        if (delimiter != null) {
+            config.setDelimiter(delimiter.charAt(0));
+        }
 
         OutputStreamWriter out = new OutputStreamWriter(outputStream);
         CSVWriter csv = new CSVWriter(config);
@@ -87,8 +89,12 @@ public class CsvDataFormat implements DataFormat {
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         InputStreamReader in = new InputStreamReader(inputStream);
+        if (delimiter != null) {
+            strategy.setDelimiter(delimiter.charAt(0));
+        }
+        
         try {
-            CSVParser parser = new CSVParser(in, getStrategy());
+            CSVParser parser = new CSVParser(in, strategy);
             List<List<String>> list = new ArrayList<List<String>>();
             while (true) {
                 String[] strings = parser.getLine();
@@ -106,6 +112,21 @@ public class CsvDataFormat implements DataFormat {
         } finally {
             in.close();
         }
+    }
+    
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    public void setDelimiter(String delimiter) {
+        if (delimiter != null && delimiter.length() > 1) {
+            throw new IllegalArgumentException("Delimiter must have a length of one!");
+        }
+        this.delimiter = delimiter;
+    }
+    
+    public CSVConfig getConfig() {
+        return config;
     }
 
     public void setConfig(CSVConfig config) {
@@ -131,10 +152,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public void setAutogenColumns(boolean autogenColumns) {
         this.autogenColumns = autogenColumns;
-    }
-
-    protected CSVConfig createConfig() {
-        return new CSVConfig();
     }
 
     private synchronized void updateFieldsInConfig(Set set, Exchange exchange) {
