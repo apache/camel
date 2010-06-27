@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A processor which validates the content of the inbound message body
- * against a regular expression.
+ * against a predicate.
  * 
  * @version $Revision$
  */

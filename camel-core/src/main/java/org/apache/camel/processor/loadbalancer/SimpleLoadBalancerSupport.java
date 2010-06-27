@@ -14,27 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.processor.loadbalancer;
 
-import org.apache.camel.Processor;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
 
 /**
- * Endpoint intercept processor so we know the processor is supposed to intercept an endpoint.
+ * A default base class for a {@link LoadBalancer} implementation.
+ * <p/>
+ * This implementation is dedicated for simple synchronous load balancers.
+ * <p/>
+ * Consider using the {@link LoadBalancerSupport} if you want to support
+ * the asynchronous routing engine in Camel.
  *
  * @version $Revision$
  */
-public class InterceptEndpointProcessor extends DelegateProcessor {
+public abstract class SimpleLoadBalancerSupport extends LoadBalancerSupport {
 
-    private final String uri;
-
-    public InterceptEndpointProcessor(String uri, Processor processor) {
-        super(processor);
-        this.uri = uri;
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        callback.done(true);
+        return true;
     }
 
-    @Override
-    public String toString() {
-        return "InterceptEndpointProcessor[" + uri + " -> " + processor + "]";
-    }
-
+    public abstract void process(Exchange exchange) throws Exception;
 }

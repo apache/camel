@@ -29,6 +29,8 @@ import org.apache.camel.spi.RoutePolicy;
  */
 public class RoutePolicyProcessor extends DelegateProcessor {
 
+    // TODO: Support async routing engine
+
     private final RoutePolicy routePolicy;
     private Route route;
 
