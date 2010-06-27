@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,9 +28,7 @@ import org.apache.camel.spi.RoutePolicy;
 /**
  * @version $Revision$
  */
-public class RoutePolicyProcessor extends DelegateProcessor {
-
-    // TODO: Support async routing engine
+public class RoutePolicyProcessor extends DelegateAsyncProcessor {
 
     private final RoutePolicy routePolicy;
     private Route route;
@@ -45,7 +44,7 @@ public class RoutePolicyProcessor extends DelegateProcessor {
     }
 
     @Override
-    protected void processNext(Exchange exchange) throws Exception {
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         // check whether the policy is enabled
         if (isRoutePolicyRunAllowed()) {
 
@@ -73,9 +72,7 @@ public class RoutePolicyProcessor extends DelegateProcessor {
             });
         }
 
-        if (processor != null) {
-            processor.process(exchange);
-        }
+        return super.process(exchange, callback);
     }
 
     public void setRoute(Route route) {
