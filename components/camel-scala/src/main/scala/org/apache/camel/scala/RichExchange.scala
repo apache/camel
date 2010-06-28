@@ -56,6 +56,8 @@ class RichExchange(val exchange : Exchange) extends Exchange {
 
   def setFromEndpoint(fromEndpoint: Endpoint) = exchange.setFromEndpoint(fromEndpoint)
 
+  def setFromRouteId(routeId: String) = exchange.setFromRouteId(routeId)
+
   def setExchangeId(id: String) = exchange.setExchangeId(id)
 
   def setException(t: Throwable) = exchange.setException(t)
@@ -95,6 +97,8 @@ class RichExchange(val exchange : Exchange) extends Exchange {
   def getIn = exchange.getIn
 
   def getFromEndpoint = exchange.getFromEndpoint
+
+  def getFromRouteId = exchange.getFromRouteId
 
   def getExchangeId = exchange.getExchangeId
 
