@@ -38,6 +38,16 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testConvertNullBody() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+        result.message(0).body().isNull();
+
+        template.sendBody("direct:start", null);
+
+        assertMockEndpointsSatisfied();
+    }
+
     public void testConvertFailed() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:dead");
         dead.expectedMessageCount(1);

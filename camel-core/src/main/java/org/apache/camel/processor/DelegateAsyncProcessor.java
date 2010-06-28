@@ -32,6 +32,9 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * A Delegate pattern which delegates processing to a nested {@link AsyncProcessor} which can
  * be useful for implementation inheritance when writing an {@link org.apache.camel.spi.Policy}
+ * <p/>
+ * <b>Important:</b> This implementation <b>does</b> support the asynchronous routing engine.
+ * If you are implementing a EIP pattern please use this as the delegate.
  *
  * @version $Revision$
  * @see org.apache.camel.processor.DelegateProcessor
@@ -78,17 +81,21 @@ public class DelegateAsyncProcessor extends ServiceSupport implements AsyncProce
         ServiceHelper.stopServices(processor);
     }
 
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        return processNext(exchange, callback);
+    }
+
+    protected boolean processNext(Exchange exchange, AsyncCallback callback) {
         if (processor == null) {
             // no processor then we are done
             callback.done(true);
             return true;
         }
         return processor.process(exchange, callback);
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean hasNext() {

@@ -51,14 +51,18 @@ public class ConvertBodyProcessor implements Processor {
         if (charset != null) {
             exchange.setProperty(Exchange.CHARSET_NAME, charset);
         }
-        Object value = in.getMandatoryBody(type);
 
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(in);
-            out.setBody(value);
-        } else {
-            in.setBody(value);
+        // only convert if the is a body
+        if (in.getBody() != null) {
+            Object value = in.getMandatoryBody(type);
+
+            if (exchange.getPattern().isOutCapable()) {
+                Message out = exchange.getOut();
+                out.copyFrom(in);
+                out.setBody(value);
+            } else {
+                in.setBody(value);
+            }
         }
     }
 

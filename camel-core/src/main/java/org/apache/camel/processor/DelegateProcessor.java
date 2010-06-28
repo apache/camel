@@ -82,7 +82,10 @@ public class DelegateProcessor extends ServiceSupport implements Processor, Navi
 
     /**
      * Proceed with the underlying delegated processor
+     *
+     * @deprecated will be removed in Camel 2.5
      */
+    @Deprecated
     public void proceed(Exchange exchange) throws Exception {
         processNext(exchange);
     }
