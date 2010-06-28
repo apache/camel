@@ -356,7 +356,7 @@ public final class EndpointHelper {
         List<Route> routes = endpoint.getCamelContext().getRoutes();
         for (Route route : routes) {
             if (route.getEndpoint().equals(endpoint)
-                    || route.getEndpoint().getEndpointKey().equals(endpoint.getEndpointKey()) ) {
+                    || route.getEndpoint().getEndpointKey().equals(endpoint.getEndpointKey())) {
                 return route.getId();
             }
         }

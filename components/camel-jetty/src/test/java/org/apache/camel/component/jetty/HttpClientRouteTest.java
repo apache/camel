@@ -125,6 +125,7 @@ public class HttpClientRouteTest extends CamelTestSupport {
                 from("jetty:http://localhost:9081/querystring").process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
+                        
                         String result = exchange.getIn().getHeader("id", String.class);
                         if (result == null) {
                             result = "No id header";

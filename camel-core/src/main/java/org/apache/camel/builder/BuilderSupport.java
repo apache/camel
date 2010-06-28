@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -138,8 +139,8 @@ public abstract class BuilderSupport {
     /**
      * Returns a xpath expression value builder
      */
-    public ValueBuilder xpath(String value) {
-        return Builder.xpath(value);
+    public XPathBuilder xpath(String value) {
+        return XPathBuilder.xpath(value);
     }
 
     /**

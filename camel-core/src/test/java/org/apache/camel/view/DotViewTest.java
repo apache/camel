@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
  * @version $Revision$
