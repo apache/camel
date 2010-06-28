@@ -136,6 +136,11 @@ public class MailBinding {
                 contentType = before.trim() + "; charset=" + charset;
             }
         }
+        
+        // set the charset if exchange has the charset name as fall back
+        if (contentType != null && !contentType.contains(";") && IOConverter.getCharsetName(exchange, false) != null) {
+            contentType = contentType.trim() + "; charset=" + IOConverter.getCharsetName(exchange, false);
+        }
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Determined Content-Type: " + contentType);
@@ -179,7 +184,12 @@ public class MailBinding {
                 }
             }
         }
-        return null;
+        
+        // Using the charset header of exchange as a fall back
+        return IOConverter.getCharsetName(exchange, false);
+        
+        
+        
     }
 
     protected String populateContentOnMimeMessage(MimeMessage part, MailConfiguration configuration, Exchange exchange)
