@@ -125,8 +125,9 @@ public class TryProcessorTest extends ContextTestSupport {
             assertNotNull("There should be an exception", e);
             
             // If we handle CamelException it is what we should have as an exception caught
-            assertTrue(e instanceof CamelException);
-            assertEquals("Force to fail", e.getMessage());
+            CamelException cause = assertIsInstanceOf(CamelException.class, e.getCause());
+            assertNotNull(cause);
+            assertEquals("Force to fail", cause.getMessage());
         }
     }
 

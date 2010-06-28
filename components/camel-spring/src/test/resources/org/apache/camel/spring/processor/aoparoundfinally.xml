@@ -35,7 +35,7 @@
                         <transform><constant>Bye World</constant></transform>
                     </when>
                     <otherwise>
-                        <transform><constant>Kabom the World</constant></transform>
+                        <transform><constant>Kaboom the World</constant></transform>
                         <throwException ref="myException"/>
                     </otherwise>
                 </choice>

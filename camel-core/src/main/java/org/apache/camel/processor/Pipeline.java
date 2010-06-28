@@ -149,7 +149,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
 
                 // continue processing the pipeline asynchronously
                 Exchange nextExchange = exchange;
-                while (processors.hasNext()) {
+                while (continueRouting(processors, nextExchange)) {
                     AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
 
                     // check for error if so we should break out

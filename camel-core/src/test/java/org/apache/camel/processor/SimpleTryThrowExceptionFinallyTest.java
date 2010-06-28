@@ -19,32 +19,23 @@ package org.apache.camel.processor;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
  */
-public class AOPAfterFinallyTest extends ContextTestSupport {
+public class SimpleTryThrowExceptionFinallyTest extends ContextTestSupport {
 
-    public void testAOPAfterFinally() throws Exception {
-        getMockEndpoint("mock:after").message(0).body().isEqualTo("Bye World");
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Bye World");
-
-        String out = template.requestBody("direct:start", "Hello World", String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    public void testAOPAfterFinallyWithException() throws Exception {
-        getMockEndpoint("mock:after").message(0).body().isEqualTo("Kaboom the World");
+    public void testSimpleTryThrowExceptionFinally() throws Exception {
+        getMockEndpoint("mock:try").expectedMessageCount(1);
+        // finally should be executed
+        getMockEndpoint("mock:finally").expectedMessageCount(1);
+        // no message arrives to result
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
         try {
-            template.requestBody("direct:start", "Kaboom", String.class);
-            fail("Should have thrown an exception");
+            template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Damn", e.getCause().getMessage());
         }
 
@@ -57,14 +48,12 @@ public class AOPAfterFinallyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aop().afterFinally("mock:after")
-                    .choice()
-                        .when(body().isEqualTo("Hello World"))
-                            .transform(constant("Bye World"))
-                        .otherwise()
-                            .transform(constant("Kaboom the World"))
-                            .throwException(new IllegalArgumentException("Damn"))
-                        .end()
+                    .doTry()
+                        .to("mock:try")
+                        .throwException(new IllegalArgumentException("Damn"))
+                    .doFinally()
+                        .to("mock:finally")
+                    .end()
                     .to("mock:result");
             }
         };

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor.async;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -24,22 +27,31 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version $Revision$
  */
-public class AsyncEndpointTryCatchFinallyTest extends ContextTestSupport {
+public class AsyncEndpointTryCatchFinally3Test extends ContextTestSupport {
 
     private static String beforeThreadName;
+    private static String middleThreadName;
     private static String afterThreadName;
+    private static String resultThreadName;
 
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
-        getMockEndpoint("mock:after").expectedBodiesReceived("Hello Camel");
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:catch").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint("mock:after").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
-        assertEquals("Bye World", reply);
+        assertEquals("Bye Camel", reply);
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        Set<String> names = new HashSet<String>();
+        names.add(beforeThreadName);
+        names.add(middleThreadName);
+        names.add(afterThreadName);
+        names.add(resultThreadName);
+
+        assertEquals("Should use 4 different threads", 4, names.size());
     }
 
     @Override
@@ -60,16 +72,30 @@ public class AsyncEndpointTryCatchFinallyTest extends ContextTestSupport {
                             })
                             .to("async:Bye Camel?failFirstAttempts=1")
                         .doCatch(Exception.class)
+                            .to("log:catch")
+                            .to("mock:catch")
+                            .process(new Processor() {
+                                public void process(Exchange exchange) throws Exception {
+                                    middleThreadName = Thread.currentThread().getName();
+                                }
+                            })
+                            .to("async:Bye World")
+                        .doFinally()
                             .process(new Processor() {
                                 public void process(Exchange exchange) throws Exception {
                                     afterThreadName = Thread.currentThread().getName();
                                 }
                             })
-                        .doFinally()
                             .to("log:after")
                             .to("mock:after")
-                            .transform(constant("Bye World"))
+                            .to("async:Bye Camel")
                         .end()
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                resultThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("log:result")
                         .to("mock:result");
             }
         };

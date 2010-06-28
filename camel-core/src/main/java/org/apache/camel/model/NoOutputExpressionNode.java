@@ -34,21 +34,21 @@ import org.apache.camel.model.language.ExpressionDefinition;
  * @version $Revision$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class NoneOutputExpressionNode extends ExpressionNode {
+public class NoOutputExpressionNode extends ExpressionNode {
 
-    public NoneOutputExpressionNode() {
+    public NoOutputExpressionNode() {
         super();
     }
 
-    public NoneOutputExpressionNode(ExpressionDefinition expression) {
+    public NoOutputExpressionNode(ExpressionDefinition expression) {
         super(expression);
     }
 
-    public NoneOutputExpressionNode(Expression expression) {
+    public NoOutputExpressionNode(Expression expression) {
         super(expression);
     }
 
-    public NoneOutputExpressionNode(Predicate predicate) {
+    public NoOutputExpressionNode(Predicate predicate) {
         super(predicate);
     }
 

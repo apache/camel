@@ -25,6 +25,9 @@ import org.apache.camel.Processor;
  */
 public interface Policy {
 
+    // TODO: Should support async routing engine
+    // we may need the same bridge as we do with InterceptStrategy in DefaultChannel
+
     /**
      * Wraps any applicable interceptors around the given processor
      *

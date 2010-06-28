@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.TransformProcessor;
 import org.apache.camel.spi.RouteContext;
 
@@ -31,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "transform")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TransformDefinition extends NoneOutputExpressionNode {
+public class TransformDefinition extends NoOutputExpressionNode {
 
     public TransformDefinition() {
     }

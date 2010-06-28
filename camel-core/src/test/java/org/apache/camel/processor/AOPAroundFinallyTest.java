@@ -28,7 +28,7 @@ public class AOPAroundFinallyTest extends ContextTestSupport {
 
     public void testAOPAroundFinally() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:after").message(0).outBody().isEqualTo("Bye World");
+        getMockEndpoint("mock:after").message(0).body().isEqualTo("Bye World");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
@@ -39,11 +39,11 @@ public class AOPAroundFinallyTest extends ContextTestSupport {
     }
 
     public void testAOPAroundFinallyWithException() throws Exception {
-        getMockEndpoint("mock:before").expectedBodiesReceived("Kabom");
-        getMockEndpoint("mock:after").message(0).outBody().isEqualTo("Kabom the World");
+        getMockEndpoint("mock:before").expectedBodiesReceived("Kaboom");
+        getMockEndpoint("mock:after").message(0).body().isEqualTo("Kaboom the World");
         
         try {
-            template.requestBody("direct:start", "Kabom", String.class);
+            template.requestBody("direct:start", "Kaboom", String.class);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
@@ -64,7 +64,7 @@ public class AOPAroundFinallyTest extends ContextTestSupport {
                         .when(body().isEqualTo("Hello World"))
                             .transform(constant("Bye World"))
                         .otherwise()
-                            .transform(constant("Kabom the World"))
+                            .transform(constant("Kaboom the World"))
                             .throwException(new IllegalArgumentException("Damn"))
                         .end()
                     .to("mock:result");

@@ -33,11 +33,11 @@ public class PolicyPerProcessorTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedHeaderReceived("foo", "was wrapped");
         getMockEndpoint("mock:bar").expectedMessageCount(1);
-        getMockEndpoint("mock:bar").expectedHeaderReceived("foo", "police finished excution");
+        getMockEndpoint("mock:bar").expectedHeaderReceived("foo", "police finished execution");
         getMockEndpoint("mock:bar").expectedHeaderReceived("bar", "was wrapped");
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:result").expectedHeaderReceived("foo", "police finished excution");               
-        getMockEndpoint("mock:result").expectedHeaderReceived("bar", "police finished excution");
+        getMockEndpoint("mock:result").expectedHeaderReceived("foo", "police finished execution");
+        getMockEndpoint("mock:result").expectedHeaderReceived("bar", "police finished execution");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -93,7 +93,7 @@ public class PolicyPerProcessorTest extends ContextTestSupport {
                     exchange.getIn().setHeader(name, "was wrapped");
                     // let the original processor continue routing
                     processor.process(exchange);
-                    exchange.getIn().setHeader(name, "police finished excution");
+                    exchange.getIn().setHeader(name, "police finished execution");
                 }
             };
         }

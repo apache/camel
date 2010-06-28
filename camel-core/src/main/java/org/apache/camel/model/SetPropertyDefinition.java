@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "setProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetPropertyDefinition extends NoneOutputExpressionNode {
+public class SetPropertyDefinition extends NoOutputExpressionNode {
     @XmlAttribute(required = true)
     private String propertyName;
     

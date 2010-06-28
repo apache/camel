@@ -53,7 +53,20 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
     public boolean process(Exchange exchange, AsyncCallback callback) {
         for (FilterProcessor filterProcessor : filters) {
             Predicate predicate = filterProcessor.getPredicate();
-            if (predicate != null && predicate.matches(exchange)) {
+
+            boolean matches = false;
+            try {
+                // ensure we handle exceptions thrown when matching predicate
+                if (predicate != null) {
+                    matches = predicate.matches(exchange);
+                }
+            } catch (Throwable e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
+
+            if (matches) {
                 // process next will also take care (has not null test) if next was a stop().
                 // stop() has no processor to execute, and thus we will end in a NPE
                 return filterProcessor.processNext(exchange, callback);
