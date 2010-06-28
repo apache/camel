@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Producer;
+import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.management.EventNotifierSupport;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
@@ -53,7 +54,7 @@ import org.apache.camel.util.ServiceHelper;
 public class NotifyBuilder {
 
     // notifier to hook into Camel to listen for events
-    private final EventNotifier eventNotifier = new ExchangeNotifier();
+    private final EventNotifier eventNotifier;
 
     // the predicates build with this builder
     private final List<EventPredicateHolder> predicates = new ArrayList<EventPredicateHolder>();
@@ -74,12 +75,16 @@ public class NotifyBuilder {
      * @param context the Camel context
      */
     public NotifyBuilder(CamelContext context) {
+        eventNotifier = new ExchangeNotifier();
         try {
             ServiceHelper.startService(eventNotifier);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
         context.getManagementStrategy().addEventNotifier(eventNotifier);
+        // we only want to match from routes, so skip for example events
+        // which is triggered by producer templates etc.
+        this.fromRoutesOnly();
     }
 
     /**
@@ -106,6 +111,64 @@ public class NotifyBuilder {
             @Override
             public String toString() {
                 return "from(" + endpointUri + ")";
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Optionally a <tt>from</tt> route which means that this expression should only be based
+     * on {@link Exchange} which is originated from the particular route(s).
+     *
+     * @param routeId id of route or pattern (see the EndpointHelper javadoc)
+     * @return the builder
+     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
+     */
+    public NotifyBuilder fromRoute(final String routeId) {
+        stack.push(new EventPredicateSupport() {
+
+            @Override
+            public boolean onExchange(Exchange exchange) {
+                String id = EndpointHelper.getRouteIdFromEndpoint(exchange.getFromEndpoint());
+                // filter non matching exchanges
+                return EndpointHelper.matchPattern(id, routeId);
+            }
+
+            public boolean matches() {
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return "fromRoute(" + routeId + ")";
+            }
+        });
+        return this;
+    }
+
+    private NotifyBuilder fromRoutesOnly() {
+        stack.push(new EventPredicateSupport() {
+
+            @Override
+            public boolean onExchange(Exchange exchange) {
+                // always accept direct endpoints as they are a special case as it will create the UoW beforehand
+                // and just continue to route that on the consumer side, which causes the EventNotifer not to
+                // emit events when the consumer received the exchange, as its alreay done. For example by
+                // ProducerTemplate which creates the UoW before producing messages.
+                if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint() instanceof DirectEndpoint) {
+                    return true;
+                }
+                return EndpointHelper.matchPattern(exchange.getFromRouteId(), "*");
+            }
+
+            public boolean matches() {
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                // we dont want any to string output as this is an internal predicate to match only from routes
+                return "";
             }
         });
         return this;

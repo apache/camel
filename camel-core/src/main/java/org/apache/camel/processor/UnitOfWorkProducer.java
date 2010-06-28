@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * Ensures a {@link Producer} is executed within an {@link org.apache.camel.spi.UnitOfWork}.
@@ -30,6 +31,7 @@ import org.apache.camel.Producer;
 public final class UnitOfWorkProducer implements Producer {
 
     private final Producer producer;
+    private final Processor processor;
 
     /**
      * The producer which should be executed within an {@link org.apache.camel.spi.UnitOfWork}.
@@ -38,6 +40,7 @@ public final class UnitOfWorkProducer implements Producer {
      */
     public UnitOfWorkProducer(Producer producer) {
         this.producer = producer;
+        this.processor = new UnitOfWorkProcessor(producer);
     }
 
     public Endpoint getEndpoint() {
@@ -57,16 +60,15 @@ public final class UnitOfWorkProducer implements Producer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        Processor processor = new UnitOfWorkProcessor(producer);
         processor.process(exchange);
     }
 
     public void start() throws Exception {
-        producer.start();
+        ServiceHelper.startService(processor);
     }
 
     public void stop() throws Exception {
-        producer.stop();
+        ServiceHelper.stopService(processor);
     }
 
     public boolean isSingleton() {

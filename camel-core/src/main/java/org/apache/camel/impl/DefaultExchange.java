@@ -48,6 +48,7 @@ public final class DefaultExchange implements Exchange {
     private UnitOfWork unitOfWork;
     private ExchangePattern pattern;
     private Endpoint fromEndpoint;
+    private String fromRouteId;
     private List<Synchronization> onCompletions;
 
     public DefaultExchange(CamelContext context) {
@@ -62,6 +63,7 @@ public final class DefaultExchange implements Exchange {
     public DefaultExchange(Exchange parent) {
         this(parent.getContext(), parent.getPattern());
         this.fromEndpoint = parent.getFromEndpoint();
+        this.fromRouteId = parent.getFromRouteId();
         this.unitOfWork = parent.getUnitOfWork();
     }
 
@@ -276,6 +278,14 @@ public final class DefaultExchange implements Exchange {
 
     public void setFromEndpoint(Endpoint fromEndpoint) {
         this.fromEndpoint = fromEndpoint;
+    }
+
+    public String getFromRouteId() {
+        return fromRouteId;
+    }
+
+    public void setFromRouteId(String fromRouteId) {
+        this.fromRouteId = fromRouteId;
     }
 
     public String getExchangeId() {

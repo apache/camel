@@ -28,13 +28,16 @@ import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
- * Handles calling the UnitOfWork.done() method when processing of an exchange
- * is complete.
+ * Ensures the {@link Exchange} is routed under the boundaries of an {@link org.apache.camel.spi.UnitOfWork}.
+ * <p/>
+ * Handles calling the {@link org.apache.camel.spi.UnitOfWork#done(org.apache.camel.Exchange)} method
+ * when processing of an {@link Exchange} is complete.
  */
 public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
 
     private static final transient Log LOG = LogFactory.getLog(UnitOfWorkProcessor.class);
     private final RouteContext routeContext;
+    private final String routeId;
 
     public UnitOfWorkProcessor(Processor processor) {
         this(null, processor);
@@ -47,11 +50,21 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
     public UnitOfWorkProcessor(RouteContext routeContext, Processor processor) {
         super(processor);
         this.routeContext = routeContext;
+        if (routeContext != null) {
+            this.routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+        } else {
+            this.routeId = null;
+        }
     }
 
     public UnitOfWorkProcessor(RouteContext routeContext, AsyncProcessor processor) {
         super(processor);
         this.routeContext = routeContext;
+        if (routeContext != null) {
+            this.routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+        } else {
+            this.routeId = null;
+        }
     }
 
     @Override
@@ -65,6 +78,12 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        // if the exchange doesn't have from route id set, then set it if it originated
+        // from this unit of work
+        if (routeId != null && exchange.getFromRouteId() == null) {
+            exchange.setFromRouteId(routeId);
+        }
+
         if (exchange.getUnitOfWork() == null) {
             // If there is no existing UoW, then we should start one and
             // terminate it once processing is completed for the exchange.

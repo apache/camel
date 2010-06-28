@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.Route;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -143,6 +144,10 @@ public final class EndpointHelper {
      * @return <tt>true</tt> if match, <tt>false</tt> otherwise.
      */
     public static boolean matchPattern(String name, String pattern) {
+        if (name == null || pattern == null) {
+            return false;
+        }
+
         if (name.equals(pattern)) {
             // exact match
             return true;
@@ -335,6 +340,27 @@ public final class EndpointHelper {
             }
             return result;
         }
+    }
+
+    /**
+     * Gets the route id for the given endpoint in which there is a consumer listening.
+     *
+     * @param endpoint  the endpoint
+     * @return the route id, or <tt>null</tt> if none found
+     */
+    public static String getRouteIdFromEndpoint(Endpoint endpoint) {
+        if (endpoint == null || endpoint.getCamelContext() == null) {
+            return null;
+        }
+
+        List<Route> routes = endpoint.getCamelContext().getRoutes();
+        for (Route route : routes) {
+            if (route.getEndpoint().equals(endpoint)
+                    || route.getEndpoint().getEndpointKey().equals(endpoint.getEndpointKey()) ) {
+                return route.getId();
+            }
+        }
+        return null;
     }
 
 }

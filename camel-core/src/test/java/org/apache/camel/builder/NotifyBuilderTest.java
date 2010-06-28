@@ -20,11 +20,76 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.seda.SedaEndpoint;
 
 /**
  * @version $Revision$
  */
 public class NotifyBuilderTest extends ContextTestSupport {
+
+    public void testDirectWhenExchangeDoneSimple() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("direct:foo").whenDone(1)
+                .create();
+
+        assertEquals("from(direct:foo).whenDone(1)", notify.toString());
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "A");
+
+        assertEquals(true, notify.matches());
+    }
+
+    public void testSedaWhenExchangeDoneSimple() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("seda:beer").whenDone(1)
+                .create();
+
+        assertEquals("from(seda:beer).whenDone(1)", notify.toString());
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("seda:beer", "A");
+
+        // wait up till 5 sec as it should be routed completed now
+        assertEquals(true, notify.matches(5, TimeUnit.SECONDS));
+
+        SedaEndpoint confirm = context.getEndpoint("seda:done", SedaEndpoint.class);
+        assertEquals(1, confirm.getExchanges().size());
+    }
+
+    public void testDirectFromRoute() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .fromRoute("foo").whenDone(1)
+                .create();
+
+        assertEquals("fromRoute(foo).whenDone(1)", notify.toString());
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "A");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "B");
+        assertEquals(true, notify.matches());
+    }
+
+    public void testDirectFromRouteReceived() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .fromRoute("foo").whenReceived(1)
+                .create();
+
+        assertEquals("fromRoute(foo).whenReceived(1)", notify.toString());
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "A");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "B");
+        assertEquals(true, notify.matches());
+    }
 
     public void testWhenExchangeDone() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context)
@@ -87,6 +152,65 @@ public class NotifyBuilderTest extends ContextTestSupport {
         template.sendBody("direct:bar", "L");
 
         assertEquals(true, notify.matches());
+    }
+
+    public void testFromRouteWhenExchangeDoneAnd() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .fromRoute("foo").whenDone(5)
+                .and().fromRoute("bar").whenDone(7)
+                .create();
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "A");
+        template.sendBody("direct:foo", "B");
+        template.sendBody("direct:foo", "C");
+
+        template.sendBody("direct:bar", "D");
+        template.sendBody("direct:bar", "E");
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "F");
+        template.sendBody("direct:bar", "G");
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "H");
+        template.sendBody("direct:bar", "I");
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "J");
+        template.sendBody("direct:bar", "K");
+        template.sendBody("direct:bar", "L");
+
+        assertEquals(true, notify.matches());
+    }
+
+    public void testFromRouteAndNot() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .fromRoute("foo").whenDone(2)
+                .and().fromRoute("bar").whenReceived(1)
+                .not().fromRoute("cake").whenDone(1)
+                .create();
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "A");
+        template.sendBody("direct:foo", "B");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "C");
+        assertEquals(true, notify.matches());
+
+        template.sendBody("direct:foo", "D");
+        template.sendBody("direct:bar", "E");
+        assertEquals(true, notify.matches());
+
+        // and now the cake to make it false
+        template.sendBody("direct:cake", "F");
+        assertEquals(false, notify.matches());
     }
 
     public void testWhenExchangeDoneOr() throws Exception {
@@ -334,10 +458,8 @@ public class NotifyBuilderTest extends ContextTestSupport {
     }
 
     public void testWhenExchangeDoneWithDelay() throws Exception {
-        // There are two done event, one for the exchange which is created by DefaultProducerTemplate
-        // the other is for the exchange which is created by route context
         NotifyBuilder notify = new NotifyBuilder(context)
-                .whenDone(2)
+                .whenDone(1)
                 .create();
 
         long start = System.currentTimeMillis();
@@ -355,10 +477,8 @@ public class NotifyBuilderTest extends ContextTestSupport {
     }
 
     public void testWhenExchangeDoneAndTimeoutWithDelay() throws Exception {
-        // There are two done event, one for the exchange which is created by DefaultProducerTemplate
-        // the other is for the exchange which is created by route context
         NotifyBuilder notify = new NotifyBuilder(context)
-                .whenDone(2)
+                .whenDone(1)
                 .create();
 
         template.sendBody("seda:cheese", "Hello Cheese");
@@ -793,15 +913,17 @@ public class NotifyBuilderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").to("mock:foo");
+                from("direct:foo").routeId("foo").to("mock:foo");
 
-                from("direct:bar").to("mock:bar");
+                from("direct:bar").routeId("bar").to("mock:bar");
 
                 from("direct:fail").throwException(new IllegalArgumentException("Damn"));
 
                 from("seda:cheese").delay(3000).to("mock:cheese");
 
-                from("direct:cake").transform(body().prepend("Bye ")).to("log:cake");
+                from("direct:cake").routeId("cake").transform(body().prepend("Bye ")).to("log:cake");
+
+                from("seda:beer").to("mock:beer").delay(3000).to("seda:done");
             }
         };
     }

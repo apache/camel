@@ -337,8 +337,8 @@ public interface Exchange {
     Exchange copy();
 
     /**
-     * Returns the endpoint which originated this message exchange if a consumer on an endpoint created the message exchange
-     * otherwise this property will be null
+     * Returns the endpoint which originated this message exchange if a consumer on an endpoint
+     * created the message exchange, otherwise this property will be <tt>null</tt>
      */
     Endpoint getFromEndpoint();
 
@@ -350,6 +350,20 @@ public interface Exchange {
      */
     void setFromEndpoint(Endpoint fromEndpoint);
     
+    /**
+     * Returns the route id which originated this message exchange if a route consumer on an endpoint
+     * created the message exchange, otherwise this property will be <tt>null</tt>
+     */
+    String getFromRouteId();
+
+    /**
+     * Sets the route id which originated this message exchange. This method
+     * should typically only be called by the internal framework.
+     *
+     * @param fromRouteId the from route id
+     */
+    void setFromRouteId(String fromRouteId);
+
     /**
      * Returns the unit of work that this exchange belongs to; which may map to
      * zero, one or more physical transactions

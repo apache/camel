@@ -145,7 +145,7 @@ public class DefaultRouteContext implements RouteContext {
             Processor processor = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-            Processor unitOfWorkProcessor = new UnitOfWorkProcessor(this, processor);
+            UnitOfWorkProcessor unitOfWorkProcessor = new UnitOfWorkProcessor(this, processor);
             Processor target = unitOfWorkProcessor;
 
             // and then optionally add route policy processor if a custom policy is set
@@ -172,7 +172,9 @@ public class DefaultRouteContext implements RouteContext {
 
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), wrapper);
-            edcr.getProperties().put(Route.ID_PROPERTY, route.idOrCreate(getCamelContext().getNodeIdFactory()));
+            // create the route id
+            String routeId = route.idOrCreate(getCamelContext().getNodeIdFactory());
+            edcr.getProperties().put(Route.ID_PROPERTY, routeId);
             edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
             if (route.getGroup() != null) {
                 edcr.getProperties().put(Route.GROUP_PROPERTY, route.getGroup());

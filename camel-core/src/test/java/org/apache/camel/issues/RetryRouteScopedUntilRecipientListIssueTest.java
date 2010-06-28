@@ -134,7 +134,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     public void testRetryUntilRecipientListFailOnly() throws Exception {
         invoked.set(0);
 
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMessageCount(0);
@@ -155,7 +155,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     public void testRetryUntilRecipientListFailAndOk() throws Exception {
         invoked.set(0);
 
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
@@ -212,7 +212,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     public void testRetryUntilRecipientFailAndNotFail() throws Exception {
         invoked.set(0);
 
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
@@ -233,7 +233,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     public void testRetryUntilRecipientNotFailAndFail() throws Exception {
         invoked.set(0);
 
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
