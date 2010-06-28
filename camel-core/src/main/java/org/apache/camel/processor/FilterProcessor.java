@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -29,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class FilterProcessor extends DelegateProcessor implements Traceable {
+public class FilterProcessor extends DelegateAsyncProcessor implements Traceable {
     private static final Log LOG = LogFactory.getLog(FilterProcessor.class);
     private final Predicate predicate;
 
@@ -38,7 +39,8 @@ public class FilterProcessor extends DelegateProcessor implements Traceable {
         this.predicate = predicate;
     }
 
-    public void process(Exchange exchange) throws Exception {
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         boolean matches = predicate.matches(exchange);
 
         if (LOG.isDebugEnabled()) {
@@ -46,7 +48,10 @@ public class FilterProcessor extends DelegateProcessor implements Traceable {
         }
 
         if (matches) {
-            super.process(exchange);
+            return super.process(exchange, callback);
+        } else {
+            callback.done(true);
+            return true;
         }
     }
 

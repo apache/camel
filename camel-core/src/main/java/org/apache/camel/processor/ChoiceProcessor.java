@@ -19,11 +19,15 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -33,27 +37,33 @@ import org.apache.camel.util.ServiceHelper;
  * 
  * @version $Revision$
  */
-public class ChoiceProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
+public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
     private final List<FilterProcessor> filters;
-    private final Processor otherwise;
+    private final AsyncProcessor otherwise;
 
     public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
         this.filters = filters;
-        this.otherwise = otherwise;
+        this.otherwise = AsyncProcessorTypeConverter.convert(otherwise);
     }
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         for (FilterProcessor filterProcessor : filters) {
             Predicate predicate = filterProcessor.getPredicate();
             if (predicate != null && predicate.matches(exchange)) {
                 // process next will also take care (has not null test) if next was a stop().
-                // stop() has no processor to execute, and thus we will end in a NPE 
-                filterProcessor.processNext(exchange);
-                return;
+                // stop() has no processor to execute, and thus we will end in a NPE
+                return filterProcessor.process(exchange, callback);
             }
         }
         if (otherwise != null) {
-            otherwise.process(exchange);
+            return otherwise.process(exchange, callback);
+        } else {
+            callback.done(true);
+            return true;
         }
     }
 

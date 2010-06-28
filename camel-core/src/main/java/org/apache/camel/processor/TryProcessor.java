@@ -36,6 +36,8 @@ import org.apache.commons.logging.LogFactory;
 public class TryProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
     private static final transient Log LOG = LogFactory.getLog(TryProcessor.class);
 
+    // TODO: support async routing engine
+
     protected final Processor tryProcessor;
     protected final List<CatchProcessor> catchClauses;
     protected final Processor finallyProcessor;
