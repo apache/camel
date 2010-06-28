@@ -77,6 +77,16 @@ public class HttpClientRouteTest extends CamelTestSupport {
         mockEndpoint.assertIsSatisfied();        
         
     }
+    
+    @Test
+    public void testHttpRouteWithQueryByHeader() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
+        mockEndpoint.expectedBodiesReceived("test");        
+        
+        template.sendBody("direct:start4", "test");
+        mockEndpoint.assertIsSatisfied();        
+        
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -92,6 +102,7 @@ public class HttpClientRouteTest extends CamelTestSupport {
                 from("direct:start").to("http://localhost:9080/hello").process(clientProc).convertBodyTo(String.class).to("mock:a");
                 from("direct:start2").to("http://localhost:9081/hello").to("mock:a");
                 from("direct:start3").to("http://localhost:9081/Query%20/test?myQuery=%40%20query").to("mock:a");
+                from("direct:start4").setHeader(Exchange.HTTP_QUERY, simple("id=${body}")).to("http://localhost:9081/querystring").to("mock:a");
                 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -107,6 +118,18 @@ public class HttpClientRouteTest extends CamelTestSupport {
 
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody(exchange.getIn().getHeader("myQuery", String.class));                        
+                    }
+                    
+                });
+                
+                from("jetty:http://localhost:9081/querystring").process(new Processor() {
+
+                    public void process(Exchange exchange) throws Exception {
+                        String result = exchange.getIn().getHeader("id", String.class);
+                        if (result == null) {
+                            result = "No id header";
+                        }
+                        exchange.getOut().setBody(result);
                     }
                     
                 });

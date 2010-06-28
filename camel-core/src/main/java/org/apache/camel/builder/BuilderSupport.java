@@ -127,6 +127,13 @@ public abstract class BuilderSupport {
     public ValueBuilder constant(Object value) {
         return Builder.constant(value);
     }
+    
+    /**
+     * Returns a simple expression value builder
+     */
+    public ValueBuilder simple(String value) {
+        return Builder.simple(value);
+    }
 
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
