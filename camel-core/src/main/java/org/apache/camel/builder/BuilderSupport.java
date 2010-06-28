@@ -134,6 +134,13 @@ public abstract class BuilderSupport {
     public ValueBuilder simple(String value) {
         return Builder.simple(value);
     }
+    
+    /**
+     * Returns a xpath expression value builder
+     */
+    public ValueBuilder xpath(String value) {
+        return Builder.xpath(value);
+    }
 
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>

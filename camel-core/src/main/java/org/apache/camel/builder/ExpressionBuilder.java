@@ -1105,6 +1105,23 @@ public final class ExpressionBuilder {
             }
         };
     }
+    
+    public static Expression xpathExpression(final String expression) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // resolve language using context to have a clear separation of packages
+                // must call evaluate to return the nested language evaluate when evaluating
+                // stacked expressions
+                Language language = exchange.getContext().resolveLanguage("xpath");
+                return language.createExpression(expression).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "xpath(" + expression + ")";
+            }
+        };
+    }
 
     public static Expression beanExpression(final String expression) {
         return new ExpressionAdapter() {

@@ -95,6 +95,14 @@ public final class Builder {
         Expression expression = ExpressionBuilder.simpleExpression(value);
         return new ValueBuilder(expression);
     }
+    
+    /**
+     * Returns a xpath expression
+     */
+    public static ValueBuilder xpath(String value) {
+        Expression expression = ExpressionBuilder.xpathExpression(value);
+        return new ValueBuilder(expression);
+    }
 
     /**
      * Returns a predicate and value builder for headers on an exchange
