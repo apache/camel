@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -41,7 +39,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RecipientListDefinition<Type extends ProcessorDefinition> extends ExpressionNode implements ExecutorServiceAwareDefinition<RecipientListDefinition> {
+public class RecipientListDefinition<Type extends ProcessorDefinition> extends NoneOutputExpressionNode implements ExecutorServiceAwareDefinition<RecipientListDefinition> {
 
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
@@ -119,18 +117,6 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends E
             aggregationStrategy = new UseLatestAggregationStrategy();
         }
         return aggregationStrategy;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
-        return Collections.EMPTY_LIST;
-    }
-
-    @Override
-    public void addOutput(ProcessorDefinition processorType) {
-        // add it to the parent as a recipient list does not support outputs
-        getParent().addOutput(processorType);
     }
 
     // Fluent API

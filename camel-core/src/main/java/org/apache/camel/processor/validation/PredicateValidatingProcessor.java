@@ -19,7 +19,6 @@ package org.apache.camel.processor.validation;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Traceable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,14 +29,13 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public class PredicateValidatingProcessor extends DelegateProcessor implements Traceable {
+public class PredicateValidatingProcessor implements Processor, Traceable {
     
     private static final Log LOG = LogFactory.getLog(PredicateValidatingProcessor.class);
 
     private final Predicate predicate;
     
-    public PredicateValidatingProcessor(Predicate predicate, Processor processor) {
-        super(processor);
+    public PredicateValidatingProcessor(Predicate predicate) {
         this.predicate = predicate;
     }
 
@@ -48,23 +46,21 @@ public class PredicateValidatingProcessor extends DelegateProcessor implements T
             LOG.debug("Validation " + (matches ? "succeed " : "failed ") + "for " + exchange + " with Predicate[" + predicate + "]");
         }
 
-        if (matches) {
-            super.process(exchange);
-        } else {
+        if (!matches) {
             throw new PredicateValidationException(exchange, predicate);
         }
     }
-    
+
+    public Predicate getPredicate() {
+        return predicate;
+    }
+
     @Override
     public String toString() {
-        return "validate[" + predicate + "]";
+        return "validate(" + predicate + ")";
     }
 
     public String getTraceLabel() {
-        return "validate";
-    }
-    
-    public Predicate getPredicate() {
-        return predicate;
+        return "validate[" + predicate + "]";
     }
 }

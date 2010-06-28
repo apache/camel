@@ -37,6 +37,9 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class SamplingThrottler extends DelegateProcessor {
+
+    // TODO: should support async routing engine
+
     protected final transient Log log = LogFactory.getLog(getClass());
     private long samplePeriod;
     private long periodInNanos;
@@ -57,7 +60,7 @@ public class SamplingThrottler extends DelegateProcessor {
         }
         this.samplePeriod = samplePeriod;
         this.units = units;
-        periodInNanos = units.toNanos(samplePeriod);
+        this.periodInNanos = units.toNanos(samplePeriod);
     }
 
     @Override

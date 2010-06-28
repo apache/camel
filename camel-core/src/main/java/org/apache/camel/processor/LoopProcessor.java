@@ -33,6 +33,8 @@ public class LoopProcessor extends DelegateProcessor implements Traceable {
 
     private final Expression expression;
 
+    // TODO: should support async routing engine
+
     public LoopProcessor(Expression expression, Processor processor) {
         super(processor);
         this.expression = expression;

@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.RouteContext;
@@ -35,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "setProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetPropertyDefinition extends ExpressionNode {
+public class SetPropertyDefinition extends NoneOutputExpressionNode {
     @XmlAttribute(required = true)
     private String propertyName;
     
@@ -82,14 +81,4 @@ public class SetPropertyDefinition extends ExpressionNode {
         return propertyName;
     }
     
-    // Fluent API
-    //-------------------------------------------------------------------------
-
-    /**
-     * Set the expression that SetPropertyType will use
-     * @return the builder
-     */
-    public ExpressionClause<SetPropertyDefinition> expression() {
-        return ExpressionClause.createAndSetExpression(this);
-    }
 }

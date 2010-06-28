@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.RouteContext;
@@ -35,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetHeaderDefinition extends ExpressionNode {
+public class SetHeaderDefinition extends NoneOutputExpressionNode {
     @XmlAttribute(required = true)
     private String headerName;
     
@@ -87,13 +86,4 @@ public class SetHeaderDefinition extends ExpressionNode {
         return headerName;
     }
     
-    // Fluent API
-    //-------------------------------------------------------------------------
-    /**
-     * Set the expression that SetHeaderType will use
-     * @return the builder
-     */
-    public ExpressionClause<SetHeaderDefinition> expression() {
-        return ExpressionClause.createAndSetExpression(this);
-    }
 }

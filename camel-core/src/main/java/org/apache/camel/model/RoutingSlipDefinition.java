@@ -29,14 +29,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.Builder;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;routingSlip/&gt; element
  */
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RoutingSlipDefinition <Type extends ProcessorDefinition> extends ExpressionNode {
+public class RoutingSlipDefinition <Type extends ProcessorDefinition> extends NoneOutputExpressionNode {
     public static final String DEFAULT_DELIMITER = ",";
     @XmlAttribute
     private String headerName;

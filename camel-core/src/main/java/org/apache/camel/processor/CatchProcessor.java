@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class CatchProcessor extends DelegateProcessor implements Traceable {
+public class CatchProcessor extends DelegateAsyncProcessor implements Traceable {
     private final List<Class> exceptions;
     private final Predicate onWhen;
     private final Predicate handled;
@@ -103,8 +103,8 @@ public class CatchProcessor extends DelegateProcessor implements Traceable {
      * <p/>
      * This default implementation will match as:
      * <ul>
-     * <li>Always true if no when predicate on the exception type
-     * <li>Otherwise the when predicate is matches against the current exchange
+     *   <li>Always true if no when predicate on the exception type
+     *   <li>Otherwise the when predicate is matches against the current exchange
      * </ul>
      *
      * @param exchange the current {@link org.apache.camel.Exchange}

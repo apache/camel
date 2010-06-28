@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
  *
  * @version $Revision$
  */
-public class InterceptEndpointProcessor extends DelegateProcessor {
+public class InterceptEndpointProcessor extends DelegateAsyncProcessor {
 
     private final String uri;
 

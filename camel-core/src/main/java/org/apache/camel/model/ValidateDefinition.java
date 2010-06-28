@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Processor;
+import org.apache.camel.Predicate;
 import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.RouteContext;
 
@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "validate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ValidateDefinition extends ExpressionNode {
+public class ValidateDefinition extends NoneOutputExpressionNode {
 
     public ValidateDefinition() {
         super();
@@ -50,8 +50,8 @@ public class ValidateDefinition extends ExpressionNode {
 
     @Override
     public PredicateValidatingProcessor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = routeContext.createProcessor(this);
-        return new PredicateValidatingProcessor(getExpression().createPredicate(routeContext), childProcessor);
+        Predicate pred = getExpression().createPredicate(routeContext);
+        return new PredicateValidatingProcessor(pred);
     }
 
 }

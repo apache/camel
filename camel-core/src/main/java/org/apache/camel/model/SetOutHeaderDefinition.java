@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.RouteContext;
@@ -76,13 +75,4 @@ public class SetOutHeaderDefinition extends ExpressionNode {
         return headerName;
     }
     
-    // Fluent API
-    //-------------------------------------------------------------------------
-    /**
-     * Set the expression that SetOutHeaderType will use
-     * @return the builder
-     */
-    public ExpressionClause<SetOutHeaderDefinition> expression() {
-        return ExpressionClause.createAndSetExpression(this);
-    }
 }

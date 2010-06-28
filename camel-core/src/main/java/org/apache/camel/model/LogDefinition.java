@@ -87,9 +87,9 @@ public class LogDefinition extends ProcessorDefinition {
     }
 
     @Override
-    public void addOutput(ProcessorDefinition processorType) {
+    public void addOutput(ProcessorDefinition output) {
         // add outputs on parent as this log does not support outputs
-        getParent().addOutput(processorType);
+        getParent().addOutput(output);
     }
 
     public LoggingLevel getLoggingLevel() {

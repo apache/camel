@@ -25,15 +25,10 @@ import org.apache.camel.impl.DefaultMessage;
 /**
  * A processor which sets the body on the IN message with an expression
  */
-public class SetBodyProcessor extends DelegateProcessor implements Traceable {
+public class SetBodyProcessor implements Processor, Traceable {
     private final Expression expression;
 
     public SetBodyProcessor(Expression expression) {
-        this.expression = expression;
-    }
-
-    public SetBodyProcessor(Expression expression, Processor childProcessor) {
-        super(childProcessor);
         this.expression = expression;
     }
 
@@ -47,13 +42,11 @@ public class SetBodyProcessor extends DelegateProcessor implements Traceable {
         msg.copyFrom(old);
         msg.setBody(newBody);
         exchange.setIn(msg);
-
-        super.process(exchange);
     }
 
     @Override
     public String toString() {
-        return "SetBody(" + expression + (processor != null ? "," + processor : "") + ")";
+        return "SetBody(" + expression + ")";
     }
 
     public String getTraceLabel() {

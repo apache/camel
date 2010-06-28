@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.SetBodyProcessor;
 import org.apache.camel.spi.RouteContext;
 
@@ -31,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "setBody")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetBodyDefinition extends ExpressionNode {
+public class SetBodyDefinition extends NoneOutputExpressionNode {
 
     public SetBodyDefinition() {
     }
@@ -58,18 +57,7 @@ public class SetBodyDefinition extends ExpressionNode {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Expression expr = getExpression().createExpression(routeContext);
-        Processor childProcessor = routeContext.createProcessor(this);
-
-        return new SetBodyProcessor(expr, childProcessor);
+        return new SetBodyProcessor(expr);
     }
     
-     // Fluent API
-    //-------------------------------------------------------------------------
-    /**
-     * Set the expression that SetBodyType class will use
-     * @return the builder
-     */
-    public ExpressionClause<SetBodyDefinition> expression() {
-        return ExpressionClause.createAndSetExpression(this);
-    }
 }

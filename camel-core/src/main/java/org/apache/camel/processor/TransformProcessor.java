@@ -23,15 +23,10 @@ import org.apache.camel.Processor;
 /**
  * A processor which sets the body on the OUT message with an expression
  */
-public class TransformProcessor extends DelegateProcessor implements Traceable {
+public class TransformProcessor implements Processor, Traceable {
     private final Expression expression;
 
     public TransformProcessor(Expression expression) {
-        this.expression = expression;
-    }
-
-    public TransformProcessor(Expression expression, Processor childProcessor) {
-        super(childProcessor);
         this.expression = expression;
     }
 
@@ -42,13 +37,11 @@ public class TransformProcessor extends DelegateProcessor implements Traceable {
         // propagate headers and attachments
         exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
         exchange.getOut().setAttachments(exchange.getIn().getAttachments());
-
-        super.process(exchange);
     }
 
     @Override
     public String toString() {
-        return "Transform(" + expression + (processor != null ? "," + processor : "") + ")";
+        return "Transform(" + expression + ")";
     }
 
     public String getTraceLabel() {

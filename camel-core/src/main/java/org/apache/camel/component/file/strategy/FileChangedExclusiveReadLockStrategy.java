@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Acquires exclusive read lock to the given file by checking whether the file is being
- * changed by scanning the file at different intervals (to detec changes).
+ * changed by scanning the file at different intervals (to detect changes).
  */
 public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveReadLockStrategy {
     private static final transient Log LOG = LogFactory.getLog(FileChangedExclusiveReadLockStrategy.class);

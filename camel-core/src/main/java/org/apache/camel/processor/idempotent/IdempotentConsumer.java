@@ -42,6 +42,8 @@ public class IdempotentConsumer extends ServiceSupport implements Processor, Nav
     private final IdempotentRepository<String> idempotentRepository;
     private final boolean eager;
 
+    // TODO: should support async routing engine
+
     public IdempotentConsumer(Expression messageIdExpression, 
             IdempotentRepository<String> idempotentRepository, boolean eager, Processor processor) {
         this.messageIdExpression = messageIdExpression;

@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "transform")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TransformDefinition extends ExpressionNode {
+public class TransformDefinition extends NoneOutputExpressionNode {
 
     public TransformDefinition() {
     }
@@ -53,18 +53,7 @@ public class TransformDefinition extends ExpressionNode {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Expression expr = getExpression().createExpression(routeContext);
-        Processor childProcessor = routeContext.createProcessor(this);
-
-        return new TransformProcessor(expr, childProcessor);
+        return new TransformProcessor(expr);
     }
     
-    // Fluent API
-    //-------------------------------------------------------------------------
-    /**
-     * Set the expression to be used
-     * @return the builder
-     */
-    public ExpressionClause<TransformDefinition> expression() {
-        return ExpressionClause.createAndSetExpression(this);
-    }
 }

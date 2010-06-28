@@ -154,14 +154,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         }
     }
 
-    public void addOutput(ProcessorDefinition processorType) {
-        processorType.setParent(this);
-        configureChild(processorType);
+    public void addOutput(ProcessorDefinition output) {
+        output.setParent(this);
+        configureChild(output);
         if (blocks.isEmpty()) {
-            getOutputs().add(processorType);
+            getOutputs().add(output);
         } else {
             Block block = blocks.getLast();
-            block.addOutput(processorType);
+            block.addOutput(output);
         }
     }
 
