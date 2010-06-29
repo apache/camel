@@ -27,6 +27,10 @@ import org.apache.camel.Processor;
  * {@link org.apache.camel.AsyncProcessor} and override the
  * {@link org.apache.camel.AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} to
  * implement your interceptor logic. And just invoke the super method to <b>continue</b> routing.
+ * <p/>
+ * Mind that not all frameworks supports asynchronous routing, for example some transaction managers, such as
+ * Spring Transaction uses the current thread to store state of the transaction, and thus can't transfer this
+ * state to other threads when routing continues asynchronously.
  *
  * @version $Revision$
  */
@@ -34,11 +38,10 @@ public interface Policy {
 
     /**
      * Wraps any applicable interceptors around the given processor.
-     * <p
      *
      * @param routeContext the route context
      * @param processor the processor to be intercepted
-     * @return either the original processor or a processor wrapped in one or more interceptors
+     * @return either the original processor or a processor wrapped in one or more processors
      */
     Processor wrap(RouteContext routeContext, Processor processor);
 }
