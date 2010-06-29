@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
@@ -36,9 +37,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class SamplingThrottler extends DelegateProcessor {
-
-    // TODO: should support async routing engine
+public class SamplingThrottler extends DelegateAsyncProcessor {
 
     protected final transient Log log = LogFactory.getLog(getClass());
     private long samplePeriod;
@@ -72,7 +71,8 @@ public class SamplingThrottler extends DelegateProcessor {
         return "samplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase() + "]";
     }
 
-    public void process(Exchange exchange) throws Exception {
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         boolean doSend = false;
 
         synchronized (calculationLock) {
@@ -91,10 +91,21 @@ public class SamplingThrottler extends DelegateProcessor {
         }
 
         if (doSend) {
-            super.process(exchange);
+            // continue routing
+            return super.process(exchange, callback);
         } else {
-            stopper.process(exchange);
+            // okay to invoke this synchronously as the stopper
+            // will just set a property
+            try {
+                stopper.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
         }
+
+        // we are done synchronously
+        callback.done(true);
+        return true;
     }
 
     private static class SampleStats {
