@@ -42,7 +42,18 @@ public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements
      * @param interceptor the interceptor to bridge
      */
     public InterceptorToAsyncProcessorBridge(Processor interceptor) {
+        this(interceptor, null);
+    }
+
+    /**
+     * Constructs the bridge
+     *
+     * @param interceptor the interceptor to bridge
+     * @param target the target
+     */
+    public InterceptorToAsyncProcessorBridge(Processor interceptor, AsyncProcessor target) {
         this.interceptor = AsyncProcessorTypeConverter.convert(interceptor);
+        this.target = target;
     }
 
     /**

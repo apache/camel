@@ -29,7 +29,7 @@ public class TransactionalClientDataSourceMixedTransactedTest extends Transactio
         try {
             template.sendBody("direct:fail", "Hello World");
         } catch (RuntimeCamelException e) {
-            // expeced as we fail
+            // expected as we fail
             assertTrue(e.getCause() instanceof IllegalArgumentException);
             assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
         }

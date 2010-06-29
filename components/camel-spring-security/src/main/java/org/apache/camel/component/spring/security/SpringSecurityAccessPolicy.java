@@ -32,7 +32,6 @@ public class SpringSecurityAccessPolicy {
 
         this.configAttributeDefinition = (accessValues.length > 0)
             ? new ConfigAttributeDefinition(accessValues) : null;
-
     }
     
     public ConfigAttributeDefinition getConfigAttributeDefinition() {

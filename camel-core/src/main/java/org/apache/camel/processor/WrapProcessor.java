@@ -24,10 +24,8 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision$
  */
-public class WrapProcessor extends DelegateProcessor {
+public class WrapProcessor extends DelegateAsyncProcessor {
     private final Processor wrapped;
-
-    // TODO: Should support async routing engine
 
     public WrapProcessor(Processor processor, Processor wrapped) {
         super(processor);

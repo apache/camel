@@ -24,7 +24,6 @@ import org.apache.camel.spring.handler.BeanDefinitionParser;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
-
 public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParser {
 
     public SpringSecurityAuthorizationPolicyParser() {
@@ -38,11 +37,9 @@ public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParse
         } else {
             return super.isEligibleAttribute(attributeName);
         }
-        
     }
     
     protected void postProcess(BeanDefinitionBuilder builder, Element element) {
-        
         setReferenceIfAttributeDefine(builder, element, "accessDecisionManager");
         setReferenceIfAttributeDefine(builder, element, "authenticationManager");
         if (ObjectHelper.isNotEmpty(element.getAttribute("authenticationAdapter"))) {
@@ -51,6 +48,7 @@ public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParse
         if (ObjectHelper.isNotEmpty(element.getAttribute("id"))) {
             builder.addPropertyValue("id", element.getAttribute("id"));
         }
+
         BeanDefinitionBuilder accessPolicyBuilder = BeanDefinitionBuilder.genericBeanDefinition(
             SpringSecurityAccessPolicy.class.getCanonicalName());
         accessPolicyBuilder.addConstructorArgValue(element.getAttribute("access"));

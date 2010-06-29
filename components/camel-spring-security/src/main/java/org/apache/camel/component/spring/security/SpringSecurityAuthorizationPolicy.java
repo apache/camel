@@ -50,14 +50,12 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
     private AuthenticationAdapter authenticationAdapter;
     private ApplicationEventPublisher eventPublisher;
     private SpringSecurityAccessPolicy accessPolicy;
-    
     private boolean alwaysReauthenticate;
     private boolean useThreadSecurityContext = true;
-    
 
     public Processor wrap(RouteContext routeContext, Processor processor) {
         // wrap the processor with authorizeDelegateProcessor
-        return new AuthorizeDelegateProcess(processor); 
+        return new AuthorizeDelegateProcess(processor);
     }
     
     protected void beforeProcess(Exchange exchange) throws Exception {
@@ -128,7 +126,6 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
     }
     
     private Authentication authenticateIfRequired(Authentication authentication) {
-                    
         if (authentication.isAuthenticated() && !alwaysReauthenticate) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Previously Authenticated: " + authentication);
@@ -137,11 +134,9 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
         }
 
         authentication = authenticationManager.authenticate(authentication);
-        
         if (LOG.isDebugEnabled()) {
             LOG.debug("Successfully Authenticated: " + authentication);
         }
-
         return authentication;
     }
     
@@ -178,7 +173,6 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
 
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.eventPublisher = applicationEventPublisher;
-        
     }
     
     public void setSpringSecurityAccessPolicy(SpringSecurityAccessPolicy policy) {

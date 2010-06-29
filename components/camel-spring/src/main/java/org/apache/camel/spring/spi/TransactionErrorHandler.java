@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.spi;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -76,7 +77,10 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 + "[" + getOutput() + "]";
     }
 
-    public void process(final Exchange exchange) throws Exception {
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        // we have to run this synchronously as Spring Transaction does *not* support
+        // using multiple threads to span a transaction
         if (exchange.getUnitOfWork().isTransactedBy(transactionTemplate)) {
             // already transacted by this transaction template
             // so lets just let the regular default error handler process it
@@ -87,12 +91,29 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         }
     }
 
-    protected void processByRegularErrorHandler(Exchange exchange) {
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        // invoke ths synchronous method as Spring Transaction does *not* support
+        // using multiple threads to span a transaction
         try {
-            super.process(exchange);
-        } catch (Exception e) {
+            process(exchange);
+        } catch (Throwable e) {
             exchange.setException(e);
         }
+
+        // notify callback we are done synchronously
+        callback.done(true);
+        return true;
+    }
+
+    protected void processByRegularErrorHandler(Exchange exchange) throws Exception {
+        // must invoke the async method and provide an empty callback
+        // to have it process by the error handler (because we invoke super)
+        super.process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                // noop
+            }
+        });
     }
 
     protected void processInTransaction(final Exchange exchange) throws Exception {
@@ -139,7 +160,11 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
                 // and now let process the exchange
                 try {
-                    TransactionErrorHandler.super.process(exchange);
+                    TransactionErrorHandler.super.process(exchange, new AsyncCallback() {
+                        public void done(boolean doneSync) {
+                            // noop
+                        }
+                    });
                 } catch (Exception e) {
                     exchange.setException(e);
                 }

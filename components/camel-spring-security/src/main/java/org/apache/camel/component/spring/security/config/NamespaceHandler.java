@@ -22,7 +22,6 @@ public class NamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
         registerBeanDefinitionParser("authorizationPolicy", new SpringSecurityAuthorizationPolicyParser());
-        
     }
 
 }
