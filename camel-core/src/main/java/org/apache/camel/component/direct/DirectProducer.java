@@ -18,6 +18,7 @@ package org.apache.camel.component.direct;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
@@ -41,6 +42,7 @@ public class DirectProducer extends DefaultProducer implements AsyncProcessor {
     public void process(Exchange exchange) throws Exception {
         if (endpoint.getConsumer() == null) {
             LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
+            throw new CamelExchangeException("No consumers available on endpoint: " + endpoint, exchange);
         } else {
             endpoint.getConsumer().getProcessor().process(exchange);
         }
@@ -50,6 +52,7 @@ public class DirectProducer extends DefaultProducer implements AsyncProcessor {
         if (endpoint.getConsumer() == null) {
             LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
             // indicate its done synchronously
+            exchange.setException(new CamelExchangeException("No consumers available on endpoint: " + endpoint, exchange));
             callback.done(true);
             return true;
         } else {
