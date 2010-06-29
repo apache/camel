@@ -37,7 +37,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutingSlipDefinition <Type extends ProcessorDefinition> extends NoOutputExpressionNode {
     public static final String DEFAULT_DELIMITER = ",";
-    @XmlAttribute
+    @Deprecated
     private String headerName;
     @XmlAttribute
     private String uriDelimiter;
@@ -97,10 +97,12 @@ public class RoutingSlipDefinition <Type extends ProcessorDefinition> extends No
         return Collections.emptyList();
     }
 
+    @Deprecated
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
 
+    @Deprecated
     public String getHeaderName() {
         return this.headerName;
     }
