@@ -31,6 +31,6 @@
 
     <bean id="myCamel1Consumer" class="org.apache.camel.spring.example.MyCamel1Consumer"/>
     <bean id="myCamel2Consumer" class="org.apache.camel.spring.example.MyCamel2Consumer"/>
-    <bean id="myCamel2RecipeintList" class="org.apache.camel.spring.example.MyCamel2RecipientList"/>
+    <bean id="myCamel2RecipientList" class="org.apache.camel.spring.example.MyCamel2RecipientList"/>
 
 </beans>

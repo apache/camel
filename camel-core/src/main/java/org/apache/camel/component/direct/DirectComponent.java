@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.direct;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * Represents the component that manages {@link DirectEndpoint}. It holds the
@@ -29,9 +31,21 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class DirectComponent extends DefaultComponent {
 
+    // must keep a map of consumers on the component to ensure endpoints can lookup old consumers
+    // later in case the DirectEndpoint was re-created due the old was evicted from the endpoints LRUCache
+    // on DefaultCamelContext
+    private final Map<String, DirectConsumer> consumers = new HashMap<String, DirectConsumer>();
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new DirectEndpoint(uri, this);
+        Endpoint endpoint = new DirectEndpoint(uri, this, consumers);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(consumers.values());
+        consumers.clear();
+        super.doStop();
     }
 }

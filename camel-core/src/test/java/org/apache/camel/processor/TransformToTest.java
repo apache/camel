@@ -16,10 +16,8 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -46,23 +44,6 @@ public class TransformToTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello In");
 
         assertMockEndpointsSatisfied();
-    }
-
-    public void testTransformToInvalidEndpoint() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:bar").transform(sendTo("bar"));
-            }
-        });
-        context.start();
-
-        try {
-            template.requestBody("direct:bar", "Hello World");
-            fail("Should thrown an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(NoSuchEndpointException.class, e.getCause());
-        }
     }
 
     @Override

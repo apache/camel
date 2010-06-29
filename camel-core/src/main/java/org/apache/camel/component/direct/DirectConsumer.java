@@ -38,16 +38,16 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware {
 
     public void start() throws Exception {
         // add consumer to endpoint
-        if (endpoint.getConsumer() != null && endpoint.getConsumer() != this) {
-            throw new IllegalArgumentException("Endpoint " + endpoint + " only allows one consumer. Existing: " + endpoint.getConsumer() + " and this: " + this);
+        if (endpoint.hasConsumer(this)) {
+            throw new IllegalArgumentException("Cannot add a 2nd consumer to the same endpoint. Endpoint " + endpoint + " only allows one consumer.");
         }
-        endpoint.setConsumer(this);
+        endpoint.addConsumer(this);
         super.start();
     }
 
     @Override
     public void stop() throws Exception {
-        endpoint.setConsumer(null);
+        endpoint.removeConsumer(this);
         super.stop();
     }
 

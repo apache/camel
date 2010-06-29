@@ -47,7 +47,7 @@ public class CoarseGrainedProcessorDefinitionIssueTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").delay(500).to("direct:foo").to("mock:result");
+                from("direct:start").delay(500).to("log:foo").to("mock:result");
             }
         };
     }

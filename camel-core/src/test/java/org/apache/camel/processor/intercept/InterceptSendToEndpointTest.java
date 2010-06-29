@@ -189,6 +189,9 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
                 
                 from("direct:input1").to("direct:intercept1");
                 from("direct:input2").to("direct:intercept2");
+
+                from("direct:intercept1").to("log:1");
+                from("direct:intercept2").to("log:2");
             }
         });
         context.start();

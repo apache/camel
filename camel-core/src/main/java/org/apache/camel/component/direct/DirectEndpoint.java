@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.direct;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,17 +32,25 @@ import org.apache.camel.impl.DefaultEndpoint;
  * @version $Revision$
  */
 public class DirectEndpoint extends DefaultEndpoint {
-    private DirectConsumer consumer;
+
+    private volatile Map<String, DirectConsumer> consumers;
 
     public DirectEndpoint() {
-    }
-
-    public DirectEndpoint(String uri, DirectComponent component) {
-        super(uri, component);
+        this.consumers = new HashMap<String, DirectConsumer>();
     }
 
     public DirectEndpoint(String endpointUri) {
         super(endpointUri);
+        this.consumers = new HashMap<String, DirectConsumer>();
+    }
+
+    public DirectEndpoint(String endpointUri, Component component) {
+        this(endpointUri, component, new HashMap<String, DirectConsumer>());
+    }
+
+    public DirectEndpoint(String uri, Component component, Map<String, DirectConsumer> consumers) {
+        super(uri, component);
+        this.consumers = consumers;
     }
 
     public Producer createProducer() throws Exception {
@@ -53,11 +65,24 @@ public class DirectEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public DirectConsumer getConsumer() {
-        return consumer;
+    public void addConsumer(DirectConsumer consumer) {
+        String key = consumer.getEndpoint().getEndpointKey();
+        consumers.put(key, consumer);
     }
 
-    public void setConsumer(DirectConsumer consumer) {
-        this.consumer = consumer;
+    public void removeConsumer(DirectConsumer consumer) {
+        String key = consumer.getEndpoint().getEndpointKey();
+        consumers.remove(key);
     }
+
+    public boolean hasConsumer(DirectConsumer consumer) {
+        String key = consumer.getEndpoint().getEndpointKey();
+        return consumers.containsKey(key);
+    }
+
+    public DirectConsumer getConsumer() {
+        String key = getEndpointKey();
+        return consumers.get(key);
+    }
+
 }

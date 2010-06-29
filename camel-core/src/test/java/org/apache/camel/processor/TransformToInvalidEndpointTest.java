@@ -14,52 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel.processor;
 
-import javax.naming.Context;
-
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * Unit test to demonstrate beans in pipelines.
+ * @version $Revision$
  */
-public class BeanInPipelineTest extends ContextTestSupport {
+public class TransformToInvalidEndpointTest extends ContextTestSupport {
 
-    public void testBeanInPipeline() throws Exception {
-        Object response = template.requestBody("direct:start", "Start:");
-        assertEquals("Start:onetwothree", response);
+    public void testTransformToInvalidEndpoint() throws Exception {
+        try {
+            template.requestBody("direct:bar", "Hello World");
+            fail("Should thrown an exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(NoSuchEndpointException.class, e.getCause());
+        }
     }
 
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-        answer.bind("one", new MyBean("one"));
-        answer.bind("two", new MyBean("two"));
-        answer.bind("three", new MyBean("three"));
-        return answer;
-    }
-
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .pipeline("bean:one", "bean:two", "log:x", "log:y", "bean:three");
+                from("direct:bar").transform(sendTo("bar"));
             }
         };
     }
-
-    public static class MyBean {
-
-        private String postfix;
-
-        public MyBean(String postfix) {
-            this.postfix = postfix;
-        }
-
-        public String doSomething(String body) {
-            return body + postfix;
-        }
-    }
-
 }

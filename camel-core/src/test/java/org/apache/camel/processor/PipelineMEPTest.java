@@ -87,7 +87,7 @@ public class PipelineMEPTest extends ContextTestSupport {
                 // however the result after the routing is correct using APIs to get the result
                 // however the exchange will carry body IN and OUT when the route completes, as
                 // we operate on the original exchange in this processor
-                // (= we are the first node in the route after the from conumer)
+                // (= we are the first node in the route after the from consumer)
                 exchange.getOut().setBody(number);
             }
         };
@@ -97,7 +97,7 @@ public class PipelineMEPTest extends ContextTestSupport {
                 from("direct:a")
                         .process(outProcessor)
                         // this pipeline is not really needed by to have some more routing in there to test with
-                        .pipeline("direct:x", "direct:y")
+                        .pipeline("log:x", "log:y")
                         .process(inProcessor)
                         .to("mock:result");
             }

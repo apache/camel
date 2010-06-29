@@ -185,7 +185,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
 
         // test that we cache at most 500 producers to avoid it eating to much memory
         for (int i = 0; i < 503; i++) {
-            Endpoint e = context.getEndpoint("direct:queue:" + i);
+            Endpoint e = context.getEndpoint("seda:queue:" + i);
             template.sendBody(e, "Hello");
         }
 
@@ -203,7 +203,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
 
         // test that we cache at most 500 producers to avoid it eating to much memory
         for (int i = 0; i < 503; i++) {
-            Endpoint e = context.getEndpoint("direct:queue:" + i);
+            Endpoint e = context.getEndpoint("seda:queue:" + i);
             template.sendBody(e, "Hello");
         }
 

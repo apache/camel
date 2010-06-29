@@ -33,7 +33,7 @@ public class ValidationWithHandlePipelineTest extends ValidationTest {
                         .doTry()
                             .process(validator).to("mock:valid")
                         .doCatch(ValidationException.class)
-                            .pipeline("direct:a", "mock:invalid");
+                            .pipeline("log:a", "mock:invalid");
             }
         };
     }

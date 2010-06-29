@@ -14,52 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
-
-import javax.naming.Context;
+package org.apache.camel.component.direct;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * Unit test to demonstrate beans in pipelines.
+ * @version $Revision$
  */
-public class BeanInPipelineTest extends ContextTestSupport {
+public class SendingToAlotOfDifferentDirectEndpointTest extends ContextTestSupport {
 
-    public void testBeanInPipeline() throws Exception {
-        Object response = template.requestBody("direct:start", "Start:");
-        assertEquals("Start:onetwothree", response);
+    public void testDirect() throws Exception {
+        getMockEndpoint("mock:foo").expectedMessageCount(3);
+
+        template.sendBody("seda:start", "Hello World");
+
+        // now create 1000 other endpoints to cause the first direct endpoint to vanish from the LRUCache
+        for (int i = 0; i < 1200; i++) {
+            context.getEndpoint("direct:bar-" + i);
+        }
+
+        template.sendBody("direct:foo", "Bye Moon");
+        template.sendBody("seda:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
     }
 
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-        answer.bind("one", new MyBean("one"));
-        answer.bind("two", new MyBean("two"));
-        answer.bind("three", new MyBean("three"));
-        return answer;
-    }
-
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .pipeline("bean:one", "bean:two", "log:x", "log:y", "bean:three");
+                from("seda:start").to("direct:foo");
+
+                from("direct:foo").to("log:foo").to("mock:foo");
             }
         };
     }
-
-    public static class MyBean {
-
-        private String postfix;
-
-        public MyBean(String postfix) {
-            this.postfix = postfix;
-        }
-
-        public String doSomething(String body) {
-            return body + postfix;
-        }
-    }
-
 }
