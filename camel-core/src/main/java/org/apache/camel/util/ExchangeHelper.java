@@ -592,4 +592,18 @@ public final class ExchangeHelper {
         return sb.toString().trim();
     }
 
+    /**
+     * Strategy to prepare results before next iterator or when we are complete,
+     * which is done by copying OUT to IN, so there is only an IN as input
+     * for the next iteration.
+     *
+     * @param exchange the exchange to prepare
+     */
+    public static void prepareOutToIn(Exchange exchange) {
+        // we are routing using pipes and filters so we need to manually copy OUT to IN
+        if (exchange.hasOut()) {
+            exchange.getIn().copyFrom(exchange.getOut());
+            exchange.setOut(null);
+        }
+    }
 }

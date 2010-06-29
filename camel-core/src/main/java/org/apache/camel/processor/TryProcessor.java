@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,7 +70,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
         Iterator<AsyncProcessor> processors = getProcessors().iterator();
 
         while (continueRouting(processors, exchange)) {
-            prepareResult(exchange);
+            ExchangeHelper.prepareOutToIn(exchange);
 
             // process the next processor
             AsyncProcessor processor = processors.next();
@@ -90,7 +91,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
             }
         }
 
-        prepareResult(exchange);
+        ExchangeHelper.prepareOutToIn(exchange);
         if (LOG.isTraceEnabled()) {
             LOG.trace("Processing complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
         }
@@ -116,7 +117,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
 
                 // continue processing the try .. catch .. finally asynchronously
                 while (continueRouting(processors, exchange)) {
-                    prepareResult(exchange);
+                    ExchangeHelper.prepareOutToIn(exchange);
 
                     // process the next processor
                     AsyncProcessor processor = processors.next();
@@ -132,7 +133,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                     }
                 }
 
-                prepareResult(exchange);
+                ExchangeHelper.prepareOutToIn(exchange);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
                 }
@@ -161,19 +162,6 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
 
         // continue if there are more processors to route
         return it.hasNext();
-    }
-
-    /**
-     * Strategy to prepare results before next iterator or when we are complete
-     *
-     * @param exchange the result exchange
-     */
-    protected static void prepareResult(Exchange exchange) {
-        // we are routing using pipes and filters so we need to manually copy OUT to IN
-        if (exchange.hasOut()) {
-            exchange.getIn().copyFrom(exchange.getOut());
-            exchange.setOut(null);
-        }
     }
 
     protected void doStart() throws Exception {
@@ -321,7 +309,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                     }
 
                     // signal callback to continue routing async
-                    prepareResult(exchange);
+                    ExchangeHelper.prepareOutToIn(exchange);
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Processing complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
                     }
@@ -395,7 +383,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                     }
 
                     // signal callback to continue routing async
-                    prepareResult(exchange);
+                    ExchangeHelper.prepareOutToIn(exchange);
                     callback.done(false);
                 }
             });
