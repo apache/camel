@@ -217,7 +217,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         while (it.hasNext()) {
             final ProcessorExchangePair pair = it.next();
             final Exchange subExchange = pair.getExchange();
-            updateNewExchange(subExchange, total.intValue(), pairs);
+            updateNewExchange(subExchange, total.intValue(), it);
 
             completion.submit(new Callable<Exchange>() {
                 public Exchange call() throws Exception {
@@ -263,7 +263,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         while (it.hasNext()) {
             ProcessorExchangePair pair = it.next();
             Exchange subExchange = pair.getExchange();
-            updateNewExchange(subExchange, total.get(), pairs);
+            updateNewExchange(subExchange, total.get(), it);
 
             boolean sync = doProcess(original, result, it, pair, callback, total);
             if (!sync) {
@@ -364,7 +364,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         // prepare and run the next
                         ProcessorExchangePair pair = it.next();
                         subExchange = pair.getExchange();
-                        updateNewExchange(subExchange, total.get(), null);
+                        updateNewExchange(subExchange, total.get(), it);
                         boolean sync = doProcess(original, result, it, pair, callback, total);
 
                         if (!sync) {
@@ -460,8 +460,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
     }
 
-    protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs) {
+    protected void updateNewExchange(Exchange exchange, int index, Iterator<ProcessorExchangePair> allPairs) {
         exchange.setProperty(Exchange.MULTICAST_INDEX, index);
+        if (allPairs.hasNext()) {
+            exchange.setProperty(Exchange.MULTICAST_COMPLETE, Boolean.FALSE);
+        } else {
+            exchange.setProperty(Exchange.MULTICAST_COMPLETE, Boolean.TRUE);
+        }
     }
 
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {

@@ -98,6 +98,7 @@ public interface Exchange {
 
     String MAXIMUM_CACHE_POOL_SIZE = "CamelMaximumCachePoolSize";
     String MULTICAST_INDEX         = "CamelMulticastIndex";
+    String MULTICAST_COMPLETE      = "CamelMulticastComplete";
 
     String ON_COMPLETION = "CamelOnCompletion";
 
@@ -108,11 +109,11 @@ public interface Exchange {
     String ROLLBACK_ONLY        = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST   = "CamelRollbackOnlyLast";
     
+    String SOAP_ACTION        = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
-   
-    String SOAP_ACTION = "CamelSoapAction";
-    String SPLIT_INDEX = "CamelSplitIndex";
-    String SPLIT_SIZE  = "CamelSplitSize";
+    String SPLIT_INDEX        = "CamelSplitIndex";
+    String SPLIT_COMPLETE     = "CamelSplitComplete";
+    String SPLIT_SIZE         = "CamelSplitSize";
 
     String TRANSACTED            = "CamelTransacted";
     String TRANSFER_ENCODING     = "Transfer-Encoding";
