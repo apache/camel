@@ -127,9 +127,6 @@ public final class DefaultExchange implements Exchange {
 
     public <T> T getProperty(String name, Class<T> type) {
         Object value = getProperty(name);
-        if (value == null) {
-            return null;
-        }
 
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type
@@ -142,9 +139,6 @@ public final class DefaultExchange implements Exchange {
 
     public <T> T getProperty(String name, Object defaultValue, Class<T> type) {
         Object value = getProperty(name, defaultValue);
-        if (value == null) {
-            return null;
-        }
 
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type
