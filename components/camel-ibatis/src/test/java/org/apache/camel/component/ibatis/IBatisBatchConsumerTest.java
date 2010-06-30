@@ -36,8 +36,6 @@ public class IBatisBatchConsumerTest extends IBatisTestSupport {
         mock.message(1).property(Exchange.BATCH_COMPLETE).isEqualTo(true);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
 
-        template.sendBody("direct:start", null);
-
         assertMockEndpointsSatisfied();
     }
 
