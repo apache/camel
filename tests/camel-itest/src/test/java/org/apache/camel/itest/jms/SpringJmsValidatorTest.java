@@ -52,4 +52,24 @@ public class SpringJmsValidatorTest extends CamelSpringTestSupport {
         assertEquals(1, bef.getExchanges().size());
     }
 
+    @Test
+    public void testJmsValidatorInvalid() throws Exception {
+        String body = "<?xml version=\"1.0\"?>\n<foo>Kaboom</foo>";
+
+        template.sendBody("jms:queue:inbox", body);
+
+        // wait a sec
+        Thread.sleep(1000);
+
+        // it should end up in the invalid and finally queue
+        BrowsableEndpoint bev = context.getEndpoint("jms:queue:valid", BrowsableEndpoint.class);
+        assertEquals(0, bev.getExchanges().size());
+
+        BrowsableEndpoint beiv = context.getEndpoint("jms:queue:invalid", BrowsableEndpoint.class);
+        assertEquals(1, beiv.getExchanges().size());
+
+        BrowsableEndpoint bef = context.getEndpoint("jms:queue:finally", BrowsableEndpoint.class);
+        assertEquals(1, bef.getExchanges().size());
+    }
+
 }
