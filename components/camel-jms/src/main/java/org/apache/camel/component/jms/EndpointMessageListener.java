@@ -25,6 +25,7 @@ import javax.jms.Session;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.LoggingExceptionHandler;
@@ -90,7 +91,7 @@ public class EndpointMessageListener implements MessageListener {
             JmsMessage body = null;
             Exception cause = null;
             boolean sendReply = false;
-            if (exchange.isFailed()) {
+            if (exchange.isFailed() || exchange.isRollbackOnly()) {
                 if (exchange.getException() != null) {
                     // an exception occurred while processing
                     if (endpoint.isTransferException()) {
@@ -103,6 +104,9 @@ public class EndpointMessageListener implements MessageListener {
                         // do not send a reply but wrap and rethrow the exception
                         rce = wrapRuntimeCamelException(exchange.getException());
                     }
+                } else if (exchange.isRollbackOnly()) {
+                    // rollback only so wrap an exception so we can rethrow the exception to cause rollback
+                    rce = wrapRuntimeCamelException(new RollbackExchangeException(exchange));
                 } else if (exchange.getOut().getBody() != null) {
                     // a fault occurred while processing
                     body = (JmsMessage) exchange.getOut();

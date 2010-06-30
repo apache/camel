@@ -19,7 +19,6 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -113,7 +112,6 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
     }
 
     @Test
-    @Ignore("markRollbackOnly causes Spring TX to not let JMS redeliver!")
     public void testJmsToJmsTestRollbackDueToMarkRollbackOnly() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -132,7 +130,6 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMessageCount(0);
 
-        // TODO: mark rollback only causes Spring TX to not rollback on JMS queue
         MockEndpoint start = getMockEndpoint("mock:start");
         start.expectedMessageCount(6);
 

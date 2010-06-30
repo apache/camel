@@ -156,7 +156,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 // wrapper exception to throw if the exchange failed
                 // IMPORTANT: Must be a runtime exception to let Spring regard it as to do "rollback"
-                RuntimeCamelException rce = null;
+                RuntimeException rce = null;
 
                 exchange.setProperty(Exchange.TRANSACTED, Boolean.TRUE);
 
@@ -210,6 +210,9 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                     // wrap exception in transacted exception
                     if (exchange.getException() != null) {
                         rce = ObjectHelper.wrapRuntimeCamelException(exchange.getException());
+                    } else if (exchange.isRollbackOnly()) {
+                        // create dummy exception to force spring transaction manager to rollback
+                        rce = new TransactionRollbackException();
                     }
 
                     if (!status.isRollbackOnly()) {
@@ -219,9 +222,6 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                     // rethrow if an exception occurred
                     if (rce != null) {
                         throw rce;
-                    } else {
-                        // create dummy exception to force spring transaction manager to rollback
-                        throw new TransactionRollbackException();
                     }
                 }
             }
