@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
@@ -85,10 +84,11 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         // using multiple threads to span a transaction
         if (exchange.getUnitOfWork().isTransactedBy(transactionTemplate)) {
             // already transacted by this transaction template
-            // so lets just let the regular default error handler process it
-            processByRegularErrorHandler(exchange);
+            // so lets just let the error handler process it
+            processByErrorHandler(exchange);
         } else {
             // not yet wrapped in transaction so lets do that
+            // and then have it invoke the error handler from within that transaction
             processInTransaction(exchange);
         }
     }
@@ -106,16 +106,6 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         // notify callback we are done synchronously
         callback.done(true);
         return true;
-    }
-
-    protected void processByRegularErrorHandler(Exchange exchange) throws Exception {
-        // must invoke the async method and provide an empty callback
-        // to have it process by the error handler (because we invoke super)
-        super.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                // noop
-            }
-        });
     }
 
     protected void processInTransaction(final Exchange exchange) throws Exception {
@@ -147,6 +137,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         }
     }
 
+
     protected void doInTransactionTemplate(final Exchange exchange) {
 
         // spring transaction template is working best with rollback if you throw it a runtime exception
@@ -160,45 +151,8 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
                 exchange.setProperty(Exchange.TRANSACTED, Boolean.TRUE);
 
-                // and now let process the exchange
-                // we have to wait if the async routing engine took over, because transactions have to be done in
-                // the same thread (Spring TransactionManager) so by waiting until the async routing is done
-                // will let us be able to continue routing thereafter in the same thread context
-                final CountDownLatch latch = new CountDownLatch(1);
-                boolean sync = TransactionErrorHandler.super.process(exchange, new AsyncCallback() {
-                    public void done(boolean doneSync) {
-                        if (!doneSync) {
-                            if (log.isTraceEnabled()) {
-                                log.trace("Asynchronous callback received for exchangeId: " + exchange.getExchangeId());
-                            }
-                            latch.countDown();
-                        }
-                    }
-
-                    @Override
-                    public String toString() {
-                        return "Done TransactionErrorHandler";
-                    }
-                });
-                if (!sync) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Waiting for asynchronous callback before continuing for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
-                    }
-                    try {
-                        latch.await();
-                    } catch (InterruptedException e) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId(), e);
-                        }
-                        // we may be shutting down etc., so set exception
-                        if (exchange.getException() == null) {
-                            exchange.setException(e);
-                        }
-                    }
-                    if (log.isTraceEnabled()) {
-                        log.trace("Asynchronous callback received, will continue routing exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
-                    }
-                }
+                // and now let process the exchange by the error handler
+                processByErrorHandler(exchange);
 
                 // after handling and still an exception or marked as rollback only then rollback
                 if (exchange.getException() != null || exchange.isRollbackOnly()) {
@@ -228,7 +182,53 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         });
     }
 
-    protected String propagationBehaviorToString(int propagationBehavior) {
+    /**
+     * Processes the {@link Exchange} using the error handler.
+     * <p/>
+     * This implementation will invoke ensure this occurs synchronously, that means if the async routing engine
+     * did kick in, then this implementation will wait for the task to complete before it continues.
+     *
+     * @param exchange the exchange
+     */
+    protected void processByErrorHandler(final Exchange exchange) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        boolean sync = super.process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                if (!doneSync) {
+                    if (log.isTraceEnabled()) {
+                        log.trace("Asynchronous callback received for exchangeId: " + exchange.getExchangeId());
+                    }
+                    latch.countDown();
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "Done TransactionErrorHandler";
+            }
+        });
+        if (!sync) {
+            if (log.isTraceEnabled()) {
+                log.trace("Waiting for asynchronous callback before continuing for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
+            }
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId(), e);
+                }
+                // we may be shutting down etc., so set exception
+                if (exchange.getException() == null) {
+                    exchange.setException(e);
+                }
+            }
+            if (log.isTraceEnabled()) {
+                log.trace("Asynchronous callback received, will continue routing exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
+            }
+        }
+    }
+
+    private static String propagationBehaviorToString(int propagationBehavior) {
         String rc;
         switch (propagationBehavior) {
         case TransactionDefinition.PROPAGATION_MANDATORY:
