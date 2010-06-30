@@ -108,7 +108,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
 
             // process the exchange (also redelivery)
-            boolean sync = outputAsync.process(exchange, new AsyncCallback() {
+            boolean sync = AsyncProcessorHelper.process(outputAsync, exchange, new AsyncCallback() {
                 public void done(boolean sync) {
                     if (log.isTraceEnabled()) {
                         log.trace("Redelivering exchangeId: " + exchange.getExchangeId() + " done");
@@ -223,7 +223,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
 
             // process the exchange (also redelivery)
-            boolean sync = outputAsync.process(exchange, new AsyncCallback() {
+            boolean sync = AsyncProcessorHelper.process(outputAsync, exchange, new AsyncCallback() {
                 public void done(boolean sync) {
                     // this callback should only handle the async case
                     if (sync) {
@@ -512,7 +512,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // the failure processor could also be asynchronous
             AsyncProcessor afp = AsyncProcessorTypeConverter.convert(processor);
-            sync = afp.process(exchange, new AsyncCallback() {
+            sync = AsyncProcessorHelper.process(afp, exchange, new AsyncCallback() {
                 public void done(boolean sync) {
                     if (log.isTraceEnabled()) {
                         log.trace("Failure processor done: " + processor + " processing Exchange: " + exchange);

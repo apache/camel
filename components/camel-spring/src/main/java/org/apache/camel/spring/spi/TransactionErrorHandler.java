@@ -191,41 +191,18 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param exchange the exchange
      */
     protected void processByErrorHandler(final Exchange exchange) {
-        final CountDownLatch latch = new CountDownLatch(1);
-        boolean sync = super.process(exchange, new AsyncCallback() {
+        // must invoke the async method with empty callback to have it invoke the
+        // super.processErrorHandler
+        // we are transacted so we have to route synchronously so don't worry about returned
+        // value from the process method
+        // and the camel routing engine will detect this is an transacted Exchange and route
+        // it fully synchronously so we don't have to wait here if we hit an async endpoint
+        // all that is taken care of in the camel-core
+        super.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
-                if (!doneSync) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Asynchronous callback received for exchangeId: " + exchange.getExchangeId());
-                    }
-                    latch.countDown();
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "Done TransactionErrorHandler";
+                // noop
             }
         });
-        if (!sync) {
-            if (log.isTraceEnabled()) {
-                log.trace("Waiting for asynchronous callback before continuing for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
-            }
-            try {
-                latch.await();
-            } catch (InterruptedException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId(), e);
-                }
-                // we may be shutting down etc., so set exception
-                if (exchange.getException() == null) {
-                    exchange.setException(e);
-                }
-            }
-            if (log.isTraceEnabled()) {
-                log.trace("Asynchronous callback received, will continue routing exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
-            }
-        }
     }
 
     private static String propagationBehaviorToString(int propagationBehavior) {

@@ -54,7 +54,8 @@ public class AsyncEndpointJmsTXTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        // we are synchronous due to TX so the we are using same threads during the routing
+        assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
     @Override

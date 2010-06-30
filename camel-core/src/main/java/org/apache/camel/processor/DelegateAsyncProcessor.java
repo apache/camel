@@ -95,7 +95,7 @@ public class DelegateAsyncProcessor extends ServiceSupport implements AsyncProce
             callback.done(true);
             return true;
         }
-        return processor.process(exchange, callback);
+        return AsyncProcessorHelper.process(processor, exchange, callback);
     }
 
     public boolean hasNext() {

@@ -28,7 +28,7 @@ import org.apache.camel.ProducerCallback;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -101,7 +101,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
                 if (log.isDebugEnabled()) {
                     log.debug(">>>> " + destination + " " + exchange);
                 }
-                return asyncProducer.process(exchange, callback);
+                return AsyncProcessorHelper.process(asyncProducer, exchange, callback);
             }
         });
     }

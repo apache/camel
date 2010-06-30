@@ -113,7 +113,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         rlp.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
 
         // now let the multicast process the exchange
-        return rlp.process(exchange, callback);
+        return AsyncProcessorHelper.process(rlp, exchange, callback);
     }
 
     protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {

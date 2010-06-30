@@ -108,7 +108,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
 
         // implement asynchronous routing logic in callback so we can have the callback being
         // triggered and then continue routing where we left
-        boolean sync = processor.process(exchange, new AsyncCallback() {
+        boolean sync = AsyncProcessorHelper.process(processor, exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 // we only have to handle async completion of the pipeline
                 if (doneSync) {
@@ -238,7 +238,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                 // this processor just lookup the right catch clause to use and then let the
                 // HandleDoCatchProcessor do all the hard work (separate of concerns)
                 HandleDoCatchProcessor cool = new HandleDoCatchProcessor(processor);
-                return cool.process(exchange, callback);
+                return AsyncProcessorHelper.process(cool, exchange, callback);
             } else {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("This TryProcessor does not catch the exception: " + e.getClass().getName() + " caused by: " + e.getMessage());

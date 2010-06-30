@@ -45,7 +45,7 @@ public abstract class QueueLoadBalancer extends LoadBalancerSupport {
             throw new IllegalStateException("No processors could be chosen to process " + exchange);
         } else {
             AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);
-            sync = albp.process(exchange, new AsyncCallback() {
+            sync = AsyncProcessorHelper.process(albp, exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // only handle the async case
                     if (doneSync) {

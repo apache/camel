@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+	">
+
+    <import resource="hsqldb-context.xml"/>
+
+    <bean id="async" class="org.apache.camel.itest.async.MyAsyncComponent"/>
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+            <transacted/>
+            <to uri="ibatis:table.add?statementType=Insert"/>
+            <to uri="log:before"/>
+            <to uri="async:Bye Camel"/>
+            <to uri="log:after"/>
+            <to uri="mock:end"/>
+        </route>
+    </camelContext>
+
+</beans>

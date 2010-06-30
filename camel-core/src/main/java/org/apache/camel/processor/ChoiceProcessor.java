@@ -73,7 +73,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
             }
         }
         if (otherwise != null) {
-            return otherwise.process(exchange, callback);
+            return AsyncProcessorHelper.process(otherwise, exchange, callback);
         } else {
             callback.done(true);
             return true;

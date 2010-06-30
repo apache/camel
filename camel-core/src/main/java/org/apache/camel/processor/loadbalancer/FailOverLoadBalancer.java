@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.processor.Traceable;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -208,7 +209,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         }
 
         AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);
-        return albp.process(exchange, new FailOverAsyncCallback(exchange, attempts, index, callback, processors));
+        return AsyncProcessorHelper.process(albp, exchange, new FailOverAsyncCallback(exchange, attempts, index, callback, processors));
     }
 
     /**

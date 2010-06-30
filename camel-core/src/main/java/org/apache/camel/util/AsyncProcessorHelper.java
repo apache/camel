@@ -40,6 +40,44 @@ public final class AsyncProcessorHelper {
     }
 
     /**
+     * Calls the async version of the processor's process method.
+     * <p/>
+     * This implementation supports transacted {@link Exchange}s which ensure those are run in a synchronous fashion.
+     * See more details at {@link org.apache.camel.AsyncProcessor}.
+     *
+     * @param processor the processor
+     * @param exchange  the exchange
+     * @param callback  the callback
+     * @return <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
+     */
+    public static boolean process(final AsyncProcessor processor, final Exchange exchange, final AsyncCallback callback) {
+        boolean sync;
+
+        if (exchange.isTransacted()) {
+            // must be synchronized for transacted exchanges
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
+            }
+            try {
+                process(processor, exchange);
+            } catch (Throwable e) {
+                exchange.setException(e);
+            }
+            callback.done(true);
+            sync = true;
+        } else {
+            // we support asynchronous routing so invoke it
+            sync = processor.process(exchange, callback);
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Exchange processed and is continued routed " + (sync ? "synchronously" : "asynchronously")
+                + " for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
+        }
+        return sync;
+    }
+
+    /**
      * Calls the async version of the processor's process method and waits
      * for it to complete before returning. This can be used by {@link AsyncProcessor}
      * objects to implement their sync version of the process method.

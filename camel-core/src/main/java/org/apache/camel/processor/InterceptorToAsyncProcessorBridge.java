@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * A bridge to have regular interceptors implemented as {@link org.apache.camel.Processor}

@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -131,7 +132,7 @@ public class LoadBalancerDefinition extends IdentifiedType implements LoadBalanc
 
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         ObjectHelper.notNull(loadBalancer, "loadBalancer");
-        return loadBalancer.process(exchange, new AsyncCallback() {
+        return AsyncProcessorHelper.process(loadBalancer, exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 // only handle the async case
                 if (doneSync) {

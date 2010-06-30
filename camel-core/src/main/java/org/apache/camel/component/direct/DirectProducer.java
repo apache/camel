@@ -22,6 +22,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -57,7 +58,7 @@ public class DirectProducer extends DefaultProducer implements AsyncProcessor {
             return true;
         } else {
             AsyncProcessor processor = AsyncProcessorTypeConverter.convert(endpoint.getConsumer().getProcessor());
-            return processor.process(exchange, callback);
+            return AsyncProcessorHelper.process(processor, exchange, callback);
         }
     }
 

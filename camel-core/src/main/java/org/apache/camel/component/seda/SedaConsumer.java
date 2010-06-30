@@ -35,6 +35,7 @@ import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -159,14 +160,14 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             MulticastProcessor mp = getMulticastProcessor();
 
             // and use the asynchronous routing engine to support it
-            mp.process(exchange, new AsyncCallback() {
+            AsyncProcessorHelper.process(mp, exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // noop
                 }
             });
         } else {
             // use the regular processor and use the asynchronous routing engine to support it
-            processor.process(exchange, new AsyncCallback() {
+            AsyncProcessorHelper.process(processor, exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // noop
                 }
