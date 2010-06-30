@@ -77,8 +77,6 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
             AsyncProcessor async = AsyncProcessorTypeConverter.convert(processor);
             boolean sync = process(exchange, nextExchange, callback, processors, async);
 
-            // are we transacted
-
             // continue as long its being processed synchronously
             if (!sync) {
                 if (LOG.isTraceEnabled()) {
