@@ -24,6 +24,8 @@ import org.apache.camel.component.file.GenericFileOperations;
 
 public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
 
+    private GenericFileRenamer<T> failureRenamer;
+    
     @Override
     public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         // must invoke super
@@ -59,5 +61,26 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
             throw new GenericFileOperationFailedException("Cannot delete file: " + file);
         }
     }
+    
+    @Override
+    public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+        // must invoke super
+        super.rollback(operations, endpoint, exchange, file);
+
+        // moved the failed file if specifying the moveFailed option
+        if (failureRenamer != null) {
+            GenericFile<T> newName = failureRenamer.renameFile(exchange, file);
+            renameFile(operations, file, newName);
+        }
+    }
+    
+    public GenericFileRenamer<T> getFailureRenamer() {
+        return failureRenamer;
+    }
+
+    public void setFailureRenamer(GenericFileRenamer<T> failureRenamer) {
+        this.failureRenamer = failureRenamer;
+    }
+
 
 }

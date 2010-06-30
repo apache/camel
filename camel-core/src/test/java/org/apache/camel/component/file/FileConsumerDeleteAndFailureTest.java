@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class FileConsumerDeleteAndMoveFailureTest extends ContextTestSupport {
+public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
@@ -44,21 +44,6 @@ public class FileConsumerDeleteAndMoveFailureTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
-    public void testDeletAndMoveFailedOption() throws Exception {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                public void configure() throws Exception {
-                    from("file://target/test?delete=true&moveFailed=target/failed/error").to("mock:failed");
-                }
-            });
-            fail("Expect an exception here");
-        } catch (IllegalArgumentException ex) {
-            // expect the error here
-            ex.getMessage().startsWith("You cannot set both deleted=true and move");
-        }
-        
-    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -75,7 +60,7 @@ public class FileConsumerDeleteAndMoveFailureTest extends ContextTestSupport {
                                 throw new IllegalArgumentException("Forced");
                             }
                         }
-                    }).to("mock:result");
+                    }).to("mock:result");                
             }
         };
     }

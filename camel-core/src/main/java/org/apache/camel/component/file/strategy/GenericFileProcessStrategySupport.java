@@ -17,11 +17,13 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.util.FileUtil;
@@ -73,6 +75,32 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
 
     public void setExclusiveReadLockStrategy(GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy) {
         this.exclusiveReadLockStrategy = exclusiveReadLockStrategy;
+    }
+    
+    protected GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to) throws IOException {
+        // deleting any existing files before renaming
+        try {
+            operations.deleteFile(to.getAbsoluteFilePath());
+        } catch (GenericFileOperationFailedException e) {
+            // ignore the file does not exists
+        }
+        
+        // make parent folder if missing
+        boolean mkdir = operations.buildDirectory(to.getParent(), to.isAbsolute());
+        
+        if (!mkdir) {
+            throw new GenericFileOperationFailedException("Cannot create directory: " + to.getParent() + " (could be because of denied permissions)");
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Renaming file: " + from + " to: " + to);
+        }
+        boolean renamed = operations.renameFile(from.getAbsoluteFilePath(), to.getAbsoluteFilePath());
+        if (!renamed) {
+            throw new GenericFileOperationFailedException("Cannot rename file: " + from + " to: " + to);
+        }
+
+        return to;
     }
 
     private void deleteLocalWorkFile(Exchange exchange) {

@@ -73,32 +73,6 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         }
     }
 
-    private GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to) throws IOException {
-        // deleting any existing files before renaming
-        try {
-            operations.deleteFile(to.getAbsoluteFilePath());
-        } catch (GenericFileOperationFailedException e) {
-            // ignore the file does not exists
-        }
-        
-        // make parent folder if missing
-        boolean mkdir = operations.buildDirectory(to.getParent(), to.isAbsolute());
-        
-        if (!mkdir) {
-            throw new GenericFileOperationFailedException("Cannot create directory: " + to.getParent() + " (could be because of denied permissions)");
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Renaming file: " + from + " to: " + to);
-        }
-        boolean renamed = operations.renameFile(from.getAbsoluteFilePath(), to.getAbsoluteFilePath());
-        if (!renamed) {
-            throw new GenericFileOperationFailedException("Cannot rename file: " + from + " to: " + to);
-        }
-
-        return to;
-    }
-
     public GenericFileRenamer<T> getBeginRenamer() {
         return beginRenamer;
     }

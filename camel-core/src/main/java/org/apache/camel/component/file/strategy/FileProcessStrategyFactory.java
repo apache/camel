@@ -48,6 +48,11 @@ public final class FileProcessStrategyFactory {
         } else if (isDelete) {
             GenericFileDeleteProcessStrategy<File> strategy = new GenericFileDeleteProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
+            if (moveFailedExpression != null) {
+                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
+                renamer.setExpression(moveFailedExpression);
+                strategy.setFailureRenamer(renamer);
+            }
             return strategy;
         } else if (isMove) {
             GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
