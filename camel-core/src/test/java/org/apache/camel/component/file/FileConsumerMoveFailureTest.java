@@ -33,31 +33,17 @@ public class FileConsumerMoveFailureTest extends ContextTestSupport {
         super.setUp();
     }
 
-    public void testMoveFailedWithOnException() throws Exception {
+    public void testMoveFailed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World IS processed!");
-        
-        mock.expectedFileExists("target/failed/error/bye.txt", "Kabom");
+        mock.expectedBodiesReceived("Hello World");
+
+        mock.expectedFileExists("target/failed/.camel/hello.txt", "Hello World");
+        mock.expectedFileExists("target/failed/error/bye-error.txt", "Kabom");
 
         template.sendBodyAndHeader("file://target/failed", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
-    }
-    
-    public void testDeletAndMoveFailedOption() throws Exception {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                public void configure() throws Exception {
-                    from("file://target/test?delete=true&moveFailed=target/failed/error").to("mock:failed");
-                }
-            });
-            fail("Expect an exception here");
-        } catch (IllegalArgumentException ex) {
-            // expect the error here
-            ex.getMessage().startsWith("You cannot set both deleted=true and move");
-        }
-        
     }
 
     @Override
@@ -65,17 +51,15 @@ public class FileConsumerMoveFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class).useOriginalMessage().to("file://target/failed/error");
-                from("file://target/failed?delete=true")
-                    .setBody(simple("${body} IS processed!"))
+                from("file://target/failed?moveFailed=error/${file:name.noext}-error.txt")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);
-                            if (body != null && body.startsWith("Kabom")) {
+                            if ("Kabom".equals(body)) {
                                 throw new IllegalArgumentException("Forced");
                             }
                         }
-                    }).to("mock:result");
+                    }).convertBodyTo(String.class).to("mock:result");
             }
         };
     }
