@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.spi;
 
+import java.util.concurrent.CountDownLatch;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -159,14 +161,43 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 exchange.setProperty(Exchange.TRANSACTED, Boolean.TRUE);
 
                 // and now let process the exchange
-                try {
-                    TransactionErrorHandler.super.process(exchange, new AsyncCallback() {
-                        public void done(boolean doneSync) {
-                            // noop
+                // we have to wait if the async routing engine took over, because transactions have to be done in
+                // the same thread (Spring TransactionManager) so by waiting until the async routing is done
+                // will let us be able to continue routing thereafter in the same thread context
+                final CountDownLatch latch = new CountDownLatch(1);
+                boolean sync = TransactionErrorHandler.super.process(exchange, new AsyncCallback() {
+                    public void done(boolean doneSync) {
+                        if (!doneSync) {
+                            if (log.isTraceEnabled()) {
+                                log.trace("Asynchronous callback received for exchangeId: " + exchange.getExchangeId());
+                            }
+                            latch.countDown();
                         }
-                    });
-                } catch (Exception e) {
-                    exchange.setException(e);
+                    }
+
+                    @Override
+                    public String toString() {
+                        return "Done TransactionErrorHandler";
+                    }
+                });
+                if (!sync) {
+                    if (log.isTraceEnabled()) {
+                        log.trace("Waiting for asynchronous callback before continuing for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
+                    }
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId(), e);
+                        }
+                        // we may be shutting down etc., so set exception
+                        if (exchange.getException() == null) {
+                            exchange.setException(e);
+                        }
+                    }
+                    if (log.isTraceEnabled()) {
+                        log.trace("Asynchronous callback received, will continue routing exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
+                    }
                 }
 
                 // after handling and still an exception or marked as rollback only then rollback
