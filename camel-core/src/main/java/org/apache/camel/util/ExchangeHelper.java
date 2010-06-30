@@ -136,6 +136,7 @@ public final class ExchangeHelper {
      */
     public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value) throws NoTypeConversionAvailableException {
         CamelContext camelContext = exchange.getContext();
+        ObjectHelper.notNull(camelContext, "CamelContext of Exchange");
         TypeConverter converter = camelContext.getTypeConverter();
         if (converter != null) {
             return converter.mandatoryConvertTo(type, exchange, value);
@@ -149,6 +150,7 @@ public final class ExchangeHelper {
      */
     public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) {
         CamelContext camelContext = exchange.getContext();
+        ObjectHelper.notNull(camelContext, "CamelContext of Exchange");
         TypeConverter converter = camelContext.getTypeConverter();
         if (converter != null) {
             return converter.convertTo(type, exchange, value);

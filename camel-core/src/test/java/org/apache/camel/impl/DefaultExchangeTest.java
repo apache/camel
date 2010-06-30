@@ -100,6 +100,11 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("apple", exchange.getProperty("fruit"));
         assertEquals(null, exchange.getProperty("beer"));
         assertEquals(null, exchange.getProperty("beer", String.class));
+        
+        // Current TypeConverter support to turn the null value to false of boolean,
+        // as assertEquals needs the Object as the parameter, we have to use Boolean.FALSE value in this case
+        assertEquals(Boolean.FALSE, exchange.getProperty("beer", boolean.class));
+        assertEquals(null, exchange.getProperty("beer", Boolean.class));
 
         assertEquals("apple", exchange.getProperty("fruit", String.class));
         assertEquals("apple", exchange.getProperty("fruit", "banana", String.class));
