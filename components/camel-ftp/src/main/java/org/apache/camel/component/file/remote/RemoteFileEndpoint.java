@@ -63,8 +63,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         afterPropertiesSet();
         RemoteFileConsumer<T> consumer = buildConsumer(processor);
 
-        if (isDelete() && getMove() != null) {
-            throw new IllegalArgumentException("You cannot both set delete=true and move options");
+        if (isDelete() && (getMove() != null || getMoveFailed() != null)) {
+            throw new IllegalArgumentException("You cannot both set delete=true and move or moveFailed options");
         }
         // if noop=true then idempotent should also be configured
         if (isNoop() && !isIdempotent()) {

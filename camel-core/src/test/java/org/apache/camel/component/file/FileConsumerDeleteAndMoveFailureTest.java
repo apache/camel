@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class FileConsumerMoveFailureTest extends ContextTestSupport {
+public class FileConsumerDeleteAndMoveFailureTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
@@ -33,7 +33,7 @@ public class FileConsumerMoveFailureTest extends ContextTestSupport {
         super.setUp();
     }
 
-    public void testMoveFailedWithOnException() throws Exception {
+    public void testMoveFailed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World IS processed!");
         
@@ -43,21 +43,6 @@ public class FileConsumerMoveFailureTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
-    }
-    
-    public void testDeletAndMoveFailedOption() throws Exception {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                public void configure() throws Exception {
-                    from("file://target/test?delete=true&moveFailed=target/failed/error").to("mock:failed");
-                }
-            });
-            fail("Expect an exception here");
-        } catch (IllegalArgumentException ex) {
-            // expect the error here
-            ex.getMessage().startsWith("You cannot set both deleted=true and move");
-        }
-        
     }
 
     @Override

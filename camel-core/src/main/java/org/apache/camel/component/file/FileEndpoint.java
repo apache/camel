@@ -67,8 +67,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
         FileConsumer result = new FileConsumer(this, processor, operations);
 
-        if (isDelete() && getMove() != null) {
-            throw new IllegalArgumentException("You cannot set both delete=true and move options");
+        if (isDelete() && (getMove() != null || getMoveFailed() != null)) {
+            throw new IllegalArgumentException("You cannot set both delete=true and move or moveFailed options");
         }
 
         // if noop=true then idempotent should also be configured
