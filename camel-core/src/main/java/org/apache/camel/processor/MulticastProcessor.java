@@ -198,7 +198,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         return true;
     }
 
-    protected void doProcessParallel(final Exchange original, final AtomicExchange result, Iterable<ProcessorExchangePair> pairs,
+    protected void doProcessParallel(final Exchange original, final AtomicExchange result, final Iterable<ProcessorExchangePair> pairs,
                                      boolean streaming, final AsyncCallback callback) throws InterruptedException, ExecutionException {
         final CompletionService<Exchange> completion;
         final AtomicBoolean running = new AtomicBoolean(true);
@@ -217,7 +217,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         while (it.hasNext()) {
             final ProcessorExchangePair pair = it.next();
             final Exchange subExchange = pair.getExchange();
-            updateNewExchange(subExchange, total.intValue(), it);
+            updateNewExchange(subExchange, total.intValue(), pairs, it);
 
             completion.submit(new Callable<Exchange>() {
                 public Exchange call() throws Exception {
@@ -226,7 +226,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         return subExchange;
                     }
 
-                    doProcess(original, result, it, pair, callback, total);
+                    doProcess(original, result, pairs, it, pair, callback, total);
 
                     // should we stop in case of an exception occurred during processing?
                     if (stopOnException && subExchange.getException() != null) {
@@ -263,9 +263,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         while (it.hasNext()) {
             ProcessorExchangePair pair = it.next();
             Exchange subExchange = pair.getExchange();
-            updateNewExchange(subExchange, total.get(), it);
+            updateNewExchange(subExchange, total.get(), pairs, it);
 
-            boolean sync = doProcess(original, result, it, pair, callback, total);
+            boolean sync = doProcess(original, result, pairs, it, pair, callback, total);
             if (!sync) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing exchangeId: " + pair.getExchange().getExchangeId() + " is continued being processed asynchronously");
@@ -299,7 +299,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         return true;
     }
 
-    private boolean doProcess(final Exchange original, final AtomicExchange result, final Iterator<ProcessorExchangePair> it,
+    private boolean doProcess(final Exchange original, final AtomicExchange result,
+                              final Iterable<ProcessorExchangePair> pairs, final Iterator<ProcessorExchangePair> it,
                               final ProcessorExchangePair pair, final AsyncCallback callback, final AtomicInteger total) {
         boolean sync = true;
 
@@ -364,8 +365,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         // prepare and run the next
                         ProcessorExchangePair pair = it.next();
                         subExchange = pair.getExchange();
-                        updateNewExchange(subExchange, total.get(), it);
-                        boolean sync = doProcess(original, result, it, pair, callback, total);
+                        updateNewExchange(subExchange, total.get(), pairs, it);
+                        boolean sync = doProcess(original, result, pairs, it, pair, callback, total);
 
                         if (!sync) {
                             if (LOG.isTraceEnabled()) {
@@ -460,9 +461,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
     }
 
-    protected void updateNewExchange(Exchange exchange, int index, Iterator<ProcessorExchangePair> allPairs) {
+    protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs,
+                                     Iterator<ProcessorExchangePair> it) {
         exchange.setProperty(Exchange.MULTICAST_INDEX, index);
-        if (allPairs.hasNext()) {
+        if (it.hasNext()) {
             exchange.setProperty(Exchange.MULTICAST_COMPLETE, Boolean.FALSE);
         } else {
             exchange.setProperty(Exchange.MULTICAST_COMPLETE, Boolean.TRUE);

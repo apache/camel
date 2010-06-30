@@ -158,12 +158,13 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     @Override
-    protected void updateNewExchange(Exchange exchange, int index, Iterator<ProcessorExchangePair> allPairs) {
+    protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs,
+                                     Iterator<ProcessorExchangePair> it) {
         exchange.setProperty(Exchange.SPLIT_INDEX, index);
         if (allPairs instanceof Collection) {
             exchange.setProperty(Exchange.SPLIT_SIZE, ((Collection<?>)allPairs).size());
         }
-        if (allPairs.hasNext()) {
+        if (it.hasNext()) {
             exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE);
         } else {
             exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.TRUE);
