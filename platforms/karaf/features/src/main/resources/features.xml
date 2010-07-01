@@ -413,7 +413,7 @@
   </feature>
   <feature name='camel-netty' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:http://repository.jboss.org/maven2!org.jboss.netty/netty/${netty-version}</bundle>
+    <bundle>mvn:http://repository.jboss.org/nexus/content/groups/public!org.jboss.netty/netty/${netty-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-netty/${pom.version}</bundle>
   </feature>	  
   <feature name='camel-ognl' version='${pom.version}'>
