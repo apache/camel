@@ -27,7 +27,7 @@ import org.apache.camel.language.simple.SimpleLanguage;
  */
 public class FileAbsoluteMoveDefaultIssueManual extends ContextTestSupport {
 
-    // TODO run this test manually
+    // run this test manually
 
     @Override
     protected void setUp() throws Exception {

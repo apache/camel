@@ -42,11 +42,7 @@ public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
     private void testExceptionInFlow(String startUri) throws Exception {
         // failed first aggregation
         
-        // TODO Following assertion should be true while it is not. Instead
-        // exception handler set in BatchProcessor is used and it logs
-        // by default.
-        
-        // getMockEndpoint("mock:handled").expectedMessageCount(1);
+        getMockEndpoint("mock:handled").expectedMessageCount(1);
 
         // second aggregated
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");

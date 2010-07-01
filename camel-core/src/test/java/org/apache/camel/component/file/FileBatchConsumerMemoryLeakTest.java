@@ -57,7 +57,7 @@ public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
      * or succeed fast
      */
     public void xxxtestMemoryLeak() throws Exception {
-        // TODO: Run this manually and browse the memory usage, eg in IDEA there is a Statistics tab
+        // run this manually and browse the memory usage, eg in IDEA there is a Statistics tab
 
         deleteDirectory("target/filesorter/archiv");
         for (int c = 0; c < 100; c++) {

@@ -26,13 +26,14 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupport {
 
+    // run this test manually
+
     private String base = "/tmp/mytemp";
 
     public void testDummy() {
         // noop
     }
 
-    // TODO: Enable to test locally
     public void xxxTestConsumeFromAbsolutePath() throws Exception {
         deleteDirectory(base);
 
