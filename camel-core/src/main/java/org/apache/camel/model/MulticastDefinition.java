@@ -38,7 +38,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> implements ExecutorServiceAwareDefinition<MulticastDefinition> {
+public class MulticastDefinition extends OutputDefinition<MulticastDefinition> implements ExecutorServiceAwareDefinition<MulticastDefinition> {
     @XmlAttribute(required = false)
     private Boolean parallelProcessing;
     @XmlAttribute(required = false)

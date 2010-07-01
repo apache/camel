@@ -53,7 +53,7 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
  */
 @XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefinition> {
 
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();

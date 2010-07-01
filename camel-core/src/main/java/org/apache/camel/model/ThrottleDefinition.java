@@ -34,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThrottleDefinition extends OutputDefinition<ProcessorDefinition> {
+public class ThrottleDefinition extends OutputDefinition<ThrottleDefinition> {
     @XmlAttribute
     private Long maximumRequestsPerPeriod;
     @XmlAttribute

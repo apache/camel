@@ -44,7 +44,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
+public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
 
     @XmlTransient
     private ExecutorService executorService;

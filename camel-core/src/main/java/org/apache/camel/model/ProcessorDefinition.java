@@ -75,7 +75,7 @@ import static org.apache.camel.builder.Builder.body;
  * @version $Revision$
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition> extends OptionalIdentifiedDefinition implements Block {
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition implements Block {
     protected final transient Log log = LogFactory.getLog(getClass());
     protected ErrorHandlerBuilder errorHandlerBuilder;
     protected String errorHandlerRef;
@@ -139,19 +139,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
             throw new IllegalArgumentException("Definition has no children on " + this);
         }
         return children;
-    }
-
-    /**
-     * A helper method to add an output node to this processor definition which can avoid the use of hairy generics
-     * when using Scala code
-     */
-    public boolean addOutputObject(Object node) {
-        if (node instanceof ProcessorDefinition) {
-            addOutput((ProcessorDefinition) node);
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public void addOutput(ProcessorDefinition output) {

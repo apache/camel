@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "output")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OutputDefinition<Type extends ProcessorDefinition> extends ProcessorDefinition<Type> {
+public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
     @XmlElementRef
     protected List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 

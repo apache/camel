@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "doFinally")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FinallyDefinition extends OutputDefinition<ProcessorDefinition> implements Block {
+public class FinallyDefinition extends OutputDefinition<FinallyDefinition> implements Block {
 
     @Override
     public String toString() {

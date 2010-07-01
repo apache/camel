@@ -37,7 +37,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
+public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
 
     // TODO: support stop later (its a bit hard as it needs to break entire processing of route)
 

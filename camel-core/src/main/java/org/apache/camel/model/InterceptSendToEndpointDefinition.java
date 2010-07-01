@@ -38,7 +38,7 @@ import org.apache.camel.util.EndpointHelper;
  */
 @XmlRootElement(name = "interceptToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InterceptSendToEndpointDefinition extends OutputDefinition<ProcessorDefinition> {
+public class InterceptSendToEndpointDefinition extends OutputDefinition<InterceptSendToEndpointDefinition> {
 
     // TODO: Support lookup endpoint by ref (requires a bit more work)
 

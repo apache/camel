@@ -40,7 +40,7 @@ import org.apache.camel.spi.RouteContext;
  * @version $Revision$
  */
 @XmlRootElement(name = "resequence")
-public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {
     @XmlElementRef
     private List<ExpressionDefinition> expressions = new ArrayList<ExpressionDefinition>();
     @XmlElementRef

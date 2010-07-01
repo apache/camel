@@ -56,7 +56,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "route")
 @XmlType(propOrder = {"inputs", "outputs" })
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     private String group;

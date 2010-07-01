@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "stop")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StopDefinition extends OutputDefinition<ProcessorDefinition> {
+public class StopDefinition extends OutputDefinition<StopDefinition> {
 
     @Override
     public String getShortName() {

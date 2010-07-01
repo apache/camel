@@ -36,7 +36,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "aop")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated
-public class AOPDefinition extends OutputDefinition<ProcessorDefinition> {
+public class AOPDefinition extends OutputDefinition<AOPDefinition> {
 
     @XmlAttribute(required = false)
     private String beforeUri;

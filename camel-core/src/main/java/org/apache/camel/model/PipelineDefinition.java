@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "pipeline")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PipelineDefinition extends OutputDefinition<ProcessorDefinition> {
+public class PipelineDefinition extends OutputDefinition<PipelineDefinition> {
 
     @Override
     public String getShortName() {

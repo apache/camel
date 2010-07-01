@@ -32,7 +32,7 @@ import org.apache.camel.util.CollectionStringBuffer;
  */
 @XmlRootElement(name = "otherwise")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OtherwiseDefinition extends OutputDefinition<ProcessorDefinition> implements Block {
+public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> implements Block {
 
     @Override
     public String toString() {
