@@ -134,8 +134,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             //org.ops4j.pax.exam.CoreOptions.systemProperty("org.apache.servicemix.specs.debug").value("true"),
             //mavenBundle().groupId("net.sourceforge.serp").artifactId("com.springsource.serp").version("1.13.1"),
             // using the features to install the camel components             
-            scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
-                         artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
+            scanFeatures(getCamelKarafFeatureUrl(),                         
                           "camel-core", "camel-spring", "camel-test", "camel-jpa"),
            
             /* This the camel-jpa needed bundles 

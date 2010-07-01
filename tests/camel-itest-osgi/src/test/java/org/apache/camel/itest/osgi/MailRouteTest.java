@@ -36,6 +36,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
+import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
@@ -130,8 +131,7 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
             
             // using the features to install the camel components             
-            scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
-                         artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
+            scanFeatures(getCamelKarafFeatureUrl(),                         
                           "camel-core", "camel-spring", "camel-test"),
             
             // using the java mail API bundle
@@ -144,7 +144,7 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
             
             workingDirectory("target/paxrunner/"),
 
-            felix());
+            equinox());
         
         return options;
     }

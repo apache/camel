@@ -66,8 +66,7 @@ public class JaxbFallbackConverterSpringTest extends OSGiIntegrationSpringTestSu
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
             
             // using the features to install the camel components             
-            scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
-                         artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
+            scanFeatures(getCamelKarafFeatureUrl(),                         
                           "camel-core", "camel-spring", "camel-test", "camel-jaxb"),
             
             workingDirectory("target/paxrunner/"),

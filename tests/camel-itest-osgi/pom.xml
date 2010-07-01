@@ -147,10 +147,12 @@
     <dependency>
         <groupId>org.apache.aries.blueprint</groupId>
         <artifactId>org.apache.aries.blueprint</artifactId>
+        <scope>test</scope>
     </dependency>
     <dependency>
         <groupId>org.apache.felix</groupId>
         <artifactId>org.apache.felix.configadmin</artifactId>
+        <scope>test</scope>
     </dependency>
 
   </dependencies>
@@ -174,16 +176,21 @@
       <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
+              <forkMode>pertest</forkMode>
               <includes>
                   <include>**/*Test.*</include>
               </includes>
               <excludes>
                   <exclude>**/JpaRouteTest.*</exclude>
-              </excludes>               
+              </excludes>
+              <systemPropertyVariables>
+                  <springVersion>${spring-version}</springVersion>
+              </systemPropertyVariables>
           </configuration>
       </plugin>      
     </plugins>
   </build>
+ 
    
   <profiles>
 	<profile>
@@ -214,12 +221,15 @@
                         </includes>
                         <excludes>
 			    <!-- TODO: temporary disable unit test to let TC not hang -->
-		                    <exclude>**/*Test.*</exclude>
+	                    <exclude>**/*Test.*</exclude>
                             <!--There are some conflicts of the JAXB OSGi bundle and Hudson System jar
                                 so I comment out these JAXB related tests -->
                             <exclude>**/OSGiIntegrationSpringTest.*</exclude>
                             <exclude>**/JaxbFallbackConverterTest.*</exclude>
                         </excludes>               
+                        <systemPropertyVariables>
+                            <springVersion>${spring-version}</springVersion>
+                        </systemPropertyVariables>
                     </configuration>
                 </plugin>
             </plugins>

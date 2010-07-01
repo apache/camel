@@ -135,7 +135,7 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
             mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-tinybundles"),
 
             // using the features to install the camel components
-            scanFeatures(mavenBundle("org.apache.camel.karaf", "apache-camel").type("xml/features"),
+            scanFeatures(getCamelKarafFeatureUrl(),
                           "camel-core", "camel-blueprint", "camel-test", "camel-mail", "camel-jaxb"),
 
             workingDirectory("target/paxrunner/"),

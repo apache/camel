@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.options.UrlReference;
 import org.osgi.framework.BundleContext;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
@@ -60,8 +61,20 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         return factory.createContext();
     }
     
+    
+    public static UrlReference getCamelKarafFeatureUrl() {
+        String springVersion = System.getProperty("springVersion");
+        System.out.println("*** The spring version is " + springVersion + " ***");
+        String type = "xml/features"; 
+        if (springVersion != null && springVersion.startsWith("3")) {
+            type = "xml/features-spring3";
+        }
+        return mavenBundle().groupId("org.apache.camel.karaf").
+            artifactId("apache-camel").versionAsInProject().type(type);
+    }
+    
     @Configuration
-    public static Option[] configure() {
+    public static Option[] configure() throws Exception {
         Option[] options = options(
             // install the spring dm profile            
             profile("spring.dm").version("1.2.0"),    
@@ -69,8 +82,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
             
             // using the features to install the camel components             
-            scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
-                         artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
+            scanFeatures(getCamelKarafFeatureUrl(),                         
                           "camel-core", "camel-spring", "camel-test"),
             
             workingDirectory("target/paxrunner/"),

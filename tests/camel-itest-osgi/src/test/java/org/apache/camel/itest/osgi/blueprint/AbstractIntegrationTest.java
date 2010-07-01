@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
 
-import org.apache.camel.test.junit4.TestSupport;
+import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
@@ -35,7 +35,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-public abstract class AbstractIntegrationTest extends TestSupport {
+public abstract class AbstractIntegrationTest extends OSGiIntegrationTestSupport {
 
     public static final long DEFAULT_TIMEOUT = 30000;
 

@@ -42,12 +42,8 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory
 public class VelocityTest extends OSGiIntegrationTestSupport {
     
     @Test
-    public void testReceivesFooResponse() throws Exception {        
+    public void testReceivesResponse() throws Exception {        
         assertRespondsWith("foo", "<hello>foo</hello>");
-    }
-
-    @Test
-    public void testReceivesBarResponse() throws Exception {
         assertRespondsWith("bar", "<hello>bar</hello>");
     }
 
@@ -82,8 +78,7 @@ public class VelocityTest extends OSGiIntegrationTestSupport {
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
             
             // using the features to install the camel components             
-            scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
-                         artifactId("apache-camel").versionAsInProject().type("xml/features").versionAsInProject().type("xml/features"),                         
+            scanFeatures(getCamelKarafFeatureUrl(),                         
                           "camel-core", "camel-spring", "camel-test", "camel-velocity"),
             
             workingDirectory("target/paxrunner/"),
