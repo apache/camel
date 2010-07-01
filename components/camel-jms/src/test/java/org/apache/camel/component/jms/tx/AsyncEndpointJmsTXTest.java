@@ -72,12 +72,14 @@ public class AsyncEndpointJmsTXTest extends CamelSpringTestSupport {
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 beforeThreadName = Thread.currentThread().getName();
+                                assertTrue("Exchange should be transacted", exchange.isTransacted());
                             }
                         })
                         .to("async:Bye Camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();
+                                assertTrue("Exchange should be transacted", exchange.isTransacted());
                             }
                         })
                         .to("log:after")

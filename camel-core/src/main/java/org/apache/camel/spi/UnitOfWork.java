@@ -82,6 +82,13 @@ public interface UnitOfWork {
     TracedRouteNodes getTracedRouteNodes();
 
     /**
+     * Are we transacted?
+     *
+     * @return <tt>true</tt> if transacted, <tt>false</tt> otherwise
+     */
+    boolean isTransacted();
+
+    /**
      * Are we already transacted by the given transaction definition
      * <p/>
      * The definition will most likely be a Spring TransactionTemplate when using Spring Transaction

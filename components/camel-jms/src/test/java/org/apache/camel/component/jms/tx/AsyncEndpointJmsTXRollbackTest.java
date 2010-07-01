@@ -76,12 +76,14 @@ public class AsyncEndpointJmsTXRollbackTest extends CamelSpringTestSupport {
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 beforeThreadName = Thread.currentThread().getName();
+                                assertTrue("Exchange should be transacted", exchange.isTransacted());
                             }
                         })
                         .to("async:Bye Camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();
+                                assertTrue("Exchange should be transacted", exchange.isTransacted());
                             }
                         })
                         .to("log:after")
@@ -92,6 +94,7 @@ public class AsyncEndpointJmsTXRollbackTest extends CamelSpringTestSupport {
                                 if (invoked < 2) {
                                     throw new IllegalArgumentException("Damn");
                                 }
+                                assertTrue("Exchange should be transacted", exchange.isTransacted());
                             }
                         })
                         .to("mock:result");

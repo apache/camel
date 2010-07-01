@@ -115,7 +115,6 @@ public interface Exchange {
     String SPLIT_COMPLETE     = "CamelSplitComplete";
     String SPLIT_SIZE         = "CamelSplitSize";
 
-    String TRANSACTED            = "CamelTransacted";
     String TRANSFER_ENCODING     = "Transfer-Encoding";
     String TRACE_EVENT           = "CamelTraceEvent";
     String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";

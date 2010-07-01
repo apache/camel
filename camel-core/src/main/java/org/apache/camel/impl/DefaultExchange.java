@@ -304,7 +304,7 @@ public final class DefaultExchange implements Exchange {
     }
 
     public boolean isTransacted() {
-        return Boolean.TRUE.equals(getProperty(Exchange.TRANSACTED));
+        return getUnitOfWork() != null && getUnitOfWork().isTransacted();
     }
 
     public boolean isRollbackOnly() {

@@ -28,9 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version $Revision$
  */
-public class AsyncEndpointJmsTXRollback2Test extends CamelSpringTestSupport {
-
-    private static int invoked;
+public class AsyncEndpointJmsTXTryCatchFinallyTest extends CamelSpringTestSupport {
 
     @Override
     protected int getExpectedRouteCount() {
@@ -47,12 +45,12 @@ public class AsyncEndpointJmsTXRollback2Test extends CamelSpringTestSupport {
     private static String afterThreadName;
 
     @Test
-    public void testAsyncEndpointRollback() throws Exception {
-        invoked = 0;
-
-        getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel", "Hello Camel");
-        getMockEndpoint("mock:after").expectedBodiesReceived("Hi Camel", "Hi Camel");
+    public void testAsyncEndpointOK() throws Exception {
+        getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
+        getMockEndpoint("mock:catch").expectedMessageCount(0);
+        getMockEndpoint("mock:finally").expectedBodiesReceived("Bye Camel");
 
         template.sendBody("activemq:queue:inbox", "Hello Camel");
 
@@ -79,7 +77,18 @@ public class AsyncEndpointJmsTXRollback2Test extends CamelSpringTestSupport {
                                 assertTrue("Exchange should be transacted", exchange.isTransacted());
                             }
                         })
-                        .to("async:Hi Camel")
+                        .doTry()
+                            .to("direct:foo")
+                        .doCatch(Exception.class)
+                            .to("mock:catch")
+                        .doFinally()
+                            .to("mock:finally")
+                        .end()
+                        .to("mock:result");
+
+                from("direct:foo")
+                        // tx should be conveyed to this route as well
+                        .to("async:Bye Camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();
@@ -87,24 +96,7 @@ public class AsyncEndpointJmsTXRollback2Test extends CamelSpringTestSupport {
                             }
                         })
                         .to("log:after")
-                        .to("mock:after")
-                        .to("direct:foo")
-                        .to("mock:result");
-
-                from("direct:foo")
-                    .transacted()
-                    .to("async:Bye Camel")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            invoked++;
-                            if (invoked < 2) {
-                                throw new IllegalArgumentException("Damn");
-                            }
-                            assertTrue("Exchange should be transacted", exchange.isTransacted());
-                        }
-                    });
-
-
+                        .to("mock:after");
             }
         };
     }

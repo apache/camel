@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring.spi;
 
-import java.util.concurrent.CountDownLatch;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -148,8 +146,6 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 // wrapper exception to throw if the exchange failed
                 // IMPORTANT: Must be a runtime exception to let Spring regard it as to do "rollback"
                 RuntimeException rce = null;
-
-                exchange.setProperty(Exchange.TRANSACTED, Boolean.TRUE);
 
                 // and now let process the exchange by the error handler
                 processByErrorHandler(exchange);

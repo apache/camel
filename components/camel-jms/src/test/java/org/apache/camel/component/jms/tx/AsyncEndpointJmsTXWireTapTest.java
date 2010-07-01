@@ -28,9 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version $Revision$
  */
-public class AsyncEndpointJmsTXRollback2Test extends CamelSpringTestSupport {
-
-    private static int invoked;
+public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
 
     @Override
     protected int getExpectedRouteCount() {
@@ -45,21 +43,20 @@ public class AsyncEndpointJmsTXRollback2Test extends CamelSpringTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
+    private static volatile boolean txA;
+    private static volatile boolean txB;
 
     @Test
-    public void testAsyncEndpointRollback() throws Exception {
-        invoked = 0;
-
-        getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel", "Hello Camel");
-        getMockEndpoint("mock:after").expectedBodiesReceived("Hi Camel", "Hi Camel");
+    public void testAsyncEndpointOK() throws Exception {
+        getMockEndpoint("mock:tap").expectedBodiesReceived("Hi Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
         template.sendBody("activemq:queue:inbox", "Hello Camel");
 
         assertMockEndpointsSatisfied();
 
-        // we are synchronous due to TX so the we are using same threads during the routing
-        assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        // the tapped exchange is not transacted
+        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
     @Override
@@ -71,40 +68,29 @@ public class AsyncEndpointJmsTXRollback2Test extends CamelSpringTestSupport {
 
                 from("activemq:queue:inbox")
                     .transacted()
-                        .to("mock:before")
-                        .to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                assertTrue("Exchange should be transacted", exchange.isTransacted());
+                            }
+                        })
+                        .to("async:Bye Camel")
+                        .wireTap("direct:tap")
+                        .to("mock:result");
+
+                from("direct:tap")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 beforeThreadName = Thread.currentThread().getName();
-                                assertTrue("Exchange should be transacted", exchange.isTransacted());
+                                assertFalse("Exchange should NOT be transacted", exchange.isTransacted());
                             }
                         })
                         .to("async:Hi Camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();
-                                assertTrue("Exchange should be transacted", exchange.isTransacted());
                             }
                         })
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("direct:foo")
-                        .to("mock:result");
-
-                from("direct:foo")
-                    .transacted()
-                    .to("async:Bye Camel")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            invoked++;
-                            if (invoked < 2) {
-                                throw new IllegalArgumentException("Damn");
-                            }
-                            assertTrue("Exchange should be transacted", exchange.isTransacted());
-                        }
-                    });
-
-
+                        .to("mock:tap");
             }
         };
     }

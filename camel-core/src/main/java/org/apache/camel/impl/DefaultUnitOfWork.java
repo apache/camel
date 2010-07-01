@@ -202,6 +202,10 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         return tracedRouteNodes;
     }
 
+    public boolean isTransacted() {
+        return transactedBy != null && !transactedBy.isEmpty();
+    }
+
     public boolean isTransactedBy(Object transactionDefinition) {
         return getTransactedBy().contains(transactionDefinition);
     }
