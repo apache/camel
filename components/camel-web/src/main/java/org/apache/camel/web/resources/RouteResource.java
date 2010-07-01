@@ -376,4 +376,7 @@ public class RouteResource extends CamelChildResourceSupport {
         return error;
     }
 
+    public String getId() {
+        return id;
+    }
 }
