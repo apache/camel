@@ -64,17 +64,25 @@
 		<artifactId>pax-swissbox-tinybundles</artifactId>
 		<scope>test</scope>
 	</dependency>
-	<dependency>
-		<groupId>org.osgi</groupId>
-		<artifactId>org.osgi.compendium</artifactId>
-		<version>4.0.1</version>
-		<scope>compile</scope>
-		<optional>true</optional>
-	</dependency> 
+	 <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.configadmin</artifactId>
+        <scope>test</scope>
+    </dependency> 
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
       <version>4.0.1</version>
+      <scope>test</scope>      
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -120,6 +128,10 @@
                  <include>**/*Test.*</include>
               </includes>
               <excludes>
+                  <!-- CXF test will hang with the Spring3, need to check Cxf feature with karaf later -->
+                  <exclude>**/*Cxf*.*</exclude>
+                  <!-- Scala-lib is not OSGi ready, so we exculde this test -->
+                  <exclude>**/*Scala*.*</exclude>
                   <!--
                   <exclude>**/*Amqp*.*</exclude>
                   <exclude>**/*Bindy*.*</exclude>
@@ -129,6 +141,9 @@
                   <exclude>**/*Jaxb*.*</exclude>
                   -->
               </excludes>
+              <systemPropertyVariables>
+                  <springVersion>${spring-version}</springVersion>
+              </systemPropertyVariables>
           </configuration>
       </plugin>
 
@@ -162,7 +177,10 @@
                         <excludes>
                             <!-- TODO: temporary disable unit test to let TC not hang -->
                             <exclude>**/*Test.*</exclude>
-                        </excludes>               
+                        </excludes>
+                        <systemPropertyVariables>
+                            <springVersion>${spring-version}</springVersion>
+                        </systemPropertyVariables>               
                     </configuration>
                 </plugin>
             </plugins>

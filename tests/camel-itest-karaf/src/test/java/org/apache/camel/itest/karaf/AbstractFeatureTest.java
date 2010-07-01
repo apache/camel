@@ -26,14 +26,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.options.FrameworkOption;
+import org.ops4j.pax.exam.options.UrlReference;
 import org.osgi.framework.BundleContext;
 
 import static org.junit.Assert.assertNotNull;
-//import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-//import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.cleanCaches;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
@@ -130,22 +130,47 @@ public abstract class AbstractFeatureTest {
         }
         return sb.toString();
     }
-
+    
+    public static UrlReference getCamelKarafFeatureUrl() {
+        String springVersion = System.getProperty("springVersion");
+        System.out.println("*** The spring version is " + springVersion + " ***");
+        String type = "xml/features"; 
+        if (springVersion != null && springVersion.startsWith("3")) {
+            type = "xml/features-spring3";
+        }
+        return mavenBundle().groupId("org.apache.camel.karaf").
+            artifactId("apache-camel").versionAsInProject().type(type);
+    }
+    
+    public static FrameworkOption getFramework() {
+        return felix();
+    }
+    
     public static Option[] configure(String feature) {
+        return configure(feature, getFramework());
+    }
+
+    public static Option[] configure(String feature, FrameworkOption framework) {
         Option[] options = options(
             profile("log").version("1.4"),
             // this is how you set the default log level when using pax logging (logProfile)
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("DEBUG"),
 
-            scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
-                         artifactId("apache-camel").versionAsInProject().type("xml/features"),
+            //need to install some karaf features
+            mavenBundle("org.apache.felix", "org.apache.felix.configadmin").versionAsInProject(),
+            
+            mavenBundle("org.apache.servicemix.bundles", "org.apache.servicemix.bundles.jaxp-ri").version("1.4.2_4-SNAPSHOT"),
+            
+            scanFeatures(getCamelKarafFeatureUrl(),
                           "camel-spring", "camel-" + feature),
-            workingDirectory("target/paxrunner/"),              
+            workingDirectory("target/paxrunner/"),            
 
-            felix());
-            //equinox());
+            framework);
+            
 
         return options;
     }
+
+    
 
 }
