@@ -55,8 +55,6 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
     
   def as[Target](toType: Class[Target]) = wrap(target.convertBodyTo(toType))
 
-  def aop = SAOPDefinition(target.aop)
-  
   def attempt : STryDefinition = STryDefinition(target.doTry)
   
   def split(expression: Exchange => Any) = SSplitDefinition(target.split(expression))

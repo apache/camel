@@ -86,7 +86,6 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages {
   
   def when(filter: Exchange => Any) = stack.top.when(filter)
   def as[Target](toType: Class[Target]) = stack.top.as(toType)
-  def aop = stack.top.aop
 
   def recipients(expression: Exchange => Any) = stack.top.recipients(expression)
   def filter(predicate: Exchange => Any) = stack.top.filter(predicate)

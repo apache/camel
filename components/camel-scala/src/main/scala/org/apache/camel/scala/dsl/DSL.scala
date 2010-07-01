@@ -30,7 +30,6 @@ import org.apache.camel.spi.Policy
 trait DSL {
   
   def aggregate(expression: Exchange => Any, strategy: AggregationStrategy) : SAggregateDefinition
-  def aop : SAOPDefinition
   def as[Target](toType: Class[Target]) : DSL
   def attempt : STryDefinition
   def bean(bean: Any) : DSL
