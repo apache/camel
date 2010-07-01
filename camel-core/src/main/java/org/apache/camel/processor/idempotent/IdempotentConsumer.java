@@ -19,12 +19,16 @@ package org.apache.camel.processor.idempotent;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,21 +39,19 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public class IdempotentConsumer extends ServiceSupport implements Processor, Navigate<Processor> {
+public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor, Navigate<Processor> {
     private static final transient Log LOG = LogFactory.getLog(IdempotentConsumer.class);
     private final Expression messageIdExpression;
-    private final Processor processor;
+    private final AsyncProcessor processor;
     private final IdempotentRepository<String> idempotentRepository;
     private final boolean eager;
 
-    // TODO: should support async routing engine
-
-    public IdempotentConsumer(Expression messageIdExpression, 
-            IdempotentRepository<String> idempotentRepository, boolean eager, Processor processor) {
+    public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository<String> idempotentRepository,
+                              boolean eager, Processor processor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
         this.eager = eager;
-        this.processor = processor;
+        this.processor = AsyncProcessorTypeConverter.convert(processor);
     }
 
     @Override
@@ -58,6 +60,10 @@ public class IdempotentConsumer extends ServiceSupport implements Processor, Nav
     }
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         final String messageId = messageIdExpression.evaluate(exchange, String.class);
         if (messageId == null) {
             throw new NoMessageIdException(exchange, messageIdExpression);
@@ -75,14 +81,15 @@ public class IdempotentConsumer extends ServiceSupport implements Processor, Nav
         if (!newKey) {
             // we already have this key so its a duplicate message
             onDuplicateMessage(exchange, messageId);
-            return;
+            callback.done(true);
+            return true;
         }
 
         // register our on completion callback
         exchange.addOnCompletion(new IdempotentOnCompletion(idempotentRepository, messageId, eager));
 
         // process the exchange
-        processor.process(exchange);
+        return processor.process(exchange, callback);
     }
 
     public List<Processor> next() {
