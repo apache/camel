@@ -30,7 +30,7 @@ public class RetryRouteScopedUntilRecipientListParallelIssueTest extends RetryRo
             public void configure() throws Exception {
 
                 from("seda:start")
-                    .onException(Exception.class).retryUntil(bean("myRetryBean")).end()
+                    .onException(Exception.class).retryWhile(bean("myRetryBean")).end()
                     .recipientList(header("recipientListHeader")).parallelProcessing()
                     .to("mock:result");
 

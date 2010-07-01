@@ -258,7 +258,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
             @Override
             public void configure() throws Exception {
                 from("seda:start")
-                    .onException(Exception.class).retryUntil(bean("myRetryBean")).end()
+                    .onException(Exception.class).retryWhile(bean("myRetryBean")).end()
                     .recipientList(header("recipientListHeader"))
                     .to("mock:result");
 
@@ -270,7 +270,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     public class MyRetryBean {
 
         // using bean binding we can bind the information from the exchange to the types we have in our method signature
-        public boolean retryUntil(@Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
+        public boolean retry(@Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
             // NOTE: counter is the redelivery attempt, will start from 1
             invoked.incrementAndGet();
 

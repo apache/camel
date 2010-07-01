@@ -95,7 +95,7 @@ class SOnExceptionRetryUntilWithDefaultErrorHandlerTest extends ScalaTestSupport
 
     handle[MyFunctionalException] {
       transform("Sorry")
-    }.retryUntil(threeTimes).handled
+    }.retryWhile(threeTimes).handled
 
     "direct:start" throwException(new MyFunctionalException("Sorry, you cannot do this"))
   }

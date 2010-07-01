@@ -132,13 +132,13 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      *
      * @param exchange  the current exchange
      * @param redeliveryCounter  the current retry counter
-     * @param retryUntil  an optional predicate to determine if we should redeliver or not
+     * @param retryWhile  an optional predicate to determine if we should redeliver or not
      * @return true to redeliver, false to stop
      */
-    public boolean shouldRedeliver(Exchange exchange, int redeliveryCounter, Predicate retryUntil) {
+    public boolean shouldRedeliver(Exchange exchange, int redeliveryCounter, Predicate retryWhile) {
         // predicate is always used if provided
-        if (retryUntil != null) {
-            return retryUntil.matches(exchange);
+        if (retryWhile != null) {
+            return retryWhile.matches(exchange);
         }
 
         if (getMaximumRedeliveries() < 0) {

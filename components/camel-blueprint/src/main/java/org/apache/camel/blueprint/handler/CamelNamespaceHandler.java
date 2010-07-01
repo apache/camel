@@ -295,7 +295,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                     findLanguage(((CatchDefinition) def).getHandled(), languages);
                 }
                 if (def instanceof OnExceptionDefinition) {
-                    findLanguage(((OnExceptionDefinition) def).getRetryUntil(), languages);
+                    findLanguage(((OnExceptionDefinition) def).getRetryWhile(), languages);
                     findLanguage(((OnExceptionDefinition) def).getHandled(), languages);
                     findLanguage(((OnExceptionDefinition) def).getContinued(), languages);
                 }

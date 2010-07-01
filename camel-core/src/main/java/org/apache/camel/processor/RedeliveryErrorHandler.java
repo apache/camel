@@ -67,7 +67,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         boolean sync = true;
         int redeliveryCounter;
         long redeliveryDelay;
-        Predicate retryUntilPredicate;
+        Predicate retryWhilePredicate;
 
         // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
@@ -416,7 +416,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
             data.handledPredicate = exceptionPolicy.getHandledPolicy();
             data.continuedPredicate = exceptionPolicy.getContinuedPolicy();
-            data.retryUntilPredicate = exceptionPolicy.getRetryUntilPolicy();
+            data.retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
             data.useOriginalInMessage = exceptionPolicy.getUseOriginalMessagePolicy();
 
             // route specific failure handler?
@@ -670,7 +670,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
             return false;
         }
-        return data.currentRedeliveryPolicy.shouldRedeliver(exchange, data.redeliveryCounter, data.retryUntilPredicate);
+        return data.currentRedeliveryPolicy.shouldRedeliver(exchange, data.redeliveryCounter, data.retryWhilePredicate);
     }
 
     /**

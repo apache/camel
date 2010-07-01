@@ -31,15 +31,18 @@ case class SOnExceptionDefinition(override val target: OnExceptionDefinition)(im
   def handled = wrap(target.handled(true))
   def handled(predicate: Exchange => Any) = wrap(target.handled(predicateBuilder(predicate)))
 
+  def continued = wrap(target.continued(true))
+  def continued(predicate: Exchange => Any) = wrap(target.continued(predicateBuilder(predicate)))
+
   def maximumRedeliveries(count: Int) = wrap(target.maximumRedeliveries(count))
 
   def onRedelivery(processor: Exchange => Unit) = wrap(target.onRedelivery(new ScalaProcessor(processor)))
 
   def onWhen(when: Exchange => Any) = wrap(target.onWhen(predicateBuilder(when)))
 
-  def retryUntil(until: Exchange => Any) = wrap(target.retryUntil(predicateBuilder(until)))
+  def retryWhile(retryWhile: Exchange => Any) = wrap(target.retryWhile(predicateBuilder(retryWhile)))
 
-  def useOriginalMessage = wrap(target.useOriginalBody)
+  def useOriginalMessage = wrap(target.useOriginalMessage)
 
   override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SOnExceptionDefinition]
   

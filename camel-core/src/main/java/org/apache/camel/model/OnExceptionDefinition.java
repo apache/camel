@@ -59,8 +59,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     private List<String> exceptions = new ArrayList<String>();
     @XmlElement(name = "onWhen", required = false)
     private WhenDefinition onWhen;
-    @XmlElement(name = "retryUntil", required = false)
-    private ExpressionSubElementDefinition retryUntil;
+    @XmlElement(name = "retryWhile", required = false)
+    private ExpressionSubElementDefinition retryWhile;
     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyDefinition redeliveryPolicy;
     @XmlElement(name = "handled", required = false)
@@ -82,7 +82,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @XmlTransient
     private Predicate continuedPolicy;
     @XmlTransient
-    private Predicate retryUntilPolicy;
+    private Predicate retryWhilePolicy;
     @XmlTransient
     private Processor onRedelivery;
 
@@ -136,7 +136,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         setHandledFromExpressionType(routeContext);
         setContinuedFromExpressionType(routeContext);
-        setRetryUntilFromExpressionType(routeContext);
+        setRetryWhileFromExpressionType(routeContext);
 
         // only one of handled or continued is allowed
         if (getHandledPolicy() != null && getContinuedPolicy() != null) {
@@ -285,24 +285,28 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
-     * Sets the retry until predicate.
+     * Sets the retry while predicate.
+     * <p/>
+     * Will continue retrying until predicate returns <tt>false</tt>.
      *
-     * @param until predicate that determines when to stop retrying
+     * @param retryWhile predicate that determines when to stop retrying
      * @return the builder
      */
-    public OnExceptionDefinition retryUntil(Predicate until) {
-        setRetryUntilPolicy(until);
+    public OnExceptionDefinition retryWhile(Predicate retryWhile) {
+        setRetryWhilePolicy(retryWhile);
         return this;
     }
 
     /**
-     * Sets the retry until expression.
+     * Sets the retry while expression.
+     * <p/>
+     * Will continue retrying until expression evaluates to <tt>false</tt>.
      *
-     * @param until expression that determines when to stop retrying
+     * @param retryWhile expression that determines when to stop retrying
      * @return the builder
      */
-    public OnExceptionDefinition retryUntil(Expression until) {
-        setRetryUntilPolicy(toPredicate(until));
+    public OnExceptionDefinition retryWhile(Expression retryWhile) {
+        setRetryWhilePolicy(toPredicate(retryWhile));
         return this;
     }
 
@@ -636,20 +640,20 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         this.onWhen = onWhen;
     }
 
-    public ExpressionSubElementDefinition getRetryUntil() {
-        return retryUntil;
+    public ExpressionSubElementDefinition getRetryWhile() {
+        return retryWhile;
     }
 
-    public void setRetryUntil(ExpressionSubElementDefinition retryUntil) {
-        this.retryUntil = retryUntil;
+    public void setRetryWhile(ExpressionSubElementDefinition retryWhile) {
+        this.retryWhile = retryWhile;
     }
 
-    public Predicate getRetryUntilPolicy() {
-        return retryUntilPolicy;
+    public Predicate getRetryWhilePolicy() {
+        return retryWhilePolicy;
     }
 
-    public void setRetryUntilPolicy(Predicate retryUntilPolicy) {
-        this.retryUntilPolicy = retryUntilPolicy;
+    public void setRetryWhilePolicy(Predicate retryWhilePolicy) {
+        this.retryWhilePolicy = retryWhilePolicy;
     }
 
     public Processor getOnRedelivery() {
@@ -708,9 +712,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         }
     }
 
-    private void setRetryUntilFromExpressionType(RouteContext routeContext) {
-        if (getRetryUntil() != null && retryUntilPolicy == null && routeContext != null) {
-            retryUntil(getRetryUntil().createPredicate(routeContext));
+    private void setRetryWhileFromExpressionType(RouteContext routeContext) {
+        if (getRetryWhile() != null && retryWhilePolicy == null && routeContext != null) {
+            retryWhile(getRetryWhile().createPredicate(routeContext));
         }
     }
 }

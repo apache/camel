@@ -47,7 +47,7 @@ public class OnExceptionRetryUntilWithDefaultErrorHandlerTest extends ContextTes
                 errorHandler(defaultErrorHandler().maximumRedeliveries(1).logStackTrace(false));
 
                 onException(MyFunctionalException.class)
-                        .retryUntil(bean("myRetryHandler"))
+                        .retryWhile(bean("myRetryHandler"))
                         .handled(true)
                         .transform().constant("Sorry").stop();
 
@@ -67,7 +67,7 @@ public class OnExceptionRetryUntilWithDefaultErrorHandlerTest extends ContextTes
     public class MyRetryBean {
 
         // using bean binding we can bind the information from the exchange to the types we have in our method signature
-        public boolean retryUntil(@Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
+        public boolean retry(@Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
             // NOTE: counter is the redelivery attempt, will start from 1
             invoked++;
 
