@@ -152,6 +152,14 @@ public class BeanDefinition extends OutputDefinition<ProcessorDefinition> {
                 ObjectHelper.notNull(beanType, "bean, ref or beanType", this);
                 bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), beanType);
             }
+            ObjectHelper.notNull(bean, "bean", this);
+
+            // validate the bean type is not from java so you by mistake think its a reference
+            // to a bean name but the String is being invoke instead
+            if (bean instanceof String) {
+                throw new IllegalArgumentException("The bean instance is a java.lang.String type: " + bean
+                    + ". We suppose you want to refer to a bean instance by its id instead. Please use beanRef.");
+            }
             answer = new BeanProcessor(bean, routeContext.getCamelContext());
         }
         if (method != null) {
