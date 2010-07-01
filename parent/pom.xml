@@ -103,7 +103,7 @@
     <quartz-version>1.8.3</quartz-version>
     <restlet-version>1.1.9</restlet-version>
     <saxon-version>9.1.0.8</saxon-version>
-    <scala-version>2.8.0.RC6</scala-version>
+    <scala-version>2.8.0.RC7</scala-version>
     <scala-plugin-version>2.9.1</scala-plugin-version>
     <slf4j-version>1.5.10</slf4j-version>
     <smack-version>3.1.0</smack-version>
