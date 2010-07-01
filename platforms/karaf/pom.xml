@@ -58,7 +58,7 @@
       <repository>
         <id>servicemix</id>
         <name>ServiceMix OSGi bundle Repository</name>
-	<url>http://repo2.maven.org/maven2</url>
+        <url>http://repo2.maven.org/maven2</url>
         <releases>
            <enabled>true</enabled>
         </releases>
@@ -70,7 +70,7 @@
       <repository>
         <id>servicemix.snapshot</id>
         <name>ServiceMix OSGi bundle snapshot Repository</name>
-	<url>http://repository.apache.org/content/groups/snapshots-group</url>
+        <url>http://repository.apache.org/content/groups/snapshots-group</url>
         <releases>
            <enabled>false</enabled>
         </releases>
@@ -94,7 +94,7 @@
       <repository>
         <id>jboss</id>
           <name>Jboss Repository</name>
-	  <url>http://repository.jboss.org/maven2</url>
+          <url>http://repository.jboss.org/nexus/content/groups/public/</url>
           <releases>
             <enabled>true</enabled>
           </releases>
