@@ -105,7 +105,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
      */
     public Object getUriOrRef() {
         String uri = getUri();
-        if (ObjectHelper.isEmpty(uri)) {
+        if (ObjectHelper.isNotEmpty(uri)) {
             return uri;
         } else if (endpoint != null) {
             return endpoint.getEndpointUri();

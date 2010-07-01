@@ -67,7 +67,10 @@ public class GraphSupport {
             ToDefinition toType = (ToDefinition) node;
             key = toType.getUriOrRef();
         }
-        NodeData answer = nodeMap.get(key);
+        NodeData answer = null;
+        if (key != null) {
+            answer = nodeMap.get(key);
+        }
         if (answer == null) {
             String id = "node" + (nodeMap.size() + 1);
             answer = new NodeData(id, node, imagePrefix);

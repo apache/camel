@@ -119,7 +119,7 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
      * Returns the endpoint URI or the name of the reference to it
      */
     public Object getUriOrRef() {
-        if (ObjectHelper.isEmpty(uri)) {
+        if (ObjectHelper.isNotEmpty(uri)) {
             return uri;
         } else if (endpoint != null) {
             return endpoint.getEndpointUri();
