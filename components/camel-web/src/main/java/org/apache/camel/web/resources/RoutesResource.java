@@ -111,7 +111,7 @@ public class RoutesResource extends CamelChildResourceSupport {
     /**
      * Looks up an individual route with specified language
      */
-    @Path("{id}/{language}")
+    @Path("{id}/lang/{language}")
     public RouteResource getRoute(@PathParam("id") String id, @PathParam("language") String language) {
         RouteResource routeResource = getRoute(id);
         if (routeResource != null) {

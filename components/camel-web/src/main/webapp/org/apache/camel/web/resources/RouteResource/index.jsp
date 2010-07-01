@@ -18,8 +18,8 @@
 </div>
 
 <ul>
-<li><a href='<c:url value="/routes/${it.route.id}/xml/edit"/>'>Edit Route in Xml</a>
-<li><a href='<c:url value="/routes/${it.route.id}/groovy/edit"/>'>Edit Route in Groovy</a>
+<li><a href='<c:url value="/routes/${it.route.id}/lang/xml/edit"/>'>Edit Route in Xml</a>
+<li><a href='<c:url value="/routes/${it.route.id}/lang/groovy/edit"/>'>Edit Route in Groovy</a>
 <li>Edit Route in Ruby
 <li>Edit Route in Scala 
 </ul>
