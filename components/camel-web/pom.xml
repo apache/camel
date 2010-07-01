@@ -156,6 +156,12 @@
 			<version>${jetty-version}</version>
 			<scope>test</scope>
 		</dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-jsp-2.1</artifactId>
+      <version>${jetty-version}</version>
+      <scope>test</scope>
+    </dependency>
 		<dependency>
 			<groupId>org.mortbay.jetty</groupId>
 			<artifactId>jsp-2.1-glassfish</artifactId>
@@ -269,7 +275,24 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.1.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <classpathScope>test</classpathScope>
+          <mainClass>org.apache.camel.web.Main</mainClass>
+        </configuration>
+      </plugin>
+
+      <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<executions>
