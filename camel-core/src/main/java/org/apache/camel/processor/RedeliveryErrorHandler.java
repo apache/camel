@@ -799,13 +799,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     @Override
     protected void doStart() throws Exception {
         ServiceHelper.startServices(output, outputAsync, deadLetter);
-        // use pool size from default profile
-        int poolSize = camelContext.getExecutorServiceStrategy().getDefaultThreadPoolProfile().getPoolSize();
-        // use a shared scheduler 
+        // use a shared scheduler
         if (executorService == null || executorService.isShutdown()) {
             // camel context will shutdown the executor when it shutdown so no need to shut it down when stopping
-            executorService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this,
-                    "RedeliveryErrorHandler-RedeliveryTask", poolSize);
+            executorService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "ErrorHandlerRedeliveryTask");
         }
     }
 
