@@ -16,11 +16,18 @@
  */
 package org.apache.camel.core.osgi;
 
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
+import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
+import org.apache.camel.spi.PackageScanFilter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -36,8 +43,55 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
     }
 
     public Set<ClassLoader> getClassLoaders() {
+        // now we just use bundle classloader to load the class
         return Collections.<ClassLoader>singleton(new BundleDelegatingClassLoader(bundle));
     }
     
+    public void find(PackageScanFilter test, String packageName, Set<Class<?>> classes) {
+        packageName = packageName.replace('.', '/');
+        loadImplementationsInBundle(test, packageName, classes);
+    }
+    
+    private void loadImplementationsInBundle(PackageScanFilter test, String packageName, Set<Class<?>> classes) {       
+        Set<String> urls = getImplementationsInBundle(test, packageName);
+        if (urls != null) {
+            for (String url : urls) {
+                // substring to avoid leading slashes
+                addIfMatching(test, url, classes);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<String> getImplementationsInBundle(PackageScanFilter test, String packageName) {
+        try {
+            Bundle[] bundles;
+            if (bundle.getBundleContext()!= null) {
+                bundles = bundle.getBundleContext().getBundles();
+            } else {
+                bundles = new Bundle[]{bundle};
+            }
+            Set<String> urls = new HashSet<String>();
+            for (Bundle bd : bundles) {            
+                if (log.isTraceEnabled()) {
+                    log.trace("Searching in bundle:" + bd);
+                }            
+                Enumeration<URL> paths = bd.findEntries("/" + packageName, "*.class", true);
+                while (paths != null && paths.hasMoreElements()) {
+                    URL path = paths.nextElement();                
+                    String pathString = path.getPath();
+                    String urlString = pathString.substring(pathString.indexOf(packageName));
+                    urls.add(urlString);
+                    if (log.isTraceEnabled()) {
+                        log.trace("Added url: " + urlString);
+                    }
+                }
+            }
+            return urls;
+        } catch (Throwable t) {
+            log.error("Could not search osgi bundles for classes matching criteria: " + test + "due to an Exception: " + t.getMessage());
+            return null;
+        }
+    }
 
 }

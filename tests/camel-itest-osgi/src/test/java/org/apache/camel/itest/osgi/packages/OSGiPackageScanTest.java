@@ -1,0 +1,43 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.itest.osgi.packages;
+
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+@RunWith(JUnit4TestRunner.class)
+public class OSGiPackageScanTest extends OSGiIntegrationSpringTestSupport {
+    @Test
+    public void testSendMessage() throws Exception {
+        MockEndpoint mock =  getMandatoryEndpoint("mock:result", MockEndpoint.class);
+        assertNotNull("The mock endpoint should not be null", mock);
+        
+        mock.expectedBodiesReceived("Hello World");
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();        
+    }
+    
+    @Override
+    protected OsgiBundleXmlApplicationContext createApplicationContext() {
+        return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/packages/CamelContext.xml"});
+    }
+
+}

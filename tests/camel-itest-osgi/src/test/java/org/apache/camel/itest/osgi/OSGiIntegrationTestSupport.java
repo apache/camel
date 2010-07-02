@@ -86,8 +86,9 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
                           "camel-core", "camel-spring", "camel-test"),
             
             workingDirectory("target/paxrunner/"),
-
-            felix(), equinox());
+             
+            equinox(),
+            felix());
         
         return options;
     }
