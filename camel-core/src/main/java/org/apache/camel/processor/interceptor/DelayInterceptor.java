@@ -40,10 +40,11 @@ public class DelayInterceptor extends DelayProcessorSupport {
         return "DelayInterceptor[delay: " + delayer.getDelay() + " on: " + node + "]";
     }
 
-    public void delay(Exchange exchange) throws Exception {
+    public long calculateDelay(Exchange exchange) {
         if (delayer.isEnabled()) {
-            long time = currentSystemTime() + delayer.getDelay();
-            waitUntil(time, exchange);
+            return delayer.getDelay();
+        } else {
+            return 0;
         }
     }
 }

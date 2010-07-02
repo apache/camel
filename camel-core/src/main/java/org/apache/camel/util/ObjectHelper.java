@@ -1256,7 +1256,7 @@ public final class ObjectHelper {
         return "0x" + Integer.toHexString(System.identityHashCode(object));
     }
 
-    private static class ExceptionIterator implements Iterator<Throwable> {
+    private static final class ExceptionIterator implements Iterator<Throwable> {
         private List<Throwable> tree = new ArrayList<Throwable>();
         private Iterator<Throwable> it;
 

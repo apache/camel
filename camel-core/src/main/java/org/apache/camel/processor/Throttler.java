@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
@@ -33,14 +35,14 @@ import org.apache.camel.Processor;
 public class Throttler extends DelayProcessorSupport implements Traceable {
     private long maximumRequestsPerPeriod;
     private long timePeriodMillis;
-    private TimeSlot slot;
+    private volatile TimeSlot slot;
 
     public Throttler(Processor processor, long maximumRequestsPerPeriod) {
-        this(processor, maximumRequestsPerPeriod, 1000);
+        this(processor, maximumRequestsPerPeriod, 1000, null);
     }
 
-    public Throttler(Processor processor, long maximumRequestsPerPeriod, long timePeriodMillis) {
-        super(processor);
+    public Throttler(Processor processor, long maximumRequestsPerPeriod, long timePeriodMillis, ScheduledExecutorService executorService) {
+        super(processor, executorService);
         this.maximumRequestsPerPeriod = maximumRequestsPerPeriod;
         this.timePeriodMillis = timePeriodMillis;
     }
@@ -81,10 +83,14 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
 
     // Implementation methods
     // -----------------------------------------------------------------------
-    protected void delay(Exchange exchange) throws Exception {
+
+    protected long calculateDelay(Exchange exchange) {
         TimeSlot slot = nextSlot();
         if (!slot.isActive()) {
-            waitUntil(slot.startTime, exchange);
+            long delay = slot.startTime - currentSystemTime();
+            return delay;
+        } else {
+            return 0;
         }
     }
     
@@ -107,7 +113,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     */
     protected class TimeSlot {
         
-        private long capacity = Throttler.this.maximumRequestsPerPeriod;
+        private volatile long capacity = Throttler.this.maximumRequestsPerPeriod;
         private final long duration = Throttler.this.timePeriodMillis;
         private final long startTime;
 

@@ -112,6 +112,17 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
     ExecutorService lookup(Object source, String name, String executorServiceRef);
 
     /**
+     * Lookup a {@link java.util.concurrent.ScheduledExecutorService} from the {@link org.apache.camel.spi.Registry}
+     * and from known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.
+     *
+     * @param source               the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name                 name which is appended to the thread name
+     * @param executorServiceRef   reference to lookup
+     * @return the {@link java.util.concurrent.ScheduledExecutorService} or <tt>null</tt> if not found
+     */
+    ScheduledExecutorService lookupScheduled(Object source, String name, String executorServiceRef);
+
+    /**
      * Creates a new thread pool using the default thread pool profile.
      *
      * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
@@ -141,6 +152,8 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
 
     /**
      * Creates a new scheduled thread pool.
+     * <p/>
+     * Will use the pool size from the default thread pool profile
      *
      * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name        name which is appended to the thread name
@@ -148,6 +161,15 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
      * @return the created thread pool
      */
     ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize);
+
+    /**
+     * Creates a new scheduled thread pool.
+     *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
+     * @return the created thread pool
+     */
+    ScheduledExecutorService newScheduledThreadPool(Object source, String name);
 
     /**
      * Creates a new fixed thread pool.

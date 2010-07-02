@@ -77,6 +77,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
         ProcessCall call = new ProcessCall(exchange, callback);
         try {
             executorService.submit(call);
+            // tell Camel routing engine we continue routing asynchronous
             return false;
         } catch (RejectedExecutionException e) {
             if (isCallerRunsWhenRejected()) {

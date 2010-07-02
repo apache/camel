@@ -22,12 +22,11 @@ import java.util.concurrent.Executors;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.Throttler.TimeSlot;
 
 /**
  * @version $Revision$
  */
-public class ThrottlerTest extends ContextTestSupport {
+public class ThrottlerAsyncDelayedTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
     protected int messageCount = 9;
 
@@ -44,7 +43,7 @@ public class ThrottlerTest extends ContextTestSupport {
         // to check that the throttle really does kick in
         resultEndpoint.assertIsSatisfied();
     }
-    
+
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
         long start = System.currentTimeMillis();
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -55,41 +54,26 @@ public class ThrottlerTest extends ContextTestSupport {
             executor.execute(new Runnable() {
                 public void run() {
                     template.sendBody("direct:a", "<message>payload</message>");
-                }                
+                }
             });
         }
-        
+
         // let's wait for the exchanges to arrive
         resultEndpoint.assertIsSatisfied();
-        
+
         // now assert that they have actually been throttled
         long minimumTime = (messageCount - 1) * INTERVAL;
         assertTrue("Should take at least " + minimumTime + "ms", System.currentTimeMillis() - start >= minimumTime);
-    }
-    
-    public void testTimeSlotCalculus() throws Exception {
-        Throttler throttler = new Throttler(null, 2, 1000, null);
-        TimeSlot slot = throttler.nextSlot();
-        // start a new time slot
-        assertNotNull(slot);
-        // make sure the same slot is used (2 exchanges per slot)
-        assertSame(slot, throttler.nextSlot());
-        assertTrue(slot.isFull());
-        
-        TimeSlot next = throttler.nextSlot();
-        // now we should have a new slot that starts somewhere in the future
-        assertNotSame(slot, next);
-        assertFalse(next.isActive());
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
-                from("seda:a").throttle(3).timePeriodMillis(10000).to("log:result", "mock:result");
+                from("seda:a").throttle(3).timePeriodMillis(10000).asyncDelayed().to("log:result", "mock:result");
                 // END SNIPPET: ex
-                
-                from("direct:a").throttle(1).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
+
+                from("direct:a").throttle(1).timePeriodMillis(INTERVAL).asyncDelayed().to("log:result", "mock:result");
             }
         };
     }

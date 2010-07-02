@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -33,8 +35,8 @@ public class Delayer extends DelayProcessorSupport implements Traceable {
     private Expression delay;
     private long delayValue;
 
-    public Delayer(Processor processor, Expression delay) {
-        super(processor);
+    public Delayer(Processor processor, Expression delay, ScheduledExecutorService executorService) {
+        super(processor, executorService);
         this.delay = delay;
     }
 
@@ -62,11 +64,7 @@ public class Delayer extends DelayProcessorSupport implements Traceable {
     // Implementation methods
     // -------------------------------------------------------------------------
 
-    /**
-     * Waits for an optional time period before continuing to process the
-     * exchange
-     */
-    protected void delay(Exchange exchange) throws Exception {
+    protected long calculateDelay(Exchange exchange) {
         long time = 0;
         if (delay != null) {
             Long longValue = delay.evaluate(exchange, Long.class);
@@ -79,21 +77,10 @@ public class Delayer extends DelayProcessorSupport implements Traceable {
         }
         if (time <= 0) {
             // no delay
-            return;
+            return 0;
         }
 
-        // now add the current time
-        time += defaultProcessTime(exchange);
-
-        waitUntil(time, exchange);
-    }
-
-    /**
-     * A Strategy Method to allow derived implementations to decide the current
-     * system time or some other default exchange property
-     */
-    protected long defaultProcessTime(Exchange exchange) {
-        return currentSystemTime();
+        return time;
     }
 
 }

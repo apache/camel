@@ -155,6 +155,29 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         return answer;
     }
 
+    public ScheduledExecutorService lookupScheduled(Object source, String name, String executorServiceRef) {
+        ScheduledExecutorService answer = camelContext.getRegistry().lookup(executorServiceRef, ScheduledExecutorService.class);
+        if (answer != null && LOG.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Looking up ScheduledExecutorService with ref: " + executorServiceRef + " and found it from Registry: " + answer);
+            }
+        }
+
+        if (answer == null) {
+            ThreadPoolProfile profile = getThreadPoolProfile(name);
+            if (profile != null) {
+                int poolSize = profile.getPoolSize();
+                answer = newScheduledThreadPool(source, name, poolSize);
+                if (answer != null && LOG.isDebugEnabled()) {
+                    LOG.debug("Looking up ScheduledExecutorService with ref: " + executorServiceRef
+                            + " and found a matching ThreadPoolProfile to create the ScheduledExecutorService: " + answer);
+                }
+            }
+        }
+
+        return answer;
+    }
+
     public ExecutorService newDefaultThreadPool(Object source, String name) {
         ThreadPoolProfile profile = getDefaultThreadPoolProfile();
         ObjectHelper.notNull(profile, "DefaultThreadPoolProfile");
@@ -192,6 +215,11 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
             LOG.debug("Created new cached thread pool for source: " + source + " with name: " + name + ". -> " + answer);
         }
         return answer;
+    }
+
+    public ScheduledExecutorService newScheduledThreadPool(Object source, String name) {
+        int poolSize = getDefaultThreadPoolProfile().getPoolSize();
+        return newScheduledThreadPool(source, name, poolSize);
     }
 
     public ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize) {
