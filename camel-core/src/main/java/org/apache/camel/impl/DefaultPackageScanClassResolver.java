@@ -55,7 +55,12 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
     private Set<PackageScanFilter> scanFilters;
 
     public void addClassLoader(ClassLoader classLoader) {
-        getClassLoaders().add(classLoader);
+        try {
+            getClassLoaders().add(classLoader);
+        } catch (UnsupportedOperationException ex) {
+            // Ignore this exception as the PackageScanClassResolver 
+            // don't want use any other classloader
+        }
     }
 
     public void addFilter(PackageScanFilter filter) {
