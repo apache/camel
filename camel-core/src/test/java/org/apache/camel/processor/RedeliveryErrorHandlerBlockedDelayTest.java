@@ -52,9 +52,9 @@ public class RedeliveryErrorHandlerBlockedDelayTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // do block redelivery attempts
+                // will by default block
                 errorHandler(defaultErrorHandler()
-                    .maximumRedeliveries(5).redeliveryDelay(2000).syncDelayedRedelivery());
+                    .maximumRedeliveries(5).redeliveryDelay(2000));
 
                 from("seda:start")
                     .to("log:before")

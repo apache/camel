@@ -78,6 +78,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Predicate handledPredicate = handledPolicy;
         Predicate continuedPredicate;
         boolean useOriginalInMessage = useOriginalMessagePolicy;
+        boolean asyncDelayedRedelivery = redeliveryPolicy.isAsyncDelayedRedelivery();
     }
 
     /**
@@ -477,6 +478,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             data.continuedPredicate = exceptionPolicy.getContinuedPolicy();
             data.retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
             data.useOriginalInMessage = exceptionPolicy.getUseOriginalMessagePolicy();
+            data.asyncDelayedRedelivery = exceptionPolicy.isAsyncDelayedRedelivery();
 
             // route specific failure handler?
             Processor processor = exceptionPolicy.getErrorHandler();

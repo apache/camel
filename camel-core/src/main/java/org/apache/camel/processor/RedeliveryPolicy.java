@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  *   <li>maximumRedeliveries = 0</li>
  *   <li>redeliveryDelay = 1000L (the initial delay)</li>
  *   <li>maximumRedeliveryDelay = 60 * 1000L</li>
- *   <li>asyncDelayedRedelivery = true</li>
+ *   <li>asyncDelayedRedelivery = false</li>
  *   <li>backOffMultiplier = 2</li>
  *   <li>useExponentialBackOff = false</li>
  *   <li>collisionAvoidanceFactor = 0.15d</li>
@@ -95,7 +95,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean logExhausted = true;
     protected boolean logRetryAttempted = true;
     protected String delayPattern;
-    protected boolean asyncDelayedRedelivery = true;
+    protected boolean asyncDelayedRedelivery;
 
     public RedeliveryPolicy() {
     }
@@ -395,12 +395,12 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Only allow synchronous delayed redelivery.
+     * Allow asynchronous delayed redelivery.
      *
      * @see #setAsyncDelayedRedelivery(boolean)
      */
-    public RedeliveryPolicy syncDelayedRedelivery() {
-        setAsyncDelayedRedelivery(false);
+    public RedeliveryPolicy asyncDelayedRedelivery() {
+        setAsyncDelayedRedelivery(true);
         return this;
     }
 
@@ -628,9 +628,10 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     /**
      * Sets whether asynchronous delayed redelivery is allowed.
      * <p/>
-     * This is enabled by default, which allows Camel to schedule a future task for delayed
-     * redelivery which prevents current thread from blocking while waiting. You can use
-     * this option to turn it off to ensure current thread will block.
+     * This is disabled by default.
+     * <p/>
+     * When enabled it allows Camel to schedule a future task for delayed
+     * redelivery which prevents current thread from blocking while waiting.
      * <p/>
      * Exchange which is transacted will however always use synchronous delayed redelivery
      * because the transaction must execute in the same thread context.

@@ -35,7 +35,7 @@
     </camel:errorHandler>
 
     <camel:errorHandler id="deadLetterErrorHandler" type="DeadLetterChannel" deadLetterUri="log:dead">
-        <camel:redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="1000" logHandled="true"/>
+        <camel:redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="1000" logHandled="true" asyncDelayedRedelivery="true"/>
     </camel:errorHandler>
 
     <bean id="myErrorProcessor" class="org.apache.camel.spring.handler.MyErrorProcessor"/>

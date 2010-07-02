@@ -41,7 +41,7 @@ public class RedeliveryPolicyDefinition {
     @XmlAttribute
     private Long redeliveryDelay;
     @XmlAttribute
-    private Boolean syncDelayedRedelivery;
+    private Boolean asyncDelayedRedelivery;
     @XmlAttribute
     private Double backOffMultiplier;
     @XmlAttribute
@@ -93,8 +93,8 @@ public class RedeliveryPolicyDefinition {
         if (redeliveryDelay != null) {
             answer.setRedeliveryDelay(redeliveryDelay);
         }
-        if (syncDelayedRedelivery != null && syncDelayedRedelivery) {
-            answer.syncDelayedRedelivery();
+        if (asyncDelayedRedelivery != null && asyncDelayedRedelivery) {
+            answer.asyncDelayedRedelivery();
         }
         if (retriesExhaustedLogLevel != null) {
             answer.setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
@@ -385,12 +385,12 @@ public class RedeliveryPolicyDefinition {
         this.redeliveryDelay = delay;
     }
 
-    public Boolean getSyncDelayedRedelivery() {
-        return syncDelayedRedelivery;
+    public Boolean getAsyncDelayedRedelivery() {
+        return asyncDelayedRedelivery;
     }
 
-    public void setSyncDelayedRedelivery(Boolean syncDelayedRedelivery) {
-        this.syncDelayedRedelivery = syncDelayedRedelivery;
+    public void setAsyncDelayedRedelivery(Boolean asyncDelayedRedelivery) {
+        this.asyncDelayedRedelivery = asyncDelayedRedelivery;
     }
 
     public Integer getMaximumRedeliveries() {

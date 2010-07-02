@@ -52,7 +52,8 @@ public class RedeliveryErrorHandlerNonBlockedDelayTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(2000));
+                // use async delayed which means non blocking
+                errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(2000).asyncDelayedRedelivery());
 
                 from("seda:start")
                     .to("log:before")

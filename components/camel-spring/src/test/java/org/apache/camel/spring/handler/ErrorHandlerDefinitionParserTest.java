@@ -80,6 +80,7 @@ public class ErrorHandlerDefinitionParserTest extends TestCase {
         assertEquals("Wrong maximumRedeliveries", 2, policy.getMaximumRedeliveries());
         assertEquals("Wrong redeliveryDelay", 1000, policy.getRedeliveryDelay());
         assertEquals("Wrong logStackTrace", true, policy.isLogHandled());
+        assertEquals("Wrong asyncRedeliveryDelayed", true, policy.isAsyncDelayedRedelivery());
     }
     
     public void testErrorHandlerInsideCamelContext() {

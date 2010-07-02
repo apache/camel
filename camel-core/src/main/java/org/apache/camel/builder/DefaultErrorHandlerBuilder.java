@@ -47,6 +47,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     protected Endpoint deadLetter;
     protected String deadLetterUri;
     protected boolean useOriginalMessage;
+    protected boolean asyncDelayedRedelivery;
 
     public DefaultErrorHandlerBuilder() {
     }
@@ -84,11 +85,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public DefaultErrorHandlerBuilder redeliveryDelay(long delay) {
         getRedeliveryPolicy().redeliveryDelay(delay);
-        return this;
-    }
-
-    public DefaultErrorHandlerBuilder syncDelayedRedelivery() {
-        getRedeliveryPolicy().syncDelayedRedelivery();
         return this;
     }
 
@@ -149,6 +145,17 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public DefaultErrorHandlerBuilder logExhausted(boolean logExhausted) {
         getRedeliveryPolicy().setLogExhausted(logExhausted);
+        return this;
+    }
+
+    /**
+     * Will allow asynchronous delayed redeliveries.
+     *
+     * @see org.apache.camel.processor.RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
+     * @return the builder
+     */
+    public DefaultErrorHandlerBuilder asyncDelayedRedelivery() {
+        getRedeliveryPolicy().setAsyncDelayedRedelivery(true);
         return this;
     }
 
@@ -388,6 +395,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setUseOriginalMessage(boolean useOriginalMessage) {
         this.useOriginalMessage = useOriginalMessage;
+    }
+
+    public boolean isAsyncDelayedRedelivery() {
+        return asyncDelayedRedelivery;
+    }
+
+    public void setAsyncDelayedRedelivery(boolean asyncDelayedRedelivery) {
+        this.asyncDelayedRedelivery = asyncDelayedRedelivery;
     }
 
     protected Predicate createHandledPolicy() {

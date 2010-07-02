@@ -33,7 +33,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
         <errorHandler id="defaultEH">
-            <redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0"/>
+            <redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="1000" asyncDelayedRedelivery="true"/>
         </errorHandler>
 
         <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="mock:dlc">

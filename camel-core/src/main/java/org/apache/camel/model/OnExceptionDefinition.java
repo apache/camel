@@ -367,13 +367,13 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
-     * Only allow synchronous delayed redelivery.
+     * Allow synchronous delayed redelivery.
      *
      * @see org.apache.camel.processor.RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
      * @return the builder
      */
-    public OnExceptionDefinition syncDelayedRedelivery() {
-        getOrCreateRedeliveryPolicy().setSyncDelayedRedelivery(true);
+    public OnExceptionDefinition asyncDelayedRedelivery() {
+        getOrCreateRedeliveryPolicy().setAsyncDelayedRedelivery(true);
         return this;
     }
 
@@ -688,6 +688,13 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     public void setUseOriginalMessagePolicy(Boolean useOriginalMessagePolicy) {
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
+    }
+
+    public boolean isAsyncDelayedRedelivery() {
+        if (getRedeliveryPolicy() != null) {
+            return getRedeliveryPolicy().getAsyncDelayedRedelivery() != null && getRedeliveryPolicy().getAsyncDelayedRedelivery();
+        }
+        return false;
     }
 
     // Implementation methods

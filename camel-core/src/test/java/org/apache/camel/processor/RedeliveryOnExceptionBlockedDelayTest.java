@@ -52,9 +52,9 @@ public class RedeliveryOnExceptionBlockedDelayTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // do block if this exception was thrown
+                // will by default block
                 onException(IllegalArgumentException.class)
-                    .maximumRedeliveries(5).redeliveryDelay(2000).syncDelayedRedelivery();
+                    .maximumRedeliveries(5).redeliveryDelay(2000);
 
                 from("seda:start")
                     .to("log:before")
