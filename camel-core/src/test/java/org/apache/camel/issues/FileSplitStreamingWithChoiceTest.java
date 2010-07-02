@@ -30,7 +30,6 @@ public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/filesplit");
         super.setUp();
-
     }
 
     public void testSplitStreamingWithChoice() throws Exception {
@@ -38,6 +37,9 @@ public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:body");
         mock.expectedBodiesReceived("line1", "line2", "line3");
+
+        // should be moved to this directory after we are done
+        mock.expectedFileExists("target/filesplit/.camel/splitme.txt");
 
         String body = "line1\nline2\nline3";
         template.sendBodyAndHeader("file://target/filesplit", body, Exchange.FILE_NAME, "splitme.txt");

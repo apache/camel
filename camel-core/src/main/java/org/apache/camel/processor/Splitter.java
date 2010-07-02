@@ -16,11 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
@@ -33,7 +35,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -46,6 +51,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public class Splitter extends MulticastProcessor implements AsyncProcessor, Traceable {
+    private static final transient Log LOG = LogFactory.getLog(Splitter.class);
+
     private final Expression expression;
 
     public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
@@ -98,17 +105,33 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     @SuppressWarnings("unchecked")
-    private Iterable<ProcessorExchangePair> createProcessorExchangePairsIterable(final Exchange exchange, Object value) {
+    private Iterable<ProcessorExchangePair> createProcessorExchangePairsIterable(final Exchange exchange, final Object value) {
         final Iterator iterator = ObjectHelper.createIterator(value);
         return new Iterable() {
 
             public Iterator iterator() {
                 return new Iterator() {
-
                     private int index;
+                    private boolean closed;
 
                     public boolean hasNext() {
-                        return iterator.hasNext();
+                        if (closed) {
+                            return false;
+                        }
+
+                        boolean answer = iterator.hasNext();
+                        if (!answer) {
+                            // we are now closed
+                            closed = true;
+                            // nothing more so we need to close the expression value in case it needs to be
+                            if (value instanceof Closeable) {
+                                IOHelper.close((Closeable) value, value.getClass().getName(), LOG);
+                            } else if (value instanceof Scanner) {
+                                // special for Scanner as it does not implement Closeable
+                                ((Scanner) value).close();
+                            }
+                        }
+                        return answer;
                     }
 
                     public Object next() {
