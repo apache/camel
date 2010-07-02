@@ -68,6 +68,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         int redeliveryCounter;
         long redeliveryDelay;
         Predicate retryWhilePredicate;
+        boolean redeliverFromSync;
 
         // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
@@ -84,13 +85,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * {@link java.util.concurrent.ScheduledExecutorService} to avoid having any threads blocking if a task
      * has to be delayed before a redelivery attempt is performed. 
      */
-    private class RedeliveryTask implements Callable<Boolean> {
+    private class AsyncRedeliveryTask implements Callable<Boolean> {
 
         private final Exchange exchange;
         private final AsyncCallback callback;
         private final RedeliveryData data;
 
-        public RedeliveryTask(Exchange exchange, AsyncCallback callback, RedeliveryData data) {
+        public AsyncRedeliveryTask(Exchange exchange, AsyncCallback callback, RedeliveryData data) {
             this.exchange = exchange;
             this.callback = callback;
             this.data = data;
@@ -101,36 +102,66 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             prepareExchangeForRedelivery(exchange);
 
             // letting onRedeliver be executed at first
-            deliverToRedeliveryProcessor(exchange, data);
+            deliverToOnRedeliveryProcessor(exchange, data);
 
             if (log.isTraceEnabled()) {
                 log.trace("Redelivering exchangeId: " + exchange.getExchangeId() + " -> " + outputAsync + " for Exchange: " + exchange);
             }
 
             // process the exchange (also redelivery)
-            boolean sync = AsyncProcessorHelper.process(outputAsync, exchange, new AsyncCallback() {
-                public void done(boolean sync) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Redelivering exchangeId: " + exchange.getExchangeId() + " done");
-                    }
+            boolean sync;
+            if (data.redeliverFromSync) {
+                // this redelivery task was scheduled from synchronous, which we forced to be asynchronous from
+                // this error handler, which means we have to invoke the callback with false, to have the callback
+                // be notified when we are done
+                sync = AsyncProcessorHelper.process(outputAsync, exchange, new AsyncCallback() {
+                    public void done(boolean doneSync) {
+                        if (log.isTraceEnabled()) {
+                            log.trace("Redelivering exchangeId: " + exchange.getExchangeId() + " done sync: " + doneSync);
+                        }
 
-                    // this callback should only handle the async case
-                    if (sync) {
-                        return;
-                    }
+                        // mark we are in sync mode now
+                        data.sync = false;
 
-                    // mark we are in async mode now
-                    data.sync = false;
-                    // only process if the exchange hasn't failed
-                    // and it has not been handled by the error processor
-                    if (isDone(exchange)) {
-                        callback.done(sync);
-                        return;
+                        // only process if the exchange hasn't failed
+                        // and it has not been handled by the error processor
+                        if (isDone(exchange)) {
+                            callback.done(false);
+                            return;
+                        }
+
+                        // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
+                        processAsyncErrorHandler(exchange, callback, data);
                     }
-                    // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
-                    processAsyncErrorHandler(exchange, callback, data);
-                }
-            });
+                });
+            } else {
+                // this redelivery task was scheduled from asynchronous, which means we should only
+                // handle when the asynchronous task was done
+                sync = AsyncProcessorHelper.process(outputAsync, exchange, new AsyncCallback() {
+                    public void done(boolean doneSync) {
+                        if (log.isTraceEnabled()) {
+                            log.trace("Redelivering exchangeId: " + exchange.getExchangeId() + " done sync: " + doneSync);
+                        }
+
+                        // this callback should only handle the async case
+                        if (doneSync) {
+                            return;
+                        }
+
+                        // mark we are in async mode now
+                        data.sync = false;
+
+                        // only process if the exchange hasn't failed
+                        // and it has not been handled by the error processor
+                        if (isDone(exchange)) {
+                            callback.done(doneSync);
+                            return;
+                        }
+                        // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
+                        processAsyncErrorHandler(exchange, callback, data);
+                    }
+                });
+            }
 
             return sync;
         }
@@ -180,6 +211,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException());
                 }
+                // we cannot process so invoke callback
                 callback.done(data.sync);
                 return data.sync;
             }
@@ -203,23 +235,48 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
 
             if (data.redeliveryCounter > 0) {
+                // calculate delay
+                data.redeliveryDelay = data.currentRedeliveryPolicy.calculateRedeliveryDelay(data.redeliveryDelay, data.redeliveryCounter);
+
+                if (data.redeliveryDelay > 0) {
+                    // okay there is a delay so create a scheduled task to have it executed in the future
+
+                    if (data.currentRedeliveryPolicy.isAsyncDelayedRedelivery() && !exchange.isTransacted()) {
+                        // let the RedeliverTask be the logic which tries to redeliver the Exchange which we can used a scheduler to
+                        // have it being executed in the future, or immediately
+                        // we are continuing asynchronously
+
+                        // mark we are routing async from now and that this redelivery task came from a synchronous routing
+                        data.sync = false;
+                        data.redeliverFromSync = true;
+                        AsyncRedeliveryTask task = new AsyncRedeliveryTask(exchange, callback, data);
+
+                        // schedule the redelivery task
+                        if (log.isTraceEnabled()) {
+                            log.trace("Scheduling redelivery task to run in " + data.redeliveryDelay + " millis for exchangeId: " + exchange.getExchangeId());
+                        }
+                        executorService.schedule(task, data.redeliveryDelay, TimeUnit.MILLISECONDS);
+
+                        return false;
+                    } else {
+                        // async delayed redelivery was disabled or we are transacted so we must be synchronous
+                        // as the transaction manager requires to execute in the same thread context
+                        try {
+                            data.currentRedeliveryPolicy.sleep(data.redeliveryDelay);
+                        } catch (InterruptedException e) {
+                            // we was interrupted so break out
+                            exchange.setException(e);
+                            callback.done(data.sync);
+                            return data.sync;
+                        }
+                    }
+                }
+
                 // prepare for redelivery
                 prepareExchangeForRedelivery(exchange);
 
-                // if we are redelivering then sleep before trying again
-                // wait until we should redeliver
-                try {
-                    data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay, data.redeliveryCounter);
-                } catch (InterruptedException e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
-                    }
-                    // continue from top
-                    continue;
-                }
-
                 // letting onRedeliver be executed
-                deliverToRedeliveryProcessor(exchange, data);
+                deliverToOnRedeliveryProcessor(exchange, data);
             }
 
             // process the exchange (also redelivery)
@@ -300,7 +357,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         if (data.redeliveryCounter > 0) {
             // let the RedeliverTask be the logic which tries to redeliver the Exchange which we can used a scheduler to
             // have it being executed in the future, or immediately
-            RedeliveryTask task = new RedeliveryTask(exchange, callback, data);
+            // Note: the data.redeliverFromSync should be kept as is, in case it was enabled previously
+            // to ensure the callback will continue routing from where we left
+            AsyncRedeliveryTask task = new AsyncRedeliveryTask(exchange, callback, data);
 
             // calculate the redelivery delay
             data.redeliveryDelay = data.currentRedeliveryPolicy.calculateRedeliveryDelay(data.redeliveryDelay, data.redeliveryCounter);
@@ -442,7 +501,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * Gives an optional configure redelivery processor a chance to process before the Exchange
      * will be redelivered. This can be used to alter the Exchange.
      */
-    protected void deliverToRedeliveryProcessor(final Exchange exchange, final RedeliveryData data) {
+    protected void deliverToOnRedeliveryProcessor(final Exchange exchange, final RedeliveryData data) {
         if (data.onRedeliveryProcessor == null) {
             return;
         }
@@ -746,7 +805,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         if (executorService == null || executorService.isShutdown()) {
             // camel context will shutdown the executor when it shutdown so no need to shut it down when stopping
             executorService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this,
-                    "RedeliveryErrorHandler-AsyncRedeliveryTask", poolSize);
+                    "RedeliveryErrorHandler-RedeliveryTask", poolSize);
         }
     }
 

@@ -87,6 +87,11 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    public DefaultErrorHandlerBuilder syncDelayedRedelivery() {
+        getRedeliveryPolicy().syncDelayedRedelivery();
+        return this;
+    }
+
     public DefaultErrorHandlerBuilder delayPattern(String delayPattern) {
         getRedeliveryPolicy().delayPattern(delayPattern);
         return this;

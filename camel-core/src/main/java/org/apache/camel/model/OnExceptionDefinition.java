@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -364,6 +363,17 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      */
     public OnExceptionDefinition redeliveryDelay(long delay) {
         getOrCreateRedeliveryPolicy().redeliveryDelay(delay);
+        return this;
+    }
+
+    /**
+     * Only allow synchronous delayed redelivery.
+     *
+     * @see org.apache.camel.processor.RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
+     * @return the builder
+     */
+    public OnExceptionDefinition syncDelayedRedelivery() {
+        getOrCreateRedeliveryPolicy().setSyncDelayedRedelivery(true);
         return this;
     }
 

@@ -54,10 +54,11 @@ public class TransactionalClientDataSourceRedeliveryTest extends TransactionalCl
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 // configure transacted error handler to use up till 4 redeliveries
+                // with 100 millis delay between each redelivery attempt
                 // we have not passed in any spring TX manager. Camel will automatic
                 // find it in the spring application context. You only need to help
                 // Camel in case you have multiple TX managers
-                errorHandler(transactionErrorHandler().maximumRedeliveries(4));
+                errorHandler(transactionErrorHandler().maximumRedeliveries(4).redeliveryDelay(100));
 
                 // START SNIPPET: e1
                 from("direct:okay")

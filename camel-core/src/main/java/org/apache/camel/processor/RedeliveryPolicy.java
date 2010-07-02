@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
  *   <li>maximumRedeliveries = 0</li>
  *   <li>redeliveryDelay = 1000L (the initial delay)</li>
  *   <li>maximumRedeliveryDelay = 60 * 1000L</li>
+ *   <li>asyncDelayedRedelivery = true</li>
  *   <li>backOffMultiplier = 2</li>
  *   <li>useExponentialBackOff = false</li>
  *   <li>collisionAvoidanceFactor = 0.15d</li>
@@ -94,6 +95,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean logExhausted = true;
     protected boolean logRetryAttempted = true;
     protected String delayPattern;
+    protected boolean asyncDelayedRedelivery = true;
 
     public RedeliveryPolicy() {
     }
@@ -103,6 +105,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         return "RedeliveryPolicy[maximumRedeliveries=" + maximumRedeliveries
             + ", redeliveryDelay=" + redeliveryDelay
             + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
+            + ", asyncDelayedRedelivery=" + asyncDelayedRedelivery
             + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
             + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
             + ", logRetryAttempted=" + logRetryAttempted
@@ -164,12 +167,22 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         redeliveryDelay = calculateRedeliveryDelay(redeliveryDelay, redeliveryCounter);
 
         if (redeliveryDelay > 0) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sleeping for: " + redeliveryDelay + " millis until attempting redelivery");
-            }
-            Thread.sleep(redeliveryDelay);
+            sleep(redeliveryDelay);
         }
         return redeliveryDelay;
+    }
+
+    /**
+     * Sleeps for the given delay
+     *
+     * @param redeliveryDelay  the delay
+     * @throws InterruptedException is thrown if the sleep is interrupted likely because of shutdown
+     */
+    public void sleep(long redeliveryDelay) throws InterruptedException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Sleeping for: " + redeliveryDelay + " millis until attempting redelivery");
+        }
+        Thread.sleep(redeliveryDelay);
     }
 
     /**
@@ -233,7 +246,6 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
         return answer;
     }
-
 
     // Builder methods
     // -------------------------------------------------------------------------
@@ -379,6 +391,16 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public RedeliveryPolicy disableRedelivery() {
         setMaximumRedeliveries(0);
+        return this;
+    }
+
+    /**
+     * Only allow synchronous delayed redelivery.
+     *
+     * @see #setAsyncDelayedRedelivery(boolean)
+     */
+    public RedeliveryPolicy syncDelayedRedelivery() {
+        setAsyncDelayedRedelivery(false);
         return this;
     }
 
@@ -597,5 +619,25 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public void setLogExhausted(boolean logExhausted) {
         this.logExhausted = logExhausted;
+    }
+
+    public boolean isAsyncDelayedRedelivery() {
+        return asyncDelayedRedelivery;
+    }
+
+    /**
+     * Sets whether asynchronous delayed redelivery is allowed.
+     * <p/>
+     * This is enabled by default, which allows Camel to schedule a future task for delayed
+     * redelivery which prevents current thread from blocking while waiting. You can use
+     * this option to turn it off to ensure current thread will block.
+     * <p/>
+     * Exchange which is transacted will however always use synchronous delayed redelivery
+     * because the transaction must execute in the same thread context.
+     *
+     * @param asyncDelayedRedelivery whether asynchronous delayed redelivery is allowed
+     */
+    public void setAsyncDelayedRedelivery(boolean asyncDelayedRedelivery) {
+        this.asyncDelayedRedelivery = asyncDelayedRedelivery;
     }
 }
