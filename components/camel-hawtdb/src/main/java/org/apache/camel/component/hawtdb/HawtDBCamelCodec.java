@@ -24,30 +24,30 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
-import org.fusesource.hawtdb.util.buffer.Buffer;
-import org.fusesource.hawtdb.util.buffer.DataByteArrayInputStream;
-import org.fusesource.hawtdb.util.buffer.DataByteArrayOutputStream;
-import org.fusesource.hawtdb.util.marshaller.Marshaller;
-import org.fusesource.hawtdb.util.marshaller.ObjectMarshaller;
-import org.fusesource.hawtdb.util.marshaller.StringMarshaller;
+import org.fusesource.hawtbuf.Buffer;
+import org.fusesource.hawtbuf.DataByteArrayInputStream;
+import org.fusesource.hawtbuf.DataByteArrayOutputStream;
+import org.fusesource.hawtbuf.codec.Codec;
+import org.fusesource.hawtbuf.codec.ObjectCodec;
+import org.fusesource.hawtbuf.codec.StringCodec;
 
 /**
  * @version $Revision$
  */
-public final class HawtDBCamelMarshaller {
+public final class HawtDBCamelCodec {
 
-    private Marshaller<String> keyMarshaller = new StringMarshaller();
-    private Marshaller<DefaultExchangeHolder> exchangeMarshaller = new ObjectMarshaller<DefaultExchangeHolder>();
+    private Codec<String> keyCodec = new StringCodec();
+    private Codec<DefaultExchangeHolder> exchangeCodec = new ObjectCodec<DefaultExchangeHolder>();
 
     public Buffer marshallKey(String key) throws IOException {
         DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
-        keyMarshaller.writePayload(key, baos);
+        keyCodec.encode(key, baos);
         return baos.toBuffer();
     }
 
     public String unmarshallKey(Buffer buffer) throws IOException {
         DataByteArrayInputStream bais = new DataByteArrayInputStream(buffer);
-        String key = keyMarshaller.readPayload(bais);
+        String key = keyCodec.decode(bais);
         return key;
     }
 
@@ -65,13 +65,13 @@ public final class HawtDBCamelMarshaller {
         if (exchange.getFromEndpoint() != null) {
             DefaultExchangeHolder.addProperty(pe, "CamelAggregatedFromEndpoint", exchange.getFromEndpoint().getEndpointUri());
         }
-        exchangeMarshaller.writePayload(pe, baos);
+        exchangeCodec.encode(pe, baos);
         return baos.toBuffer();
     }
 
     public Exchange unmarshallExchange(CamelContext camelContext, Buffer buffer) throws IOException {
         DataByteArrayInputStream bais = new DataByteArrayInputStream(buffer);
-        DefaultExchangeHolder pe = exchangeMarshaller.readPayload(bais);
+        DefaultExchangeHolder pe = exchangeCodec.decode(bais);
         Exchange answer = new DefaultExchange(camelContext);
         DefaultExchangeHolder.unmarshal(answer, pe);
         // restore the from endpoint

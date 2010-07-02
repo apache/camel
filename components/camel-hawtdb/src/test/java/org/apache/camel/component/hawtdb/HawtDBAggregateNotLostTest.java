@@ -20,9 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtdb.api.Index;
 import org.fusesource.hawtdb.api.Transaction;
-import org.fusesource.hawtdb.util.buffer.Buffer;
 import org.junit.Test;
 
 public class HawtDBAggregateNotLostTest extends CamelTestSupport {
@@ -55,8 +55,8 @@ public class HawtDBAggregateNotLostTest extends CamelTestSupport {
 
         // the exchange should be in the completed repo where we should be able to find it
         final HawtDBFile hawtDBFile = repo.getHawtDBFile();
-        final HawtDBCamelMarshaller marshaller = new HawtDBCamelMarshaller();
-        final Buffer confirmKeyBuffer = marshaller.marshallKey(exchangeId);
+        final HawtDBCamelCodec codec = new HawtDBCamelCodec();
+        final Buffer confirmKeyBuffer = codec.marshallKey(exchangeId);
         Buffer bf = hawtDBFile.execute(new Work<Buffer>() {
             public Buffer execute(Transaction tx) {
                 Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, "repo1-completed", false);
@@ -66,7 +66,7 @@ public class HawtDBAggregateNotLostTest extends CamelTestSupport {
 
         // assert the exchange was not lost and we got all the information still
         assertNotNull(bf);
-        Exchange completed = marshaller.unmarshallExchange(context, bf);
+        Exchange completed = codec.unmarshallExchange(context, bf);
         assertNotNull(completed);
         // should retain the exchange id
         assertEquals(exchangeId, completed.getExchangeId());

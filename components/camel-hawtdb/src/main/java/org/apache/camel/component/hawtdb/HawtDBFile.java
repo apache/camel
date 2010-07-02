@@ -19,16 +19,16 @@ package org.apache.camel.component.hawtdb;
 import org.apache.camel.Service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.fusesource.hawtbuf.Buffer;
+import org.fusesource.hawtbuf.codec.BufferCodec;
+import org.fusesource.hawtbuf.codec.IntegerCodec;
+import org.fusesource.hawtbuf.codec.StringCodec;
 import org.fusesource.hawtdb.api.BTreeIndexFactory;
-import org.fusesource.hawtdb.api.Index;
+import org.fusesource.hawtdb.api.SortedIndex;
 import org.fusesource.hawtdb.api.OptimisticUpdateException;
 import org.fusesource.hawtdb.api.Transaction;
 import org.fusesource.hawtdb.api.TxPageFile;
 import org.fusesource.hawtdb.api.TxPageFileFactory;
-import org.fusesource.hawtdb.util.buffer.Buffer;
-import org.fusesource.hawtdb.util.marshaller.IntegerMarshaller;
-import org.fusesource.hawtdb.util.marshaller.StringMarshaller;
-import org.fusesource.hawtdb.util.marshaller.VariableBufferMarshaller;
 
 /**
  * Manages access to a shared <a href="http://hawtdb.fusesource.org/">HawtDB</a> file.
@@ -48,11 +48,11 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
     private TxPageFile pageFile;
 
     static {
-        ROOT_INDEXES_FACTORY.setKeyMarshaller(StringMarshaller.INSTANCE);
-        ROOT_INDEXES_FACTORY.setValueMarshaller(IntegerMarshaller.INSTANCE);
+        ROOT_INDEXES_FACTORY.setKeyCodec(StringCodec.INSTANCE);
+        ROOT_INDEXES_FACTORY.setValueCodec(IntegerCodec.INSTANCE);
         ROOT_INDEXES_FACTORY.setDeferredEncoding(true);
-        INDEX_FACTORY.setKeyMarshaller(VariableBufferMarshaller.INSTANCE);
-        INDEX_FACTORY.setValueMarshaller(VariableBufferMarshaller.INSTANCE);
+        INDEX_FACTORY.setKeyCodec(BufferCodec.INSTANCE);
+        INDEX_FACTORY.setValueCodec(BufferCodec.INSTANCE);
         INDEX_FACTORY.setDeferredEncoding(true);
     }
 
@@ -82,7 +82,7 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
                 } else {
                     // Was previously created.. so free up the test page
                     tx.allocator().free(page, 1);
-                    Index<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx, 0);
+                    SortedIndex<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx, 0);
                     LOG.info("Aggregation repository data store loaded using file: " + getFile()
                             + " containing " + indexes.size() + " repositories.");
                 }
@@ -114,16 +114,16 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
         return answer;
     }
 
-    public Index<Buffer, Buffer> getRepositoryIndex(Transaction tx, String name, boolean create) {
-        Index<Buffer, Buffer> answer = null;
+    public SortedIndex<Buffer, Buffer> getRepositoryIndex(Transaction tx, String name, boolean create) {
+        SortedIndex<Buffer, Buffer> answer = null;
 
-        Index<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx, 0);
+        SortedIndex<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx, 0);
         Integer location = indexes.get(name);
 
         if (create && location == null) {
             // create it..
             int page = tx.allocator().alloc(1);
-            Index<Buffer, Buffer> created = INDEX_FACTORY.create(tx, page);
+            SortedIndex<Buffer, Buffer> created = INDEX_FACTORY.create(tx, page);
 
             // add it to indexes so we can find it the next time
             indexes.put(name, page);

@@ -20,9 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtdb.api.Index;
 import org.fusesource.hawtdb.api.Transaction;
-import org.fusesource.hawtdb.util.buffer.Buffer;
 import org.junit.Test;
 
 public class HawtDBAggregateNotLostRemovedWhenConfirmedTest extends CamelTestSupport {
@@ -54,8 +54,8 @@ public class HawtDBAggregateNotLostRemovedWhenConfirmedTest extends CamelTestSup
 
         // the exchange should NOT be in the completed repo as it was confirmed
         final HawtDBFile hawtDBFile = repo.getHawtDBFile();
-        final HawtDBCamelMarshaller marshaller = new HawtDBCamelMarshaller();
-        final Buffer confirmKeyBuffer = marshaller.marshallKey(exchangeId);
+        final HawtDBCamelCodec codec = new HawtDBCamelCodec();
+        final Buffer confirmKeyBuffer = codec.marshallKey(exchangeId);
         Buffer bf = hawtDBFile.execute(new Work<Buffer>() {
             public Buffer execute(Transaction tx) {
                 Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, "repo1-completed", false);

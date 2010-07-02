@@ -16,15 +16,6 @@
  */
 package org.apache.camel.component.hawtdb;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.ServiceSupport;
@@ -33,9 +24,15 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtdb.api.Index;
+import org.fusesource.hawtdb.api.SortedIndex;
 import org.fusesource.hawtdb.api.Transaction;
-import org.fusesource.hawtdb.util.buffer.Buffer;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * An instance of AggregationRepository which is backed by a HawtDB.
@@ -50,7 +47,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     private boolean sync = true;
     private short pageSize = 512;
     private boolean returnOldExchange;
-    private HawtDBCamelMarshaller marshaller = new HawtDBCamelMarshaller();
+    private HawtDBCamelCodec codec = new HawtDBCamelCodec();
     private long recoveryInterval = 5000;
     private boolean useRecovery = true;
     private int maximumRedeliveries;
@@ -107,13 +104,13 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
             // If we could guarantee that the key and exchange are immutable,
             // then we could have stuck them directly into the index, 
             // HawtDB could then eliminate the need to marshal and un-marshal  
-            // in some cases.  But since we can.. we are going to force
+            // in some cases.  But since we can't.. we are going to force
             // early marshaling.
-            final Buffer keyBuffer = marshaller.marshallKey(key);
-            final Buffer exchangeBuffer = marshaller.marshallExchange(camelContext, exchange);
+            final Buffer keyBuffer = codec.marshallKey(key);
+            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange);
             Buffer rc = hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
-                    Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, true);
+                    SortedIndex<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, true);
                     return index.put(keyBuffer, exchangeBuffer);
                 }
 
@@ -128,7 +125,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
 
             // only return old exchange if enabled
             if (isReturnOldExchange()) {
-                return marshaller.unmarshallExchange(camelContext, rc);
+                return codec.unmarshallExchange(camelContext, rc);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error adding to repository " + repositoryName + " with key " + key, e);
@@ -140,10 +137,10 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     public Exchange get(final CamelContext camelContext, final String key) {
         Exchange answer = null;
         try {
-            final Buffer keyBuffer = marshaller.marshallKey(key);
+            final Buffer keyBuffer = codec.marshallKey(key);
             Buffer rc = hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
-                    Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, false);
+                    SortedIndex<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, false);
                     if (index == null) {
                         return null;
                     }
@@ -156,7 +153,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
                 }
             });
             if (rc != null) {
-                answer = marshaller.unmarshallExchange(camelContext, rc);
+                answer = codec.unmarshallExchange(camelContext, rc);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error getting key " + key + " from repository " + repositoryName, e);
@@ -173,17 +170,17 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
             LOG.debug("Removing key [" + key + "]");
         }
         try {
-            final Buffer keyBuffer = marshaller.marshallKey(key);
-            final Buffer confirmKeyBuffer = marshaller.marshallKey(exchange.getExchangeId());
-            final Buffer exchangeBuffer = marshaller.marshallExchange(camelContext, exchange);
+            final Buffer keyBuffer = codec.marshallKey(key);
+            final Buffer confirmKeyBuffer = codec.marshallKey(exchange.getExchangeId());
+            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange);
             hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
-                    Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, true);
+                    SortedIndex<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, true);
                     // remove from the in progress index
                     index.remove(keyBuffer);
 
                     // and add it to the confirmed index
-                    Index<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted(), true);
+                    SortedIndex<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted(), true);
                     indexCompleted.put(confirmKeyBuffer, exchangeBuffer);
                     return null;
                 }
@@ -204,10 +201,10 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
             LOG.debug("Confirming exchangeId [" + exchangeId + "]");
         }
         try {
-            final Buffer confirmKeyBuffer = marshaller.marshallKey(exchangeId);
+            final Buffer confirmKeyBuffer = codec.marshallKey(exchangeId);
             hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
-                    Index<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted(), true);
+                    SortedIndex<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted(), true);
                     return indexCompleted.remove(confirmKeyBuffer);
                 }
 
@@ -232,7 +229,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
                     return null;
                 }
 
-                Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, false);
+                SortedIndex<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, false);
                 if (index == null) {
                     return null;
                 }
@@ -245,7 +242,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
 
                     String key;
                     try {
-                        key  = marshaller.unmarshallKey(keyBuffer);
+                        key  = codec.unmarshallKey(keyBuffer);
                     } catch (IOException e) {
                         throw new RuntimeException("Error unmarshalling key: " + keyBuffer, e);
                     }
@@ -278,7 +275,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
                     return null;
                 }
 
-                Index<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted(), false);
+                SortedIndex<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted(), false);
                 if (indexCompleted == null) {
                     return null;
                 }
@@ -291,7 +288,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
 
                     String exchangeId;
                     try {
-                        exchangeId = marshaller.unmarshallKey(keyBuffer);
+                        exchangeId = codec.unmarshallKey(keyBuffer);
                     } catch (IOException e) {
                         throw new RuntimeException("Error unmarshalling confirm key: " + keyBuffer, e);
                     }
@@ -325,10 +322,10 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     public Exchange recover(CamelContext camelContext, final String exchangeId) {
         Exchange answer = null;
         try {
-            final Buffer confirmKeyBuffer = marshaller.marshallKey(exchangeId);
+            final Buffer confirmKeyBuffer = codec.marshallKey(exchangeId);
             Buffer rc = hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
-                    Index<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted(), false);
+                    SortedIndex<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted(), false);
                     if (indexCompleted == null) {
                         return null;
                     }
@@ -341,7 +338,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
                 }
             });
             if (rc != null) {
-                answer = marshaller.unmarshallExchange(camelContext, rc);
+                answer = codec.unmarshallExchange(camelContext, rc);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error recovering exchangeId " + exchangeId + " from repository " + repositoryName, e);
@@ -356,7 +353,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     private int size(final String repositoryName) {
         int answer = hawtDBFile.execute(new Work<Integer>() {
             public Integer execute(Transaction tx) {
-                Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, false);
+                SortedIndex<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, false);
                 return index != null ? index.size() : 0;
             }
 
