@@ -16,18 +16,15 @@
  */
 package org.apache.camel.core.osgi;
 
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
+import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 

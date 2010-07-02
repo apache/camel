@@ -87,11 +87,11 @@ public class CamelMockBundle extends MockBundle {
     }
     
     public Enumeration findEntries(String path, String filePattern, boolean recurse) {
-        if (path.equals("/org/apache/camel/osgi/test") && filePattern.equals("*.class")) {
+        if (path.equals("/org/apache/camel/core/osgi/test") && filePattern.equals("*.class")) {
             List<URL> urls = new ArrayList<URL>();
-            URL url = getClass().getClassLoader().getResource("org/apache/camel/osgi/test/MyTypeConverter.class");
+            URL url = getClass().getClassLoader().getResource("org/apache/camel/core/osgi/test/MyTypeConverter.class");
             urls.add(url);
-            url = getClass().getClassLoader().getResource("org/apache/camel/osgi/test/MyRouteBuilder.class");
+            url = getClass().getClassLoader().getResource("org/apache/camel/core/osgi/test/MyRouteBuilder.class");
             urls.add(url);
             return new ListEnumeration(urls);
         } else {
