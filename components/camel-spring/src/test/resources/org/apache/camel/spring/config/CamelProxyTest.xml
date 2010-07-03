@@ -51,6 +51,11 @@
         </route>
 
     </camelContext>
+    
+    <proxy id="myProxySenderWithCamelContextId"
+               serviceInterface="org.apache.camel.spring.config.MyProxySender"
+               serviceUrl="direct:inOnly"
+               camelContextId ="myCamel" xmlns="http://camel.apache.org/schema/spring"/>
     <!-- END SNIPPET: e1 -->
 
 </beans>

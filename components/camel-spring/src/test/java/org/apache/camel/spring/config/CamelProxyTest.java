@@ -45,6 +45,14 @@ public class CamelProxyTest extends TestCase {
         anotherSender.greeting("Hello my friends!");
         result.assertIsSatisfied();
         
+        result.reset();
+        // test sending inOnly message with other sender
+        MyProxySender myProxySenderWithCamelContextId = (MyProxySender) ac.getBean("myProxySenderWithCamelContextId");
+        
+        result.expectedBodiesReceived("Hello my friends again!");
+        myProxySenderWithCamelContextId.greeting("Hello my friends again!");
+        result.assertIsSatisfied();
+        
     }
     
 }

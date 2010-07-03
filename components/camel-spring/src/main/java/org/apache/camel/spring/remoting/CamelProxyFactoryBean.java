@@ -127,6 +127,10 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
+    
+    public void setCamelContextId(String contextId) {
+        this.camelContextId = contextId;
+    }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
