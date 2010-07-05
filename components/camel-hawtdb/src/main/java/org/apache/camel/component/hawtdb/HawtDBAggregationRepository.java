@@ -16,6 +16,15 @@
  */
 package org.apache.camel.component.hawtdb;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.ServiceSupport;
@@ -25,14 +34,8 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.fusesource.hawtbuf.Buffer;
-import org.fusesource.hawtdb.api.Index;
 import org.fusesource.hawtdb.api.SortedIndex;
 import org.fusesource.hawtdb.api.Transaction;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * An instance of AggregationRepository which is backed by a HawtDB.
