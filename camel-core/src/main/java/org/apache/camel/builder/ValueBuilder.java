@@ -51,11 +51,16 @@ public class ValueBuilder implements Expression {
 
     // Predicate builders
     // -------------------------------------------------------------------------
-
+    // this method will be removed , please use PredicateBuilder.toPredicate(Expression) 
+    @Deprecated
     public Predicate matches(Expression expression) {
         return onNewPredicate(PredicateBuilder.toPredicate(expression));
     }
 
+    public Predicate matches() {
+        return onNewPredicate(PredicateBuilder.toPredicate(expression));
+    }
+    
     public Predicate isNotEqualTo(Object value) {
         Expression right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isNotEqualTo(expression, right));
@@ -97,7 +102,7 @@ public class ValueBuilder implements Expression {
     public Predicate isNotNull() {
         return onNewPredicate(PredicateBuilder.isNotNull(expression));
     }
-
+   
     public Predicate not(Predicate predicate) {
         return onNewPredicate(PredicateBuilder.not(predicate));
     }
