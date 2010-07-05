@@ -1102,9 +1102,9 @@ public final class ObjectHelper {
         if (value instanceof Boolean) {
             return (Boolean)value;
         } else if (value instanceof String) {
-            if ("true".equals(value)) {
+            if ("true".equalsIgnoreCase((String)value)) {
                 return true;
-            } else if ("false".equals(value)) {
+            } else if ("false".equalsIgnoreCase((String)value)) {
                 return false;
             }
         }

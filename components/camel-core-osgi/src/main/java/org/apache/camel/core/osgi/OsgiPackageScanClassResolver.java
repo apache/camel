@@ -63,7 +63,7 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
     private Set<String> getImplementationsInBundle(PackageScanFilter test, String packageName) {
         try {
             Bundle[] bundles;
-            if (bundle.getBundleContext()!= null) {
+            if (bundle.getBundleContext() != null) {
                 bundles = bundle.getBundleContext().getBundles();
             } else {
                 bundles = new Bundle[]{bundle};
