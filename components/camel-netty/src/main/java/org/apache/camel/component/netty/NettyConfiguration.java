@@ -71,6 +71,7 @@ public class NettyConfiguration implements Cloneable {
     private boolean transferExchange;
     private boolean disconnectOnNoReply = true;
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
+    private boolean allowDefaultCodec = true;
 
     /**
      * Returns a copy of this configuration
@@ -117,22 +118,28 @@ public class NettyConfiguration implements Cloneable {
 
         // add default encoders and decoders
         if (encoders.isEmpty() && decoders.isEmpty()) {
-            // are we textline or object?
-            if (isTextline()) {
-                Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
-                encoders.add(new StringEncoder(charset));
-                decoders.add(new StringDecoder(charset));
+            if (allowDefaultCodec) {
+                // are we textline or object?
+                if (isTextline()) {
+                    Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
+                    encoders.add(new StringEncoder(charset));
+                    decoders.add(new StringDecoder(charset));
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Using textline encoders and decoders with charset: " + charset);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Using textline encoders and decoders with charset: " + charset);
+                    }
+                } else {
+                    // object serializable is then used
+                    encoders.add(new ObjectEncoder());
+                    decoders.add(new ObjectDecoder());
+
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Using object encoders and decoders");
+                    }
                 }
             } else {
-                // object serializable is then used
-                encoders.add(new ObjectEncoder());
-                decoders.add(new ObjectDecoder());
-
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Using object encoders and decoders");
+                    LOG.debug("No encoders and decoders will be used");
                 }
             }
         } else {
@@ -413,6 +420,14 @@ public class NettyConfiguration implements Cloneable {
 
     public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
         this.noReplyLogLevel = noReplyLogLevel;
+    }
+
+    public boolean isAllowDefaultCodec() {
+        return allowDefaultCodec;
+    }
+
+    public void setAllowDefaultCodec(boolean allowDefaultCodec) {
+        this.allowDefaultCodec = allowDefaultCodec;
     }
 
     public String getAddress() {
