@@ -51,8 +51,7 @@ public class ValueBuilder implements Expression {
 
     // Predicate builders
     // -------------------------------------------------------------------------
-    // this method will be removed , please use PredicateBuilder.toPredicate(Expression) 
-    @Deprecated
+
     public Predicate matches(Expression expression) {
         return onNewPredicate(PredicateBuilder.toPredicate(expression));
     }

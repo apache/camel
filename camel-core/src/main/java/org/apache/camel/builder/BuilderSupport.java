@@ -132,8 +132,8 @@ public abstract class BuilderSupport {
     /**
      * Returns a simple expression value builder
      */
-    public ValueBuilder simple(String value) {
-        return Builder.simple(value);
+    public SimpleBuilder simple(String value) {
+        return SimpleBuilder.simple(value);
     }
     
     /**

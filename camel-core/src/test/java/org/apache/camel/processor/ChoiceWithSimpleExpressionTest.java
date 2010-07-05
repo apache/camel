@@ -16,10 +16,7 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 /**
  * @version $Revision$
@@ -30,8 +27,8 @@ public class ChoiceWithSimpleExpressionTest extends ChoiceTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").choice()
-                  .when(simple("${header.foo} == 'bar'").matches()).to("mock:x")
-                  .when(simple("${in.header.foo} == 'cheese'").matches()).to("mock:y")
+                  .when(simple("${header.foo} == 'bar'")).to("mock:x")
+                  .when(simple("${in.header.foo} == 'cheese'")).to("mock:y")
                   .otherwise().to("mock:z").end().to("mock:end");
             }
         };
