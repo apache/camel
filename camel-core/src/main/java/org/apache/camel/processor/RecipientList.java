@@ -33,8 +33,6 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -47,7 +45,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public class RecipientList extends ServiceSupport implements AsyncProcessor {
-    private static final transient Log LOG = LogFactory.getLog(RecipientList.class);
     private final CamelContext camelContext;
     private ProducerCache producerCache;
     private Expression expression;

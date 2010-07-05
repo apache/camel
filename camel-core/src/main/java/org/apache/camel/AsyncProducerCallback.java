@@ -34,7 +34,7 @@ public interface AsyncProducerCallback {
      * @param exchange        the exchange, can be <tt>null</tt> if so then create a new exchange from the producer
      * @param exchangePattern the exchange pattern, can be <tt>null</tt>
      * @param callback        the async callback
-     * @return the response
+     * @return (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
      */
     boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, Exchange exchange,
                               ExchangePattern exchangePattern, AsyncCallback callback);

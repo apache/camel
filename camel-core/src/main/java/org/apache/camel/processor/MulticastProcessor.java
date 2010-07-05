@@ -199,7 +199,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     protected void doProcessParallel(final Exchange original, final AtomicExchange result, final Iterable<ProcessorExchangePair> pairs,
-                                     boolean streaming, final AsyncCallback callback) throws InterruptedException, ExecutionException {
+                                     final boolean streaming, final AsyncCallback callback) throws InterruptedException, ExecutionException {
         final CompletionService<Exchange> completion;
         final AtomicBoolean running = new AtomicBoolean(true);
 
@@ -226,7 +226,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         return subExchange;
                     }
 
-                    doProcess(original, result, pairs, it, pair, callback, total);
+                    try {
+                        doProcessParallel(pair);
+                    } catch (Exception e) {
+                        subExchange.setException(e);
+                    }
 
                     // should we stop in case of an exception occurred during processing?
                     if (stopOnException && subExchange.getException() != null) {
@@ -245,6 +249,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             total.incrementAndGet();
         }
 
+        // its to hard to do parallel async routing so we let the caller thread be synchronously
+        // and have it pickup the replies and do the aggregation
         for (int i = 0; i < total.intValue(); i++) {
             Future<Exchange> future = completion.take();
             Exchange subExchange = future.get();
@@ -265,7 +271,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             Exchange subExchange = pair.getExchange();
             updateNewExchange(subExchange, total.get(), pairs, it);
 
-            boolean sync = doProcess(original, result, pairs, it, pair, callback, total);
+            boolean sync = doProcessSequential(original, result, pairs, it, pair, callback, total);
             if (!sync) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing exchangeId: " + pair.getExchange().getExchangeId() + " is continued being processed asynchronously");
@@ -299,9 +305,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         return true;
     }
 
-    private boolean doProcess(final Exchange original, final AtomicExchange result,
-                              final Iterable<ProcessorExchangePair> pairs, final Iterator<ProcessorExchangePair> it,
-                              final ProcessorExchangePair pair, final AsyncCallback callback, final AtomicInteger total) {
+    private boolean doProcessSequential(final Exchange original, final AtomicExchange result,
+                                        final Iterable<ProcessorExchangePair> pairs, final Iterator<ProcessorExchangePair> it,
+                                        final ProcessorExchangePair pair, final AsyncCallback callback, final AtomicInteger total) {
         boolean sync = true;
 
         final Exchange exchange = pair.getExchange();
@@ -366,7 +372,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         ProcessorExchangePair pair = it.next();
                         subExchange = pair.getExchange();
                         updateNewExchange(subExchange, total.get(), pairs, it);
-                        boolean sync = doProcess(original, result, pairs, it, pair, callback, total);
+                        boolean sync = doProcessSequential(original, result, pairs, it, pair, callback, total);
 
                         if (!sync) {
                             if (LOG.isTraceEnabled()) {
@@ -415,6 +421,45 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         return sync;
+    }
+
+    private void doProcessParallel(final ProcessorExchangePair pair) throws Exception {
+        final Exchange exchange = pair.getExchange();
+        Processor processor = pair.getProcessor();
+        Producer producer = pair.getProducer();
+
+        TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
+
+        // compute time taken if sending to another endpoint
+        StopWatch watch = null;
+        if (producer != null) {
+            watch = new StopWatch();
+        }
+
+        try {
+            // prepare tracing starting from a new block
+            if (traced != null) {
+                traced.pushBlock();
+            }
+
+            // let the prepared process it, remember to begin the exchange pair
+            // we invoke it synchronously as parallel async routing is too hard
+            AsyncProcessor async = AsyncProcessorTypeConverter.convert(processor);
+            pair.begin();
+            AsyncProcessorHelper.process(async, exchange);
+        } finally {
+            pair.done();
+            // pop the block so by next round we have the same staring point and thus the tracing looks accurate
+            if (traced != null) {
+                traced.popBlock();
+            }
+            if (producer != null) {
+                long timeTaken = watch.stop();
+                Endpoint endpoint = producer.getEndpoint();
+                // emit event that the exchange was sent to the endpoint
+                EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
+            }
+        }
     }
 
     /**
