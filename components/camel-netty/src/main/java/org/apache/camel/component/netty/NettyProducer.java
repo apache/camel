@@ -17,18 +17,17 @@
 package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.RejectedExecutionException;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.ServicePoolAware;
-import org.apache.camel.component.netty.handlers.ClientChannelHandler;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -38,6 +37,7 @@ import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
@@ -46,26 +46,19 @@ import org.jboss.netty.channel.socket.DatagramChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
 
-public class NettyProducer extends DefaultProducer implements ServicePoolAware {
+public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAware {
     private static final transient Log LOG = LogFactory.getLog(NettyProducer.class);
-    private final ChannelGroup allChannels;
+    private static final ChannelGroup ALL_CHANNELS = new DefaultChannelGroup("NettyProducer");
     private CamelContext context;
     private NettyConfiguration configuration;
-    private CountDownLatch countdownLatch;
     private ChannelFactory channelFactory;
     private DatagramChannelFactory datagramChannelFactory;
-    private Channel channel;
-    private ClientBootstrap clientBootstrap;
-    private ConnectionlessBootstrap connectionlessClientBootstrap;
-    private ClientPipelineFactory clientPipelineFactory;
-    private ChannelPipeline clientPipeline;
     private Logger noReplyLogger;
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint);
         this.configuration = configuration;
         this.context = this.getEndpoint().getCamelContext();
-        this.allChannels = new DefaultChannelGroup("NettyProducer-" + nettyEndpoint.getEndpointUri());
         this.noReplyLogger = new Logger(LOG, configuration.getNoReplyLogLevel());
     }
 
@@ -81,17 +74,27 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         return false;
     }
 
+    public CamelContext getContext() {
+        return context;
+    }
+
+    protected boolean isTcp() {
+        return configuration.getProtocol().equalsIgnoreCase("tcp");
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (configuration.getProtocol().equalsIgnoreCase("udp")) {
-            setupUDPCommunication();
-        } else {
+        if (isTcp()) {
             setupTCPCommunication();
+        } else {
+            setupUDPCommunication();
         }
+
         if (!configuration.isLazyChannelCreation()) {
-            openConnection();
+            // ensure the connection can be established when we start up
+            openAndCloseConnection();
         }
     }
 
@@ -100,83 +103,111 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Stopping producer at address: " + configuration.getAddress());
         }
-        closeConnection();
+        // close all channels
+        ChannelGroupFuture future = ALL_CHANNELS.close();
+        future.awaitUninterruptibly();
+
+        // and then release other resources
+        if (channelFactory != null) {
+            channelFactory.releaseExternalResources();
+        }
         super.doStop();
     }
 
-    public void process(Exchange exchange) throws Exception {
-        if (channel == null && !configuration.isLazyChannelCreation()) {
-            throw new IllegalStateException("Not started yet!");
-        }
-        if (channel == null || !channel.isConnected()) {
-            openConnection();
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        if (!isRunAllowed()) {
+            if (exchange.getException() == null) {
+                exchange.setException(new RejectedExecutionException());
+            }
+            callback.done(true);
+            return true;
         }
 
         Object body = NettyPayloadHelper.getIn(getEndpoint(), exchange);
         if (body == null) {
             noReplyLogger.log("No payload to send for exchange: " + exchange);
-            return; // exit early since nothing to write
+            callback.done(true);
+            return true;
+        }
+        // if textline enabled then covert to a String which must be used for textline
+        if (getConfiguration().isTextline()) {
+            try {
+                body = context.getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
+            } catch (NoTypeConversionAvailableException e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
         }
 
-        if (configuration.isSync()) {
-            // only initialize latch if we should get a response
-            countdownLatch = new CountDownLatch(1);
+        // set the exchange encoding property
+        if (getConfiguration().getCharsetName() != null) {
+            exchange.setProperty(Exchange.CHARSET_NAME, getConfiguration().getCharsetName());
+        }
+
+        ChannelFuture channelFuture;
+        final Channel channel;
+        try {
+            channelFuture = openConnection(exchange, callback);
+            channel = openChannel(channelFuture);
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
 
         // log what we are writing
         if (LOG.isDebugEnabled()) {
-            Object out = body;
-            if (body instanceof byte[]) {
-                // byte arrays is not readable so convert to string
-                out = exchange.getContext().getTypeConverter().convertTo(String.class, body);
-            }
-            LOG.debug("Writing body : " + out);
+            LOG.debug("Writing body: " + body);
         }
+        // write the body asynchronously
+        ChannelFuture future = channel.write(body);
 
-        // write the body
-        NettyHelper.writeBody(channel, null, body, exchange);
+        // add listener which handles the operation
+        future.addListener(new ChannelFutureListener() {
+            public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Operation complete " + channelFuture);
+                }
+                if (!channelFuture.isSuccess()) {
+                    // no success the set the caused exception and signal callback and break
+                    exchange.setException(channelFuture.getCause());
+                    callback.done(false);
+                    return;
+                }
 
-        if (configuration.isSync()) {
-            boolean success = countdownLatch.await(configuration.getTimeout(), TimeUnit.MILLISECONDS);
-            if (!success) {
-                throw new ExchangeTimedOutException(exchange, configuration.getTimeout());
-            }
+                // if we do not expect any reply then signal callback to continue routing
+                if (!configuration.isSync()) {
+                    try {
+                        // should channel be closed after complete?
+                        Boolean close;
+                        if (ExchangeHelper.isOutCapable(exchange)) {
+                            close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+                        } else {
+                            close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+                        }
 
-            ClientChannelHandler handler = (ClientChannelHandler) clientPipeline.get("handler");
-            if (handler.getCause() != null) {
-                throw new CamelExchangeException("Error occurred in ClientChannelHandler", exchange, handler.getCause());
-            } else if (!handler.isMessageReceived()) {
-                // no message received
-                throw new CamelExchangeException("No response received from remote server: " + configuration.getAddress(), exchange);
-            } else {
-                // set the result on either IN or OUT on the original exchange depending on its pattern
-                if (ExchangeHelper.isOutCapable(exchange)) {
-                    NettyPayloadHelper.setOut(exchange, handler.getMessage());
-                } else {
-                    NettyPayloadHelper.setIn(exchange, handler.getMessage());
+                        // should we disconnect, the header can override the configuration
+                        boolean disconnect = getConfiguration().isDisconnect();
+                        if (close != null) {
+                            disconnect = close;
+                        }
+                        if (disconnect) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Closing channel when complete at address: " + getEndpoint().getConfiguration().getAddress());
+                            }
+                            NettyHelper.close(channel);
+                        }
+                    } finally {
+                        // signal callback to continue routing
+                        callback.done(false);
+                    }
                 }
             }
-        }
+        });
 
-        // should channel be closed after complete?
-        Boolean close;
-        if (ExchangeHelper.isOutCapable(exchange)) {
-            close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-        } else {
-            close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-        }
-
-        // should we disconnect, the header can override the configuration
-        boolean disconnect = getConfiguration().isDisconnect();
-        if (close != null) {
-            disconnect = close;
-        }
-        if (disconnect) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Closing channel when complete at address: " + getEndpoint().getConfiguration().getAddress());
-            }
-            NettyHelper.close(channel);
-        }
+        // continue routing asynchronously
+        return false;
     }
 
     protected void setupTCPCommunication() throws Exception {
@@ -187,13 +218,6 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
                     configuration.getCorePoolSize(), configuration.getMaxPoolSize());
             channelFactory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor);
         }
-        if (clientBootstrap == null) {
-            clientBootstrap = new ClientBootstrap(channelFactory);
-            clientBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
-            clientBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
-            clientBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
-            clientBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
-        }
     }
 
     protected void setupUDPCommunication() throws Exception {
@@ -202,8 +226,29 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
                     configuration.getCorePoolSize(), configuration.getMaxPoolSize());
             datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
         }
-        if (connectionlessClientBootstrap == null) {
-            connectionlessClientBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
+    }
+
+    private ChannelFuture openConnection(Exchange exchange, AsyncCallback callback) throws Exception {
+        ChannelFuture answer;
+
+        // initialize client pipeline factory
+        ClientPipelineFactory clientPipelineFactory = new ClientPipelineFactory(this, exchange, callback);
+        // must get the pipeline from the factory when opening a new connection
+        ChannelPipeline clientPipeline = clientPipelineFactory.getPipeline();
+
+        if (isTcp()) {
+            ClientBootstrap clientBootstrap = new ClientBootstrap(channelFactory);
+            clientBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
+            clientBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
+            clientBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
+            clientBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
+
+            // set the pipeline on the bootstrap
+            clientBootstrap.setPipeline(clientPipeline);
+            answer = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            return answer;
+        } else {
+            ConnectionlessBootstrap connectionlessClientBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
             connectionlessClientBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
             connectionlessClientBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
             connectionlessClientBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
@@ -212,52 +257,38 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
             connectionlessClientBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
             connectionlessClientBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
 
+            // set the pipeline on the bootstrap
+            connectionlessClientBootstrap.setPipeline(clientPipeline);
+            connectionlessClientBootstrap.bind(new InetSocketAddress(0));
+            answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            return answer;
         }
     }
 
-    private void openConnection() throws Exception {
-        ChannelFuture channelFuture;
-
-        // initialize client pipeline factory
-        if (clientPipelineFactory == null) {
-            clientPipelineFactory = new ClientPipelineFactory(this);
-        }
-        // must get the pipeline from the factory when opening a new connection
-        clientPipeline = clientPipelineFactory.getPipeline();
-
-        if (clientBootstrap != null) {
-            clientBootstrap.setPipeline(clientPipeline);
-            channelFuture = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-        } else if (connectionlessClientBootstrap != null) {
-            connectionlessClientBootstrap.setPipeline(clientPipeline);
-            connectionlessClientBootstrap.bind(new InetSocketAddress(0));
-            channelFuture = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-        } else {
-            throw new IllegalStateException("Should either be TCP or UDP");
-        }
-
+    private Channel openChannel(ChannelFuture channelFuture) throws Exception {
+        // wait until we got connection
         channelFuture.awaitUninterruptibly();
         if (!channelFuture.isSuccess()) {
             throw new CamelException("Cannot connect to " + configuration.getAddress(), channelFuture.getCause());
         }
-        channel = channelFuture.getChannel();
+        Channel channel = channelFuture.getChannel();
         // to keep track of all channels in use
-        allChannels.add(channel);
+        ALL_CHANNELS.add(channel);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating connector to address: " + configuration.getAddress());
         }
+        return channel;
     }
 
-    private void closeConnection() throws Exception {
-        // close all channels
-        ChannelGroupFuture future = allChannels.close();
-        future.awaitUninterruptibly();
-
-        // and then release other resources
-        if (channelFactory != null) {
-            channelFactory.releaseExternalResources();
-        }
+    private void openAndCloseConnection() throws Exception {
+        ChannelFuture future = openConnection(new DefaultExchange(context), new AsyncCallback() {
+            public void done(boolean doneSync) {
+                // noop
+            }
+        });
+        Channel channel = openChannel(future);
+        NettyHelper.close(channel);
     }
 
     public NettyConfiguration getConfiguration() {
@@ -268,10 +299,6 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         this.configuration = configuration;
     }
 
-    public CountDownLatch getCountdownLatch() {
-        return countdownLatch;
-    }
-
     public ChannelFactory getChannelFactory() {
         return channelFactory;
     }
@@ -280,23 +307,7 @@ public class NettyProducer extends DefaultProducer implements ServicePoolAware {
         this.channelFactory = channelFactory;
     }
 
-    public ClientBootstrap getClientBootstrap() {
-        return clientBootstrap;
-    }
-
-    public void setClientBootstrap(ClientBootstrap clientBootstrap) {
-        this.clientBootstrap = clientBootstrap;
-    }
-
-    public ClientPipelineFactory getClientPipelineFactory() {
-        return clientPipelineFactory;
-    }
-
-    public void setClientPipelineFactory(ClientPipelineFactory clientPipelineFactory) {
-        this.clientPipelineFactory = clientPipelineFactory;
-    }
-
     public ChannelGroup getAllChannels() {
-        return allChannels;
+        return ALL_CHANNELS;
     }
 }

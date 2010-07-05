@@ -62,7 +62,8 @@ public class NettyInOutWithForcedNoResponseTest extends CamelTestSupport {
                         .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
                         .otherwise().transform(constant(null));
 
-                from("netty:tcp://localhost:4445?sync=true&disconnectOnNoReply=false&noReplyLogLevel=OFF")
+                from("netty:tcp://localhost:4445?sync=true&disconnectOnNoReply=false&noReplyLogLevel=INFO")
+                    .to("log:foo")
                     .choice()
                         .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
                         .otherwise().transform(constant(null));

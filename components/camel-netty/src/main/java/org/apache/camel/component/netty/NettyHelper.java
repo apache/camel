@@ -47,7 +47,7 @@ public final class NettyHelper {
      * @throws CamelExchangeException is thrown if the body could not be written for some reasons
      *                                (eg remote connection is closed etc.)
      */
-    public static void writeBody(Channel channel, SocketAddress remoteAddress, Object body, Exchange exchange) throws CamelExchangeException {
+    public static void writeBodySync(Channel channel, SocketAddress remoteAddress, Object body, Exchange exchange) throws CamelExchangeException {
         // the write operation is asynchronous. Use future to wait until the session has been written
         ChannelFuture future;
         if (remoteAddress != null) {

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty.handlers;
 
-import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.netty.NettyConstants;
@@ -27,14 +26,17 @@ import org.apache.camel.processor.Logger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelPipelineCoverage;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 
-@ChannelPipelineCoverage("all")
+/**
+ * Server handler which is shared
+ */
+@ChannelHandler.Sharable
 public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     private static final transient Log LOG = LogFactory.getLog(ServerChannelHandler.class);
     private NettyConsumer consumer;
@@ -47,39 +49,47 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     }
 
     @Override
-    public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent channelStateEvent) throws Exception {
+    public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Channel open: " + e.getChannel());
+        }
         // to keep track of open sockets
-        consumer.getAllChannels().add(channelStateEvent.getChannel());
+        consumer.getAllChannels().add(e.getChannel());
     }
 
     @Override
     public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-        LOG.debug("Channel closed: " + e.getChannel());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Channel closed: " + e.getChannel());
+        }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
-        LOG.warn("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
+        // only close if we are still allowed to run
+        if (consumer.isRunAllowed()) {
+            LOG.warn("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
 
-        // close channel in case an exception was thrown
-        NettyHelper.close(exceptionEvent.getChannel());
+            // close channel in case an exception was thrown
+            NettyHelper.close(exceptionEvent.getChannel());
+        }
     }
     
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
         Object in = messageEvent.getMessage();
         if (LOG.isDebugEnabled()) {
-            if (in instanceof byte[]) {
-                // byte arrays is not readable so convert to string
-                in = consumer.getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, in);
-            }
             LOG.debug("Incoming message: " + in);
         }
-        
+
         // create Exchange and let the consumer process it
         Exchange exchange = consumer.getEndpoint().createExchange(ctx, messageEvent);
         if (consumer.getConfiguration().isSync()) {
             exchange.setPattern(ExchangePattern.InOut);
+        }
+        // set the exchange charset property for converting
+        if (consumer.getConfiguration().getCharsetName() != null) {
+            exchange.setProperty(Exchange.CHARSET_NAME, consumer.getConfiguration().getCharsetName());
         }
 
         try {
@@ -123,14 +133,19 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
                 NettyHelper.close(messageEvent.getChannel());
             }
         } else {
+            // if textline enabled then covert to a String which must be used for textline
+            if (consumer.getConfiguration().isTextline()) {
+                body = consumer.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
+            }
+
             // we got a body to write
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Writing body: " + body);
             }
             if (consumer.getConfiguration().getProtocol().equalsIgnoreCase("udp")) {
-                NettyHelper.writeBody(messageEvent.getChannel(), messageEvent.getRemoteAddress(), body, exchange);
+                NettyHelper.writeBodySync(messageEvent.getChannel(), messageEvent.getRemoteAddress(), body, exchange);
             } else {
-                NettyHelper.writeBody(messageEvent.getChannel(), null, body, exchange);
+                NettyHelper.writeBodySync(messageEvent.getChannel(), null, body, exchange);
             }
         }
 

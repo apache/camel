@@ -60,11 +60,15 @@ public class NettyConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Netty consumer binding to: " + configuration.getAddress());
+        }
+
         super.doStart();
-        if (configuration.getProtocol().equalsIgnoreCase("udp")) {
-            initializeUDPServerSocketCommunicationLayer();
-        } else {
+        if (isTcp()) {
             initializeTCPServerSocketCommunicationLayer();
+        } else {
+            initializeUDPServerSocketCommunicationLayer();
         }
 
         LOG.info("Netty consumer bound to: " + configuration.getAddress());
@@ -72,8 +76,8 @@ public class NettyConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Netty consumer unbinding from: " + configuration.getAddress());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Netty consumer unbinding from: " + configuration.getAddress());
         }
 
         // close all channels
@@ -86,6 +90,12 @@ public class NettyConsumer extends DefaultConsumer {
         }
 
         super.doStop();
+
+        LOG.info("Netty consumer unbound from: " + configuration.getAddress());
+    }
+
+    public CamelContext getContext() {
+        return context;
     }
 
     public ChannelGroup getAllChannels() {
@@ -130,6 +140,10 @@ public class NettyConsumer extends DefaultConsumer {
 
     public void setConnectionlessServerBootstrap(ConnectionlessBootstrap connectionlessServerBootstrap) {
         this.connectionlessServerBootstrap = connectionlessServerBootstrap;
+    }
+
+    protected boolean isTcp() {
+        return configuration.getProtocol().equalsIgnoreCase("tcp");
     }
 
     private void initializeTCPServerSocketCommunicationLayer() throws Exception {

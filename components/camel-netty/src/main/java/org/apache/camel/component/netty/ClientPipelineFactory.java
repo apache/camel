@@ -17,8 +17,11 @@
 package org.apache.camel.component.netty;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLEngine;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.apache.commons.logging.Log;
@@ -29,33 +32,25 @@ import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.ssl.SslHandler;
+import org.jboss.netty.handler.timeout.ReadTimeoutHandler;
+import org.jboss.netty.util.HashedWheelTimer;
+import org.jboss.netty.util.Timer;
 
 public class ClientPipelineFactory implements ChannelPipelineFactory {
     private static final transient Log LOG = LogFactory.getLog(ClientPipelineFactory.class);
-    private NettyProducer producer;
-    private ChannelPipeline channelPipeline;
+    private final NettyProducer producer;
+    private final Exchange exchange;
+    private final AsyncCallback callback;
 
-    public ClientPipelineFactory(NettyProducer producer) {
+    public ClientPipelineFactory(NettyProducer producer, Exchange exchange, AsyncCallback callback) {
         this.producer = producer;
+        this.exchange = exchange;
+        this.callback = callback;
     }
 
     public ChannelPipeline getPipeline() throws Exception {
-        if (channelPipeline != null) {
-            // http://docs.jboss.org/netty/3.1/api/org/jboss/netty/handler/ssl/SslHandler.html
-            // To restart the SSL session, you must remove the existing closed SslHandler
-            // from the ChannelPipeline, insert a new SslHandler with a new SSLEngine into
-            // the pipeline, and start the handshake process as described in the first section.
-            if (channelPipeline.remove("ssl") != null) {
-                // reinitialize and add SSL first
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Client SSL handler re-initialized on the ChannelPipeline");
-                }
-                channelPipeline.addFirst("ssl", configureClientSSLOnDemand());
-            }
-            return channelPipeline;
-        }
-
-        channelPipeline = Channels.pipeline();
+        // create a new pipeline
+        ChannelPipeline channelPipeline = Channels.pipeline();
 
         SslHandler sslHandler = configureClientSSLOnDemand();
         if (sslHandler != null) {
@@ -63,6 +58,12 @@ public class ClientPipelineFactory implements ChannelPipelineFactory {
                 LOG.debug("Client SSL handler configured and added to the ChannelPipeline");
             }
             channelPipeline.addLast("ssl", sslHandler);
+        }
+
+        // use read timeout handler to handle timeout while waiting for a remote reply (while reading from the remote host)
+        if (producer.getConfiguration().getTimeout() > 0) {
+            Timer timer = new HashedWheelTimer();
+            channelPipeline.addLast("timeout", new ReadTimeoutHandler(timer, producer.getConfiguration().getTimeout(), TimeUnit.MILLISECONDS));
         }
 
         List<ChannelUpstreamHandler> decoders = producer.getConfiguration().getDecoders();
@@ -75,11 +76,8 @@ public class ClientPipelineFactory implements ChannelPipelineFactory {
             channelPipeline.addLast("encoder-" + x, encoders.get(x));
         }
 
-        if (producer.getConfiguration().getHandler() != null) {
-            channelPipeline.addLast("handler", producer.getConfiguration().getHandler());
-        } else {
-            channelPipeline.addLast("handler", new ClientChannelHandler(producer));
-        }
+        // our handler must be added last
+        channelPipeline.addLast("handler", new ClientChannelHandler(producer, exchange, callback));
 
         return channelPipeline;
     }

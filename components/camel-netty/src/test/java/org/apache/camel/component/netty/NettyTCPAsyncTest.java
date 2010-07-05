@@ -82,6 +82,7 @@ public class NettyTCPAsyncTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:5150?sync=false")
+                    .to("log:result")
                     .to("mock:result");                
             }
         };

@@ -14,32 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mina;
+package org.apache.camel.component.netty;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class MinaVmTest extends ContextTestSupport {
-    protected String uri = "mina:vm://localhost:8080?sync=false&minaLogger=true";
+public class NettyTextlineInOutTest extends CamelTestSupport {
 
-    public void testMinaRoute() throws Exception {
-        MockEndpoint endpoint = getMockEndpoint("mock:result");
-        Object body = "Hello there!";
-        endpoint.expectedBodiesReceived(body);
+    @Test
+    public void testTextlineInOut() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(uri, body, "cheese", 123);
+        String reply = template.requestBody("netty:tcp://localhost:5148?textline=true&sync=true", "Hello World", String.class);
+        assertEquals("Bye World", reply);
 
         assertMockEndpointsSatisfied();
     }
 
-    protected RouteBuilder createRouteBuilder() {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
-                from(uri).to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
+            @Override
+            public void configure() throws Exception {
+                from("netty:tcp://localhost:5148?textline=true&sync=true")
+                    // body should be a String when using textline codec
+                    .validate(body().isInstanceOf(String.class))
+                    .to("mock:result")
+                    .transform(body().regexReplaceAll("Hello", "Bye"));
             }
         };
     }

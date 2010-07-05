@@ -16,37 +16,41 @@
  */
 package org.apache.camel.component.netty.handlers;
 
-import java.util.concurrent.CountDownLatch;
-
-import org.apache.camel.CamelException;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyHelper;
+import org.apache.camel.component.netty.NettyPayloadHelper;
 import org.apache.camel.component.netty.NettyProducer;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelPipelineCoverage;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+import org.jboss.netty.handler.timeout.TimeoutException;
 
-@ChannelPipelineCoverage("all")
+/**
+ * Client handler which cannot be shared
+ */
 public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
     private static final transient Log LOG = LogFactory.getLog(ClientChannelHandler.class);
-    private NettyProducer producer;
-    private Object message;
-    private Throwable cause;
+    private final NettyProducer producer;
+    private final Exchange exchange;
+    private final AsyncCallback callback;
     private boolean messageReceived;
+    private boolean exceptionHandled;
 
-    public ClientChannelHandler(NettyProducer producer) {
+    public ClientChannelHandler(NettyProducer producer, Exchange exchange, AsyncCallback callback) {
         super();
         this.producer = producer;
-    }
-
-    public void reset() {
-        this.message = null;
-        this.cause = null;
-        this.messageReceived = false;
+        this.exchange = exchange;
+        this.callback = callback;
     }
 
     @Override
@@ -57,59 +61,109 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
-        this.message = null;
-        this.messageReceived = false;
-        this.cause = exceptionEvent.getCause();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Exception caught at Channel: " + ctx.getChannel(), exceptionEvent.getCause());
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Closing channel as an exception was thrown from Netty", cause);
         }
-        // close channel in case an exception was thrown
-        NettyHelper.close(exceptionEvent.getChannel());
+        if (exceptionHandled) {
+            // ignore subsequent exceptions being thrown
+            return;
+        }
+
+        exceptionHandled = true;
+        Throwable cause = exceptionEvent.getCause();
+
+        // was it the timeout
+        if (cause instanceof TimeoutException) {
+            // timeout occurred
+            exchange.setException(new ExchangeTimedOutException(exchange, producer.getConfiguration().getTimeout()));
+
+            // signal callback
+            callback.done(false);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Closing channel as an exception was thrown from Netty", cause);
+            }
+            // set the cause on the exchange
+            exchange.setException(cause);
+
+            // close channel in case an exception was thrown
+            NettyHelper.close(exceptionEvent.getChannel());
+
+            // signal callback
+            callback.done(false);
+        }
     }
 
     @Override
     public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-        if (producer.getConfiguration().isSync() && !messageReceived) {
-            // sync=true (InOut mode) so we expected a message as reply but did not get one before the session is closed
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Channel closed: " + ctx.getChannel());
+        }
+
+        if (producer.getConfiguration().isSync() && !messageReceived && !exceptionHandled) {
+            // session was closed but no message received. This could be because the remote server had an internal error
+            // and could not return a response. We should count down to stop waiting for a response
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Channel closed but no message received from address: " + producer.getConfiguration().getAddress());
             }
-            // session was closed but no message received. This could be because the remote server had an internal error
-            // and could not return a response. We should count down to stop waiting for a response
-            countDown();
+            exchange.setException(new CamelExchangeException("No response received from remote server: " + producer.getConfiguration().getAddress(), exchange));
+            // signal callback
+            callback.done(false);
         }
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
-        message = messageEvent.getMessage();
         messageReceived = true;
-        cause = null;
 
+        Object body = messageEvent.getMessage();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Message received: " + message);
+            LOG.debug("Message received: " + body);
         }
 
-        // signal we have received message
-        countDown();
-    }
+        // if textline enabled then covert to a String which must be used for textline
+        if (producer.getConfiguration().isTextline()) {
+            try {
+                body = producer.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
+            } catch (NoTypeConversionAvailableException e) {
+                exchange.setException(e);
+                callback.done(false);
+            }
+        }
 
-    protected void countDown() {
-        if (producer.getConfiguration().isSync()) {
-            producer.getCountdownLatch().countDown();
+
+        // set the result on either IN or OUT on the original exchange depending on its pattern
+        if (ExchangeHelper.isOutCapable(exchange)) {
+            NettyPayloadHelper.setOut(exchange, body);
+        } else {
+            NettyPayloadHelper.setIn(exchange, body);
+        }
+
+        try {
+            // should channel be closed after complete?
+            Boolean close;
+            if (ExchangeHelper.isOutCapable(exchange)) {
+                close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+            } else {
+                close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+            }
+
+            // should we disconnect, the header can override the configuration
+            boolean disconnect = producer.getConfiguration().isDisconnect();
+            if (close != null) {
+                disconnect = close;
+            }
+            if (disconnect) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Closing channel when complete at address: " + producer.getConfiguration().getAddress());
+                }
+                NettyHelper.close(ctx.getChannel());
+            }
+        } finally {
+            // signal callback
+            callback.done(false);
         }
     }
 
-    public Object getMessage() {
-        return message;
-    }
-
-    public boolean isMessageReceived() {
-        return messageReceived;
-    }
-
-    public Throwable getCause() {
-        return cause;
-    }
 }

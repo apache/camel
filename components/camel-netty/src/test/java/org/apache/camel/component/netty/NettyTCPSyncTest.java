@@ -34,34 +34,31 @@ public class NettyTCPSyncTest extends CamelTestSupport {
 
     @Test
     public void testTCPStringInOutWithNettyConsumer() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testTCPInOutWithNettyConsumer()");
-        }
-        
         String response = producerTemplate.requestBody(
             "netty:tcp://localhost:5150?sync=true", 
             "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);        
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
-  
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testTCPInOutWithNettyConsumer()");
-        }
+    }
+
+    @Test
+    public void testTCPStringInOutWithNettyConsumer2Times() throws Exception {
+        String response = producerTemplate.requestBody(
+            "netty:tcp://localhost:5150?sync=true",
+            "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
+        assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
+
+        response = producerTemplate.requestBody(
+            "netty:tcp://localhost:5150?sync=true",
+            "Hello World", String.class);
+        assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }
 
     @Test
     public void testTCPObjectInOutWithNettyConsumer() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testUDPInOutWithNettyConsumer()");
-        }
-        
         Poetry poetry = new Poetry();
         Poetry response = (Poetry) producerTemplate.requestBody("netty:tcp://localhost:5150?sync=true", poetry);        
         assertEquals("Dr. Sarojini Naidu", response.getPoet());
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testUDPInOutWithNettyConsumer()");
-        }
-    }  
+    }
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

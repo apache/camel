@@ -14,32 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mina;
+package org.apache.camel.component.netty;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class MinaVmTest extends ContextTestSupport {
-    protected String uri = "mina:vm://localhost:8080?sync=false&minaLogger=true";
+public class NettyTextlineInOnlyTest extends CamelTestSupport {
 
-    public void testMinaRoute() throws Exception {
-        MockEndpoint endpoint = getMockEndpoint("mock:result");
-        Object body = "Hello there!";
-        endpoint.expectedBodiesReceived(body);
-
-        template.sendBodyAndHeader(uri, body, "cheese", 123);
+    @Test
+    public void testTextlineInOnly() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World\nHow are you?");
+        
+        template.sendBody("netty:tcp://localhost:5149?textline=true&sync=false", "Hello World\nHow are you?");
 
         assertMockEndpointsSatisfied();
     }
 
-    protected RouteBuilder createRouteBuilder() {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
-                from(uri).to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
+            @Override
+            public void configure() throws Exception {
+                from("netty:tcp://localhost:5149?textline=true&sync=false")
+                    // body should be a String when using textline codec
+                    .validate(body().isInstanceOf(String.class))
+                    .to("mock:result");
             }
         };
     }

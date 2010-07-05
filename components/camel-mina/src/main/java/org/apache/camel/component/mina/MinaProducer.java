@@ -89,7 +89,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
 
         // if textline enabled then covert to a String which must be used for textline
         if (endpoint.getConfiguration().isTextline()) {
-            body = endpoint.getCamelContext().getTypeConverter().convertTo(String.class, exchange, body);
+            body = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
         }
 
         // if sync is true then we should also wait for a response (synchronous mode)

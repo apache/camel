@@ -18,23 +18,29 @@ package org.apache.camel.component.netty;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.URISupport;
+import org.apache.camel.util.EndpointHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
-import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
-import org.jboss.netty.channel.SimpleChannelHandler;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
+import org.jboss.netty.handler.codec.string.StringDecoder;
+import org.jboss.netty.handler.codec.string.StringEncoder;
 import org.jboss.netty.handler.ssl.SslHandler;
+import org.jboss.netty.util.CharsetUtil;
 
 @SuppressWarnings("unchecked")
 public class NettyConfiguration implements Cloneable {
+    private static final transient Log LOG = LogFactory.getLog(NettyConfiguration.class);
+
     private String protocol;
     private String host;
     private int port;
@@ -45,13 +51,14 @@ public class NettyConfiguration implements Cloneable {
     private long timeout = 30000;
     private boolean reuseAddress = true;
     private boolean sync = true;
+    private boolean textline;
+    private String encoding;
     private String passphrase;
     private File keyStoreFile;
     private File trustStoreFile;
     private SslHandler sslHandler;
     private List<ChannelDownstreamHandler> encoders = new ArrayList<ChannelDownstreamHandler>();
     private List<ChannelUpstreamHandler> decoders = new ArrayList<ChannelUpstreamHandler>();
-    private ChannelHandler handler;
     private boolean ssl;
     private long sendBufferSize = 65536;
     private long receiveBufferSize = 65536;
@@ -99,70 +106,53 @@ public class NettyConfiguration implements Cloneable {
         keyStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "keyStoreFile", File.class, null);
         trustStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "trustStoreFile", File.class, null);
 
+        // set custom encoders and decoders first
         List<ChannelDownstreamHandler> referencedEncoders = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelDownstreamHandler.class, null);
         addToHandlersList(encoders, referencedEncoders, ChannelDownstreamHandler.class);
         List<ChannelUpstreamHandler> referencedDecoders = component.resolveAndRemoveReferenceListParameter(parameters, "decoders", ChannelUpstreamHandler.class, null);
         addToHandlersList(decoders, referencedDecoders, ChannelUpstreamHandler.class);
 
+        // then set parameters with the help of the camel context type converters
+        EndpointHelper.setProperties(component.getCamelContext(), this, parameters);
+
+        // add default encoders and decoders
         if (encoders.isEmpty() && decoders.isEmpty()) {
-            encoders.add(component.resolveAndRemoveReferenceParameter(parameters, "encoder", ChannelDownstreamHandler.class, new ObjectEncoder()));
-            decoders.add(component.resolveAndRemoveReferenceParameter(parameters, "decoder", ChannelUpstreamHandler.class, new ObjectDecoder()));
+            // are we textline or object?
+            if (isTextline()) {
+                Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
+                encoders.add(new StringEncoder(charset));
+                decoders.add(new StringDecoder(charset));
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using textline encoders and decoders with charset: " + charset);
+                }
+            } else {
+                // object serializable is then used
+                encoders.add(new ObjectEncoder());
+                decoders.add(new ObjectDecoder());
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using object encoders and decoders");
+                }
+            }
+        } else {
+            LOG.debug("Using configured encoders and/or decoders");
+        }
+    }
+
+    public String getCharsetName() {
+        if (encoding == null) {
+            return null;
+        }
+        if (!Charset.isSupported(encoding)) {
+            throw new IllegalArgumentException("The encoding: " + encoding + " is not supported");
         }
 
-        handler = component.resolveAndRemoveReferenceParameter(parameters, "handler", SimpleChannelHandler.class, null);
+        return Charset.forName(encoding).name();
+    }
 
-        Map<String, Object> settings = URISupport.parseParameters(uri);
-        if (settings.containsKey("keepAlive")) {
-            setKeepAlive(Boolean.valueOf((String) settings.get("keepAlive")));
-        }
-        if (settings.containsKey("tcpNoDelay")) {
-            setTcpNoDelay(Boolean.valueOf((String) settings.get("tcpNoDelay")));
-        }
-        if (settings.containsKey("broadcast")) {
-            setBroadcast(Boolean.valueOf((String) settings.get("broadcast")));
-        }
-        if (settings.containsKey("reuseAddress")) {
-            setReuseAddress(Boolean.valueOf((String) settings.get("reuseAddress")));
-        }
-        if (settings.containsKey("connectTimeoutMillis")) {
-            setConnectTimeout(Long.valueOf((String) settings.get("connectTimeoutMillis")));
-        }
-        if (settings.containsKey("sync")) {
-            setTcpNoDelay(Boolean.valueOf((String) settings.get("sync")));
-        }
-        if (settings.containsKey("receiveTimeoutMillis")) {
-            setTimeout(Long.valueOf((String) settings.get("receiveTimeoutMillis")));
-        }
-        if (settings.containsKey("sendBufferSize")) {
-            setSendBufferSize(Long.valueOf((String) settings.get("sendBufferSize")));
-        }
-        if (settings.containsKey("receiveBufferSize")) {
-            setReceiveBufferSize(Long.valueOf((String) settings.get("receiveBufferSize")));
-        }
-        if (settings.containsKey("ssl")) {
-            setTcpNoDelay(Boolean.valueOf((String) settings.get("ssl")));
-        }
-        if (settings.containsKey("corePoolSize")) {
-            setCorePoolSize(Integer.valueOf((String) settings.get("corePoolSize")));
-        }
-        if (settings.containsKey("maxPoolSize")) {
-            setMaxPoolSize(Integer.valueOf((String) settings.get("maxPoolSize")));
-        }
-        if (settings.containsKey("disconnect")) {
-            setDisconnect(Boolean.valueOf((String) settings.get("disconnect")));
-        }
-        if (settings.containsKey("lazyChannelCreation")) {
-            setLazyChannelCreation(Boolean.valueOf((String) settings.get("lazyChannelCreation")));
-        }
-        if (settings.containsKey("transferExchange")) {
-            setTransferExchange(Boolean.valueOf((String) settings.get("transferExchange")));
-        }
-        if (settings.containsKey("disconnectOnNoReply")) {
-            setDisconnectOnNoReply(Boolean.valueOf((String) settings.get("disconnectOnNoReply")));
-        }
-        if (settings.containsKey("noReplyLogLevel")) {
-            setNoReplyLogLevel(LoggingLevel.valueOf((String) settings.get("noReplyLogLevel")));
-        }
+    protected boolean isTcp() {
+        return protocol.equalsIgnoreCase("tcp");
     }
 
     public String getProtocol() {
@@ -237,6 +227,22 @@ public class NettyConfiguration implements Cloneable {
         this.sync = sync;
     }
 
+    public boolean isTextline() {
+        return textline;
+    }
+
+    public void setTextline(boolean textline) {
+        this.textline = textline;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
     public SslHandler getSslHandler() {
         return sslHandler;
     }
@@ -279,14 +285,6 @@ public class NettyConfiguration implements Cloneable {
 
     public void setDecoders(List<ChannelUpstreamHandler> decoders) {
         this.decoders = decoders;
-    }
-
-    public ChannelHandler getHandler() {
-        return handler;
-    }
-
-    public void setHandler(ChannelHandler handler) {
-        this.handler = handler;
     }
 
     public long getTimeout() {

@@ -70,7 +70,6 @@ public class MinaConfiguration implements Cloneable {
         return Charset.forName(encoding).name();
     }
 
-
     public String getProtocol() {
         return protocol;
     }
