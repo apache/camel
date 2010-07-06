@@ -40,6 +40,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     protected int dataTimeout;
 
     public FtpEndpoint() {
+        super();
     }
 
     public FtpEndpoint(String uri, RemoteFileComponent<FTPFile> component, RemoteFileConfiguration configuration) {
@@ -49,11 +50,6 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     @Override
     public String getScheme() {
         return "ftp";
-    }
-
-    @Override
-    public RemoteFileConfiguration getConfiguration() {
-        return (RemoteFileConfiguration) super.getConfiguration();
     }
 
     @Override
