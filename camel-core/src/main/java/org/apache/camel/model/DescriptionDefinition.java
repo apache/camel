@@ -32,6 +32,14 @@ import javax.xml.bind.annotation.XmlValue;
 public class DescriptionDefinition {
     @XmlAttribute(required = false)
     private String lang;
+    @XmlAttribute(required = false)
+    private Double layoutX;
+    @XmlAttribute(required = false)
+    private Double layoutY;
+    @XmlAttribute(required = false)
+    private Double layoutWidth;
+    @XmlAttribute(required = false)
+    private Double layoutHeight;
 
     @XmlValue
     private String text;
@@ -50,5 +58,37 @@ public class DescriptionDefinition {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public Double getLayoutHeight() {
+        return layoutHeight;
+    }
+
+    public void setLayoutHeight(Double layoutHeight) {
+        this.layoutHeight = layoutHeight;
+    }
+
+    public Double getLayoutWidth() {
+        return layoutWidth;
+    }
+
+    public void setLayoutWidth(Double layoutWidth) {
+        this.layoutWidth = layoutWidth;
+    }
+
+    public Double getLayoutX() {
+        return layoutX;
+    }
+
+    public void setLayoutX(Double layoutX) {
+        this.layoutX = layoutX;
+    }
+
+    public Double getLayoutY() {
+        return layoutY;
+    }
+
+    public void setLayoutY(Double layoutY) {
+        this.layoutY = layoutY;
     }
 }
