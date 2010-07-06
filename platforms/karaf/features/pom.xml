@@ -90,7 +90,7 @@
       <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
       <juel-bundle-version>2.1.2_1</juel-bundle-version>
       <junit-bundle-version>4.7_1</junit-bundle-version>
-      <jsmpp-bundle-version>2.1.0_1-SNAPSHOT</jsmpp-bundle-version>
+      <jsmpp-bundle-version>2.1.0_1</jsmpp-bundle-version>
       <lucene-bundle-version>3.0.1_1</lucene-bundle-version>
       <mvel-bundle-version>2.0.8_3</mvel-bundle-version>
       <mina-bundle-version>1.1.7_3</mina-bundle-version>
@@ -102,7 +102,7 @@
       <osgi.compendium.version>4.2.0</osgi.compendium.version>
       <protobuf-java-bundle-version>2.2.0_1</protobuf-java-bundle-version>
       <pax.web.version>0.7.2</pax.web.version>
-      <quartz-bundle-version>1.8.3_1-SNAPSHOT</quartz-bundle-version>
+      <quartz-bundle-version>1.8.3_1</quartz-bundle-version>
       <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
       <saxon-bundle-version>9.1.0.1_3</saxon-bundle-version>
       <servicemix-specs-version>1.5.0</servicemix-specs-version>
