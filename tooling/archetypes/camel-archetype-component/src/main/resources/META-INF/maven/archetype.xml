@@ -27,7 +27,7 @@
   </sources>
   <resources>    
     <resource>ReadMe.txt</resource>
-    <resource>src/main/resources/META-INF/services/direct</resource>
+    <resource>src/main/resources/META-INF/services/org/apache/camel/component/direct</resource>
     <resource>src/main/resources/log4j.properties</resource>   
   </resources>
 </archetype>
