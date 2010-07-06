@@ -130,8 +130,6 @@
               <excludes>
                   <!-- CXF test will hang with the Spring3, need to check Cxf feature with karaf later -->
                   <exclude>**/*Cxf*.*</exclude>
-                  <!-- Scala-lib is not OSGi ready, so we exculde this test -->
-                  <exclude>**/*Scala*.*</exclude>
                   <!--
                   <exclude>**/*Amqp*.*</exclude>
                   <exclude>**/*Bindy*.*</exclude>
