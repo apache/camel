@@ -56,7 +56,7 @@ public class NettyConfiguration implements Cloneable {
     private boolean textline;
     private TextLineDelimiter delimiter = TextLineDelimiter.LINE;
     private boolean autoAppendDelimiter = true;
-    private int decorderMaxLineLength = 1024;
+    private int decoderMaxLineLength = 1024;
     private String encoding;
     private String passphrase;
     private File keyStoreFile;
@@ -128,12 +128,12 @@ public class NettyConfiguration implements Cloneable {
                 if (isTextline()) {
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
                     encoders.add(new StringEncoder(charset));
-                    decoders.add(new DelimiterBasedFrameDecoder(decorderMaxLineLength, true, delimiter == TextLineDelimiter.LINE ? Delimiters.lineDelimiter() : Delimiters.nulDelimiter()));
+                    decoders.add(new DelimiterBasedFrameDecoder(decoderMaxLineLength, true, delimiter == TextLineDelimiter.LINE ? Delimiters.lineDelimiter() : Delimiters.nulDelimiter()));
                     decoders.add(new StringDecoder(charset));
 
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Using textline encoders and decoders with charset: " + charset + ", delimiter: "
-                            + delimiter + " and decoderMaxLineLength: " + decorderMaxLineLength);
+                            + delimiter + " and decoderMaxLineLength: " + decoderMaxLineLength);
                     }
                 } else {
                     // object serializable is then used
@@ -249,12 +249,12 @@ public class NettyConfiguration implements Cloneable {
         this.textline = textline;
     }
 
-    public int getDecorderMaxLineLength() {
-        return decorderMaxLineLength;
+    public int getDecoderMaxLineLength() {
+        return decoderMaxLineLength;
     }
 
-    public void setDecorderMaxLineLength(int decorderMaxLineLength) {
-        this.decorderMaxLineLength = decorderMaxLineLength;
+    public void setDecoderMaxLineLength(int decoderMaxLineLength) {
+        this.decoderMaxLineLength = decoderMaxLineLength;
     }
 
     public TextLineDelimiter getDelimiter() {
