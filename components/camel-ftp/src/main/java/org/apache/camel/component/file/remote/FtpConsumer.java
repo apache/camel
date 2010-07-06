@@ -36,9 +36,12 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
 
-    protected void pollDirectory(String fileName, List<GenericFile<FTPFile>> fileList) {
+    protected boolean pollDirectory(String fileName, List<GenericFile<FTPFile>> fileList) {
+        if (log.isTraceEnabled()) {
+            log.trace("pollDirectory from fileName: " + fileName);
+        }
         if (fileName == null) {
-            return;
+            return true;
         }
 
         // remove trailing /
@@ -48,13 +51,35 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             log.trace("Polling directory: " + fileName);
         }
         List<FTPFile> files = operations.listFiles(fileName);
+        if (files == null || files.isEmpty()) {
+            // no files in this directory to poll
+            if (log.isTraceEnabled()) {
+                log.trace("No files found in directory: " + fileName);
+            }
+            return true;
+        } else {
+            // we found some files
+            if (log.isTraceEnabled()) {
+                log.trace("Found " + files.size() + " in directory: " + fileName);
+            }
+        }
+
         for (FTPFile file : files) {
+
+            // check if we can continue polling in files
+            if (!canPollMoreFiles(fileList)) {
+                return false;
+            }
+
             if (file.isDirectory()) {
                 RemoteFile<FTPFile> remote = asRemoteFile(fileName, file);
                 if (endpoint.isRecursive() && isValidFile(remote, true)) {
                     // recursive scan and add the sub files and folders
-                    String directory = fileName + "/" + file.getName();
-                    pollDirectory(directory, fileList);
+                    String subDirectory = fileName + "/" + file.getName();
+                    boolean canPollMore = pollDirectory(subDirectory, fileList);
+                    if (!canPollMore) {
+                        return false;
+                    }
                 }
             } else if (file.isFile()) {
                 RemoteFile<FTPFile> remote = asRemoteFile(fileName, file);
@@ -72,6 +97,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                 log.debug("Ignoring unsupported remote file type: " + file);
             }
         }
+
+        return true;
     }
 
     private RemoteFile<FTPFile> asRemoteFile(String directory, FTPFile file) {

@@ -35,7 +35,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
 
-    protected void pollDirectory(String fileName, List<GenericFile<File>> fileList) {
+    protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList) {
         if (log.isTraceEnabled()) {
             log.trace("pollDirectory from fileName: " + fileName);
         }
@@ -45,7 +45,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
             if (log.isDebugEnabled()) {
                 log.debug("Cannot poll as directory does not exists or its not a directory: " + directory);
             }
-            return;
+            return true;
         }
 
         if (log.isTraceEnabled()) {
@@ -57,7 +57,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
             if (log.isTraceEnabled()) {
                 log.trace("No files found in directory: " + directory.getPath());
             }
-            return;
+            return true;
         } else {
             // we found some files
             if (log.isTraceEnabled()) {
@@ -66,6 +66,11 @@ public class FileConsumer extends GenericFileConsumer<File> {
         }
 
         for (File file : files) {
+            // check if we can continue polling in files
+            if (!canPollMoreFiles(fileList)) {
+                return false;
+            }
+
             // trace log as Windows/Unix can have different views what the file is?
             if (log.isTraceEnabled()) {
                 log.trace("Found file: " + file + " [isAbsolute: " + file.isAbsolute() + ", isDirectory: "
@@ -79,7 +84,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 if (endpoint.isRecursive() && isValidFile(gf, true)) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = fileName + File.separator + file.getName();
-                    pollDirectory(subDirectory, fileList);
+                    boolean canPollMore = pollDirectory(subDirectory, fileList);
+                    if (!canPollMore) {
+                        return false;
+                    }
                 }
             } else {
                 // Windows can report false to a file on a share so regard it always as a file (if its not a directory)
@@ -98,6 +106,8 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 }
             }
         }
+
+        return true;
     }
 
     /**

@@ -73,9 +73,15 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
         // gather list of files to process
         List<GenericFile<T>> files = new ArrayList<GenericFile<T>>();
-
         String name = endpoint.getConfiguration().getDirectory();
-        pollDirectory(name, files);
+        boolean limitHit = !pollDirectory(name, files);
+
+        // log if we hit the limit
+        if (limitHit) {
+            if (log.isDebugEnabled()) {
+                log.debug("Limiting maximum messages to poll at " + maxMessagesPerPoll + " files as there was more messages in this poll.");
+            }
+        }
 
         // sort files using file comparator if provided
         if (endpoint.getSorter() != null) {
@@ -180,6 +186,20 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     }
 
     /**
+     * Whether or not we can continue polling for more files
+     *
+     * @param fileList  the current list of gathered files
+     * @return <tt>true</tt> to continue, <tt>false</tt> to stop due hitting maxMessagesPerPoll limit
+     */
+    public boolean canPollMoreFiles(List fileList) {
+        if (maxMessagesPerPoll > 0 && fileList.size() >= maxMessagesPerPoll) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * Override if required. Perform some checks (and perhaps actions) before we
      * poll.
      *
@@ -202,8 +222,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      *
      * @param fileName current directory or file
      * @param fileList current list of files gathered
+     * @return whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has been hit
      */
-    protected abstract void pollDirectory(String fileName, List<GenericFile<T>> fileList);
+    protected abstract boolean pollDirectory(String fileName, List<GenericFile<T>> fileList);
 
     /**
      * Sets the operations to be used.

@@ -9,7 +9,7 @@
 
 	<artifactId>camel-spring-security</artifactId>
 	<packaging>bundle</packaging>
-	<name>Camel :: Spring :: Security </name>
+	<name>Camel :: Spring Security </name>
 	<description>Camel Spring Security support</description>
 
 	<properties>

@@ -36,9 +36,13 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
 
-    protected void pollDirectory(String fileName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
+    protected boolean pollDirectory(String fileName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
+        if (log.isTraceEnabled()) {
+            log.trace("pollDirectory from fileName: " + fileName);
+        }
+
         if (fileName == null) {
-            return;
+            return true;
         }
 
         // remove trailing /
@@ -48,13 +52,35 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
             log.trace("Polling directory: " + fileName);
         }
         List<ChannelSftp.LsEntry> files = operations.listFiles(fileName);
+        if (files == null || files.isEmpty()) {
+            // no files in this directory to poll
+            if (log.isTraceEnabled()) {
+                log.trace("No files found in directory: " + fileName);
+            }
+            return true;
+        } else {
+            // we found some files
+            if (log.isTraceEnabled()) {
+                log.trace("Found " + files.size() + " in directory: " + fileName);
+            }
+        }
+
         for (ChannelSftp.LsEntry file : files) {
+
+            // check if we can continue polling in files
+            if (!canPollMoreFiles(fileList)) {
+                return false;
+            }
+
             if (file.getAttrs().isDir()) {
                 RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(fileName, file);
                 if (endpoint.isRecursive() && isValidFile(remote, true)) {
                     // recursive scan and add the sub files and folders
-                    String directory = fileName + "/" + file.getFilename();
-                    pollDirectory(directory, fileList);
+                    String subDirectory = fileName + "/" + file.getFilename();
+                    boolean canPollMore = pollDirectory(subDirectory, fileList);
+                    if (!canPollMore) {
+                        return false;
+                    }
                 }
                 // we cannot use file.getAttrs().isLink on Windows, so we dont invoke the method
                 // just assuming its a file we should poll
@@ -72,6 +98,8 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
                 }
             }
         }
+
+        return true;
     }
 
     private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String directory, ChannelSftp.LsEntry file) {
