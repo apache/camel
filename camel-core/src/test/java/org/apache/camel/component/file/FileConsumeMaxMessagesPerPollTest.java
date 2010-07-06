@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/poll/?initialDelay=2000&delay=5000&sortBy=file:name&maxMessagesPerPoll=2";
+    private String fileUrl = "file://target/poll/?initialDelay=2000&delay=5000&maxMessagesPerPoll=2";
 
     @Override
     protected void setUp() throws Exception {
@@ -39,14 +39,14 @@ public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
 
     public void testMaxMessagesPerPoll() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Bye World", "Godday World");
+        mock.expectedMessageCount(2);
         mock.setResultWaitTime(3000);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
 
         assertMockEndpointsSatisfied();
 
         mock.reset();
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedMessageCount(1);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 1);
 
         assertMockEndpointsSatisfied();

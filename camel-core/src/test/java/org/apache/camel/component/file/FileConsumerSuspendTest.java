@@ -44,8 +44,9 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
         Thread.sleep(1000);
 
         // the route is suspended by the policy so we should only receive one
-        File file = new File("target/suspended/hello.txt").getAbsoluteFile();
-        assertEquals("The file should exists", true, file.exists());
+        String[] files = new File("target/suspended/").getAbsoluteFile().list();
+        assertNotNull(files);
+        assertEquals("The file should exists", 1, files.length);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 MyPolicy myPolicy = new MyPolicy();
-                from("file://target/suspended?maxMessagesPerPoll=1&sortBy=file:name")
+                from("file://target/suspended?maxMessagesPerPoll=1&delete=true")
                     .routePolicy(myPolicy).id("myRoute")
                     .convertBodyTo(String.class).to("mock:result");
             }
