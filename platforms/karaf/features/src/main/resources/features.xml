@@ -278,7 +278,8 @@
   </feature>
   <feature name='camel-hawtdb' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>  
-    <bundle>mvn:${hawtdb-maven-repo-url}!org.fusesource.hawtdb/hawtdb/${hawtdb-version}</bundle>
+    <bundle>mvn:${fuse-maven-repo-url}!org.fusesource.hawtdb/hawtdb/${hawtdb-version}</bundle>
+    <bundle>mvn:${fuse-maven-repo-url}!org.fusesource.hawtbuf/hawtbuf/${hawtbuf-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hawtdb/${pom.version}</bundle>
   </feature>	  
   <feature name='camel-hl7' version='${pom.version}'>
@@ -463,7 +464,7 @@
     <bundle>mvn:org.apache.camel/camel-saxon/${pom.version}</bundle>
   </feature>
   <feature name='camel-scala' version='${pom.version}'>
-    <bundle>mvn:http://scala-tools.org/repo-releases!org.scala-lang-osgi/scala-library/${scala-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.scala-library/${scala-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-scala/${pom.version}</bundle>
   </feature>
