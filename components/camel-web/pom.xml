@@ -71,6 +71,14 @@
 			<url>http://download.java.net/maven/2/</url>
 			<layout>default</layout>
 		</pluginRepository>
+		<pluginRepository>
+			<id>glassfish-repo-archive</id>
+			<name>Nexus repository collection for Glassfish</name>
+			<url>http://maven.glassfish.org/content/groups/glassfish</url>
+			<snapshots>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</pluginRepository>
 	</pluginRepositories>
 
 	<dependencies>
