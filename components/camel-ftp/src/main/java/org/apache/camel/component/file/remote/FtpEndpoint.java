@@ -37,6 +37,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     protected Map<String, Object> ftpClientParameters;
     protected Map<String, Object> ftpClientConfigParameters;
     protected int soTimeout;
+    protected int dataTimeout;
 
     public FtpEndpoint() {
     }
@@ -48,6 +49,11 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     @Override
     public String getScheme() {
         return "ftp";
+    }
+
+    @Override
+    public RemoteFileConfiguration getConfiguration() {
+        return (RemoteFileConfiguration) super.getConfiguration();
     }
 
     @Override
@@ -76,11 +82,26 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
             client = createFtpClient();
         }
 
+        // set any endpoint configured timeouts
+        if (getConfiguration().getConnectTimeout() > -1) {
+            client.setConnectTimeout(getConfiguration().getConnectTimeout());
+        }
+        if (getConfiguration().getSoTimeout() > -1) {
+            soTimeout = getConfiguration().getSoTimeout();
+        }
+        dataTimeout = getConfiguration().getTimeout();
+
+        // then lookup ftp client parameters and set those
         if (ftpClientParameters != null) {
             // setting soTimeout has to be done later on FTPClient (after it has connected)
             Object timeout = ftpClientParameters.remove("soTimeout");
             if (timeout != null) {
                 soTimeout = getCamelContext().getTypeConverter().convertTo(int.class, timeout);
+            }
+            // and we want to keep data timeout so we can log it later
+            timeout = ftpClientParameters.remove("dataTimeout");
+            if (timeout != null) {
+                dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, dataTimeout);
             }
             IntrospectionSupport.setProperties(client, ftpClientParameters);
         }
@@ -91,6 +112,14 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
                 ftpClientConfig = new FTPClientConfig();
             }
             IntrospectionSupport.setProperties(ftpClientConfig, ftpClientConfigParameters);
+        }
+
+        if (dataTimeout > 0) {
+            client.setDataTimeout(dataTimeout);
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Created FTPClient [connectTimeout: " + client.getConnectTimeout() + ", soTimeout: " + getSoTimeout() + ", dataTimeout: " + dataTimeout + "]: " + client);
         }
 
         FtpOperations operations = new FtpOperations(client, getFtpClientConfig());
@@ -137,7 +166,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     /**
-     * Sets the soTimeout option to be used by FTPClient.
+     * Sets the soTimeout option.
+     * <p/>
+     * Used by FTPClient
      */
     public void setSoTimeout(int soTimeout) {
         this.soTimeout = soTimeout;

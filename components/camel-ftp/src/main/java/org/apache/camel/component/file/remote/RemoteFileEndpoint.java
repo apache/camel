@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.impl.DefaultExchange;
@@ -41,6 +42,11 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     public RemoteFileEndpoint(String uri, RemoteFileComponent<T> component, RemoteFileConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public RemoteFileConfiguration getConfiguration() {
+        return (RemoteFileConfiguration) this.configuration;
     }
 
     @Override

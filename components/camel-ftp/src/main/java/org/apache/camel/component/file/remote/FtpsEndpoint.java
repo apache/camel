@@ -42,6 +42,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     protected Map<String, Object> ftpClientTrustStoreParameters;
 
     public FtpsEndpoint() {
+        super();
     }
 
     public FtpsEndpoint(String uri, RemoteFileComponent<FTPFile> remoteFileComponent, RemoteFileConfiguration configuration) {
@@ -120,11 +121,25 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             client = (FTPSClient) createFtpClient();
         }
 
+        // set any endpoint configured timeouts
+        if (getConfiguration().getConnectTimeout() > -1) {
+            client.setConnectTimeout(getConfiguration().getConnectTimeout());
+        }
+        if (getConfiguration().getSoTimeout() > -1) {
+            soTimeout = getConfiguration().getSoTimeout();
+        }
+        dataTimeout = getConfiguration().getTimeout();
+
         if (ftpClientParameters != null) {
             // setting soTimeout has to be done later on FTPClient (after it has connected)
             Object timeout = ftpClientParameters.remove("soTimeout");
             if (timeout != null) {
                 soTimeout = getCamelContext().getTypeConverter().convertTo(int.class, timeout);
+            }
+            // and we want to keep data timeout so we can log it later
+            timeout = ftpClientParameters.remove("dataTimeout");
+            if (timeout != null) {
+                dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, dataTimeout);
             }
             IntrospectionSupport.setProperties(client, ftpClientParameters);
         }
@@ -135,6 +150,14 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
                 ftpClientConfig = new FTPClientConfig();
             }
             IntrospectionSupport.setProperties(ftpClientConfig, ftpClientConfigParameters);
+        }
+
+        if (dataTimeout > 0) {
+            client.setDataTimeout(dataTimeout);
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Created FTPSClient [connectTimeout: " + client.getConnectTimeout() + ", soTimeout: " + getSoTimeout() + ", dataTimeout: " + dataTimeout + "]: " + client);
         }
 
         FtpsOperations operations = new FtpsOperations(client, getFtpClientConfig());

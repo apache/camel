@@ -80,11 +80,25 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                     if (session == null || !session.isConnected()) {
                         LOG.trace("Session isn't connected, trying to recreate and connect.");
                         session = createSession(configuration);
-                        session.connect();
+                        if (endpoint.getConfiguration().getConnectTimeout() > 0) {
+                            LOG.trace("Connecting use connectTimeout: " + endpoint.getConfiguration().getConnectTimeout() + " ...");
+                            session.connect(endpoint.getConfiguration().getConnectTimeout());
+                        } else {
+                            LOG.trace("Connecting ...");
+                            session.connect();
+                        }
                     }
+
                     LOG.trace("Channel isn't connected, trying to recreate and connect.");
                     channel = (ChannelSftp) session.openChannel("sftp");
-                    channel.connect();
+
+                    if (endpoint.getConfiguration().getConnectTimeout() > 0) {
+                        LOG.trace("Connecting use connectTimeout: " + endpoint.getConfiguration().getConnectTimeout() + " ...");
+                        channel.connect(endpoint.getConfiguration().getConnectTimeout());
+                    } else {
+                        LOG.trace("Connecting ...");
+                        channel.connect();
+                    }
                     LOG.info("Connected to " + configuration.remoteServerInformation());
                 }
 

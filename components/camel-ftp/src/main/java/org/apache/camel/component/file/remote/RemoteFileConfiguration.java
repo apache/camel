@@ -31,6 +31,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private String password;
     private boolean binary;
     private boolean passiveMode;
+    private int connectTimeout = 10000;
+    private int timeout = 30000;
+    private int soTimeout;
 
     public RemoteFileConfiguration() {
     }
@@ -127,4 +130,42 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         this.passiveMode = passiveMode;
     }
 
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * Sets the connect timeout for waiting for a connection to be established
+     * <p/>
+     * Used by both FTPClient and JSCH
+     */
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    /**
+     * Sets the data timeout for waiting for reply
+     * <p/>
+     * Used only by FTPClient
+     */
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    public int getSoTimeout() {
+        return soTimeout;
+    }
+
+    /**
+     * Sets the so timeout
+     * <p/>
+     * Used only by FTPClient
+     */
+    public void setSoTimeout(int soTimeout) {
+        this.soTimeout = soTimeout;
+    }
 }

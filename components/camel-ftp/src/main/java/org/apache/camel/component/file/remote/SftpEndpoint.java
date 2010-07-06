@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 
 /**
@@ -30,6 +31,11 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
     public SftpEndpoint(String uri, SftpComponent component, RemoteFileConfiguration configuration) {
         super(uri, component, configuration);
+    }
+
+    @Override
+    public RemoteFileConfiguration getConfiguration() {
+        return (RemoteFileConfiguration) super.getConfiguration();
     }
 
     @Override

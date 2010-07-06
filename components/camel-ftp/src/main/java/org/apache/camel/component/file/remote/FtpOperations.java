@@ -77,7 +77,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("Connecting to " + configuration.remoteServerInformation());
+            log.trace("Connecting to " + configuration.remoteServerInformation() + " using connection timeout: " + client.getConnectTimeout());
         }
 
         boolean connected = false;
