@@ -20,6 +20,7 @@ import java.net.SocketAddress;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.netty.channel.Channel;
@@ -39,11 +40,49 @@ public final class NettyHelper {
     }
 
     /**
+     * Gets the string body to be used when sending with the textline codec.
+     *
+     * @param body                 the current body
+     * @param exchange             the exchange
+     * @param delimiter            the textline delimiter
+     * @param autoAppendDelimiter  whether absent delimiter should be auto appended
+     * @return the string body to send
+     * @throws NoTypeConversionAvailableException is thrown if the current body could not be converted to a String type
+     */
+    public static String getTextlineBody(Object body, Exchange exchange, TextLineDelimiter delimiter, boolean autoAppendDelimiter) throws NoTypeConversionAvailableException {
+        String s = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
+
+        // auto append delimiter if missing?
+        if (autoAppendDelimiter) {
+            if (TextLineDelimiter.LINE.equals(delimiter)) {
+                // line delimiter so ensure it ends with newline
+                if (!s.endsWith("\n")) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Auto appending missing newline delimiter to body");
+                    }
+                    s = s + "\n";
+                }
+            } else {
+                // null delimiter so ensure it ends with null
+                if (!s.endsWith("\u0000")) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Auto appending missing null delimiter to body");
+                    }
+                    s = s + "\u0000";
+                }
+            }
+        }
+
+        return s;
+    }
+
+    /**
      * Writes the given body to Netty channel. Will wait until the body has been written.
      *
-     * @param channel  the Netty channel
-     * @param body     the body to write (send)
-     * @param exchange the exchange
+     * @param channel         the Netty channel
+     * @param remoteAddress   the remote address when using UDP
+     * @param body            the body to write (send)
+     * @param exchange        the exchange
      * @throws CamelExchangeException is thrown if the body could not be written for some reasons
      *                                (eg remote connection is closed etc.)
      */
@@ -69,6 +108,11 @@ public final class NettyHelper {
         }
     }
 
+    /**
+     * Closes the given channel
+     *
+     * @param channel the channel to close
+     */
     public static void close(Channel channel) {
         if (channel != null) {
             if (LOG.isTraceEnabled()) {

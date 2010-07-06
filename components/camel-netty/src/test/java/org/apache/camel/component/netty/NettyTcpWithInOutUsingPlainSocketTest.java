@@ -89,7 +89,8 @@ public class NettyTcpWithInOutUsingPlainSocketTest extends CamelTestSupport {
         InputStream is = null;
         try {
             os = soc.getOutputStream();
-            os.write(input.getBytes());
+            // must append the line delimiter
+            os.write((input + "\n").getBytes());
 
             is = soc.getInputStream();
             int len = is.read(buf);

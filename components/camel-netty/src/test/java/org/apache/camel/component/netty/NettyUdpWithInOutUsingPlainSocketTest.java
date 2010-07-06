@@ -39,14 +39,15 @@ public class NettyUdpWithInOutUsingPlainSocketTest extends CamelTestSupport {
     public void testSendAndReceiveOnce() throws Exception {
         String out = sendAndReceiveUdpMessages("World");
         assertNotNull("should receive data", out);
-        assertEquals("Hello World", out);
+        assertEquals("Hello World\n", out);
     }
 
     private String sendAndReceiveUdpMessages(String input) throws Exception {
         DatagramSocket socket = new DatagramSocket();
         InetAddress address = InetAddress.getByName("127.0.0.1");
 
-        byte[] data = input.getBytes();
+        // must append delimiter
+        byte[] data = (input + "\n").getBytes();
 
         DatagramPacket packet = new DatagramPacket(data, data.length, address, PORT);
         LOG.debug("+++ Sending data +++");

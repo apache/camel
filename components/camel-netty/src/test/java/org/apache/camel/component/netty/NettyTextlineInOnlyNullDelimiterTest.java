@@ -23,31 +23,13 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-public class NettyTextlineInOnlyTest extends CamelTestSupport {
+public class NettyTextlineInOnlyNullDelimiterTest extends CamelTestSupport {
 
     @Test
-    public void testTextlineInOnlyDual() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "how are you?");
-
-        template.sendBody("netty:tcp://localhost:5149?textline=true&sync=false", "Hello World\nhow are you?\n");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testTextlineInOnlyAutoAppend() throws Exception {
+    public void testTextlineInOnlyNull() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("netty:tcp://localhost:5149?textline=true&sync=false", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testTextlineInOnly() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-
-        template.sendBody("netty:tcp://localhost:5149?textline=true&sync=false", "Hello World\n");
+        template.sendBody("netty:tcp://localhost:5149?textline=true&delimiter=NULL&sync=false", "Hello World\u0000");
 
         assertMockEndpointsSatisfied();
     }
@@ -57,7 +39,7 @@ public class NettyTextlineInOnlyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:5149?textline=true&sync=false")
+                from("netty:tcp://localhost:5149?textline=true&delimiter=NULL&sync=false")
                     // body should be a String when using textline codec
                     .validate(body().isInstanceOf(String.class))
                     .to("mock:result");

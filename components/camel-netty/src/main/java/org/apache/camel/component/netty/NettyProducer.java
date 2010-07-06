@@ -129,10 +129,11 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
             callback.done(true);
             return true;
         }
+
         // if textline enabled then covert to a String which must be used for textline
         if (getConfiguration().isTextline()) {
             try {
-                body = context.getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
+                body = NettyHelper.getTextlineBody(body, exchange, getConfiguration().getDelimiter(), getConfiguration().isAutoAppendDelimiter());
             } catch (NoTypeConversionAvailableException e) {
                 exchange.setException(e);
                 callback.done(true);

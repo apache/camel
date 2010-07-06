@@ -30,6 +30,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
+import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
+import org.jboss.netty.handler.codec.frame.Delimiters;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.jboss.netty.handler.codec.string.StringDecoder;
@@ -52,6 +54,9 @@ public class NettyConfiguration implements Cloneable {
     private boolean reuseAddress = true;
     private boolean sync = true;
     private boolean textline;
+    private TextLineDelimiter delimiter = TextLineDelimiter.LINE;
+    private boolean autoAppendDelimiter = true;
+    private int decorderMaxLineLength = 1024;
     private String encoding;
     private String passphrase;
     private File keyStoreFile;
@@ -123,10 +128,12 @@ public class NettyConfiguration implements Cloneable {
                 if (isTextline()) {
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
                     encoders.add(new StringEncoder(charset));
+                    decoders.add(new DelimiterBasedFrameDecoder(decorderMaxLineLength, true, delimiter == TextLineDelimiter.LINE ? Delimiters.lineDelimiter() : Delimiters.nulDelimiter()));
                     decoders.add(new StringDecoder(charset));
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Using textline encoders and decoders with charset: " + charset);
+                        LOG.debug("Using textline encoders and decoders with charset: " + charset + ", delimiter: "
+                            + delimiter + " and decoderMaxLineLength: " + decorderMaxLineLength);
                     }
                 } else {
                     // object serializable is then used
@@ -158,7 +165,7 @@ public class NettyConfiguration implements Cloneable {
         return Charset.forName(encoding).name();
     }
 
-    protected boolean isTcp() {
+    public boolean isTcp() {
         return protocol.equalsIgnoreCase("tcp");
     }
 
@@ -240,6 +247,30 @@ public class NettyConfiguration implements Cloneable {
 
     public void setTextline(boolean textline) {
         this.textline = textline;
+    }
+
+    public int getDecorderMaxLineLength() {
+        return decorderMaxLineLength;
+    }
+
+    public void setDecorderMaxLineLength(int decorderMaxLineLength) {
+        this.decorderMaxLineLength = decorderMaxLineLength;
+    }
+
+    public TextLineDelimiter getDelimiter() {
+        return delimiter;
+    }
+
+    public void setDelimiter(TextLineDelimiter delimiter) {
+        this.delimiter = delimiter;
+    }
+
+    public boolean isAutoAppendDelimiter() {
+        return autoAppendDelimiter;
+    }
+
+    public void setAutoAppendDelimiter(boolean autoAppendDelimiter) {
+        this.autoAppendDelimiter = autoAppendDelimiter;
     }
 
     public String getEncoding() {

@@ -135,17 +135,17 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         } else {
             // if textline enabled then covert to a String which must be used for textline
             if (consumer.getConfiguration().isTextline()) {
-                body = consumer.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
+                body = NettyHelper.getTextlineBody(body, exchange, consumer.getConfiguration().getDelimiter(), consumer.getConfiguration().isAutoAppendDelimiter());
             }
 
             // we got a body to write
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Writing body: " + body);
             }
-            if (consumer.getConfiguration().getProtocol().equalsIgnoreCase("udp")) {
-                NettyHelper.writeBodySync(messageEvent.getChannel(), messageEvent.getRemoteAddress(), body, exchange);
-            } else {
+            if (consumer.getConfiguration().isTcp()) {
                 NettyHelper.writeBodySync(messageEvent.getChannel(), null, body, exchange);
+            } else {
+                NettyHelper.writeBodySync(messageEvent.getChannel(), messageEvent.getRemoteAddress(), body, exchange);
             }
         }
 
