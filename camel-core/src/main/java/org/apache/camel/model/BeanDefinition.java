@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.RegistryBean;
+import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -72,6 +73,7 @@ public class BeanDefinition extends OutputDefinition<BeanDefinition> {
         return ref;
     }
 
+    @Required
     public void setRef(String ref) {
         this.ref = ref;
     }

@@ -28,6 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -80,6 +81,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         return uri;
     }
 
+    @Required
     public void setUri(String uri) {
         this.uri = uri;
     }

@@ -28,6 +28,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -70,6 +71,7 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
         return expression;
     }
 
+    @Required
     public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
     }

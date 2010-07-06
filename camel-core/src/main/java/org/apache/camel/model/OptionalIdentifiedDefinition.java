@@ -35,7 +35,7 @@ import org.apache.camel.spi.NodeIdFactory;
  */
 @XmlType(name = "optionalIdentifiedDefinition")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition> {
+public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> {
     @XmlAttribute(required = false)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID

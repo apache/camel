@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -87,6 +88,7 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
      *
      * @param uri the endpoint URI to use
      */
+    @Required
     public void setUri(String uri) {
         this.uri = uri;
         clear();
