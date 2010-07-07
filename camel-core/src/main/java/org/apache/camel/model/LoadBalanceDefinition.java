@@ -35,7 +35,6 @@ import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
-import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
@@ -107,8 +106,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
                                                Collection<ProcessorDefinition> outputs) throws Exception {
         LoadBalancer loadBalancer = LoadBalancerDefinition.getLoadBalancer(routeContext, loadBalancerType, ref);
         for (ProcessorDefinition<?> processorType : outputs) {
-            // The outputs should be the SendProcessor
-            SendProcessor processor = (SendProcessor) processorType.createProcessor(routeContext);
+            Processor processor = processorType.createProcessor(routeContext);
             loadBalancer.addProcessor(processor);
         }
         return loadBalancer;

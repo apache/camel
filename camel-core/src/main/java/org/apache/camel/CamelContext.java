@@ -19,7 +19,6 @@ package org.apache.camel;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -40,6 +39,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -744,5 +744,19 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @param executorServiceStrategy the custom strategy
      */
     void setExecutorServiceStrategy(ExecutorServiceStrategy executorServiceStrategy);
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
+     *
+     * @return the factory, can be <tt>null</tt> if no custom factory has been set
+     */
+    ProcessorFactory getProcessorFactory();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.ProcessorFactory}
+     *
+     * @param processorFactory the custom factory
+     */
+    void setProcessorFactory(ProcessorFactory processorFactory);
 
 }

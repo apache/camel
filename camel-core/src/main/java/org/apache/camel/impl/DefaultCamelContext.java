@@ -89,6 +89,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteStartupOrder;
@@ -162,6 +163,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     // so if we have 6 endpoints in the pool, we can have 6 x 100 producers in total
     private ServicePool<Endpoint, Producer> producerServicePool = new SharedProducerServicePool(100);
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
+    private ProcessorFactory processorFactory;
     private InterceptStrategy defaultTracer;
     private InflightRepository inflightRepository = new DefaultInflightRepository();
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<RouteStartupOrder>();
@@ -1642,6 +1644,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void setExecutorServiceStrategy(ExecutorServiceStrategy executorServiceStrategy) {
         this.executorServiceStrategy = executorServiceStrategy;
+    }
+
+    public ProcessorFactory getProcessorFactory() {
+        return processorFactory;
+    }
+
+    public void setProcessorFactory(ProcessorFactory processorFactory) {
+        this.processorFactory = processorFactory;
     }
 
     protected String getEndpointKey(String uri, Endpoint endpoint) {

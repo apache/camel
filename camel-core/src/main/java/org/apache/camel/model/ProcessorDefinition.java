@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -134,7 +133,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @throws Exception is thrown if error creating the child or if it was mandatory and there was no output defined on definition
      */
     public Processor createChildProcessor(RouteContext routeContext, boolean mandatory) throws Exception {
-        Processor children = routeContext.createProcessor(this);
+        Processor children = null;
+        // at first use custom factory
+        if (routeContext.getCamelContext().getProcessorFactory() != null) {
+            children = routeContext.getCamelContext().getProcessorFactory().createChildProcessor(routeContext, this, mandatory);
+        }
+        // fallback to default implementation if factory did not create the child
+        if (children == null) {
+            children = routeContext.createProcessor(this);
+        }
+
         if (children == null && mandatory) {
             throw new IllegalArgumentException("Definition has no children on " + this);
         }
@@ -336,7 +344,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition> outputs) throws Exception {
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorDefinition<?> output : outputs) {
-            Processor processor = output.createProcessor(routeContext);
+            Processor processor = null;
+            // at first use custom factory
+            if (routeContext.getCamelContext().getProcessorFactory() != null) {
+                processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, output);
+            }
+            // fallback to default implementation if factory did not create the processor
+            if (processor == null) {
+                processor = output.createProcessor(routeContext);
+            }
+
             if (output instanceof Channel && processor == null) {
                 continue;
             }
@@ -362,7 +379,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Creates the processor and wraps it in any necessary interceptors and error handlers
      */
     protected Processor makeProcessor(RouteContext routeContext) throws Exception {
-        Processor processor = createProcessor(routeContext);
+        Processor processor = null;
+        // at first use custom factory
+        if (routeContext.getCamelContext().getProcessorFactory() != null) {
+            processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, this);
+        }
+        // fallback to default implementation if factory did not create the processor
+        if (processor == null) {
+            processor = createProcessor(routeContext);
+        }
+
         if (processor == null) {
             // no processor to make
             return null;

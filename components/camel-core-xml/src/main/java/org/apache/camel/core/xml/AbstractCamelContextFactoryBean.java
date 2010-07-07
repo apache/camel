@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -73,6 +72,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
+import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.CamelContextHelper;
@@ -148,6 +148,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         if (executorServiceStrategy != null) {
             LOG.info("Using custom ExecutorServiceStrategy: " + executorServiceStrategy);
             getContext().setExecutorServiceStrategy(executorServiceStrategy);
+        }
+        ProcessorFactory processorFactory = getBeanForType(ProcessorFactory.class);
+        if (processorFactory != null) {
+            LOG.info("Using custom ProcessorFactory: " + processorFactory);
+            getContext().setProcessorFactory(processorFactory);
         }
 
         // set the custom registry if defined
