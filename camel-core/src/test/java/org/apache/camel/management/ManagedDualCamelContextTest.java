@@ -47,6 +47,11 @@ public class ManagedDualCamelContextTest extends TestSupport {
         CamelContext camel2 = createCamelContext();
         camel2.start();
 
+        // Ensure JMX is enabled for this test so the ManagedManagementStrategy.class
+        // If other tests cleaned up the environment properly the following assertions will be true with the default settings
+        assertIsInstanceOf(ManagedManagementStrategy.class, camel1.getManagementStrategy());
+        assertIsInstanceOf(ManagedManagementStrategy.class, camel2.getManagementStrategy());
+
         MBeanServer mbeanServer1 = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
         Set<ObjectName> set = mbeanServer1.queryNames(new ObjectName("*:context=localhost/camel-1,type=components,*"), null);
         assertEquals(2, set.size());

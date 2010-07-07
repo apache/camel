@@ -88,6 +88,7 @@ import org.apache.commons.logging.LogFactory;
  * @see org.apache.camel.spi.ManagementStrategy
  * @version $Revision$
  */
+@SuppressWarnings("deprecation")
 public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Service, CamelContextAware {
 
     private static final Log LOG = LogFactory.getLog(DefaultManagementLifecycleStrategy.class);

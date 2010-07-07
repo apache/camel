@@ -62,7 +62,7 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
 
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
-        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
+        Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=context,*"), null);
@@ -85,5 +85,4 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
 
         verifyCounter(mbsc, new ObjectName(domainName + ":type=routes,*"));
     }
-
 }

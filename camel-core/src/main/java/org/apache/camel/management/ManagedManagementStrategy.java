@@ -33,7 +33,6 @@ import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

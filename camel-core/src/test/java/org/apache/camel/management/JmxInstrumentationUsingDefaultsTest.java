@@ -57,7 +57,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
-        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
+        Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=context,*"), null);
@@ -87,10 +87,10 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     protected void verifyCounter(MBeanServerConnection beanServer, ObjectName name) throws Exception {
-        Set s = beanServer.queryNames(name, null);
+        Set<ObjectName> s = beanServer.queryNames(name, null);
         assertEquals("Found mbeans: " + s, 1, s.size());
 
-        Iterator iter = s.iterator();
+        Iterator<ObjectName> iter = s.iterator();
         ObjectName pcob = (ObjectName)iter.next();
 
         Long valueofNumExchanges = (Long)beanServer.getAttribute(pcob, "ExchangesTotal");
@@ -160,23 +160,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
-        releaseMBeanServers();
-        mbsc = null;
-        super.tearDown();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void releaseMBeanServers() {
-        List<MBeanServer> servers =
-            (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
-
-        for (MBeanServer server : servers) {
-            MBeanServerFactory.releaseMBeanServer(server);
-        }
-    }
-
-    @Override
     protected void setUp() throws Exception {
         releaseMBeanServers();
         super.setUp();
@@ -184,6 +167,18 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         mbsc = getMBeanConnection();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        releaseMBeanServers();
+        mbsc = null;
+    }
+
+    protected void releaseMBeanServers() {
+        for (MBeanServer server : (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null)) {
+            MBeanServerFactory.releaseMBeanServer(server);
+        }
+    }
 
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         if (mbsc == null) {

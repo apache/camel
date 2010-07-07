@@ -1159,8 +1159,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     private void startServices(Object service) throws Exception {
         // it can be a collection so ensure we look inside it
-        if (service instanceof Collection) {
-            for (Object element : (Collection)service) {
+        if (service instanceof Collection<?>) {
+            for (Object element : (Collection<?>)service) {
                 startServices(element);
             }
         }
