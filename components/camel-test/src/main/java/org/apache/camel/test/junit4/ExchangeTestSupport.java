@@ -22,7 +22,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 
 /**
- * A base class for a test which requires a {@link CamelContext} and
+ * A base class for a test which requires a {@link org.apache.camel.CamelContext} and
  * a populated {@link Exchange}
  *
  * @version $Revision$
