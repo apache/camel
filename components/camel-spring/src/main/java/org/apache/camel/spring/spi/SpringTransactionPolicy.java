@@ -19,6 +19,7 @@ package org.apache.camel.spring.spi;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
@@ -50,6 +51,9 @@ public class SpringTransactionPolicy implements TransactedPolicy {
 
     public SpringTransactionPolicy(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {
     }
 
     public Processor wrap(RouteContext routeContext, Processor processor) {

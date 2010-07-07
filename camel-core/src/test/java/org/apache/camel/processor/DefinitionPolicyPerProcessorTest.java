@@ -24,7 +24,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.language.ConstantExpression;
-import org.apache.camel.spi.DefinitionAwarePolicy;
+import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -65,7 +65,7 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
         };
     }
 
-    public static class MyPolicy implements DefinitionAwarePolicy {
+    public static class MyPolicy implements Policy {
 
         private final String name;
         private int invoked;
@@ -92,6 +92,5 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
                 }
             };
         }
-
     }
 }

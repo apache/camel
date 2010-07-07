@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
@@ -68,6 +69,9 @@ public class TransactedJmsRouteTest extends CamelTestSupport {
                 SpringTransactionPolicy requirenew = new SpringTransactionPolicy(lookup("PROPAGATION_REQUIRES_NEW", TransactionTemplate.class));
 
                 Policy rollback = new Policy() {
+                    public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {
+                    }
+
                     public Processor wrap(RouteContext routeContext, Processor processor) {
                         return new DelegateProcessor(processor) {
                             @Override
@@ -85,6 +89,9 @@ public class TransactedJmsRouteTest extends CamelTestSupport {
                 };
 
                 Policy catchRollback = new Policy() {
+                    public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {
+                    }
+
                     public Processor wrap(RouteContext routeContext, Processor processor) {
                         return new DelegateProcessor(processor) {
                             @Override
@@ -305,5 +312,4 @@ public class TransactedJmsRouteTest extends CamelTestSupport {
 
         assertIsSatisfied(mockEndpointA, mockEndpointB);
     }
-
 }

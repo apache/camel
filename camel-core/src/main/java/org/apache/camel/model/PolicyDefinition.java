@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.WrapProcessor;
-import org.apache.camel.spi.DefinitionAwarePolicy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
@@ -125,10 +124,7 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
         ObjectHelper.notNull(policy, "policy", this);
 
         // before wrap
-        if (policy instanceof DefinitionAwarePolicy) {
-            DefinitionAwarePolicy aware = (DefinitionAwarePolicy) policy;
-            aware.beforeWrap(routeContext, this);
-        }
+        policy.beforeWrap(routeContext, this);
 
         // create processor after the before wrap
         Processor childProcessor = this.createChildProcessor(routeContext, true);

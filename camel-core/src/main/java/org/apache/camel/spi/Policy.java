@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Processor;
+import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * A strategy capable of applying interceptors to a processor
@@ -35,6 +36,17 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public interface Policy {
+
+    /**
+     * Hook invoked before the wrap.
+     * <p/>
+     * This allows you to do any custom logic before the processor is wrapped. For example to
+     * manipulate the {@link org.apache.camel.model.ProcessorDefinition definiton}
+     *
+     * @param routeContext   the route context
+     * @param definition     the processor definition
+     */
+    void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition);
 
     /**
      * Wraps any applicable interceptors around the given processor.

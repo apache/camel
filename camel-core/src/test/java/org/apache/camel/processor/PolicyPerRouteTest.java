@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 
@@ -83,6 +84,11 @@ public class PolicyPerRouteTest extends ContextTestSupport {
 
         public MyPolicy(String name) {
             this.name = name;
+        }
+
+        public void beforeWrap(RouteContext routeContext,
+                ProcessorDefinition<?> definition) {
+            // no need to modify the route
         }
 
         public Processor wrap(RouteContext routeContext, final Processor processor) {
