@@ -30,7 +30,6 @@ public class RouterBean {
     @Consume(uri = "direct:start")
     @RecipientList
     public String[] route(String body) {
-        System.out.println("RouteBean called with body: " + body);
         return new String[]{"mock:a", "mock:b"};
     }
 }
