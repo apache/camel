@@ -54,10 +54,10 @@ public class ScanStreamFileTest extends CamelTestSupport {
         fos.write("Hello\n".getBytes());
         Thread.sleep(150);
         fos.write("World\n".getBytes());
-
+        fos.close();
+        
         assertMockEndpointsSatisfied();
 
-        fos.close();
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello", "there", "World", "!");
 
         FileOutputStream fos = refreshFile(null);
-        fos.write("Hello\n".getBytes());
+        fos.write("Hello\n".getBytes());        
         Thread.sleep(150);
         fos.write("there\n".getBytes());
         fos = refreshFile(fos);
@@ -76,10 +76,10 @@ public class ScanStreamFileTest extends CamelTestSupport {
         fos = refreshFile(fos);
         Thread.sleep(150);
         fos.write("!\n".getBytes());
-
+        fos.close(); 
         assertMockEndpointsSatisfied();
 
-        fos.close();
+        
     }
 
     private FileOutputStream refreshFile(FileOutputStream fos) throws Exception {
