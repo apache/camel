@@ -37,10 +37,6 @@ public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingProper
 
     @Override
     public void testMBeansRegistered() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
-
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
                 && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());

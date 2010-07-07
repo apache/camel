@@ -22,12 +22,12 @@ import java.util.List;
 import java.util.Locale;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.ErrorHandlerSupport;
@@ -50,15 +50,21 @@ public abstract class TestSupport extends TestCase {
     // -------------------------------------------------------------------------
 
     /**
-     * Runs the bare test sequence.
+     * Runs the bare test sequence only if this platform is supported
      * @exception Throwable if any exception is thrown
      */
     @Override
     public void runBare() throws Throwable {
-        //start with a clean slate
-        DefaultCamelContext.setContextCounter(0);
-        TestSupportNodeIdFactory.resetCounters();
-        super.runBare();
+        if (canRunOnThisPlatform()) {
+            //start with a clean slate
+            DefaultCamelContext.setContextCounter(0);
+            TestSupportNodeIdFactory.resetCounters();
+            super.runBare();
+        }
+    }
+
+    protected boolean canRunOnThisPlatform() {
+        return true;
     }
 
     /**

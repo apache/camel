@@ -32,6 +32,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.TestSupportNodeIdFactory;
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
@@ -52,6 +53,24 @@ public abstract class TestSupport extends TestCase {
     private static final Log LOG = LogFactory.getLog(TestSupport.class);    
     protected transient Log log = LogFactory.getLog(getClass());    
     
+    /**
+     * Runs the bare test sequence only if this platform is supported
+     * @exception Throwable if any exception is thrown
+     */
+    @Override
+    public void runBare() throws Throwable {
+        if (canRunOnThisPlatform()) {
+            //start with a clean slate
+            DefaultCamelContext.setContextCounter(0);
+            TestSupportNodeIdFactory.resetCounters();
+            super.runBare();
+        }
+    }
+
+    protected boolean canRunOnThisPlatform() {
+        return true;
+    }
+
     // Builder methods for expressions used when testing
     // -------------------------------------------------------------------------
 

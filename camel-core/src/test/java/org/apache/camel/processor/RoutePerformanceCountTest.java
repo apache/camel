@@ -33,10 +33,6 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
     private String url = "direct:start";
 
     public void testSendMessages() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
-
         long start = System.currentTimeMillis();
 
         for (int i = 0; i < size; i++) {
@@ -48,7 +44,8 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
         System.out.println("RoutePerformanceCountTest: Sent: " + size + " Took: " + delta + " ms");
     }
 
-    private boolean canRunOnThisPlatform() {
+    @Override
+    protected boolean canRunOnThisPlatform() {
         String os = System.getProperty("os.name");
         // HP-UX is just to slow to run this test
         return !os.toLowerCase().contains("hp-ux");
@@ -71,7 +68,6 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
     }
 
     private class CountProcessor implements Processor {
-
         private AtomicInteger counter = new AtomicInteger(0);
 
         public void process(Exchange exchange) throws Exception {
@@ -81,7 +77,5 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
         public int getCounter() {
             return counter.intValue();
         }
-
     }
-
 }

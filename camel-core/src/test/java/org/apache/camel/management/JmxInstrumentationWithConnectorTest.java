@@ -37,6 +37,7 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
         return true;
     }
 
+    @Override
     protected boolean canRunOnThisPlatform() {
         String os = System.getProperty("os.name");
         // Does not work on AIX and the problem is hard to identify, could be issues not allowing to use a custom port

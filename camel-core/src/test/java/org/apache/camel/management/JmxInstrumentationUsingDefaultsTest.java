@@ -47,15 +47,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         return true;
     }
 
-    protected boolean canRunOnThisPlatform() {
-        return true;
-    }
-
     public void testMBeansRegistered() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
-
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
                 && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());
@@ -85,10 +77,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     public void testCounters() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
-
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived("<hello>world!</hello>");
         sendBody("direct:start", "<hello>world!</hello>");
@@ -173,10 +161,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
-
         releaseMBeanServers();
         mbsc = null;
         super.tearDown();
@@ -194,10 +178,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
-
         releaseMBeanServers();
         super.setUp();
         Thread.sleep(sleepForConnection);

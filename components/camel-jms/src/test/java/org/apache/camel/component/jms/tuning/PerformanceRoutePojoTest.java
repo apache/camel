@@ -36,10 +36,6 @@ public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
 
     @Test
     public void testPojoPerformance() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
-
         long start = System.currentTimeMillis();
 
         getMockEndpoint("mock:audit").expectedMessageCount(size);
@@ -66,10 +62,10 @@ public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
         System.out.println("RoutePerformancePojoTest: Sent: " + size + " Took: " + delta + " ms");
     }
 
-    private boolean canRunOnThisPlatform() {
+    @Override
+    protected boolean canRunOnThisPlatform() {
         String os = System.getProperty("os.name");
         // HP-UX is just to slow to run this test
         return !os.toLowerCase().contains("hp-ux");
     }
-
 }

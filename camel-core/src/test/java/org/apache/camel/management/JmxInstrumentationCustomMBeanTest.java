@@ -51,10 +51,6 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
     }
 
     public void testCustomEndpoint() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
-
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
                 && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());
@@ -79,10 +75,6 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
 
     @SuppressWarnings("unchecked")
     public void testManagedEndpoint() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
-
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
                 && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());
@@ -96,10 +88,6 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
     }
 
     public void testCounters() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
-
         CustomEndpoint resultEndpoint = resolveMandatoryEndpoint("custom:end", CustomEndpoint.class);
         resultEndpoint.expectedBodiesReceived("<hello>world!</hello>");
         sendBody("direct:start", "<hello>world!</hello>");
@@ -110,10 +98,6 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
     }
 
     public void testMBeansRegistered() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
-
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
                 && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());
