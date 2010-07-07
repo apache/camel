@@ -62,6 +62,7 @@ import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExecutorServiceStrategy;
@@ -153,6 +154,12 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         if (processorFactory != null) {
             LOG.info("Using custom ProcessorFactory: " + processorFactory);
             getContext().setProcessorFactory(processorFactory);
+        }
+
+        Debugger debugger = getBeanForType(Debugger.class);
+        if (debugger != null) {
+            LOG.info("Using custom Debugger: " + debugger);
+            getContext().setDebugger(debugger);
         }
 
         // set the custom registry if defined

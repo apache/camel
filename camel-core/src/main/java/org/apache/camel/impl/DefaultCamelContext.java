@@ -67,6 +67,7 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
@@ -75,6 +76,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExecutorServiceStrategy;
@@ -173,6 +175,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private ExecutorServiceStrategy executorServiceStrategy = new DefaultExecutorServiceStrategy(this);
+    private Debugger debugger;
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
 
@@ -1000,7 +1003,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         if (isTracing()) {
             // tracing is added in the DefaultChannel so we can enable it on the fly
-            LOG.info("Tracing is enabled on CamelContext" + getName());
+            LOG.info("Tracing is enabled on CamelContext: " + getName());
         }
 
         if (isHandleFault()) {
@@ -1018,6 +1021,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                 LOG.info("Delayer is enabled with: " + millis + " ms. on CamelContext: " + getName());
                 addInterceptStrategy(new Delayer(millis));
             }
+        }
+        
+        if (getDebugger() != null) {
+            LOG.info("Debugger: " + getDebugger() + " is enabled on CamelContext: " + getName());
+            addInterceptStrategy(new Debug(getDebugger()));
         }
 
         // start management strategy before lifecycles are started
@@ -1652,6 +1660,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void setProcessorFactory(ProcessorFactory processorFactory) {
         this.processorFactory = processorFactory;
+    }
+
+    public Debugger getDebugger() {
+        return debugger;
+    }
+
+    public void setDebugger(Debugger debugger) {
+        this.debugger = debugger;
     }
 
     protected String getEndpointKey(String uri, Endpoint endpoint) {

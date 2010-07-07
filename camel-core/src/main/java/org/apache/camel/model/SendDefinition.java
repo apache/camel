@@ -105,7 +105,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     /**
      * Returns the endpoint URI or the name of the reference to it
      */
-    public Object getUriOrRef() {
+    public String getUriOrRef() {
         String uri = getUri();
         if (ObjectHelper.isNotEmpty(uri)) {
             return uri;

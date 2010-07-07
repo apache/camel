@@ -27,6 +27,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.ExecutorServiceStrategy;
 import org.apache.camel.spi.FactoryFinder;
@@ -758,5 +759,19 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @param processorFactory the custom factory
      */
     void setProcessorFactory(ProcessorFactory processorFactory);
+
+    /**
+     * Gets the current {@link Debugger}
+     *
+     * @return the debugger
+     */
+    Debugger getDebugger();
+
+    /**
+     * Sets a custom {@link Debugger}
+     *
+     * @param debugger the debugger
+     */
+    void setDebugger(Debugger debugger);
 
 }
