@@ -41,8 +41,9 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
         context.setProcessorFactory(new MyFactory());
         return context;
     }
-    // START SNIPPET: e2
+    // START SNIPPET: e1
 
+    // START SNIPPET: e2
     public void testAlterDefinitionUsingProcessorFactory() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("body was altered");
 
@@ -65,7 +66,6 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
-            // START SNIPPET: e2
             public void configure() throws Exception {
                 from("direct:start")
                     .setBody().constant("body not altered").to("mock:foo");
@@ -76,9 +76,9 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
                     .end()
                     .to("mock:result");
             }
-            // END SNIPPET: e2
         };
     }
+    // END SNIPPET: e2
 
     // START SNIPPET: e3
     public static class MyFactory implements ProcessorFactory {
