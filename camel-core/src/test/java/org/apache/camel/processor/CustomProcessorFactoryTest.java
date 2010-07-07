@@ -41,7 +41,7 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
         context.setProcessorFactory(new MyFactory());
         return context;
     }
-    // START SNIPPET: e1
+    // END SNIPPET: e1
 
     // START SNIPPET: e2
     public void testAlterDefinitionUsingProcessorFactory() throws Exception {
