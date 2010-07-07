@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.DefinitionAwarePolicy;
 import org.apache.camel.spi.Policy;
@@ -122,18 +121,20 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        DelegateProcessor childProcessor = new DelegateProcessor();
-
         Policy policy = resolvePolicy(routeContext);
         ObjectHelper.notNull(policy, "policy", this);
-        Processor target;
+
+        // before wrap
         if (policy instanceof DefinitionAwarePolicy) {
-            target = ((DefinitionAwarePolicy)policy).wrap(routeContext, childProcessor, this);
-        } else {
-            target = policy.wrap(routeContext, childProcessor);
+            DefinitionAwarePolicy aware = (DefinitionAwarePolicy) policy;
+            aware.beforeWrap(routeContext, this);
         }
-        
-        childProcessor.setProcessor(this.createChildProcessor(routeContext, true));
+
+        // create processor after the before wrap
+        Processor childProcessor = this.createChildProcessor(routeContext, true);
+
+        // wrap
+        Processor target = policy.wrap(routeContext, childProcessor);
 
         // wrap the target so it becomes a service and we can manage its lifecycle
         WrapProcessor wrap = new WrapProcessor(target, childProcessor);

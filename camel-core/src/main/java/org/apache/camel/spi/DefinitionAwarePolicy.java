@@ -16,23 +16,29 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
- * A strategy capable of applying interceptors to a processor
+ * A strategy capable of applying interceptors to a processor.
+ * <p/>
+ * This <i>aware</i> policy allows you to do any custom work before the processor is wrapped.
+ * For example to manipulate the {@link org.apache.camel.model.ProcessorDefinition definiton}.
  *
+ *
+ * @see org.apache.camel.spi.Policy
  * @version $Revision: 761894 $
  */
 public interface DefinitionAwarePolicy extends Policy {
 
     /**
-     * Wraps any applicable interceptors around the given processor
+     * Callback invoked before the wrap.
+     * <p/>
+     * This allows you to do any custom logic before the processor is wrapped. For example to
+     * manipulate the {@link org.apache.camel.model.ProcessorDefinition definiton}
      *
-     * @param routeContext the route context
-     * @param  ProcessorDefinition<ProcessorDefinition>
-     * @param processor the processor to be intercepted
-     * @return either the original processor or a processor wrapped in one or more interceptors
+     * @param routeContext   the route context
+     * @param definition     the processor definition
      */
-    Processor wrap(RouteContext routeContext, Processor processor, ProcessorDefinition<?> processorDefinition);
+    void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition);
+
 }

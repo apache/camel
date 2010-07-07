@@ -19,12 +19,11 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetBodyDefinition;
-import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.DefinitionAwarePolicy;
 import org.apache.camel.spi.RouteContext;
 
@@ -75,23 +74,16 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
             this.name = name;
         }
 
-        public Processor wrap(RouteContext routeContext, final Processor processor) {
-            throw new UnsupportedOperationException("This method should not be called");
-        }
-
         public int getInvoked() {
             return invoked;
         }
 
-        public Processor wrap(final RouteContext routeContext,
-            final Processor processor,
-            final ProcessorDefinition<?> processorDefinition) {
+        public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {
+            SetBodyDefinition bodyDef = (SetBodyDefinition) definition.getOutputs().get(0);
+            bodyDef.setExpression(new ConstantExpression("body was altered"));
+        }
 
-            // alter the child definition
-            SetBodyDefinition bodyDef = (SetBodyDefinition) processorDefinition.getOutputs().get(0);
-            ((ExpressionClause<?>)((ExpressionDefinition)bodyDef.getExpression()).getExpressionValue()).constant("body was altered");
-
-            // make sure the normal "wrap" still works.
+        public Processor wrap(final RouteContext routeContext, final Processor processor) {
             return new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     invoked++;
@@ -100,5 +92,6 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
                 }
             };
         }
+
     }
 }
