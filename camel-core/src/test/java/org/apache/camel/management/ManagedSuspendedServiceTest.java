@@ -57,7 +57,7 @@ public class ManagedSuspendedServiceTest extends ContextTestSupport {
         assertEquals(false, suspended.booleanValue());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Bye World");
+        mock.expectedMessageCount(1);
 
         template.sendBodyAndHeader("file://target/suspended", "Bye World", Exchange.FILE_NAME, "bye.txt");
         template.sendBodyAndHeader("file://target/suspended", "Hello World", Exchange.FILE_NAME, "hello.txt");
@@ -77,7 +77,7 @@ public class ManagedSuspendedServiceTest extends ContextTestSupport {
 
         // reset mock
         mock.reset();
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedMessageCount(1);
 
         // now resume it
         mbeanServer.invoke(on, "resume", null, null);
