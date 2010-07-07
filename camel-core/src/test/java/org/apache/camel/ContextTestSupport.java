@@ -103,6 +103,7 @@ public abstract class ContextTestSupport extends TestSupport {
             template.stop();
         }
         stopCamelContext();
+        System.clearProperty(JmxSystemPropertyKeys.DISABLED);
     }
 
     /**
@@ -336,5 +337,4 @@ public abstract class ContextTestSupport extends TestSupport {
     protected void enableJMX() {
         System.setProperty(JmxSystemPropertyKeys.DISABLED, "false");
     }
-
 }
