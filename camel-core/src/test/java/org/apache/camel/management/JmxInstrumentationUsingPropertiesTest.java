@@ -39,18 +39,8 @@ public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsi
         super.setUp();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        // restore environment to original state
-        System.clearProperty(JmxSystemPropertyKeys.DOMAIN);
-        System.clearProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN);
-        super.tearDown();
-    }
-
     public void testMBeanServerType() throws Exception {
         // default is platform mbs
-        assertNotNull(mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem")));
-        
+        assertNotNull(mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem")));        
     }
-
 }

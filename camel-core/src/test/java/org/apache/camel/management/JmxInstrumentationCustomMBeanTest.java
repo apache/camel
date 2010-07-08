@@ -51,10 +51,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
     }
 
     public void testCustomEndpoint() throws Exception {
-        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
-                && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
-            assertEquals(domainName, mbsc.getDefaultDomain());
-        }
+        assertDefaultDomain();
 
         resolveMandatoryEndpoint("custom://end", CustomEndpoint.class);
 
@@ -73,12 +70,8 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void testManagedEndpoint() throws Exception {
-        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
-                && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
-            assertEquals(domainName, mbsc.getDefaultDomain());
-        }
+        assertDefaultDomain();
 
         resolveMandatoryEndpoint("direct:start", DirectEndpoint.class);
 
@@ -98,10 +91,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
     }
 
     public void testMBeansRegistered() throws Exception {
-        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
-                && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
-            assertEquals(domainName, mbsc.getDefaultDomain());
-        }
+        assertDefaultDomain();
 
         Set<ObjectName> s = CastUtils.cast(mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null));
         assertEquals("Could not find 2 endpoints: " + s, 2, s.size());

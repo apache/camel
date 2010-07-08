@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.Iterator;
 import java.util.List;
@@ -47,11 +48,15 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         return true;
     }
 
-    public void testMBeansRegistered() throws Exception {
+    protected void assertDefaultDomain() throws IOException {
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
                 && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());
         }
+    }
+
+    public void testMBeansRegistered() throws Exception {
+        assertDefaultDomain();
 
         template.sendBody("direct:start", "Hello World");
 
@@ -169,9 +174,19 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        super.tearDown();
-        releaseMBeanServers();
-        mbsc = null;
+        try {
+            super.tearDown();
+            releaseMBeanServers();
+            mbsc = null;
+        } finally {
+            // restore environment to original state
+            // the following properties may have been set by specialization of this test class
+            System.clearProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
+            System.clearProperty(JmxSystemPropertyKeys.DOMAIN);
+            System.clearProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN);
+            System.clearProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR);
+            System.clearProperty(JmxSystemPropertyKeys.REGISTRY_PORT);
+        }
     }
 
     protected void releaseMBeanServers() {

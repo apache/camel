@@ -24,7 +24,6 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.processor.interceptor.StreamCaching;
 
 /**
@@ -49,9 +48,13 @@ public class ResequencerTest extends ContextTestSupport {
     @Override 
     protected void tearDown() throws Exception {
         super.tearDown();
-        System.clearProperty(JmxSystemPropertyKeys.DISABLED);
     }
     
+    protected boolean useJmx() {
+        // use jmx only when running the following test(s)
+        return getName().equals("testBatchResequencerTypeWithJmx");
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -63,7 +66,6 @@ public class ResequencerTest extends ContextTestSupport {
     }
 
     public void testBatchResequencerTypeWithJmx() throws Exception {
-        System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
         testBatchResequencerTypeWithoutJmx();
     }
 

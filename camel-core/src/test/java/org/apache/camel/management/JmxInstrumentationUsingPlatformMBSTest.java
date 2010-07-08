@@ -38,14 +38,8 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
 
     @Override
     protected void setUp() throws Exception {
-        System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "False");
+        System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "false");
         super.setUp();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        System.clearProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
-        super.tearDown();
     }
 
     @Override

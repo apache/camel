@@ -37,14 +37,11 @@ public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingProper
 
     @Override
     public void testMBeansRegistered() throws Exception {
-        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
-                && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
-            assertEquals(domainName, mbsc.getDefaultDomain());
-        }
+        assertDefaultDomain();
 
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
-        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
+        Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 0 endpoints: " + s, 0, s.size());
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=contexts,*"), null);
@@ -59,8 +56,7 @@ public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingProper
 
     @Override
     protected void verifyCounter(MBeanServerConnection beanServer, ObjectName name) throws Exception {
-        Set s = beanServer.queryNames(name, null);
+        Set<ObjectName> s = beanServer.queryNames(name, null);
         assertEquals("Found mbeans: " + s, 0, s.size());
     }
-
 }

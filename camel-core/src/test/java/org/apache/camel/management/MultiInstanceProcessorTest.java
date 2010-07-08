@@ -55,10 +55,7 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
      */
     @Override
     public void testMBeansRegistered() throws Exception {
-        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
-                && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
-            assertEquals(domainName, mbsc.getDefaultDomain());
-        }
+        assertDefaultDomain();
 
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
