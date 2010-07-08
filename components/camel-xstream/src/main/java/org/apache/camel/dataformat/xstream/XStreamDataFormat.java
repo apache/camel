@@ -31,6 +31,7 @@ import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 
 /**
@@ -60,9 +61,9 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     /**
      * A factory method which takes a collection of types to be annotated
      */
-    public static XStreamDataFormat processAnnotations(Iterable<Class<?>> types) {
+    public static XStreamDataFormat processAnnotations(ClassResolver resolver, Iterable<Class<?>> types) {
         XStreamDataFormat answer = new XStreamDataFormat();
-        XStream xstream = answer.getXStream();
+        XStream xstream = answer.getXStream(resolver);
         for (Class<?> type : types) {
             xstream.processAnnotations(type);
         }
@@ -72,9 +73,9 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     /**
      * A factory method which takes a number of types to be annotated
      */
-    public static XStreamDataFormat processAnnotations(Class<?>... types) {
+    public static XStreamDataFormat processAnnotations(ClassResolver resolver, Class<?>... types) {
         XStreamDataFormat answer = new XStreamDataFormat();
-        XStream xstream = answer.getXStream();
+        XStream xstream = answer.getXStream(resolver);
         for (Class<?> type : types) {
             xstream.processAnnotations(type);
         }

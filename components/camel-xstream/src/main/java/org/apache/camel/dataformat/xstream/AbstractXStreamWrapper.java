@@ -18,15 +18,20 @@ package org.apache.camel.dataformat.xstream;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.stream.XMLStreamException;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.StaxConverter;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 
 /**
@@ -40,18 +45,20 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     
     private XStream xstream;
     private StaxConverter staxConverter;
-    
+    private List<String> converters;
+    private Map<String, String> aliases;
+    private Map<String, String[]> implicitCollections;
+
     public AbstractXStreamWrapper() {
-        
     }
     
     public AbstractXStreamWrapper(XStream xstream) {
         this.xstream = xstream;
     }
     
-    public XStream getXStream() {
+    public XStream getXStream(ClassResolver resolver) {
         if (xstream == null) {
-            xstream = createXStream();
+            xstream = createXStream(resolver);
         }
         return xstream;
     }
@@ -59,11 +66,37 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     public void setXStream(XStream xstream) {
         this.xstream = xstream;
     }
-    
-    protected XStream createXStream() {
-        return new XStream();
+
+    protected XStream createXStream(ClassResolver resolver) {
+        xstream = new XStream();
+
+        try {
+            if (this.implicitCollections != null) {
+                for (Entry<String, String[]> entry : this.implicitCollections.entrySet()) {
+                    for (String name : entry.getValue()) {
+                        xstream.addImplicitCollection(resolver.resolveMandatoryClass(entry.getKey()), name);
+                    }
+                }
+            }
+
+            if (this.aliases != null) {
+                for (Entry<String, String> entry : this.aliases.entrySet()) {
+                    xstream.alias(entry.getKey(), resolver.resolveMandatoryClass(entry.getValue()));
+                }
+            }
+
+            if (this.converters != null) {
+                for (String converter : this.converters) {
+                    xstream.registerConverter(resolver.resolveMandatoryClass(converter, Converter.class).newInstance());
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to build Xstream instance", e);
+        }
+
+        return xstream;
     }
-    
+
     public StaxConverter getStaxConverter() {
         if (staxConverter == null) {
             staxConverter = new StaxConverter();
@@ -73,12 +106,44 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
     public void setStaxConverter(StaxConverter staxConverter) {
         this.staxConverter = staxConverter;
-    }  
-    
+    }
+
+    public List<String> getConverters() {
+        return converters;
+    }
+
+    public void setConverters(List<String> converters) {
+        this.converters = converters;
+    }
+
+    public Map<String, String> getAliases() {
+        return aliases;
+    }
+
+    public void setAliases(Map<String, String> aliases) {
+        this.aliases = aliases;
+    }
+
+    public Map<String, String[]> getImplicitCollections() {
+        return implicitCollections;
+    }
+
+    public void setImplicitCollections(Map<String, String[]> implicitCollections) {
+        this.implicitCollections = implicitCollections;
+    }
+
+    public XStream getXstream() {
+        return xstream;
+    }
+
+    public void setXstream(XStream xstream) {
+        this.xstream = xstream;
+    }
+
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         HierarchicalStreamWriter writer = createHierarchicalStreamWriter(exchange, body, stream);
         try {
-            getXStream().marshal(body, writer);
+            getXStream(exchange.getContext().getClassResolver()).marshal(body, writer);
         } finally {
             writer.close();
         }
@@ -87,13 +152,15 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         HierarchicalStreamReader reader = createHierarchicalStreamReader(exchange, stream);
         try {
-            return getXStream().unmarshal(reader);
+            return getXStream(exchange.getContext().getClassResolver()).unmarshal(reader);
         } finally {
             reader.close();
         }
     }
-    
-    protected abstract HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException;
 
-    protected abstract HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException;
+    protected abstract HierarchicalStreamWriter createHierarchicalStreamWriter(
+            Exchange exchange, Object body, OutputStream stream) throws XMLStreamException;
+
+    protected abstract HierarchicalStreamReader createHierarchicalStreamReader(
+            Exchange exchange, InputStream stream) throws XMLStreamException;
 }

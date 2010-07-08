@@ -71,12 +71,20 @@ public class XStreamDataFormat extends DataFormatDefinition {
         setEncoding(encoding);
     }
     
+    public String getEncoding() {
+        return encoding;
+    }
+    
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
 
-    public String getEncoding() {
-        return encoding;
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
     }
 
     public List<String> getConverters() {
