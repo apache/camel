@@ -19,12 +19,12 @@ package org.apache.camel.impl;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
+import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.direct.DirectComponent;
@@ -35,10 +35,11 @@ import org.apache.camel.util.CamelContextHelper;
 /**
  * @version $Revision$
  */
-public class DefaultCamelContextTest extends TestCase {
+public class DefaultCamelContextTest extends TestSupport {
 
     public void testAutoCreateComponentsOn() {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         Component component = ctx.getComponent("bean");
         assertNotNull(component);
         assertEquals(component.getClass(), BeanComponent.class);
@@ -46,6 +47,7 @@ public class DefaultCamelContextTest extends TestCase {
 
     public void testAutoCreateComponentsOff() {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         ctx.setAutoCreateComponents(false);
         Component component = ctx.getComponent("bean");
         assertNull(component);
@@ -53,6 +55,7 @@ public class DefaultCamelContextTest extends TestCase {
 
     public void testGetComponents() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         Component component = ctx.getComponent("bean");
         assertNotNull(component);
 
@@ -63,6 +66,7 @@ public class DefaultCamelContextTest extends TestCase {
 
     public void testGetEndpoint() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         Endpoint endpoint = ctx.getEndpoint("log:foo");
         assertNotNull(endpoint);
 
@@ -76,6 +80,7 @@ public class DefaultCamelContextTest extends TestCase {
 
     public void testGetEndpointNotFound() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         try {
             ctx.getEndpoint("xxx:foo");
             fail("Should have thrown a ResolveEndpointFailedException");
@@ -86,6 +91,7 @@ public class DefaultCamelContextTest extends TestCase {
 
     public void testGetEndpointNoScheme() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         try {
             CamelContextHelper.getMandatoryEndpoint(ctx, "log.foo");
             fail("Should have thrown a NoSuchEndpointException");
@@ -96,6 +102,7 @@ public class DefaultCamelContextTest extends TestCase {
 
     public void testRestartCamelContext() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         ctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -116,6 +123,7 @@ public class DefaultCamelContextTest extends TestCase {
 
     public void testName() {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         assertNotNull("Should have a default name", ctx.getName());
         ctx.setName("foo");
         assertEquals("foo", ctx.getName());
@@ -126,11 +134,13 @@ public class DefaultCamelContextTest extends TestCase {
 
     public void testVersion() {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         assertNotNull("Should have a version", ctx.getVersion());
     }
 
     public void testHasComponent() {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         assertNull(ctx.hasComponent("log"));
 
         ctx.addComponent("log", new LogComponent());
@@ -139,6 +149,7 @@ public class DefaultCamelContextTest extends TestCase {
 
     public void testGetComponent() {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         ctx.addComponent("log", new LogComponent());
 
         LogComponent log = ctx.getComponent("log", LogComponent.class);
@@ -154,14 +165,16 @@ public class DefaultCamelContextTest extends TestCase {
 
     public void testGetEndpointMap() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         ctx.addEndpoint("mock://foo", new MockEndpoint("mock://foo"));
 
-        Map map = ctx.getEndpointMap();
+        Map<String, Endpoint> map = ctx.getEndpointMap();
         assertEquals(1, map.size());
     }
 
     public void testHasEndpoint() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         ctx.addEndpoint("mock://foo", new MockEndpoint("mock://foo"));
 
         assertNotNull(ctx.hasEndpoint("mock://foo"));
@@ -177,6 +190,7 @@ public class DefaultCamelContextTest extends TestCase {
 
     public void testGetRouteById() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
         ctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -191,6 +205,7 @@ public class DefaultCamelContextTest extends TestCase {
         assertEquals("direct://start", route.getConsumer().getEndpoint().getEndpointUri());
 
         assertNull(ctx.getRoute("unknown"));
+        ctx.stop();
     }
 
 }

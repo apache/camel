@@ -36,7 +36,6 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         return true;
     }
 
-    @SuppressWarnings("unchecked")
     public void testStopAndStartRoute() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);

@@ -16,19 +16,20 @@
  */
 package org.apache.camel.component.direct;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * MultipleConsumers option test.
  */
-public class DirectNoMultipleConsumersTest extends TestCase {
+public class DirectNoMultipleConsumersTest extends TestSupport {
 
     public void testNoMultipleConsumersTest() throws Exception {
         CamelContext container = new DefaultCamelContext();
+        container.disableJMX();
 
         container.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -43,7 +44,8 @@ public class DirectNoMultipleConsumersTest extends TestCase {
             fail("Should have thrown an FailedToStartRouteException");
         } catch (FailedToStartRouteException e) {
             // expected
+        } finally {
+            container.stop();
         }
     }
-
 }

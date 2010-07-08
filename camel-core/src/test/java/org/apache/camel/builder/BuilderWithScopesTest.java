@@ -90,6 +90,7 @@ public class BuilderWithScopesTest extends TestSupport {
 
         order.clear();
         CamelContext container = new DefaultCamelContext();
+        container.disableJMX();
 
         container.addRoutes(builder);
         container.start();
@@ -104,6 +105,8 @@ public class BuilderWithScopesTest extends TestSupport {
 
         log.debug("Invocation order:" + order);
         assertEquals(expected, order);
+        
+        container.stop();
     }
 
     public void testRouteWithFilterEnd() throws Exception {

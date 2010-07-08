@@ -16,17 +16,18 @@
  */
 package org.apache.camel.impl;
 
-import junit.framework.TestCase;
+import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
  */
-public class DefaultCamelContextAutoStartupTest extends TestCase {
+public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
     public void testAutoStartupFalse() throws Exception {
         DefaultCamelContext camel = new DefaultCamelContext(new SimpleRegistry());
+        camel.disableJMX();
         camel.setAutoStartup(false);
 
         camel.addRoutes(new RouteBuilder() {
@@ -53,10 +54,13 @@ public class DefaultCamelContextAutoStartupTest extends TestCase {
         camel.createProducerTemplate().sendBody("direct:start", "Hello World");
 
         mock.assertIsSatisfied();
+        
+        camel.stop();
     }
 
     public void testAutoStartupTrue() throws Exception {
         DefaultCamelContext camel = new DefaultCamelContext(new SimpleRegistry());
+        camel.disableJMX();
         camel.setAutoStartup(true);
 
         camel.addRoutes(new RouteBuilder() {
@@ -76,6 +80,7 @@ public class DefaultCamelContextAutoStartupTest extends TestCase {
         camel.createProducerTemplate().sendBody("direct:start", "Hello World");
 
         mock.assertIsSatisfied();
+        
+        camel.stop();
     }
-
 }
