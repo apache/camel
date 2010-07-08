@@ -40,7 +40,7 @@ public class CamelResourceConfig extends PackagesResourceConfig {
     protected static Map<String, Object> createProperties() {
         Map<String, Object> properties = new HashMap<String, Object>();
 
-        properties.put(PackagesResourceConfig.PROPERTY_PACKAGES, "org.apache.camel.web");
+        properties.put(PackagesResourceConfig.PROPERTY_PACKAGES, getResourcePackages());
 
         WadlGeneratorConfig config = WadlGeneratorConfig
                 .generator(WadlGeneratorApplicationDoc.class)
@@ -62,5 +62,9 @@ public class CamelResourceConfig extends PackagesResourceConfig {
         m.put("json", MediaType.APPLICATION_JSON_TYPE);
         m.put("dot", MediaType.valueOf(Constants.DOT_MIMETYPE));
         return m;
+    }
+
+    protected static String getResourcePackages() {
+        return "org.apache.camel.web";
     }
 }
