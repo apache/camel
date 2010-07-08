@@ -139,7 +139,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         return match;
     }
 
-    public boolean afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+    public boolean afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken) {
         boolean match = false;
 
         // does any of the breakpoints apply?
@@ -148,7 +148,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
             if (Breakpoint.State.Active.equals(breakpoint.getBreakpoint().getState())) {
                 if (matchConditions(exchange, processor, definition, breakpoint)) {
                     match = true;
-                    onAfterProcess(exchange, processor, definition, breakpoint.getBreakpoint());
+                    onAfterProcess(exchange, processor, definition, timeTaken, breakpoint.getBreakpoint());
                 }
             }
         }
@@ -181,9 +181,9 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         }
     }
 
-    protected void onAfterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, Breakpoint breakpoint) {
+    protected void onAfterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken, Breakpoint breakpoint) {
         try {
-            breakpoint.afterProcess(exchange, processor, definition);
+            breakpoint.afterProcess(exchange, processor, definition, timeTaken);
         } catch (Throwable e) {
             LOG.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
         }

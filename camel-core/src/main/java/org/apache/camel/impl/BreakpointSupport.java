@@ -50,7 +50,7 @@ public abstract class BreakpointSupport implements Breakpoint {
         // noop
     }
 
-    public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+    public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken) {
         // noop
     }
 

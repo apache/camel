@@ -40,32 +40,28 @@ public interface Exchange {
     String AGGREGATION_STRATEGY             = "CamelAggregationStrategy";
     String ASYNC_WAIT                       = "CamelAsyncWait";
 
-    String BATCH_INDEX    = "CamelBatchIndex";
-    String BATCH_SIZE     = "CamelBatchSize";
-    String BATCH_COMPLETE = "CamelBatchComplete";
-
+    String BATCH_INDEX                = "CamelBatchIndex";
+    String BATCH_SIZE                 = "CamelBatchSize";
+    String BATCH_COMPLETE             = "CamelBatchComplete";
     String BEAN_METHOD_NAME           = "CamelBeanMethodName";
     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
-
-    String BINDING = "CamelBinding";
+    String BINDING                    = "CamelBinding";
 
     String CHARSET_NAME     = "CamelCharsetName";
     String CONTENT_ENCODING = "Content-Encoding";
     String CONTENT_TYPE     = "Content-Type";
     String CORRELATION_ID   = "CamelCorrelationId";
 
-    String DATASET_INDEX = "CamelDataSetIndex";
-    String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
-    
+    String DATASET_INDEX             = "CamelDataSetIndex";
+    String DEFAULT_CHARSET_PROPERTY  = "org.apache.camel.default.charset";
     String DISABLE_HTTP_STREAM_CACHE = "CamelDisableHttpStreamCache";
 
     String EXCEPTION_CAUGHT     = "CamelExceptionCaught";
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
+
     String FAILURE_HANDLED      = "CamelFailureHandled";
     String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
-    
     String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
-
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
     String FILE_NAME            = "CamelFileName";
     String FILE_NAME_ONLY       = "CamelFileNameOnly";
@@ -85,11 +81,10 @@ public interface Exchange {
     String HTTP_URI                = "CamelHttpUri";
     String HTTP_URL                = "CamelHttpUrl";
     String HTTP_CHUNKED            = "CamelHttpChunked";
-    String HTTP_SERVLET_REQUEST   = "CamelHttpServletRequest";
-    String HTTP_SERVLET_RESPONSE  = "CamelHttpServletResponse";
+    String HTTP_SERVLET_REQUEST    = "CamelHttpServletRequest";
+    String HTTP_SERVLET_RESPONSE   = "CamelHttpServletResponse";
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
-    String TO_ENDPOINT          = "CamelToEndpoint";
 
     String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
     String LOG_DEBUG_BODY_STREAMS   = "CamelLogDebugStreams";
@@ -102,29 +97,29 @@ public interface Exchange {
 
     String ON_COMPLETION = "CamelOnCompletion";
 
-    String ROUTE_STOP           = "CamelRouteStop";
     String REDELIVERED          = "CamelRedelivered";
     String REDELIVERY_COUNTER   = "CamelRedeliveryCounter";
     String REDELIVERY_EXHAUSTED = "CamelRedeliveryExhausted";
     String ROLLBACK_ONLY        = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST   = "CamelRollbackOnlyLast";
-    
+    String ROUTE_STOP           = "CamelRouteStop";
+
     String SOAP_ACTION        = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
     String SPLIT_INDEX        = "CamelSplitIndex";
     String SPLIT_COMPLETE     = "CamelSplitComplete";
     String SPLIT_SIZE         = "CamelSplitSize";
 
-    String TRANSFER_ENCODING     = "Transfer-Encoding";
+    String TIMER_FIRED_TIME      = "CamelTimerFiredTime";
+    String TIMER_NAME            = "CamelTimerName";
+    String TIMER_PERIOD          = "CamelTimerPeriod";
+    String TIMER_TIME            = "CamelTimerTime";
+    String TO_ENDPOINT           = "CamelToEndpoint";
     String TRACE_EVENT           = "CamelTraceEvent";
     String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
     String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
-
-    String TIMER_FIRED_TIME = "CamelTimerFiredTime";
-    String TIMER_NAME       = "CamelTimerName";
-    String TIMER_PERIOD     = "CamelTimerPeriod";
-    String TIMER_TIME       = "CamelTimerTime";
+    String TRANSFER_ENCODING     = "Transfer-Encoding";
 
     String XSLT_FILE_NAME = "CamelXsltFileName";
 

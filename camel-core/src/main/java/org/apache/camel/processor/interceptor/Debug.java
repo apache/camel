@@ -24,6 +24,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.util.StopWatch;
 
 /**
  * A debug interceptor to notify {@link Debugger} with {@link Exchange}s being processed.
@@ -44,10 +45,13 @@ public class Debug implements InterceptStrategy {
             @Override
             public boolean process(final Exchange exchange, final AsyncCallback callback) {
                 debugger.beforeProcess(exchange, target, definition);
+                final StopWatch watch = new StopWatch();
 
                 return super.process(exchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
-                        debugger.afterProcess(exchange, processor, definition);
+                        long diff = watch.stop();
+                        debugger.afterProcess(exchange, processor, definition, diff);
+
                         // must notify original callback
                         callback.done(doneSync);
                     }

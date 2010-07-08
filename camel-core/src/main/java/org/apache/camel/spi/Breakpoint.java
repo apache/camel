@@ -74,8 +74,9 @@ public interface Breakpoint {
      * @param exchange   the {@link Exchange}
      * @param processor  the {@link Processor} which was processed
      * @param definition the {@link org.apache.camel.model.ProcessorDefinition} definition of the processor
+     * @param timeTaken  time in millis it took to process the {@link Exchange} - time spend in breakpoint callbacks may affect this time
      */
-    void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition);
+    void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken);
 
     /**
      * Callback invoked when the breakpoint was hit and any of the {@link Exchange} {@link EventObject event}s occurred.

@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel;
 
 import java.lang.management.ManagementFactory;
 import java.util.Set;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -29,6 +27,10 @@ import org.apache.commons.logging.LogFactory;
 
 public final class TestSupportJmxCleanup {
     private static final transient Log LOG = LogFactory.getLog(TestSupportJmxCleanup.class);
+
+    private TestSupportJmxCleanup() {
+        // no instances
+    }
 
     public static void removeMBeans(String domain) throws Exception {
         MBeanServer mbsc =  ManagementFactory.getPlatformMBeanServer();
@@ -55,7 +57,4 @@ public final class TestSupportJmxCleanup {
         return domain == null ? DefaultManagementAgent.DEFAULT_DOMAIN : domain;
     }
 
-    private TestSupportJmxCleanup() {
-        // no instances
-    }
 }

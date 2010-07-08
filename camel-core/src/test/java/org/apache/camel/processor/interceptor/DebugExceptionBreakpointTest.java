@@ -45,7 +45,7 @@ public class DebugExceptionBreakpointTest extends ContextTestSupport {
 
         breakpoint = new BreakpointSupport() {
             @Override
-            public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+            public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken) {
                 Exception e = exchange.getException();
                 logs.add("Breakpoint at " + definition.getShortName() + " caused by: " + e.getClass().getSimpleName() + "[" + e.getMessage() + "]");
             }
