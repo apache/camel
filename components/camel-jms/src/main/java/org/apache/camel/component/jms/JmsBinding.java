@@ -183,7 +183,7 @@ public class JmsBinding {
                 try {
                     map.put("JMSType", jmsMessage.getJMSType());
                 } catch (JMSException e) {
-                    LOG.trace("Cannot read JMSReplyTo header. Will ignore this exception.", e);
+                    LOG.trace("Cannot read JMSType header. Will ignore this exception.", e);
                 }
 
                 // this works around a bug in the ActiveMQ property handling
