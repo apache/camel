@@ -171,14 +171,20 @@ public class JmsBinding {
                 map.put("JMSMessageID", jmsMessage.getJMSMessageID());
                 map.put("JMSPriority", jmsMessage.getJMSPriority());
                 map.put("JMSRedelivered", jmsMessage.getJMSRedelivered());
+                map.put("JMSTimestamp", jmsMessage.getJMSTimestamp());
+
                 // to work around OracleAQ not supporting the JMSReplyTo header (CAMEL-2909)
                 try {
                     map.put("JMSReplyTo", jmsMessage.getJMSReplyTo());
                 } catch (JMSException e) {
                     LOG.trace("Cannot read JMSReplyTo header. Will ignore this exception.", e);
                 }
-                map.put("JMSTimestamp", jmsMessage.getJMSTimestamp());
-                map.put("JMSType", jmsMessage.getJMSType());
+                // to work around OracleAQ not supporting the JMSType header (CAMEL-2909)
+                try {
+                    map.put("JMSType", jmsMessage.getJMSType());
+                } catch (JMSException e) {
+                    LOG.trace("Cannot read JMSReplyTo header. Will ignore this exception.", e);
+                }
 
                 // this works around a bug in the ActiveMQ property handling
                 map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
