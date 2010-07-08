@@ -14,22 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management.event;
+package org.apache.camel.impl;
+
+import java.util.EventObject;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.Condition;
 
 /**
+ * A support class for {@link org.apache.camel.spi.Condition} implementations to use as base class.
+ *
  * @version $Revision$
  */
-public class ExchangeCompletedEvent extends AbstractExchangeEvent {
-    private static final long serialVersionUID = -3231801412021356098L;
+public class ConditionSupport implements Condition {
 
-    public ExchangeCompletedEvent(Exchange source) {
-        super(source);
+    public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+        return false;
     }
 
-    @Override
-    public String toString() {
-        return getExchange().getExchangeId() + " exchange completed: " + getExchange();
+    public boolean matchEvent(Exchange exchange, EventObject event) {
+        return false;
     }
 }

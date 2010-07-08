@@ -16,34 +16,25 @@
  */
 package org.apache.camel.management.event;
 
-import java.util.EventObject;
-
 import org.apache.camel.Exchange;
 
 /**
  * @version $Revision$
  */
-public class ExchangeFailureEvent extends EventObject {
+public class ExchangeFailureEvent extends AbstractExchangeEvent {
     private static final long serialVersionUID = -8484326904627268101L;
-
-    private final Exchange exchange;
 
     public ExchangeFailureEvent(Exchange source) {
         super(source);
-        this.exchange = source;
-    }
-
-    public Exchange getExchange() {
-        return exchange;
     }
 
     @Override
     public String toString() {
-        Exception cause = exchange.getException();
+        Exception cause = getExchange().getException();
         if (cause != null) {
-            return exchange.getExchangeId() + " exchange failure: " + exchange + " cause " + cause;
+            return getExchange().getExchangeId() + " exchange failure: " + getExchange() + " cause " + cause;
         } else {
-            return exchange.getExchangeId() + " exchange failure: " + exchange;
+            return getExchange().getExchangeId() + " exchange failure: " + getExchange();
         }
     }
 }

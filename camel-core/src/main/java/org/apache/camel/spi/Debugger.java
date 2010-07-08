@@ -16,8 +16,10 @@
  */
 package org.apache.camel.spi;
 
+import java.util.EventObject;
 import java.util.List;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
@@ -29,7 +31,7 @@ import org.apache.camel.model.ProcessorDefinition;
  *
  * @version $Revision$
  */
-public interface Debugger extends Service {
+public interface Debugger extends Service, CamelContextAware {
 
     /**
      * Add the given breakpoint
@@ -71,14 +73,35 @@ public interface Debugger extends Service {
     List<Breakpoint> getBreakpoints();
 
     /**
+     * Callback invoked when an {@link Exchange} is about to be processed which allows implementators
+     * to notify breakpoints.
+     *
+     * @param exchange   the exchange
+     * @param processor  the {@link Processor} about to be processed
+     * @param definition the definition of the processor
+     * @return <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
+     */
+    boolean beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition);
+
+    /**
+     * Callback invoked when an {@link Exchange} has been processed which allows implementators
+     * to notify breakpoints.
+     *
+     * @param exchange   the exchange
+     * @param processor  the {@link Processor} which was processed
+     * @param definition the definition of the processor
+     * @return <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
+     */
+    boolean afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition);
+
+    /**
      * Callback invoked when an {@link Exchange} is being processed which allows implementators
      * to notify breakpoints.
      *
-     * @param exchange     the exchange
-     * @param processor    the target processor (to be processed next)
-     * @param definition   the definition of the processor
+     * @param exchange the exchange
+     * @param event    the event (instance of {@link org.apache.camel.management.event.AbstractExchangeEvent}
      * @return <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
      */
-    boolean onExchange(Exchange exchange, Processor processor, ProcessorDefinition definition);
+    boolean onEvent(Exchange exchange, EventObject event);
 
 }

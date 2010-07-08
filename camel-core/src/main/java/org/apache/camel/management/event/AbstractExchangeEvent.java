@@ -16,20 +16,25 @@
  */
 package org.apache.camel.management.event;
 
+import java.util.EventObject;
+
 import org.apache.camel.Exchange;
 
 /**
+ * Base class for {@link Exchange} events.
+ *
  * @version $Revision$
  */
-public class ExchangeCompletedEvent extends AbstractExchangeEvent {
-    private static final long serialVersionUID = -3231801412021356098L;
+public abstract class AbstractExchangeEvent extends EventObject {
 
-    public ExchangeCompletedEvent(Exchange source) {
+    private final Exchange exchange;
+
+    public AbstractExchangeEvent(Exchange source) {
         super(source);
+        this.exchange = source;
     }
 
-    @Override
-    public String toString() {
-        return getExchange().getExchangeId() + " exchange completed: " + getExchange();
+    public Exchange getExchange() {
+        return exchange;
     }
 }

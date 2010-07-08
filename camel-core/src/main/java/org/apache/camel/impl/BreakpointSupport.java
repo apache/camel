@@ -16,13 +16,17 @@
  */
 package org.apache.camel.impl;
 
+import java.util.EventObject;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Breakpoint;
 
 /**
  * A support class for {@link Breakpoint} implementations to use as base class.
  * <p/>
- * Will be in active state and match any {@link Exchange}s.
+ * Will be in active state.
  *
  * @version $Revision$
  */
@@ -42,4 +46,15 @@ public abstract class BreakpointSupport implements Breakpoint {
         state = State.Active;
     }
 
+    public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+        // noop
+    }
+
+    public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+        // noop
+    }
+
+    public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition definition) {
+        // noop
+    }
 }

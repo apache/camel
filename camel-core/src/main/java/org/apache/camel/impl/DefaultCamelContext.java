@@ -1023,8 +1023,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
         }
         
+        // register debugger
         if (getDebugger() != null) {
             LOG.info("Debugger: " + getDebugger() + " is enabled on CamelContext: " + getName());
+            // register this camel context on the debugger
+            getDebugger().setCamelContext(this);
+            startServices(getDebugger());
             addInterceptStrategy(new Debug(getDebugger()));
         }
 
@@ -1072,6 +1076,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             startRouteDefinitions(routeDefinitions);
             routeDefinitionInitiated = true;
         }
+
 
         // starting will continue in the start method
     }

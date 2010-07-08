@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.EventObject;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
@@ -26,20 +28,19 @@ import org.apache.camel.model.ProcessorDefinition;
  * This allows you to register {@link org.apache.camel.spi.Breakpoint}s to the {@link org.apache.camel.spi.Debugger}
  * and have those breakpoints activated when their {@link org.apache.camel.spi.Condition}s match.
  * <p/>
- * If any exceptions is thrown from the {@link #onExchange(org.apache.camel.Exchange, org.apache.camel.Processor, org.apache.camel.model.ProcessorDefinition)}
- * method then the {@link org.apache.camel.spi.Debugger} will catch and log those at <tt>WARN</tt> level and continue.
+ * If any exceptions is thrown from the callback methods then the {@link org.apache.camel.spi.Debugger}
+ * will catch and log those at <tt>WARN</tt> level and continue. This ensures Camel can continue to route
+ * the message without having breakpoints causing issues.
  *
+ * @version $Revision$
  * @see org.apache.camel.spi.Debugger
  * @see org.apache.camel.spi.Condition
- * @version $Revision$
  */
 public interface Breakpoint {
 
-    // TODO: Hook into the EventNotifier so we can have breakpoints trigger on those conditions as well
-    // exceptions, create, done, etc. and a FollowMe condition to follow a single exchange
-    // while others are being routed so you can follow one only, eg need an API on Debugger for that
-
-    enum State { Active, Suspended }
+    enum State {
+        Active, Suspended
+    }
 
     /**
      * Gets the state of this break
@@ -59,12 +60,32 @@ public interface Breakpoint {
     void activate();
 
     /**
-     * Callback invoked when the breakpoint was hit.
+     * Callback invoked when the breakpoint was hit and the {@link Exchange} is about to be processed (before).
      *
-     * @param exchange    the {@link Exchange}
-     * @param processor   the {@link Processor} which is the next target
-     * @param definition  the {@link org.apache.camel.model.ProcessorDefinition} definition of the processor
+     * @param exchange   the {@link Exchange}
+     * @param processor  the {@link Processor} about to be processed
+     * @param definition the {@link org.apache.camel.model.ProcessorDefinition} definition of the processor
      */
-    void onExchange(Exchange exchange, Processor processor, ProcessorDefinition definition);
+    void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition);
+
+    /**
+     * Callback invoked when the breakpoint was hit and the {@link Exchange} has been processed (after).
+     *
+     * @param exchange   the {@link Exchange}
+     * @param processor  the {@link Processor} which was processed
+     * @param definition the {@link org.apache.camel.model.ProcessorDefinition} definition of the processor
+     */
+    void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition);
+
+    /**
+     * Callback invoked when the breakpoint was hit and any of the {@link Exchange} {@link EventObject event}s occurred.
+     *
+     * @param exchange   the {@link Exchange}
+     * @param event      the event (instance of {@link org.apache.camel.management.event.AbstractExchangeEvent}
+     * @param definition the {@link org.apache.camel.model.ProcessorDefinition} definition of the last processor executed,
+     *                   may be <tt>null</tt> if not possible to resolve from tracing
+     * @see org.apache.camel.management.event.AbstractExchangeEvent
+     */
+    void onEvent(Exchange exchange, EventObject event, ProcessorDefinition definition);
 
 }

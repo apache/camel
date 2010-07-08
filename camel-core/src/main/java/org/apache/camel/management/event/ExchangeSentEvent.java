@@ -16,30 +16,22 @@
  */
 package org.apache.camel.management.event;
 
-import java.util.EventObject;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
 /**
  * @version $Revision$
  */
-public class ExchangeSentEvent extends EventObject {
+public class ExchangeSentEvent extends AbstractExchangeEvent {
     private static final long serialVersionUID = -19248832613958123L;
 
-    private final Exchange exchange;
     private final Endpoint endpoint;
     private final long timeTaken;
 
     public ExchangeSentEvent(Exchange source, Endpoint endpoint, long timeTaken) {
         super(source);
-        this.exchange = source;
         this.endpoint = endpoint;
         this.timeTaken = timeTaken;
-    }
-
-    public Exchange getExchange() {
-        return exchange;
     }
 
     public Endpoint getEndpoint() {
@@ -52,7 +44,7 @@ public class ExchangeSentEvent extends EventObject {
 
     @Override
     public String toString() {
-        return exchange.getExchangeId() + " exchange " + exchange + " sent to: " + endpoint.getEndpointUri() + " took: " + timeTaken + " ms.";
+        return getExchange().getExchangeId() + " exchange " + getExchange() + " sent to: " + endpoint.getEndpointUri() + " took: " + timeTaken + " ms.";
     }
 
 }

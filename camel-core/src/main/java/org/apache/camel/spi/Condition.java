@@ -16,7 +16,10 @@
  */
 package org.apache.camel.spi;
 
+import java.util.EventObject;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
@@ -33,9 +36,20 @@ public interface Condition {
      * Does the condition match
      *
      * @param exchange the exchange
-     * @param definition the current node in the route where the Exchange is at
+     * @param processor  the {@link Processor}
+     * @param definition the present location in the route where the {@link Exchange} is located at
      * @return <tt>true</tt> to match, <tt>false</tt> otherwise
      */
-    boolean match(Exchange exchange, ProcessorDefinition definition);
+    boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition definition);
+
+    /**
+     * Does the condition match
+     *
+     * @param exchange the exchange
+     * @param event    the event (instance of {@link org.apache.camel.management.event.AbstractExchangeEvent}
+     * @return <tt>true</tt> to match, <tt>false</tt> otherwise
+     * @see org.apache.camel.management.event.AbstractExchangeEvent
+     */
+    boolean matchEvent(Exchange exchange, EventObject event);
 
 }

@@ -16,29 +16,20 @@
  */
 package org.apache.camel.management.event;
 
-import java.util.EventObject;
-
 import org.apache.camel.Exchange;
 
 /**
  * @version $Revision$
  */
-public class ExchangeCreatedEvent extends EventObject {
+public class ExchangeCreatedEvent extends AbstractExchangeEvent {
     private static final long serialVersionUID = -19248832613958243L;
-
-    private final Exchange exchange;
 
     public ExchangeCreatedEvent(Exchange source) {
         super(source);
-        this.exchange = source;
-    }
-
-    public Exchange getExchange() {
-        return exchange;
     }
 
     @Override
     public String toString() {
-        return exchange.getExchangeId() + " exchange created: " + exchange;
+        return getExchange().getExchangeId() + " exchange created: " + getExchange();
     }
 }

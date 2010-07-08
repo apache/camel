@@ -26,6 +26,8 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
 
 /**
+ * A debug interceptor to notify {@link Debugger} with {@link Exchange}s being processed.
+ *
  * @version $Revision$
  */
 public class Debug implements InterceptStrategy {
@@ -40,9 +42,16 @@ public class Debug implements InterceptStrategy {
                                                  final Processor target, final Processor nextTarget) throws Exception {
         return new DelegateAsyncProcessor(target) {
             @Override
-            public boolean process(Exchange exchange, AsyncCallback callback) {
-                debugger.onExchange(exchange, target, definition);
-                return super.process(exchange, callback);
+            public boolean process(final Exchange exchange, final AsyncCallback callback) {
+                debugger.beforeProcess(exchange, target, definition);
+
+                return super.process(exchange, new AsyncCallback() {
+                    public void done(boolean doneSync) {
+                        debugger.afterProcess(exchange, processor, definition);
+                        // must notify original callback
+                        callback.done(doneSync);
+                    }
+                });
             }
 
             @Override

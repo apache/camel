@@ -19,14 +19,23 @@ package org.apache.camel.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EventObject;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
+import org.apache.camel.RouteNode;
+import org.apache.camel.management.EventNotifierSupport;
+import org.apache.camel.management.event.AbstractExchangeEvent;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,10 +44,11 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DefaultDebugger implements Debugger {
+public class DefaultDebugger implements Debugger, CamelContextAware {
 
     private static final Log LOG = LogFactory.getLog(DefaultDebugger.class);
     private final List<BreakpointConditions> breakpoints = new ArrayList<BreakpointConditions>();
+    private CamelContext camelContext;
 
     /**
      * Holder class for breakpoint and the associated conditions
@@ -63,6 +73,21 @@ public class DefaultDebugger implements Debugger {
         public List<Condition> getConditions() {
             return conditions;
         }
+    }
+
+    public DefaultDebugger() {
+    }
+
+    public DefaultDebugger(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public void addBreakpoint(Breakpoint breakpoint) {
@@ -97,7 +122,7 @@ public class DefaultDebugger implements Debugger {
         return Collections.unmodifiableList(answer);
     }
 
-    public boolean onExchange(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+    public boolean beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
         boolean match = false;
 
         // does any of the breakpoints apply?
@@ -106,7 +131,7 @@ public class DefaultDebugger implements Debugger {
             if (Breakpoint.State.Active.equals(breakpoint.getBreakpoint().getState())) {
                 if (matchConditions(exchange, processor, definition, breakpoint)) {
                     match = true;
-                    onBreakpoint(exchange, processor, definition, breakpoint.getBreakpoint());
+                    onBeforeProcess(exchange, processor, definition, breakpoint.getBreakpoint());
                 }
             }
         }
@@ -114,10 +139,78 @@ public class DefaultDebugger implements Debugger {
         return match;
     }
 
-    private boolean matchConditions(Exchange exchange,  Processor processor, ProcessorDefinition definition, BreakpointConditions breakpoint) {
+    public boolean afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+        boolean match = false;
+
+        // does any of the breakpoints apply?
+        for (BreakpointConditions breakpoint : breakpoints) {
+            // breakpoint must be active
+            if (Breakpoint.State.Active.equals(breakpoint.getBreakpoint().getState())) {
+                if (matchConditions(exchange, processor, definition, breakpoint)) {
+                    match = true;
+                    onAfterProcess(exchange, processor, definition, breakpoint.getBreakpoint());
+                }
+            }
+        }
+
+        return match;
+    }
+
+    public boolean onEvent(Exchange exchange, EventObject event) {
+        boolean match = false;
+
+        // does any of the breakpoints apply?
+        for (BreakpointConditions breakpoint : breakpoints) {
+            // breakpoint must be active
+            if (Breakpoint.State.Active.equals(breakpoint.getBreakpoint().getState())) {
+                if (matchConditions(exchange, event, breakpoint)) {
+                    match = true;
+                    onEvent(exchange, event, breakpoint.getBreakpoint());
+                }
+            }
+        }
+
+        return match;
+    }
+
+    protected void onBeforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, Breakpoint breakpoint) {
+        try {
+            breakpoint.beforeProcess(exchange, processor, definition);
+        } catch (Throwable e) {
+            LOG.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+        }
+    }
+
+    protected void onAfterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, Breakpoint breakpoint) {
+        try {
+            breakpoint.afterProcess(exchange, processor, definition);
+        } catch (Throwable e) {
+            LOG.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+        }
+    }
+
+    protected void onEvent(Exchange exchange, EventObject event, Breakpoint breakpoint) {
+        ProcessorDefinition definition = null;
+
+        // try to get the last known definition
+        if (exchange.getUnitOfWork() != null && exchange.getUnitOfWork().getTracedRouteNodes() != null) {
+            RouteNode node = exchange.getUnitOfWork().getTracedRouteNodes().getLastNode();
+            if (node != null) {
+                definition = node.getProcessorDefinition();
+            }
+        }
+
+        try {
+            breakpoint.onEvent(exchange, event, definition);
+        } catch (Throwable e) {
+            LOG.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+        }
+    }
+
+    private boolean matchConditions(Exchange exchange, Processor processor, ProcessorDefinition definition, BreakpointConditions breakpoint) {
         if (breakpoint.getConditions() != null && !breakpoint.getConditions().isEmpty()) {
             for (Condition condition : breakpoint.getConditions()) {
-                if (!condition.match(exchange, definition)) {
+                if (!condition.matchProcess(exchange, processor, definition)) {
                     return false;
                 }
             }
@@ -126,21 +219,66 @@ public class DefaultDebugger implements Debugger {
         return true;
     }
 
-    protected void onBreakpoint(Exchange exchange, Processor processor, ProcessorDefinition definition, Breakpoint breakpoint) {
-        breakpoint.onExchange(exchange, processor, definition);
+    private boolean matchConditions(Exchange exchange, EventObject event, BreakpointConditions breakpoint) {
+        if (breakpoint.getConditions() != null && !breakpoint.getConditions().isEmpty()) {
+            for (Condition condition : breakpoint.getConditions()) {
+                if (!condition.matchEvent(exchange, event)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public void start() throws Exception {
-        // noop
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+        // register our event notifier
+        camelContext.getManagementStrategy().addEventNotifier(new DebugEventNotifier());
+        Tracer tracer = Tracer.getTracer(camelContext);
+        if (tracer == null) {
+            // tracer is disabled so enable it silently so we can leverage it to trace the Exchanges for us
+            tracer = Tracer.createTracer(camelContext);
+            tracer.setLogLevel(LoggingLevel.OFF);
+            camelContext.addService(tracer);
+            camelContext.addInterceptStrategy(tracer);
+        }
     }
 
     public void stop() throws Exception {
         breakpoints.clear();
-        // noop
     }
 
     @Override
     public String toString() {
         return "DefaultDebugger";
+    }
+
+    private final class DebugEventNotifier extends EventNotifierSupport {
+
+        private DebugEventNotifier() {
+            setIgnoreCamelContextEvents(true);
+            setIgnoreServiceEvents(true);
+        }
+
+        public void notify(EventObject event) throws Exception {
+            AbstractExchangeEvent aee = (AbstractExchangeEvent) event;
+            Exchange exchange = aee.getExchange();
+            onEvent(exchange, event);
+        }
+
+        public boolean isEnabled(EventObject event) {
+            return event instanceof AbstractExchangeEvent;
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            // noop
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            // noop
+        }
     }
 }
