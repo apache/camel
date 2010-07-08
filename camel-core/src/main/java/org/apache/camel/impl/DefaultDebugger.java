@@ -52,8 +52,8 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
 
     private static final Log LOG = LogFactory.getLog(DefaultDebugger.class);
     private final List<BreakpointConditions> breakpoints = new ArrayList<BreakpointConditions>();
-    // TODO: Should we support multiple single steps?
-    private final Map<String, Breakpoint> singleSteps = new HashMap<String, Breakpoint>();
+    private final int maxConcurrentSingleSteps = 1;
+    private final Map<String, Breakpoint> singleSteps = new HashMap<String, Breakpoint>(maxConcurrentSingleSteps);
     private CamelContext camelContext;
 
     /**
@@ -97,11 +97,11 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     public void addBreakpoint(Breakpoint breakpoint) {
-        breakpoints.add(new BreakpointConditions(breakpoint));
+        addBreakpoint(breakpoint, (Condition) null);
     }
 
     public void addBreakpoint(Breakpoint breakpoint, Condition... conditions) {
-        if (conditions != null) {
+        if (conditions != null && conditions.length > 0) {
             breakpoints.add(new BreakpointConditions(breakpoint, Arrays.asList(conditions)));
         } else {
             breakpoints.add(new BreakpointConditions(breakpoint));
@@ -109,7 +109,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     public void addSingleStepBreakpoint(final Breakpoint breakpoint) {
-        addSingleStepBreakpoint(breakpoint, null);
+        breakpoints.add(new BreakpointConditions(breakpoint));
     }
 
     public void addSingleStepBreakpoint(final Breakpoint breakpoint, Condition... conditions) {
@@ -177,8 +177,14 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         return Collections.unmodifiableList(answer);
     }
 
-    public void startSingleStepExchange(String exchangeId, Breakpoint breakpoint) {
+    public boolean startSingleStepExchange(String exchangeId, Breakpoint breakpoint) {
+        // can we accept single stepping the given exchange?
+        if (singleSteps.size() >= maxConcurrentSingleSteps) {
+            return false;
+        }
+
         singleSteps.put(exchangeId, breakpoint);
+        return true;
     }
 
     public void stopSingleStepExchange(String exchangeId) {

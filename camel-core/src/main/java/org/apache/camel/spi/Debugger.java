@@ -96,8 +96,10 @@ public interface Debugger extends Service, CamelContextAware {
      *
      * @param exchangeId the exchange id
      * @param breakpoint the breakpoint
+     * @return <tt>true</tt> if the debugger will single step the given exchange, <tt>false</tt> if the debugger is already
+     * single stepping another, and thus cannot simultaneously single step another exchange
      */
-    void startSingleStepExchange(String exchangeId, Breakpoint breakpoint);
+    boolean startSingleStepExchange(String exchangeId, Breakpoint breakpoint);
 
     /**
      * Stops the single step debug mode for the given exchange.
