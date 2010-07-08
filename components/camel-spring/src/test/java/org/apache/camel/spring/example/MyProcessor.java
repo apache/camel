@@ -26,10 +26,10 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public class MyProcessor implements Processor {
-    private static List<Exchange> exchanges = new CopyOnWriteArrayList<Exchange>();
+    private List<Exchange> exchanges = new CopyOnWriteArrayList<Exchange>();
     private String name = "James";
 
-    public static List<Exchange> getExchanges() {
+    public List<Exchange> getExchanges() {
         return exchanges;
     }
 

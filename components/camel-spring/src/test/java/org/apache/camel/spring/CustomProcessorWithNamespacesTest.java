@@ -53,7 +53,8 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
         });
         template.stop();
 
-        List list = MyProcessor.getExchanges();
+        MyProcessor myProcessor = (MyProcessor) applicationContext.getBean("myProcessor");
+        List<Exchange> list = myProcessor.getExchanges();
         assertEquals("Should have received a single exchange: " + list, 1, list.size());
     }
 
