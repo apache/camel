@@ -149,7 +149,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>pertest</forkMode>
+          <forkMode>once</forkMode>
           <excludes>
             <!-- TODO FIXME ASAP -->
             <exclude>**/XXXTest.*</exclude>            

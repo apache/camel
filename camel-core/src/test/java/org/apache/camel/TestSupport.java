@@ -60,6 +60,8 @@ public abstract class TestSupport extends TestCase {
             DefaultCamelContext.setContextCounter(0);
             TestSupportNodeIdFactory.resetCounters();
             super.runBare();
+            // make sure we cleanup the platform mbean server
+            TestSupportJmxCleanup.removeMBeans(null);
         }
     }
 
