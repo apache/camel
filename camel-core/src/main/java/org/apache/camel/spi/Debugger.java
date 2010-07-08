@@ -49,6 +49,25 @@ public interface Debugger extends Service, CamelContextAware {
     void addBreakpoint(Breakpoint breakpoint, Condition... conditions);
 
     /**
+     * Add the given breakpoint which will be used in single step mode
+     * <p/>
+     * The debugger will single step the first message arriving.
+     *
+     * @param breakpoint the breakpoint
+     */
+    void addSingleStepBreakpoint(Breakpoint breakpoint);
+
+    /**
+     * Add the given breakpoint which will be used in single step mode
+     * <p/>
+     * The debugger will single step the first message arriving.
+     *
+     * @param breakpoint the breakpoint
+     * @param conditions a number of {@link org.apache.camel.spi.Condition}s
+     */
+    void addSingleStepBreakpoint(Breakpoint breakpoint, Condition... conditions);
+
+    /**
      * Removes the given breakpoint
      *
      * @param breakpoint the breakpoint
@@ -71,6 +90,23 @@ public interface Debugger extends Service, CamelContextAware {
      * @return the breakpoints wrapped in an unmodifiable list, is never <tt>null</tt>.
      */
     List<Breakpoint> getBreakpoints();
+
+    /**
+     * Starts the single step debug mode for the given exchange
+     *
+     * @param exchangeId the exchange id
+     * @param breakpoint the breakpoint
+     */
+    void startSingleStepExchange(String exchangeId, Breakpoint breakpoint);
+
+    /**
+     * Stops the single step debug mode for the given exchange.
+     * <p/>
+     * <b>Notice:</b> The default implementation of the debugger is capable of auto stopping when the exchange is complete.
+     *
+     * @param exchangeId the exchange id
+     */
+    void stopSingleStepExchange(String exchangeId);
 
     /**
      * Callback invoked when an {@link Exchange} is about to be processed which allows implementators

@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -30,6 +32,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.RouteNode;
 import org.apache.camel.management.EventNotifierSupport;
 import org.apache.camel.management.event.AbstractExchangeEvent;
+import org.apache.camel.management.event.ExchangeCompletedEvent;
+import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.Breakpoint;
@@ -48,6 +52,8 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
 
     private static final Log LOG = LogFactory.getLog(DefaultDebugger.class);
     private final List<BreakpointConditions> breakpoints = new ArrayList<BreakpointConditions>();
+    // TODO: Should we support multiple single steps?
+    private final Map<String, Breakpoint> singleSteps = new HashMap<String, Breakpoint>();
     private CamelContext camelContext;
 
     /**
@@ -95,7 +101,56 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     public void addBreakpoint(Breakpoint breakpoint, Condition... conditions) {
-        breakpoints.add(new BreakpointConditions(breakpoint, Arrays.asList(conditions)));
+        if (conditions != null) {
+            breakpoints.add(new BreakpointConditions(breakpoint, Arrays.asList(conditions)));
+        } else {
+            breakpoints.add(new BreakpointConditions(breakpoint));
+        }
+    }
+
+    public void addSingleStepBreakpoint(final Breakpoint breakpoint) {
+        addSingleStepBreakpoint(breakpoint, null);
+    }
+
+    public void addSingleStepBreakpoint(final Breakpoint breakpoint, Condition... conditions) {
+        // wrap the breakpoint into single step breakpoint so we can automatic enable/disable the single step mode
+        Breakpoint singlestep = new Breakpoint() {
+            public State getState() {
+                return breakpoint.getState();
+            }
+
+            public void suspend() {
+                breakpoint.suspend();
+            }
+
+            public void activate() {
+                breakpoint.activate();
+            }
+
+            public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+                breakpoint.beforeProcess(exchange, processor, definition);
+            }
+
+            public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken) {
+                breakpoint.afterProcess(exchange, processor, definition, timeTaken);
+            }
+
+            public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition definition) {
+                if (event instanceof ExchangeCreatedEvent) {
+                    exchange.getContext().getDebugger().startSingleStepExchange(exchange.getExchangeId(), this);
+                } else if (event instanceof ExchangeCompletedEvent) {
+                    exchange.getContext().getDebugger().stopSingleStepExchange(exchange.getExchangeId());
+                }
+                breakpoint.onEvent(exchange, event, definition);
+            }
+
+            @Override
+            public String toString() {
+                return breakpoint.toString();
+            }
+        };
+
+        addBreakpoint(singlestep, conditions);
     }
 
     public void removeBreakpoint(Breakpoint breakpoint) {
@@ -122,10 +177,24 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         return Collections.unmodifiableList(answer);
     }
 
+    public void startSingleStepExchange(String exchangeId, Breakpoint breakpoint) {
+        singleSteps.put(exchangeId, breakpoint);
+    }
+
+    public void stopSingleStepExchange(String exchangeId) {
+        singleSteps.remove(exchangeId);
+    }
+
     public boolean beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
-        boolean match = false;
+        // is the exchange in single step mode?
+        Breakpoint singleStep = singleSteps.get(exchange.getExchangeId());
+        if (singleStep != null) {
+            onBeforeProcess(exchange, processor, definition, singleStep);
+            return true;
+        }
 
         // does any of the breakpoints apply?
+        boolean match = false;
         for (BreakpointConditions breakpoint : breakpoints) {
             // breakpoint must be active
             if (Breakpoint.State.Active.equals(breakpoint.getBreakpoint().getState())) {
@@ -140,9 +209,15 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     public boolean afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken) {
-        boolean match = false;
+        // is the exchange in single step mode?
+        Breakpoint singleStep = singleSteps.get(exchange.getExchangeId());
+        if (singleStep != null) {
+            onAfterProcess(exchange, processor, definition, timeTaken, singleStep);
+            return true;
+        }
 
         // does any of the breakpoints apply?
+        boolean match = false;
         for (BreakpointConditions breakpoint : breakpoints) {
             // breakpoint must be active
             if (Breakpoint.State.Active.equals(breakpoint.getBreakpoint().getState())) {
@@ -157,9 +232,15 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     public boolean onEvent(Exchange exchange, EventObject event) {
-        boolean match = false;
+        // is the exchange in single step mode?
+        Breakpoint singleStep = singleSteps.get(exchange.getExchangeId());
+        if (singleStep != null) {
+            onEvent(exchange, event, singleStep);
+            return true;
+        }
 
         // does any of the breakpoints apply?
+        boolean match = false;
         for (BreakpointConditions breakpoint : breakpoints) {
             // breakpoint must be active
             if (Breakpoint.State.Active.equals(breakpoint.getBreakpoint().getState())) {
@@ -247,6 +328,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
 
     public void stop() throws Exception {
         breakpoints.clear();
+        singleSteps.clear();
     }
 
     @Override
@@ -265,6 +347,11 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
             AbstractExchangeEvent aee = (AbstractExchangeEvent) event;
             Exchange exchange = aee.getExchange();
             onEvent(exchange, event);
+
+            if (event instanceof ExchangeCompletedEvent) {
+                // failsafe to ensure we remote single steps when the Exchange is complete
+                singleSteps.remove(exchange.getExchangeId());
+            }
         }
 
         public boolean isEnabled(EventObject event) {
