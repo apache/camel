@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
+import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.QNameMap;
@@ -30,6 +31,7 @@ import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.ClassResolver;
 import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
 
@@ -50,6 +52,13 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
         mif = new MappedXMLInputFactory(nstjsons);
     }
 
+    @Override
+    protected XStream createXStream(ClassResolver resolver) {
+        XStream xs = super.createXStream(resolver);
+        xs.setMode(XStream.NO_REFERENCES);
+        return xs;
+    }
+
     protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {        
         return new StaxWriter(new QNameMap(), mof.createXMLStreamWriter(stream));
     }
@@ -57,5 +66,4 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
     protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException {        
         return new StaxReader(new QNameMap(), mif.createXMLStreamReader(stream));
     }
-
 }

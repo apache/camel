@@ -107,7 +107,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
         return implicitCollections;
     }
 
-    public void setImplicitCollection(Map<String, String[]> implicitCollections) {
+    public void setImplicitCollections(Map<String, String[]> implicitCollections) {
         this.implicitCollections = implicitCollections;
     }
 

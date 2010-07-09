@@ -138,7 +138,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
 
                 Map<String, String[]> implicits = new HashMap<String, String[]>();
                 implicits.put(PurchaseHistory.class.getName(), new String[] {"history"});
-                xstreamDefinition.setImplicitCollection(implicits);
+                xstreamDefinition.setImplicitCollections(implicits);
 
                 from("direct:marshal").marshal(xstreamDefinition).to("mock:result");
                 from("direct:unmarshal").unmarshal(xstreamDefinition).to("mock:result");
