@@ -18,14 +18,13 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
  * @version $Revision$
  */
-public class MethodCallBeanRefNotFoundTest extends ContextTestSupport {
+public class MethodCallBeanRefMethodNotFoundTest extends ContextTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -34,13 +33,13 @@ public class MethodCallBeanRefNotFoundTest extends ContextTestSupport {
         return jndi;
     }
 
-    public void testMethodCallBeanRefNotFound() throws Exception {
+    public void testMethodCallBeanRefMethodNotFound() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:b").routeId("b").split().method("foo", "hello").to("mock:b");
 
-                from("direct:b").routeId("b").split().method("bar", "hello").to("mock:b");
+                from("direct:b").routeId("b").split().method("foo", "bye").to("mock:b");
             }
         });
         try {
@@ -48,8 +47,8 @@ public class MethodCallBeanRefNotFoundTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
             assertEquals("b", e.getRouteId());
-            NoSuchBeanException cause = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
-            assertEquals("bar", cause.getName());
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
+            assertEquals("bye", cause.getMethodName());
         }
     }
 

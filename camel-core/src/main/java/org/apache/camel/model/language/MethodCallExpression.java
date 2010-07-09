@@ -24,8 +24,11 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Predicate;
+import org.apache.camel.component.bean.BeanHolder;
+import org.apache.camel.component.bean.BeanInfo;
+import org.apache.camel.component.bean.MethodNotFoundException;
+import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.util.ObjectHelper;
 
@@ -98,33 +101,68 @@ public class MethodCallExpression extends ExpressionDefinition {
     
     @Override
     public Expression createExpression(CamelContext camelContext) {
+        Expression answer;
+
         if (beanType != null) {            
-            return new BeanExpression(ObjectHelper.newInstance(beanType), getMethod());
+            instance = ObjectHelper.newInstance(beanType);
+            return new BeanExpression(instance, getMethod());
         } else if (instance != null) {
             return new BeanExpression(instance, getMethod());
         } else {
             String ref = beanName();
             // if its a ref then check that the ref exists
-            if (camelContext.getRegistry().lookup(ref) == null) {
-                throw new NoSuchBeanException(ref);
-            }
-            return new BeanExpression(ref, getMethod());
+            BeanHolder holder = new RegistryBean(camelContext, ref);
+            // get the bean which will check that it exists
+            instance = holder.getBean();
+            answer = new BeanExpression(ref, getMethod());
         }
+
+        // validate method
+        validateHasMethod(camelContext, instance, getMethod());
+
+        return answer;
     }
 
     @Override
     public Predicate createPredicate(CamelContext camelContext) {
+        Predicate answer;
+
         if (beanType != null) {
-            return new BeanExpression(ObjectHelper.newInstance(beanType), getMethod());
+            instance = ObjectHelper.newInstance(beanType);
+            answer = new BeanExpression(instance, getMethod());
         } else if (instance != null) {
-            return new BeanExpression(instance, getMethod());
+            answer = new BeanExpression(instance, getMethod());
         } else {
             String ref = beanName();
             // if its a ref then check that the ref exists
-            if (camelContext.getRegistry().lookup(ref) == null) {
-                throw new NoSuchBeanException(ref);
-            }
-            return new BeanExpression(ref, getMethod());
+            BeanHolder holder = new RegistryBean(camelContext, ref);
+            // get the bean which will check that it exists
+            instance = holder.getBean();
+            answer = new BeanExpression(ref, getMethod());
+        }
+
+        // validate method
+        validateHasMethod(camelContext, instance, getMethod());
+
+        return answer;
+    }
+
+    /**
+     * Validates the given bean has the method
+     *
+     * @param context  camel context
+     * @param bean     the bean instance
+     * @param method   the method, can be <tt>null</tt> if no method name provided
+     * @throws org.apache.camel.RuntimeCamelException is thrown if bean does not have the method
+     */
+    protected void validateHasMethod(CamelContext context, Object bean, String method) {
+        if (method == null) {
+            return;
+        }
+
+        BeanInfo info = new BeanInfo(context, bean.getClass());
+        if (!info.hasMethod(method)) {
+            throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
         }
     }
 

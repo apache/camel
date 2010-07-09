@@ -23,6 +23,8 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +134,7 @@ public class BeanInfo {
 
         String name = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
         if (name != null) {
-            if (hasOperations(name)) {
+            if (hasMethod(name)) {
                 List<MethodInfo> methods = getOperations(name);
                 if (methods != null && methods.size() == 1) {
                     // only one method then choose it
@@ -231,7 +233,7 @@ public class BeanInfo {
             LOG.trace("Adding operation: " + opName + " for method: " + methodInfo);
         }
 
-        if (hasOperations(opName)) {
+        if (hasMethod(opName)) {
             // we have an overloaded method so add the method info to the same key
             List<MethodInfo> existing = getOperations(opName);
             existing.add(methodInfo);
@@ -672,7 +674,7 @@ public class BeanInfo {
     }
 
     /**
-     * Do we have an operation with the given name.
+     * Do we have a method with the given name.
      * <p/>
      * Shorthand method names for getters is supported, so you can pass in eg 'name' and Camel
      * will can find the real 'getName' method instead.
@@ -680,8 +682,33 @@ public class BeanInfo {
      * @param methodName the method name
      * @return <tt>true</tt> if we have such a method.
      */
-    private boolean hasOperations(String methodName) {
+    public boolean hasMethod(String methodName) {
         return getOperations(methodName) != null;
+    }
+
+    /**
+     * Gets the list of methods sorted by A..Z method name.
+     *
+     * @return the methods.
+     */
+    @SuppressWarnings("unchecked")
+    public List<MethodInfo> getMethods() {
+        if (operations.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        List<MethodInfo> methods = new ArrayList<MethodInfo>();
+        for (Collection<MethodInfo> col : operations.values()) {
+            methods.addAll(col);
+        }
+
+        // sort the methods by name A..Z
+        Collections.sort(methods, new Comparator<MethodInfo>() {
+            public int compare(MethodInfo o1, MethodInfo o2) {
+                return o1.getMethod().getName().compareTo(o2.getMethod().getName());
+            }
+        });
+        return methods;
     }
 
     /**

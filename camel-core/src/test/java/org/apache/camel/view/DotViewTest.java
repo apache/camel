@@ -86,7 +86,7 @@ public class DotViewTest extends ContextTestSupport {
 
     static class FromToBeanRoute extends RouteBuilder {
         public void configure() throws Exception {
-            from("seda:foo").beanRef("myBean", "myMethod");
+            from("seda:foo").beanRef("myBean", "hello");
         }
     }
 

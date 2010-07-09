@@ -17,9 +17,9 @@
 package org.apache.camel.component.bean;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.InOnly;
@@ -36,6 +36,16 @@ public class BeanInfoTest extends TestCase {
     private static final transient Log LOG = LogFactory.getLog(BeanInfoTest.class);
 
     protected CamelContext camelContext = new DefaultCamelContext();
+
+    public void testGetOperations() throws Exception {
+        BeanInfo info = createBeanInfo(Foo.class);
+
+        List<MethodInfo> operations = info.getMethods();
+        assertEquals(3, operations.size());
+        assertEquals("inOnlyMethod", operations.get(0).getMethod().getName());
+        assertEquals("inOutMethod", operations.get(1).getMethod().getName());
+        assertEquals("robustInOnlyMethod", operations.get(2).getMethod().getName());
+    }
 
     public void testMethodPatternUsingMethodAnnotations() throws Exception {
         BeanInfo info = createBeanInfo(Foo.class);

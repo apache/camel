@@ -22,6 +22,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
@@ -86,11 +87,15 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
 
     public void testMethodNotExists() throws Exception {
         try {
-            template.sendBody("direct:typo", "Hello World");
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:typo").beanRef("myBean", "ups").to("mock:result");
+                }
+            });
             fail("Should throw an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
-            MethodNotFoundException mnfe = (MethodNotFoundException) e.getCause();
+        } catch (FailedToCreateRouteException e) {
+            MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
             assertEquals("ups", mnfe.getMethodName());
             assertSame(bean, mnfe.getBean());
         }
@@ -115,8 +120,6 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
                 from("direct:mixed").beanRef("myBean", "echo").beanRef("myBean", "hi").to("mock:result");
 
                 from("direct:fail").beanRef("myBean").to("mock:result");
-
-                from("direct:typo").beanRef("myBean", "ups").to("mock:result");
             }
         };
     }
