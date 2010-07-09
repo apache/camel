@@ -41,7 +41,7 @@
                 </camel.osgi.import>
 		<!-- avoid to import the bunch of spring related package -->
 		<camel.osgi.dynamic>*</camel.osgi.dynamic>
-		<spring-version>3.0.0.RELEASE</spring-version>
+		<spring-version>3.0.3.RELEASE</spring-version>
 		<junit-version>4.8.1</junit-version>
 	</properties>
 
