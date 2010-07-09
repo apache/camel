@@ -325,7 +325,7 @@ public final class EventHelper {
         }
 
         for (EventNotifier notifier : notifiers) {
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailureEvents()) {
+            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
@@ -333,7 +333,7 @@ public final class EventHelper {
             if (factory == null) {
                 return;
             }
-            EventObject event = factory.createExchangeFailureEvent(exchange);
+            EventObject event = factory.createExchangeFailedEvent(exchange);
             if (event == null) {
                 return;
             }
@@ -349,7 +349,7 @@ public final class EventHelper {
         }
 
         for (EventNotifier notifier : notifiers) {
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailureEvents()) {
+            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
@@ -358,6 +358,29 @@ public final class EventHelper {
                 return;
             }
             EventObject event = factory.createExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel);
+            if (event == null) {
+                return;
+            }
+            doNotifyEvent(notifier, event);
+        }
+    }
+
+    public static void notifyExchangeRedelivery(CamelContext context, Exchange exchange, int attempt) {
+        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return;
+        }
+
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
+                continue;
+            }
+
+            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            if (factory == null) {
+                return;
+            }
+            EventObject event = factory.createExchangeRedeliveryEvent(exchange, attempt);
             if (event == null) {
                 return;
             }

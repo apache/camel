@@ -42,9 +42,13 @@ public interface ManagedEventNotifierMBean {
 
     void setIgnoreExchangeCompletedEvent(boolean ignoreExchangeCompletedEvent);
 
-    boolean isIgnoreExchangeFailureEvents();
+    boolean isIgnoreExchangeFailedEvents();
 
-    void setIgnoreExchangeFailureEvents(boolean ignoreExchangeFailureEvents);
+    void setIgnoreExchangeFailedEvents(boolean ignoreExchangeFailedEvents);
+
+    boolean isIgnoreExchangeRedeliveryEvents();
+
+    void setIgnoreExchangeRedeliveryEvents(boolean ignoreExchangeRedeliveryEvents);
 
     boolean isIgnoreExchangeSentEvents();
 

@@ -30,7 +30,7 @@ import org.apache.camel.management.event.CamelContextStoppedEvent;
 import org.apache.camel.management.event.CamelContextStoppingEvent;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeFailureEvent;
+import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.management.event.RouteStoppedEvent;
@@ -149,14 +149,14 @@ public class MultipleEventNotifierEventsTest extends ContextTestSupport {
         assertIsInstanceOf(RouteStartedEvent.class, events.get(2));
         assertIsInstanceOf(CamelContextStartedEvent.class, events.get(3));
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(4));
-        assertIsInstanceOf(ExchangeFailureEvent.class, events.get(5));
+        assertIsInstanceOf(ExchangeFailedEvent.class, events.get(5));
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
 
         assertEquals(3, events2.size());
 
         context.stop();
         assertIsInstanceOf(ExchangeCreatedEvent.class, events2.get(0));
-        assertIsInstanceOf(ExchangeFailureEvent.class, events2.get(1));
+        assertIsInstanceOf(ExchangeFailedEvent.class, events2.get(1));
         assertIsInstanceOf(ExchangeSentEvent.class, events2.get(2));
 
         assertEquals(11, events.size());

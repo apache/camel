@@ -18,7 +18,6 @@ package org.apache.camel.management.mbean;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.management.MBeanNotificationInfo;
 import javax.management.NotificationBroadcasterSupport;
 
@@ -103,12 +102,20 @@ public class ManagedEventNotifier extends NotificationBroadcasterSupport impleme
         getEventNotifier().setIgnoreExchangeCompletedEvent(ignoreExchangeCompletedEvent);
     }
     
-    public boolean isIgnoreExchangeFailureEvents() {
-        return getEventNotifier().isIgnoreExchangeFailureEvents();
+    public boolean isIgnoreExchangeFailedEvents() {
+        return getEventNotifier().isIgnoreExchangeFailedEvents();
     }
     
-    public void setIgnoreExchangeFailureEvents(boolean ignoreExchangeFailureEvents) {
-        getEventNotifier().setIgnoreExchangeFailureEvents(ignoreExchangeFailureEvents);
+    public void setIgnoreExchangeFailedEvents(boolean ignoreExchangeFailedEvents) {
+        getEventNotifier().setIgnoreExchangeFailedEvents(ignoreExchangeFailedEvents);
+    }
+
+    public boolean isIgnoreExchangeRedeliveryEvents() {
+        return getEventNotifier().isIgnoreExchangeRedeliveryEvents();
+    }
+
+    public void setIgnoreExchangeRedeliveryEvents(boolean ignoreExchangeRedeliveryEvents) {
+        getEventNotifier().setIgnoreExchangeRedeliveryEvents(ignoreExchangeRedeliveryEvents);
     }
 
     public boolean isIgnoreExchangeSentEvents() {
@@ -123,8 +130,8 @@ public class ManagedEventNotifier extends NotificationBroadcasterSupport impleme
         // all the class names in the event package
         String[] names = {"CamelContextStartedEvent", "CamelContextStartingEvent", "CamelContextStartupFailureEvent"
                 , "CamelContextStopFailureEvent", "CamelContextStoppedEvent", "CamelContextStoppingEvent"
-                , "ExchangeCompletedEvent", "ExchangeCreatedEvent", "ExchangeFailureEvent"
-                , "ExchangeFailureHandledEvent", "ExchangeSentEvent", "RouteStartedEvent"
+                , "ExchangeCompletedEvent", "ExchangeCreatedEvent", "ExchangeFailedEvent"
+                , "ExchangeFailureHandledEvent", "ExchangeRedeliveryEvents", "ExchangeSentEvent", "RouteStartedEvent"
                 , "RouteStoppedEvent", "ServiceStartupFailureEvent", "ServiceStopFailureEvent"};
 
         List<MBeanNotificationInfo> infos = new ArrayList<MBeanNotificationInfo>();

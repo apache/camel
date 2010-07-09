@@ -64,7 +64,8 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
                 setIgnoreRouteEvents(true);
                 setIgnoreExchangeCreatedEvent(true);
                 setIgnoreExchangeCompletedEvent(true);
-                setIgnoreExchangeFailureEvents(true);
+                setIgnoreExchangeFailedEvents(true);
+                setIgnoreExchangeRedeliveryEvents(true);
             }
 
             @Override

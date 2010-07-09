@@ -21,20 +21,28 @@ import org.apache.camel.Exchange;
 /**
  * @version $Revision$
  */
-public class ExchangeFailureEvent extends AbstractExchangeEvent {
-    private static final long serialVersionUID = -8484326904627268101L;
+public class ExchangeRedeliveryEvent extends AbstractExchangeEvent {
+    private static final long serialVersionUID = -19248832613958122L;
 
-    public ExchangeFailureEvent(Exchange source) {
+    private final int attempt;
+
+    public ExchangeRedeliveryEvent(Exchange source, int attempt) {
         super(source);
+        this.attempt = attempt;
+    }
+
+    public int getAttempt() {
+        return attempt;
     }
 
     @Override
     public String toString() {
-        Exception cause = getExchange().getException();
+        Exception cause = getExchange().getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         if (cause != null) {
-            return getExchange().getExchangeId() + " exchange failure: " + getExchange() + " cause " + cause;
+            return getExchange().getExchangeId() + " exchange redelivery: " + getExchange() + " attempt " + attempt + " cause " + cause;
         } else {
-            return getExchange().getExchangeId() + " exchange failure: " + getExchange();
+            return getExchange().getExchangeId() + " exchange redelivery: " + getExchange() + " attempt " + attempt;
         }
     }
+
 }

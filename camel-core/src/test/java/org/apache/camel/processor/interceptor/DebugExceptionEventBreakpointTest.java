@@ -27,7 +27,7 @@ import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.ConditionSupport;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.management.event.AbstractExchangeEvent;
-import org.apache.camel.management.event.ExchangeFailureEvent;
+import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
@@ -55,7 +55,7 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
 
         exceptionCondition = new ConditionSupport() {
             public boolean matchEvent(Exchange exchange, EventObject event) {
-                return event instanceof ExchangeFailureEvent;
+                return event instanceof ExchangeFailedEvent;
             }
         };
     }

@@ -35,7 +35,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.management.EventNotifierSupport;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeFailureEvent;
+import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -288,7 +288,7 @@ public class NotifyBuilder {
             }
 
             @Override
-            public boolean onExchangeFailure(Exchange exchange) {
+            public boolean onExchangeFailed(Exchange exchange) {
                 current++;
                 return true;
             }
@@ -363,7 +363,7 @@ public class NotifyBuilder {
             private int current;
 
             @Override
-            public boolean onExchangeFailure(Exchange exchange) {
+            public boolean onExchangeFailed(Exchange exchange) {
                 current++;
                 return true;
             }
@@ -404,7 +404,7 @@ public class NotifyBuilder {
             }
 
             @Override
-            public boolean onExchangeFailure(Exchange exchange) {
+            public boolean onExchangeFailed(Exchange exchange) {
                 current++;
                 return true;
             }
@@ -473,7 +473,7 @@ public class NotifyBuilder {
             private int current;
 
             @Override
-            public boolean onExchangeFailure(Exchange exchange) {
+            public boolean onExchangeFailed(Exchange exchange) {
                 current++;
                 return true;
             }
@@ -528,7 +528,7 @@ public class NotifyBuilder {
             }
 
             @Override
-            public boolean onExchangeFailure(Exchange exchange) {
+            public boolean onExchangeFailed(Exchange exchange) {
                 if (!received && !matches) {
                     matches = predicate.matches(exchange);
                 }
@@ -597,7 +597,7 @@ public class NotifyBuilder {
             }
 
             @Override
-            public boolean onExchangeFailure(Exchange exchange) {
+            public boolean onExchangeFailed(Exchange exchange) {
                 if (!received && matches) {
                     matches = predicate.matches(exchange);
                 }
@@ -680,7 +680,7 @@ public class NotifyBuilder {
             }
 
             @Override
-            public boolean onExchangeFailure(Exchange exchange) {
+            public boolean onExchangeFailed(Exchange exchange) {
                 if (!received) {
                     sendToMock(exchange);
                 }
@@ -780,7 +780,7 @@ public class NotifyBuilder {
             }
 
             @Override
-            public boolean onExchangeFailure(Exchange exchange) {
+            public boolean onExchangeFailed(Exchange exchange) {
                 if (!received) {
                     sendToMock(exchange);
                 }
@@ -908,7 +908,7 @@ public class NotifyBuilder {
             }
 
             @Override
-            public boolean onExchangeFailure(Exchange exchange) {
+            public boolean onExchangeFailed(Exchange exchange) {
                 if (!received) {
                     matchBody(exchange);
                 }
@@ -1086,8 +1086,8 @@ public class NotifyBuilder {
                 onExchangeCreated((ExchangeCreatedEvent) event);
             } else if (event instanceof ExchangeCompletedEvent) {
                 onExchangeCompleted((ExchangeCompletedEvent) event);
-            } else if (event instanceof ExchangeFailureEvent) {
-                onExchangeFailure((ExchangeFailureEvent) event);
+            } else if (event instanceof ExchangeFailedEvent) {
+                onExchangeFailed((ExchangeFailedEvent) event);
             }
 
             // now compute whether we matched
@@ -1110,9 +1110,9 @@ public class NotifyBuilder {
             }
         }
 
-        private void onExchangeFailure(ExchangeFailureEvent event) {
+        private void onExchangeFailed(ExchangeFailedEvent event) {
             for (EventPredicateHolder predicate : predicates) {
-                predicate.getPredicate().onExchangeFailure(event.getExchange());
+                predicate.getPredicate().onExchangeFailed(event.getExchange());
             }
         }
 
@@ -1208,7 +1208,7 @@ public class NotifyBuilder {
          * @param exchange the exchange
          * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to stop immediately
          */
-        boolean onExchangeFailure(Exchange exchange);
+        boolean onExchangeFailed(Exchange exchange);
     }
 
     private abstract class EventPredicateSupport implements EventPredicate {
@@ -1225,7 +1225,7 @@ public class NotifyBuilder {
             return onExchange(exchange);
         }
 
-        public boolean onExchangeFailure(Exchange exchange) {
+        public boolean onExchangeFailed(Exchange exchange) {
             return onExchange(exchange);
         }
 
@@ -1308,9 +1308,9 @@ public class NotifyBuilder {
             return true;
         }
 
-        public boolean onExchangeFailure(Exchange exchange) {
+        public boolean onExchangeFailed(Exchange exchange) {
             for (EventPredicate predicate : predicates) {
-                if (!predicate.onExchangeFailure(exchange)) {
+                if (!predicate.onExchangeFailed(exchange)) {
                     return false;
                 }
             }

@@ -109,6 +109,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 log.trace("Redelivering exchangeId: " + exchange.getExchangeId() + " -> " + outputAsync + " for Exchange: " + exchange);
             }
 
+            // emmit event we are doing redelivery
+            EventHelper.notifyExchangeRedelivery(exchange.getContext(), exchange, data.redeliveryCounter);
+
             // process the exchange (also redelivery)
             boolean sync;
             if (data.redeliverFromSync) {
@@ -278,6 +281,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
                 // letting onRedeliver be executed
                 deliverToOnRedeliveryProcessor(exchange, data);
+
+                // emmit event we are doing redelivery
+                EventHelper.notifyExchangeRedelivery(exchange.getContext(), exchange, data.redeliveryCounter);
             }
 
             // process the exchange (also redelivery)

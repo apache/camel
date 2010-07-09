@@ -53,7 +53,7 @@ public interface EventFactory {
      * Creates an {@link EventObject} for Camel failing to start
      *
      * @param context camel context
-     * @param cause the cause exception
+     * @param cause   the cause exception
      * @return the created event
      */
     EventObject createCamelContextStartupFailureEvent(CamelContext context, Throwable cause);
@@ -62,7 +62,7 @@ public interface EventFactory {
      * Creates an {@link EventObject} for Camel failing to stop cleanly
      *
      * @param context camel context
-     * @param cause the cause exception
+     * @param cause   the cause exception
      * @return the created event
      */
     EventObject createCamelContextStopFailureEvent(CamelContext context, Throwable cause);
@@ -88,7 +88,7 @@ public interface EventFactory {
      *
      * @param context camel context
      * @param service the service
-     * @param cause the cause exception
+     * @param cause   the cause exception
      * @return the created event
      */
     EventObject createServiceStartupFailureEvent(CamelContext context, Object service, Throwable cause);
@@ -98,7 +98,7 @@ public interface EventFactory {
      *
      * @param context camel context
      * @param service the service
-     * @param cause the cause exception
+     * @param cause   the cause exception
      * @return the created event
      */
     EventObject createServiceStopFailureEvent(CamelContext context, Object service, Throwable cause);
@@ -141,24 +141,33 @@ public interface EventFactory {
      * @param exchange the exchange
      * @return the created event
      */
-    EventObject createExchangeFailureEvent(Exchange exchange);
+    EventObject createExchangeFailedEvent(Exchange exchange);
 
     /**
      * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has failed
      * but was handled by the Camel error handlers such as an dead letter channel.
      *
-     * @param exchange the exchange
-     * @param failureHandler the failure handler such as moving the message to a dead letter queue
+     * @param exchange          the exchange
+     * @param failureHandler    the failure handler such as moving the message to a dead letter queue
      * @param deadLetterChannel whether it was a dead letter channel or not handling the failure
      * @return the created event
      */
     EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel);
 
     /**
-     * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has been sent to the endpoint.
+     * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} is about to be redelivered
      *
      * @param exchange the exchange
-     * @param endpoint the destination
+     * @param attempt  the current redelivery attempt (starts from 1)
+     * @return the created event
+     */
+    EventObject createExchangeRedeliveryEvent(Exchange exchange, int attempt);
+
+    /**
+     * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has completely been sent to the endpoint.
+     *
+     * @param exchange  the exchange
+     * @param endpoint  the destination
      * @param timeTaken time in millis taken
      * @return the created event
      */
