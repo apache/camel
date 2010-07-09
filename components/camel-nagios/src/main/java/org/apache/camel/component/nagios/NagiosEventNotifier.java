@@ -25,8 +25,9 @@ import com.googlecode.jsendnsca.core.NagiosSettings;
 import org.apache.camel.management.EventNotifierSupport;
 import org.apache.camel.management.event.CamelContextStartupFailureEvent;
 import org.apache.camel.management.event.CamelContextStopFailureEvent;
-import org.apache.camel.management.event.ExchangeFailureEvent;
+import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.management.event.ExchangeFailureHandledEvent;
+import org.apache.camel.management.event.ExchangeRedeliveryEvent;
 import org.apache.camel.management.event.ServiceStartupFailureEvent;
 import org.apache.camel.management.event.ServiceStopFailureEvent;
 
@@ -46,7 +47,7 @@ public class NagiosEventNotifier extends EventNotifierSupport {
     public void notify(EventObject eventObject) throws Exception {
         // create message payload to send
         String message = eventObject.toString();
-        Level level = detemineLevel(eventObject);
+        Level level = determineLevel(eventObject);
         MessagePayload payload = new MessagePayload(getHostName(), level.ordinal(), getServiceName(), message);
 
         if (log.isInfoEnabled()) {
@@ -62,9 +63,9 @@ public class NagiosEventNotifier extends EventNotifierSupport {
         return true;
     }
 
-    protected Level detemineLevel(EventObject eventObject) {
+    protected Level determineLevel(EventObject eventObject) {
         // failures is considered critical
-        if (eventObject instanceof ExchangeFailureEvent
+        if (eventObject instanceof ExchangeFailedEvent
                 || eventObject instanceof CamelContextStartupFailureEvent
                 || eventObject instanceof CamelContextStopFailureEvent
                 || eventObject instanceof ServiceStartupFailureEvent
@@ -73,7 +74,9 @@ public class NagiosEventNotifier extends EventNotifierSupport {
         }
 
         // the failure was handled so its just a warning
-        if (eventObject instanceof ExchangeFailureHandledEvent) {
+        // and warn when a redelivery attempt is done
+        if (eventObject instanceof ExchangeFailureHandledEvent
+                || eventObject instanceof ExchangeRedeliveryEvent) {
             return Level.WARNING;
         }
 
