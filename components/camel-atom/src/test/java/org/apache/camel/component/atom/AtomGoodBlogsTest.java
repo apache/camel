@@ -16,19 +16,14 @@
  */
 package org.apache.camel.component.atom;
 
-import java.util.Hashtable;
-
 import org.apache.abdera.model.Entry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.CamelInitialContextFactory;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -41,22 +36,24 @@ public class AtomGoodBlogsTest extends CamelTestSupport {
     // This is the CamelContext that is the heart of Camel
     private CamelContext context;
 
-    // We use a simple Hashtable for our bean registry. For more advanced usage Spring is supported out-of-the-box
-    private Hashtable<String, Object> beans = new Hashtable<String, Object>();
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        // We initialize Camel
 
-    // We initialize Camel
-    private void setupCamel() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
         // First we register a blog service in our bean registry
-        beans.put("blogService", new BlogService());
+        registry.put("blogService", new BlogService());
 
         // Then we create the camel context with our bean registry
-        context = new DefaultCamelContext(new CamelInitialContextFactory().getInitialContext(beans));
+        context = new DefaultCamelContext(registry);
 
         // Then we add all the routes we need using the route builder DSL syntax
         context.addRoutes(createRouteBuilder());
 
         // And finally we must start Camel to let the magic routing begins
         context.start();
+
+        return context;
     }
 
     /**
@@ -125,17 +122,5 @@ public class AtomGoodBlogsTest extends CamelTestSupport {
     }
 
     // END SNIPPET: e1
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        setupCamel();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        context.stop();
-    }
 
 }
