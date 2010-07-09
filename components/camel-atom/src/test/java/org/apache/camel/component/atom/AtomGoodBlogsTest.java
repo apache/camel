@@ -94,7 +94,7 @@ public class AtomGoodBlogsTest extends CamelTestSupport {
         MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
 
         // There should be two good blog entries from the feed
-        mock.expectedMessageCount(2);
+        mock.expectedMinimumMessageCount(2);
 
         // Asserts that the above expectations is true, will throw assertions exception if it failed
         // Camel will default wait max 20 seconds for the assertions to be true, if the conditions
@@ -112,7 +112,7 @@ public class AtomGoodBlogsTest extends CamelTestSupport {
          */
         public boolean isGoodBlog(Exchange exchange) {
             Entry entry = exchange.getIn().getBody(Entry.class);
-            String title = entry.getTitle();            
+            String title = entry.getTitle();
 
             // We like blogs about Camel
             boolean good = title.toLowerCase().contains("camel");
