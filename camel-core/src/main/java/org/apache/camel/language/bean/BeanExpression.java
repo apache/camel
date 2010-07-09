@@ -190,7 +190,7 @@ public class BeanExpression implements Expression, Predicate {
                 // keep up with how far are we doing
                 ognlPath += methodName;
 
-                // get rid of leading ?. or . as we only needed that to determine if elvis was enabled or not
+                // get rid of leading ?. or . as we only needed that to determine if null safe was enabled or not
                 methodName = OgnlHelper.removeLeadingOperators(methodName);
 
                 // are we doing an index lookup (eg in Map/List/array etc)?
@@ -264,7 +264,7 @@ public class BeanExpression implements Expression, Predicate {
                         return list.get(num);
                     }
                     if (!nullSafe) {
-                        // not elvis then its mandatory so thrown out of bounds exception
+                        // not null safe then its mandatory so thrown out of bounds exception
                         throw new IndexOutOfBoundsException("Index: " + num + ", Size: " + list.size()
                                 + " out of bounds with List from bean: " + bean + "using OGNL path [" + ognlPath + "]");
                     }

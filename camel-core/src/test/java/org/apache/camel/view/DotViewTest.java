@@ -19,6 +19,8 @@ package org.apache.camel.view;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
+import org.apache.camel.component.bean.MyFooBean;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 
@@ -31,6 +33,13 @@ public class DotViewTest extends ContextTestSupport {
     public void testGenerateFiles() throws Exception {
         RouteDotGenerator generator = new RouteDotGenerator(outputDirectory);
         generator.drawRoutes(context);
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myBean", new MyFooBean());
+        return jndi;
     }
 
     @Override

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.util.ObjectHelper;
@@ -102,7 +103,12 @@ public class MethodCallExpression extends ExpressionDefinition {
         } else if (instance != null) {
             return new BeanExpression(instance, getMethod());
         } else {
-            return new BeanExpression(beanName(), getMethod());
+            String ref = beanName();
+            // if its a ref then check that the ref exists
+            if (camelContext.getRegistry().lookup(ref) == null) {
+                throw new NoSuchBeanException(ref);
+            }
+            return new BeanExpression(ref, getMethod());
         }
     }
 
@@ -113,7 +119,12 @@ public class MethodCallExpression extends ExpressionDefinition {
         } else if (instance != null) {
             return new BeanExpression(instance, getMethod());
         } else {
-            return new BeanExpression(beanName(), getMethod());
+            String ref = beanName();
+            // if its a ref then check that the ref exists
+            if (camelContext.getRegistry().lookup(ref) == null) {
+                throw new NoSuchBeanException(ref);
+            }
+            return new BeanExpression(ref, getMethod());
         }
     }
 

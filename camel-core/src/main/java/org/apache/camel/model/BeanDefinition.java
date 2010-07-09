@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.RegistryBean;
@@ -148,6 +149,10 @@ public class BeanDefinition extends OutputDefinition<BeanDefinition> {
     public Processor createProcessor(RouteContext routeContext) {
         BeanProcessor answer;
         if (ObjectHelper.isNotEmpty(ref)) {
+            // if its a ref then check that the ref exists
+            if (routeContext.getCamelContext().getRegistry().lookup(ref) == null) {
+                throw new NoSuchBeanException(ref);
+            }
             answer = new BeanProcessor(new RegistryBean(routeContext.getCamelContext(), ref));
         } else {
             if (bean == null) {
