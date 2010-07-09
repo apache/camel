@@ -330,6 +330,8 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
             camelContext.addService(tracer);
             camelContext.addInterceptStrategy(tracer);
         }
+        // make sure tracer is enabled so the debugger can leverage the tracer for debugging purposes
+        tracer.setEnabled(true);
     }
 
     public void stop() throws Exception {
