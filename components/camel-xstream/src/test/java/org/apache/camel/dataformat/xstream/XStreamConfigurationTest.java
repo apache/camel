@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -38,6 +39,21 @@ import org.junit.Test;
  */
 public class XStreamConfigurationTest extends CamelTestSupport {
 
+    private static volatile boolean constructorInjected;
+    private static volatile boolean methodInjected;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        constructorInjected = false;
+        methodInjected = false;
+    }
+
+    public void testXStreamInjection() {
+        assertTrue(constructorInjected);
+        assertTrue(methodInjected);
+    }
+
     @Test
     public void testCustomMarshalDomainObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -51,12 +67,11 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         list.add(11.5);
         list.add(97.5);
 
-        String ordereString = "<?xml version='1.0' encoding='UTF-8'?>"
-            + "<purchase-order name=\"Tiger\" price=\"99.95\" amount=\"1.0\"/>";
+        String ordereString = "<?xml version='1.0' encoding='UTF-8'?>" + "<purchase-order name=\"Tiger\" price=\"99.95\" amount=\"1.0\"/>";
         mock.expectedBodiesReceived(new Object[] {ordereString, order});
 
-        template.sendBody("direct:marshal", order);
-        template.sendBody("direct:unmarshal", ordereString);
+        this.template.sendBody("direct:marshal", order);
+        this.template.sendBody("direct:unmarshal", ordereString);
 
         mock.assertIsSatisfied();
     }
@@ -72,14 +87,12 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         list.add(97.5);
         history.setHistory(list);
 
-        String ordereString = "<?xml version='1.0' encoding='UTF-8'?>"
-            + "<org.apache.camel.dataformat.xstream.PurchaseHistory>"
-            + "<double>11.5</double><double>97.5</double>"
-            + "</org.apache.camel.dataformat.xstream.PurchaseHistory>";
+        String ordereString = "<?xml version='1.0' encoding='UTF-8'?>" + "<org.apache.camel.dataformat.xstream.PurchaseHistory>"
+                + "<double>11.5</double><double>97.5</double>" + "</org.apache.camel.dataformat.xstream.PurchaseHistory>";
         mock.expectedBodiesReceived(new Object[] {ordereString, history});
 
-        template.sendBody("direct:marshal", history);
-        template.sendBody("direct:unmarshal", ordereString);
+        this.template.sendBody("direct:marshal", history);
+        this.template.sendBody("direct:unmarshal", ordereString);
 
         mock.assertIsSatisfied();
     }
@@ -100,14 +113,16 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         String ordereString = "{\"purchase-order\":{\"@name\":\"Tiger\",\"@price\":\"99.95\",\"@amount\":\"1.0\"}}";
         mock.expectedBodiesReceived(new Object[] {ordereString, order});
 
-        template.sendBody("direct:marshal-json", order);
-        template.sendBody("direct:unmarshal-json", ordereString);
+        this.template.sendBody("direct:marshal-json", order);
+        this.template.sendBody("direct:unmarshal-json", ordereString);
 
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
                 XStreamDataFormat xstreamDefinition = new XStreamDataFormat();
                 Map<String, String> aliases = new HashMap<String, String>();
@@ -116,6 +131,9 @@ public class XStreamConfigurationTest extends CamelTestSupport {
 
                 List<String> converters = new ArrayList<String>();
                 converters.add(PurchaseOrderConverter.class.getName());
+                converters.add(CheckMethodInjection.class.getName());
+                converters.add(CheckConstructorInjection.class.getName());
+
                 xstreamDefinition.setConverters(converters);
 
                 Map<String, String[]> implicits = new HashMap<String, String[]>();
@@ -156,9 +174,55 @@ public class XStreamConfigurationTest extends CamelTestSupport {
 
         public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
 
-            writer.addAttribute("name", ((PurchaseOrder)object).getName());
+            writer.addAttribute("name", ((PurchaseOrder) object).getName());
             writer.addAttribute("price", Double.toString(((PurchaseOrder) object).getPrice()));
             writer.addAttribute("amount", Double.toString(((PurchaseOrder) object).getAmount()));
+        }
+    }
+
+    public static class CheckConstructorInjection implements Converter {
+        public CheckConstructorInjection(XStream xstream) {
+            if (xstream != null) {
+                constructorInjected = true;
+            } else {
+                throw new RuntimeException("XStream should not be null");
+            }
+        }
+
+        public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
+        }
+
+        public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+            return null;
+        }
+
+        public boolean canConvert(Class type) {
+            return false;
+        }
+    }
+
+    public static class CheckMethodInjection implements Converter {
+        public CheckMethodInjection() {
+
+        }
+
+        public void setXStream(XStream xstream) {
+            if (xstream != null) {
+                methodInjected = true;
+            } else {
+                throw new RuntimeException("XStream should not be null");
+            }
+        }
+
+        public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
+        }
+
+        public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+            return null;
+        }
+
+        public boolean canConvert(Class type) {
+            return false;
         }
     }
 }

@@ -18,6 +18,8 @@ package org.apache.camel.dataformat.xstream;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,6 +35,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * An abstract class which implement <a href="http://camel.apache.org/data-format.html">data format</a>
@@ -40,7 +43,6 @@ import org.apache.camel.spi.DataFormat;
  *
  * @version $Revision$
  */
-
 public abstract class AbstractXStreamWrapper implements DataFormat {
     
     private XStream xstream;
@@ -86,16 +88,39 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
             }
 
             if (this.converters != null) {
-                for (String converter : this.converters) {
-                    xstream.registerConverter(resolver.resolveMandatoryClass(converter, Converter.class).newInstance());
+                for (String name : this.converters) {
+                    Class<Converter> converterClass = resolver.resolveMandatoryClass(name, Converter.class);
+                    Converter converter;
+
+                    Constructor con = null;
+                    try {
+                        con = converterClass.getDeclaredConstructor(new Class[] {XStream.class});
+                    } catch (Exception e) {
+                         //swallow as we null check in a moment.
+                    }
+                    if (con != null) {
+                        converter = (Converter) con.newInstance(xstream);
+                    } else {
+                        converter = converterClass.newInstance();
+                        try { 
+                            Method method = converterClass.getMethod("setXStream", new Class[] {XStream.class});
+                            if (method != null) {
+                                ObjectHelper.invokeMethod(method, converter, xstream);
+                            }
+                        } catch (Throwable e) {
+                            // swallow, as it just means the user never add an XStream setter, which is optional
+                        }
+                    }
+
+                    xstream.registerConverter(converter);
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException("Unable to build Xstream instance", e);
+            throw new RuntimeException("Unable to build XStream instance", e);
         }
 
         return xstream;
-    }
+    }    
 
     public StaxConverter getStaxConverter() {
         if (staxConverter == null) {
