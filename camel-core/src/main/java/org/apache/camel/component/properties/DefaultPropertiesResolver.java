@@ -40,7 +40,10 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         Properties answer = new Properties();
 
         for (String path : uri) {
-            if (path.startsWith("file:")) {
+            if (path.startsWith("ref:")) {
+                Properties prop = loadPropertiesFromRegistry(context, path);
+                answer.putAll(prop);
+            } else if (path.startsWith("file:")) {
                 Properties prop = loadPropertiesFromFilePath(context, path);
                 answer.putAll(prop);
             } else {
@@ -50,6 +53,16 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
             }
         }
 
+        return answer;
+    }
+
+    protected Properties loadPropertiesFromFilePath(CamelContext context, String path) throws IOException {
+        if (path.startsWith("file:")) {
+            path = ObjectHelper.after(path, "file:");
+        }
+        InputStream is = new FileInputStream(path);
+        Properties answer = new Properties();
+        answer.load(is);
         return answer;
     }
 
@@ -66,13 +79,14 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         return answer;
     }
 
-    protected Properties loadPropertiesFromFilePath(CamelContext context, String path) throws IOException {
-        if (path.startsWith("file:")) {
-            path = ObjectHelper.after(path, "file:");
+    protected Properties loadPropertiesFromRegistry(CamelContext context, String path) throws IOException {
+        if (path.startsWith("ref:")) {
+            path = ObjectHelper.after(path, "ref:");
         }
-        InputStream is = new FileInputStream(path);
-        Properties answer = new Properties();
-        answer.load(is);
+        Properties answer = context.getRegistry().lookup(path, Properties.class);
+        if (answer == null) {
+            throw new FileNotFoundException("Properties " + path + " not found in registry");
+        }
         return answer;
     }
 
