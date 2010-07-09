@@ -42,6 +42,8 @@ public class NagiosEventNotifierTest extends CamelTestSupport {
     @Before
     @Override
     public void setUp() throws Exception {
+        canRun = true;
+
         nagios = new NagiosNscaStub(25669, "password");
         try {
             nagios.start();
@@ -51,7 +53,6 @@ public class NagiosEventNotifierTest extends CamelTestSupport {
         }
 
         super.setUp();
-        canRun = true;
     }
 
     @After

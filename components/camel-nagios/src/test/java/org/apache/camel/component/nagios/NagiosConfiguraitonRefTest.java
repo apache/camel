@@ -37,6 +37,8 @@ public class NagiosConfiguraitonRefTest extends CamelTestSupport {
     @Before
     @Override
     public void setUp() throws Exception {
+        canRun = true;
+
         nagios = new NagiosNscaStub(25668, "secret");
         try {
             nagios.start();
@@ -46,7 +48,6 @@ public class NagiosConfiguraitonRefTest extends CamelTestSupport {
         }
 
         super.setUp();
-        canRun = true;
     }
 
     @After
