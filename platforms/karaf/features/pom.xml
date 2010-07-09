@@ -216,7 +216,7 @@
                        <classifier>features</classifier>
                      </artifact>
 		     <artifact>
-                       <file>target/classes/features-spring3.xml</file>
+                       <file>target/classes/features-spring2.xml</file>
                        <type>xml</type>
                        <classifier>features-spring3</classifier>
                      </artifact>
@@ -230,9 +230,9 @@
 
     <profiles>
        <profile>
-         <id>spring3</id>      
+         <id>spring-2.x</id>      
          <properties>
-           <features.file>features-spring3.xml</features.file>
+           <features.file>features-spring2.xml</features.file>
          </properties>     
        </profile>	 
        <profile>

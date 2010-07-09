@@ -87,8 +87,7 @@
     <jettison-version>1.2</jettison-version>
     <jruby-version>1.4.0</jruby-version>
     <juel-version>2.1.2</juel-version>
-    <!-- spring 2.5.x is only compatible with junit 4.4 or lower - see SPR-5145 -->
-    <junit-version>4.4</junit-version>
+    <junit-version>4.8.1</junit-version>
     <log4j-version>1.2.16</log4j-version>
     <lucene-version>3.0.1</lucene-version>
     <mina-version>1.1.7</mina-version>
@@ -112,7 +111,7 @@
     <spring-ehcache-version>1.6.2</spring-ehcache-version>
     <spring-integration-version>1.0.4.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
-    <spring-version>2.5.6</spring-version>
+    <spring-version>3.0.2.RELEASE</spring-version>
     <spring-osgi-version>1.2.0</spring-osgi-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stringtemplate-version>3.0</stringtemplate-version>
@@ -1521,17 +1520,12 @@
       </build>
     </profile>
     <profile>
-      <id>spring-3.x</id>
+      <id>spring-2.x</id>
       <properties>
-         <spring-version>3.0.3.RELEASE</spring-version>
-         <junit-version>4.8.1</junit-version> 
+         <spring-version>2.5.6</spring-version>
+         <!-- spring 2.5.x is only compatible with junit 4.4 or lower - see SPR-5145 -->
+         <junit-version>4.4</junit-version> 
       </properties>
-      <!--repositories>
-         <repository>
-           <id>SpringSource Enterprise Bundle Repositorys</id>
-           <url>http://repository.springsource.com/maven/bundles/release</url>
-         </repository>
-      </repositories-->
     </profile>
     <profile>
       <id>on-sunjdk</id>
