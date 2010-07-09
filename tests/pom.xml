@@ -34,6 +34,7 @@
     <module>test-bundles</module>
     <module>camel-itest</module>
     <module>camel-itest-spring-2.0</module>
+    <module>camel-itest-spring-2.5</module>
     <module>camel-partial-classpath-test</module>
     <module>camel-itest-osgi</module>
   </modules>
