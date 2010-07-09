@@ -98,7 +98,7 @@
                 <configuration>
                     <childDelegation>false</childDelegation>
                     <useFile>true</useFile>
-                    <forkMode>pertest</forkMode>
+                    <forkMode>once</forkMode>
                     <excludes>
                         <exclude>**/CommonBindyTest.*</exclude>
                         <!-- <exclude>**/*Csv*Test.*</exclude>

@@ -134,7 +134,7 @@
                 <configuration>
                     <childDelegation>false</childDelegation>
                     <useFile>true</useFile>
-                    <forkMode>pertest</forkMode>
+                    <forkMode>once</forkMode>
                     <includes>
                         <include>**/*Test.*</include>
                     </includes>
