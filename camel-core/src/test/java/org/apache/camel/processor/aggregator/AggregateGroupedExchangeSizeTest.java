@@ -65,7 +65,7 @@ public class AggregateGroupedExchangeSizeTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate().constant(true).groupExchanges().completionSize(3)
+                    .aggregate(constant(true)).groupExchanges().completionSize(3)
                         .to("mock:result")
                     .end();
             }

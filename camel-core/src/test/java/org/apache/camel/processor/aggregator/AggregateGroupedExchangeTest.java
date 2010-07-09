@@ -66,7 +66,7 @@ public class AggregateGroupedExchangeTest extends ContextTestSupport {
                 // our route is aggregating from the direct queue and sending the response to the mock
                 from("direct:start")
                     // aggregate all using same expression
-                    .aggregate().constant(true)
+                    .aggregate(constant(true))
                     // wait for 0.5 seconds to aggregate
                     .completionTimeout(500L)
                     // group the exchanges so we get one single exchange containing all the others

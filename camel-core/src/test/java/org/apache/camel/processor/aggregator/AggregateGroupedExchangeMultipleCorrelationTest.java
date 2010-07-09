@@ -78,7 +78,7 @@ public class AggregateGroupedExchangeMultipleCorrelationTest extends ContextTest
                 // our route is aggregating from the direct queue and sending the response to the mock
                 from("direct:start")
                     // aggregate all using the foo header
-                    .aggregate().header("foo")
+                    .aggregate(header("foo"))
                     // group the exchanges so we get one single exchange containing all the others
                     .groupExchanges()
                     // wait for 1 seconds to aggregate

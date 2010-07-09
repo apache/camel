@@ -60,7 +60,7 @@ public class DefaultAggregatorCollectionTest extends ContextTestSupport {
                     // aggregated by header id
                     // as we have not configured more on the aggregator it will default to aggregate the
                     // latest exchange only
-                    .aggregate().header("id").aggregationStrategy(new UseLatestAggregationStrategy())
+                    .aggregate(header("id")).aggregationStrategy(new UseLatestAggregationStrategy())
                     // wait for 0.5 seconds to aggregate
                     .completionTimeout(500L)
                     .to("mock:result");
