@@ -106,7 +106,7 @@ public class GreeterClientTest extends AbstractJUnit4SpringContextTests {
         } catch (Exception ex) {
             assertTrue("Get a wrong type exception.", ex instanceof SOAPFaultException);
             assertTrue("Get a wrong exception message", ex.getMessage().startsWith("Cannot access the processor which has been protected."));
-            assertTrue("Get a wrong exception message", ex.getMessage().endsWith("Caused by: [org.springframework.security.AccessDeniedException - Access is denied]"));
+            assertTrue("Get a wrong exception message", ex.getMessage().endsWith("Caused by: [org.springframework.security.access.AccessDeniedException - Access is denied]"));
         }        
     }
 

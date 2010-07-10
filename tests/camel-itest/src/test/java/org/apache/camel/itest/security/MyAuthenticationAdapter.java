@@ -23,8 +23,9 @@ import javax.security.auth.Subject;
 
 import org.apache.camel.component.spring.security.DefaultAuthenticationAdapter;
 import org.apache.ws.security.WSUsernameTokenPrincipal;
-import org.springframework.security.Authentication;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+
 
 public class MyAuthenticationAdapter extends DefaultAuthenticationAdapter {
     

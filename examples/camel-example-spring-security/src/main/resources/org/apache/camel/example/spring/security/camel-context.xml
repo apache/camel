@@ -28,14 +28,13 @@
           http://www.springframework.org/schema/security
 		  http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <!-- we don't authenticate the user again here-->
-    <bean id="authenticationManager" class="org.springframework.security.MockAuthenticationManager"/>
-
-    <bean id="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
+    <import resource="classpath:org/apache/camel/example/spring/security/common-security.xml"/>
+    
+    <bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
         <property name="allowIfAllAbstainDecisions" value="true"/>
         <property name="decisionVoters">
             <list>
-                <bean class="org.springframework.security.vote.RoleVoter"/>
+                <bean class="org.springframework.security.access.vote.RoleVoter"/>
             </list>
         </property>
     </bean>

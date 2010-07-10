@@ -24,18 +24,20 @@
 			http://www.springframework.org/schema/security
 			http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <spring-security:authentication-manager alias="authenticationManager"/>
+    <spring-security:authentication-manager alias="authenticationManager">
+    	<spring-security:authentication-provider user-service-ref="userDetailsService"/>
+    </spring-security:authentication-manager>
 
-    <bean id="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
+    <bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
         <property name="allowIfAllAbstainDecisions" value="true"/>
         <property name="decisionVoters">
             <list>
-                <bean class="org.springframework.security.vote.RoleVoter"/>
+                <bean class="org.springframework.security.access.vote.RoleVoter"/>
             </list>
         </property>
     </bean>
 
-    <spring-security:authentication-provider user-service-ref="userDetailsService"/>
+    
 
     <spring-security:user-service id="userDetailsService">
         <spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>

@@ -24,7 +24,9 @@
 			http://www.springframework.org/schema/security/spring-security.xsd">
 
     <!--  set up the user configuration here -->
-	<spring-security:authentication-provider user-service-ref="userDetailsService"/>
+    <spring-security:authentication-manager alias="authenticationManager">
+		<spring-security:authentication-provider user-service-ref="userDetailsService"/>
+    </spring-security:authentication-manager>
 	
 	<spring-security:user-service id="userDetailsService">
 		<spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
