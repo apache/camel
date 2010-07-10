@@ -36,11 +36,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision$
  */
 public class AsyncEndpointTransacted2Test extends CamelSpringTestSupport {
-
-    private DummyTable table;
-
     @EndpointInject(uri = "direct:start")
     ProducerTemplate producer;
+    
+    private DummyTable table;
 
     @EndpointInject(uri = "mock:end")
     private MockEndpoint end;
