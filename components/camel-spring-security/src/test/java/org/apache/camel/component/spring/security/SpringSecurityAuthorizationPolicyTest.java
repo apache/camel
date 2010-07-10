@@ -53,7 +53,6 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
             sendMessageWithAuthentication("bob", "bobspassword", "ROLE_USER");
             fail("we should get the access deny exception here");
         } catch (Exception exception) {
-            exception.printStackTrace();
             // the exception should be caused by CamelAuthorizationException
             assertTrue("Expect CamelAuthorizationException here", exception.getCause() instanceof CamelAuthorizationException);
         }

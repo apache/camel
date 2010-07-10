@@ -37,8 +37,6 @@
         </property>
     </bean>
 
-    
-
     <spring-security:user-service id="userDetailsService">
         <spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
         <spring-security:user name="bob" password="bobspassword" authorities="ROLE_USER"/>
