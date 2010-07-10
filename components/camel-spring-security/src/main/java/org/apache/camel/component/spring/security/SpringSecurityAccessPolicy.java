@@ -16,26 +16,25 @@
  */
 package org.apache.camel.component.spring.security;
 
-import org.springframework.security.ConfigAttributeDefinition;
+
+import java.util.List;
+
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.access.SecurityConfig;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 public class SpringSecurityAccessPolicy {
 
-    private final ConfigAttributeDefinition configAttributeDefinition;
+    private final List<ConfigAttribute> configAttributes;
 
     public SpringSecurityAccessPolicy(String access) {
         Assert.isTrue(access != null, "The access attribute must not be null.");
-
-        String[] accessValues = StringUtils.trimArrayElements(StringUtils
-            .commaDelimitedListToStringArray(access));
-
-        this.configAttributeDefinition = (accessValues.length > 0)
-            ? new ConfigAttributeDefinition(accessValues) : null;
+        configAttributes = SecurityConfig.createListFromCommaDelimitedString(access);
     }
     
-    public ConfigAttributeDefinition getConfigAttributeDefinition() {
-        return this.configAttributeDefinition;
+    public List<ConfigAttribute> getConfigAttributes() {
+        return configAttributes;
     }
 
 }

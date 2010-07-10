@@ -20,7 +20,7 @@ import java.util.Set;
 
 import javax.security.auth.Subject;
 
-import org.springframework.security.Authentication;
+import org.springframework.security.core.Authentication;
 
 public class DefaultAuthenticationAdapter implements AuthenticationAdapter {
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.spring.security;
 
+import java.util.List;
+
 import javax.security.auth.Subject;
 
 import org.apache.camel.CamelAuthorizationException;
@@ -33,15 +35,15 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.security.AccessDecisionManager;
-import org.springframework.security.AccessDeniedException;
-import org.springframework.security.Authentication;
-import org.springframework.security.AuthenticationManager;
-import org.springframework.security.ConfigAttributeDefinition;
-import org.springframework.security.SpringSecurityException;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.event.authorization.AuthorizationFailureEvent;
-import org.springframework.security.event.authorization.AuthorizedEvent;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.access.event.AuthorizationFailureEvent;
+import org.springframework.security.access.event.AuthorizedEvent;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Assert;
 
 public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements AuthorizationPolicy, InitializingBean, ApplicationEventPublisherAware {
@@ -63,7 +65,7 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
     }
     
     protected void beforeProcess(Exchange exchange) throws Exception {
-        ConfigAttributeDefinition attributes = accessPolicy.getConfigAttributeDefinition();
+        List<ConfigAttribute> attributes = accessPolicy.getConfigAttributes();
         
         try {
             Authentication authToken = getAuthentication(exchange.getIn());
@@ -87,7 +89,7 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
             }
             publishEvent(new AuthorizedEvent(exchange, attributes, authenticated));
             
-        } catch (SpringSecurityException exception) {
+        } catch (RuntimeException exception) {
             CamelAuthorizationException authorizationException =
                 new CamelAuthorizationException("Cannot access the processor which has been protected.", exchange, exception);
             throw authorizationException;

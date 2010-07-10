@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.spring.security;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.security.auth.Subject;
 
 import org.apache.camel.CamelAuthorizationException;
@@ -25,12 +29,11 @@ import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.security.Authentication;
-import org.springframework.security.AuthenticationManager;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSupport {
 
@@ -50,6 +53,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
             sendMessageWithAuthentication("bob", "bobspassword", "ROLE_USER");
             fail("we should get the access deny exception here");
         } catch (Exception exception) {
+            exception.printStackTrace();
             // the exception should be caused by CamelAuthorizationException
             assertTrue("Expect CamelAuthorizationException here", exception.getCause() instanceof CamelAuthorizationException);
         }
@@ -71,9 +75,9 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
     private Authentication createAuthenticationToken(String username, String password, String... roles) {
         Authentication authToken;
         if (roles != null && roles.length > 0) {
-            GrantedAuthority[] authorities = new GrantedAuthority[roles.length];
+            List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(roles.length);
             for (int i = 0; i < roles.length; i++) {
-                authorities[i] = new GrantedAuthorityImpl(roles[i]);
+                authorities.add(new GrantedAuthorityImpl(roles[i]));
             }
             authToken = new UsernamePasswordAuthenticationToken(username, password, authorities);
         } else {
