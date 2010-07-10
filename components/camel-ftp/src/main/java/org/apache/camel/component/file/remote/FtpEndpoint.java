@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.net.ftp.FTPClient;
@@ -125,6 +126,26 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
 
     protected FTPClient createFtpClient() throws Exception {
         return new FTPClient();
+    }
+
+    @Override
+    public FtpConfiguration getConfiguration() {
+        if (configuration == null) {
+            configuration = new FtpConfiguration();
+        }
+        return (FtpConfiguration)configuration;
+    }
+
+    @Override
+    public void setConfiguration(GenericFileConfiguration configuration) {
+        setConfiguration((FtpConfiguration)configuration);
+    }
+
+    public void setConfiguration(FtpConfiguration configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("FtpConfiguration expected");
+        }
+        this.configuration = configuration;
     }
 
     public FTPClient getFtpClient() {
