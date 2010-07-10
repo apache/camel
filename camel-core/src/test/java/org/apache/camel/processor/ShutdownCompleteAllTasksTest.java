@@ -45,19 +45,18 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
         // give it 20 seconds to shutdown
         context.getShutdownStrategy().setTimeout(20);
 
-        // start route which will pickup the 5 files
-        context.startRoute("route1");
-
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
 
         assertMockEndpointsSatisfied();
 
+        int batch = bar.getReceivedExchanges().get(0).getProperty(Exchange.BATCH_SIZE, int.class);
+
         // shutdown during processing
         context.stop();
 
         // should route all 5
-        assertEquals("Should complete all messages", 5, bar.getReceivedCounter());
+        assertEquals("Should complete all messages", batch, bar.getReceivedCounter());
     }
 
     @Override
@@ -66,7 +65,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
             @Override
             // START SNIPPET: e1
             public void configure() throws Exception {
-                from(url).routeId("route1").noAutoStartup()
+                from(url)
                     // let it complete all tasks during shutdown
                     .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
                     .delay(1000).to("seda:foo");
