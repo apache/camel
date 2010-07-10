@@ -14,10 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.protobuf;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos;
@@ -27,6 +30,9 @@ import org.junit.Test;
 
 public class ProtobufMarshalTest extends CamelTestSupport {
 
+    /**
+     * @throws Exception
+     */
     @Test
     public void testMarshalAndUnmarshalWithDataFormat() throws Exception {
         marshalAndUnmarshal("direct:in", "direct:back");
@@ -43,13 +49,15 @@ public class ProtobufMarshalTest extends CamelTestSupport {
     }
     
     @Test
-    public void testMarshalAndUnmarshalWithDSL3() throws Exception {
+    public void testMarshalAndUnmashalWithDSL3() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
+    
                 @Override
                 public void configure() throws Exception {
                     from("direct:unmarshalC").unmarshal().protobuf(new CamelException("wrong instance"))
                         .to("mock:reverse");
+    
                 }
             });
             fail("Expect the exception here");
@@ -82,8 +90,10 @@ public class ProtobufMarshalTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+
             @Override
             public void configure() throws Exception {
+
                 ProtobufDataFormat format = new ProtobufDataFormat(Person.getDefaultInstance());
 
                 from("direct:in").marshal(format);
@@ -93,6 +103,8 @@ public class ProtobufMarshalTest extends CamelTestSupport {
                 from("direct:unmarshalA").unmarshal().protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
                 
                 from("direct:unmarshalB").unmarshal().protobuf(Person.getDefaultInstance()).to("mock:reverse");
+                
+
             }
         };
     }
