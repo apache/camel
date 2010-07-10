@@ -85,9 +85,8 @@ public class HttpAuthMethodPriorityTest extends CamelTestSupport {
         try {
             template.requestBody("http://localhost:9080/test?authMethod=Basic&authMethodPriority=Basic,foo&authUsername=donald&authPassword=duck", "Hello World", String.class);
             fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            FailedToCreateProducerException failed = assertIsInstanceOf(FailedToCreateProducerException.class, e.getCause());
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, failed.getCause());
+        } catch (FailedToCreateProducerException e) {
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Unknown authMethod: foo in authMethodPriority: Basic,foo", cause.getMessage());
         }
     }

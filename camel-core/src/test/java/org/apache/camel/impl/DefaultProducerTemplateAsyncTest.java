@@ -319,8 +319,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         template.asyncCallback("direct:start", exchange, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                ORDER.addAndGet(2);
                 assertEquals("Hello World", exchange.getIn().getBody());
+                ORDER.addAndGet(2);
                 latch.countDown();
             }
         });
@@ -345,8 +345,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         template.asyncCallback("direct:echo", exchange, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                ORDER.addAndGet(2);
                 assertEquals("HelloHello", exchange.getOut().getBody());
+                ORDER.addAndGet(2);
                 latch.countDown();
             }
         });
@@ -369,8 +369,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Future<Exchange> future = template.asyncCallback("direct:start", exchange, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                ORDER.addAndGet(2);
                 assertEquals("Hello World", exchange.getIn().getBody());
+                ORDER.addAndGet(2);
             }
         });
 
@@ -393,8 +393,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Future<Exchange> future = template.asyncCallback("direct:echo", exchange, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                ORDER.addAndGet(2);
                 assertEquals("HelloHello", exchange.getOut().getBody());
+                ORDER.addAndGet(2);
             }
         });
 
@@ -417,8 +417,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         template.asyncCallbackSendBody("direct:start", "Hello", new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                ORDER.addAndGet(2);
                 assertEquals("Hello World", exchange.getIn().getBody());
+                ORDER.addAndGet(2);
                 latch.countDown();
             }
         });
@@ -439,8 +439,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         template.asyncCallbackRequestBody("direct:echo", "Hello", new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                ORDER.addAndGet(2);
                 assertEquals("HelloHello", exchange.getOut().getBody());
+                ORDER.addAndGet(2);
                 latch.countDown();
             }
         });
@@ -460,8 +460,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Future<Object> future = template.asyncCallbackSendBody("direct:start", "Hello", new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                ORDER.addAndGet(2);
                 assertEquals("Hello World", exchange.getIn().getBody());
+                ORDER.addAndGet(2);
             }
         });
 
@@ -481,8 +481,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Future<Object> future = template.asyncCallbackRequestBody("direct:echo", "Hello", new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                ORDER.addAndGet(2);
                 assertEquals("HelloHello", exchange.getOut().getBody());
+                ORDER.addAndGet(2);
             }
         });
 
@@ -508,8 +508,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         }, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                ORDER.addAndGet(2);
                 assertEquals("Hello World", exchange.getIn().getBody());
+                ORDER.addAndGet(2);
                 latch.countDown();
             }
         });
@@ -535,8 +535,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         }, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                ORDER.addAndGet(2);
                 assertEquals("HelloHello", exchange.getOut().getBody());
+                ORDER.addAndGet(2);
                 latch.countDown();
             }
         });
@@ -561,8 +561,57 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         }, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                ORDER.addAndGet(2);
                 assertEquals("ByeBye", exchange.getOut().getBody());
+                ORDER.addAndGet(2);
+                latch.countDown();
+            }
+        });
+
+        ORDER.addAndGet(1);
+        latch.await(10, TimeUnit.SECONDS);
+        ORDER.addAndGet(4);
+
+        assertEquals(7, ORDER.get());
+    }
+
+    public void testAsyncCallbackExchangeInOnlyWithFailure() throws Exception {
+        ORDER.set(0);
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        Exchange exchange = context.getEndpoint("direct:error").createExchange();
+        exchange.getIn().setBody("Hello");
+
+        template.asyncCallback("direct:error", exchange, new SynchronizationAdapter() {
+            @Override
+            public void onFailure(Exchange exchange) {
+                assertEquals("Damn forced by unit test", exchange.getException().getMessage());
+                ORDER.addAndGet(2);
+                latch.countDown();
+            }
+        });
+
+        ORDER.addAndGet(1);
+        latch.await(10, TimeUnit.SECONDS);
+        ORDER.addAndGet(4);
+
+        assertEquals(7, ORDER.get());
+    }
+
+    public void testAsyncCallbackExchangeInOutWithFailure() throws Exception {
+        ORDER.set(0);
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        Exchange exchange = context.getEndpoint("direct:error").createExchange();
+        exchange.getIn().setBody("Hello");
+        exchange.setPattern(ExchangePattern.InOut);
+
+        template.asyncCallback("direct:error", exchange, new SynchronizationAdapter() {
+            @Override
+            public void onFailure(Exchange exchange) {
+                assertEquals("Damn forced by unit test", exchange.getException().getMessage());
+                ORDER.addAndGet(2);
                 latch.countDown();
             }
         });
@@ -580,16 +629,16 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .delay(400)
-                    .transform(body().append(" World")).to("mock:result");
+                        .delay(400)
+                        .transform(body().append(" World")).to("mock:result");
 
                 from("direct:error")
-                    .delay(400)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Damn forced by unit test");
-                        }
-                    });
+                        .delay(400)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                throw new IllegalArgumentException("Damn forced by unit test");
+                            }
+                        });
 
                 from("direct:echo").transform(body().append(body()));
 

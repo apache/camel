@@ -44,11 +44,6 @@ public class Issue3Test extends ContextTestSupport {
                         assertNull("Header should be null but is: " + isDebugString, isDebugString);
                         assertNotNull("Message is Null", in);
 
-
-                        // the following line throws an NPE due to null being converted to a boolean
-                        //boolean isDebug = in.getHeader("someproperty", Boolean.class);
-                        //assertFalse(isDebug);
-
                         Boolean isDebug = in.getHeader("someproperty", Boolean.class);
                         assertNull(isDebug);
 

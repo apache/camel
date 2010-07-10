@@ -176,17 +176,17 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public void sendBodyAndProperty(String endpointUri, final Object body,
-                                      final String property, final Object propertyValue) throws CamelExecutionException {
+                                    final String property, final Object propertyValue) throws CamelExecutionException {
         sendBodyAndProperty(resolveMandatoryEndpoint(endpointUri), body, property, propertyValue);
-    }    
-    
+    }
+
     public void sendBodyAndProperty(Endpoint endpoint, final Object body,
-                                      final String property, final Object propertyValue) throws CamelExecutionException {
+                                    final String property, final Object propertyValue) throws CamelExecutionException {
         Exchange result = send(endpoint, createBodyAndPropertyProcessor(body, property, propertyValue));
         // must invoke extract result body in case of exception to be rethrown
         extractResultBody(result);
     }
-    
+
     public Object sendBodyAndProperty(Endpoint endpoint, ExchangePattern pattern, final Object body,
                                       final String property, final Object propertyValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
@@ -210,7 +210,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             return null;
         }
     }
-    
+
     public void sendBodyAndHeaders(String endpointUri, final Object body, final Map<String, Object> headers) throws CamelExecutionException {
         sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
     }
@@ -355,14 +355,15 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public void sendBodyAndProperty(Object body, String property, Object propertyValue) {
         sendBodyAndProperty(getMandatoryDefaultEndpoint(), body, property, propertyValue);
-    }    
-    
+    }
+
     public void sendBodyAndHeaders(Object body, Map<String, Object> headers) {
         sendBodyAndHeaders(getMandatoryDefaultEndpoint(), body, headers);
     }
 
     // Properties
     // -----------------------------------------------------------------------
+
     public CamelContext getContext() {
         return context;
     }
@@ -403,13 +404,12 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return new Processor() {
             public void process(Exchange exchange) {
                 exchange.setProperty(property, propertyValue);
-                
                 Message in = exchange.getIn();
                 in.setBody(body);
             }
         };
-    }    
-    
+    }
+
     protected Processor createSetBodyProcessor(final Object body) {
         return new Processor() {
             public void process(Exchange exchange) {
@@ -567,7 +567,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return executor.submit(task);
     }
 
-    
     public Future<Object> asyncRequestBodyAndHeaders(final Endpoint endpoint, final Object body,
                                                      final Map<String, Object> headers) {
         Callable<Object> task = new Callable<Object>() {
@@ -636,7 +635,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         }
         return executor.submit(task);
     }
-   
+
     private Future<Object> asyncCallback(final Endpoint endpoint, final ExchangePattern pattern, final Object body, final Synchronization onCompletion) {
         Callable<Object> task = new Callable<Object>() {
             public Object call() throws Exception {
@@ -671,18 +670,19 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public Future<Exchange> asyncCallback(final Endpoint endpoint, final Exchange exchange, final Synchronization onCompletion) {
         Callable<Exchange> task = new Callable<Exchange>() {
             public Exchange call() throws Exception {
-                Exchange answer = send(endpoint, exchange);
+                // process the exchange, any exception occurring will be caught and set on the exchange
+                send(endpoint, exchange);
 
                 // invoke callback before returning answer
                 // as it allows callback to be used without UnitOfWorkProcessor invoking it
                 // and thus it works directly from a producer template as well, as opposed
                 // to the UnitOfWorkProcessor that is injected in routes
-                if (answer.isFailed()) {
-                    onCompletion.onFailure(answer);
+                if (exchange.isFailed()) {
+                    onCompletion.onFailure(exchange);
                 } else {
-                    onCompletion.onComplete(answer);
+                    onCompletion.onComplete(exchange);
                 }
-                return answer;
+                return exchange;
             }
         };
 
@@ -695,7 +695,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public Future<Exchange> asyncCallback(final Endpoint endpoint, final Processor processor, final Synchronization onCompletion) {
         Callable<Exchange> task = new Callable<Exchange>() {
             public Exchange call() throws Exception {
-                Exchange answer = getProducerCache().send(endpoint, processor);
+                // process the exchange, any exception occurring will be caught and set on the exchange
+                Exchange answer = send(endpoint, processor);
 
                 // invoke callback before returning answer
                 // as it allows callback to be used without UnitOfWorkProcessor invoking it

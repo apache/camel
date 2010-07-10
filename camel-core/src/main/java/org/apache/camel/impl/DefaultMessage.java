@@ -70,9 +70,15 @@ public class DefaultMessage extends MessageSupport {
         return answer != null ? answer : defaultValue;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Class<T> type) {
         Object value = getHeader(name);
+
         if (value == null) {
+            // lets avoid NullPointerException when converting to boolean for null values
+            if (boolean.class.isAssignableFrom(type)) {
+                return (T) Boolean.FALSE;
+            }
             return null;
         }
 

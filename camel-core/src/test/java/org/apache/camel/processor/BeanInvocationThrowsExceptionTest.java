@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -38,16 +37,10 @@ public class BeanInvocationThrowsExceptionTest extends ContextTestSupport {
         Exchange exchange = getMandatoryEndpoint("direct:input").createExchange(ExchangePattern.InOut);
         exchange.getIn().setBody("Hello Paris");
 
-        try {
-            template.send("direct:input", exchange);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        }
-
-        assertTrue("Should be failed", exchange.isFailed());
-        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
-        assertEquals("Forced exception", exchange.getException().getMessage());
+        Exchange out = template.send("direct:input", exchange);
+        assertTrue("Should be failed", out.isFailed());
+        assertTrue("Should be IllegalArgumentException", out.getException() instanceof IllegalArgumentException);
+        assertEquals("Forced exception", out.getException().getMessage());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

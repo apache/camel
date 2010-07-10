@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
@@ -29,7 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for DefaultProducerTemplate extractResultBody method.
+ * Unit test for DefaultProducerTemplate
  */
 public class DefaultProducerTemplateTest extends ContextTestSupport {
 
@@ -66,7 +67,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         assertEquals("Faulty World", result);
     }
 
-    public void testException() throws Exception {
+    public void testExceptionUsingBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
@@ -77,6 +78,81 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
             assertEquals("Forced exception by unit test", e.getCause().getMessage());
         }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testExceptionUsingProcessor() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+
+        Exchange out = template.send("direct:exception", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World");
+            }
+        });
+
+        assertTrue(out.isFailed());
+        assertEquals("Forced exception by unit test", out.getException().getMessage());
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testExceptionUsingExchange() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+
+        Exchange exchange = context.getEndpoint("direct:exception").createExchange();
+        exchange.getIn().setBody("Hello World");
+
+        Exchange out = template.send("direct:exception", exchange);
+        assertTrue(out.isFailed());
+        assertEquals("Forced exception by unit test", out.getException().getMessage());
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testRequestExceptionUsingBody() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+
+        try {
+            template.requestBody("direct:exception", "Hello World");
+            fail("Should have thrown RuntimeCamelException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            assertEquals("Forced exception by unit test", e.getCause().getMessage());
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testRequestExceptionUsingProcessor() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+
+        Exchange out = template.request("direct:exception", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World");
+            }
+        });
+
+        assertTrue(out.isFailed());
+        assertEquals("Forced exception by unit test", out.getException().getMessage());
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testRequestExceptionUsingExchange() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+
+        Exchange exchange = context.getEndpoint("direct:exception").createExchange(ExchangePattern.InOut);
+        exchange.getIn().setBody("Hello World");
+
+        Exchange out = template.send("direct:exception", exchange);
+        assertTrue(out.isFailed());
+        assertEquals("Forced exception by unit test", out.getException().getMessage());
 
         assertMockEndpointsSatisfied();
     }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -273,12 +272,10 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
     public void testReceiveException() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.setException(new IllegalArgumentException("Damn"));
-        try {
-            template.send("seda:foo", exchange);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            // ignore
-        }
+
+        Exchange out = template.send("seda:foo", exchange);
+        assertTrue(out.isFailed());
+        assertNotNull(out.getException());
 
         try {
             consumer.receiveBody("seda:foo", String.class);

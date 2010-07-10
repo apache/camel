@@ -41,8 +41,6 @@ import org.apache.camel.util.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static org.apache.camel.util.ObjectHelper.wrapCamelExecutionException;
-
 /**
  * Cache containing created {@link Producer}.
  *
@@ -113,24 +111,6 @@ public class ProducerCache extends ServiceSupport {
     }
 
     /**
-     * Sends the exchange to the given endpoint
-     *
-     * @param endpoint the endpoint to send the exchange to
-     * @param exchange the exchange to send
-     */
-    public void send(Endpoint endpoint, Exchange exchange) {
-        try {
-            sendExchange(endpoint, null, null, exchange);
-            // ensure that CamelExecutionException is always thrown
-            if (exchange.getException() != null) {
-                throw wrapCamelExecutionException(exchange, exchange.getException());
-            }
-        } catch (Exception e) {
-            throw wrapCamelExecutionException(exchange, e);
-        }
-    }
-
-    /**
      * Starts the {@link Producer} to be used for sending to the given endpoint
      * <p/>
      * This can be used to early start the {@link Producer} to ensure it can be created,
@@ -146,24 +126,40 @@ public class ProducerCache extends ServiceSupport {
     }
 
     /**
-     * Sends an exchange to an endpoint using a supplied
-     * {@link Processor} to populate the exchange
+     * Sends the exchange to the given endpoint.
+     * <p>
+     * This method will <b>not</b> throw an exception. If processing of the given
+     * Exchange failed then the exception is stored on the provided Exchange
      *
      * @param endpoint the endpoint to send the exchange to
-     * @param processor the transformer used to populate the new exchange
-     * @return the exchange
+     * @param exchange the exchange to send
      */
-    public Exchange send(Endpoint endpoint, Processor processor) {
-        try {
-            return sendExchange(endpoint, null, processor, null);
-        } catch (Exception e) {
-            throw wrapCamelExecutionException(null, e);
-        }
+    public void send(Endpoint endpoint, Exchange exchange) {
+        sendExchange(endpoint, null, null, exchange);
     }
 
     /**
      * Sends an exchange to an endpoint using a supplied
      * {@link Processor} to populate the exchange
+     * <p>
+     * This method will <b>not</b> throw an exception. If processing of the given
+     * Exchange failed then the exception is stored on the return Exchange
+     *
+     * @param endpoint the endpoint to send the exchange to
+     * @param processor the transformer used to populate the new exchange
+     * @throws org.apache.camel.CamelExecutionException is thrown if sending failed
+     * @return the exchange
+     */
+    public Exchange send(Endpoint endpoint, Processor processor) {
+        return sendExchange(endpoint, null, processor, null);
+    }
+
+    /**
+     * Sends an exchange to an endpoint using a supplied
+     * {@link Processor} to populate the exchange
+     * <p>
+     * This method will <b>not</b> throw an exception. If processing of the given
+     * Exchange failed then the exception is stored on the return Exchange
      *
      * @param endpoint the endpoint to send the exchange to
      * @param pattern the message {@link ExchangePattern} such as
@@ -172,24 +168,23 @@ public class ProducerCache extends ServiceSupport {
      * @return the exchange
      */
     public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor) {
-        try {
-            return sendExchange(endpoint, pattern, processor, null);
-        } catch (Exception e) {
-            throw wrapCamelExecutionException(null, e);
-        }
+        return sendExchange(endpoint, pattern, processor, null);
     }
 
     /**
      * Sends an exchange to an endpoint using a supplied callback
+     * <p/>
+     * If an exception was thrown during processing, it would be set on the given Exchange
      *
      * @param endpoint  the endpoint to send the exchange to
      * @param exchange  the exchange, can be <tt>null</tt> if so then create a new exchange from the producer
      * @param pattern   the exchange pattern, can be <tt>null</tt>
      * @param callback  the callback
      * @return the response from the callback
-     * @throws Exception if an internal processing error has occurred.
      */
-    public <T> T doInProducer(Endpoint endpoint, Exchange exchange, ExchangePattern pattern, ProducerCallback<T> callback) throws Exception {
+    public <T> T doInProducer(Endpoint endpoint, Exchange exchange, ExchangePattern pattern, ProducerCallback<T> callback) {
+        T answer = null;
+
         // get the producer and we do not mind if its pooled as we can handle returning it back to the pool
         Producer producer = doGetProducer(endpoint, true);
 
@@ -210,7 +205,11 @@ public class ProducerCache extends ServiceSupport {
 
         try {
             // invoke the callback
-            return callback.doInProducer(producer, exchange, pattern);
+            answer = callback.doInProducer(producer, exchange, pattern);
+        } catch (Throwable e) {
+            if (exchange != null) {
+                exchange.setException(e);
+            }
         } finally {
             if (exchange != null) {
                 long timeTaken = watch.stop();
@@ -230,9 +229,25 @@ public class ProducerCache extends ServiceSupport {
                 }
             }
         }
+
+        return answer;
     }
 
+    /**
+     * Sends an exchange to an endpoint using a supplied callback supporting the asynchronous routing engine.
+     * <p/>
+     * If an exception was thrown during processing, it would be set on the given Exchange
+     *
+     * @param endpoint         the endpoint to send the exchange to
+     * @param exchange         the exchange, can be <tt>null</tt> if so then create a new exchange from the producer
+     * @param pattern          the exchange pattern, can be <tt>null</tt>
+     * @param callback         the asynchronous callback
+     * @param producerCallback the producer template callback to be executed
+     * @return (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
+     */
     public boolean doInAsyncProducer(Endpoint endpoint, Exchange exchange, ExchangePattern pattern, AsyncCallback callback, AsyncProducerCallback producerCallback) {
+        boolean sync = true;
+
         // get the producer and we do not mind if its pooled as we can handle returning it back to the pool
         Producer producer = doGetProducer(endpoint, true);
 
@@ -254,7 +269,12 @@ public class ProducerCache extends ServiceSupport {
         try {
             // invoke the callback
             AsyncProcessor asyncProcessor = AsyncProcessorTypeConverter.convert(producer);
-            return producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, callback);
+            sync = producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, callback);
+        } catch (Throwable e) {
+            // ensure exceptions is caught and set on the exchange
+            if (exchange != null) {
+                exchange.setException(e);
+            }
         } finally {
             if (exchange != null) {
                 long timeTaken = watch.stop();
@@ -274,19 +294,27 @@ public class ProducerCache extends ServiceSupport {
                 }
             }
         }
+
+        return sync;
     }
 
     protected Exchange sendExchange(final Endpoint endpoint, ExchangePattern pattern,
-                                    final Processor processor, Exchange exchange) throws Exception {
+                                    final Processor processor, Exchange exchange) {
         return doInProducer(endpoint, exchange, pattern, new ProducerCallback<Exchange>() {
-            public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
+            public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) {
                 if (exchange == null) {
                     exchange = pattern != null ? producer.createExchange(pattern) : producer.createExchange();
                 }
 
                 if (processor != null) {
                     // lets populate using the processor callback
-                    processor.process(exchange);
+                    try {
+                        processor.process(exchange);
+                    } catch (Exception e) {
+                        // populate failed so return
+                        exchange.setException(e);
+                        return exchange;
+                    }
                 }
 
                 // now lets dispatch
@@ -303,6 +331,9 @@ public class ProducerCache extends ServiceSupport {
                     // ensure we run in an unit of work
                     Producer target = new UnitOfWorkProducer(producer);
                     target.process(exchange);
+                } catch (Throwable e) {
+                    // ensure exceptions is caught and set on the exchange
+                    exchange.setException(e);
                 } finally {
                     // emit event that the exchange was sent to the endpoint
                     long timeTaken = watch.stop();
@@ -375,7 +406,7 @@ public class ProducerCache extends ServiceSupport {
     /**
      * Gets the maximum cache size (capacity).
      * <p/>
-     * Will return -1 if it cannot determine this if a custom cache was used.
+     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
      *
      * @return the capacity
      */
