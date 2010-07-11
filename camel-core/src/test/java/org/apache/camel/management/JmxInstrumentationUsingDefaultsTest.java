@@ -190,7 +190,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     protected void releaseMBeanServers() {
-        for (MBeanServer server : MBeanServerFactory.findMBeanServer(null)) {
+        for (MBeanServer server : (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null)) {
             MBeanServerFactory.releaseMBeanServer(server);
         }
     }
