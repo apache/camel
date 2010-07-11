@@ -37,12 +37,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     
     // Check if there is an awt library
     private boolean isAwtHeadless() {
-        if (Boolean.getBoolean("java.awt.headless")) {
-            System.out.println("Running headless. Skipping test as Images may not work.");
-            return true;
-        } else {
-            return false;
-        }
+        return Boolean.getBoolean("java.awt.headless");
     }
 
     private void sendFile() throws Exception {

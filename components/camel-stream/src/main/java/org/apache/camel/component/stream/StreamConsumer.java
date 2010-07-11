@@ -181,7 +181,9 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 Thread.currentThread().interrupt();
             }
         }
-        LOG.trace(endpoint.getPromptMessage());
+        if (inputStream == System.in) {
+            System.out.print(endpoint.getPromptMessage());
+        }
     }
 
     private InputStream resolveStreamFromUrl() throws IOException {
