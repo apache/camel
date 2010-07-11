@@ -16,8 +16,8 @@
  */
 package org.apache.camel.itest.osgi.packages;
 
-import org.springframework.stereotype.Component;
 import org.apache.camel.builder.RouteBuilder;
+import org.springframework.stereotype.Component;
 
 @Component
 public class MyRouteBuilder extends RouteBuilder {

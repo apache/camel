@@ -16,12 +16,12 @@
  */
 package org.apache.camel.itest.osgi.packages;
 
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 @RunWith(JUnit4TestRunner.class)
 public class OSGiPackageScanTest extends OSGiIntegrationSpringTestSupport {

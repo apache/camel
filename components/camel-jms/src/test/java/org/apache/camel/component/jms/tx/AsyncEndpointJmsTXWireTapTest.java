@@ -29,6 +29,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision$
  */
 public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
+    private static String beforeThreadName;
+    private static String afterThreadName;
+    private static volatile boolean txA;
+    private static volatile boolean txB;
+
 
     @Override
     protected int getExpectedRouteCount() {
@@ -40,12 +45,7 @@ public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/JmsTransacted-context.xml");
     }
-
-    private static String beforeThreadName;
-    private static String afterThreadName;
-    private static volatile boolean txA;
-    private static volatile boolean txB;
-
+    
     @Test
     public void testAsyncEndpointOK() throws Exception {
         getMockEndpoint("mock:tap").expectedBodiesReceived("Hi Camel");

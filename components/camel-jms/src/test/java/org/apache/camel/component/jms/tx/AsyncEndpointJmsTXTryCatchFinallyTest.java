@@ -30,6 +30,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class AsyncEndpointJmsTXTryCatchFinallyTest extends CamelSpringTestSupport {
 
+    private static String beforeThreadName;
+    private static String afterThreadName;
+
     @Override
     protected int getExpectedRouteCount() {
         // no routes in Spring XML so return 0
@@ -40,9 +43,6 @@ public class AsyncEndpointJmsTXTryCatchFinallyTest extends CamelSpringTestSuppor
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/JmsTransacted-context.xml");
     }
-
-    private static String beforeThreadName;
-    private static String afterThreadName;
 
     @Test
     public void testAsyncEndpointOK() throws Exception {

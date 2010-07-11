@@ -31,6 +31,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class AsyncEndpointJmsTXRollbackTest extends CamelSpringTestSupport {
 
     private static int invoked;
+    private static String beforeThreadName;
+    private static String afterThreadName;
 
     @Override
     protected int getExpectedRouteCount() {
@@ -41,10 +43,7 @@ public class AsyncEndpointJmsTXRollbackTest extends CamelSpringTestSupport {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/JmsTransacted-context.xml");
-    }
-
-    private static String beforeThreadName;
-    private static String afterThreadName;
+    }   
 
     @Test
     public void testAsyncEndpointRollback() throws Exception {
