@@ -46,6 +46,7 @@ public class StreamProducer extends DefaultProducer {
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
     private OutputStream outputStream = System.out;
+    private boolean isSystemStream = false;
     private StreamEndpoint endpoint;
     private String uri;
 
@@ -57,16 +58,19 @@ public class StreamProducer extends DefaultProducer {
 
     @Override
     public void doStop() throws Exception {
-        // important: do not close the stream as it will close the standard system.out etc.
+        closeStream();
         super.doStop();
     }
 
     public void process(Exchange exchange) throws Exception {
         delay(endpoint.getDelay());
 
+        isSystemStream = false;
         if ("out".equals(uri)) {
+            isSystemStream = true;
             outputStream = System.out;
         } else if ("err".equals(uri)) {
+            isSystemStream = true;
             outputStream = System.err;
         } else if ("file".equals(uri)) {
             outputStream = resolveStreamFromFile();
@@ -77,6 +81,7 @@ public class StreamProducer extends DefaultProducer {
         }
 
         writeToStream(exchange);
+        closeStream();
     }
 
     private OutputStream resolveStreamFromUrl() throws IOException {
@@ -143,7 +148,14 @@ public class StreamProducer extends DefaultProducer {
         bw.write(s);
         bw.write("\n");
         bw.flush();
-        // important: do not close the writer as it will close the standard system.out etc.
+    }
+
+    private void closeStream() throws Exception {
+        // important: do not close the writer on a standard system.out etc.
+        if (outputStream != null && !isSystemStream) {
+            outputStream.close();
+        }
+        outputStream = null;
     }
 
     private void validateUri(String uri) throws Exception {
@@ -165,6 +177,5 @@ public class StreamProducer extends DefaultProducer {
             throw new IllegalArgumentException(INVALID_URI);
         }
     }
-
 }
 
