@@ -96,7 +96,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         assertEquals("Found mbeans: " + s, 1, s.size());
 
         Iterator<ObjectName> iter = s.iterator();
-        ObjectName pcob = (ObjectName)iter.next();
+        ObjectName pcob = iter.next();
 
         Long valueofNumExchanges = (Long)beanServer.getAttribute(pcob, "ExchangesTotal");
         assertNotNull("Expected attribute found. MBean registered under a "
@@ -190,7 +190,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     protected void releaseMBeanServers() {
-        for (MBeanServer server : (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null)) {
+        for (MBeanServer server : MBeanServerFactory.findMBeanServer(null)) {
             MBeanServerFactory.releaseMBeanServer(server);
         }
     }

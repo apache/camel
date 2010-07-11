@@ -54,8 +54,7 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
 
     @SuppressWarnings("unchecked")
     protected void releaseMBeanServers() {
-        List<MBeanServer> servers =
-            (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
+        List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
 
         for (MBeanServer server : servers) {
             MBeanServerFactory.releaseMBeanServer(server);
@@ -63,8 +62,11 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     }
 
     public void testQueryMbeans() throws Exception {
-        assertEquals(1, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=routes,*"), null).size());
-        assertEquals(1, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=processors,*"), null).size());
+        int routes = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=routes,*"), null).size();
+        int processors = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=processors,*"), null).size();
+
+        assertTrue("Should contain routes", routes > 0);
+        assertTrue("Should contain processors", processors > 0);
     }
 
     @Override
