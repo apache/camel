@@ -38,11 +38,6 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
     private static List<EventObject> events = new ArrayList<EventObject>();
 
     @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -83,7 +78,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).redeliveryDelay(25));
 
                 from("direct:start").throwException(new IllegalArgumentException("Damn"));
             }

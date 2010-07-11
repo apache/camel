@@ -57,13 +57,15 @@ public class ScanStreamFileTest extends CamelTestSupport {
         fos.close();
         
         assertMockEndpointsSatisfied();
-
     }
 
     @Test
     public void testScanRefreshedFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello", "there", "World", "!");
+        mock.expectedMinimumMessageCount(3);
+        mock.message(0).body().isEqualTo("Hello");
+        mock.message(1).body().isEqualTo("there");
+        mock.message(2).body().isEqualTo("World");
 
         FileOutputStream fos = refreshFile(null);
         fos.write("Hello\n".getBytes());        
@@ -76,10 +78,9 @@ public class ScanStreamFileTest extends CamelTestSupport {
         fos = refreshFile(fos);
         Thread.sleep(150);
         fos.write("!\n".getBytes());
-        fos.close(); 
-        assertMockEndpointsSatisfied();
+        fos.close();
 
-        
+        assertMockEndpointsSatisfied();
     }
 
     private FileOutputStream refreshFile(FileOutputStream fos) throws Exception {
