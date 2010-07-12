@@ -46,7 +46,7 @@ public class StreamProducer extends DefaultProducer {
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
     private OutputStream outputStream = System.out;
-    private boolean isSystemStream = false;
+    private boolean isSystemStream;
     private StreamEndpoint endpoint;
     private String uri;
 
