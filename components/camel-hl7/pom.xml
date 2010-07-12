@@ -32,7 +32,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.hl7.*</camel.osgi.export.pkg>
-        <hapi-version>1.0</hapi-version>
+        <hapi-version>1.0.1</hapi-version>
     </properties>
 
     <repositories>
