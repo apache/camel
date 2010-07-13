@@ -43,17 +43,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     private static final transient Log LOG = LogFactory.getLog(OSGiIntegrationTestSupport.class);
     @Inject
     protected BundleContext bundleContext;
-            
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();        
-    }
-    
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
+        
     protected CamelContext createCamelContext() throws Exception {
         CamelContextFactory factory = new CamelContextFactory();
         factory.setBundleContext(bundleContext);
