@@ -42,8 +42,8 @@ public class FileComponentTest extends OSGiIntegrationTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:simple").to("file:/myfile");
-                from("file:/myfile").to("mock:test");
+                from("direct:simple").to("file:myfile");
+                from("file:myfile").to("mock:test");
             }
         };
     }
