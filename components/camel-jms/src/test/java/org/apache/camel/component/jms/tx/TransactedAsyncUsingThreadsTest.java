@@ -60,7 +60,8 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertNotSame("Should use a different thread when doing async routing", thread1, thread2);
+        // transacted causes Camel to force sync routing
+        assertEquals("Should use a same thread when doing transacted async routing", thread1, thread2);
     }
 
     @Test
@@ -81,7 +82,8 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertNotSame("Should use a different thread when doing async routing", thread1, thread2);
+        // transacted causes Camel to force sync routing
+        assertEquals("Should use a same thread when doing transacted async routing", thread1, thread2);
     }
 
     @Override
