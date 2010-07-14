@@ -54,9 +54,9 @@
 	
 	<camel:route>
         <camel:from uri="file://target/subfolder"/>
-        <camel:setOutHeader headerName="subject">
+        <camel:setHeader headerName="subject">
           	<camel:constant>new incident reported</camel:constant>
-        </camel:setOutHeader>
+        </camel:setHeader>
         <camel:to uri="smtp://someone@localhost?password=secret&amp;to=incident@mycompany.com"/>        
 	</camel:route>
 	
