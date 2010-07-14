@@ -229,9 +229,11 @@ public class HttpProducer extends DefaultProducer {
         // As httpclient is using a AutoCloseInputStream, it will be closed when the connection is closed
         // we need to cache the stream for it.
         try {
-            CachedOutputStream cos = new CachedOutputStream(exchange);
+            // This CachedOutputStream will not be closed when the exchange is onCompletion
+            CachedOutputStream cos = new CachedOutputStream(exchange, false);
             IOHelper.copy(is, cos);
-            return cos.getInputStream();
+            // When the InputStream is closed, the CachedOutputStream will be closed
+            return cos.getWrappedInputStream();
         } finally {
             IOHelper.close(is, "Extracting response body", LOG);
         }
