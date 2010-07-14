@@ -56,8 +56,12 @@ public class CachedOutputStream extends OutputStream {
 
     private long threshold = 64 * 1024;
     private File outputDir;
-
+    
     public CachedOutputStream(Exchange exchange) {
+        this(exchange, true);
+    }
+
+    public CachedOutputStream(Exchange exchange, boolean closedOnCompletion) {
         String hold = exchange.getContext().getProperties().get(THRESHOLD);
         String dir = exchange.getContext().getProperties().get(TEMP_DIR);
         if (hold != null) {
@@ -67,25 +71,27 @@ public class CachedOutputStream extends OutputStream {
             this.outputDir = exchange.getContext().getTypeConverter().convertTo(File.class, dir);
         }
         
-        // add on completion so we can cleanup after the exchange is done such as deleting temporary files
-        exchange.addOnCompletion(new SynchronizationAdapter() {
-            @Override
-            public void onDone(Exchange exchange) {
-                try {
-                    if (fileInputStreamCache != null) {
-                        fileInputStreamCache.close();
+        if (closedOnCompletion) {
+            // add on completion so we can cleanup after the exchange is done such as deleting temporary files
+            exchange.addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onDone(Exchange exchange) {
+                    try {
+                        if (fileInputStreamCache != null) {
+                            fileInputStreamCache.close();
+                        }
+                        close();
+                    } catch (Exception e) {
+                        LOG.warn("Error deleting temporary cache file: " + tempFile, e);
                     }
-                    close();
-                } catch (Exception e) {
-                    LOG.warn("Error deleting temporary cache file: " + tempFile, e);
                 }
-            }
-
-            @Override
-            public String toString() {
-                return "OnCompletion[CachedOutputStream]";
-            }
-        });
+    
+                @Override
+                public String toString() {
+                    return "OnCompletion[CachedOutputStream]";
+                }
+            });
+        }
     }
 
     public void flush() throws IOException {
@@ -152,6 +158,11 @@ public class CachedOutputStream extends OutputStream {
                 throw IOHelper.createIOException("Cached file " + tempFile + " not found", e);
             }
         }
+    }    
+    
+    public InputStream getWrappedInputStream() throws IOException {
+        // The WrappedInputStream will close the CachedOuputStream when it is closed
+        return new WrappedInputStream(this, getInputStream());
     }
 
 
@@ -204,6 +215,38 @@ public class CachedOutputStream extends OutputStream {
         } finally {
             // ensure flag is flipped to file based
             inMemory = false;
+        }
+    }
+    
+    // This class will close the CachedOutputStream when it is closed
+    private class WrappedInputStream extends InputStream {
+        private CachedOutputStream cachedOutputStream;
+        private InputStream inputStream;
+        
+        WrappedInputStream(CachedOutputStream cos, InputStream is) {
+            cachedOutputStream = cos;
+            inputStream = is;
+        }
+        
+        @Override
+        public int read() throws IOException {
+            return inputStream.read();
+        }
+        
+        @Override
+        public int available() throws IOException {
+            return inputStream.available();
+        }
+        
+        @Override
+        public void reset() throws IOException {
+            inputStream.reset();
+        }
+        
+        @Override
+        public void close() throws IOException {
+            inputStream.close();
+            cachedOutputStream.close();
         }
     }
 
