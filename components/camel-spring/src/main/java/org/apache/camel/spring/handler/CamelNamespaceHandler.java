@@ -126,9 +126,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             LOG.trace("Cannot find class so assuming not running in OSGi container: " + t.getMessage());
         }
         if (osgi) {
-            LOG.info("Found the OSGi environment, deloying the camel context into OSGi container");
+            LOG.info("OSGi environment detected.");
         } else {
-            LOG.info("Cannot find the OSGi environment, deploying the camel context into stand alone JVM");
+            LOG.info("OSGi environment not detected.");
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug("Using " + cl.getCanonicalName() + " as CamelContextBeanDefinitionParser");
