@@ -17,7 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.camel.Exchange;
@@ -42,8 +42,7 @@ public class HandlerTest extends CamelTestSupport {
         assertEquals(0, statisticsHandler2.getRequests());
         assertEquals(0, statisticsHandler3.getRequests());
         
-        ByteArrayInputStream html = (ByteArrayInputStream) template
-                .requestBody("http://localhost:9080/", "");
+        InputStream html = (InputStream) template.requestBody("http://localhost:9080/", "");
         BufferedReader br = new BufferedReader(new InputStreamReader(html));
         
         assertEquals(htmlResponse, br.readLine());
@@ -59,8 +58,7 @@ public class HandlerTest extends CamelTestSupport {
         assertEquals(0, statisticsHandler2.getRequests());
         assertEquals(0, statisticsHandler3.getRequests());
 
-        ByteArrayInputStream html = (ByteArrayInputStream) template.requestBody(
-                "http://localhost:9081/", "");
+        InputStream html = (InputStream) template.requestBody("http://localhost:9081/", "");
         BufferedReader br = new BufferedReader(new InputStreamReader(html));
         
         assertEquals(htmlResponse, br.readLine());
@@ -84,16 +82,14 @@ public class HandlerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("jetty:http://localhost:9080/?handlers=#statisticsHandler1")
                         .process(new Processor() {
-                            public void process(Exchange exchange)
-                                throws Exception {
+                            public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody(htmlResponse);
                             }
                         });
-                from(
-                        "jetty:http://localhost:9081/?handlers=#statisticsHandler2,#statisticsHandler3")
+
+                from("jetty:http://localhost:9081/?handlers=#statisticsHandler2,#statisticsHandler3")
                         .process(new Processor() {
-                            public void process(Exchange exchange)
-                                throws Exception {
+                            public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody(htmlResponse);
                             }
                         });
