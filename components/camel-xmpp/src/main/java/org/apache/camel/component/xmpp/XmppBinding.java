@@ -73,9 +73,13 @@ public class XmppBinding {
                 } else {
                     try {
                         message.setProperty(name, value);
-                        LOG.debug("Added property name: " + name + " value: " + value.toString());
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Added property name: " + name + " value: " + value.toString());
+                        }
                     } catch (IllegalArgumentException iae) {
-                        LOG.debug("Not adding property " + name + " to XMPP message due to " + iae);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Cannot add property " + name + " to XMPP message due: ", iae);
+                        }
                     }
                 }
             }

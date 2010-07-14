@@ -64,7 +64,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
             chat.sendMessage(message);
             // must invoke nextMessage to consume the response from the server
             // otherwise the client local queue will fill up (CAMEL-1467)
-            chat.nextMessage();
+            chat.pollMessage();
         } catch (XMPPException e) {
             throw new RuntimeExchangeException("Cannot send XMPP message: " + message, exchange, e);
         }

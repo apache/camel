@@ -38,11 +38,15 @@ public class XmppComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         if (endpointCache.containsKey(uri)) {
-            LOG.debug("Using cached endpoint for URI " + uri);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using cached endpoint for URI " + uri);
+            }
             return endpointCache.get(uri);
         }
 
-        LOG.debug("Creating new endpoint for URI " + uri);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating new endpoint for URI " + uri);
+        }
         XmppEndpoint endpoint = new XmppEndpoint(uri, this);
 
         URI u = new URI(uri);
@@ -73,5 +77,6 @@ public class XmppComponent extends DefaultComponent {
         for (Map.Entry<String, XmppEndpoint> entry : endpointCache.entrySet()) {
             entry.getValue().destroy();
         }
+        endpointCache.clear();
     }
 }

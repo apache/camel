@@ -72,7 +72,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
                 LOG.debug("Opening private chat to " + privateChat.getParticipant());
             }
         } else {
-            // add the presence packet listener to the connection so we only get packets that concers us
+            // add the presence packet listener to the connection so we only get packets that concerns us
             // we must add the listener before creating the muc
             final ToContainsFilter toFilter = new ToContainsFilter(endpoint.getParticipant());
             final AndFilter packetFilter = new AndFilter(new PacketTypeFilter(Presence.class), toFilter);
@@ -129,6 +129,13 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             getProcessor().process(exchange);
         } catch (Exception e) {
             exchange.setException(e);
+        } finally {
+            // must remove message from muc to avoid messages stacking up and causing OutOfMemoryError
+            // pollMessage is a non blocking method
+            // (see http://issues.igniterealtime.org/browse/SMACK-129)
+            if (muc != null) {
+                muc.pollMessage();
+            }
         }
     }
 }

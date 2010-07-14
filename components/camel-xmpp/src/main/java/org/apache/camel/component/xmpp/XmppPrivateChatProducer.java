@@ -43,7 +43,10 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         this.endpoint = endpoint;
         this.participant = participant;
         ObjectHelper.notEmpty(participant, "participant");
-        LOG.debug("Creating XmppPrivateChatProducer to participant " + participant);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating XmppPrivateChatProducer to participant " + participant);
+        }
     }
 
     public void process(Exchange exchange) {
@@ -65,14 +68,21 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         }
 
         ChatManager chatManager = connection.getChatManager();
-        LOG.debug("Looking for existing chat instance with thread ID " + endpoint.getChatId());
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Looking for existing chat instance with thread ID " + endpoint.getChatId());
+        }
         Chat chat = chatManager.getThreadChat(endpoint.getChatId());
         if (chat == null) {
-            LOG.debug("Creating new chat instance with thread ID " + endpoint.getChatId());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Creating new chat instance with thread ID " + endpoint.getChatId());
+            }
             chat = chatManager.createChat(getParticipant(), endpoint.getChatId(), new MessageListener() {
                 public void processMessage(Chat chat, Message message) {
                     // not here to do conversation
-                    LOG.debug("Received and discarding message from " + getParticipant() + " : " + message.getBody());
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Received and discarding message from " + getParticipant() + " : " + message.getBody());
+                    }
                 }
             });
         }
