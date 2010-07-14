@@ -25,8 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
@@ -54,9 +52,7 @@ public class CachedOutputStream extends OutputStream {
     private boolean inMemory = true;
     private int totalLength;
     private File tempFile;
-    private boolean exchangeOnCompleted;
-    
-    private List<FileInputStreamCache> fileInputStreamCaches = new ArrayList<FileInputStreamCache>(4);
+    private FileInputStreamCache fileInputStreamCache;
 
     private long threshold = 64 * 1024;
     private File outputDir;
@@ -76,12 +72,10 @@ public class CachedOutputStream extends OutputStream {
             @Override
             public void onDone(Exchange exchange) {
                 try {
-                    //set the flag so we can delete the temp file 
-                    exchangeOnCompleted = true;
-                    if (fileInputStreamCaches.size() == 0) {
-                        // there is no open fileInputStream let's close it 
-                        close();
+                    if (fileInputStreamCache != null) {
+                        fileInputStreamCache.close();
                     }
+                    close();
                 } catch (Exception e) {
                     LOG.warn("Error deleting temporary cache file: " + tempFile, e);
                 }
@@ -150,9 +144,10 @@ public class CachedOutputStream extends OutputStream {
             }
         } else {
             try {
-                FileInputStreamCache answer = new FileInputStreamCache(tempFile, this);
-                fileInputStreamCaches.add(answer);
-                return answer;
+                if (fileInputStreamCache == null) {
+                    fileInputStreamCache = new FileInputStreamCache(tempFile);
+                }
+                return fileInputStreamCache;
             } catch (FileNotFoundException e) {
                 throw IOHelper.createIOException("Cached file " + tempFile + " not found", e);
             }
@@ -171,23 +166,16 @@ public class CachedOutputStream extends OutputStream {
             }
         } else {
             try {
-                FileInputStreamCache answer = new FileInputStreamCache(tempFile, this);
-                fileInputStreamCaches.add(answer);
-                return answer;
+                if (fileInputStreamCache == null) {
+                    fileInputStreamCache = new FileInputStreamCache(tempFile);
+                }
+                return fileInputStreamCache;
             } catch (FileNotFoundException e) {
                 throw IOHelper.createIOException("Cached file " + tempFile + " not found", e);
             }
         }
     }
-    
-    public void releaseFileInputStream(FileInputStreamCache fileInputStreamCache) throws IOException {
-        fileInputStreamCaches.remove(fileInputStreamCache);
-        if (exchangeOnCompleted && fileInputStreamCaches.size() == 0) {
-            // now we can close stream and delete the temp file
-            close();
-        }
-    }
-    
+
     private void cleanUpTempFile() {
         // cleanup temporary file
         if (tempFile != null) {

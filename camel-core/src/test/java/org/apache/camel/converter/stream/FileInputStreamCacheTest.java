@@ -33,9 +33,8 @@ public class FileInputStreamCacheTest extends ContextTestSupport {
     public void testFileInputStreamCache() throws Exception {
         Exchange exchange = new DefaultExchange(context);
 
-        CachedOutputStream cos = new CachedOutputStream(exchange);
         File file = new File(TEST_FILE).getAbsoluteFile();
-        FileInputStreamCache cache = new FileInputStreamCache(file, cos);
+        FileInputStreamCache cache = new FileInputStreamCache(file);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         cache.writeTo(bos);

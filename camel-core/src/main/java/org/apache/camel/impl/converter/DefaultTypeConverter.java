@@ -165,6 +165,9 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
         // try to find a suitable type converter
         TypeConverter converter = getOrFindTypeConverter(type, value);
         if (converter != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Using converter: " + converter + " to convert " + key);
+            }
             Object rc = converter.convertTo(type, exchange, value);
             if (rc != null) {
                 return rc;

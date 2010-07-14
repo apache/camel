@@ -89,8 +89,6 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(1000);
-
         assertEquals(9, events.size());
 
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(0));
@@ -112,7 +110,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).asyncDelayedRedelivery().redeliveryDelay(25));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).asyncDelayedRedelivery().redeliveryDelay(100));
 
                 from("direct:start").throwException(new IllegalArgumentException("Damn"));
             }
@@ -122,6 +120,8 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
+
+        Thread.sleep(500);
 
         assertEquals(9, events.size());
 
@@ -135,9 +135,8 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         e = assertIsInstanceOf(ExchangeRedeliveryEvent.class, events.get(4));
         assertEquals(4, e.getAttempt());
         assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(5));
-        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(6));
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(8));
+
+        // since its async the ordering of the rest can be different depending per OS and timing
     }
 
 }

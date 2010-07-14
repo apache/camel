@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter.stream;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,42 +28,31 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
-public class FileInputStreamCache extends InputStream implements StreamCache {
+public class FileInputStreamCache extends InputStream implements StreamCache, Closeable {
     private InputStream stream;
-    private CachedOutputStream cachedOutputStream;
     private File file;
 
-    public FileInputStreamCache(File file, CachedOutputStream cos) throws FileNotFoundException {
+    public FileInputStreamCache(File file) throws FileNotFoundException {
         this.file = file;
-        this.cachedOutputStream = cos;
         this.stream = new FileInputStream(file);
     }
     
     @Override
     public void close() {
-        try {
-            if (isSteamOpened()) {
-                getInputStream().close();
-            }
-            // Just remove the itself from cachedOutputStream
-            if (cachedOutputStream != null) {
-                cachedOutputStream.releaseFileInputStream(this);
-            }
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+        if (isSteamOpened()) {
+            IOHelper.close(getInputStream());
         }
     }
 
     @Override
     public void reset() {
         try {
-            if (isSteamOpened()) {
-                getInputStream().close();
-            }
+            // reset by closing and creating a new stream based on the file
+            close();
             // reset by creating a new stream based on the file
             stream = new FileInputStream(file);
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            throw new RuntimeCamelException("Cannot reset stream from file " + file, e);
         }            
     }
 
