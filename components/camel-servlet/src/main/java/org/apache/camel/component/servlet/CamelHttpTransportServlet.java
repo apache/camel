@@ -48,11 +48,13 @@ public class CamelHttpTransportServlet extends CamelServlet {
         }
     }
     
-    public void destroy() {
-        CAMEL_SERVLET_MAP.remove(servletName);
+    public void destroy() {        
         if (applicationContext != null) {
             applicationContext.stop();
         }
+        // Need to remove the servlet from map after 
+        // the ApplicationContext is removed
+        CAMEL_SERVLET_MAP.remove(servletName);
     }
     
     public static CamelServlet getCamelServlet(String servletName) {
