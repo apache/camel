@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+       <groupId>org.apache.camel</groupId>
+       <artifactId>examples</artifactId>
+       <version>2.5-SNAPSHOT</version>
+   </parent>
+  
+  <!-- USED TO TEST camel 2.4.0 on Karaf/SMX
+    <parent>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-parent</artifactId>
+      <version>2.4.0</version>
+  </parent>
+   -->
+  
+  <artifactId>camel-example-reportincident-wssecurity</artifactId>
+  <name>Camel :: Example :: Report Incident :: WS-Security</name>
+  <description>An example based on real life use case for reporting incidents using webservice that are transformed
+      and send as emails to a backing system. Client calling the WebService is authentified through WS-Security
+  </description>
+  <packaging>bundle</packaging>
+  
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-cxf</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-velocity</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-mail</artifactId>
+		</dependency>
+		
+	    <dependency>
+		  <groupId>org.fusesource.commonman</groupId>
+		  <artifactId>commons-management</artifactId>
+		</dependency>
+
+        <!-- mock mail server so we do not send an email for real -->
+        <dependency>
+            <groupId>org.jvnet.mock-javamail</groupId>
+            <artifactId>mock-javamail</artifactId>
+            <version>1.7</version>
+            <exclusions>
+              <exclusion>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+              </exclusion>
+            </exclusions>
+            <scope>test</scope>
+        </dependency>
+        
+       <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- cxf -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-core</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
+
+
+		<!-- regular http transport -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
+		
+		<!-- ws-security -->
+		<dependency>
+		    <groupId>org.apache.ws.security</groupId>
+		    <artifactId>wss4j</artifactId>
+		    <version>1.5.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-ws-security</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
+		
+		
+		<!-- logging -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+        <dependency>
+           <groupId>org.slf4j</groupId>
+           <artifactId>slf4j-log4j12</artifactId>
+         </dependency>
+
+		<!-- cxf web container for unit testing -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http-jetty</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+			<version>${cxf-version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>${velocity-version}</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- to compile with 1.5 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+       
+            <!-- CXF wsdl2java generator, will plugin to the compile goal -->
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>${cxf-version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/main/resources/etc/report_incident.wsdl</wsdl>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- so we can run mvn jetty:run -->
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty-version}</version>
+                <configuration>
+                   <connectors>
+                      <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                        <port>9080</port>
+                        <maxIdleTime>60000</maxIdleTime>
+                      </connector>
+                   </connectors>                   
+                </configuration>
+            </plugin>
+            
+            <!-- to generate the MANIFEST-FILE of the bundle -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Export-Package>org.apache.camel.example.reportincident*</Export-Package>
+						<Import-Package>
+						    META-INF.cxf,
+				  			org.apache.cxf,
+							org.apache.cxf.binding,
+							org.apache.cxf.binding.corba,
+							org.apache.cxf.binding.soap,
+							org.apache.cxf.binding.soap.spring,
+							org.apache.cxf.bus,
+							org.apache.cxf.bus.resource,
+							org.apache.cxf.bus.spring,
+							org.apache.cxf.buslifecycle,
+							org.apache.cxf.catalog,
+							org.apache.cxf.configuration,
+							org.apache.cxf.configuration.spring,
+							org.apache.cxf.endpoint,
+							org.apache.cxf.headers,
+							org.apache.cxf.management,
+							org.apache.cxf.management.jmx,
+							org.apache.cxf.phase,
+							org.apache.cxf.resource,
+							org.apache.cxf.transport,
+							org.apache.cxf.transport.http,
+							org.apache.cxf.transport.http.policy,
+							org.apache.cxf.transport.http_jetty,
+							org.apache.cxf.transport.http_osgi,
+							org.apache.cxf.transport.jms,
+							org.apache.cxf.transports.http,
+							org.apache.cxf.workqueue,
+							org.apache.cxf.wsdl,
+							org.apache.cxf.wsdl11,
+							org.apache.ws.security.action,
+							org.apache.ws.security.processor,
+							org.springframework.beans.factory.config,
+							org.springframework.mail.javamail,
+						    *
+					    </Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+            
+
+        </plugins>
+    </build>
+</project>
