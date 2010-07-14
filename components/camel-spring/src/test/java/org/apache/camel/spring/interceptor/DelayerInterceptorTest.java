@@ -22,7 +22,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Unit test for delayer interceptor configurd in spring XML.
+ * Unit test for delayer interceptor configured in spring XML.
  */
 public class DelayerInterceptorTest extends SpringTestSupport {
 
@@ -39,12 +39,13 @@ public class DelayerInterceptorTest extends SpringTestSupport {
         for (int i = 0; i < 10; i++) {
             template.sendBody("direct:start", "Message #" + i);
         }
-        long delta = System.currentTimeMillis() - start;
+        // add a little slack
+        long delta = System.currentTimeMillis() - start + 200;
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("Should be slower to run: " + delta, delta > 2000);
-        assertTrue("Should not take that long to run: " + delta, delta < 7000);
+        assertTrue("Should be slower to run: " + delta, delta >= 2000);
+        assertTrue("Should not take that long to run: " + delta, delta <= 7000);
     }
 
 }

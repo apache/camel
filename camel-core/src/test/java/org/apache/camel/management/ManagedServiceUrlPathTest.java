@@ -56,6 +56,12 @@ public class ManagedServiceUrlPathTest extends ContextTestSupport {
     }
 
     @Override
+    protected boolean canRunOnThisPlatform() {
+        // does not run on IBM/HP
+        return !isJavaVendor("IBM") && !isJavaVendor("HP");
+    }
+
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
         try {

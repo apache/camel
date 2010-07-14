@@ -46,27 +46,30 @@ public class ThrottlerTest extends ContextTestSupport {
     }
     
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
-        long start = System.currentTimeMillis();
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(messageCount);
 
         ExecutorService executor = Executors.newFixedThreadPool(messageCount);
+
+        long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
             executor.execute(new Runnable() {
                 public void run() {
                     template.sendBody("direct:a", "<message>payload</message>");
-                }                
+                }
             });
         }
-        
+
         // let's wait for the exchanges to arrive
         resultEndpoint.assertIsSatisfied();
-        
+
         // now assert that they have actually been throttled
         long minimumTime = (messageCount - 1) * INTERVAL;
-        assertTrue("Should take at least " + minimumTime + "ms", System.currentTimeMillis() - start >= minimumTime);
+        // add a little slack
+        long delta = System.currentTimeMillis() - start + 200;
+        assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
     }
-    
+
     public void testTimeSlotCalculus() throws Exception {
         Throttler throttler = new Throttler(null, 2, 1000, null);
         TimeSlot slot = throttler.nextSlot();
