@@ -32,6 +32,8 @@ import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -74,7 +76,14 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         // gather list of files to process
         List<GenericFile<T>> files = new ArrayList<GenericFile<T>>();
         String name = endpoint.getConfiguration().getDirectory();
+
+        // time how long time it takes to poll
+        StopWatch stop = new StopWatch();
         boolean limitHit = !pollDirectory(name, files);
+        long delta = stop.stop();
+        if (log.isDebugEnabled()) {
+            log.debug("Took " + TimeUtils.printDuration(delta) + " to pool: " + name);
+        }
 
         // log if we hit the limit
         if (limitHit) {
