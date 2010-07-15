@@ -39,7 +39,7 @@ public class HawtDBAggregateRecoverDeadLetterChannelFailedTest extends CamelTest
         // and move to this dead letter channel
         repo.setDeadLetterUri("direct:dead");
         // check faster
-        repo.setRecoveryInterval(500, TimeUnit.MILLISECONDS);
+        repo.setRecoveryInterval(1000, TimeUnit.MILLISECONDS);
 
         super.setUp();
     }
@@ -65,7 +65,7 @@ public class HawtDBAggregateRecoverDeadLetterChannelFailedTest extends CamelTest
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
 
     @Override
