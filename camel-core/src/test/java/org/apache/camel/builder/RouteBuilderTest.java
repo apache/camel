@@ -50,7 +50,7 @@ public class RouteBuilderTest extends TestSupport {
     protected DelegateProcessor interceptor2;
 
     protected CamelContext createCamelContext() {
-        // disable stream cache otherwisw to much hazzle in this unit test to filter the stream cache
+        // disable stream cache otherwise to much hazzle in this unit test to filter the stream cache
         // in all the assertion codes
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.setStreamCaching(Boolean.FALSE);
@@ -262,7 +262,6 @@ public class RouteBuilderTest extends TestSupport {
         interceptor1 = new DelegateProcessor() {
         };
 
-        // START SNIPPET: e7
         interceptor2 = new MyInterceptorProcessor();
 
         RouteBuilder builder = new RouteBuilder() {
@@ -272,7 +271,6 @@ public class RouteBuilderTest extends TestSupport {
                 from("seda:a").process(interceptor1).process(interceptor2).to("seda:d");
             }
         };
-        // END SNIPPET: e7
         return getRouteList(builder);
     }
 
@@ -321,7 +319,7 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     protected List<Route> buildStaticRecipientList() throws Exception {
-        // START SNIPPET: e8
+        // START SNIPPET: multicast
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
@@ -329,7 +327,7 @@ public class RouteBuilderTest extends TestSupport {
                 from("seda:a").multicast().to("seda:b", "seda:c", "seda:d");
             }
         };
-        // END SNIPPET: e8
+        // END SNIPPET: multicast
         return getRouteList(builder);
     }
 
