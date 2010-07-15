@@ -37,6 +37,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
+import org.apache.camel.component.http4.helper.CamelFileDataSource;
 import org.apache.camel.component.http4.helper.GZIPHelper;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -149,7 +150,7 @@ public class DefaultHttpBinding implements HttpBinding {
             Object object = request.getAttribute(name);
             if (object instanceof File) {
                 String fileName = request.getParameter(name);
-                message.addAttachment(fileName, new DataHandler(new FileDataSource((File)object), FileTypeMap.getDefaultFileTypeMap().getContentType(fileName)));
+                message.addAttachment(fileName, new DataHandler(new CamelFileDataSource((File)object, fileName)));
             }
         }
     }
