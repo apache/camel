@@ -41,5 +41,13 @@ public class CamelFileDataSource extends FileDataSource {
     public void setFileTypeMap(FileTypeMap map) {
         typeMap = map;
     }
+    
+    public String getName() {
+        if (fileName != null) {
+            return fileName;
+        } else {
+            return super.getName();
+        }
+    }
 
 }

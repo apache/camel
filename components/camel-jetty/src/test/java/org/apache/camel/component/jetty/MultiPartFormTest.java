@@ -78,6 +78,7 @@ public class MultiPartFormTest extends CamelTestSupport {
 
                         assertNotNull("Should get the DataHandle NOTICE.txt", data);
                         assertEquals("Get a wrong content type", "text/plain", data.getContentType());
+                        assertEquals("Got the wrong name", "NOTICE.txt", data.getName());
 
                         assertTrue("We should get the data from the DataHandle", data.getDataSource()
                             .getInputStream().available() > 0);
