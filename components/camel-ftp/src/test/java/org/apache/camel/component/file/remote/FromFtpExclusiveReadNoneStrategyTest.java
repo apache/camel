@@ -47,6 +47,11 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
 
     @Test
     public void testPollFileWhileSlowFileIsBeingWrittenUsingNonExclusiveRead() throws Exception {
+        // cannot test on windows due file system works differently with file locks
+        if (isPlatform("windows")) {
+            return;
+        }
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
