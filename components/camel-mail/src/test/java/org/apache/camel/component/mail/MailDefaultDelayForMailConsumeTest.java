@@ -19,6 +19,7 @@ package org.apache.camel.component.mail;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
 /**
@@ -28,21 +29,27 @@ public class MailDefaultDelayForMailConsumeTest extends CamelTestSupport {
 
     @Test
     public void testConsuming() throws Exception {
-        template.sendBody("smtp://bond@localhost", "Hello London");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello London");
-        // first poll should happend immediately
+
+        template.sendBody("smtp://bond@localhost", "Hello London");
+
+        // first poll should happen immediately
         mock.setResultWaitTime(2000L);
         mock.assertIsSatisfied();
 
-        long start = System.currentTimeMillis();
         mock.reset();
-        template.sendBody("smtp://bond@localhost", "Hello Paris");
         mock.expectedBodiesReceived("Hello Paris");
-        // poll next mail and that is should be done within the default delay (overrule to 5 sec) + 2 sec slack
         mock.setResultWaitTime(5000L + 2000L);
+
+        StopWatch watch = new StopWatch();
+
+        template.sendBody("smtp://bond@localhost", "Hello Paris");
+
+        // poll next mail and that is should be done within the default delay (overrule to 5 sec) + 2 sec slack
         mock.assertIsSatisfied();
-        long delta = System.currentTimeMillis() - start;
+
+        long delta = watch.stop();
         assertTrue("Camel should not default poll the mailbox to often", delta > 5000 - 1000L);
     }
 
