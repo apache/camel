@@ -71,8 +71,9 @@ public class HttpGetTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                getContext().addComponent("http2", new HttpComponent());
                 from("direct:start").setHeader(Exchange.HTTP_QUERY, constant("hl=en&q=activemq"))
-                    .to("http://www.google.com/search").to("mock:results");
+                    .to("http2://http://www.google.com/search").to("mock:results");
             }
         };
     }

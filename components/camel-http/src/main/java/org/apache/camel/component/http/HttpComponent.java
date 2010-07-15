@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -195,7 +196,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
+        String addressUri = uri;
+        if (!uri.startsWith("http:") && !uri.startsWith("https:")) {
+            addressUri = remaining;
+        }
+        Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
         // must extract well known parameters before we create the endpoint
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
         if (binding == null) {
@@ -218,11 +223,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // create the configurer to use for this endpoint (authMethods contains the used methods created by the configurer)
         final Set<AuthMethod> authMethods = new LinkedHashSet<AuthMethod>();
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
-        
+        URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(uri), CastUtils.cast(parameters));
-        uri = httpUri.toString();
-
+        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
+        
         // validate http uri that end-user did not duplicate the http part that can be a common error
         String part = httpUri.getSchemeSpecificPart();
         if (part != null) {
@@ -232,9 +236,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
                         "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
             }
         }
+        // need to keep the parameters of http client configure to avoid unwiser endpoint caching
 
         // create the endpoint
-        HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, clientParams, httpConnectionManager, configurer);
+        HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, httpUri, clientParams, httpConnectionManager, configurer);
         setEndpointHeaderFilterStrategy(endpoint);
 
         // prefer to use endpoint configured over component configured

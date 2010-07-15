@@ -33,6 +33,25 @@ public class HttpProxyTest extends CamelTestSupport {
         assertNull("No proxy configured yet", client.getHostConfiguration().getProxyHost());
         assertEquals("No proxy configured yet", -1, client.getHostConfiguration().getProxyPort());
     }
+    
+    @Test
+    public void testDifferentHttpProxyConfigured() throws Exception {
+        HttpEndpoint http1 = context.getEndpoint("http://www.google.com?proxyHost=myproxy&proxyPort=1234", HttpEndpoint.class);
+        HttpEndpoint http2 = context.getEndpoint("http://www.google.com?test=parameter&proxyHost=myotherproxy&proxyPort=2345", HttpEndpoint.class);
+        
+        HttpClient client1 = http1.createHttpClient();
+        assertEquals("myproxy", client1.getHostConfiguration().getProxyHost());
+        assertEquals(1234, client1.getHostConfiguration().getProxyPort());
+        
+        HttpClient client2 = http2.createHttpClient();
+        assertEquals("myotherproxy", client2.getHostConfiguration().getProxyHost());
+        assertEquals(2345, client2.getHostConfiguration().getProxyPort());
+
+        assertEquals("Get a wrong endpoint uri", "http://www.google.com?proxyHost=myproxy&proxyPort=1234", http1.getEndpointUri());
+        assertEquals("Get a wrong endpoint uri", "http://www.google.com?test=parameter&proxyHost=myotherproxy&proxyPort=2345", http2.getEndpointUri());
+       
+        assertEquals("Should get the same EndpointKey", http1.getEndpointKey(), http2.getEndpointKey());
+    }
 
     @Test
     public void testHttpProxyConfigured() throws Exception {

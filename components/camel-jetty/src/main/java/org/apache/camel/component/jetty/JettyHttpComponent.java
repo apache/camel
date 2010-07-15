@@ -109,8 +109,9 @@ public class JettyHttpComponent extends HttpComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        uri = uri.startsWith("jetty:") ? remaining : uri;
-
+        String addressUri = uri.startsWith("jetty:") ? remaining : uri;
+        Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
+        
         // must extract well known parameters before we create the endpoint
         List<Handler> handlerList = resolveAndRemoveReferenceListParameter(parameters, "handlers", Handler.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
@@ -130,13 +131,17 @@ public class JettyHttpComponent extends HttpComponent {
             // validate that we could resolve all httpClient. parameters as this component is lenient
             validateParameters(uri, parameters, "httpClient.");
         }
-
+        // keep the configure parameters for the http client
+        for (String key : parameters.keySet()) {
+            httpClientParameters.remove(key);
+        }
+        URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
+        
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(uri), CastUtils.cast(parameters));
-        uri = httpUri.toString();
-
+        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
+     
         // create endpoint after all known parameters have been extracted from parameters
-        JettyHttpEndpoint endpoint = new JettyHttpEndpoint(this, uri, httpUri);
+        JettyHttpEndpoint endpoint = new JettyHttpEndpoint(this, endpointUri.toString(), httpUri);
         setEndpointHeaderFilterStrategy(endpoint);
 
         if (client != null) {
