@@ -17,6 +17,7 @@
 package org.apache.camel.bam;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,11 +47,13 @@ public class MultipleActivitiesConcurrentlyTest extends MultipleProcessesTest {
         };
         thread.start();
 
-        startLatch.await();
+        // use a timeout to avoid test hang if something happens
+        startLatch.await(30, TimeUnit.SECONDS);
 
         sendAMessages();
 
-        endLatch.await();
+        // use a timeout to avoid test hang if something happens
+        endLatch.await(30, TimeUnit.SECONDS);
 
         overdueEndpoint.assertIsSatisfied();
     }

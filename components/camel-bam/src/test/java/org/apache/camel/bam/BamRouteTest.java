@@ -63,7 +63,7 @@ public class BamRouteTest extends CamelSpringTestSupport {
         super.setUp();
 
         overdueEndpoint = getMockEndpoint("mock:overdue");
-        overdueEndpoint.setResultWaitTime(8000);
+        overdueEndpoint.setResultWaitTime(20000);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
