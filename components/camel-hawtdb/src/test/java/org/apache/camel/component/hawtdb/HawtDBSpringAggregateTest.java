@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hawtdb;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -48,7 +50,7 @@ public class HawtDBSpringAggregateTest extends CamelSpringTestSupport {
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
 
     public static class MyAggregationStrategy implements AggregationStrategy {

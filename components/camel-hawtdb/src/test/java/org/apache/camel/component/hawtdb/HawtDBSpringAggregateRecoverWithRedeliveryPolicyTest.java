@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hawtdb;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
@@ -60,7 +61,7 @@ public class HawtDBSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelS
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
 
     public static class MyFailProcessor implements Processor {

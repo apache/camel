@@ -34,6 +34,7 @@ public class HawtDBAggregateCompletionIntervalTest extends CamelTestSupport {
     @Test
     public void testHawtDBAggregateCompletionInterval() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
+        mock.setResultWaitTime(30 * 1000L);
         mock.expectedBodiesReceived("ABCD", "E");
 
         // wait a bit so we complete on the next poll

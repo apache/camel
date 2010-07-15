@@ -24,7 +24,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class HawtDBAggregateLoadTest extends CamelTestSupport {
