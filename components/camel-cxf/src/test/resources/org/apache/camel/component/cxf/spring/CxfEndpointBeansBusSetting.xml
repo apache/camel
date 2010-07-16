@@ -27,6 +27,8 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
     ">
+  <!-- As a work around of CXF-2667,  we need to use the spring bean style configure -->
+  <!-- 
   <bean id="cxf1" class="org.apache.cxf.bus.CXFBusImpl">
        <property name="outInterceptors">
            <list>
@@ -42,23 +44,23 @@
            </list>
         </property>
   </bean>
-  
-  <!-- As current CXF bus configure doesn't support to set the bus CXF-2667, we will fix it in next release of CXF -->
-  <!--
-      <cxf:bus bus="cxf1">
-        <cxf:outInterceptors>
+  -->
+    <bean id="cxf1" class="org.apache.cxf.bus.CXFBusImpl"/>
+    <bean id="cxf2" class="org.apache.cxf.bus.CXFBusImpl"/>
+    
+    <!-- The bus configure doesn't create the CXF bus instance -->
+    <cxfcore:bus bus="cxf1">
+        <cxfcore:outInterceptors>
         <bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
-        </cxf:outInterceptors>
-    </cxf:bus>
+        </cxfcore:outInterceptors>
+    </cxfcore:bus>
 
-    <cxf:bus bus="cxf2">
-        <cxf:inInterceptors>
+    <cxfcore:bus bus="cxf2">
+        <cxfcore:inInterceptors>
         <bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
-        </cxf:inInterceptors>
-    </cxf:bus>
+        </cxfcore:inInterceptors>
+    </cxfcore:bus>
    
-   -->
-  
   
   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
     serviceClass="org.apache.camel.component.cxf.HelloService" bus="cxf1"/>
