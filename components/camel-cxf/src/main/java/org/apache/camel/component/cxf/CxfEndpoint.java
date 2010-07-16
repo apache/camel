@@ -83,7 +83,10 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private String defaultOperationName;
     private String defaultOperationNamespace;
     private DataFormat dataFormat = DataFormat.POJO;
+    // This is for invoking the CXFClient with wrapped parameters of unwrapped parameters
     private boolean isWrapped;
+    // This is for marshal or unmarshal message with the document-literal wrapped or unwrapped style
+    private Boolean wrappedStyle;
     private boolean inOut = true;
     private Bus bus;
     private CxfBinding cxfBinding;
@@ -158,7 +161,12 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
         if (getDataFormat() == DataFormat.PAYLOAD) {
             sfb.setDataBinding(new HybridSourceDataBinding());
-        }        
+        }
+        
+        // set the document-literal wrapped style
+        if (getWrappedStyle() != null) {
+            sfb.getServiceFactory().setWrapped(getWrappedStyle());
+        }
         
         sfb.setBus(getBus());
         sfb.setStart(false);
@@ -260,6 +268,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             factoryBean.getFeatures().add(new LoggingFeature());
         }
         
+        // set the document-literal wrapped style
+        if (getWrappedStyle() != null) {
+            factoryBean.getServiceFactory().setWrapped(getWrappedStyle());
+        }
+        
         factoryBean.setBus(getBus());
         
     }
@@ -293,6 +306,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         
         if (loggingFeatureEnabled) {
             factoryBean.getFeatures().add(new LoggingFeature());
+        }
+        
+        // set the document-literal wrapped style
+        if (getWrappedStyle() != null) {
+            factoryBean.getServiceFactory().setWrapped(getWrappedStyle());
         }
         
         factoryBean.setBus(getBus());        
@@ -445,6 +463,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setWrapped(boolean wrapped) {
         isWrapped = wrapped;
+    }
+    
+    public Boolean getWrappedStyle() {
+        return wrappedStyle;
+    }
+    
+    public void setWrappedStyle(Boolean wrapped) {
+        wrappedStyle = wrapped;
     }
 
     public void setCxfBinding(CxfBinding cxfBinding) {
