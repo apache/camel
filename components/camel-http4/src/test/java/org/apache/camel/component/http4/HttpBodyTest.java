@@ -34,13 +34,21 @@ import org.junit.Test;
  * @version $Revision$
  */
 public class HttpBodyTest extends BaseHttpTest {
-
+    private String protocolString = "http4://";
     // default content encoding of the local test server
     private String charset = "ISO-8859-1";
+    
+    public String getProtocolString() {
+        return protocolString;
+    }
+    
+    public void setProtocolString(String protocol) {
+        protocolString = protocol;
+    }
 
     @Test
     public void httpPostWithStringBody() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/", new Processor() {
+        Exchange exchange = template.request(getProtocolString() + getHostName() + ":" + getPort() + "/", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // without this property, camel use the os default encoding
                 // to create the byte array for the StringRequestEntity
@@ -54,7 +62,7 @@ public class HttpBodyTest extends BaseHttpTest {
 
     @Test
     public void httpPostWithByteArrayBody() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/", new Processor() {
+        Exchange exchange = template.request(getProtocolString() + getHostName() + ":" + getPort() + "/", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(getBody().getBytes(charset));
             }
@@ -65,7 +73,7 @@ public class HttpBodyTest extends BaseHttpTest {
 
     @Test
     public void httpPostWithInputStreamBody() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/", new Processor() {
+        Exchange exchange = template.request(getProtocolString() + getHostName() + ":" + getPort() + "/", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset)));
             }
@@ -80,7 +88,7 @@ public class HttpBodyTest extends BaseHttpTest {
         expectedHeaders.put("Content-Type", "image/jpeg");
         localServer.register("/", new HeaderValidationHandler("POST", null, null, getExpectedContent(), expectedHeaders));
 
-        Exchange exchange = template.send("http4://" + getHostName() + ":" + getPort() + "/", new Processor() {
+        Exchange exchange = template.send(getProtocolString() + getHostName() + ":" + getPort() + "/", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(new File("src/test/data/logo.jpeg"));
                 exchange.getIn().setHeader("Content-Type", "image/jpeg");

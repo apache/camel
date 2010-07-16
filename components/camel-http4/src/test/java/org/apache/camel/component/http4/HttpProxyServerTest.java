@@ -29,6 +29,7 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Header;
 import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
@@ -36,6 +37,8 @@ import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolException;
 import org.apache.http.auth.AUTH;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.localserver.LocalTestServer;
 import org.apache.http.protocol.BasicHttpProcessor;
 import org.apache.http.protocol.HTTP;
@@ -77,6 +80,30 @@ public class HttpProxyServerTest extends BaseHttpTest {
         }
 
         super.tearDown();
+    }
+    
+    @Test
+    public void testDifferentHttpProxyConfigured() throws Exception {
+        HttpEndpoint http1 = context.getEndpoint("http4://www.google.com?proxyHost=myproxy&proxyPort=1234", HttpEndpoint.class);
+        HttpEndpoint http2 = context.getEndpoint("http4://www.google.com?proxyHost=myotherproxy&proxyPort=2345", HttpEndpoint.class);
+        HttpEndpoint http3 = context.getEndpoint("http4://www.google.com?test=parameter", HttpEndpoint.class);
+        
+        HttpClient client1 = http1.createHttpClient();
+        HttpHost proxy1 = (HttpHost)client1.getParams().getParameter(ConnRoutePNames.DEFAULT_PROXY);
+        assertEquals("myproxy", proxy1.getHostName());
+        assertEquals(1234, proxy1.getPort());
+        
+        HttpClient client2 = http2.createHttpClient();
+        HttpHost proxy2 = (HttpHost)client2.getParams().getParameter(ConnRoutePNames.DEFAULT_PROXY);
+        assertEquals("myotherproxy", proxy2.getHostName());
+        assertEquals(2345, proxy2.getPort());
+
+        //As the endpointUri is recreated, so the parameter could be in different place
+        assertTrue("Get a wrong endpoint uri of http1", http1.getEndpointUri().indexOf("proxyPort=1234") > 0);
+        assertTrue("Get a wrong endpoint uri of http2", http2.getEndpointUri().indexOf("proxyHost=myotherproxy") > 0);
+        assertEquals("Get a wrong endpoint uri", "http4://www.google.com?test=parameter", http3.getEndpointUri());
+       
+        assertEquals("Should get the same EndpointKey", http1.getEndpointKey(), http2.getEndpointKey());
     }
 
     @Test

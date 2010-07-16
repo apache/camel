@@ -17,6 +17,7 @@
 package org.apache.camel.component.http4;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -131,6 +132,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        String addressUri = uri;
+        if (!uri.startsWith("http4:") && !uri.startsWith("https4:")) {
+            addressUri = remaining;
+        }
+        Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
         // http client can be configured from URI options
         HttpParams clientParams = configureHttpParams(parameters);
 
@@ -149,11 +155,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         validateParameters(uri, parameters, "httpClient.");
         // create the configurer to use for this endpoint
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters);
-
+        URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(uri), CastUtils.cast(parameters));
-        uri = httpUri.toString();
-
+        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
+        
         // validate http uri that end-user did not duplicate the http part that can be a common error
         String part = httpUri.getSchemeSpecificPart();
         if (part != null) {
@@ -170,7 +175,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         registerPort(secure, port);
 
         // create the endpoint
-        HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, clientParams, clientConnectionManager, configurer);
+        HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, httpUri, clientParams, clientConnectionManager, configurer);
         setEndpointHeaderFilterStrategy(endpoint);
 
         // prefer to use endpoint configured over component configured
@@ -202,9 +207,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     private static int getPort(URI uri) {
         int port = uri.getPort();
         if (port < 0) {
-            if ("http4".equals(uri.getScheme())) {
+            if ("http4".equals(uri.getScheme()) || "http".equals(uri.getScheme())) {
                 port = 80;
-            } else if ("https4".equals(uri.getScheme())) {
+            } else if ("https4".equals(uri.getScheme()) || "https".equals(uri.getScheme())) {
                 port = 443;
             } else {
                 throw new IllegalArgumentException("Unknown scheme, cannot determine port number for uri: " + uri);
