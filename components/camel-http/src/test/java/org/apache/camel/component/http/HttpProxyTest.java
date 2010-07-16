@@ -37,7 +37,8 @@ public class HttpProxyTest extends CamelTestSupport {
     @Test
     public void testDifferentHttpProxyConfigured() throws Exception {
         HttpEndpoint http1 = context.getEndpoint("http://www.google.com?proxyHost=myproxy&proxyPort=1234", HttpEndpoint.class);
-        HttpEndpoint http2 = context.getEndpoint("http://www.google.com?test=parameter&proxyHost=myotherproxy&proxyPort=2345", HttpEndpoint.class);
+        HttpEndpoint http2 = context.getEndpoint("http://www.google.com?proxyHost=myotherproxy&proxyPort=2345", HttpEndpoint.class);
+        HttpEndpoint http3 = context.getEndpoint("http://www.google.com?test=parameter", HttpEndpoint.class);
         
         HttpClient client1 = http1.createHttpClient();
         assertEquals("myproxy", client1.getHostConfiguration().getProxyHost());
@@ -47,8 +48,10 @@ public class HttpProxyTest extends CamelTestSupport {
         assertEquals("myotherproxy", client2.getHostConfiguration().getProxyHost());
         assertEquals(2345, client2.getHostConfiguration().getProxyPort());
 
-        assertEquals("Get a wrong endpoint uri", "http://www.google.com?proxyHost=myproxy&proxyPort=1234", http1.getEndpointUri());
-        assertEquals("Get a wrong endpoint uri", "http://www.google.com?test=parameter&proxyHost=myotherproxy&proxyPort=2345", http2.getEndpointUri());
+        //As the endpointUri is recreated, so the parameter could be in different place
+        assertTrue("Get a wrong endpoint uri of http1", http1.getEndpointUri().indexOf("proxyPort=1234") > 0);
+        assertTrue("Get a wrong endpoint uri of http2", http2.getEndpointUri().indexOf("proxyHost=myotherproxy") > 0);
+        assertEquals("Get a wrong endpoint uri", "http://www.google.com?test=parameter", http3.getEndpointUri());
        
         assertEquals("Should get the same EndpointKey", http1.getEndpointKey(), http2.getEndpointKey());
     }
