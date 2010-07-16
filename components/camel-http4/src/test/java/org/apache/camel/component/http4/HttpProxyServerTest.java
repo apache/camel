@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.HeaderValidationHandler;
 import org.apache.camel.component.http4.handler.ProxyAuthenticationValidationHandler;
+import org.apache.camel.util.URISupport;
 import org.apache.commons.codec.BinaryDecoder;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
@@ -85,8 +86,8 @@ public class HttpProxyServerTest extends BaseHttpTest {
     @Test
     public void testDifferentHttpProxyConfigured() throws Exception {
         HttpEndpoint http1 = context.getEndpoint("http4://www.google.com?proxyHost=myproxy&proxyPort=1234", HttpEndpoint.class);
-        HttpEndpoint http2 = context.getEndpoint("http4://www.google.com?proxyHost=myotherproxy&proxyPort=2345", HttpEndpoint.class);
-        HttpEndpoint http3 = context.getEndpoint("http4://www.google.com?test=parameter", HttpEndpoint.class);
+        HttpEndpoint http2 = context.getEndpoint("http4://www.google.com?test=parameter&proxyHost=myotherproxy&proxyPort=2345", HttpEndpoint.class);
+
         
         HttpClient client1 = http1.createHttpClient();
         HttpHost proxy1 = (HttpHost)client1.getParams().getParameter(ConnRoutePNames.DEFAULT_PROXY);
@@ -97,12 +98,11 @@ public class HttpProxyServerTest extends BaseHttpTest {
         HttpHost proxy2 = (HttpHost)client2.getParams().getParameter(ConnRoutePNames.DEFAULT_PROXY);
         assertEquals("myotherproxy", proxy2.getHostName());
         assertEquals(2345, proxy2.getPort());
+        
+      //As the endpointUri is recreated, so the parameter could be in different place, so we use the URISupport.normalizeUri
+        assertEquals("Get a wrong endpoint uri of http1", "http4://www.google.com?proxyHost=myproxy&proxyPort=1234", URISupport.normalizeUri(http1.getEndpointUri()));
+        assertEquals("Get a wrong endpoint uri of http2", "http4://www.google.com?proxyHost=myotherproxy&proxyPort=2345&test=parameter", URISupport.normalizeUri(http2.getEndpointUri()));
 
-        //As the endpointUri is recreated, so the parameter could be in different place
-        assertTrue("Get a wrong endpoint uri of http1", http1.getEndpointUri().indexOf("proxyPort=1234") > 0);
-        assertTrue("Get a wrong endpoint uri of http2", http2.getEndpointUri().indexOf("proxyHost=myotherproxy") > 0);
-        assertEquals("Get a wrong endpoint uri", "http4://www.google.com?test=parameter", http3.getEndpointUri());
-       
         assertEquals("Should get the same EndpointKey", http1.getEndpointKey(), http2.getEndpointKey());
     }
 
