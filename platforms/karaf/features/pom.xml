@@ -70,7 +70,7 @@
       <hibernate-validator-bundle-version>4.0.2.GA_1</hibernate-validator-bundle-version>
       <ibatis-bundle-version>2.3.4.726_2</ibatis-bundle-version>
       <jackrabbit-version>1.5.3</jackrabbit-version>
-      <jaxb-bundle-version>2.1.12_1</jaxb-bundle-version>
+      <jaxb-bundle-version>2.1.13_1-SNAPSHOT</jaxb-bundle-version>
       <jetty6-bundle-version>6.1.22_1</jetty6-bundle-version>
       <jexcelapi-bundle-version>2.4.2_2</jexcelapi-bundle-version>
       <hapi-bundle-version>0.5.1_3</hapi-bundle-version>

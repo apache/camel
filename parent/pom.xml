@@ -80,7 +80,7 @@
     <jackson-version>1.5.4</jackson-version>
     <javassist-version>3.9.0.GA</javassist-version>
     <javax-mail-version>1.4.3</javax-mail-version>
-    <jaxb-version>2.1.12</jaxb-version>
+    <jaxb-version>2.1.13</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
     <jaxen-version>1.1.1</jaxen-version>
     <jetty-version>7.1.4.v20100610</jetty-version>
