@@ -410,9 +410,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
-    public void changeCurrentDirectory(String newDirectory) throws GenericFileOperationFailedException {
+    public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
+        if (log.isTraceEnabled()) {
+            log.trace("Changing current directory to: " + path);
+        }
         try {
-            client.changeWorkingDirectory(newDirectory);
+            client.changeWorkingDirectory(path);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }

@@ -27,20 +27,25 @@ import org.junit.Test;
 public class FromFtpRecursiveNoopTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/noop?password=admin&binary=false"
+        return "ftp://admin@localhost:" + getPort() + "/noop?password=admin&binary=false&initialDelay=3000"
                 + "&recursive=true&noop=true";
     }
 
-    @Test
-    public void testRecursiveNoop() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("a", "b", "a2", "c", "b2");
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
 
         template.sendBodyAndHeader(getFtpUrl(), "a", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(getFtpUrl(), "b", Exchange.FILE_NAME, "b.txt");
         template.sendBodyAndHeader(getFtpUrl(), "a2", Exchange.FILE_NAME, "foo/a.txt");
         template.sendBodyAndHeader(getFtpUrl(), "c", Exchange.FILE_NAME, "bar/c.txt");
         template.sendBodyAndHeader(getFtpUrl(), "b2", Exchange.FILE_NAME, "bar/b.txt");
+    }
+
+    @Test
+    public void testRecursiveNoop() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("a", "b", "a2", "c", "b2");
 
         assertMockEndpointsSatisfied();
 
@@ -60,6 +65,7 @@ public class FromFtpRecursiveNoopTest extends FtpServerTestSupport {
             public void configure() throws Exception {
                 from(getFtpUrl())
                     .convertBodyTo(String.class)
+                    .to("log:ftp")
                     .to("mock:result");
             }
         };

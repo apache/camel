@@ -42,7 +42,7 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
     @Test
     public void testMultiDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Bye World", "Hello World", "Godday World");
+        mock.expectedBodiesReceived("Bye World", "Hello World", "Goodday World");
 
         assertMockEndpointsSatisfied();
 
@@ -71,7 +71,7 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         sendFile(getFtpUrl(), "Bye World", "bye.txt");
         sendFile(getFtpUrl(), "Hello World", "sub/hello.txt");
-        sendFile(getFtpUrl(), "Godday World", "sub/sub2/godday.txt");
+        sendFile(getFtpUrl(), "Goodday World", "sub/sub2/godday.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

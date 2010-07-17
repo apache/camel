@@ -37,30 +37,47 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     protected boolean pollDirectory(String fileName, List<GenericFile<FTPFile>> fileList) {
+        // strip trailing slash
+        fileName = FileUtil.stripTrailingSeparator(fileName);
+        return pollDirectory(fileName, null, fileList);
+    }
+
+    protected boolean pollDirectory(String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList) {
+        // must remember current dir so we stay in that directory after the poll
+        String currentDir = operations.getCurrentDirectory();
+
+        boolean answer = doPollDirectory(absolutePath, dirName, fileList);
+
+        operations.changeCurrentDirectory(currentDir);
+        return answer;
+    }
+
+    protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList) {
         if (log.isTraceEnabled()) {
-            log.trace("pollDirectory from fileName: " + fileName);
-        }
-        if (fileName == null) {
-            return true;
+            log.trace("doPollDirectory from absolutePath: " + absolutePath + ", dirName: " + dirName);
         }
 
         // remove trailing /
-        fileName = FileUtil.stripTrailingSeparator(fileName);
+        dirName = FileUtil.stripTrailingSeparator(dirName);
+        String dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
+
+        // change into directory (to ensure most FTP servers can list files)
+        operations.changeCurrentDirectory(dir);
 
         if (log.isTraceEnabled()) {
-            log.trace("Polling directory: " + fileName);
+            log.trace("Polling directory: " + dir);
         }
-        List<FTPFile> files = operations.listFiles(fileName);
+        List<FTPFile> files = operations.listFiles();
         if (files == null || files.isEmpty()) {
             // no files in this directory to poll
             if (log.isTraceEnabled()) {
-                log.trace("No files found in directory: " + fileName);
+                log.trace("No files found in directory: " + dir);
             }
             return true;
         } else {
             // we found some files
             if (log.isTraceEnabled()) {
-                log.trace("Found " + files.size() + " in directory: " + fileName);
+                log.trace("Found " + files.size() + " in directory: " + dir);
             }
         }
 
@@ -72,17 +89,18 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             }
 
             if (file.isDirectory()) {
-                RemoteFile<FTPFile> remote = asRemoteFile(fileName, file);
+                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file);
                 if (endpoint.isRecursive() && isValidFile(remote, true)) {
                     // recursive scan and add the sub files and folders
-                    String subDirectory = fileName + "/" + file.getName();
-                    boolean canPollMore = pollDirectory(subDirectory, fileList);
+                    String subDirectory = file.getName();
+                    String path = absolutePath + "/" + subDirectory;
+                    boolean canPollMore = pollDirectory(path, subDirectory, fileList);
                     if (!canPollMore) {
                         return false;
                     }
                 }
             } else if (file.isFile()) {
-                RemoteFile<FTPFile> remote = asRemoteFile(fileName, file);
+                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file);
                 if (isValidFile(remote, false)) {
                     if (isInProgress(remote)) {
                         if (log.isTraceEnabled()) {
@@ -101,7 +119,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return true;
     }
 
-    private RemoteFile<FTPFile> asRemoteFile(String directory, FTPFile file) {
+    private RemoteFile<FTPFile> asRemoteFile(String absolutePath, FTPFile file) {
         RemoteFile<FTPFile> answer = new RemoteFile<FTPFile>();
 
         answer.setEndpointPath(endpointPath);
@@ -118,7 +136,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         answer.setAbsolute(false);
 
         // create a pseudo absolute name
-        String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getName();
+        String dir = FileUtil.stripTrailingSeparator(absolutePath);
+        String absoluteFileName = dir + "/" + file.getName();
         answer.setAbsoluteFilePath(absoluteFileName);
 
         // the relative filename, skip the leading endpoint configured path

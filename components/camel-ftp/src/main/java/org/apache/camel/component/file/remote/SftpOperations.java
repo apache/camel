@@ -336,6 +336,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Changing current directory to: " + path);
+        }
         try {
             channel.cd(path);
         } catch (SftpException e) {
