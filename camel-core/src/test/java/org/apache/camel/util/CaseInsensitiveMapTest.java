@@ -141,6 +141,37 @@ public class CaseInsensitiveMapTest extends TestCase {
         Map<String, Object> map = new CaseInsensitiveMap();
         assertNull(map.get("foo"));
 
+        Map<String, Object> other = new CaseInsensitiveMap();
+        other.put("Foo", "cheese");
+        other.put("bar", 123);
+
+        map.putAll(other);
+
+        assertEquals("cheese", map.get("FOO"));
+        assertEquals("cheese", map.get("foo"));
+        assertEquals("cheese", map.get("Foo"));
+
+        assertEquals(123, map.get("BAR"));
+        assertEquals(123, map.get("bar"));
+        assertEquals(123, map.get("BaR"));
+
+        // key case should be preserved
+        Map<String, Object> keys = new HashMap<String, Object>();
+        keys.putAll(map);
+
+        assertEquals("cheese", keys.get("Foo"));
+        assertNull(keys.get("foo"));
+        assertNull(keys.get("FOO"));
+
+        assertEquals(123, keys.get("bar"));
+        assertNull(keys.get("Bar"));
+        assertNull(keys.get("BAR"));
+    }
+
+    public void testPutAllOther() {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        assertNull(map.get("foo"));
+
         Map<String, Object> other = new HashMap<String, Object>();
         other.put("Foo", "cheese");
         other.put("bar", 123);
@@ -154,6 +185,20 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(123, map.get("BAR"));
         assertEquals(123, map.get("bar"));
         assertEquals(123, map.get("BaR"));
+    }
+
+    public void testPutAllEmpty() {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("foo", "cheese");
+
+        Map<String, Object> other = new HashMap<String, Object>();
+        map.putAll(other);
+
+        assertEquals("cheese", map.get("FOO"));
+        assertEquals("cheese", map.get("foo"));
+        assertEquals("cheese", map.get("Foo"));
+
+        assertEquals(1, map.size());
     }
 
     public void testConstructFromOther() {

@@ -29,6 +29,9 @@ import java.util.Set;
  * <p/>
  * When copying from this map to a regular Map such as {@link java.util.HashMap} then the original keys are
  * copied over and you get the old behavior back using a regular Map with case sensitive keys.
+ * <p/>
+ * This map is <b>not</b> designed to be thread safe as concurrent access to it is not supposed to be performed
+ * by the Camel routing engine.
  *
  * @version $Revision$
  */
@@ -73,7 +76,7 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
     }
 
     @Override
-    public Object put(String key, Object value) {
+    public synchronized Object put(String key, Object value) {
         // invalidate views as we mutate
         entrySetView = null;
         String s = key.toLowerCase();
@@ -83,13 +86,19 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
 
     @Override
     public void putAll(Map<? extends String, ?> map) {
-        for (Map.Entry<? extends String, ?> entry : map.entrySet()) {
-            put(entry.getKey(), entry.getValue());
+        if (map != null && !map.isEmpty()) {
+            for (Map.Entry<? extends String, ?> entry : map.entrySet()) {
+                put(entry.getKey(), entry.getValue());
+            }
         }
     }
 
     @Override
-    public Object remove(Object key) {
+    public synchronized Object remove(Object key) {
+        if (key == null) {
+            return null;
+        }
+
         // invalidate views as we mutate
         entrySetView = null;
         String s = key.toString().toLowerCase();
@@ -98,7 +107,7 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
     }
 
     @Override
-    public void clear() {
+    public synchronized void clear() {
         // invalidate views as we mutate
         entrySetView = null;
         originalKeys.clear();
@@ -107,12 +116,16 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
 
     @Override
     public boolean containsKey(Object key) {
+        if (key == null) {
+            return false;
+        }
+
         String s = key.toString().toLowerCase();
         return super.containsKey(s);
     }
 
     @Override
-    public Set<Map.Entry<String, Object>> entrySet() {
+    public synchronized Set<Map.Entry<String, Object>> entrySet() {
         if (entrySetView == null) {
             // build the key set using the original keys so we retain their case
             // when for example we copy values to another map
