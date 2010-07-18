@@ -35,8 +35,7 @@
 
     <properties>
       <karaf-version>1.4.0</karaf-version>
-      <!-- TODO change the version to 1.7.0-SNAPSHOT, when Camel 2.4.0 is released -->
-      <features-maven-plugin-version>1.6.0</features-maven-plugin-version>
+      <features-maven-plugin-version>1.7.0-SNAPSHOT</features-maven-plugin-version>
     </properties>
 
     <modules>
