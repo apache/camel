@@ -66,7 +66,7 @@
     <commons-logging-version>1.1.1</commons-logging-version>
     <commons-logging-api-version>1.1</commons-logging-api-version>
     <commons-collections-version>3.2.1</commons-collections-version>
-    <commons-pool-version>1.4</commons-pool-version>
+    <commons-pool-version>1.5</commons-pool-version>
     <commons-dbcp-version>1.2.2</commons-dbcp-version>
     <derby-version>10.4.2.0</derby-version>
     <easymock-version>2.4</easymock-version>
@@ -89,7 +89,7 @@
     <scala-plugin-version>2.9.1</scala-plugin-version>
     <smack-version>3.0.4</smack-version>
     <testng-version>5.8</testng-version>
-    <velocity-version>1.6.2</velocity-version>
+    <velocity-version>1.6.4</velocity-version>
     <xbean-spring-version>3.4</xbean-spring-version>
     <qpid-version>0.5.0</qpid-version>
     <xmlbeans-version>2.4.0</xmlbeans-version>

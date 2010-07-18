@@ -99,7 +99,7 @@
       <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
       <stringtemplate-bundle-version>3.2_3</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_3</tagsoup-bundle-version>
-      <velocity-bundle-version>1.6.2_3</velocity-bundle-version>
+      <velocity-bundle-version>1.6.4_1-SNAPSHOT</velocity-bundle-version>
       <xalan-bundle-version>2.7.1_2</xalan-bundle-version>
       <xerces-bundle-version>2.9.1_3</xerces-bundle-version>
       <xmlbeans-bundle-version>2.4.0_2</xmlbeans-bundle-version>
