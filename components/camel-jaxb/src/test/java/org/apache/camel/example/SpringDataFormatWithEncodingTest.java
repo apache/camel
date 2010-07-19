@@ -35,8 +35,11 @@ public class SpringDataFormatWithEncodingTest extends CamelSpringTestSupport {
         bean.setPrice(2.5);
 
         MockEndpoint mock = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>"
-                + "<purchaseOrder amount=\"23.0\" price=\"2.5\" name=\"Beer\"/>");
+        mock.message(0).body(String.class).startsWith("<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>");
+        mock.message(0).body(String.class).contains("purchaseOrder");
+        mock.message(0).body(String.class).contains("amount=\"23.0\"");
+        mock.message(0).body(String.class).contains("price=\"2.5\"");
+        mock.message(0).body(String.class).contains("name=\"Beer\"");
 
         template.sendBody("direct:start", bean);
 
@@ -51,8 +54,11 @@ public class SpringDataFormatWithEncodingTest extends CamelSpringTestSupport {
         bean.setPrice(2.5);
 
         MockEndpoint mock = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>"
-                + "<purchaseOrder amount=\"23.0\" price=\"2.5\" name=\"Beer\"/>");
+        mock.message(0).body(String.class).startsWith("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>");
+        mock.message(0).body(String.class).contains("purchaseOrder");
+        mock.message(0).body(String.class).contains("amount=\"23.0\"");
+        mock.message(0).body(String.class).contains("price=\"2.5\"");
+        mock.message(0).body(String.class).contains("name=\"Beer\"");
 
         // the property should override the jaxb configuration
         template.sendBodyAndProperty("direct:start", bean, Exchange.CHARSET_NAME, "utf-8");
