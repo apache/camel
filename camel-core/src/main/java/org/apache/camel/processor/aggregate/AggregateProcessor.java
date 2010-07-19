@@ -33,13 +33,17 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Traceable;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
@@ -772,7 +776,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                         throw new IllegalArgumentException("Option maximumRedeliveries must be a positive number, was: " + max);
                     }
                     LOG.info("After " + max + " failed redelivery attempts Exchanges will be moved to deadLetterUri: " + recoverable.getDeadLetterUri());
-                    deadLetterProcessor = camelContext.getEndpoint(recoverable.getDeadLetterUri()).createProducer();
+
+                    // dead letter uri must be a valid endpoint
+                    Endpoint endpoint = camelContext.getEndpoint(recoverable.getDeadLetterUri());
+                    if (endpoint == null) {
+                        throw new NoSuchEndpointException(recoverable.getDeadLetterUri());
+                    }
+                    // force MEP to be InOnly so when sending to DLQ we would not expect a reply if the MEP was InOut
+                    deadLetterProcessor = new SendProcessor(endpoint, ExchangePattern.InOnly);
                     ServiceHelper.startService(deadLetterProcessor);
                 }
             }
