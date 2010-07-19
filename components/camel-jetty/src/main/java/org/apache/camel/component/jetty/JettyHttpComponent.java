@@ -21,11 +21,11 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.management.MBeanServer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpBinding;
@@ -73,15 +73,23 @@ public class JettyHttpComponent extends HttpComponent {
    
     private static final transient Log LOG = LogFactory.getLog(JettyHttpComponent.class);
     private static final String JETTY_SSL_KEYSTORE = "org.eclipse.jetty.ssl.keystore";
-    
+    private static final String JETTY_SSL_KEYPASSWORD = "org.eclipse.jetty.ssl.keypassword";
+    private static final String JETTY_SSL_PASSWORD = "org.eclipse.jetty.ssl.password";
+
     protected String sslKeyPassword;
     protected String sslPassword;
     protected String sslKeystore;
     protected Map<Integer, SslSocketConnector> sslSocketConnectors;
+    protected Map<Integer, SelectChannelConnector> socketConnectors;
+    protected Map<String, Object> sslSocketConnectorProperties;
+    protected Map<String, Object> socketConnectorProperties;
     protected HttpClient httpClient;
     protected ThreadPool httpClientThreadPool;
     protected Integer httpClientMinThreads;
     protected Integer httpClientMaxThreads;
+    protected Integer minThreads;
+    protected Integer maxThreads;
+    protected ThreadPool threadPool;
     protected MBeanContainer mbContainer;
     protected boolean enableJmx;
 
@@ -196,7 +204,7 @@ public class JettyHttpComponent extends HttpComponent {
                 if ("https".equals(endpoint.getProtocol())) {
                     connector = getSslSocketConnector(endpoint.getPort());
                 } else {
-                    connector = new SelectChannelConnector();
+                    connector = getSocketConnector(endpoint.getPort());
                 }
                 connector.setPort(endpoint.getPort());
                 connector.setHost(endpoint.getHttpUri().getHost());
@@ -314,47 +322,94 @@ public class JettyHttpComponent extends HttpComponent {
         return sslKeystore;
     }
 
-    public SslSocketConnector getSslSocketConnector(int port) {
+    protected SslSocketConnector getSslSocketConnector(int port) throws Exception {
         SslSocketConnector answer = null;
         if (sslSocketConnectors != null) {
             answer = sslSocketConnectors.get(port);
         }
         if (answer == null) {
             answer = createSslSocketConnector();
-        } else {
-            // try the keystore system property as a backup, jetty doesn't seem
-            // to read this property anymore
-            String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
-            if (keystoreProperty != null) {
-                answer.setKeystore(keystoreProperty);
-            }
-
         }
         return answer;
     }
     
-    public SslSocketConnector createSslSocketConnector() {
+    protected SslSocketConnector createSslSocketConnector() throws Exception {
         SslSocketConnector answer = new SslSocketConnector();
         // with default null values, jetty ssl system properties
         // and console will be read by jetty implementation
-        answer.setPassword(sslPassword);
-        answer.setKeyPassword(sslKeyPassword);
-        if (sslKeystore != null) {
+
+        String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
+        if (keystoreProperty != null) {
+            answer.setKeystore(keystoreProperty);
+        } else if (sslKeystore != null) {
             answer.setKeystore(sslKeystore);
-        } else {
-            // try the keystore system property as a backup, jetty doesn't seem
-            // to read this property anymore
-            String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
-            if (keystoreProperty != null) {
-                answer.setKeystore(keystoreProperty);
+        }
+
+        String keystorePassword = System.getProperty(JETTY_SSL_KEYPASSWORD);
+        if (keystorePassword != null) {
+            answer.setKeyPassword(keystorePassword);
+        } else if (sslKeyPassword != null) {
+            answer.setKeyPassword(sslKeyPassword);
+        }
+
+        String password = System.getProperty(JETTY_SSL_PASSWORD);
+        if (password != null) {
+            answer.setPassword(password);
+        } else if (sslPassword != null) {
+            answer.setPassword(sslPassword);
+        }
+
+        if (getSslSocketConnectorProperties() != null) {
+            // must copy the map otherwise it will be deleted
+            Map<String, Object> properties = new HashMap<String, Object>(getSslSocketConnectorProperties());
+            IntrospectionSupport.setProperties(answer, properties);
+            if (properties.size() > 0) {
+                throw new IllegalArgumentException("There are " + properties.size()
+                    + " parameters that couldn't be set on the SslSocketConnector."
+                    + " Check the uri if the parameters are spelt correctly and that they are properties of the SslSocketConnector."
+                    + " Unknown parameters=[" + properties + "]");
             }
         }
-        
         return answer;
+    }
+
+    public Map<Integer, SslSocketConnector> getSslSocketConnectors() {
+        return sslSocketConnectors;
     }
 
     public void setSslSocketConnectors(Map <Integer, SslSocketConnector> connectors) {
         sslSocketConnectors = connectors;
+    }
+
+    public SelectChannelConnector getSocketConnector(int port) throws Exception {
+        SelectChannelConnector answer = null;
+        if (socketConnectors != null) {
+            answer = socketConnectors.get(port);
+        }
+        if (answer == null) {
+            answer = createSocketConnector();
+        }
+        return answer;
+    }
+
+    protected SelectChannelConnector createSocketConnector() throws Exception {
+        SelectChannelConnector answer = new SelectChannelConnector();
+        if (getSocketConnectorProperties() != null) {
+            // must copy the map otherwise it will be deleted
+            Map<String, Object> properties = new HashMap<String, Object>(getSocketConnectorProperties());
+            IntrospectionSupport.setProperties(answer, properties);
+            if (properties.size() > 0) {
+                throw new IllegalArgumentException("There are " + properties.size()
+                    + " parameters that couldn't be set on the SocketConnector."
+                    + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
+                    + " Unknown parameters=[" + properties + "]");
+            }
+        }
+        return answer;
+    }
+
+    public void setSocketConnectors(Map<Integer, SelectChannelConnector> socketConnectors) {
+        this.socketConnectors = socketConnectors;
     }
 
     public synchronized HttpClient getHttpClient() {
@@ -421,6 +476,30 @@ public class JettyHttpComponent extends HttpComponent {
         this.httpClientMaxThreads = httpClientMaxThreads;
     }
 
+    public Integer getMinThreads() {
+        return minThreads;
+    }
+
+    public void setMinThreads(Integer minThreads) {
+        this.minThreads = minThreads;
+    }
+
+    public Integer getMaxThreads() {
+        return maxThreads;
+    }
+
+    public void setMaxThreads(Integer maxThreads) {
+        this.maxThreads = maxThreads;
+    }
+
+    public ThreadPool getThreadPool() {
+        return threadPool;
+    }
+
+    public void setThreadPool(ThreadPool threadPool) {
+        this.threadPool = threadPool;
+    }
+
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
     }
@@ -453,6 +532,36 @@ public class JettyHttpComponent extends HttpComponent {
 
     public void setMbContainer(MBeanContainer mbContainer) {
         this.mbContainer = mbContainer;
+    }
+
+    public Map<String, Object> getSslSocketConnectorProperties() {
+        return sslSocketConnectorProperties;
+    }
+
+    public void setSslSocketConnectorProperties(Map<String, Object> sslSocketConnectorProperties) {
+        this.sslSocketConnectorProperties = sslSocketConnectorProperties;
+    }
+
+    public Map<String, Object> getSocketConnectorProperties() {
+        return socketConnectorProperties;
+    }
+
+    public void setSocketConnectorProperties(Map<String, Object> socketConnectorProperties) {
+        this.socketConnectorProperties = socketConnectorProperties;
+    }
+
+    public void addSocketConnectorProperty(String key, Object value) {
+        if (socketConnectorProperties == null) {
+            socketConnectorProperties = new HashMap<String, Object>();
+        }
+        socketConnectorProperties.put(key, value);
+    }
+
+    public void addSslSocketConnectorProperty(String key, Object value) {
+        if (sslSocketConnectorProperties == null) {
+            sslSocketConnectorProperties = new HashMap<String, Object>();
+        }
+        sslSocketConnectorProperties.put(key, value);
     }
 
     // Implementation methods
@@ -502,6 +611,31 @@ public class JettyHttpComponent extends HttpComponent {
         Server server = new Server();
         ContextHandlerCollection collection = new ContextHandlerCollection();
         server.setHandler(collection);
+
+        // configure thread pool if min/max given
+        if (minThreads != null || maxThreads != null) {
+            if (getThreadPool() != null) {
+                throw new IllegalArgumentException("You cannot configure both minThreads/maxThreads and a custom threadPool on JettyHttpComponent: " + this);
+            }
+            QueuedThreadPool qtp = new QueuedThreadPool();
+            if (minThreads != null) {
+                qtp.setMinThreads(minThreads.intValue());
+            }
+            if (maxThreads != null) {
+                qtp.setMaxThreads(maxThreads.intValue());
+            }
+            try {
+                qtp.start();
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Error starting JettyServer thread pool: " + qtp, e);
+            }
+            server.setThreadPool(qtp);
+        }
+
+        if (getThreadPool() != null) {
+            server.setThreadPool(getThreadPool());
+        }
+
         return server;
     }
     

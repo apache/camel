@@ -27,7 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
 
 public class ExplicitHttpsRouteTest extends HttpsRouteTest {
-    
+
+    // START SNIPPET: e2
     private SslSocketConnector createSslSocketConnector() throws URISyntaxException {
         SslSocketConnector sslSocketConnector = new SslSocketConnector();
         sslSocketConnector.setKeyPassword(pwd);
@@ -37,19 +38,26 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
         sslSocketConnector.setTruststoreType("JKS");
         return sslSocketConnector;
     }
+    // END SNIPPET: e2
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                
-                JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
+                // START SNIPPET: e1
+                // create SSL socket connectors for port 9080 and 9090
                 Map<Integer, SslSocketConnector> connectors = new HashMap<Integer, SslSocketConnector>();
                 connectors.put(9080, createSslSocketConnector());
                 connectors.put(9090, createSslSocketConnector());
-                
-                componentJetty.setSslSocketConnectors(connectors);
-                
+
+                // create jetty component
+                JettyHttpComponent jetty = new JettyHttpComponent();
+                // add connectors
+                jetty.setSslSocketConnectors(connectors);
+                // add jetty to camel context
+                context.addComponent("jetty", jetty);
+                // END SNIPPET: e1
+
                 from("jetty:https://localhost:9080/test").to("mock:a");
 
                 Processor proc = new Processor() {

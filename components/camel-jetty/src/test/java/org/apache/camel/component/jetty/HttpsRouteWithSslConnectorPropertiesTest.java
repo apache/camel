@@ -16,37 +16,41 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
 
-public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
-    
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        // ensure jsse clients can validate the self signed dummy localhost cert,
-        // use the server keystore as the trust store for these tests
-        URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
-        setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.getPath());
-        
-        // START SNIPPET: e1
-        // setup SSL using system properties
-        setSystemProp("org.eclipse.jetty.ssl.keystore", trustStoreUrl.getPath());
-        setSystemProp("org.eclipse.jetty.ssl.keypassword", pwd);
-        setSystemProp("org.eclipse.jetty.ssl.password", pwd);
-        // END SNIPPET: e1
+public class HttpsRouteWithSslConnectorPropertiesTest extends HttpsRouteTest {
 
-        super.setUp();     
-    }
-    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
+            public void configure() throws URISyntaxException {
+                // START SNIPPET: e1
+                // keystore path
+                URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
+                String path = keyStoreUrl.toURI().getPath();
+
+                // map with properties
+                Map<String, Object> properties = new HashMap<String, Object>();
+                properties.put("keyPassword", pwd);
+                properties.put("password", pwd);
+                properties.put("keystore", path);
+                properties.put("truststoreType", "JKS");
+
+                // create jetty component
+                JettyHttpComponent jetty = new JettyHttpComponent();
+                jetty.setSslSocketConnectorProperties(properties);
+
+                // add jetty to camel context
+                context.addComponent("jetty", jetty);
+                // END SNIPPET: e1
+
                 from("jetty:https://localhost:9080/test").to("mock:a");
 
                 Processor proc = new Processor() {
@@ -55,7 +59,7 @@ public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
                     }
                 };
                 from("jetty:https://localhost:9080/hello").process(proc);
-                
+
                 from("jetty:https://localhost:9090/test").to("mock:b");
             }
         };
