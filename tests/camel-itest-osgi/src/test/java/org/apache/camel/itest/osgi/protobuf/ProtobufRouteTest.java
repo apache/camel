@@ -104,7 +104,7 @@ public class ProtobufRouteTest extends OSGiIntegrationTestSupport {
                 from("direct:back").unmarshal(format).to("mock:reverse");
                 
                 from("direct:marshal").marshal().protobuf();
-                from("direct:unmarshalA").unmarshal().protobuf("org.apache.camel.itest.osgi.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
+                from("direct:unmarshalA").unmarshal().protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
                 
                 from("direct:unmarshalB").unmarshal().protobuf(AddressBookProtos.Person.getDefaultInstance()).to("mock:reverse");
                 
