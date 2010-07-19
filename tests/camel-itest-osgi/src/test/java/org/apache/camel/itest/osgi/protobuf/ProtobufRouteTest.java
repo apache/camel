@@ -16,15 +16,13 @@
  */
 package org.apache.camel.itest.osgi.protobuf;
 
-
 import org.apache.camel.CamelException;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.protobuf.ProtobufDataFormat;
+import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.apache.camel.itest.osgi.protobuf.generated.AddressBookProtos;
-import org.apache.camel.itest.osgi.protobuf.generated.AddressBookProtos.Person;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -32,12 +30,10 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
-
 
 @RunWith(JUnit4TestRunner.class)
 public class ProtobufRouteTest extends OSGiIntegrationTestSupport {
@@ -83,7 +79,7 @@ public class ProtobufRouteTest extends OSGiIntegrationTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(Person.class);
+        mock.message(0).body().isInstanceOf(org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.class);
         mock.message(0).body().equals(input);
 
         Object marshalled = template.requestBody(inURI, input);
@@ -92,7 +88,7 @@ public class ProtobufRouteTest extends OSGiIntegrationTestSupport {
 
         mock.assertIsSatisfied();
 
-        Person output = mock.getReceivedExchanges().get(0).getIn().getBody(Person.class);
+        AddressBookProtos.Person output = mock.getReceivedExchanges().get(0).getIn().getBody(AddressBookProtos.Person.class);
         assertEquals("Martin", output.getName());
     }
 
@@ -102,7 +98,7 @@ public class ProtobufRouteTest extends OSGiIntegrationTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                ProtobufDataFormat format = new ProtobufDataFormat(Person.getDefaultInstance());
+                ProtobufDataFormat format = new ProtobufDataFormat(AddressBookProtos.Person.getDefaultInstance());
 
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format).to("mock:reverse");
@@ -110,7 +106,7 @@ public class ProtobufRouteTest extends OSGiIntegrationTestSupport {
                 from("direct:marshal").marshal().protobuf();
                 from("direct:unmarshalA").unmarshal().protobuf("org.apache.camel.itest.osgi.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
                 
-                from("direct:unmarshalB").unmarshal().protobuf(Person.getDefaultInstance()).to("mock:reverse");
+                from("direct:unmarshalB").unmarshal().protobuf(AddressBookProtos.Person.getDefaultInstance()).to("mock:reverse");
                 
             }
         };
