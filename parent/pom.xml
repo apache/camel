@@ -101,6 +101,7 @@
     <osgi-version>4.1.0</osgi-version>
     <pax-exam-version>1.2.0</pax-exam-version>
     <pax-tiny-bundle-version>1.2.0</pax-tiny-bundle-version>
+    <protobuf-version>2.3.0</protobuf-version>
     <qpid-version>0.5.0</qpid-version>
     <quartz-version>1.8.3</quartz-version>
     <restlet-version>1.1.10</restlet-version>
