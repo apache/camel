@@ -34,6 +34,14 @@
     <camel.osgi.export.pkg>org.apache.camel.converter.xmlbeans.*</camel.osgi.export.pkg>
   </properties>
 
+  <repositories>
+      <repository>
+          <id>fusesource.m2all</id>
+          <name>Fusesource maven2 Repository</name>
+          <url>http://repo.fusesource.com/maven2-all</url>
+      </repository>
+  </repositories>
+
   <dependencies>
 
     <dependency>
