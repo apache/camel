@@ -41,6 +41,11 @@
             <name>Apache ServiceMix Repository</name>
             <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
         </repository>
+        <repository>
+            <id>fusesource.m2all</id>
+            <name>Fusesource maven2 Repository</name>
+            <url>http://repo.fusesource.com/maven2-all</url>
+        </repository>
     </repositories>
 
   <dependencies>
