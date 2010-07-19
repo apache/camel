@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
@@ -70,7 +71,8 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
     public Processor getFailureProcessor() {
         if (failureProcessor == null) {
-            failureProcessor = new SendProcessor(deadLetter);
+            // force MEP to be InOnly so when sending to DLQ we would not expect a reply if the MEP was InOut
+            failureProcessor = new SendProcessor(deadLetter, ExchangePattern.InOnly);
         }
         return failureProcessor;
     }

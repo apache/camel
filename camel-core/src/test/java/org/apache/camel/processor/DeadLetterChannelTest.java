@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -63,6 +64,33 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         assertNotNull("Should have been a cause property", t);
         assertTrue(t instanceof RuntimeException);
         assertEquals("Failed to process due to attempt: 3 being less than: 5", t.getMessage());
+
+        // must be InOnly
+        Exchange dead = deadEndpoint.getReceivedExchanges().get(0);
+        assertEquals(ExchangePattern.InOnly, dead.getPattern());
+    }
+
+    public void testLotsOfAttemptsFailInOut() throws Exception {
+        failUntilAttempt = 5;
+
+        deadEndpoint.expectedBodiesReceived(body);
+        // no traces of redelivery as the dead letter channel will handle the exception when moving the DLQ
+        deadEndpoint.message(0).header(Exchange.REDELIVERED).isNull();
+        deadEndpoint.message(0).header(Exchange.REDELIVERY_COUNTER).isNull();
+        successEndpoint.expectedMessageCount(0);
+
+        template.requestBody("direct:start", body);
+
+        assertMockEndpointsSatisfied();
+
+        Throwable t = deadEndpoint.getExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+        assertNotNull("Should have been a cause property", t);
+        assertTrue(t instanceof RuntimeException);
+        assertEquals("Failed to process due to attempt: 3 being less than: 5", t.getMessage());
+
+        // must be InOnly
+        Exchange dead = deadEndpoint.getReceivedExchanges().get(0);
+        assertEquals(ExchangePattern.InOnly, dead.getPattern());
     }
 
     @Override

@@ -30,6 +30,12 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsProducerDisableReplyToTest extends CamelTestSupport {
 
+    @Override
+    public void setUp() throws Exception {
+        deleteDirectory("activemq-data");
+        super.setUp();
+    }
+
     @Test
     public void testProducerDisableReplyTo() throws Exception {
         String url = "activemq:queue:foo?disableReplyTo=true";

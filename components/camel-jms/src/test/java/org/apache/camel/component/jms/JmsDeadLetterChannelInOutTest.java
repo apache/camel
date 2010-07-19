@@ -34,6 +34,12 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsDeadLetterChannelInOutTest extends CamelTestSupport {
 
+    @Override
+    public void setUp() throws Exception {
+        deleteDirectory("activemq-data");
+        super.setUp();
+    }
+
     @Test
     public void testJmsDLCInOut() throws Exception {
         Exchange out = template.send("direct:start", new Processor() {
@@ -66,7 +72,7 @@ public class JmsDeadLetterChannelInOutTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("activemq:queue:error?disableReplyTo=true"));
+                errorHandler(deadLetterChannel("activemq:queue:error"));
 
                 from("direct:start").throwException(new IllegalArgumentException("Damn"));
             }

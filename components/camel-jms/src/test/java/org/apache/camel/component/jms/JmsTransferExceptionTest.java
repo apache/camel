@@ -24,10 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
@@ -58,10 +58,6 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
 
     @Test
     public void testTransferExeption() throws Exception {
-        // should fail as we thrown an exception
-        MockEndpoint dead = getMockEndpoint("mock:dead");
-        dead.expectedMessageCount(1);
-
         // we send something that causes a remote exception
         // then we expect our producer template to thrown
         // an exception with the remote exception as cause
@@ -72,8 +68,6 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
             assertEquals("Boom", e.getCause().getMessage());
             assertNotNull("Should contain a remote stacktrace", e.getCause().getStackTrace());
         }
-
-        assertMockEndpointsSatisfied();
 
         // we still try redeliver
         assertEquals(3, counter);
@@ -93,7 +87,7 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false).handled(false));
+                errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
                 from(getUri())
                         .process(new Processor() {
