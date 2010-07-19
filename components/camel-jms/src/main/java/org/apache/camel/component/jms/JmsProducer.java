@@ -142,7 +142,7 @@ public class JmsProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
+        if (!endpoint.isDisableReplyTo() && exchange.getPattern().isOutCapable()) {
             // in out requires a bit more work than in only
             processInOut(exchange);
         } else {
