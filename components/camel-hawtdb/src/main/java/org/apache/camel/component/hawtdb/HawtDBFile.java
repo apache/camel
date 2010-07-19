@@ -74,15 +74,12 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
 
         execute(new Work<Boolean>() {
             public Boolean execute(Transaction tx) {
-                int page = tx.allocator().alloc(1);
-                if (page == 0) {
+                if (!tx.allocator().isAllocated(0)) {
                     // if we just created the file, first allocated page should be 0
-                    ROOT_INDEXES_FACTORY.create(tx, 0);
+                    ROOT_INDEXES_FACTORY.create(tx);
                     LOG.info("Aggregation repository data store created using file: " + getFile());
                 } else {
-                    // Was previously created.. so free up the test page
-                    tx.allocator().free(page, 1);
-                    SortedIndex<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx, 0);
+                    SortedIndex<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx);
                     LOG.info("Aggregation repository data store loaded using file: " + getFile()
                             + " containing " + indexes.size() + " repositories.");
                 }
@@ -117,13 +114,13 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
     public SortedIndex<Buffer, Buffer> getRepositoryIndex(Transaction tx, String name, boolean create) {
         SortedIndex<Buffer, Buffer> answer = null;
 
-        SortedIndex<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx, 0);
+        SortedIndex<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx);
         Integer location = indexes.get(name);
 
         if (create && location == null) {
             // create it..
-            int page = tx.allocator().alloc(1);
-            SortedIndex<Buffer, Buffer> created = INDEX_FACTORY.create(tx, page);
+            SortedIndex<Buffer, Buffer> created = INDEX_FACTORY.create(tx);
+            int page = created.getIndexLocation();
 
             // add it to indexes so we can find it the next time
             indexes.put(name, page);
