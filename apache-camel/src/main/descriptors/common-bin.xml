@@ -113,13 +113,17 @@
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xstream</include>
+        <!-- these two jars is mandatory -->
         <include>commons-logging:commons-logging</include>
         <include>org.fusesource.commonman:commons-management</include>
-        <include>javax.xml.bind:jaxb-api</include>
-        <include>javax.activation:activation</include>
-        <include>javax.xml.stream:stax-api</include>
-        <include>com.sun.xml.bind:jaxb-impl</include>
-        <!--<include>stax:stax-api</include>-->
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/lib/spring</outputDirectory>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <includes>
+        <!-- spring is used by several camel components -->
         <include>aopalliance:aopalliance</include>
         <include>org.springframework:spring-aop</include>
         <include>org.springframework:spring-asm</include>
@@ -128,10 +132,23 @@
         <include>org.springframework:spring-context-support</include>
         <include>org.springframework:spring-core</include>
         <include>org.springframework:spring-expression</include>
+        <include>org.springframework:spring-jdbc</include>
         <include>org.springframework:spring-jms</include>
+        <include>org.springframework:spring-orm</include>
         <include>org.springframework:spring-test</include>
         <include>org.springframework:spring-tx</include>
         <include>org.springframework:spring-web</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/lib/jdk15</outputDirectory>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <includes>
+        <include>javax.xml.bind:jaxb-api</include>
+        <include>javax.activation:activation</include>
+        <include>javax.xml.stream:stax-api</include>
+        <include>com.sun.xml.bind:jaxb-impl</include>
       </includes>
     </dependencySet>
     <dependencySet>
@@ -140,6 +157,8 @@
       <scope>runtime</scope>
       <includes>
         <include>log4j:log4j</include>
+        <include>org.slf4j:slf4j-api</include>
+        <include>org.slf4j:slf4j-log4j12</include>
         <!-- commons-XXX is needed when running examples using ANT -->
         <include>commons-beanutils:commons-beanutils</include>
         <include>commons-collections:commons-collections</include>
