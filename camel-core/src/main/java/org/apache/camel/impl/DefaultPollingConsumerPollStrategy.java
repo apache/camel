@@ -24,6 +24,8 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A default implementation that just logs a <tt>WARN</tt> level log in case of rollback.
+ * <p/>
+ * The implement will <b>not</b> log if the rollback occurred during shutdown.
  *
  * @version $Revision$
  */
@@ -40,7 +42,16 @@ public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollSt
     }
 
     public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
-        log.warn("Consumer " + consumer +  " could not poll endpoint: " + endpoint.getEndpointUri() + " caused by: " + e.getMessage(), e);
+        boolean runAllowed = true;
+        if (consumer instanceof ServiceSupport) {
+            runAllowed = ((ServiceSupport) consumer).isRunAllowed();
+        }
+
+        // only log warn if we are running, otherwise we are just stopping which we should not log the issue in the logs
+        if (runAllowed) {
+            log.warn("Consumer " + consumer +  " could not poll endpoint: " + endpoint.getEndpointUri() + " caused by: " + e.getMessage(), e);
+        }
+
         // we do not want to retry
         return false;
     }

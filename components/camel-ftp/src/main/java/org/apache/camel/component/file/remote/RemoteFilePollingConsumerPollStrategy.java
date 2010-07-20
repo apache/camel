@@ -29,10 +29,20 @@ public class RemoteFilePollingConsumerPollStrategy extends DefaultPollingConsume
 
     @Override
     public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
-        // disconnect from the server to force it to re login at next poll to recover
         RemoteFileConsumer rfc = (RemoteFileConsumer) consumer;
-        log.warn("Trying to recover by disconnecting from remote server forcing a re-connect at next poll: " + rfc.remoteServer());
-        rfc.disconnect();
+
+        // only try to recover if we are allowed to run
+        if (((RemoteFileConsumer) consumer).isRunAllowed()) {
+            // disconnect from the server to force it to re login at next poll to recover
+            log.warn("Trying to recover by disconnecting from remote server forcing a re-connect at next poll: " + rfc.remoteServer());
+            try {
+                rfc.disconnect();
+            } catch (Throwable t) {
+                // ignore the exception
+                log.debug("Error occurred during disconnect from: " + rfc.remoteServer() + ". This example will be ignored.", t);
+            }
+        }
+
         return super.rollback(consumer, endpoint, retryCounter, e);
     }
 
