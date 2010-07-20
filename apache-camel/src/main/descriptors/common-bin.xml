@@ -120,12 +120,18 @@
         <include>javax.xml.stream:stax-api</include>
         <include>com.sun.xml.bind:jaxb-impl</include>
         <!--<include>stax:stax-api</include>-->
+        <include>aopalliance:aopalliance</include>
         <include>org.springframework:spring-aop</include>
+        <include>org.springframework:spring-asm</include>
         <include>org.springframework:spring-beans</include>
         <include>org.springframework:spring-context</include>
+        <include>org.springframework:spring-context-support</include>
         <include>org.springframework:spring-core</include>
-        <include>org.springframework:spring-web</include>
+        <include>org.springframework:spring-expression</include>
+        <include>org.springframework:spring-jms</include>
         <include>org.springframework:spring-test</include>
+        <include>org.springframework:spring-tx</include>
+        <include>org.springframework:spring-web</include>
       </includes>
     </dependencySet>
     <dependencySet>
