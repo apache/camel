@@ -218,7 +218,7 @@
 		     <artifact>
                        <file>target/classes/features-spring2.xml</file>
                        <type>xml</type>
-                       <classifier>features-spring3</classifier>
+                       <classifier>features-spring2</classifier>
                      </artifact>
                    </artifacts>
                  </configuration>
