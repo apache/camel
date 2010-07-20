@@ -50,6 +50,7 @@ import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
@@ -58,6 +59,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.builder.xml.Namespaces.DEFAULT_NAMESPACE;
+import static org.apache.camel.builder.xml.Namespaces.FUNCTION_NAMESPACE;
 import static org.apache.camel.builder.xml.Namespaces.IN_NAMESPACE;
 import static org.apache.camel.builder.xml.Namespaces.OUT_NAMESPACE;
 import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmptyNamespace;
@@ -98,6 +100,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     private XPathFunction headerFunction;
     private XPathFunction outBodyFunction;
     private XPathFunction outHeaderFunction;
+    private XPathFunction propertiesFunction;
+    private XPathFunction simpleFunction;
 
     public XPathBuilder(String text) {
         this.text = text;
@@ -464,7 +468,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
                     if (exchange != null && !list.isEmpty()) {
                         Object value = list.get(0);
                         if (value != null) {
-                            return exchange.get().getIn().getHeader(value.toString());
+                            String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                            return exchange.get().getIn().getHeader(text);
                         }
                     }
                     return null;
@@ -503,7 +508,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
                     if (exchange.get() != null && !list.isEmpty()) {
                         Object value = list.get(0);
                         if (value != null) {
-                            return exchange.get().getOut().getHeader(value.toString());
+                            String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                            return exchange.get().getOut().getHeader(text);
                         }
                     }
                     return null;
@@ -515,6 +521,59 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
     public void setOutHeaderFunction(XPathFunction outHeaderFunction) {
         this.outHeaderFunction = outHeaderFunction;
+    }
+
+    public XPathFunction getPropertiesFunction() {
+        if (propertiesFunction == null) {
+            propertiesFunction = new XPathFunction() {
+                public Object evaluate(List list) throws XPathFunctionException {
+                    if (exchange != null && !list.isEmpty()) {
+                        Object value = list.get(0);
+                        if (value != null) {
+                            String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                            try {
+                                // use the property placeholder resolver to lookup the property for us
+                                Object answer = exchange.get().getContext().resolvePropertyPlaceholders("{{" + text + "}}");
+                                return answer;
+                            } catch (Exception e) {
+                                throw new XPathFunctionException(e);
+                            }
+                        }
+                    }
+                    return null;
+                }
+            };
+        }
+        return propertiesFunction;
+    }
+
+    public void setPropertiesFunction(XPathFunction propertiesFunction) {
+        this.propertiesFunction = propertiesFunction;
+    }
+
+    public XPathFunction getSimpleFunction() {
+        if (simpleFunction == null) {
+            simpleFunction = new XPathFunction() {
+                public Object evaluate(List list) throws XPathFunctionException {
+                    if (exchange != null && !list.isEmpty()) {
+                        Object value = list.get(0);
+                        if (value != null) {
+                            String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                            Language simple = exchange.get().getContext().resolveLanguage("simple");
+                            Expression exp = simple.createExpression(text);
+                            Object answer = exp.evaluate(exchange.get(), Object.class);
+                            return answer;
+                        }
+                    }
+                    return null;
+                }
+            };
+        }
+        return simpleFunction;
+    }
+
+    public void setSimpleFunction(XPathFunction simpleFunction) {
+        this.simpleFunction = simpleFunction;
     }
 
     public Class<?> getResultType() {
@@ -640,6 +699,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         setNamespaceIfNotPresent(context, "out", OUT_NAMESPACE);
         setNamespaceIfNotPresent(context, "env", Namespaces.ENVIRONMENT_VARIABLES);
         setNamespaceIfNotPresent(context, "system", Namespaces.SYSTEM_PROPERTIES_NAMESPACE);
+        setNamespaceIfNotPresent(context, "function", Namespaces.FUNCTION_NAMESPACE);
     }
 
     protected void setNamespaceIfNotPresent(DefaultNamespaceContext context, String prefix, String uri) {
@@ -676,6 +736,15 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
                         }
                         if (localPart.equals("header") && argumentCount == 1) {
                             return getOutHeaderFunction();
+                        }
+                    }
+                    if (isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), FUNCTION_NAMESPACE)) {
+                        String localPart = qName.getLocalPart();
+                        if (localPart.equals("properties") && argumentCount == 1) {
+                            return getPropertiesFunction();
+                        }
+                        if (localPart.equals("simple") && argumentCount == 1) {
+                            return getSimpleFunction();
                         }
                     }
                 }

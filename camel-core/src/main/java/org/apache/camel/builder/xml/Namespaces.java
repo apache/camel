@@ -38,6 +38,7 @@ public class Namespaces {
     public static final String DEFAULT_NAMESPACE = "http://camel.apache.org/schema/spring";
     public static final String IN_NAMESPACE = "http://camel.apache.org/xml/in/";
     public static final String OUT_NAMESPACE = "http://camel.apache.org/xml/out/";
+    public static final String FUNCTION_NAMESPACE = "http://camel.apache.org/xml/function/";
     public static final String SYSTEM_PROPERTIES_NAMESPACE = "http://camel.apache.org/xml/variables/system-properties";
     public static final String ENVIRONMENT_VARIABLES = "http://camel.apache.org/xml/variables/environment-variables";
     public static final String EXCHANGE_PROPERTY = "http://camel.apache.org/xml/variables/exchange-property";
