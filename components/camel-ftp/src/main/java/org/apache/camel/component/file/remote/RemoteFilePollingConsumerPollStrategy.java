@@ -39,7 +39,7 @@ public class RemoteFilePollingConsumerPollStrategy extends DefaultPollingConsume
                 rfc.disconnect();
             } catch (Throwable t) {
                 // ignore the exception
-                log.debug("Error occurred during disconnect from: " + rfc.remoteServer() + ". This example will be ignored.", t);
+                log.debug("Error occurred during disconnect from: " + rfc.remoteServer() + ". This exception will be ignored.", t);
             }
         }
 
