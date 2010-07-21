@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ScheduledExecutorService;
-
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
@@ -35,7 +34,6 @@ import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap.Deferred
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.DefaultTimeoutMap;
 import org.apache.camel.util.TimeoutMap;
-import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -49,9 +47,7 @@ import org.springframework.jms.support.destination.DestinationResolver;
  */
 public class Requestor extends ServiceSupport implements MessageListener {
     private static final transient Log LOG = LogFactory.getLog(Requestor.class);
-    private static UuidGenerator uuidGenerator;
     private final JmsConfiguration configuration;
-    private ScheduledExecutorService executorService;
     private AbstractMessageListenerContainer listenerContainer;
     private TimeoutMap<String, Object> requestMap;
     private Map<JmsProducer, DeferredRequestReplyMap> producerDeferredRequestReplyMap;
@@ -61,14 +57,15 @@ public class Requestor extends ServiceSupport implements MessageListener {
     private long maxRequestTimeout = -1;
     private long replyToResolverTimeout = 5000;
 
+    // TODO: Use a Task queue to transfer replies arriving in onMessage
+    // instead of using the FutureHandle to support async routing
 
     public Requestor(JmsConfiguration configuration, ScheduledExecutorService executorService) {
         this.configuration = configuration;
-        this.executorService = executorService;
-        requestMap = new DefaultTimeoutMap<String, Object>(executorService, configuration.getRequestMapPurgePollTimeMillis());
-        producerDeferredRequestReplyMap = new HashMap<JmsProducer, DeferredRequestReplyMap>();
-        deferredRequestMap = new DefaultTimeoutMap<String, Object>(executorService, configuration.getRequestMapPurgePollTimeMillis());
-        deferredReplyMap = new DefaultTimeoutMap<String, Object>(executorService, configuration.getRequestMapPurgePollTimeMillis());
+        this.requestMap = new DefaultTimeoutMap<String, Object>(executorService, configuration.getRequestMapPurgePollTimeMillis());
+        this.producerDeferredRequestReplyMap = new HashMap<JmsProducer, DeferredRequestReplyMap>();
+        this.deferredRequestMap = new DefaultTimeoutMap<String, Object>(executorService, configuration.getRequestMapPurgePollTimeMillis());
+        this.deferredReplyMap = new DefaultTimeoutMap<String, Object>(executorService, configuration.getRequestMapPurgePollTimeMillis());
     }
 
     public synchronized DeferredRequestReplyMap getDeferredRequestReplyMap(JmsProducer producer) {
@@ -259,13 +256,6 @@ public class Requestor extends ServiceSupport implements MessageListener {
             answer.setExceptionListener(exceptionListener);
         }
         return answer;
-    }
-
-    public static synchronized UuidGenerator getUuidGenerator() {
-        if (uuidGenerator == null) {
-            uuidGenerator = UuidGenerator.get();
-        }
-        return uuidGenerator;
     }
 
     protected JmsConfiguration getConfiguration() {

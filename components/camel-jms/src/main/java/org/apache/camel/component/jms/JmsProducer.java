@@ -26,6 +26,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.FailedToCreateProducerException;
@@ -37,7 +38,7 @@ import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap;
 import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap.DeferredMessageSentCallback;
 import org.apache.camel.component.jms.requestor.PersistentReplyToRequestor;
 import org.apache.camel.component.jms.requestor.Requestor;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.util.UuidGenerator;
 import org.apache.camel.util.ValueHolder;
 import org.apache.commons.logging.Log;
@@ -48,7 +49,7 @@ import org.springframework.jms.core.MessageCreator;
 /**
  * @version $Revision$
  */
-public class JmsProducer extends DefaultProducer {
+public class JmsProducer extends DefaultAsyncProducer {
     private static final transient Log LOG = LogFactory.getLog(JmsProducer.class);
     private RequestorAffinity affinity;
     private final JmsEndpoint endpoint;
@@ -100,11 +101,11 @@ public class JmsProducer extends DefaultProducer {
                 try {
                     JmsConfiguration c = endpoint.getConfiguration();
                     if (c.getReplyTo() != null) {
-                        requestor = new PersistentReplyToRequestor(endpoint.getConfiguration(), endpoint.getScheduledExecutorService());
+                        requestor = new PersistentReplyToRequestor(endpoint.getConfiguration(), endpoint.getRequestorExecutorService());
                         requestor.start();
                     } else {
                         if (affinity == RequestorAffinity.PER_PRODUCER) {
-                            requestor = new Requestor(endpoint.getConfiguration(), endpoint.getScheduledExecutorService());
+                            requestor = new Requestor(endpoint.getConfiguration(), endpoint.getRequestorExecutorService());
                             requestor.start();
                         } else if (affinity == RequestorAffinity.PER_ENDPOINT) {
                             requestor = endpoint.getRequestor();
@@ -141,17 +142,17 @@ public class JmsProducer extends DefaultProducer {
         super.doStop();
     }
 
-    public void process(final Exchange exchange) {
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         if (!endpoint.isDisableReplyTo() && exchange.getPattern().isOutCapable()) {
             // in out requires a bit more work than in only
-            processInOut(exchange);
+            return processInOut(exchange, callback);
         } else {
             // in only
-            processInOnly(exchange);
+            return processInOnly(exchange, callback);
         }
     }
 
-    protected void processInOut(final Exchange exchange) {
+    protected boolean processInOut(final Exchange exchange, final AsyncCallback callback) {
         final org.apache.camel.Message in = exchange.getIn();
 
         String destinationName = in.getHeader(JmsConstants.JMS_DESTINATION_NAME, String.class);
@@ -190,7 +191,7 @@ public class JmsProducer extends DefaultProducer {
         }
 
         final ValueHolder<FutureTask> futureHolder = new ValueHolder<FutureTask>();
-        final DeferredMessageSentCallback callback = msgIdAsCorrId ? deferredRequestReplyMap.createDeferredMessageSentCallback() : null;
+        final DeferredMessageSentCallback jmsCallback = msgIdAsCorrId ? deferredRequestReplyMap.createDeferredMessageSentCallback() : null;
 
         MessageCreator messageCreator = new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
@@ -201,17 +202,23 @@ public class JmsProducer extends DefaultProducer {
                 FutureTask future;
                 future = (!msgIdAsCorrId)
                         ? requestor.getReceiveFuture(message.getJMSCorrelationID(), endpoint.getConfiguration().getRequestTimeout())
-                        : requestor.getReceiveFuture(callback);
+                        : requestor.getReceiveFuture(jmsCallback);
 
                 futureHolder.set(future);
                 return message;
             }
         };
 
-        doSend(true, destinationName, destination, messageCreator, callback);
+        doSend(true, destinationName, destination, messageCreator, jmsCallback);
 
         // after sending then set the OUT message id to the JMSMessageID so its identical
         setMessageId(exchange);
+
+        // now we should routing asynchronously to not block while waiting for the reply
+        // TODO:
+        // we need a thread pool to use for continue routing messages, just like a seda consumer
+        // and we need options to configure it as well so you can indicate how many threads to use
+        // TODO: Also consider requestTimeout
 
         // lets wait and return the response
         long requestTimeout = endpoint.getConfiguration().getRequestTimeout();
@@ -268,9 +275,12 @@ public class JmsProducer extends DefaultProducer {
             exchange.setException(e);
         }
 
+        // TODO: should be async
+        callback.done(true);
+        return true;
     }
 
-    protected void processInOnly(final Exchange exchange) {
+    protected boolean processInOnly(final Exchange exchange, final AsyncCallback callback) {
         final org.apache.camel.Message in = exchange.getIn();
 
         String destinationName = in.getHeader(JmsConstants.JMS_DESTINATION_NAME, String.class);
@@ -321,6 +331,10 @@ public class JmsProducer extends DefaultProducer {
 
         // after sending then set the OUT message id to the JMSMessageID so its identical
         setMessageId(exchange);
+
+        // we are synchronous so return true
+        callback.done(true);
+        return true;
     }
 
     /**

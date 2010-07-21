@@ -54,9 +54,6 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 @ManagedResource(description = "Managed JMS Endpoint")
 public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, ManagementAware<JmsEndpoint>, MultipleConsumersSupport {
-    private static final int DEFAULT_THREADPOOL_SIZE = 100;
-
-    private ScheduledExecutorService scheduledExecutorService;
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean pubSubDomain;
     private JmsBinding binding;
@@ -65,6 +62,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private String selector;
     private JmsConfiguration configuration;
     private Requestor requestor;
+    private ScheduledExecutorService requestorExecutorService;
 
     public JmsEndpoint() {
         this(null, null);
@@ -288,7 +286,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public synchronized Requestor getRequestor() throws Exception {
         if (requestor == null) {
-            requestor = new Requestor(getConfiguration(), getScheduledExecutorService());
+            requestor = new Requestor(getConfiguration(), getRequestorExecutorService());
             requestor.start();
         }
         return requestor;
@@ -296,18 +294,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setRequestor(Requestor requestor) {
         this.requestor = requestor;
-    }
-
-    public synchronized ScheduledExecutorService getScheduledExecutorService() {
-        if (scheduledExecutorService == null) {
-            scheduledExecutorService = getCamelContext().getExecutorServiceStrategy()
-                    .newScheduledThreadPool(this, getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
-        }
-        return scheduledExecutorService;
-    }
-
-    public void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
-        this.scheduledExecutorService = scheduledExecutorService;
     }
 
     public boolean isPubSubDomain() {
@@ -355,6 +341,13 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             throw new IllegalArgumentException("No Metadata JmsTemplate supplied!");
         }
         return template;
+    }
+
+    protected synchronized ScheduledExecutorService getRequestorExecutorService() {
+        if (requestorExecutorService == null) {
+            requestorExecutorService = getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this, "JmsRequesterTimeoutTask", 1);
+        }
+        return requestorExecutorService;
     }
 
     // Delegated properties from the configuration
