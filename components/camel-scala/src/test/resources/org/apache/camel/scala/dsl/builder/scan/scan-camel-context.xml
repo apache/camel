@@ -20,7 +20,7 @@
 	xsi:schemaLocation="http://camel.apache.org/schema/spring
        http://camel.apache.org/schema/spring/camel-spring.xsd
 	http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <package>org.apache.camel.scala.dsl.builder.scan</package>

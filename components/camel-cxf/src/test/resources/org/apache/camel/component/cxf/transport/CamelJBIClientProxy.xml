@@ -21,7 +21,7 @@
        xmlns:simple="http://cxf.apache.org/simple"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/beans/spring-beans.xsd
        http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/cxfEndpoint.xsd
        http://cxf.apache.org/simple http://cxf.apache.org/schemas/simple.xsd

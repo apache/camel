@@ -21,7 +21,7 @@
        xmlns:osgi="http://camel.apache.org/schema/osgi"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/osgi http://camel.apache.org/schema/osgi/camel-osgi.xsd">
 

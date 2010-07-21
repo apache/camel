@@ -20,7 +20,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <camelContext id="foo" xmlns="http://camel.apache.org/schema/spring">

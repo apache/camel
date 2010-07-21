@@ -19,7 +19,7 @@
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:camel="http://cxf.apache.org/transports/camel"
 	xsi:schemaLocation="
-       http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring  http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
