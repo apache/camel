@@ -123,7 +123,7 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
         
-        if (request.getMethod().equals("POST") && request.getContentType() != null && request.getContentType().equals("application/x-www-form-urlencoded")) {
+        if (request.getMethod().equals("POST") && request.getContentType() != null && request.getContentType().startsWith("application/x-www-form-urlencoded")) {
             String charset = request.getCharacterEncoding();
             if (charset == null) {
                 charset = "UTF-8";
