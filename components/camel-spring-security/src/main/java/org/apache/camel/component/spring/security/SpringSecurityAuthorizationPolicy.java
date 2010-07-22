@@ -90,6 +90,7 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
             publishEvent(new AuthorizedEvent(exchange, attributes, authenticated));
             
         } catch (RuntimeException exception) {
+            exchange.getIn().setHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, getId());
             CamelAuthorizationException authorizationException =
                 new CamelAuthorizationException("Cannot access the processor which has been protected.", exchange, exception);
             throw authorizationException;

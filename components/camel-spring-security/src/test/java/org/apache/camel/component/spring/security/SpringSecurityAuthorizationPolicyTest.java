@@ -60,6 +60,21 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
     }
     
     @Test
+    public void testAuthenticationFailed() throws Exception {
+        MockEndpoint end = getMockEndpoint("mock:end");
+        end.expectedMessageCount(0);
+        try {
+            sendMessageWithAuthentication("bob", "jimspassword");
+            fail("we should get the access deny exception here");
+        } catch (Exception exception) {
+            // the exception should be caused by CamelAuthorizationException
+            assertTrue("Expect CamelAuthorizationException here", exception.getCause() instanceof CamelAuthorizationException);
+            assertEquals("admin", ((CamelAuthorizationException) exception.getCause()).getPolicyId());
+        }
+        end.assertIsSatisfied();
+    }
+    
+    @Test
     public void testGetAuthorizationTokenFromSecurityContextHolder() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedBodiesReceived("hello world");
