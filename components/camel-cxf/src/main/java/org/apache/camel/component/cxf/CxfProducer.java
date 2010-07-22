@@ -27,6 +27,8 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 import javax.xml.ws.handler.MessageContext.Scope;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
@@ -48,9 +50,10 @@ import org.apache.cxf.service.model.BindingOperationInfo;
  *
  * @version $Revision$
  */
-public class CxfProducer extends DefaultProducer {
+public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     private static final Log LOG = LogFactory.getLog(CxfProducer.class);
     private Client client;
+    private CxfEndpoint endpoint;
 
     /**
      * Constructor to create a CxfProducer.  It will create a CXF client
@@ -62,7 +65,41 @@ public class CxfProducer extends DefaultProducer {
      */
     public CxfProducer(CxfEndpoint endpoint) throws Exception {
         super(endpoint);
+        this.endpoint = endpoint;
         client = endpoint.createClient();
+    }
+    
+    // As the cxf client async and sync api is implement different,
+    // so we don't delegate the sync process call to the async process 
+    public boolean process(Exchange camelExchange, AsyncCallback callback) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Process exchange: " + camelExchange);
+        }
+        
+        try {
+            // create CXF exchange
+            ExchangeImpl cxfExchange = new ExchangeImpl();
+            
+            // prepare binding operation info
+            BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange);
+            
+            Map<String, Object> invocationContext = new HashMap<String, Object>();
+            Map<String, Object> responseContext = new HashMap<String, Object>();
+            invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
+            invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
+            
+            CxfClientCallback cxfClientCallback = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
+            // send the CXF async request
+            client.invoke(cxfClientCallback, boi, getParams(endpoint, camelExchange), 
+                          invocationContext, cxfExchange);
+        } catch (Exception ex) {
+            // error occurred before we had a chance to go async
+            // so set exception and invoke callback true
+            camelExchange.setException(ex);
+            callback.done(true);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -78,15 +115,32 @@ public class CxfProducer extends DefaultProducer {
         // create CXF exchange
         ExchangeImpl cxfExchange = new ExchangeImpl();
         
-        // get CXF binding
-        CxfEndpoint endpoint = (CxfEndpoint)getEndpoint();
-        CxfBinding binding = endpoint.getCxfBinding();
+        // prepare binding operation info
+        BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange);
+        
+        Map<String, Object> invocationContext = new HashMap<String, Object>();
+        Map<String, Object> responseContext = new HashMap<String, Object>();
+        invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
+        invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
+        
+        // send the CXF request
+        client.invoke(boi, getParams(endpoint, camelExchange), 
+                      invocationContext, cxfExchange);
+        
+        // bind the CXF response to Camel exchange
+        if (!boi.getOperationInfo().isOneWay()) {
+            // copy the InMessage header to OutMessage header
+            camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
+            endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
+                    responseContext);
+        }
+    }
+    
+    protected Map<String, Object> prepareRequest(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) throws Exception {
         
         // create invocation context
         WrappedMessageContext requestContext = new WrappedMessageContext(
                 new HashMap<String, Object>(), null, Scope.APPLICATION);
-        Map<String, Object> responseContext = new HashMap<String, Object>();
-        
         
         // set data format mode in exchange
         DataFormat dataFormat = endpoint.getDataFormat();
@@ -107,13 +161,26 @@ public class CxfProducer extends DefaultProducer {
                         + "=" + true);
             }
         }
+     
+        // bind the request CXF exchange
+        endpoint.getCxfBinding().populateCxfRequestFromExchange(cxfExchange, camelExchange, 
+                requestContext);
         
+        // Remove protocol headers from scopes.  Otherwise, response headers can be
+        // overwritten by request headers when SOAPHandlerInterceptor tries to create
+        // a wrapped message context by the copyScoped() method.
+        requestContext.getScopes().remove(Message.PROTOCOL_HEADERS);
+        
+        return requestContext.getWrappedMap();
+    }
+    
+    private BindingOperationInfo prepareBindingOperation(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) {
         // get binding operation info
         BindingOperationInfo boi = getBindingOperationInfo(camelExchange);
         ObjectHelper.notNull(boi, "BindingOperationInfo");
         
         // keep the message wrapper in PAYLOAD mode
-        if (dataFormat == DataFormat.PAYLOAD && boi.isUnwrapped()) {
+        if (endpoint.getDataFormat() == DataFormat.PAYLOAD && boi.isUnwrapped()) {
             boi = boi.getWrappedOperation();
             cxfExchange.put(BindingOperationInfo.class, boi);
             
@@ -126,7 +193,7 @@ public class CxfProducer extends DefaultProducer {
         }
 
         // Unwrap boi before passing it to make a client call
-        if (dataFormat != DataFormat.PAYLOAD && !endpoint.isWrapped() && boi != null) {
+        if (endpoint.getDataFormat() != DataFormat.PAYLOAD && !endpoint.isWrapped() && boi != null) {
             if (boi.isUnwrappedCapable()) {
                 boi = boi.getUnwrappedOperation();
                 if (LOG.isTraceEnabled()) {
@@ -134,31 +201,7 @@ public class CxfProducer extends DefaultProducer {
                 }
             }
         }
-     
-        // bind the request CXF exchange
-        binding.populateCxfRequestFromExchange(cxfExchange, camelExchange, 
-                requestContext);
-        
-        // Remove protocol headers from scopes.  Otherwise, response headers can be
-        // overwritten by request headers when SOAPHandlerInterceptor tries to create
-        // a wrapped message context by the copyScoped() method.
-        requestContext.getScopes().remove(Message.PROTOCOL_HEADERS);
-        
-        Map<String, Object> invocationContext = new HashMap<String, Object>();
-        invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
-        invocationContext.put(Client.REQUEST_CONTEXT, requestContext.getWrappedMap());
-
-        // send the CXF request
-        client.invoke(boi, getParams(endpoint, camelExchange), 
-                invocationContext, cxfExchange);
-        
-        // bind the CXF response to Camel exchange
-        if (!boi.getOperationInfo().isOneWay()) {
-            // copy the InMessage header to OutMessage header
-            camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
-            binding.populateExchangeFromCxfResponse(camelExchange, cxfExchange,
-                    responseContext);
-        }
+        return  boi;
     }
     
     private void checkParameterSize(CxfEndpoint endpoint, Exchange exchange, Object[] parameters) {

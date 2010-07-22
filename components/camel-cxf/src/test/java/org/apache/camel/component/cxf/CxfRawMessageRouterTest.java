@@ -28,6 +28,7 @@ import org.junit.Test;
 public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
     private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
+    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -60,6 +61,7 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
                                          + "<soap:Body><ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
                                          + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">hello world</arg0>"
                                          + "</ns1:echo></soap:Body></soap:Envelope>");
+                
             }
 
         });
