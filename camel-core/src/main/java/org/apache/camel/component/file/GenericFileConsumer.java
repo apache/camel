@@ -71,6 +71,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             if (log.isDebugEnabled()) {
                 log.debug("Skipping pool as pre poll check returned false");
             }
+            return;
         }
 
         // gather list of files to process
@@ -211,18 +212,16 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     }
 
     /**
-     * Override if required. Perform some checks (and perhaps actions) before we
-     * poll.
+     * Override if required. Perform some checks (and perhaps actions) before we poll.
      *
-     * @return true to poll, false to skip this poll.
+     * @return <tt>true</tt> to poll, <tt>false</tt> to skip this poll.
      */
     protected boolean prePollCheck() throws Exception {
         return true;
     }
 
     /**
-     * Override if required. Perform some checks (and perhaps actions) after we
-     * have polled.
+     * Override if required. Perform some checks (and perhaps actions) after we have polled.
      */
     protected void postPollCheck() {
         // noop
