@@ -55,7 +55,6 @@ import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.servlets.MultiPartFilter;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
@@ -599,7 +598,7 @@ public class JettyHttpComponent extends HttpComponent {
             }
             context.setAttribute("javax.servlet.context.tempdir", file);
         }
-        filterHolder.setFilter(new MultiPartFilter());
+        filterHolder.setFilter(new CamelMultipartFilter());
         //add the default MultiPartFilter filter for it
         context.addFilter(filterHolder, "/*", 0);
         context.addServlet(holder, "/*");

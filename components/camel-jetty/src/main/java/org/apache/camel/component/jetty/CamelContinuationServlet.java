@@ -38,6 +38,8 @@ import org.eclipse.jetty.continuation.ContinuationSupport;
  */
 public class CamelContinuationServlet extends CamelServlet {
 
+    static final String EXCHANGE_ATRRIBUTE_NAME = "CamelExchange";
+
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -50,15 +52,15 @@ public class CamelContinuationServlet extends CamelServlet {
                 return;
             }
 
-            // are we suspended?
-            if (consumer.isSuspended()) {
+            final Continuation continuation = ContinuationSupport.getContinuation(request);
+
+            // are we suspended and a request is dispatched initially?
+            if (consumer.isSuspended() && continuation.isInitial()) {
                 response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
                 return;
             }
 
-            final Continuation continuation = ContinuationSupport.getContinuation(request);
             if (continuation.isInitial()) {
-
                 // a new request so create an exchange
                 final Exchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
                 if (consumer.getEndpoint().isBridgeEndpoint()) {
@@ -69,44 +71,28 @@ public class CamelContinuationServlet extends CamelServlet {
                 }
                 exchange.setIn(new HttpMessage(exchange, request, response));
 
-                // use the asynchronous API to process the exchange
-                boolean sync = consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
-                    public void done(boolean doneSync) {
-                        // we only have to handle async completion
-                        if (doneSync) {
-                            return;
-                        }
+                if (log.isTraceEnabled()) {
+                    log.trace("Suspending continuation of exchangeId: " + exchange.getExchangeId());
+                }
+                continuation.suspend();
 
-                        // we should resume the continuation now that we are done asynchronously
+                // use the asynchronous API to process the exchange
+                consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
+                    public void done(boolean doneSync) {
                         if (log.isTraceEnabled()) {
                             log.trace("Resuming continuation of exchangeId: " + exchange.getExchangeId());
                         }
-                        continuation.setAttribute("CamelExchange", exchange);
+                        // resume processing after both, sync and async callbacks
+                        continuation.setAttribute(EXCHANGE_ATRRIBUTE_NAME, exchange);
                         continuation.resume();
                     }
                 });
-
-                if (!sync) {
-                    // wait for the exchange to get processed.
-                    // this might block until it completes or it might return via an exception and
-                    // then this method is re-invoked once the the exchange has finished processing
-                    if (log.isTraceEnabled()) {
-                        log.trace("Suspending continuation of exchangeId: " + exchange.getExchangeId());
-                    }
-                    continuation.suspend(response);
-                    return;
-                }
-
-                // now lets output to the response
-                if (log.isTraceEnabled()) {
-                    log.trace("Writing response of exchangeId: " + exchange.getExchangeId());
-                }
-                consumer.getBinding().writeResponse(exchange, response);
                 return;
             }
 
             if (continuation.isResumed()) {
-                Exchange exchange = (Exchange) continuation.getAttribute("CamelExchange");
+                // a re-dispatched request containing the processing result
+                Exchange exchange = (Exchange) continuation.getAttribute(EXCHANGE_ATRRIBUTE_NAME);
                 if (log.isTraceEnabled()) {
                     log.trace("Resuming continuation of exchangeId: " + exchange.getExchangeId());
                 }
@@ -116,8 +102,10 @@ public class CamelContinuationServlet extends CamelServlet {
                     log.trace("Writing response of exchangeId: " + exchange.getExchangeId());
                 }
                 consumer.getBinding().writeResponse(exchange, response);
-                return;
             }
+        } catch (IOException e) {
+            log.error("Error processing request", e);
+            throw e;
         } catch (Exception e) {
             log.error("Error processing request", e);
             throw new ServletException(e);
