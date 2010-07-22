@@ -422,7 +422,17 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public List<FTPFile> listFiles() throws GenericFileOperationFailedException {
-        return listFiles(".");
+        try {
+            final List<FTPFile> list = new ArrayList<FTPFile>();
+            FTPFile[] files = client.listFiles();
+            // can return either null or an empty list depending on FTP servers
+            if (files != null) {
+                list.addAll(Arrays.asList(files));
+            }
+            return list;
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        }
     }
 
     public List<FTPFile> listFiles(String path) throws GenericFileOperationFailedException {
