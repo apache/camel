@@ -44,7 +44,17 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     protected boolean prePollCheck() throws Exception {
-        recoverableConnectIfNecessary();
+        try {
+            if (getEndpoint().getMaximumReconnectAttempts() > 0) {
+                // only use recoverable if we are allowed any re-connect attempts
+                recoverableConnectIfNecessary();
+            } else {
+                connectIfNecessary();
+            }
+        } catch (Exception e) {
+            loggedIn = false;
+        }
+
         if (!loggedIn) {
             String message = "Could not connect/login to: " + remoteServer() + ". Will skip this poll.";
             log.warn(message);

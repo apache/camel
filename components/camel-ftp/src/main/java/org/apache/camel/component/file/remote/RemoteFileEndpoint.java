@@ -97,7 +97,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
      * @throws Exception is thrown if endpoint is invalid configured for its mandatory options
      */
     protected void afterPropertiesSet() throws Exception {
-        RemoteFileConfiguration config = (RemoteFileConfiguration) getConfiguration();
+        RemoteFileConfiguration config = getConfiguration();
         ObjectHelper.notEmpty(config.getHost(), "host");
         ObjectHelper.notEmpty(config.getProtocol(), "protocol");
     }
