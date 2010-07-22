@@ -38,7 +38,7 @@ public class JettyContentTypeTest extends CamelTestSupport {
         exchange.getIn().setHeader("SOAPAction", "test");
         exchange.getIn().setHeader("Content-Type", "text/xml");
         if (usingGZip) {
-            exchange.getIn().setHeader("Content-Encoding", "gzip");
+            exchange.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
         }
         template.send(endpoint, exchange);
 
@@ -84,6 +84,10 @@ public class JettyContentTypeTest extends CamelTestSupport {
             String user = exchange.getIn().getHeader("User", String.class);
             String contentType = ExchangeHelper.getContentType(exchange);
             String body = exchange.getIn().getBody(String.class);
+            String encoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
+            if (encoding != null) {
+                exchange.getOut().setHeader(Exchange.CONTENT_ENCODING, encoding);
+            }
             if ("Claus".equals(user) && contentType.startsWith("text/xml") && body.equals("<order>123</order>")) {
                 assertEquals("test", exchange.getIn().getHeader("SOAPAction", String.class));
                 exchange.getOut().setBody("<order>OK</order>");

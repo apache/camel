@@ -55,8 +55,8 @@ public class RequestEntityConverter {
     }
 
     private RequestEntity asRequestEntity(InputStream in, Exchange exchange) throws IOException {
-        if (exchange == null
-            || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+        if (exchange != null
+            && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             return new InputStreamRequestEntity(GZIPHelper.compressGzip(exchange.getIn()
                 .getHeader(Exchange.CONTENT_ENCODING, String.class), in), ExchangeHelper
                 .getContentType(exchange));
@@ -66,8 +66,8 @@ public class RequestEntityConverter {
     }
 
     private RequestEntity asRequestEntity(byte[] data, Exchange exchange) throws Exception {
-        if (exchange == null
-            || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+        if (exchange != null
+            && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             return new InputStreamRequestEntity(GZIPHelper.compressGzip(exchange.getIn()
                 .getHeader(Exchange.CONTENT_ENCODING, String.class), data), ExchangeHelper
                 .getContentType(exchange));

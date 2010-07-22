@@ -203,7 +203,7 @@ public class HttpProducer extends DefaultProducer {
             return null;
         }
 
-        Header header = method.getRequestHeader(Exchange.CONTENT_ENCODING);        
+        Header header = method.getResponseHeader(Exchange.CONTENT_ENCODING);        
         String contentEncoding = header != null ? header.getValue() : null;
         
         if (!exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
