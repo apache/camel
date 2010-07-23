@@ -83,7 +83,8 @@ public class DefaultTimeoutMapTest extends TestCase {
 
         assertEquals(123, (int)map.get("A"));
 
-        map.remove("A");
+        Object old = map.remove("A");
+        assertEquals(123, old);
         assertEquals(null, map.get("A"));
         assertEquals(0, map.size());
     }

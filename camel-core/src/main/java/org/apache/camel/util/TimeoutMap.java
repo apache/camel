@@ -27,7 +27,7 @@ public interface TimeoutMap<K, V> extends Runnable {
      * Looks up the value in the map by the given key.
      *
      * @param key the key of the value to search for
-     * @return the value for the given key or null if it is not present (or has timed out)
+     * @return the value for the given key or <tt>null</tt> if it is not present (or has timed out)
      */
     V get(K key);
 
@@ -69,8 +69,9 @@ public interface TimeoutMap<K, V> extends Runnable {
      * Removes the object with the given key
      *
      * @param key  key for the object to remove
+     * @return the value for the given key or <tt>null</tt> if it is not present (or has timed out)
      */
-    void remove(K key);
+    V remove(K key);
 
     /**
      * Purges any old entries from the map

@@ -100,6 +100,7 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
@@ -110,6 +111,8 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.util.ServiceHelper.stopServices;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -329,6 +332,27 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
         }
         return oldEndpoint;
+    }
+
+    public Collection<Endpoint> removeEndpoints(String uri) throws Exception {
+        Collection<Endpoint> answer = new ArrayList<Endpoint>();
+        Endpoint oldEndpoint = endpoints.remove(uri);
+        if (oldEndpoint != null) {
+            answer.add(oldEndpoint);
+            stopServices(oldEndpoint);
+        } else {
+            for (Map.Entry entry : endpoints.entrySet()) {
+                oldEndpoint = (Endpoint)entry.getValue();
+                if (EndpointHelper.matchEndpoint(oldEndpoint.getEndpointUri(), uri)) {
+                    answer.add(oldEndpoint);
+                    stopServices(oldEndpoint);
+                }
+            }
+            for (Endpoint endpoint : answer) {
+                endpoints.remove(endpoint.getEndpointUri());
+            }
+        }
+        return answer;
     }
 
     public Endpoint getEndpoint(String uri) {

@@ -122,8 +122,8 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     /**
      * Adds a component to the context.
      *
-     * @param componentName  the name the component is registered as
-     * @param component      the component
+     * @param componentName the name the component is registered as
+     * @param component     the component
      */
     void addComponent(String componentName, Component component);
 
@@ -146,8 +146,8 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     /**
      * Gets a component from the context by name and specifying the expected type of component.
      *
-     * @param name  the name to lookup
-     * @param componentType  the expected type
+     * @param name          the name to lookup
+     * @param componentType the expected type
      * @return the component
      */
     <T extends Component> T getComponent(String name, Class<T> componentType);
@@ -177,8 +177,8 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * If the name has a singleton endpoint registered, then the singleton is returned.
      * Otherwise, a new {@link Endpoint} is created and registered.
      *
-     * @param uri  the URI of the endpoint
-     * @return  the endpoint
+     * @param uri the URI of the endpoint
+     * @return the endpoint
      */
     Endpoint getEndpoint(String uri);
 
@@ -187,8 +187,8 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * If the name has a singleton endpoint registered, then the singleton is returned.
      * Otherwise, a new {@link Endpoint} is created and registered.
      *
-     * @param name  the name of the endpoint
-     * @param endpointType  the expected type
+     * @param name         the name of the endpoint
+     * @param endpointType the expected type
      * @return the endpoint
      */
     <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType);
@@ -196,7 +196,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     /**
      * Returns the collection of all registered endpoints.
      *
-     * @return  all endpoints
+     * @return all endpoints
      */
     Collection<Endpoint> getEndpoints();
 
@@ -211,7 +211,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     /**
      * Is the given endpoint already registered?
      *
-     * @param uri  the URI of the endpoint
+     * @param uri the URI of the endpoint
      * @return the registered endpoint or <tt>null</tt> if not registered
      */
     Endpoint hasEndpoint(String uri);
@@ -219,7 +219,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     /**
      * Adds the endpoint to the context using the given URI.
      *
-     * @param uri the URI to be used to resolve this endpoint
+     * @param uri      the URI to be used to resolve this endpoint
      * @param endpoint the endpoint to be added to the context
      * @return the old endpoint that was previously registered or <tt>null</tt> if none was registered
      * @throws Exception if the new endpoint could not be started or the old endpoint could not be stopped
@@ -227,12 +227,22 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception;
 
     /**
+     * Removes all endpoints with the given URI.
+     *
+     * @param pattern an uri or pattern to match
+     * @return a collection of endpoints removed or null if there are no endpoints for this URI
+     * @throws Exception if at least one endpoint could not be stopped
+     * @see {@link org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)} for pattern
+     */
+    Collection<Endpoint> removeEndpoints(String pattern) throws Exception;
+
+    /**
      * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom
      * logic when an {@link Endpoint} is about to be registered to the {@link CamelContext} endpoint registry.
      * <p/>
      * When a callback is added it will be executed on the already registered endpoints allowing you to catch-up
      *
-     * @param strategy  callback to be invoked
+     * @param strategy callback to be invoked
      */
     void addRegisterEndpointCallback(EndpointStrategy strategy);
 
@@ -346,9 +356,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
      * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
      *
-     * @param routeId the route id
-     * @param timeout   timeout
-     * @param timeUnit  the unit to use
+     * @param routeId  the route id
+     * @param timeout  timeout
+     * @param timeUnit the unit to use
      * @throws Exception is thrown if the route could not be shutdown for whatever reason
      */
     void shutdownRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
@@ -377,7 +387,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @return the type converter registry
      */
     TypeConverterRegistry getTypeConverterRegistry();
-    
+
     /**
      * Returns the registry used to lookup components by name and type such as the Spring ApplicationContext,
      * JNDI or the OSGi Service Registry
@@ -403,14 +413,14 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     /**
      * Adds the given lifecycle strategy to be used.
      *
-     * @param lifecycleStrategy  the strategy
+     * @param lifecycleStrategy the strategy
      */
     void addLifecycleStrategy(LifecycleStrategy lifecycleStrategy);
 
     /**
      * Resolves a language for creating expressions
      *
-     * @param language  name of the language
+     * @param language name of the language
      * @return the resolved language
      */
     Language resolveLanguage(String language);
@@ -513,7 +523,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     /**
      * Sets the default error handler builder which is inherited by the routes
      *
-     * @param errorHandlerBuilder  the builder
+     * @param errorHandlerBuilder the builder
      */
     void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder);
 
@@ -530,7 +540,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @return the data formats available
      */
     Map<String, DataFormatDefinition> getDataFormats();
-    
+
     /**
      * Resolve a data format given its name
      *
@@ -557,7 +567,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     /**
      * Sets a custom data format resolver
      *
-     * @param dataFormatResolver  the resolver
+     * @param dataFormatResolver the resolver
      */
     void setDataFormatResolver(DataFormatResolver dataFormatResolver);
 
@@ -567,14 +577,14 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @param properties properties
      */
     void setProperties(Map<String, String> properties);
-    
+
     /**
      * Gets the properties that can be referenced in the camel context
      *
      * @return the properties
      */
     Map<String, String> getProperties();
-    
+
     /**
      * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF
      *
@@ -588,7 +598,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @param resolver the factory finder resolver
      */
     void setFactoryFinderResolver(FactoryFinderResolver resolver);
-    
+
     /**
      * Gets the FactoryFinder which will be used for the loading the factory class from META-INF in the given path
      *
@@ -643,14 +653,14 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     /**
      * Uses a custom node id factory when generating auto assigned ids to the nodes in the route definitions
      *
-     * @param factory  custom factory to use
+     * @param factory custom factory to use
      */
     void setNodeIdFactory(NodeIdFactory factory);
 
     /**
      * Gets the node id factory
      *
-     * @return  the node id factory
+     * @return the node id factory
      */
     NodeIdFactory getNodeIdFactory();
 
@@ -703,7 +713,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @param repository the repository
      */
     void setInflightRepository(InflightRepository repository);
-    
+
     /**
      * Gets the the application context class loader which may be helpful for running camel in other containers
      *

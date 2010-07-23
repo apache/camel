@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +78,28 @@ public class DefaultCamelContextTest extends TestSupport {
         } catch (IllegalArgumentException e) {
             // expected
         }
+    }
+
+    public void testRemoveEndpoint() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
+        ctx.getEndpoint("log:foo");
+        ctx.getEndpoint("log:bar");
+
+        Collection<Endpoint> list = ctx.removeEndpoints("log:foo");
+        assertEquals(1, list.size());
+        assertEquals("log://foo", list.iterator().next().getEndpointUri());
+
+        ctx.getEndpoint("log:baz");
+        ctx.getEndpoint("seda:cool");
+
+        list = ctx.removeEndpoints("log:*");
+        assertEquals(2, list.size());
+        Iterator<Endpoint> it = list.iterator();
+        assertEquals("log://bar", it.next().getEndpointUri());
+        assertEquals("log://baz", it.next().getEndpointUri());
+
+        assertEquals(1, ctx.getEndpoints().size());
     }
 
     public void testGetEndpointNotFound() throws Exception {

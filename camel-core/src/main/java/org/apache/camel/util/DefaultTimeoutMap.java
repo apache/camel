@@ -105,17 +105,21 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
         }
     }
 
-    public void remove(K id) {
+    public V remove(K id) {
+        TimeoutMapEntry<K, V> entry;
+
         if (useLock) {
             lock.lock();
         }
         try {
-            map.remove(id);
+            entry = map.remove(id);
         } finally {
             if (useLock) {
                 lock.unlock();
             }
         }
+
+        return entry != null ? entry.getValue() : null;
     }
 
     public Object[] getKeys() {
