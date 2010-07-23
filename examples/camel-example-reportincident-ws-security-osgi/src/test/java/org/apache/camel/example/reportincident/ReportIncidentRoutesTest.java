@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
@@ -31,22 +30,25 @@ import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test of our routes
  */
 public class ReportIncidentRoutesTest extends CamelSpringTestSupport {
-	
+
     // should be the same address as we have in our route
     private static final String URL = "http://localhost:9080/camel-example-reportincident/webservices/incident";
 
     protected CamelContext camel;
 
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("/META-INF/spring/camel-context.xml");
+    }
+
     protected static ReportIncidentEndpoint createCXFClient() {
-    	
         List outInterceptors = new ArrayList();
-    	
+
         // Define WSS4j properties for flow outgoing
         Map<String, Object> outProps = new HashMap<String, Object>();
         outProps.put("action", "UsernameToken Timestamp");
@@ -54,15 +56,15 @@ public class ReportIncidentRoutesTest extends CamelSpringTestSupport {
         outProps.put("passwordType", "PasswordDigest");
         outProps.put("user", "charles");
         outProps.put("passwordCallbackClass", "org.apache.camel.example.reportincident.UTPasswordCallback");
-        
+
         WSS4JOutInterceptor wss4j = new WSS4JOutInterceptor(outProps);
 
         // Add LoggingOutInterceptor
-        LoggingOutInterceptor loggingOutInterceptor = new LoggingOutInterceptor (); 
-        
+        LoggingOutInterceptor loggingOutInterceptor = new LoggingOutInterceptor();
+
         outInterceptors.add(wss4j);
         outInterceptors.add(loggingOutInterceptor);
-        
+
         // we use CXF to create a client for us as its easier than JAXWS and works
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setOutInterceptors(outInterceptors);
@@ -73,11 +75,6 @@ public class ReportIncidentRoutesTest extends CamelSpringTestSupport {
 
     @Test
     public void testRendportIncident() throws Exception {
-        runTest();
-    }
-    
-    protected void runTest() throws Exception {
-    	
         // assert mailbox is empty before starting
         Mailbox inbox = Mailbox.get("incident@localhost");
         inbox.clear();
@@ -106,11 +103,6 @@ public class ReportIncidentRoutesTest extends CamelSpringTestSupport {
 
         // assert mail box
         assertEquals("Should have got 1 mail", 1, inbox.size());
-
     }
 
-	@Override
-	protected AbstractXmlApplicationContext createApplicationContext() {
-		return new ClassPathXmlApplicationContext("/META-INF/spring/camel-context.xml");
-	}
 }

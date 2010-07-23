@@ -11,14 +11,14 @@ the user using the WSS4J callback
 You will need to compile this example first:
   mvn install
 
-Remarks : 
+Remarks:
 - During the compilation phase, a unit test will be performed, this unit test simulates the
-communication between a client calling the web services exposed by our camel/cxf routes. During the call,
-the user "charles" is used to authenticate the web service call and the SOAP message created can be 
-retrieved from log file target/camel-example-reportincident-wssecurity.log
+  communication between a client calling the web services exposed by our camel/cxf routes. During the call,
+  the user "charles" is used to authenticate the web service call and the SOAP message created can be
+  retrieved from log file target/camel-example-reportincident-wssecurity.log
 - A mock SMTP server is used during unit test
 - In Eclipse, I have used the following option when starting the junit test case. This option tells
- CXF that it must use log4j : -Dorg.apache.cxf.Logger=org.apache.cxf.common.logging.Log4jLogger
+  CXF that it must use log4j : -Dorg.apache.cxf.Logger=org.apache.cxf.common.logging.Log4jLogger
 
 To run the example on Apache ServiceMix 4.x or Apache Karaf 1.x / 2.x
 
@@ -32,8 +32,8 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 1.x / 2.x
   features:install camel-mail
   features:install camel-velocity
   
-  remark : As the camel route sends email to a SMTP server, you must configure a user/password in your favorite
-  SMTP Server (James by example). User = someone and password = secret
+  remark: As the camel route sends email to a SMTP server, you must configure a user/password in your favorite
+          SMTP Server (James by example). User = someone and password = secret
   
   3) Deploy our example
   osgi:install -s mvn:org.apache.example.reportincident/camel-example-reportincident-wssecurity
@@ -93,11 +93,12 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 1.x / 2.x
 		</soap:Envelope>
 
   
- You can use another user : james, claus and retry. 
+ You can use another user: james, claus and retry.
  
  6) Check email
  Check through a POP request that a message has been published in the mailbox of someone (email address : incident@mycompany.com)
- 
+
+
 For the latest & greatest documentation on how to use this example please see
   http://camel.apache.org/tutorial-example-reportincident-wssecurity.html
 

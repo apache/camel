@@ -25,14 +25,6 @@
        <version>2.5-SNAPSHOT</version>
    </parent>
   
-  <!-- USED TO TEST camel 2.4.0 on Karaf/SMX
-    <parent>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-parent</artifactId>
-      <version>2.4.0</version>
-  </parent>
-   -->
-  
   <artifactId>camel-example-reportincident-wssecurity</artifactId>
   <name>Camel :: Example :: Report Incident :: WS-Security</name>
   <description>An example based on real life use case for reporting incidents using webservice that are transformed
@@ -72,11 +64,6 @@
 			<artifactId>camel-mail</artifactId>
 		</dependency>
 		
-	    <dependency>
-		  <groupId>org.fusesource.commonman</groupId>
-		  <artifactId>commons-management</artifactId>
-		</dependency>
-
         <!-- mock mail server so we do not send an email for real -->
         <dependency>
             <groupId>org.jvnet.mock-javamail</groupId>
@@ -109,7 +96,6 @@
 			<version>${cxf-version}</version>
 		</dependency>
 
-
 		<!-- regular http transport -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -128,7 +114,6 @@
 			<artifactId>cxf-rt-ws-security</artifactId>
 			<version>${cxf-version}</version>
 		</dependency>
-		
 		
 		<!-- logging -->
 		<dependency>
@@ -270,8 +255,8 @@
 					</instructions>
 				</configuration>
 			</plugin>
-            
 
         </plugins>
     </build>
+
 </project>

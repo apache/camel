@@ -19,93 +19,90 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
-       xmlns:cxf="http://camel.apache.org/schema/cxf"       
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://camel.apache.org/schema/spring
-       http://camel.apache.org/schema/spring/camel-spring.xsd
-       http://camel.apache.org/schema/cxf
-       http://camel.apache.org/schema/cxf/camel-cxf.xsd">
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+           http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
 
- <import resource="classpath:META-INF/cxf/cxf.xml"/>
- <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
- <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
- 
-   <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor">
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
+
+    <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor">
         <!--  it really should have been user-prestream but CXF does have such phase! -->
-        <constructor-arg value="write"/> 
-   </bean>
-   
-   <bean id="loggingInInterceptor" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
-   
-  <bean id="wss4jInInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
-    <constructor-arg>
-		<map>
-			<entry key="action" value="UsernameToken Timestamp"/>
-			<entry key="passwordType" value="PasswordDigest"/>
-			<entry key="passwordCallbackClass" value="org.apache.camel.example.reportincident.UTPasswordCallback"/>
-		</map>
-	</constructor-arg>    
-  </bean>
-   
-  <!--          
-  <bean id="wss4jOutInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
-    <constructor-arg>
-		<map>
-			<entry key="action" value="UsernameToken Timestamp"/>
-			<entry key="passwordType" value="PasswordText"/>
-			<entry key="user" value="Alice"/>
-			<entry key="passwordCallbackClass" value="org.apache.camel.example.reportincident.UTPasswordCallback"/>
-		</map>
-	</constructor-arg>
-  </bean>
-   -->
+        <constructor-arg value="write"/>
+    </bean>
 
- <cxf:cxfEndpoint id="reportIncident"
+    <bean id="loggingInInterceptor" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+
+    <bean id="wss4jInInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+        <constructor-arg>
+            <map>
+                <entry key="action" value="UsernameToken Timestamp"/>
+                <entry key="passwordType" value="PasswordDigest"/>
+                <entry key="passwordCallbackClass" value="org.apache.camel.example.reportincident.UTPasswordCallback"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <!--
+   <bean id="wss4jOutInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+     <constructor-arg>
+         <map>
+             <entry key="action" value="UsernameToken Timestamp"/>
+             <entry key="passwordType" value="PasswordText"/>
+             <entry key="user" value="Alice"/>
+             <entry key="passwordCallbackClass" value="org.apache.camel.example.reportincident.UTPasswordCallback"/>
+         </map>
+     </constructor-arg>
+   </bean>
+    -->
+
+    <cxf:cxfEndpoint id="reportIncident"
                      address="http://localhost:9080/camel-example-reportincident/webservices/incident"
                      wsdlURL="etc/report_incident.wsdl"
                      serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint">
-                     
+
         <cxf:inInterceptors>
-          <ref bean="loggingInInterceptor"/>
-          <ref bean="wss4jInInterceptor"/>
+            <ref bean="loggingInInterceptor"/>
+            <ref bean="wss4jInInterceptor"/>
         </cxf:inInterceptors>
-        	
+
         <cxf:outInterceptors>
-          <ref bean="loggingOutInterceptor"/>
-          <!--  <ref bean="wss4jOutInterceptor"/> -->
+            <ref bean="loggingOutInterceptor"/>
+            <!--  <ref bean="wss4jOutInterceptor"/> -->
         </cxf:outInterceptors>
- 
- </cxf:cxfEndpoint>
- 
- <bean id="myBean" class="org.apache.camel.example.reportincident.MyBean"/>
- <bean id="filenameGenerator" class="org.apache.camel.example.reportincident.FilenameGenerator"/>
- 
- <camel:camelContext id="camel">
-	<camel:route>
-		<camel:from uri="cxf:bean:reportIncident" />
-		<camel:convertBodyTo
-			type="org.apache.camel.example.reportincident.InputReportIncident" />
-	    <camel:setHeader headerName="CamelFileName">
-          	<camel:method bean="filenameGenerator" method="generateFilename" />
-        </camel:setHeader>		
-        <camel:to uri="velocity:etc/MailBody.vm"/>        
-        <camel:to uri="file://target/subfolder"/>		
-		<camel:transform>
-			<camel:method bean="myBean" method="getOK" />
-		</camel:transform>
-	</camel:route>
-	
 
-	<camel:route>
-        <camel:from uri="file://target/subfolder"/>
-        <camel:setHeader headerName="subject">
-          	<camel:constant>new incident reported</camel:constant>
-        </camel:setHeader>
-        <camel:to uri="log:com.mycompany.incident?level=INFO"/>
-        <camel:to uri="smtp://someone@localhost?password=secret&amp;to=incident@localhost"/>        
-	</camel:route>
+    </cxf:cxfEndpoint>
 
-</camel:camelContext>
+    <bean id="myBean" class="org.apache.camel.example.reportincident.MyBean"/>
+    <bean id="filenameGenerator" class="org.apache.camel.example.reportincident.FilenameGenerator"/>
+
+    <camel:camelContext id="camel">
+        <camel:route>
+            <camel:from uri="cxf:bean:reportIncident"/>
+            <camel:convertBodyTo type="org.apache.camel.example.reportincident.InputReportIncident"/>
+            <camel:setHeader headerName="CamelFileName">
+                <camel:method bean="filenameGenerator" method="generateFilename"/>
+            </camel:setHeader>
+            <camel:to uri="velocity:etc/MailBody.vm"/>
+            <camel:to uri="file://target/subfolder"/>
+            <camel:transform>
+                <camel:method bean="myBean" method="getOK"/>
+            </camel:transform>
+        </camel:route>
+
+
+        <camel:route>
+            <camel:from uri="file://target/subfolder"/>
+            <camel:setHeader headerName="subject">
+                <camel:constant>new incident reported</camel:constant>
+            </camel:setHeader>
+            <camel:to uri="log:com.mycompany.incident?level=INFO"/>
+            <camel:to uri="smtp://someone@localhost?password=secret&amp;to=incident@localhost"/>
+        </camel:route>
+
+    </camel:camelContext>
+
 </beans>
