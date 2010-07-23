@@ -32,6 +32,8 @@
 
     <class>org.apache.camel.examples.MultiSteps</class>
     <class>org.apache.camel.examples.SendEmail</class>
+    <class>org.apache.camel.examples.Customer</class>
+    <class>org.apache.camel.examples.Address</class>
 
     <properties>
       <property name="openjpa.ConnectionURL" value="jdbc:derby:target/derby;create=true"/>

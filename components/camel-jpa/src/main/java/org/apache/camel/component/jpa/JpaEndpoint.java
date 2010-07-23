@@ -53,6 +53,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean consumeLockEntity = true;
     private boolean flushOnSend = true;
     private int maxMessagesPerPoll;
+    private boolean usePersist;
 
     public JpaEndpoint() {
     }
@@ -221,6 +222,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+    
+    public boolean isUsePersist() {
+        return usePersist;
+    }
+
+    public void setUsePersist(boolean usePersist) {
+        this.usePersist = usePersist;
     }
 
     // Implementation methods
