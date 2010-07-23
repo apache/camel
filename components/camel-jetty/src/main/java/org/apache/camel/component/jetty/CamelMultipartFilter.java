@@ -33,7 +33,7 @@ class CamelMultipartFilter extends MultiPartFilter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (request.getAttribute(CamelContinuationServlet.EXCHANGE_ATRRIBUTE_NAME) == null) {
+        if (request.getAttribute(CamelContinuationServlet.EXCHANGE_ATTRIBUTE_NAME) == null) {
             super.doFilter(request, response, chain);
         } else {
             chain.doFilter(request, response);

@@ -38,7 +38,7 @@ import org.eclipse.jetty.continuation.ContinuationSupport;
  */
 public class CamelContinuationServlet extends CamelServlet {
 
-    static final String EXCHANGE_ATRRIBUTE_NAME = "CamelExchange";
+    static final String EXCHANGE_ATTRIBUTE_NAME = "CamelExchange";
 
     private static final long serialVersionUID = 1L;
 
@@ -83,7 +83,7 @@ public class CamelContinuationServlet extends CamelServlet {
                             log.trace("Resuming continuation of exchangeId: " + exchange.getExchangeId());
                         }
                         // resume processing after both, sync and async callbacks
-                        continuation.setAttribute(EXCHANGE_ATRRIBUTE_NAME, exchange);
+                        continuation.setAttribute(EXCHANGE_ATTRIBUTE_NAME, exchange);
                         continuation.resume();
                     }
                 });
@@ -92,7 +92,7 @@ public class CamelContinuationServlet extends CamelServlet {
 
             if (continuation.isResumed()) {
                 // a re-dispatched request containing the processing result
-                Exchange exchange = (Exchange) continuation.getAttribute(EXCHANGE_ATRRIBUTE_NAME);
+                Exchange exchange = (Exchange) continuation.getAttribute(EXCHANGE_ATTRIBUTE_NAME);
                 if (log.isTraceEnabled()) {
                     log.trace("Resuming continuation of exchangeId: " + exchange.getExchangeId());
                 }
