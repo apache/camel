@@ -256,17 +256,36 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
         OutputStream os = null;
+        boolean result;
         try {
             os = new ByteArrayOutputStream();
             GenericFile<FTPFile> target = (GenericFile<FTPFile>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             target.setBody(os);
-            return client.retrieveFile(name, os);
+
+            // remember current directory
+            String currentDir = getCurrentDirectory();
+
+            // change directory to path where the file is to be retrieved
+            // (must do this as some FTP servers cannot retrieve using absolute path)
+            String path = FileUtil.onlyPath(name);
+            if (path != null) {
+                changeCurrentDirectory(path);
+            }
+            String onlyName = FileUtil.stripPath(name);
+
+            result = client.retrieveFile(onlyName, os);
+
+            // change back to current directory
+            changeCurrentDirectory(currentDir);
+
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } finally {
             IOHelper.close(os, "retrieve: " + name, log);
         }
+
+        return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -317,9 +336,24 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             GenericFile<FTPFile> target = (GenericFile<FTPFile>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             // store the java.io.File handle as the body
-            target.setBody(local);            
-            result = client.retrieveFile(name, os);
+            target.setBody(local);
+
+            // remember current directory
+            String currentDir = getCurrentDirectory();
+
+            // change directory to path where the file is to be retrieved
+            // (must do this as some FTP servers cannot retrieve using absolute path)
+            String path = FileUtil.onlyPath(name);
+            if (path != null) {
+                changeCurrentDirectory(path);
+            }
+            String onlyName = FileUtil.stripPath(name);
+
+            result = client.retrieveFile(onlyName, os);
             
+            // change back to current directory
+            changeCurrentDirectory(currentDir);
+
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } finally {
