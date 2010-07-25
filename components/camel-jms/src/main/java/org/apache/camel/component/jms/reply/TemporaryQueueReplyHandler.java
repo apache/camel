@@ -46,10 +46,9 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
     }
 
     public void onReply(String correlationId, Message reply) {
-        // create holder object with the reply and add to task queue so we can process the reply and continue
-        // route the exchange using the async routing engine
+        // create holder object with the the reply
         ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, reply);
-        // process reply
+        // process the reply
         replyManager.processReply(holder);
     }
 
