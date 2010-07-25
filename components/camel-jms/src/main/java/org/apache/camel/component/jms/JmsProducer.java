@@ -16,11 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -28,21 +24,19 @@ import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.FailedToCreateProducerException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate;
 import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate102;
-import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap;
-import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap.DeferredMessageSentCallback;
-import org.apache.camel.component.jms.requestor.PersistentReplyToRequestor;
-import org.apache.camel.component.jms.requestor.Requestor;
+import org.apache.camel.component.jms.reply.ReplyManager;
+import org.apache.camel.component.jms.reply.UseMessageIdAsCorrelationIdMessageSentCallback;
 import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UuidGenerator;
 import org.apache.camel.util.ValueHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 
@@ -51,95 +45,44 @@ import org.springframework.jms.core.MessageCreator;
  */
 public class JmsProducer extends DefaultAsyncProducer {
     private static final transient Log LOG = LogFactory.getLog(JmsProducer.class);
-    private RequestorAffinity affinity;
     private final JmsEndpoint endpoint;
+    private final AtomicBoolean started = new AtomicBoolean(false);
     private JmsOperations inOnlyTemplate;
     private JmsOperations inOutTemplate;
     private UuidGenerator uuidGenerator;
-    private DeferredRequestReplyMap deferredRequestReplyMap;
-    private Requestor requestor;
-    private AtomicBoolean started = new AtomicBoolean(false);
-
-    private enum RequestorAffinity {
-        PER_COMPONENT(0),
-        PER_ENDPOINT(1),
-        PER_PRODUCER(2);
-        private int value;
-        private RequestorAffinity(int value) {
-            this.value = value;
-        }
-    }
+    private ReplyManager replyManager;
 
     public JmsProducer(JmsEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        JmsConfiguration c = endpoint.getConfiguration();
-        affinity = RequestorAffinity.PER_PRODUCER;
-        if (c.getReplyTo() != null) {
-            if (c.getReplyToTempDestinationAffinity().equals(JmsConfiguration.REPLYTO_TEMP_DEST_AFFINITY_PER_ENDPOINT)) {
-                affinity = RequestorAffinity.PER_ENDPOINT;
-            } else if (c.getReplyToTempDestinationAffinity().equals(JmsConfiguration.REPLYTO_TEMP_DEST_AFFINITY_PER_COMPONENT)) {
-                affinity = RequestorAffinity.PER_COMPONENT;
-            }
-        }
     }
 
-    public long getRequestTimeout() {
-        return endpoint.getConfiguration().getRequestTimeout();
-    }
-
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
-    protected void testAndSetRequestor() throws RuntimeCamelException {
+    protected void initReplyManager() {
         if (!started.get()) {
             synchronized (this) {
                 if (started.get()) {
                     return;
                 }
                 try {
-                    JmsConfiguration c = endpoint.getConfiguration();
-                    if (c.getReplyTo() != null) {
-                        requestor = new PersistentReplyToRequestor(endpoint.getConfiguration(), endpoint.getRequestorExecutorService());
-                        requestor.start();
+                    if (endpoint.getReplyTo() != null) {
+                        replyManager = endpoint.getReplyManager(endpoint.getReplyTo());
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from: " + endpoint.getReplyTo()
+                                    + " queue with " + endpoint.getConcurrentConsumers() + " concurrent consumers.");
+                        }
                     } else {
-                        if (affinity == RequestorAffinity.PER_PRODUCER) {
-                            requestor = new Requestor(endpoint.getConfiguration(), endpoint.getRequestorExecutorService());
-                            requestor.start();
-                        } else if (affinity == RequestorAffinity.PER_ENDPOINT) {
-                            requestor = endpoint.getRequestor();
-                        } else if (affinity == RequestorAffinity.PER_COMPONENT) {
-                            requestor = ((JmsComponent)endpoint.getComponent()).getRequestor();
+                        replyManager = endpoint.getReplyManager();
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from temporary queue with "
+                                    + endpoint.getConcurrentConsumers() + " concurrent consumers.");
                         }
                     }
                 } catch (Exception e) {
                     throw new FailedToCreateProducerException(endpoint, e);
                 }
-                deferredRequestReplyMap = requestor.getDeferredRequestReplyMap(this);
                 started.set(true);
             }
         }
-    }
-
-    protected void testAndUnsetRequestor() throws Exception  {
-        if (started.get()) {
-            synchronized (this) {
-                if (!started.get()) {
-                    return;
-                }
-                requestor.removeDeferredRequestReplyMap(this);
-                if (affinity == RequestorAffinity.PER_PRODUCER) {
-                    requestor.stop();
-                }
-                started.set(false);
-            }
-        }
-    }
-
-    protected void doStop() throws Exception {
-        testAndUnsetRequestor();
-        super.doStop();
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -173,111 +116,76 @@ public class JmsProducer extends DefaultAsyncProducer {
             destinationName = null;
         }
 
-        testAndSetRequestor();
+        initReplyManager();
 
         // note due to JMS transaction semantics we cannot use a single transaction
         // for sending the request and receiving the response
-        final Destination replyTo = requestor.getReplyTo();
-
+        final Destination replyTo = replyManager.getReplyTo();
         if (replyTo == null) {
             throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
         }
 
+        // when using message id as correlation id, we need at first to use a provisional correlation id
+        // which we then update to the real JMSMessageID when the message has been sent
+        // this is done with the help of the MessageSentCallback
         final boolean msgIdAsCorrId = endpoint.getConfiguration().isUseMessageIDAsCorrelationID();
-        String correlationId = in.getHeader("JMSCorrelationID", String.class);
+        final String provisionalCorrelationId = msgIdAsCorrId ? getUuidGenerator().generateUuid() : null;
+        MessageSentCallback messageSentCallback = null;
+        if (msgIdAsCorrId) {
+            messageSentCallback = new UseMessageIdAsCorrelationIdMessageSentCallback(replyManager, provisionalCorrelationId, endpoint.getRequestTimeout());
+        }
+        final ValueHolder<MessageSentCallback> sentCallback = new ValueHolder<MessageSentCallback>(messageSentCallback);
 
-        if (correlationId == null && !msgIdAsCorrId) {
+        final String originalCorrelationId = in.getHeader("JMSCorrelationID", String.class);
+        if (originalCorrelationId == null && !msgIdAsCorrId) {
             in.setHeader("JMSCorrelationID", getUuidGenerator().generateUuid());
         }
-
-        final ValueHolder<FutureTask> futureHolder = new ValueHolder<FutureTask>();
-        final DeferredMessageSentCallback jmsCallback = msgIdAsCorrId ? deferredRequestReplyMap.createDeferredMessageSentCallback() : null;
 
         MessageCreator messageCreator = new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
                 message.setJMSReplyTo(replyTo);
-                requestor.setReplyToSelectorHeader(in, message);
+                replyManager.setReplyToSelectorHeader(in, message);
 
-                FutureTask future;
-                future = (!msgIdAsCorrId)
-                        ? requestor.getReceiveFuture(message.getJMSCorrelationID(), endpoint.getConfiguration().getRequestTimeout())
-                        : requestor.getReceiveFuture(jmsCallback);
+                String correlationId = determineCorrelationId(message, provisionalCorrelationId);
+                replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, endpoint.getRequestTimeout());
 
-                futureHolder.set(future);
                 return message;
             }
         };
 
-        doSend(true, destinationName, destination, messageCreator, jmsCallback);
+        doSend(true, destinationName, destination, messageCreator, sentCallback.get());
 
         // after sending then set the OUT message id to the JMSMessageID so its identical
         setMessageId(exchange);
 
-        // now we should routing asynchronously to not block while waiting for the reply
-        // TODO:
-        // we need a thread pool to use for continue routing messages, just like a seda consumer
-        // and we need options to configure it as well so you can indicate how many threads to use
-        // TODO: Also consider requestTimeout
+        // continue routing asynchronously (reply will be processed async when its received)
+        return false;
+    }
 
-        // lets wait and return the response
-        long requestTimeout = endpoint.getConfiguration().getRequestTimeout();
-        try {
-            Message message = null;
-            try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Message sent, now waiting for reply at: " + replyTo.toString());
-                }
-                if (requestTimeout <= 0) {
-                    message = (Message)futureHolder.get().get();
-                } else {
-                    message = (Message)futureHolder.get().get(requestTimeout, TimeUnit.MILLISECONDS);
-                }
-            } catch (InterruptedException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Future interrupted: " + e, e);
-                }
-            } catch (TimeoutException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Future timed out: " + e, e);
-                }
-            }
-            if (message != null) {
-                // the response can be an exception
-                JmsMessage response = new JmsMessage(message, endpoint.getBinding());
-                Object body = response.getBody();
-
-                if (endpoint.isTransferException() && body instanceof Exception) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Reply received. Setting reply as an Exception: " + body);
-                    }
-                    // we got an exception back and endpoint was configured to transfer exception
-                    // therefore set response as exception
-                    exchange.setException((Exception) body);
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Reply received. Setting reply as OUT message: " + body);
-                    }
-                    // regular response
-                    exchange.setOut(response);
-                }
-
-                // restore correlation id in case the remote server messed with it
-                if (correlationId != null) {
-                    message.setJMSCorrelationID(correlationId);
-                    exchange.getOut().setHeader("JMSCorrelationID", correlationId);
-                }
-            } else {
-                // no response, so lets set a timed out exception
-                exchange.setException(new ExchangeTimedOutException(exchange, requestTimeout));
-            }
-        } catch (Exception e) {
-            exchange.setException(e);
+    /**
+     * Strategy to determine which correlation id to use among <tt>JMSMessageID</tt> and <tt>JMSCorrelationID</tt>.
+     *
+     * @param message   the JMS message
+     * @param provisionalCorrelationId an optional provisional correlation id, which is preferred to be used
+     * @return the correlation id to use
+     * @throws JMSException can be thrown
+     */
+    protected String determineCorrelationId(Message message, String provisionalCorrelationId) throws JMSException {
+        if (provisionalCorrelationId != null) {
+            return provisionalCorrelationId;
         }
 
-        // TODO: should be async
-        callback.done(true);
-        return true;
+        final String messageId = message.getJMSMessageID();
+        final String correlationId = message.getJMSCorrelationID();
+        if (endpoint.getConfiguration().isUseMessageIDAsCorrelationID()) {
+            return messageId;
+        } else if (ObjectHelper.isEmpty(correlationId)) {
+            // correlation id is empty so fallback to message id
+            return messageId;
+        } else {
+            return correlationId;
+        }
     }
 
     protected boolean processInOnly(final Exchange exchange, final AsyncCallback callback) {
@@ -340,14 +248,14 @@ public class JmsProducer extends DefaultAsyncProducer {
     /**
      * Sends the message using the JmsTemplate.
      *
-     * @param inOut  use inOut or inOnly template
+     * @param inOut           use inOut or inOnly template
      * @param destinationName the destination name
      * @param destination     the destination (if no name provided)
-     * @param messageCreator  the creator to create the javax.jms.Message to send
+     * @param messageCreator  the creator to create the {@link Message} to send
      * @param callback        optional callback for inOut messages
      */
     protected void doSend(boolean inOut, String destinationName, Destination destination,
-                          MessageCreator messageCreator, DeferredMessageSentCallback callback) {
+                          MessageCreator messageCreator, MessageSentCallback callback) {
 
         CamelJmsTemplate template = null;
         CamelJmsTemplate102 template102 = null;
@@ -405,7 +313,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                 }
             } catch (JMSException e) {
                 LOG.warn("Unable to retrieve JMSMessageID from outgoing "
-                    + "JMS Message and set it into Camel's MessageId", e);
+                        + "JMS Message and set it into Camel's MessageId", e);
             }
         }
     }
@@ -433,14 +341,23 @@ public class JmsProducer extends DefaultAsyncProducer {
     }
 
     public UuidGenerator getUuidGenerator() {
-        if (uuidGenerator == null) {
-            uuidGenerator = UuidGenerator.get();
-        }
         return uuidGenerator;
     }
 
     public void setUuidGenerator(UuidGenerator uuidGenerator) {
         this.uuidGenerator = uuidGenerator;
+    }
+
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (uuidGenerator == null) {
+            // use the default generator
+            uuidGenerator = UuidGenerator.get();
+        }
+    }
+
+    protected void doStop() throws Exception {
+        super.doStop();
     }
 
 }

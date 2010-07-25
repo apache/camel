@@ -14,18 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.requestor;
+package org.apache.camel.component.jms.reply;
 
-import javax.jms.JMSException;
 import javax.jms.Message;
 
 /**
+ * Handles a reply.
+ *
  * @version $Revision$
  */
 public interface ReplyHandler {
+
     /**
-     * Processes the message, returning true if this is the last method of a lifecycle
-     * so that the handler can be discarded
+     * The reply message was received
+     *
+     * @param correlationId  the correlation id
+     * @param reply  the reply message
      */
-    boolean handle(Message message) throws JMSException;
+    void onReply(String correlationId, Message reply);
+
+    /**
+     * The reply message was not received and a timeout triggered
+     *
+     * @param correlationId  the correlation id
+     */
+    void onTimeout(String correlationId);
 }

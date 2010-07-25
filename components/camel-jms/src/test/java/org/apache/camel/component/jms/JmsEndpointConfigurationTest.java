@@ -205,9 +205,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNotNull(endpoint.getRecoveryInterval());
         assertNull(endpoint.getReplyTo());
         assertNull(endpoint.getReplyToDestinationSelectorName());
-        assertEquals(JmsConfiguration.REPLYTO_TEMP_DEST_AFFINITY_PER_ENDPOINT, endpoint.getReplyToTempDestinationAffinity());
         assertEquals(1000, endpoint.getRequestMapPurgePollTimeMillis());
-        assertNotNull(endpoint.getRequestor());
         assertEquals(20000, endpoint.getRequestTimeout());
         assertNull(endpoint.getSelector());
         assertEquals(-1, endpoint.getTimeToLive());
@@ -342,9 +340,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
         endpoint.setReplyToDestinationSelectorName("me");
         assertEquals("me", endpoint.getReplyToDestinationSelectorName());
-
-        endpoint.setReplyToTempDestinationAffinity("endpoint");
-        assertEquals("endpoint", endpoint.getReplyToTempDestinationAffinity());
 
         endpoint.setRequestMapPurgePollTimeMillis(2000);
         assertEquals(2000, endpoint.getRequestMapPurgePollTimeMillis());

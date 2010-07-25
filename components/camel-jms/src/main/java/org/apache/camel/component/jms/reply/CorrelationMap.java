@@ -14,38 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.requestor;
+package org.apache.camel.component.jms.reply;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.ScheduledExecutorService;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
+import org.apache.camel.util.DefaultTimeoutMap;
 
 /**
- * A {@link FutureTask} which implements {@link ReplyHandler}
- * so that it can be used as a handler for a correlation ID
- *
  * @version $Revision$
  */
-public class FutureHandler extends FutureTask<Message> implements ReplyHandler {
-    
-    private static final Callable<Message> EMPTY_CALLABLE = new Callable<Message>() {
-        public Message call() throws Exception {
-            return null;
-        }
-    };
+public class CorrelationMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
-    public FutureHandler() {
-        super(EMPTY_CALLABLE);
+    public CorrelationMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
+        super(executor, requestMapPollTimeMillis);
     }
 
-    public synchronized void set(Message result) {
-        super.set(result);
-    }
-
-    public boolean handle(Message message) throws JMSException {
-        set(message);
+    public boolean onEviction(String key, ReplyHandler value) {
+        // trigger timeout
+        value.onTimeout(key);
+        // return true to remove the element
         return true;
     }
+
 }

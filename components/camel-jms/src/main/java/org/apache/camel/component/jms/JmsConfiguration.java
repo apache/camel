@@ -124,12 +124,6 @@ public class JmsConfiguration implements Cloneable {
     private boolean useMessageIDAsCorrelationID;
     private JmsProviderMetadata providerMetadata = new JmsProviderMetadata();
     private JmsOperations metadataJmsOperations;
-    // defines the component created temporary replyTo destination sharing strategy:
-    // possible values are: "component", "endpoint", "producer"
-    // component - a single temp queue is shared among all producers for a given component instance
-    // endpoint - a single temp queue is shared among all producers for a given endpoint instance
-    // producer - a single temp queue is created per producer
-    private String replyToTempDestinationAffinity = REPLYTO_TEMP_DEST_AFFINITY_PER_ENDPOINT;
     private String replyToDestination;
     private String replyToDestinationSelectorName;
     private JmsMessageType jmsMessageType;
@@ -156,10 +150,6 @@ public class JmsConfiguration implements Cloneable {
         }
     }
 
-
-    public static interface MessageSentCallback {
-        void sent(Message message);
-    }
 
     public static class CamelJmsTemplate extends JmsTemplate {
         private JmsConfiguration config;
@@ -220,6 +210,9 @@ public class JmsConfiguration implements Cloneable {
             try {
                 message = messageCreator.createMessage(session);
                 doSend(producer, message);
+                if (message != null && callback != null) {
+                    callback.sent(message, destination);
+                }
                 // Check commit - avoid commit call within a JTA transaction.
                 if (session.getTransacted() && isSessionLocallyTransacted(session)) {
                     // Transacted session created by this template -> commit.
@@ -227,9 +220,6 @@ public class JmsConfiguration implements Cloneable {
                 }
             } finally {
                 JmsUtils.closeMessageProducer(producer);
-            }
-            if (message != null && callback != null) {
-                callback.sent(message);
             }
             return null;
         }
@@ -349,6 +339,9 @@ public class JmsConfiguration implements Cloneable {
                     logger.debug("Sending JMS message to: " + producer.getDestination() + " with message: " + message);
                 }
                 doSend(producer, message);
+                if (message != null && callback != null) {
+                    callback.sent(message, destination);
+                }
                 // Check commit - avoid commit call within a JTA transaction.
                 if (session.getTransacted() && isSessionLocallyTransacted(session)) {
                     // Transacted session created by this template -> commit.
@@ -356,9 +349,6 @@ public class JmsConfiguration implements Cloneable {
                 }
             } finally {
                 JmsUtils.closeMessageProducer(producer);
-            }
-            if (message != null && callback != null) {
-                callback.sent(message);
             }
             return null;
         }
@@ -516,6 +506,7 @@ public class JmsConfiguration implements Cloneable {
 
     // Properties
     // -------------------------------------------------------------------------
+
     public ConnectionFactory getConnectionFactory() {
         if (connectionFactory == null) {
             connectionFactory = createConnectionFactory();
@@ -863,10 +854,12 @@ public class JmsConfiguration implements Cloneable {
      * <p/>
      * By default this is false as you need to commit the outgoing request before you can consume the input
      */
+    @Deprecated
     public boolean isTransactedInOut() {
         return transactedInOut;
     }
 
+    @Deprecated
     public void setTransactedInOut(boolean transactedInOut) {
         this.transactedInOut = transactedInOut;
     }
@@ -1229,14 +1222,6 @@ public class JmsConfiguration implements Cloneable {
 
     public void setUseMessageIDAsCorrelationID(boolean useMessageIDAsCorrelationID) {
         this.useMessageIDAsCorrelationID = useMessageIDAsCorrelationID;
-    }
-
-    public String getReplyToTempDestinationAffinity() {
-        return replyToTempDestinationAffinity;
-    }
-
-    public void setReplyToTempDestinationAffinity(String replyToTempDestinationAffinity) {
-        this.replyToTempDestinationAffinity = replyToTempDestinationAffinity;
     }
 
     public long getRequestTimeout() {

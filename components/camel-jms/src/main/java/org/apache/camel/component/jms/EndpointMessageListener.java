@@ -67,7 +67,7 @@ public class EndpointMessageListener implements MessageListener {
         LOG.trace("onMessage START");
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug(endpoint + " consumer receiving JMS message: " + message);
+            LOG.debug(endpoint + " consumer received JMS message: " + message);
         }
 
         RuntimeCamelException rce = null;
@@ -82,6 +82,12 @@ public class EndpointMessageListener implements MessageListener {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("onMessage.process START");
             }
+
+            String correlationId = message.getJMSCorrelationID();
+            if (correlationId != null) {
+                LOG.debug("Received Message has JMSCorrelationID [" + correlationId + "]");
+            }
+            
             processor.process(exchange);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("onMessage.process END");
@@ -292,19 +298,11 @@ public class EndpointMessageListener implements MessageListener {
         getTemplate().send(replyDestination, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
-
-                if (endpoint.getConfiguration().isUseMessageIDAsCorrelationID()) {
-                    String messageID = exchange.getIn().getHeader("JMSMessageID", String.class);
-                    reply.setJMSCorrelationID(messageID);
-                } else {
-                    String correlationID = message.getJMSCorrelationID();
-                    if (correlationID != null) {
-                        reply.setJMSCorrelationID(correlationID);
-                    }
-                }
+                final String correlationID = determineCorrelationId(message);
+                reply.setJMSCorrelationID(correlationID);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug(endpoint + " sending reply JMS message: " + reply);
+                    LOG.debug(endpoint + " sending reply JMS message [correlationId:" + correlationID + "]: " + reply);
                 }
                 return reply;
             }
@@ -318,7 +316,9 @@ public class EndpointMessageListener implements MessageListener {
             try {
                 destination = message.getJMSReplyTo();
             } catch (JMSException e) {
-                LOG.trace("Cannot read JMSReplyTo header. Will ignore this exception.", e);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Cannot read JMSReplyTo header. Will ignore this exception.", e);
+                }
             }
         }
         return destination;

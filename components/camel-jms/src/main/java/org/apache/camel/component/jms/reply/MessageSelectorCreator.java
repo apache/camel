@@ -14,17 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.requestor;
+package org.apache.camel.component.jms.reply;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MessageSelectorProvider {
+/**
+ * A creator which can build the JMS message selector query string to use
+ * with a shared persistent reply-to queue, so we can select the correct messages we expect as replies.
+ */
+public class MessageSelectorCreator {
     protected Map<String, String> correlationIds;
     protected boolean dirty = true;
     protected StringBuilder expression;
 
-    public MessageSelectorProvider() {
+    public MessageSelectorCreator() {
         correlationIds = new HashMap<String, String>();
     }
 
@@ -42,18 +46,27 @@ public class MessageSelectorProvider {
         if (!dirty) {
             return expression.toString();
         }
+
         expression = new StringBuilder("JMSCorrelationID='");
-        boolean first = true;
-        for (Map.Entry<String, String> entry : correlationIds.entrySet()) {
-            if (!first) {
-                expression.append(" OR JMSCorrelationID='");
-            }
-            expression.append(entry.getValue()).append("'");
-            if (first) {
-                first = false;
+
+        if (correlationIds.isEmpty()) {
+            // no id's so use a dummy to select nothing
+            expression.append("CamelDummyJmsMessageSelector'");
+        } else {
+            boolean first = true;
+            for (Map.Entry<String, String> entry : correlationIds.entrySet()) {
+                if (!first) {
+                    expression.append(" OR JMSCorrelationID='");
+                }
+                expression.append(entry.getValue()).append("'");
+                if (first) {
+                    first = false;
+                }
             }
         }
+
         dirty = false;
         return expression.toString();
     }
+
 }

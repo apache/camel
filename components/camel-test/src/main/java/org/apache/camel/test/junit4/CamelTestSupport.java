@@ -53,9 +53,9 @@ import org.junit.Before;
  */
 public abstract class CamelTestSupport extends TestSupport {    
     
-    protected CamelContext context;
-    protected ProducerTemplate template;
-    protected ConsumerTemplate consumer;
+    protected volatile CamelContext context;
+    protected volatile ProducerTemplate template;
+    protected volatile ConsumerTemplate consumer;
     private boolean useRouteBuilder = true;
     private Service camelContextService;
 

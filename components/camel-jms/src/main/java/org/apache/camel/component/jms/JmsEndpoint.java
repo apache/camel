@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -32,12 +36,17 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
-import org.apache.camel.component.jms.requestor.Requestor;
+import org.apache.camel.Service;
+import org.apache.camel.component.jms.reply.PersistentQueueReplyManager;
+import org.apache.camel.component.jms.reply.ReplyHolder;
+import org.apache.camel.component.jms.reply.ReplyManager;
+import org.apache.camel.component.jms.reply.TemporaryQueueReplyManager;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.ManagementAware;
+import org.apache.camel.util.ServiceHelper;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
@@ -53,7 +62,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * @version $Revision:520964 $
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, ManagementAware<JmsEndpoint>, MultipleConsumersSupport {
+public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, ManagementAware<JmsEndpoint>, MultipleConsumersSupport, Service {
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean pubSubDomain;
     private JmsBinding binding;
@@ -61,8 +70,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private Destination destination;
     private String selector;
     private JmsConfiguration configuration;
-    private Requestor requestor;
-    private ScheduledExecutorService requestorExecutorService;
+    private final Map<String, ReplyManager> replyToReplyManager = new HashMap<String, ReplyManager>();
+    private ReplyManager replyManager;
+    // scheduled executor to check for timeout (reply not received)
+    private ScheduledExecutorService replyManagerExecutorService;
 
     public JmsEndpoint() {
         this(null, null);
@@ -284,16 +295,29 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return true;
     }
 
-    public synchronized Requestor getRequestor() throws Exception {
-        if (requestor == null) {
-            requestor = new Requestor(getConfiguration(), getRequestorExecutorService());
-            requestor.start();
+    public synchronized ReplyManager getReplyManager() throws Exception {
+        if (replyManager == null) {
+            // use a temporary queue
+            replyManager = new TemporaryQueueReplyManager();
+            replyManager.setEndpoint(this);
+            replyManager.setScheduledExecutorService(getReplyManagerExecutorService());
+            ServiceHelper.startService(replyManager);
         }
-        return requestor;
+        return replyManager;
     }
 
-    public void setRequestor(Requestor requestor) {
-        this.requestor = requestor;
+    public synchronized ReplyManager getReplyManager(String replyTo) throws Exception {
+        ReplyManager answer = replyToReplyManager.get(replyTo);
+        if (answer == null) {
+            // use a persistent queue
+            answer = new PersistentQueueReplyManager();
+            answer.setEndpoint(this);
+            answer.setScheduledExecutorService(getReplyManagerExecutorService());
+            ServiceHelper.startService(answer);
+            // remember this manager so we can re-use it
+            replyToReplyManager.put(replyTo, answer);
+        }
+        return answer;
     }
 
     public boolean isPubSubDomain() {
@@ -343,11 +367,28 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return template;
     }
 
-    protected synchronized ScheduledExecutorService getRequestorExecutorService() {
-        if (requestorExecutorService == null) {
-            requestorExecutorService = getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this, "JmsRequesterTimeoutTask", 1);
+    protected synchronized ScheduledExecutorService getReplyManagerExecutorService() {
+        if (replyManagerExecutorService == null) {
+            replyManagerExecutorService = getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this, "JmsReplyManagerTimeoutChecker", 1);
         }
-        return requestorExecutorService;
+        return replyManagerExecutorService;
+    }
+
+    public void start() throws Exception {
+    }
+
+    public void stop() throws Exception {
+        if (replyManager != null) {
+            ServiceHelper.stopService(replyManager);
+            replyManager = null;
+        }
+
+        if (!replyToReplyManager.isEmpty()) {
+            for (ReplyManager replyManager : replyToReplyManager.values()) {
+                ServiceHelper.stopService(replyManager);
+            }
+            replyToReplyManager.clear();
+        }
     }
 
     // Delegated properties from the configuration
@@ -457,10 +498,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public String getReplyToDestinationSelectorName() {
         return getConfiguration().getReplyToDestinationSelectorName();
-    }
-
-    public String getReplyToTempDestinationAffinity() {
-        return getConfiguration().getReplyToTempDestinationAffinity();
     }
 
     public long getRequestMapPurgePollTimeMillis() {
@@ -768,10 +805,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setReplyToDestinationSelectorName(replyToDestinationSelectorName);
     }
 
-    public void setReplyToTempDestinationAffinity(String replyToTempDestinationAffinity) {
-        getConfiguration().setReplyToTempDestinationAffinity(replyToTempDestinationAffinity);
-    }
-
     public void setRequestMapPurgePollTimeMillis(long requestMapPurgePollTimeMillis) {
         getConfiguration().setRequestMapPurgePollTimeMillis(requestMapPurgePollTimeMillis);
     }
@@ -910,5 +943,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
         return super.createEndpointUri();
     }
+
+
 
 }

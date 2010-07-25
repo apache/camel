@@ -17,19 +17,16 @@
 package org.apache.camel.component.jms;
 
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Session;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,13 +51,10 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 public class JmsComponent extends DefaultComponent implements ApplicationContextAware, HeaderFilterStrategyAware {
 
     private static final transient Log LOG = LogFactory.getLog(JmsComponent.class);
-    private static final int DEFAULT_THREADPOOL_SIZE = 100;
     private static final String DEFAULT_QUEUE_BROWSE_STRATEGY = "org.apache.camel.component.jms.DefaultQueueBrowseStrategy";
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
-    private ScheduledExecutorService scheduledExecutorService;
     private JmsConfiguration configuration;
     private ApplicationContext applicationContext;
-    private Requestor requestor;
     private QueueBrowseStrategy queueBrowseStrategy;
     private boolean attemptedToCreateQueueBrowserStrategy;
     private HeaderFilterStrategy headerFilterStrategy = new JmsHeaderFilterStrategy();
@@ -341,30 +335,6 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setDestinationResolver(destinationResolver);
     }
 
-    public synchronized Requestor getRequestor() throws Exception {
-        if (requestor == null) {
-            requestor = new Requestor(getConfiguration(), getScheduledExecutorService());
-            requestor.start();
-        }
-        return requestor;
-    }
-
-    public void setRequestor(Requestor requestor) {
-        this.requestor = requestor;
-    }
-
-    public synchronized ScheduledExecutorService getScheduledExecutorService() {
-        if (scheduledExecutorService == null) {
-            scheduledExecutorService = getCamelContext().getExecutorServiceStrategy()
-                    .newScheduledThreadPool(this, "JmsComponent", DEFAULT_THREADPOOL_SIZE);
-        }
-        return scheduledExecutorService;
-    }
-
-    public void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
-        this.scheduledExecutorService = scheduledExecutorService;
-    }
-
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
@@ -401,9 +371,6 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
 
     @Override
     protected void doStop() throws Exception {
-        if (requestor != null) {
-            requestor.stop();
-        }
         super.doStop();
     }
 

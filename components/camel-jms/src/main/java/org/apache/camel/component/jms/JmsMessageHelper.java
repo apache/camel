@@ -125,4 +125,19 @@ public final class JmsMessageHelper {
         }
     }
 
+    /**
+     * Sets the correlation id on the JMS message.
+     * <p/>
+     * Will ignore exception thrown
+     *
+     * @param message  the JMS message
+     * @param correlationId the correlation id
+     */
+    public static void setCorrelationId(Message message, String correlationId) {
+        try {
+            message.setJMSCorrelationID(correlationId);
+        } catch (JMSException e) {
+            // ignore
+        }
+    }
 }

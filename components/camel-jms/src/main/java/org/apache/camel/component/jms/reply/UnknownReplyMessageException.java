@@ -14,30 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.requestor;
+package org.apache.camel.component.jms.reply;
 
-import javax.jms.JMSException;
 import javax.jms.Message;
 
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * An exception thrown if a response message from an InOut could not be processed
+ * A reply message which cannot be correlated to a match request message.
  *
  * @version $Revision$
  */
-public class FailedToProcessResponse extends RuntimeCamelException {
-    private final Message response;
+public class UnknownReplyMessageException extends RuntimeCamelException {
 
-    public FailedToProcessResponse(Message response, JMSException e) {
-        super("Failed to process response: " + e + ". Message: " + response, e);
-        this.response = response;
+    private final Message replyMessage;
+    private final String correlationId;
+
+    public UnknownReplyMessageException(String text, Message replyMessage, String correlationId) {
+        super(text);
+        this.replyMessage = replyMessage;
+        this.correlationId = correlationId;
     }
 
     /**
-     * The response message which caused the exception
+     * The unknown reply message
      */
-    public Message getResponse() {
-        return response;
+    public Message getReplyMessage() {
+        return replyMessage;
+    }
+
+    /**
+     * The correlation id of the reply message
+     */
+    public String getCorrelationId() {
+        return correlationId;
     }
 }
