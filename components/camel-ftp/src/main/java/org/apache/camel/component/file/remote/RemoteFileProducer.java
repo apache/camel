@@ -94,36 +94,34 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     protected void preWriteCheck() throws Exception {
         // before writing send a noop to see if the connection is alive and works
         boolean noop = false;
-        try {
-            connectIfNecessary();
-            if (loggedIn) {
+        if (loggedIn) {
+            try {
                 noop = getOperations().sendNoop();
+            } catch (Exception e) {
+                // ignore as we will try to recover connection
+                noop = false;
             }
-        } catch (Exception e) {
-            // ignore as we will try to recover connection
-            noop = false;
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("preWriteCheck send noop success: " + noop);
         }
 
-        // if not alive then force a disconnect so we reconnect again
+        if (log.isTraceEnabled()) {
+            log.trace("preWriteCheck send noop success: " + noop);
+        }
+
+        // if not alive then reconnect
         if (!noop) {
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("preWriteCheck forcing a disconnect as noop failed");
+                if (getEndpoint().getMaximumReconnectAttempts() > 0) {
+                    // only use recoverable if we are allowed any re-connect attempts
+                    recoverableConnectIfNecessary();
+                } else {
+                    connectIfNecessary();
                 }
-                disconnect();
             } catch (Exception e) {
-                // ignore for now as we will reconnect below
-            }
-        }
+                loggedIn = false;
 
-        recoverableConnectIfNecessary();
-        if (!loggedIn) {
-            // must be logged in to be able to upload the file
-            String message = "Cannot connect/login to: " + getEndpoint().remoteServerInformation();
-            throw new GenericFileOperationFailedException(message);
+                // must be logged in to be able to upload the file
+                throw e;
+            }
         }
     }
 
@@ -185,7 +183,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
             if (log.isDebugEnabled()) {
                 log.debug("Not already connected/logged in. Connecting to: " + getEndpoint());
             }
-            RemoteFileConfiguration config = (RemoteFileConfiguration) getEndpoint().getConfiguration();
+            RemoteFileConfiguration config = getEndpoint().getConfiguration();
             loggedIn = getOperations().connect(config);
             if (!loggedIn) {
                 return;

@@ -53,13 +53,19 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             }
         } catch (Exception e) {
             loggedIn = false;
+
+            // login failed should we thrown exception
+            if (getEndpoint().getConfiguration().isThrowExceptionOnConnectFailed()) {
+                throw e;
+            }
         }
 
         if (!loggedIn) {
-            String message = "Could not connect/login to: " + remoteServer() + ". Will skip this poll.";
+            String message = "Cannot connect/login to: " + remoteServer() + ". Will skip this poll.";
             log.warn(message);
             return false;
         }
+
         return true;
     }
 

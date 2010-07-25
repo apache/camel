@@ -34,6 +34,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int connectTimeout = 10000;
     private int timeout = 30000;
     private int soTimeout;
+    private boolean throwExceptionOnConnectFailed;
 
     public RemoteFileConfiguration() {
     }
@@ -167,5 +168,20 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      */
     public void setSoTimeout(int soTimeout) {
         this.soTimeout = soTimeout;
+    }
+
+    public boolean isThrowExceptionOnConnectFailed() {
+        return throwExceptionOnConnectFailed;
+    }
+
+    /**
+     * Should an exception be thrown if connection failed (exhausted)
+     * <p/>
+     * By default exception is not thrown and a <tt>WARN</tt> is logged.
+     * You can use this to enable exception being thrown and handle the thrown exception
+     * from the {@link org.apache.camel.spi.PollingConsumerPollStrategy} rollback method.
+     */
+    public void setThrowExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
+        this.throwExceptionOnConnectFailed = throwExceptionOnConnectFailed;
     }
 }
