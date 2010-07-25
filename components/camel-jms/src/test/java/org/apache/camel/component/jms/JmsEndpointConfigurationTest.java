@@ -205,7 +205,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNotNull(endpoint.getRecoveryInterval());
         assertNull(endpoint.getReplyTo());
         assertNull(endpoint.getReplyToDestinationSelectorName());
-        assertEquals(1000, endpoint.getRequestMapPurgePollTimeMillis());
         assertEquals(20000, endpoint.getRequestTimeout());
         assertNull(endpoint.getSelector());
         assertEquals(-1, endpoint.getTimeToLive());
@@ -231,7 +230,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(false, endpoint.isPubSubNoLocal());
         assertEquals(true, endpoint.isReplyToDeliveryPersistent());
         assertEquals(false, endpoint.isUseMessageIDAsCorrelationID());
-        assertEquals(false, endpoint.isUseVersion102());
         assertEquals(true, endpoint.isSingleton());
         assertEquals(false, endpoint.isSubscriptionDurable());
         assertEquals(false, endpoint.isTransacted());
@@ -341,9 +339,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         endpoint.setReplyToDestinationSelectorName("me");
         assertEquals("me", endpoint.getReplyToDestinationSelectorName());
 
-        endpoint.setRequestMapPurgePollTimeMillis(2000);
-        assertEquals(2000, endpoint.getRequestMapPurgePollTimeMillis());
-
         endpoint.setRequestTimeout(3000);
         assertEquals(3000, endpoint.getRequestTimeout());
 
@@ -367,9 +362,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
         endpoint.setJmsMessageType(JmsMessageType.Text);
         assertEquals(JmsMessageType.Text, endpoint.getJmsMessageType());
-
-        endpoint.setUseVersion102(true);
-        assertEquals(true, endpoint.isUseVersion102());
     }
 
     protected void assertCacheLevel(JmsEndpoint endpoint, int expected) throws Exception {

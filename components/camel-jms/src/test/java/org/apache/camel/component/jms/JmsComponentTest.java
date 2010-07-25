@@ -57,7 +57,6 @@ public class JmsComponentTest extends CamelTestSupport {
         assertEquals(3000, endpoint.getTimeToLive());
         assertEquals(true, endpoint.isTransacted());
         assertEquals(15000, endpoint.getTransactionTimeout());
-        assertEquals(false, endpoint.isUseVersion102());
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -85,7 +84,6 @@ public class JmsComponentTest extends CamelTestSupport {
         comp.setTimeToLive(3000);
         comp.setTransacted(true);
         comp.setTransactionTimeout(15000);
-        comp.setUseVersion102(false);
 
         camelContext.addComponent(componentName, comp);
 

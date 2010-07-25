@@ -500,10 +500,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getReplyToDestinationSelectorName();
     }
 
-    public long getRequestMapPurgePollTimeMillis() {
-        return getConfiguration().getRequestMapPurgePollTimeMillis();
-    }
-
     @ManagedAttribute
     public long getRequestTimeout() {
         return getConfiguration().getRequestTimeout();
@@ -619,14 +615,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public boolean isUseMessageIDAsCorrelationID() {
         return getConfiguration().isUseMessageIDAsCorrelationID();
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.2
-     */
-    @Deprecated
-    public boolean isUseVersion102() {
-        return getConfiguration().isUseVersion102();
     }
 
     @ManagedAttribute
@@ -805,10 +793,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setReplyToDestinationSelectorName(replyToDestinationSelectorName);
     }
 
-    public void setRequestMapPurgePollTimeMillis(long requestMapPurgePollTimeMillis) {
-        getConfiguration().setRequestMapPurgePollTimeMillis(requestMapPurgePollTimeMillis);
-    }
-
     @ManagedAttribute
     public void setRequestTimeout(long requestTimeout) {
         getConfiguration().setRequestTimeout(requestTimeout);
@@ -859,14 +843,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setUseMessageIDAsCorrelationID(boolean useMessageIDAsCorrelationID) {
         getConfiguration().setUseMessageIDAsCorrelationID(useMessageIDAsCorrelationID);
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.2
-     */
-    @Deprecated
-    public void setUseVersion102(boolean useVersion102) {
-        getConfiguration().setUseVersion102(useVersion102);
     }
 
     public JmsMessageType getJmsMessageType() {

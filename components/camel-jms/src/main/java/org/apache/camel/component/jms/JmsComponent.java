@@ -319,14 +319,6 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setTransferException(transferException);
     }
 
-    /**
-     * @deprecated will be removed in Camel 2.2
-     */
-    @Deprecated
-    public void setUseVersion102(boolean useVersion102) {
-        getConfiguration().setUseVersion102(useVersion102);
-    }
-
     public void setJmsOperations(JmsOperations jmsOperations) {
         getConfiguration().setJmsOperations(jmsOperations);
     }

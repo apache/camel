@@ -23,7 +23,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
-import javax.jms.TopicPublisher;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
@@ -35,14 +34,11 @@ import org.springframework.jms.JmsException;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.JmsTemplate102;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.core.SessionCallback;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
-import org.springframework.jms.listener.DefaultMessageListenerContainer102;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
-import org.springframework.jms.listener.SimpleMessageListenerContainer102;
 import org.springframework.jms.support.JmsUtils;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -60,14 +56,6 @@ public class JmsConfiguration implements Cloneable {
     public static final String TOPIC_PREFIX = "topic:";
     public static final String TEMP_QUEUE_PREFIX = "temp:queue:";
     public static final String TEMP_TOPIC_PREFIX = "temp:topic:";
-
-    protected static final String TRANSACTED = "TRANSACTED";
-    protected static final String CLIENT_ACKNOWLEDGE = "CLIENT_ACKNOWLEDGE";
-    protected static final String AUTO_ACKNOWLEDGE = "AUTO_ACKNOWLEDGE";
-    protected static final String DUPS_OK_ACKNOWLEDGE = "DUPS_OK_ACKNOWLEDGE";
-    protected static final String REPLYTO_TEMP_DEST_AFFINITY_PER_COMPONENT = "component";
-    protected static final String REPLYTO_TEMP_DEST_AFFINITY_PER_ENDPOINT = "endpoint";
-    protected static final String REPLYTO_TEMP_DEST_AFFINITY_PER_PRODUCER = "producer";
 
     private static final transient Log LOG = LogFactory.getLog(JmsConfiguration.class);
     private JmsOperations jmsOperations;
@@ -98,7 +86,6 @@ public class JmsConfiguration implements Cloneable {
     private int idleTaskExecutionLimit = 1;
     private int maxConcurrentConsumers = 1;
     // JmsTemplate only
-    private boolean useVersion102;
     private Boolean explicitQosEnabled;
     private boolean deliveryPersistent = true;
     private boolean replyToDeliveryPersistent = true;
@@ -116,7 +103,6 @@ public class JmsConfiguration implements Cloneable {
     private String transactionName;
     private int transactionTimeout = -1;
     private boolean preserveMessageQos;
-    private long requestMapPurgePollTimeMillis = 1000L;
     private boolean disableReplyTo;
     private boolean eagerLoadingOfProperties;
     // Always make a JMS message copy when it's passed to Producer
@@ -274,139 +260,6 @@ public class JmsConfiguration implements Cloneable {
         }
     }
 
-    /**
-     * @deprecated will be removed in the future
-     */
-    @Deprecated
-    public static class CamelJmsTemplate102 extends JmsTemplate102 {
-        private JmsConfiguration config;
-
-        public CamelJmsTemplate102(JmsConfiguration config, ConnectionFactory connectionFactory, boolean pubSubDomain) {
-            super(connectionFactory, pubSubDomain);
-            this.config = config;
-        }
-
-        public void send(final String destinationName,
-                         final MessageCreator messageCreator,
-                         final MessageSentCallback callback) throws JmsException {
-            execute(new SessionCallback() {
-                public Object doInJms(Session session) throws JMSException {
-                    Destination destination = resolveDestinationName(session, destinationName);
-                    return doSendToDestination(destination, messageCreator, callback, session);
-                }
-            }, false);
-        }
-
-        public void send(final Destination destination,
-                         final MessageCreator messageCreator,
-                         final MessageSentCallback callback) throws JmsException {
-            execute(new SessionCallback() {
-                public Object doInJms(Session session) throws JMSException {
-                    return doSendToDestination(destination, messageCreator, callback, session);
-                }
-            }, false);
-        }
-
-        public void send(final String destinationName,
-                         final MessageCreator messageCreator) throws JmsException {
-            execute(new SessionCallback() {
-                public Object doInJms(Session session) throws JMSException {
-                    Destination destination = resolveDestinationName(session, destinationName);
-                    return doSendToDestination(destination, messageCreator, null, session);
-                }
-            }, false);
-        }
-
-        public void send(final Destination destination,
-                         final MessageCreator messageCreator) throws JmsException {
-            execute(new SessionCallback() {
-                public Object doInJms(Session session) throws JMSException {
-                    return doSendToDestination(destination, messageCreator, null, session);
-                }
-            }, false);
-        }
-
-        private Object doSendToDestination(final Destination destination,
-                                           final MessageCreator messageCreator,
-                                           final MessageSentCallback callback,
-                                           final Session session) throws JMSException {
-            Assert.notNull(messageCreator, "MessageCreator must not be null");
-            MessageProducer producer = createProducer(session, destination);
-            Message message = null;
-            try {
-                message = messageCreator.createMessage(session);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Sending JMS message to: " + producer.getDestination() + " with message: " + message);
-                }
-                doSend(producer, message);
-                if (message != null && callback != null) {
-                    callback.sent(message, destination);
-                }
-                // Check commit - avoid commit call within a JTA transaction.
-                if (session.getTransacted() && isSessionLocallyTransacted(session)) {
-                    // Transacted session created by this template -> commit.
-                    JmsUtils.commitIfNecessary(session);
-                }
-            } finally {
-                JmsUtils.closeMessageProducer(producer);
-            }
-            return null;
-        }
-
-        /**
-         * Override so we can support preserving the Qos settings that have
-         * been set on the message.
-         */
-        @Override
-        protected void doSend(MessageProducer producer, Message message) throws JMSException {
-            if (config.isPreserveMessageQos()) {
-                long ttl = message.getJMSExpiration();
-                if (ttl != 0) {
-                    ttl = ttl - System.currentTimeMillis();
-                    // Message had expired.. so set the ttl as small as possible
-                    if (ttl <= 0) {
-                        ttl = 1;
-                    }
-                }
-
-                int priority = message.getJMSPriority();
-                if (priority <= 0) {
-                    // use priority from endpoint if not provided on message
-                    priority = this.getPriority();
-                }
-
-                // if a delivery mode was set as a JMS header then we have used a temporary
-                // property to store it - CamelJMSDeliveryMode. Otherwise we could not keep
-                // track whether it was set or not as getJMSDeliveryMode() will default return 1 regardless
-                // if it was set or not, so we can never tell if end user provided it in a header
-                int deliveryMode;
-                if (JmsMessageHelper.hasProperty(message, JmsConstants.JMS_DELIVERY_MODE)) {
-                    deliveryMode = message.getIntProperty(JmsConstants.JMS_DELIVERY_MODE);
-                    // remove the temporary property
-                    JmsMessageHelper.removeJmsProperty(message, JmsConstants.JMS_DELIVERY_MODE);
-                } else {
-                    deliveryMode = this.getDeliveryMode();
-                }
-
-                // need to log just before so the message is 100% correct when logged
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Sending JMS message to: " + producer.getDestination() + " with message: " + message);
-                }
-                if (isPubSubDomain()) {
-                    ((TopicPublisher) producer).publish(message, deliveryMode, priority, ttl);
-                } else {
-                    producer.send(message, deliveryMode, priority, ttl);
-                }
-            } else {
-                // need to log just before so the message is 100% correct when logged
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Sending JMS message to: " + producer.getDestination() + " with message: " + message);
-                }
-                super.doSend(producer, message);
-            }
-        }
-    }
-
 
     /**
      * Creates a {@link JmsOperations} object used for request/response using a request timeout value
@@ -441,16 +294,12 @@ public class JmsConfiguration implements Cloneable {
      * Creates a {@link JmsOperations} object used for one way messaging
      */
     public JmsOperations createInOnlyTemplate(JmsEndpoint endpoint, boolean pubSubDomain, String destination) {
-
         if (jmsOperations != null) {
             return jmsOperations;
         }
 
         ConnectionFactory factory = getTemplateConnectionFactory();
-
-        JmsTemplate template = useVersion102
-                ? new CamelJmsTemplate102(this, factory, pubSubDomain)
-                : new CamelJmsTemplate(this, factory);
+        JmsTemplate template = new CamelJmsTemplate(this, factory);
 
         template.setPubSubDomain(pubSubDomain);
         if (destinationResolver != null) {
@@ -559,22 +408,6 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setTemplateConnectionFactory(ConnectionFactory templateConnectionFactory) {
         this.templateConnectionFactory = templateConnectionFactory;
-    }
-
-    /**
-     * @deprecated will be removed in the future
-     */
-    @Deprecated
-    public boolean isUseVersion102() {
-        return useVersion102;
-    }
-
-    /**
-     * @deprecated will be removed in the future
-     */
-    @Deprecated
-    public void setUseVersion102(boolean useVersion102) {
-        this.useVersion102 = useVersion102;
     }
 
     public boolean isAutoStartup() {
@@ -929,18 +762,6 @@ public class JmsConfiguration implements Cloneable {
         this.destinationResolver = destinationResolver;
     }
 
-    public long getRequestMapPurgePollTimeMillis() {
-        return requestMapPurgePollTimeMillis;
-    }
-
-    /**
-     * Sets the frequency that the requestMap for InOut exchanges is purged for
-     * timed out message exchanges
-     */
-    public void setRequestMapPurgePollTimeMillis(long requestMapPurgePollTimeMillis) {
-        this.requestMapPurgePollTimeMillis = requestMapPurgePollTimeMillis;
-    }
-
     public JmsProviderMetadata getProviderMetadata() {
         return providerMetadata;
     }
@@ -1112,14 +933,11 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public AbstractMessageListenerContainer chooseMessageListenerContainerImplementation() {
-        // TODO we could allow a spring container to auto-inject these objects?
         switch (consumerType) {
         case Simple:
-            return isUseVersion102()
-                ? new SimpleMessageListenerContainer102() : new SimpleMessageListenerContainer();
+            return new SimpleMessageListenerContainer();
         case Default:
-            return isUseVersion102()
-                ? new DefaultMessageListenerContainer102() : new DefaultMessageListenerContainer();
+            return new DefaultMessageListenerContainer();
         default:
             throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
         }
@@ -1136,7 +954,7 @@ public class JmsConfiguration implements Cloneable {
      * created and destroyed per message).
      *
      * @param endpoint the endpoint
-     * @return the cacne level
+     * @return the cache level
      */
     protected int defaultCacheLevel(JmsEndpoint endpoint) {
         // if we are on a new enough spring version we can assume CACHE_CONSUMER

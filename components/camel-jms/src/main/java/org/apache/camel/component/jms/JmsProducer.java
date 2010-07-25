@@ -27,7 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate;
-import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate102;
 import org.apache.camel.component.jms.reply.ReplyManager;
 import org.apache.camel.component.jms.reply.UseMessageIdAsCorrelationIdMessageSentCallback;
 import org.apache.camel.impl.DefaultAsyncProducer;
@@ -257,17 +256,10 @@ public class JmsProducer extends DefaultAsyncProducer {
     protected void doSend(boolean inOut, String destinationName, Destination destination,
                           MessageCreator messageCreator, MessageSentCallback callback) {
 
-        CamelJmsTemplate template = null;
-        CamelJmsTemplate102 template102 = null;
-        if (endpoint.isUseVersion102()) {
-            template102 = (JmsConfiguration.CamelJmsTemplate102) (inOut ? getInOutTemplate() : getInOnlyTemplate());
-        } else {
-            template = (CamelJmsTemplate) (inOut ? getInOutTemplate() : getInOnlyTemplate());
-        }
+        CamelJmsTemplate template = (CamelJmsTemplate) (inOut ? getInOutTemplate() : getInOnlyTemplate());
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Using " + (inOut ? "inOut" : "inOnly") + " jms template to send with API "
-                    + (endpoint.isUseVersion102() ? "v1.0.2" : "v1.1"));
+            LOG.trace("Using " + (inOut ? "inOut" : "inOnly") + " jms template");
         }
 
         // destination should be preferred
@@ -275,28 +267,20 @@ public class JmsProducer extends DefaultAsyncProducer {
             if (inOut) {
                 if (template != null) {
                     template.send(destination, messageCreator, callback);
-                } else if (template102 != null) {
-                    template102.send(destination, messageCreator, callback);
                 }
             } else {
                 if (template != null) {
                     template.send(destination, messageCreator);
-                } else if (template102 != null) {
-                    template102.send(destination, messageCreator);
                 }
             }
         } else if (destinationName != null) {
             if (inOut) {
                 if (template != null) {
                     template.send(destinationName, messageCreator, callback);
-                } else if (template102 != null) {
-                    template102.send(destinationName, messageCreator, callback);
                 }
             } else {
                 if (template != null) {
                     template.send(destinationName, messageCreator);
-                } else if (template102 != null) {
-                    template102.send(destinationName, messageCreator);
                 }
             }
         } else {

@@ -309,28 +309,27 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         Thread.sleep(1000);
     }
 
-    public void xxxtestUseMessageIDAsCorrelationID() throws Exception {
+    public void testUseMessageIDAsCorrelationID() throws Exception {
         runRequestReplyThreaded(endpointUriA);
     }
 
-    public void xxxtestUseCorrelationID() throws Exception {
+    public void testUseCorrelationID() throws Exception {
         runRequestReplyThreaded(endpointUriA);
     }
 
-    public void xxxtestUseMessageIDAsCorrelationIDMultiNode() throws Exception {
+    public void testUseMessageIDAsCorrelationIDMultiNode() throws Exception {
         runRequestReplyThreaded(endpointUriA);
     }
 
-    public void xxxtestUseCorrelationIDMultiNode() throws Exception {
+    public void testUseCorrelationIDMultiNode() throws Exception {
         runRequestReplyThreaded(endpointUriA);
     }
 
-    // TODO: A bit tricky test
     public void testUseMessageIDAsCorrelationIDPersistReplyToMultiNode() throws Exception {
         runRequestReplyThreaded(endpointReplyToUriA);
     }
 
-    public void xxxtestUseCorrelationIDPersistReplyToMultiNode() throws Exception {
+    public void testUseCorrelationIDPersistReplyToMultiNode() throws Exception {
         runRequestReplyThreaded(endpointUriA);
     }
 
@@ -342,7 +341,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     // for a faster way to do this. Note however that in this case the message copy has to occur
     // between consumer -> producer as the selector value needs to be propagated to the ultimate
     // destination, which in turn will copy this value back into the reply message
-    public void xxxtestUseMessageIDAsCorrelationIDPersistMultiReplyToMultiNode() throws Exception {
+    public void testUseMessageIDAsCorrelationIDPersistMultiReplyToMultiNode() throws Exception {
         int oldMaxTasks = maxTasks;
         int oldMaxServerTasks = maxServerTasks;
         int oldMaxCalls = maxCalls;
@@ -361,7 +360,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     }
 
     // see (1)
-    public void xxxtestUseCorrelationIDPersistMultiReplyToMultiNode() throws Exception {
+    public void testUseCorrelationIDPersistMultiReplyToMultiNode() throws Exception {
         int oldMaxTasks = maxTasks;
         int oldMaxServerTasks = maxServerTasks;
         int oldMaxCalls = maxCalls;
@@ -379,18 +378,17 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         }
     }
 
-    public void xxxtestUseMessageIDAsCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode() throws Exception {
+    public void testUseMessageIDAsCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode() throws Exception {
         runRequestReplyThreaded(endpointUriA);
     }
 
-    public void xxxtestUseCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode() throws Exception {
+    public void testUseCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode() throws Exception {
         runRequestReplyThreaded(endpointUriA);
     }
 
-    public void xxxtestUseCorrelationIDTimeout() throws Exception {
+    public void testUseCorrelationIDTimeout() throws Exception {
         JmsComponent c = (JmsComponent)context.getComponent(componentName);
         c.getConfiguration().setRequestTimeout(1000);
-        c.getConfiguration().setRequestMapPurgePollTimeMillis(1000);
 
         Object reply = "";
         try {
@@ -402,10 +400,9 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         assertEquals("", reply);
     }
 
-    public void xxxtestUseMessageIDAsCorrelationIDTimeout() throws Exception {
+    public void testUseMessageIDAsCorrelationIDTimeout() throws Exception {
         JmsComponent c = (JmsComponent)context.getComponent(componentName);
         c.getConfiguration().setRequestTimeout(1000);
-        c.getConfiguration().setRequestMapPurgePollTimeMillis(1000);
 
         Object reply = "";
         try {
@@ -417,11 +414,11 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         assertEquals("", reply);
     }
 
-    public void xxxtestUseCorrelationIDMultiNodeDiffComponents() throws Exception {
+    public void testUseCorrelationIDMultiNodeDiffComponents() throws Exception {
         runRequestReplyThreaded(endpointUriA);
     }
 
-    public void xxxtestUseMessageIDAsCorrelationIDMultiNodeDiffComponents() throws Exception {
+    public void testUseMessageIDAsCorrelationIDMultiNodeDiffComponents() throws Exception {
         runRequestReplyThreaded(endpointUriA);
     }
 
