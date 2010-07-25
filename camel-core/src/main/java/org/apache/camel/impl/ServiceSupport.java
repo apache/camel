@@ -159,21 +159,21 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
     }
 
     /**
-     * @return true if this service is
+     * @return true if this service is being started
      */
     public boolean isStarting() {
         return starting.get();
     }
 
     /**
-     * @return true if this service is in the process of closing
+     * @return true if this service is in the process of stopping
      */
     public boolean isStopping() {
         return stopping.get();
     }
 
     /**
-     * @return true if this service is closed
+     * @return true if this service is stopped
      */
     public boolean isStopped() {
         return stopped.get();

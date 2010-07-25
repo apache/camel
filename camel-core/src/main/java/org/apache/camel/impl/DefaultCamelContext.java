@@ -352,6 +352,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                 endpoints.remove(endpoint.getEndpointUri());
             }
         }
+
+        // notify lifecycle its being removed
+        for (Endpoint endpoint : answer) {
+            for (LifecycleStrategy strategy : lifecycleStrategies) {
+                strategy.onEndpointRemove(endpoint);
+            }
+        }
+
         return answer;
     }
 
@@ -776,6 +784,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     public LanguageResolver getLanguageResolver() {
+        if (languageResolver == null) {
+            languageResolver = new DefaultLanguageResolver();
+        }
         return languageResolver;
     }
 
@@ -1153,6 +1164,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // shutdown management as the last one
         shutdownServices(managementStrategy);
 
+        // stop the lazy created so they can be re-created on restart
+        forceStopLazyInitialization();
+
         stopWatch.stop();
         if (LOG.isInfoEnabled()) {
             LOG.info("Uptime: " + getUptime());
@@ -1415,7 +1429,18 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     protected void forceLazyInitialization() {
         getInjector();
         getLanguageResolver();
+        getTypeConverterRegistry();
         getTypeConverter();
+    }
+
+    /**
+     * Lets force clear lazy initialization so they can be re-created on restart
+     */
+    protected void forceStopLazyInitialization() {
+        injector = null;
+        languageResolver = null;
+        typeConverterRegistry = null;
+        typeConverter = null;
     }
 
     /**

@@ -47,9 +47,9 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
     private final CamelContext context;
-    private ProducerCache producerCache;
+    private volatile ProducerCache producerCache;
+    private volatile ExecutorService executor;
     private Endpoint defaultEndpoint;
-    private ExecutorService executor;
     private int maximumCacheSize;
 
     public DefaultProducerTemplate(CamelContext context) {

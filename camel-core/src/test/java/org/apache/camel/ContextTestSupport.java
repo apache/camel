@@ -36,9 +36,9 @@ import org.apache.camel.util.jndi.JndiTest;
  */
 public abstract class ContextTestSupport extends TestSupport {
     
-    protected CamelContext context;
-    protected ProducerTemplate template;
-    protected ConsumerTemplate consumer;
+    protected volatile CamelContext context;
+    protected volatile ProducerTemplate template;
+    protected volatile ConsumerTemplate consumer;
     private boolean useRouteBuilder = true;
     private Service camelContextService;
 

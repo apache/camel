@@ -164,9 +164,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @param componentName the component name to remove
      * @return the previously added component or null if it had not been previously added.
-     * @deprecated will be removed in Camel 2.5
      */
-    @Deprecated
     Component removeComponent(String componentName);
 
     // Endpoint Management Methods
