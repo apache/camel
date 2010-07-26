@@ -20,10 +20,14 @@ import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.endpoint.ClientCallback;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
 public class CxfClientCallback extends ClientCallback {
+    private static final Log LOG = LogFactory.getLog(CxfClientCallback.class);
+
     private final AsyncCallback camelAsyncCallback;
     private final Exchange camelExchange;
     private final org.apache.cxf.message.Exchange cxfExchange;
@@ -43,27 +47,35 @@ public class CxfClientCallback extends ClientCallback {
     }
     
     public void handleResponse(Map<String, Object> ctx, Object[] res) {
-        try {
-            super.handleResponse(ctx, res);
-            // bind the CXF response to Camel exchange
-            if (!boi.getOperationInfo().isOneWay()) {
-                // copy the InMessage header to OutMessage header
-                camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
-                endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
-                        ctx);
-            }
-        } finally {
-            camelAsyncCallback.done(false);
+        LOG.trace("Handling response +++ START +++");
+
+        super.handleResponse(ctx, res);
+        // bind the CXF response to Camel exchange
+        if (!boi.getOperationInfo().isOneWay()) {
+            // copy the InMessage header to OutMessage header
+            camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
+            endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
+                    ctx);
         }
+
+        // TODO: callback should be in finally to ensure its invoked
+
+        LOG.trace("Handling response +++ DONE +++");
+        camelAsyncCallback.done(false);
+        LOG.trace("Handling response +++ END +++");
     }
     
     public void handleException(Map<String, Object> ctx, Throwable ex) {
-        try {
-            super.handleException(ctx, ex);
-        } finally {
-            camelExchange.setException(ex);
-            camelAsyncCallback.done(false);
-        }
+        LOG.trace("Handling exception +++ START +++");
+
+        super.handleException(ctx, ex);
+        camelExchange.setException(ex);
+
+        // TODO: callback should be in finally to ensure its invoked
+
+        LOG.trace("Handling response +++ DONE +++");
+        camelAsyncCallback.done(false);
+        LOG.trace("Handling response +++ END +++");
     }
 
 }

@@ -229,6 +229,8 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     protected boolean continueRouting(Iterator<Processor> it, Exchange exchange) {
+        boolean answer = true;
+
         Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
@@ -236,12 +238,17 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Exchange is marked to stop routing: " + exchange);
                 }
-                return false;
+                answer = false;
             }
+        } else {
+            // continue if there are more processors to route
+            answer = it.hasNext();
         }
 
-        // continue if there are more processors to route
-        return it.hasNext();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Continue routing: " + answer);
+        }
+        return answer;
     }
 
     @Override
