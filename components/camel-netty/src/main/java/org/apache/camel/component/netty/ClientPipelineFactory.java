@@ -46,7 +46,7 @@ public class ClientPipelineFactory implements ChannelPipelineFactory {
         this.callback = callback;
     }
 
-    public synchronized ChannelPipeline getPipeline() throws Exception {
+    public ChannelPipeline getPipeline() throws Exception {
         // create a new pipeline
         ChannelPipeline channelPipeline = Channels.pipeline();
 
