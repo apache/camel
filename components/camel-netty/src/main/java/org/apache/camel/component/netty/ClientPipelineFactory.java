@@ -33,8 +33,6 @@ import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.jboss.netty.handler.timeout.ReadTimeoutHandler;
-import org.jboss.netty.util.HashedWheelTimer;
-import org.jboss.netty.util.Timer;
 
 public class ClientPipelineFactory implements ChannelPipelineFactory {
     private static final transient Log LOG = LogFactory.getLog(ClientPipelineFactory.class);
@@ -48,7 +46,7 @@ public class ClientPipelineFactory implements ChannelPipelineFactory {
         this.callback = callback;
     }
 
-    public ChannelPipeline getPipeline() throws Exception {
+    public synchronized ChannelPipeline getPipeline() throws Exception {
         // create a new pipeline
         ChannelPipeline channelPipeline = Channels.pipeline();
 
@@ -62,8 +60,7 @@ public class ClientPipelineFactory implements ChannelPipelineFactory {
 
         // use read timeout handler to handle timeout while waiting for a remote reply (while reading from the remote host)
         if (producer.getConfiguration().getTimeout() > 0) {
-            Timer timer = new HashedWheelTimer();
-            channelPipeline.addLast("timeout", new ReadTimeoutHandler(timer, producer.getConfiguration().getTimeout(), TimeUnit.MILLISECONDS));
+            channelPipeline.addLast("timeout", new ReadTimeoutHandler(producer.getEndpoint().getTimer(), producer.getConfiguration().getTimeout(), TimeUnit.MILLISECONDS));
         }
 
         List<ChannelUpstreamHandler> decoders = producer.getConfiguration().getDecoders();

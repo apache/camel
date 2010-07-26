@@ -22,8 +22,12 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.jboss.netty.util.HashedWheelTimer;
+import org.jboss.netty.util.Timer;
 
 public class NettyComponent extends DefaultComponent {
+    // use a shared timer for Netty (see javadoc for HashedWheelTimer)
+    private static volatile Timer timer;
     private NettyConfiguration configuration;
 
     public NettyComponent() {
@@ -43,8 +47,9 @@ public class NettyComponent extends DefaultComponent {
         }
 
         config.parseURI(new URI(remaining), parameters, this);
-        
+
         NettyEndpoint nettyEndpoint = new NettyEndpoint(remaining, this, config);
+        nettyEndpoint.setTimer(getTimer());
         setProperties(nettyEndpoint.getConfiguration(), parameters);
         return nettyEndpoint;
     }
@@ -56,4 +61,24 @@ public class NettyComponent extends DefaultComponent {
     public void setConfiguration(NettyConfiguration configuration) {
         this.configuration = configuration;
     }
+
+    public static Timer getTimer() {
+        return timer;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (timer == null) {
+            timer = new HashedWheelTimer();
+        }
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        timer.stop();
+        timer = null;
+        super.doStop();
+    }
+
 }

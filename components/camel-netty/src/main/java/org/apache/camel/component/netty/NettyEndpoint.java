@@ -22,13 +22,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.util.HashedWheelTimer;
+import org.jboss.netty.util.Timer;
 
 public class NettyEndpoint extends DefaultEndpoint {
     private NettyConfiguration configuration;
+    private Timer timer;
 
-    public NettyEndpoint(String endpointUri, Component component, NettyConfiguration configuration) {
+    public NettyEndpoint(String endpointUri, NettyComponent component, NettyConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
     }
@@ -62,5 +66,18 @@ public class NettyEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    @Override
+    public void start() throws Exception {
+        super.start();
+        ObjectHelper.notNull(timer, "timer");
+    }
+
 }
