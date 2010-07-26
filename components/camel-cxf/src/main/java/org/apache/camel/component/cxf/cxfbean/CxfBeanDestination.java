@@ -44,7 +44,7 @@ public class CxfBeanDestination extends CamelDestination implements Processor {
     public CxfBeanDestination(CxfBeanComponent cxfBeanComponent, Bus bus,
             ConduitInitiator conduitInitiator,
             EndpointInfo endpointInfo) throws IOException {
-        super(null, bus, conduitInitiator, endpointInfo);
+        super(cxfBeanComponent.getCamelContext(), bus, conduitInitiator, endpointInfo);
         this.cxfBeanComponent = cxfBeanComponent;
     }
 

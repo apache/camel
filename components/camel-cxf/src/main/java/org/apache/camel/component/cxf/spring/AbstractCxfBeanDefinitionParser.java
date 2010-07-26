@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf.spring;
 
 import java.util.HashMap;
@@ -29,11 +28,6 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 
-
-
-/**
- * 
- */
 public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefinitionParser {
     
     /**

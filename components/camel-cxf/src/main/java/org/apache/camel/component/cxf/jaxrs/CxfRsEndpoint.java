@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.util.Arrays;
@@ -38,9 +37,6 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 
-/**
- * 
- */
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Log LOG = LogFactory.getLog(CxfRsEndpoint.class);
 

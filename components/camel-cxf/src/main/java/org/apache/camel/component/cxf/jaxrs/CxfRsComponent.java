@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
  * Defines the <a href="http://camel.apache.org/cxfrs.html">CXF RS Component</a> 
  */
 public class CxfRsComponent extends HeaderFilterStrategyComponent {
+
     public CxfRsComponent() {
         super();
     }

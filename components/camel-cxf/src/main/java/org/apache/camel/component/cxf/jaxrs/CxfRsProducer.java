@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
@@ -38,7 +37,6 @@ import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
 
-
 /**
  * CxfRsProducer binds a Camel exchange to a CXF exchange, acts as a CXF 
  * JAXRS client, it will turn the normal Object invocation to a RESTful request
@@ -56,7 +54,6 @@ public class CxfRsProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        
         if (LOG.isTraceEnabled()) {
             LOG.trace("Process exchange: " + exchange);
         }
@@ -72,7 +69,6 @@ public class CxfRsProducer extends DefaultProducer {
         } else {
             invokeProxyClient(exchange);            
         }
-        
     }
     
     @SuppressWarnings("unchecked")

@@ -47,11 +47,8 @@ public class DataOutInterceptor extends AbstractOutDatabindingInterceptor {
                 StaxUtils.copy(xmlReader, xmlWriter);
             }
         } catch (XMLStreamException e) {
-            throw new Fault(new org.apache.cxf.common.i18n.Message("XMLSTREAM_EXCEPTION",
-                                                                   LOG, e),
-                            e);
+            throw new Fault(new org.apache.cxf.common.i18n.Message("XMLSTREAM_EXCEPTION", LOG, e), e);
         }
-
     }
 
 }

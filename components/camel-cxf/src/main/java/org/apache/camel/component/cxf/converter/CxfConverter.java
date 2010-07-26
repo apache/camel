@@ -124,7 +124,6 @@ public final class CxfConverter {
     
     @Converter
     public static InputStream toInputStream(Response response, Exchange exchange) {
-        
         Object obj = response.getEntity();
         
         if (obj == null) {
@@ -149,7 +148,7 @@ public final class CxfConverter {
     /**
      * Use a fallback type converter so we can convert the embedded list element 
      * if the value is MessageContentsList.  The algorithm of this converter
-     * finds the first non-null list element from the list and applies convertion
+     * finds the first non-null list element from the list and applies conversion
      * to the list element.
      * 
      * @param type the desired type to be converted to

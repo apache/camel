@@ -35,14 +35,12 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-
 public class CxfRsClientFactoryBeanDefinitionParser extends AbstractCxfBeanDefinitionParser {
     public CxfRsClientFactoryBeanDefinitionParser() {
         super();
         setBeanClass(SpringJAXRSClientFactoryBean.class);
     }
-    
-    
+
     @Override
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
         super.doParse(element, ctx, bean);

@@ -154,8 +154,7 @@ public final class CxfEndpointUtils {
         }
         return result;
     }
-    
-    
+
 }
 
 

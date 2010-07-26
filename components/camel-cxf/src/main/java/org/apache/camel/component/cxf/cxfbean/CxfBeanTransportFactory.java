@@ -46,12 +46,8 @@ public class CxfBeanTransportFactory extends CamelTransportFactory  {
         return new CxfBeanDestination(cxfBeanComponent, getBus(), this, endpointInfo);
     }
 
-    /**
-     * @param cxfBeanComponent
-     */
     public void setCxfBeanComponent(CxfBeanComponent cxfBeanComponent) {
         this.cxfBeanComponent = cxfBeanComponent;
-        
     }
     
 }

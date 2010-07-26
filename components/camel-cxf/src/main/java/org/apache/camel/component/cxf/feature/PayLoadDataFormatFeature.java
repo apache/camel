@@ -34,9 +34,7 @@ import org.apache.cxf.interceptor.ClientFaultConverter;
  */
 public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     private static final Logger LOG = LogUtils.getL7dLogger(PayLoadDataFormatFeature.class);    
-
     private static final Collection<Class> REMOVING_FAULT_IN_INTERCEPTORS;
-
 
     static {
         REMOVING_FAULT_IN_INTERCEPTORS = new ArrayList<Class>();
@@ -67,6 +65,5 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         removeInterceptors(client.getEndpoint().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
         removeInterceptors(client.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);        
     }
-
 
 }

@@ -24,7 +24,6 @@ import org.w3c.dom.Element;
 
 import org.apache.camel.converter.jaxp.XmlConverter;
 
-
 /**
  * CxfMessage body type when {@link DataFormat#PAYLOAD} is used.
  * 

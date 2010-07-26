@@ -25,7 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
@@ -230,6 +229,8 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     /**
      * Represented decoupled response endpoint.
      */
+    // TODO: This class is not used
+    @Deprecated
     protected class DecoupledDestination implements Destination {
         protected MessageObserver decoupledMessageObserver;
         private EndpointReferenceType address;

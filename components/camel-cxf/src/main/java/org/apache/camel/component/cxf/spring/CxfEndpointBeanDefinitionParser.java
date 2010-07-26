@@ -43,8 +43,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
 
     @Override
     protected void mapAttribute(BeanDefinitionBuilder bean, Element e, String name, String val) {
-                
-        if ("endpointName".equals(name) || "serviceName".equals(name)) {           
+        if ("endpointName".equals(name) || "serviceName".equals(name)) {
             QName q = parseQName(e, val);
             bean.addPropertyValue(name, q);
         } else {
@@ -105,6 +104,5 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
         }
         
     }
-
 
 }

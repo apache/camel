@@ -24,9 +24,6 @@ import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 
 import org.springframework.beans.factory.DisposableBean;
 
-/**
- *
- */
 public class CxfEndpointBean extends AbstractWSDLBasedEndpointFactory
     implements DisposableBean {
     

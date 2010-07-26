@@ -25,6 +25,7 @@ import org.apache.camel.impl.DefaultHeaderFilterStrategy;
  * @version $Revision$
  */
 public class CxfRsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+
     public CxfRsHeaderFilterStrategy() {
         initialize();  
     }

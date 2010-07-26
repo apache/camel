@@ -27,6 +27,7 @@ import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.MessageImpl;
 
 public final class CxfMessageHelper {
+
     private CxfMessageHelper() {
         //Helper class
     }
@@ -66,6 +67,8 @@ public final class CxfMessageHelper {
         return answer;
     }
 
+    // TODO: This method is not used
+    @Deprecated
     public static org.apache.cxf.message.Message getCxfOutMessage(HeaderFilterStrategy headerFilterStrategy,
                                                                   org.apache.camel.Exchange exchange,
                                                                   boolean isClient)

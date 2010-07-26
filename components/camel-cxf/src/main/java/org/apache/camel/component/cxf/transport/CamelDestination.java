@@ -25,13 +25,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.component.cxf.util.CxfMessageHelper;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.configuration.Configurable;
@@ -104,6 +106,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
     public void activate() {
         getLogger().log(Level.FINE, "CamelDestination activate().... ");
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         try {
             getLogger().log(Level.FINE, "establishing Camel connection");
@@ -112,17 +115,15 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             consumer.start();
 
         } catch (Exception ex) {
-            // TODO: Is it okay just to log severe errors such as this?
-            getLogger().log(Level.SEVERE, "Camel connect failed with Exception : ", ex);
+            throw new FailedToCreateConsumerException(destinationEndpoint, ex);
         }
     }
 
     public void deactivate() {
         try {
-            consumer.stop();
+            ServiceHelper.stopService(consumer);
         } catch (Exception e) {
-            // TODO: Is it okay just to log severe errors such as this?
-            getLogger().log(Level.SEVERE, "Camel stop failed with Exception : ", e);
+            getLogger().log(Level.WARNING, "Error stopping consumer", e);
         }
     }
 
@@ -131,27 +132,12 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         this.deactivate();
     }
 
-    public ProducerTemplate getCamelTemplate() throws Exception {
-        if (camelTemplate == null) {            
-            camelTemplate = getCamelContext().createProducerTemplate();
-        }
-        return camelTemplate;
-    }
-
-    public void setCamelTemplate(ProducerTemplate template) {
-        camelTemplate = template;
-    }
-
-    public void setCamelContext(CamelContext context) {
-        camelContext = context;
-    }
-
     public CamelContext getCamelContext() {
-        if (camelContext == null) {
-            getLogger().log(Level.INFO, "No CamelContext injected, create a default one");
-            camelContext = new DefaultCamelContext();
-        }
         return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     protected void incoming(org.apache.camel.Exchange camelExchange) {
@@ -163,7 +149,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         ((MessageImpl)inMessage).setDestination(this);
 
         // Handling the incoming message
-        // The response message will be send back by the outgoingchain
+        // The response message will be send back by the outgoing chain
         incomingObserver.onMessage(inMessage);
 
     }
@@ -257,10 +243,6 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         return conduitInitiator;
     }
 
-    /**
-     * @param outMessage
-     * @param camelExchange
-     */
     protected void propagateResponseHeadersToCamel(Message outMessage, Exchange camelExchange) {
         CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage, 
                                             camelExchange.getOut().getHeaders(), camelExchange);            

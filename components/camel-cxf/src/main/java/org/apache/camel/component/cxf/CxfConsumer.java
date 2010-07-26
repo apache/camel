@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf;
 
-
 import java.util.HashMap;
 import java.util.Map;
 

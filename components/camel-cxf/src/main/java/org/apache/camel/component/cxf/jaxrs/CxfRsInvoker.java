@@ -62,7 +62,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
             Throwable exception = camelExchange.getException();
             Object result = null;
             if (exception instanceof RuntimeCamelException) {
-                exception = ((RuntimeCamelException)exception).getCause();
+                exception = exception.getCause();
             }
             if (exception instanceof WebApplicationException) {
                 result = ((WebApplicationException)exception).getResponse();

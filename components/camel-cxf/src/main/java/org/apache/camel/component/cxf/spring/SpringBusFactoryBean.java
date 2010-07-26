@@ -23,12 +23,12 @@ import org.springframework.beans.factory.SmartFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-/** This factoryBean which can help user to choice CXF components that he wants bus to load 
- *  without needing to import bunch of CXF packages in OSGi bundle, as the SpringBusFactory 
- *  will try to load the bus extensions with the CXF bundle classloader.
- *  You can set the CXF extensions files with ; as the separator to create a bus.
- * */
-
+/**
+ * This factoryBean which can help user to choice CXF components that he wants bus to load
+ * without needing to import bunch of CXF packages in OSGi bundle, as the SpringBusFactory
+ * will try to load the bus extensions with the CXF bundle classloader.
+ * You can set the CXF extensions files with ; as the separator to create a bus.
+ */
 public class SpringBusFactoryBean implements SmartFactoryBean {
     private String[] cfgFiles;
     private boolean includeDefaultBus;
@@ -46,19 +46,19 @@ public class SpringBusFactoryBean implements SmartFactoryBean {
     public Class getObjectType() {
         return Bus.class;
     }
-    
+
     public void setCfgFiles(String cfgFiles) {
         this.cfgFiles = cfgFiles.split(";");
     }
-    
+
     public void setIncludeDefaultBus(boolean includeDefaultBus) {
         this.includeDefaultBus = includeDefaultBus;
     }
-    
+
     public boolean isSingleton() {
         return true;
     }
-   
+
     public boolean isEagerInit() {
         return true;
     }

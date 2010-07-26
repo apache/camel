@@ -125,12 +125,7 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
         }
     }
     
-    /**
-     * @param cxfBeanComponent 
-     * 
-     */
     private void registerTransportFactory(CxfBeanComponent cxfBeanComponent) {
-        
         CxfBeanTransportFactory transportFactory = new CxfBeanTransportFactory();
         transportFactory.setCxfBeanComponent(cxfBeanComponent);
         transportFactory.setBus(bus);
@@ -142,7 +137,6 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
         // register the destination factory
         DestinationFactoryManager dfm = bus.getExtension(DestinationFactoryManager.class);
         dfm.registerDestinationFactory(CxfBeanTransportFactory.TRANSPORT_ID, transportFactory);    
-        
     }
 
     // Properties

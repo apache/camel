@@ -46,9 +46,7 @@ public class DataInInterceptor extends AbstractInDatabindingInterceptor {
             Document doc = StaxUtils.read(xmlReader);
             message.setContent(Source.class, new DOMSource(doc));
         } catch (XMLStreamException e) {
-            throw new Fault(new org.apache.cxf.common.i18n.Message("XMLSTREAM_EXCEPTION",
-                                                                   LOG),
-                            e);
+            throw new Fault(new org.apache.cxf.common.i18n.Message("XMLSTREAM_EXCEPTION", LOG), e);
         }
     }
 

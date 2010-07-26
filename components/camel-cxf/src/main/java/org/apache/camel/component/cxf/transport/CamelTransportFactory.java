@@ -44,13 +44,10 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
 public class CamelTransportFactory extends AbstractTransportFactory implements ConduitInitiator, DestinationFactory {
 
     public static final String TRANSPORT_ID = "http://cxf.apache.org/transports/camel";
-
     private static final Set<String> URI_PREFIXES = new HashSet<String>();
 
     private Collection<String> activationNamespaces;
-    
     private HeaderFilterStrategy headerFilterStrategy;
-    
     private boolean checkException;
 
     static {
@@ -139,8 +136,7 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
-    
-    
+
 }
 
 

@@ -242,16 +242,13 @@ public class CxfSpringEndpoint extends CxfEndpoint {
         this.serviceNamespace = serviceNamespace;
     }
 
-
     public String getServiceNamespace() {
         return serviceNamespace;
     }
 
-
     public void setServiceLocalName(String serviceLocalName) {
         this.serviceLocalName = serviceLocalName;
     }
-
 
     public String getServiceLocalName() {
         return serviceLocalName;
@@ -265,15 +262,12 @@ public class CxfSpringEndpoint extends CxfEndpoint {
         this.endpointLocalName = endpointLocalName;
     }
 
-
     public void setEndpointNamespace(String endpointNamespace) {
         this.endpointNamespace = endpointNamespace;
     }
 
-
     public String getEndpointNamespace() {
         return endpointNamespace;
     }
-    
-    
+
 }

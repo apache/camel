@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf;
 
 import java.util.List;
@@ -24,7 +23,6 @@ import org.apache.cxf.headers.Header;
 
 /**
  * Filter the wire message headers from one CXF endpoint to another CXF endpoint
- *
  */
 public interface MessageHeaderFilter {
 
@@ -42,4 +40,5 @@ public interface MessageHeaderFilter {
      *  @param headers the origin list of headers
      */
     void filter(Direction direction, List<Header> headers);
+
 }

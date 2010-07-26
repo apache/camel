@@ -37,14 +37,15 @@ import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.service.model.ServiceInfo;
 import org.apache.cxf.wsdl11.WSDLServiceFactory;
 
-//The service factory bean which is used for the service without SEI
+/**
+ * The service factory bean which is used for the service without SEI
+ */
 public class WSDLSoapServiceFactoryBean extends ReflectionServiceFactoryBean {
     private QName serviceName;
     private QName endpointName;
 
     @Override
     public Service create() {
-
         WSDLServiceFactory factory = new WSDLServiceFactory(getBus(), getWsdlURL(), getServiceQName());
 
         setService(factory.create());
@@ -68,13 +69,11 @@ public class WSDLSoapServiceFactoryBean extends ReflectionServiceFactoryBean {
                 //ei.getBinding().setProperty(AbstractBindingFactory.DATABINDING_DISABLED, Boolean.TRUE);
             }
         }
-
     }
     
     protected void checkServiceClassAnnotations(Class<?> sc) {
         // do nothing here
     }
-
 
     // do not handle any payload information here
     private void initializeSoapInterceptors() {
@@ -122,4 +121,5 @@ public class WSDLSoapServiceFactoryBean extends ReflectionServiceFactoryBean {
     public void setEndpointName(QName name) {
         endpointName = name;
     }
+
 }

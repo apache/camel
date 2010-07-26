@@ -86,4 +86,5 @@ public class HybridSourceDataBinding extends JAXBDataBinding {
     public Class<?>[] getSupportedWriterFormats() {
         return new Class[] {XMLStreamWriter.class, Node.class};
     }
+
 }

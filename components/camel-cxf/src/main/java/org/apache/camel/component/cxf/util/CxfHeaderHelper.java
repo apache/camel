@@ -41,11 +41,11 @@ public final class CxfHeaderHelper {
     }
 
     /**
-     * Progagates Camel headers to CXF message.
+     * Propagates Camel headers to CXF message.
      *
      * @param strategy header filter strategy
      * @param headers Camel header
-     * @param message CXF meassage
+     * @param message CXF message
      * @param exchange provides context for filtering
      */
     public static void propagateCamelToCxf(HeaderFilterStrategy strategy,
@@ -117,4 +117,5 @@ public final class CxfHeaderHelper {
             headers.put(key, value);
         }
     }
+
 }

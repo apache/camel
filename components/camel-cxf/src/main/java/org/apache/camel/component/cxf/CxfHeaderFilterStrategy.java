@@ -226,4 +226,5 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     public void setRelayAllMessageHeaders(boolean relayAllMessageHeaders) {
         this.relayAllMessageHeaders = relayAllMessageHeaders;
     }
+
 }

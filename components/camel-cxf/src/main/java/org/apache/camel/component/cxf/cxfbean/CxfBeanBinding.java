@@ -21,28 +21,21 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.message.Message;
 
 /**
- * A Strategy to bind a Camel exchange to a CXF message used by {@link CxfBeanDestination}. 
- * 
+ * A Strategy to bind a Camel exchange to a CXF message used by {@link CxfBeanDestination}.
+ *
  * @version $Revision$
  */
 public interface CxfBeanBinding {
 
     /**
      * Create a CXF {@link Message} from a Camel exchange.
-     * 
-     * @param camelExchange
-     * @param headerFilterStrategy
      */
-    Message createCxfMessageFromCamelExchange(Exchange camelExchange, 
-            HeaderFilterStrategy headerFilterStrategy);
+    Message createCxfMessageFromCamelExchange(Exchange camelExchange,
+                                              HeaderFilterStrategy headerFilterStrategy);
 
     /**
-     * Given a CXF out/response Message, this method propagates response headers to a 
+     * Given a CXF out/response Message, this method propagates response headers to a
      * Camel exchange.
-     * 
-     * @param cxfMessage
-     * @param camelExchange
-     * @param headerFilterStrategy
      */
     void propagateResponseHeadersToCamel(Message cxfMessage, Exchange camelExchange,
                                          HeaderFilterStrategy headerFilterStrategy);

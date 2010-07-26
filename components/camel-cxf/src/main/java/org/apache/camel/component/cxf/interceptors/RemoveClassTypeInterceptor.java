@@ -41,7 +41,6 @@ public class RemoveClassTypeInterceptor extends AbstractPhaseInterceptor<Message
     public RemoveClassTypeInterceptor() {
         super(Phase.UNMARSHAL);
         addBefore(SoapHeaderInterceptor.class.getName());
-
     }
 
     public void handleMessage(Message message) throws Fault {
@@ -67,7 +66,6 @@ public class RemoveClassTypeInterceptor extends AbstractPhaseInterceptor<Message
             removePartTypeClass(bop.getInput());
             removePartTypeClass(bop.getOutput());
         }
-        
     }
 
     protected void removePartTypeClass(BindingMessageInfo bmi) {

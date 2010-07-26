@@ -79,7 +79,6 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         return camelExchange.getOut().getBody();
     }
 
-    
     public void populateExchangeFromCxfRsRequest(org.apache.cxf.message.Exchange cxfExchange,
                                                  Exchange camelExchange, Method method, Object[] paramArray) {
         Message camelMessage = camelExchange.getIn();        
@@ -180,7 +179,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     /**
      * We will return an empty Map unless the response parameter is a {@link Response} object. 
      */
-    public Map<String, Object> bindResponseHeadersToCamelHeaders(Object response, Exchange exchange)
+    public Map<String, Object> bindResponseHeadersToCamelHeaders(Object response, Exchange camelExchange)
         throws Exception {
         
         Map<String, Object> answer = new HashMap<String, Object>();
@@ -188,7 +187,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             
             for (Map.Entry<String, List<Object>> entry : ((Response)response).getMetadata().entrySet()) {
                 if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), 
-                                                                       entry.getValue(), exchange)) {
+                                                                       entry.getValue(), camelExchange)) {
                     
                     String mappedHeaderName = cxfToCamelHeaderMap.get(entry.getKey());
                     if (mappedHeaderName == null) {
@@ -227,7 +226,6 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         return headerFilterStrategy;
     }
 
-
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;        
     }
@@ -262,7 +260,6 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             camelMessage.setHeader(CxfConstants.CAMEL_CXF_RS_OPERATION_RESOURCE_INFO_STACK, copyStack);
                         
         }
-      
     }
 
 }

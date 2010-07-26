@@ -173,7 +173,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
     
     /**
-     * 
      * Create a client factory bean object.  Notice that the serviceClass <b>must</b> be
      * an interface.
      */
@@ -197,7 +196,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
     
     /**
-     * 
      * Create a client factory bean object without serviceClass interface.
      */
     protected ClientFactoryBean createClientFactoryBean() {
@@ -227,11 +225,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             busFactory = new org.apache.cxf.bus.spring.SpringBusFactory(applicationContext);
         }
         return busFactory.createBus();
-        
     }
     
     /**
-     * 
      * Populate a client factory bean
      */
     protected void setupClientFactoryBean(ClientProxyFactoryBean factoryBean, Class<?> cls) {       
@@ -548,8 +544,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     /**
      * We need to override the {@link ClientImpl#setParameters} method
-     * to insert parameters into CXF Message for {@link DataFormat#PAYLOAD}
-     * mode.
+     * to insert parameters into CXF Message for {@link DataFormat#PAYLOAD} mode.
      */
     class CamelCxfClientImpl extends ClientImpl {
        
@@ -596,4 +591,5 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             message.remove(DataFormat.class);
         }
     }
+
 }

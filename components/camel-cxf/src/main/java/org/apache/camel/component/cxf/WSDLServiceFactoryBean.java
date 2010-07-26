@@ -26,6 +26,7 @@ import org.apache.cxf.service.invoker.Invoker;
  * @version $Revision$
  */
 public class WSDLServiceFactoryBean extends ReflectionServiceFactoryBean {
+
     @Override
     protected void initializeWSDLOperations() {
         // skip this operation that requires service class
@@ -41,4 +42,5 @@ public class WSDLServiceFactoryBean extends ReflectionServiceFactoryBean {
         // Camel specific invoker will be set 
         return null;
     }
+
 }

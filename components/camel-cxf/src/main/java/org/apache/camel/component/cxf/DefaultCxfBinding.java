@@ -73,13 +73,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     // -------------------------------------------------------------------------
     
     /**
-     * <p>
-     * This method is called by {@link CxfProducer#process(Exchange)}. It populates 
+     * This method is called by {@link CxfProducer#process(Exchange)}. It populates
      * the CXF exchange and invocation context (i.e. request/response) contexts, it 
      * but does not create and populate a CXF message as a ClientImpl's invoke method
      * will create a new CXF Message.  That method will put all properties from the 
      * CXF exchange and request context to the CXF message.
-     * </p>
      */
     public void populateCxfRequestFromExchange(
             org.apache.cxf.message.Exchange cxfExchange, Exchange camelExchange,
@@ -353,7 +351,6 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     // HeaderFilterStrategyAware Methods
     // -------------------------------------------------------------------------
-    
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
@@ -363,7 +360,6 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         this.headerFilterStrategy = strategy;
     }
 
-       
     // Non public methods
     // -------------------------------------------------------------------------
     
@@ -394,8 +390,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     /**
      * @param camelExchange
      * @param cxfContext Request or Response context
-     * @param camelHeaders 
-     * @param contextKey 
+     * @param camelHeaders
+     * @param contextKey
      */
     @SuppressWarnings("unchecked")
     protected void extractInvocationContextFromCamel(Exchange camelExchange,
@@ -587,8 +583,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (boi.isUnwrapped()) {
             op = boi.getWrappedOperation().getOperationInfo();
         } 
-        
-        
+
         List<MessagePartInfo> partInfos = null;
         boolean client = Boolean.TRUE.equals(message.get(Message.REQUESTOR_ROLE));
         if (client) {
@@ -636,7 +631,6 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
         return answer;
     }
-
 
     public static Object getBodyFromCamel(org.apache.camel.Message out,
             DataFormat dataFormat) {
