@@ -53,7 +53,7 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
             throw new Fault(e);
         } finally {
             IOHelper.close(is, "input stream", null);
-            IOHelper.close(os, "output stream", null);
+            // Should not close the output stream as the interceptor chain will close it
         }
     }
 }

@@ -23,9 +23,8 @@ public class GreeterImplWithSleep extends GreeterImpl {
 
     @Override
     public String greetMe(String hi) {
-
         try {            
-            Thread.sleep(10000);
+            Thread.sleep(2000);
         } catch (Exception ignore) {
 
         }

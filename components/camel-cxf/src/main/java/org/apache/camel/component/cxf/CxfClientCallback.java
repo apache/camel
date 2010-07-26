@@ -47,35 +47,33 @@ public class CxfClientCallback extends ClientCallback {
     }
     
     public void handleResponse(Map<String, Object> ctx, Object[] res) {
-        LOG.trace("Handling response +++ START +++");
-
-        super.handleResponse(ctx, res);
-        // bind the CXF response to Camel exchange
-        if (!boi.getOperationInfo().isOneWay()) {
-            // copy the InMessage header to OutMessage header
-            camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
-            endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
-                    ctx);
+        try {
+            super.handleResponse(ctx, res);
+            // bind the CXF response to Camel exchange
+            if (!boi.getOperationInfo().isOneWay()) {
+                // copy the InMessage header to OutMessage header
+                camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
+                endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
+                        ctx);
+            }
+        } finally {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(Thread.currentThread().getName() + "calling handleResponse");
+            }
+            camelAsyncCallback.done(false);
         }
-
-        // TODO: callback should be in finally to ensure its invoked
-
-        LOG.trace("Handling response +++ DONE +++");
-        camelAsyncCallback.done(false);
-        LOG.trace("Handling response +++ END +++");
     }
     
     public void handleException(Map<String, Object> ctx, Throwable ex) {
-        LOG.trace("Handling exception +++ START +++");
-
-        super.handleException(ctx, ex);
-        camelExchange.setException(ex);
-
-        // TODO: callback should be in finally to ensure its invoked
-
-        LOG.trace("Handling response +++ DONE +++");
-        camelAsyncCallback.done(false);
-        LOG.trace("Handling response +++ END +++");
-    }
+        try {
+            super.handleException(ctx, ex);
+            camelExchange.setException(ex);
+        } finally {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(Thread.currentThread().getName() + "calling handleException");
+            }
+            camelAsyncCallback.done(false);
+        }
+    }        
 
 }
