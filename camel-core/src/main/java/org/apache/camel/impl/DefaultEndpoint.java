@@ -193,4 +193,11 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         return false;
     }
 
+    public void start() throws Exception {
+        // noop
+    }
+
+    public void stop() throws Exception {
+        // noop
+    }
 }

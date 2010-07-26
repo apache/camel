@@ -205,6 +205,14 @@ public class InterceptSendToEndpoint implements Endpoint {
         return delegate.isSingleton();
     }
 
+    public void start() throws Exception {
+        delegate.start();
+    }
+
+    public void stop() throws Exception {
+        delegate.stop();
+    }
+
     @Override
     public String toString() {
         return delegate.toString();

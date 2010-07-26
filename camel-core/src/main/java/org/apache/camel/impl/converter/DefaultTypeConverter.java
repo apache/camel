@@ -89,6 +89,10 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
 
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        if (!isRunAllowed()) {
+            throw new IllegalStateException(this + " is not started");
+        }
+
         Object answer;
         try {
             answer = doConvertTo(type, exchange, value);
@@ -121,6 +125,10 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
 
     @SuppressWarnings("unchecked")
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
+        if (!isRunAllowed()) {
+            throw new IllegalStateException(this + " is not started");
+        }
+
         Object answer;
         try {
             answer = doConvertTo(type, exchange, value);

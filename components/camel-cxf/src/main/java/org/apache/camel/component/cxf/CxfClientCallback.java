@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientCallback;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
@@ -44,22 +43,27 @@ public class CxfClientCallback extends ClientCallback {
     }
     
     public void handleResponse(Map<String, Object> ctx, Object[] res) {
-        super.handleResponse(ctx, res);
-        // bind the CXF response to Camel exchange
-        if (!boi.getOperationInfo().isOneWay()) {
-            // copy the InMessage header to OutMessage header
-            camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
-            endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
-                    ctx);
+        try {
+            super.handleResponse(ctx, res);
+            // bind the CXF response to Camel exchange
+            if (!boi.getOperationInfo().isOneWay()) {
+                // copy the InMessage header to OutMessage header
+                camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
+                endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
+                        ctx);
+            }
+        } finally {
+            camelAsyncCallback.done(false);
         }
-        camelAsyncCallback.done(false);
     }
     
     public void handleException(Map<String, Object> ctx, Throwable ex) {
-        super.handleException(ctx, ex);
-        camelExchange.setException(ex);
-        camelAsyncCallback.done(false);
+        try {
+            super.handleException(ctx, ex);
+        } finally {
+            camelExchange.setException(ex);
+            camelAsyncCallback.done(false);
+        }
     }
-    
 
 }

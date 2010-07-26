@@ -29,7 +29,7 @@ import java.util.Map;
  * @see Message
  * @version $Revision$
  */
-public interface Endpoint extends IsSingleton {
+public interface Endpoint extends IsSingleton, Service {
 
     /**
      * Returns the string representation of the endpoint URI

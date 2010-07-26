@@ -126,7 +126,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private ClassLoader applicationContextClassLoader;
     private boolean routeDefinitionInitiated;
     private String name;
-    private final Map<String, Endpoint> endpoints = new LRUCache<String, Endpoint>(1000);
+    private final Map<String, Endpoint> endpoints = new EndpointRegistry();
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
@@ -414,9 +414,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
                     if (answer != null) {
                         addService(answer);
-                        for (LifecycleStrategy strategy : lifecycleStrategies) {
-                            strategy.onEndpointAdd(answer);
-                        }
                         answer = addEndpointToRegistry(uri, answer);
                     }
                 } catch (Exception e) {
@@ -642,10 +639,25 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     public void addService(Object object) throws Exception {
         if (object instanceof Service) {
             Service service = (Service) object;
+
             for (LifecycleStrategy strategy : lifecycleStrategies) {
-                strategy.onServiceAdd(this, service, null);
+                if (service instanceof Endpoint) {
+                    // use specialized endpint add
+                    strategy.onEndpointAdd((Endpoint) service);
+                } else {
+                    strategy.onServiceAdd(this, service, null);
+                }
             }
-            servicesToClose.add(service);
+
+            // only add to services to close if its a singleton
+            // otherwise we could end up with a lot of endpoints (prototype scoped)
+            boolean singleton = true; // assume singleton by default
+            if (service instanceof IsSingleton) {
+                singleton = ((IsSingleton) service).isSingleton();
+            }
+            if (singleton) {
+                servicesToClose.add(service);
+            }
         }
         startServices(object);
     }
@@ -1111,7 +1123,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             startRouteDefinitions(routeDefinitions);
             routeDefinitionInitiated = true;
         }
-
 
         // starting will continue in the start method
     }
