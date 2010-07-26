@@ -92,12 +92,14 @@ public class CxfConsumer extends DefaultConsumer {
                 Map<String, Object> context = new HashMap<String, Object>();
                 binding.extractJaxWsContext(cxfExchange, context);                 
                 // send Camel exchange to the target processor
+                LOG.trace("Processing +++ START +++");
                 try {
                     getProcessor().process(camelExchange);
                 } catch (Exception e) {
                     throw new Fault(e);
                 }
-                
+                LOG.trace("Processing +++ END +++");
+
                 checkFailure(camelExchange);
               
                 // bind the Camel response into a CXF response
