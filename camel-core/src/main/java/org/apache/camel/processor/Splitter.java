@@ -35,6 +35,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -183,6 +184,9 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     @Override
     protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs,
                                      Iterator<ProcessorExchangePair> it) {
+        // do not share unit of work
+        exchange.setUnitOfWork(null);
+
         exchange.setProperty(Exchange.SPLIT_INDEX, index);
         if (allPairs instanceof Collection) {
             exchange.setProperty(Exchange.SPLIT_SIZE, ((Collection<?>)allPairs).size());

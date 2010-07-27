@@ -23,6 +23,8 @@ import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -85,8 +87,8 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
 
     private boolean findMatchedExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies,
-                                                             Exchange exchange, Throwable exception,
-                                                             Map<Integer, OnExceptionDefinition> candidates) {
+                                               Exchange exchange, Throwable exception,
+                                               Map<Integer, OnExceptionDefinition> candidates) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Finding best suited exception policy for thrown exception " + exception.getClass().getName());
         }
@@ -103,6 +105,19 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         for (Map.Entry<ExceptionPolicyKey, OnExceptionDefinition> entry : entries) {
             Class<?> clazz = entry.getKey().getExceptionClass();
             OnExceptionDefinition type = entry.getValue();
+
+            // if OnException is route scoped then the current route (Exchange) must match
+            // so we will not pick an OnException from another route
+            if (exchange != null && exchange.getUnitOfWork() != null) {
+                RouteDefinition route = exchange.getUnitOfWork().getRouteContext() != null ? exchange.getUnitOfWork().getRouteContext().getRoute() : null;
+                RouteDefinition typeRoute = ProcessorDefinitionHelper.getRoute(type);
+                if (route != null && typeRoute != null && route != typeRoute) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("The type is scoped for route: " + typeRoute.getId() + " however Exchange is at route: " + route.getId());
+                    }
+                    continue;
+                }
+            }
 
             if (filter(type, clazz, exception)) {
 

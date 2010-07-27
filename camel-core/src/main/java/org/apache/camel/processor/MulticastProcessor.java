@@ -61,8 +61,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Implements the Multicast pattern to send a message exchange to a number of
  * endpoints, each endpoint receiving a copy of the message exchange.
  *
- * @see Pipeline
  * @version $Revision$
+ * @see Pipeline
  */
 public class MulticastProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
 
@@ -130,7 +130,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
         this(camelContext, processors, aggregationStrategy, false, null, false, false);
     }
-    
+
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
                               boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException) {
         notNull(camelContext, "camelContext");
@@ -152,7 +152,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     public String getTraceLabel() {
         return "multicast";
     }
-    
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -469,10 +469,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * when using the asynchronous routing engine. And therefore we want the logic in one method instead
      * of being scattered.
      *
-     * @param original      the original exchange
-     * @param subExchange   the current sub exchange, can be <tt>null</tt> for the synchronous part
-     * @param callback      the callback
-     * @param doneSync      the <tt>doneSync</tt> parameter to call on callback
+     * @param original    the original exchange
+     * @param subExchange the current sub exchange, can be <tt>null</tt> for the synchronous part
+     * @param callback    the callback
+     * @param doneSync    the <tt>doneSync</tt> parameter to call on callback
      */
     protected void doDone(Exchange original, Exchange subExchange, AsyncCallback callback, boolean doneSync) {
         // cleanup any per exchange aggregation strategy
@@ -494,7 +494,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * Aggregate the {@link Exchange} with the current result
      *
      * @param strategy the aggregation strategy to use
-     * @param result the current result
+     * @param result   the current result
      * @param exchange the exchange to be added to the result
      */
     protected synchronized void doAggregate(AggregationStrategy strategy, AtomicExchange result, Exchange exchange) {
@@ -521,8 +521,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         int index = 0;
         for (Processor processor : processors) {
-            Exchange copy = exchange.copy();
-            result.add(createProcessorExchangePair(index++, processor, copy));
+            result.add(createProcessorExchangePair(index++, processor, exchange));
         }
 
         return result;
@@ -534,15 +533,18 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * You <b>must</b> use this method to create the instances of {@link ProcessorExchangePair} as they
      * need to be specially prepared before use.
      *
-     * @param processor  the processor
-     * @param exchange   the exchange
+     * @param processor the processor
+     * @param exchange  the exchange
      * @return prepared for use
      */
     protected ProcessorExchangePair createProcessorExchangePair(int index, Processor processor, Exchange exchange) {
         Processor prepared = processor;
 
+        // copy exchange, and do not share the unit of work
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+
         // set property which endpoint we send to
-        setToEndpoint(exchange, prepared);
+        setToEndpoint(copy, prepared);
 
         // rework error handling to support fine grained error handling
         if (exchange.getUnitOfWork() != null && exchange.getUnitOfWork().getRouteContext() != null) {
@@ -556,12 +558,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // instead of using ProcessorDefinition.wrapInErrorHandler)
             try {
                 prepared = builder.createErrorHandler(routeContext, prepared);
+                // and wrap in unit of work processor so the copy exchange also can run under UoW
+                prepared = new UnitOfWorkProcessor(prepared);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         }
 
-        return new DefaultProcessorExchangePair(index, processor, prepared, exchange);
+        return new DefaultProcessorExchangePair(index, processor, prepared, copy);
     }
 
     protected void doStart() throws Exception {
@@ -594,7 +598,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     /**
      * Is the multicast processor working in streaming mode?
-     * 
+     * <p/>
      * In streaming mode:
      * <ul>
      * <li>we use {@link Iterable} to ensure we can send messages as soon as the data becomes available</li>

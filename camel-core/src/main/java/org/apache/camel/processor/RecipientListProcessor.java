@@ -173,8 +173,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             }
 
             // then create the exchange pair
-            Exchange copy = exchange.copy();
-            result.add(createProcessorExchangePair(index++, endpoint, producer, copy));
+            result.add(createProcessorExchangePair(index++, endpoint, producer, exchange));
         }
 
         return result;
@@ -186,8 +185,11 @@ public class RecipientListProcessor extends MulticastProcessor {
     protected ProcessorExchangePair createProcessorExchangePair(int index, Endpoint endpoint, Producer producer, Exchange exchange) {
         Processor prepared = producer;
 
+        // copy exchange, and do not share the unit of work
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+
         // set property which endpoint we send to
-        setToEndpoint(exchange, prepared);
+        setToEndpoint(copy, prepared);
 
         // rework error handling to support fine grained error handling
         if (exchange.getUnitOfWork() != null && exchange.getUnitOfWork().getRouteContext() != null) {
@@ -201,12 +203,14 @@ public class RecipientListProcessor extends MulticastProcessor {
             // instead of using ProcessorDefinition.wrapInErrorHandler)
             try {
                 prepared = builder.createErrorHandler(routeContext, prepared);
+                // and wrap in unit of work processor so the copy exchange also can run under UoW
+                prepared = new UnitOfWorkProcessor(prepared);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         }
 
-        return new RecipientProcessorExchangePair(index, producerCache, endpoint, producer, prepared, exchange);
+        return new RecipientProcessorExchangePair(index, producerCache, endpoint, producer, prepared, copy);
     }
 
     protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient) {

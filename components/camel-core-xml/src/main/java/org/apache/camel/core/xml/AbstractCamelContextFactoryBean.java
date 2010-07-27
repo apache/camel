@@ -273,6 +273,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // using route builders. So we have here a little custom code to fix the JAXB gaps
         for (RouteDefinition route : getRoutes()) {
 
+            // at first init the parent
+            initParent(route);
+
             // abstracts is the cross cutting concerns
             List<ProcessorDefinition> abstracts = new ArrayList<ProcessorDefinition>();
 
@@ -295,11 +298,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
 
             // rebuild route as upper + lower
             route.clearOutput();
-            route.getOutputs().addAll(upper);
             route.getOutputs().addAll(lower);
-
-            // configure parents
-            initParent(route);
+            route.getOutputs().addAll(0, upper);
         }
 
         if (getDataFormats() != null) {
@@ -356,6 +356,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // add global on exceptions if any
         List<OnExceptionDefinition> onExceptions = getOnExceptions();
         if (onExceptions != null && !onExceptions.isEmpty()) {
+            // init the parent
+            for (OnExceptionDefinition global : onExceptions) {
+                initParent(global);
+            }
             abstracts.addAll(onExceptions);
         }
 
@@ -373,6 +377,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // configure intercept
         for (InterceptDefinition intercept : getIntercepts()) {
             intercept.afterPropertiesSet();
+            // init the parent
+            initParent(intercept);
             // add as first output so intercept is handled before the actual route and that gives
             // us the needed head start to init and be able to intercept all the remaining processing steps
             upper.add(0, intercept);
@@ -395,6 +401,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
 
             if (match) {
                 intercept.afterPropertiesSet();
+                // init the parent
+                initParent(intercept);
                 // add as first output so intercept is handled before the actual route and that gives
                 // us the needed head start to init and be able to intercept all the remaining processing steps
                 upper.add(0, intercept);
@@ -404,6 +412,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // configure intercept send to endpoint
         for (InterceptSendToEndpointDefinition intercept : getInterceptSendToEndpoints()) {
             intercept.afterPropertiesSet();
+            // init the parent
+            initParent(intercept);
             // add as first output so intercept is handled before the actual route and that gives
             // us the needed head start to init and be able to intercept all the remaining processing steps
             upper.add(0, intercept);
@@ -423,6 +433,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // only add global onCompletion if there are no route already
         if (completions.isEmpty()) {
             completions = getOnCompletions();
+            // init the parent
+            for (OnCompletionDefinition global : completions) {
+                initParent(global);
+            }
         }
 
         // are there any completions to init at all?

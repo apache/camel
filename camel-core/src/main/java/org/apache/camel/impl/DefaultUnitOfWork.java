@@ -54,6 +54,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private final Stack<RouteContext> routeContextStack = new Stack<RouteContext>();
 
     public DefaultUnitOfWork(Exchange exchange) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("UnitOfWork created for ExchangeId: " + exchange.getExchangeId() + " with " + exchange);
+        }
         tracedRouteNodes = new DefaultTracedRouteNodes();
 
         // TODO: the copy on facade strategy will help us here in the future
@@ -132,7 +135,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
             if (handover) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Handover synchronization " + synchronization + " to Exchange: " + target);
+                    LOG.trace("Handover synchronization " + synchronization + " to: " + target);
                 }
                 target.addOnCompletion(synchronization);
                 // remove it if its handed over
@@ -147,6 +150,10 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @SuppressWarnings("unchecked")
     public void done(Exchange exchange) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("UnitOfWork done for ExchangeId: " + exchange.getExchangeId() + " with " + exchange);
+        }
+
         boolean failed = exchange.isFailed();
 
         // fire event to signal the exchange is done
@@ -170,8 +177,14 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             for (Synchronization synchronization : synchronizations) {
                 try {
                     if (failed) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Invoking synchronization.onFailure: " + synchronization + " with " + exchange);
+                        }
                         synchronization.onFailure(exchange);
                     } else {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Invoking synchronization.onComplete: " + synchronization + " with " + exchange);
+                        }
                         synchronization.onComplete(exchange);
                     }
                 } catch (Exception e) {
