@@ -196,5 +196,12 @@ public class IOConverterTest extends ContextTestSupport {
         assertNotNull(data);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, data));
     }
+    
+    public void testCharsetNormalize() throws Exception {
+        assertEquals("UTF-8", IOConverter.normalizeCharset("'UTF-8'"));
+        assertEquals("UTF-8", IOConverter.normalizeCharset("\"UTF-8\""));
+        assertEquals("UTF-8", IOConverter.normalizeCharset("\"UTF-8 \""));
+        assertEquals("UTF-8", IOConverter.normalizeCharset("\' UTF-8\'"));
+    }
 
 }

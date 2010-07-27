@@ -219,7 +219,7 @@ public class HttpProducer extends DefaultProducer {
             int index = contentType.indexOf("charset=");
             if (index > 0) {
                 String charset = contentType.substring(index + 8);
-                exchange.setProperty(Exchange.CHARSET_NAME, charset);
+                exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
             }
         }
         return doExtractResponseBody(is, exchange);

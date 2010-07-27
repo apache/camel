@@ -341,7 +341,7 @@ public final class IOConverter {
         if (exchange != null) {
             String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
             if (charsetName != null) {
-                return charsetName;
+                return IOConverter.normalizeCharset(charsetName);
             }
         }
         if (useDefault) {
@@ -385,6 +385,26 @@ public final class IOConverter {
             super(new FileOutputStream(file), charset);
         }
 
+    }
+
+    /**
+     * This method will take off the quotes and double quotes of the charset
+     * @param charset
+     * @return
+     */
+    public static String normalizeCharset(String charset) {
+        if (charset != null) {
+            String answer = charset.trim();
+            if (answer.startsWith("'") || answer.startsWith("\"")) {
+                answer = answer.substring(1);
+            }
+            if (answer.endsWith("'") || answer.endsWith("\"")) {
+                answer = answer.substring(0, answer.length() - 1);
+            }
+            return answer.trim();
+        } else {
+            return null;
+        }
     }
     
 }

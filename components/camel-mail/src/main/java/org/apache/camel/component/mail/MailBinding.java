@@ -165,7 +165,7 @@ public class MailBinding {
 
             // after is the charset lets see if its given and a valid charset
             if (after != null) {
-                String charset = ObjectHelper.after(after, "=");
+                String charset = IOConverter.normalizeCharset(ObjectHelper.after(after, "="));
                 if (charset != null) {
                     boolean supported;
                     try {

@@ -24,6 +24,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.ServicePoolAware;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.util.ExchangeHelper;
@@ -78,7 +79,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
 
         // set the exchange encoding property
         if (endpoint.getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, endpoint.getConfiguration().getCharsetName());
+            exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(endpoint.getConfiguration().getCharsetName()));
         }
 
         Object body = MinaPayloadHelper.getIn(endpoint, exchange);

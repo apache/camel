@@ -26,6 +26,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.ServicePoolAware;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.Logger;
@@ -143,7 +144,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
 
         // set the exchange encoding property
         if (getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, getConfiguration().getCharsetName());
+            exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(getConfiguration().getCharsetName()));
         }
 
         ChannelFuture channelFuture;

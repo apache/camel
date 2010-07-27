@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.converter.IOConverter;
 
 /**
  * A processor which converts the payload of the input message to be of the given type
@@ -49,7 +50,7 @@ public class ConvertBodyProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
         if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, charset);
+            exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
         }
 
         // only convert if the is a body
