@@ -94,13 +94,21 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
     private boolean isSetDefaultBus;
     private boolean loggingFeatureEnabled;
+    private String address;
 
     public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
         super(remaining, cxfComponent);
+        setAddress(remaining);
     }
     
     public CxfEndpoint(String remaining, CamelContext context) {
         super(remaining, context);
+        setAddress(remaining);
+    }
+    
+    // This path is for CxfComponent setting the EndpointUri
+    void updateEndpointUri(String endpointUri) {
+        super.setEndpointUri(endpointUri);
     }
 
     public Producer createProducer() throws Exception {
@@ -121,7 +129,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     protected void setupServerFactoryBean(ServerFactoryBean sfb, Class<?> cls) {
         
         // address
-        sfb.setAddress(getEndpointUri());
+        sfb.setAddress(getAddress());
         
         // service class
         sfb.setServiceClass(cls); 
@@ -235,7 +243,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         factoryBean.setServiceClass(cls);
         
         // address
-        factoryBean.setAddress(getEndpointUri());
+        factoryBean.setAddress(getAddress());
 
         // wsdl url
         if (getWsdlURL() != null) {
@@ -275,7 +283,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     protected void setupClientFactoryBean(ClientFactoryBean factoryBean) {       
         // address
-        factoryBean.setAddress(getEndpointUri());
+        factoryBean.setAddress(getAddress());
 
         // wsdl url
         if (getWsdlURL() != null) {
@@ -540,6 +548,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void stop() throws Exception {
         // noop
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     /**

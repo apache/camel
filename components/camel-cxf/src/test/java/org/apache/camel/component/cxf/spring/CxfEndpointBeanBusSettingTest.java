@@ -33,12 +33,14 @@ public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport
         CamelContext camelContext = (CamelContext) ctx.getBean("camel");
         
         CxfEndpoint endpoint = (CxfEndpoint)camelContext.getEndpoint("cxf:bean:routerEndpoint");
+        assertEquals("Get a wrong endpoint uri", "cxf://bean:routerEndpoint", endpoint.getEndpointUri());       
         Bus cxf1 = endpoint.getBus();
         
         assertTrue(cxf1.getOutInterceptors().size() >= 1);
         assertTrue(cxf1.getInInterceptors().size() == 0);
         
         endpoint = (CxfEndpoint)camelContext.getEndpoint("cxf:bean:serviceEndpoint");
+        assertEquals("Get a wrong endpoint uri", "cxf://bean:serviceEndpoint", endpoint.getEndpointUri());
         Bus cxf2 = endpoint.getBus();
         assertTrue(cxf2.getInInterceptors().size() >= 1);
         assertTrue(cxf2.getOutInterceptors().size() == 0);

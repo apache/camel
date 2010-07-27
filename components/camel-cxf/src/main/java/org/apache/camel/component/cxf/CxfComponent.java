@@ -80,5 +80,11 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         setEndpointHeaderFilterStrategy(result);
         return result;
     }
+    
+    @Override
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
+        CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
+        cxfEndpoint.updateEndpointUri(uri);
+    }
         
 }

@@ -60,8 +60,8 @@ public class CxfSpringEndpoint extends CxfEndpoint {
         super(bean.getAddress(), component);
         init(bean);
     }
-    
-
+        
+    // override the 
     private void init(CxfEndpointBean bean) throws Exception {
         this.bean = bean;        
         // create configurer
@@ -234,7 +234,7 @@ public class CxfSpringEndpoint extends CxfEndpoint {
     }
     
     // this property will be set by spring
-    public void setBeanId(String id) {        
+    public void setBeanId(String id) {       
         this.beanId = id;
     }
     

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.bus.CXFBusFactory;
@@ -65,6 +67,16 @@ public class CxfProducerRouterTest extends CamelTestSupport {
                 from("direct:EndpointB").to(getSimpleEndpointUri() + "&dataFormat=MESSAGE");
             }
         };
+    }
+    
+    @Test
+    public void testCxfEndpointUris() throws URISyntaxException {
+        CxfEndpoint endpoint = context.getEndpoint(getSimpleEndpointUri(), CxfEndpoint.class);
+        assertEquals("Get a wrong endpoint uri", getSimpleEndpointUri(), endpoint.getEndpointUri());
+        
+        endpoint = context.getEndpoint(getSimpleEndpointUri() + "&dataFormat=MESSAGE", CxfEndpoint.class);
+        assertEquals("Get a wrong endpoint uri", URISupport.normalizeUri(getSimpleEndpointUri() + "&dataFormat=MESSAGE"), endpoint.getEndpointUri());
+
     }
 
     @Test

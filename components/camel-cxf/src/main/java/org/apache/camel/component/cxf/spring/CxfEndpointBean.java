@@ -22,12 +22,15 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.NamedBean;
 
 public class CxfEndpointBean extends AbstractWSDLBasedEndpointFactory
-    implements DisposableBean {
+    implements DisposableBean, BeanNameAware, NamedBean {
     
     private List handlers;
+    private String beanName;
 
     public CxfEndpointBean() {
         this(new ReflectionServiceFactoryBean());
@@ -50,5 +53,13 @@ public class CxfEndpointBean extends AbstractWSDLBasedEndpointFactory
         BusFactory.setDefaultBus(null);
         BusFactory.setThreadDefaultBus(null);
         
+    }
+
+    public void setBeanName(String name) {
+        beanName = name;
+    }
+
+    public String getBeanName() {
+        return beanName;
     }
 }
