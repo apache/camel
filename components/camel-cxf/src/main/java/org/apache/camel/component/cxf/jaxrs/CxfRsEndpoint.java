@@ -45,15 +45,23 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private HeaderFilterStrategy headerFilterStrategy;
     private CxfRsBinding binding;
     private boolean httpClientAPI = true;
+    private String address;
 
     private AtomicBoolean bindingInitialized = new AtomicBoolean(false);
     
     public CxfRsEndpoint(String endpointUri, CamelContext camelContext) {
-       super(endpointUri, camelContext);
+        super(endpointUri, camelContext);
+        setAddress(endpointUri);
     }
     
     public CxfRsEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
+        setAddress(endpointUri);
+    }
+    
+    // This method is for CxfRsComponent setting the EndpointUri
+    protected void updateEndpointUri(String endpointUri) {
+        super.setEndpointUri(endpointUri);
     }
     
     public void setParameters(Map<String, String> param) {
@@ -130,14 +138,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     
     protected void setupJAXRSServerFactoryBean(JAXRSServerFactoryBean sfb) {        
         // address
-        sfb.setAddress(getEndpointUri());
+        sfb.setAddress(getAddress());
         sfb.setResourceClasses(CastUtils.cast(getResourceClasses(), Class.class));
         sfb.setStart(false);
     }
     
     protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb) {        
         // address
-        cfb.setAddress(getEndpointUri());
+        cfb.setAddress(getAddress());
         if (getResourceClasses() != null) {
             cfb.setResourceClass(getResourceClasses().get(0));
         }    
@@ -165,6 +173,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     public void setResourceClasses(Class<?>... classes) {
         setResourceClasses(Arrays.asList(classes));
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
 }

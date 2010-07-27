@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
@@ -73,5 +74,11 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
         answer.setParameters(params);
         setEndpointHeaderFilterStrategy(answer);
         return answer;
+    }
+    
+    @Override
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
+        CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) endpoint;
+        cxfRsEndpoint.updateEndpointUri(uri);
     }
 }

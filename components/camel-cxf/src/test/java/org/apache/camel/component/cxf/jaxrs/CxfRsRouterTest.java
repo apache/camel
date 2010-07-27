@@ -39,6 +39,16 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringRouter.xml");
     }
     
+    @Test 
+    public void testEndpointUris() throws Exception {
+        CxfRsEndpoint cxfRsEndpoint = context.getEndpoint("cxfrs://bean://rsServer", CxfRsEndpoint.class);
+        assertEquals("Get a wrong endpoint uri", "cxfrs://bean://rsServer", cxfRsEndpoint.getEndpointUri());
+        
+        cxfRsEndpoint = context.getEndpoint("cxfrs://bean://rsClient", CxfRsEndpoint.class);
+        assertEquals("Get a wrong endpoint uri", "cxfrs://bean://rsClient", cxfRsEndpoint.getEndpointUri());
+        
+    }
+    
     @Test
     public void testGetCustomer() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers/123");

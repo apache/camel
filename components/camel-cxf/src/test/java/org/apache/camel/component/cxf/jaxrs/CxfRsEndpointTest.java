@@ -24,13 +24,14 @@ public class CxfRsEndpointTest extends CamelTestSupport {
     
     @Test
     public void testCreateCxfRsEndpoint() throws Exception {
-        CxfRsComponent component = new CxfRsComponent(context);
-        CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint("cxfrs://http://localhost:9000"
+        String endpointUri = "cxfrs://http://localhost:9000"
             + "?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService, "
-            + "java.lang.String ; org.apache.camel.component.cxf.jaxrs.testbean.Order");
+            + "java.lang.String ; org.apache.camel.component.cxf.jaxrs.testbean.Order";
+        CxfRsComponent component = new CxfRsComponent(context);
+        CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint(endpointUri);
         
         assertNotNull("The endpoint should not be null ", endpoint);
-        assertEquals("Get a wrong address ", "http://localhost:9000", endpoint.getEndpointUri());
+        assertEquals("Get a wrong address ", endpointUri, endpoint.getEndpointUri());
         assertEquals("Get a wrong size of resouces classes", 3, endpoint.getResourceClasses().size());
         assertEquals("Get a wrong resources class", CustomerService.class, endpoint.getResourceClasses().get(0));
     }
@@ -41,7 +42,7 @@ public class CxfRsEndpointTest extends CamelTestSupport {
         CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint("cxfrs://http://localhost:9000/templatetest/TID/ranges/start=0;end=1?"
             + "httpClientAPI=true&q1=11&q2=12");
         
-        assertEquals("Get a wrong URI ", "http://localhost:9000/templatetest/TID/ranges/start=0;end=1", endpoint.getEndpointUri());
+        assertEquals("Get a wrong URI ", "cxfrs://http://localhost:9000/templatetest/TID/ranges/start=0;end=1?httpClientAPI=true&q1=11&q2=12", endpoint.getEndpointUri());
         assertEquals("Get a wrong usingClientAPI option", true, endpoint.isHttpClientAPI());
         assertNotNull("The Parameter should not be null" + endpoint.getParameters());
         assertEquals("Get a wrong parameter map", "{q1=11, q2=12}", endpoint.getParameters().toString());

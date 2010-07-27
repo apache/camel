@@ -106,8 +106,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         setAddress(remaining);
     }
     
-    // This path is for CxfComponent setting the EndpointUri
-    void updateEndpointUri(String endpointUri) {
+    // This method is for CxfComponent setting the EndpointUri
+    protected void updateEndpointUri(String endpointUri) {
         super.setEndpointUri(endpointUri);
     }
 
