@@ -1178,6 +1178,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
 
+        // reset values (mark routes as not initialized so they can be started again)
+        routeDefinitionInitiated = false;
+        firstStartDone = false;
+        defaultRouteStartupOrder = 1000;
+
         stopWatch.stop();
         if (LOG.isInfoEnabled()) {
             LOG.info("Uptime: " + getUptime());

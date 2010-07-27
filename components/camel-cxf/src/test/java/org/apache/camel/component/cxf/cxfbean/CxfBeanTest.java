@@ -22,6 +22,7 @@ import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
@@ -33,6 +34,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
@@ -46,10 +49,13 @@ import static org.junit.Assert.assertEquals;
 public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>113</id></Customer>";
     private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
+
+    @Autowired
+    @Qualifier("camel")
+    protected CamelContext camelContext;
     
     @Test
     public void testGetConsumer() throws Exception {
-        
         URL url = new URL("http://localhost:9000/customerservice/customers/123");
 
         InputStream in = url.openStream();
@@ -60,9 +66,27 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         in = url.openStream();
         assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", CxfUtils.getStringFromInputStream(in));
         // END SNIPPET: clientInvocation
-
     }
 
+    @Test
+    public void testGetConsumerAfterReStartCamelContext() throws Exception {
+        URL url = new URL("http://localhost:9000/customerservice/customers/123");
+
+        InputStream in = url.openStream();
+        assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", CxfUtils.getStringFromInputStream(in));
+        in.close();
+
+        camelContext.stop();
+        camelContext.start();
+
+        url = new URL("http://localhost:9000/customerservice/orders/223/products/323");
+        in = url.openStream();
+        
+        assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", 
+                     CxfUtils.getStringFromInputStream(in));
+        in.close();
+    }
+    
     @Test
     public void testPutConsumer() throws Exception {
         HttpPut put = new HttpPut("http://localhost:9000/customerservice/customers");
