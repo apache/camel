@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.processor.Logger;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
@@ -34,6 +35,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
+
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
@@ -147,6 +149,17 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     }
 
     @Test
+    public void testInvalidMaxConcurrentConsumers() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=5&maxConcurrentConsumers=2");
+        try {
+            endpoint.createConsumer(new Logger());
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Property maxConcurrentConsumers: 2 must be higher than concurrentConsumers: 5", e.getMessage());
+        }
+    }
+
+    @Test
     public void testConcurrentConsumers() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=4");
         assertEquals(4, endpoint.getConcurrentConsumers());
@@ -195,7 +208,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(null, endpoint.getJmsMessageType());
         assertNull(endpoint.getJmsOperations());
         assertNotNull(endpoint.getListenerConnectionFactory());
-        assertEquals(1, endpoint.getMaxConcurrentConsumers());
+        assertEquals(0, endpoint.getMaxConcurrentConsumers());
         assertEquals(-1, endpoint.getMaxMessagesPerTask());
         assertEquals(null, endpoint.getMessageConverter());
         assertNotNull(endpoint.getMetadataJmsOperations());

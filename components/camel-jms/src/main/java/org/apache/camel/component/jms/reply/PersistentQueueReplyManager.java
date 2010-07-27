@@ -19,18 +19,15 @@ package org.apache.camel.component.jms.reply;
 import java.math.BigInteger;
 import java.util.Random;
 import javax.jms.Destination;
-import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.destination.DestinationResolver;
-import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * A {@link ReplyManager} when using persistent queues.
@@ -189,48 +186,25 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         answer.setMessageListener(this);
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);
-        answer.setConcurrentConsumers(endpoint.getConcurrentConsumers());
-
-        ExceptionListener exceptionListener = endpoint.getExceptionListener();
-        if (exceptionListener != null) {
-            answer.setExceptionListener(exceptionListener);
-        }
-
-        answer.setSessionTransacted(endpoint.isTransacted());
-        if (endpoint.isTransacted()) {
-            answer.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
-        } else {
-            if (endpoint.getAcknowledgementMode() >= 0) {
-                answer.setSessionAcknowledgeMode(endpoint.getAcknowledgementMode());
-            } else if (endpoint.getAcknowledgementModeName() != null) {
-                answer.setSessionAcknowledgeModeName(endpoint.getAcknowledgementModeName());
-            }
-        }
-
         answer.setConcurrentConsumers(1);
+        // must use cache level session
         answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_SESSION);
 
+        // we cannot do request-reply over JMS with transaction
+        answer.setSessionTransacted(false);
+
+        // other optional properties
+        if (endpoint.getExceptionListener() != null) {
+            answer.setExceptionListener(endpoint.getExceptionListener());
+        }
         if (endpoint.getReceiveTimeout() >= 0) {
             answer.setReceiveTimeout(endpoint.getReceiveTimeout());
         }
         if (endpoint.getRecoveryInterval() >= 0) {
             answer.setRecoveryInterval(endpoint.getRecoveryInterval());
         }
-        TaskExecutor taskExecutor = endpoint.getTaskExecutor();
-        if (taskExecutor != null) {
-            answer.setTaskExecutor(taskExecutor);
-        }
-        PlatformTransactionManager tm = endpoint.getTransactionManager();
-        if (tm != null) {
-            answer.setTransactionManager(tm);
-        } else if (endpoint.isTransacted()) {
-            throw new IllegalArgumentException("Property transacted is enabled but a transactionManager was not injected!");
-        }
-        if (endpoint.getTransactionName() != null) {
-            answer.setTransactionName(endpoint.getTransactionName());
-        }
-        if (endpoint.getTransactionTimeout() >= 0) {
-            answer.setTransactionTimeout(endpoint.getTransactionTimeout());
+        if (endpoint.getTaskExecutor() != null) {
+            answer.setTaskExecutor(endpoint.getTaskExecutor());
         }
 
         return answer;

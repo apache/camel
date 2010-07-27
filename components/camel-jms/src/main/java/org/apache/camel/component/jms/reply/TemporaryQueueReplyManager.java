@@ -105,8 +105,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         answer.setMessageListener(this);
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);
-        answer.setConcurrentConsumers(endpoint.getConcurrentConsumers());
+        answer.setConcurrentConsumers(1);
         answer.setConnectionFactory(endpoint.getConnectionFactory());
+        answer.setSessionTransacted(false);
         String clientId = endpoint.getClientId();
         if (clientId != null) {
             clientId += ".CamelReplyManager";
