@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.strategy;
 
+import java.io.File;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -40,27 +41,36 @@ public final class GenericFileProcessStrategyFactory {
         boolean isDelete = params.get("delete") != null;
         boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
 
-        if (isNoop) {
-            GenericFileNoOpProcessStrategy<T> strategy = new GenericFileNoOpProcessStrategy<T>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
-            return strategy;
-        } else if (isDelete) {
+        if (isDelete) {
             GenericFileDeleteProcessStrategy<T> strategy = new GenericFileDeleteProcessStrategy<T>();
             strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
-            return strategy;
-        } else if (isMove) {
-            GenericFileRenameProcessStrategy<T> strategy = new GenericFileRenameProcessStrategy<T>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
-            if (moveExpression != null) {
+            if (preMoveExpression != null) {
                 GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
-                renamer.setExpression(moveExpression);
-                strategy.setCommitRenamer(renamer);
+                renamer.setExpression(preMoveExpression);
+                strategy.setBeginRenamer(renamer);
             }
             if (moveFailedExpression != null) {
                 GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
                 renamer.setExpression(moveFailedExpression);
                 strategy.setFailureRenamer(renamer);
             }
+            return strategy;
+        } else if (isMove || isNoop) {
+            GenericFileRenameProcessStrategy<T> strategy = new GenericFileRenameProcessStrategy<T>();
+            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
+            if (!isNoop && moveExpression != null) {
+                // move on commit is only possible if not noop
+                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
+                renamer.setExpression(moveExpression);
+                strategy.setCommitRenamer(renamer);
+            }
+            // both move and noop supports pre move
+            if (moveFailedExpression != null) {
+                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
+                renamer.setExpression(moveFailedExpression);
+                strategy.setFailureRenamer(renamer);
+            }
+            // both move and noop supports pre move
             if (preMoveExpression != null) {
                 GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
                 renamer.setExpression(preMoveExpression);

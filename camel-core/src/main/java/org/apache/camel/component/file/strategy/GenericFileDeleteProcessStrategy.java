@@ -25,7 +25,27 @@ import org.apache.camel.component.file.GenericFileOperations;
 public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
 
     private GenericFileRenamer<T> failureRenamer;
-    
+    private GenericFileRenamer<T> beginRenamer;
+
+    @Override
+    public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+        // must invoke super
+        boolean result = super.begin(operations, endpoint, exchange, file);
+        if (!result) {
+            return false;
+        }
+
+        if (beginRenamer != null) {
+            GenericFile<T> newName = beginRenamer.renameFile(exchange, file);
+            GenericFile<T> to = renameFile(operations, file, newName);
+            if (to != null) {
+                to.bindToExchange(exchange);
+            }
+        }
+
+        return true;
+    }
+
     @Override
     public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         // must invoke super
@@ -82,5 +102,11 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
         this.failureRenamer = failureRenamer;
     }
 
+    public GenericFileRenamer<T> getBeginRenamer() {
+        return beginRenamer;
+    }
 
+    public void setBeginRenamer(GenericFileRenamer<T> beginRenamer) {
+        this.beginRenamer = beginRenamer;
+    }
 }

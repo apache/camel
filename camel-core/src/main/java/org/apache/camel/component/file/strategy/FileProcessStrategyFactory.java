@@ -41,34 +41,40 @@ public final class FileProcessStrategyFactory {
         boolean isDelete = params.get("delete") != null;
         boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
 
-        if (isNoop) {
-            GenericFileNoOpProcessStrategy<File> strategy = new GenericFileNoOpProcessStrategy<File>();
-            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
-            return strategy;
-        } else if (isDelete) {
+        if (isDelete) {
             GenericFileDeleteProcessStrategy<File> strategy = new GenericFileDeleteProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
+            if (preMoveExpression != null) {
+                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
+                renamer.setExpression(preMoveExpression);
+                strategy.setBeginRenamer(renamer);
+            }
             if (moveFailedExpression != null) {
                 GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
                 renamer.setExpression(moveFailedExpression);
                 strategy.setFailureRenamer(renamer);
             }
             return strategy;
-        } else if (isMove) {
+        } else if (isMove || isNoop) {
             GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
-            if (moveExpression != null) {
-                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
-                renamer.setExpression(moveExpression);
-                strategy.setCommitRenamer(renamer);
-            } else {
-                strategy.setCommitRenamer(getDefaultCommitRenamer(context));
+            if (!isNoop) {
+                // move on commit is only possible if not noop
+                if (moveExpression != null) {
+                    GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
+                    renamer.setExpression(moveExpression);
+                    strategy.setCommitRenamer(renamer);
+                } else {
+                    strategy.setCommitRenamer(getDefaultCommitRenamer(context));
+                }
             }
+            // both move and noop supports pre move
             if (preMoveExpression != null) {
                 GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
                 renamer.setExpression(preMoveExpression);
                 strategy.setBeginRenamer(renamer);
             }
+            // both move and noop supports move failed
             if (moveFailedExpression != null) {
                 GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
                 renamer.setExpression(moveFailedExpression);
