@@ -56,6 +56,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected IdempotentRepository<String> inProgressRepository = new MemoryIdempotentRepository();
     protected String localWorkDirectory;
     protected boolean autoCreate = true;
+    protected boolean startingDirectoryMustExist;
+    protected boolean directoryMustExist;
     protected int bufferSize = 128 * 1024;
     protected GenericFileExist fileExist = GenericFileExist.Override;
     protected boolean noop;
@@ -419,6 +421,22 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setAutoCreate(boolean autoCreate) {
         this.autoCreate = autoCreate;
+    }
+
+    public boolean isStartingDirectoryMustExist() {
+        return startingDirectoryMustExist;
+    }
+
+    public void setStartingDirectoryMustExist(boolean startingDirectoryMustExist) {
+        this.startingDirectoryMustExist = startingDirectoryMustExist;
+    }
+
+    public boolean isDirectoryMustExist() {
+        return directoryMustExist;
+    }
+
+    public void setDirectoryMustExist(boolean directoryMustExist) {
+        this.directoryMustExist = directoryMustExist;
     }
 
     public GenericFileProcessStrategy<T> getProcessStrategy() {

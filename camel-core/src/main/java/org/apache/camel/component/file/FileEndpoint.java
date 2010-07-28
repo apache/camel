@@ -17,9 +17,11 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
@@ -62,6 +64,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
                 }
                 boolean absolute = FileUtil.isAbsolute(file);
                 operations.buildDirectory(file.getPath(), absolute);
+            } else if (isStartingDirectoryMustExist()) {
+                throw new FileNotFoundException("Starting directory does not exist: " + file);
             }
         }
 

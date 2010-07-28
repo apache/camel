@@ -45,6 +45,9 @@ public class FileConsumer extends GenericFileConsumer<File> {
             if (log.isDebugEnabled()) {
                 log.debug("Cannot poll as directory does not exists or its not a directory: " + directory);
             }
+            if (getEndpoint().isDirectoryMustExist()) {
+                throw new GenericFileOperationFailedException("Directory does not exist: " + directory);
+            }
             return true;
         }
 
@@ -158,5 +161,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
         // use file as body as we have converters if needed as stream
         answer.setBody(file);
         return answer;
+    }
+
+    @Override
+    public FileEndpoint getEndpoint() {
+        return (FileEndpoint) super.getEndpoint();
     }
 }
