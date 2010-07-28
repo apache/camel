@@ -108,6 +108,7 @@
     <saxon-version>9.1.0.8</saxon-version>
     <scala-version>2.8.0.RC7</scala-version>
     <scala-plugin-version>2.9.1</scala-plugin-version>
+    <shiro-version>1.0.0-incubating</shiro-version>
     <slf4j-version>1.6.0</slf4j-version>
     <smack-version>3.1.0</smack-version>
     <snmp4j-version>1.8.1_3</snmp4j-version>
@@ -529,6 +530,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-servlet</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-shiro</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
