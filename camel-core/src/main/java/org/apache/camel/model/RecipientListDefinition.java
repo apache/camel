@@ -57,6 +57,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
     private Boolean stopOnException;
     @XmlAttribute(required = false)
     private Boolean ignoreInvalidEndpoints;
+    @XmlAttribute(required = false)
+    private Boolean streaming;
 
     public RecipientListDefinition() {
     }
@@ -91,6 +93,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
         }
         answer.setAggregationStrategy(createAggregationStrategy(routeContext));
         answer.setParallelProcessing(isParallelProcessing());
+        answer.setStreaming(isStreaming());   
         if (stopOnException != null) {
             answer.setStopOnException(isStopOnException());
         }
@@ -168,6 +171,16 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
      */
     public RecipientListDefinition<Type> parallelProcessing() {
         setParallelProcessing(true);
+        return this;
+    }
+    
+    /**
+     * Doing the recipient list work in streaming model
+     *
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> streaming() {
+        setStreaming(true);
         return this;
     }
 
@@ -259,5 +272,13 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public void setStreaming(boolean streaming) {
+        this.streaming = streaming;
+    }
+
+    public boolean isStreaming() {
+        return streaming != null ? streaming : false;
     }
 }

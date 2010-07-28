@@ -47,6 +47,7 @@ public @interface RecipientList {
     String delimiter() default ",";
     boolean parallelProcessing() default false;
     boolean stopOnException() default false;
+    boolean streaming() default false;
     boolean ignoreInvalidEndpoints() default false;
     String strategyRef() default "";
     String executorServiceRef() default "";

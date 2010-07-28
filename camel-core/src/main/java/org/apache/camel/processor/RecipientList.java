@@ -52,6 +52,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     private boolean parallelProcessing;
     private boolean stopOnException;
     private boolean ignoreInvalidEndpoints;
+    private boolean streaming;
     private ExecutorService executorService;
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
 
@@ -106,7 +107,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         Iterator<Object> iter = ObjectHelper.createIterator(recipientList, delimiter);
 
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
-                                                                isParallelProcessing(), getExecutorService(), false, isStopOnException());
+                                                                isParallelProcessing(), getExecutorService(), isStreaming(), isStopOnException());
         rlp.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
 
         // now let the multicast process the exchange
@@ -133,7 +134,15 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
     }
-
+    
+    public boolean isStreaming() {
+        return streaming;
+    }
+    
+    public void setStreaming(boolean streaming) {
+        this.streaming = streaming;
+    }
+ 
     public boolean isIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }

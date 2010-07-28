@@ -398,8 +398,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 }
                 if (size > 0) {
                     try {
-                        LOG.info("Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in " +
-                                (TimeUnit.SECONDS.convert(getTimeout(), getTimeUnit()) - (loopCount++ * loopDelaySeconds)) + " seconds.");
+                        LOG.info("Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in "
+                                 + (TimeUnit.SECONDS.convert(getTimeout(), getTimeUnit()) - (loopCount++ * loopDelaySeconds)) + " seconds.");
                         Thread.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
                         LOG.warn("Interrupted while waiting during graceful shutdown, will force shutdown now.");
