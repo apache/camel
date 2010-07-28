@@ -376,6 +376,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
             // wait till there are no more pending and inflight messages
             boolean done = false;
+            long loopDelaySeconds = 1;
+            long loopCount = 0;
             while (!done) {
                 int size = 0;
                 for (RouteStartupOrder order : routes) {
@@ -396,8 +398,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 }
                 if (size > 0) {
                     try {
-                        LOG.info("Waiting as there are still " + size + " inflight and pending exchanges to complete before we can shutdown");
-                        Thread.sleep(1000);
+                        LOG.info("Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in " +
+                                (TimeUnit.SECONDS.convert(getTimeout(), getTimeUnit()) - (loopCount++ * loopDelaySeconds)) + " seconds.");
+                        Thread.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
                         LOG.warn("Interrupted while waiting during graceful shutdown, will force shutdown now.");
                         Thread.currentThread().interrupt();
