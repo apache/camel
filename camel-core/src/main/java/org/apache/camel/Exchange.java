@@ -239,17 +239,27 @@ public interface Exchange {
      * Returns the outbound message, lazily creating one if one has not already
      * been associated with this exchange.
      * <p/>
-     * If you want to test whether an OUT message have been set or not, use the {@link #hasOut()} method.
+     * <br/><b>Important:</b> If you want to change the current message, then use {@link #getIn()} instead as it will
+     * ensure headers etc. is kept and propagated when routing continues. Bottom line end users should rarely use
+     * this method.
+     * <p/>
+     * <br/>If you want to test whether an OUT message have been set or not, use the {@link #hasOut()} method.
      *
      * @return the response
+     * @see #getIn()
      */
     Message getOut();
 
     /**
      * Returns the outbound request message as the given type
+     * <p/>
+     * <br/><b>Important:</b> If you want to change the current message, then use {@link #getIn(Class)} instead as it will
+     * ensure headers etc. is kept and propagated when routing continues. Bottom line end users should rarely use
+     * this method.
      *
      * @param type the given type
      * @return the message as the given type or <tt>null</tt> if not possible to covert to given type
+     * @see #getIn(Class)
      */
     <T> T getOut(Class<T> type);
 
