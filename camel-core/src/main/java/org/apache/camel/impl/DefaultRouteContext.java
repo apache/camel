@@ -121,7 +121,7 @@ public class DefaultRouteContext implements RouteContext {
         if (ref != null) {
             endpoint = lookup(ref, Endpoint.class);
             if (endpoint == null) {
-                throw new NoSuchEndpointException("ref:" + ref, "check your camel registery with id " + ref);
+                throw new NoSuchEndpointException("ref:" + ref, "check your camel registry with id " + ref);
             }
             // Check the endpoint has the right CamelContext 
             if (!this.getCamelContext().equals(endpoint.getCamelContext())) {

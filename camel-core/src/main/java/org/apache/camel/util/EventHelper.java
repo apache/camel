@@ -411,6 +411,121 @@ public final class EventHelper {
         }
     }
 
+    public static void notifyCamelContextSuspending(CamelContext context) {
+        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return;
+        }
+
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isIgnoreCamelContextEvents()) {
+                continue;
+            }
+
+            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            if (factory == null) {
+                return;
+            }
+            EventObject event = factory.createCamelContextSuspendingEvent(context);
+            if (event == null) {
+                return;
+            }
+            doNotifyEvent(notifier, event);
+        }
+    }
+
+    public static void notifyCamelContextSuspended(CamelContext context) {
+        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return;
+        }
+
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isIgnoreCamelContextEvents()) {
+                continue;
+            }
+
+            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            if (factory == null) {
+                return;
+            }
+            EventObject event = factory.createCamelContextSuspendedEvent(context);
+            if (event == null) {
+                return;
+            }
+            doNotifyEvent(notifier, event);
+        }
+    }
+
+    public static void notifyCamelContextResuming(CamelContext context) {
+        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return;
+        }
+
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isIgnoreCamelContextEvents()) {
+                continue;
+            }
+
+            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            if (factory == null) {
+                return;
+            }
+            EventObject event = factory.createCamelContextResumingEvent(context);
+            if (event == null) {
+                return;
+            }
+            doNotifyEvent(notifier, event);
+        }
+    }
+
+    public static void notifyCamelContextResumed(CamelContext context) {
+        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return;
+        }
+
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isIgnoreCamelContextEvents()) {
+                continue;
+            }
+
+            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            if (factory == null) {
+                return;
+            }
+            EventObject event = factory.createCamelContextResumedEvent(context);
+            if (event == null) {
+                return;
+            }
+            doNotifyEvent(notifier, event);
+        }
+    }
+
+    public static void notifyCamelContextResumeFailed(CamelContext context, Throwable cause) {
+        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return;
+        }
+
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isIgnoreCamelContextEvents()) {
+                continue;
+            }
+
+            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            if (factory == null) {
+                return;
+            }
+            EventObject event = factory.createCamelContextResumeFailureEvent(context, cause);
+            if (event == null) {
+                return;
+            }
+            doNotifyEvent(notifier, event);
+        }
+    }
+
     private static void doNotifyEvent(EventNotifier notifier, EventObject event) {
         // only notify if notifier is started
         boolean started = true;

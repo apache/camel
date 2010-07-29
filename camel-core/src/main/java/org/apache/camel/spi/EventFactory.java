@@ -173,4 +173,45 @@ public interface EventFactory {
      */
     EventObject createExchangeSentEvent(Exchange exchange, Endpoint endpoint, long timeTaken);
 
+    /**
+     * Creates an {@link EventObject} for Camel is suspending.
+     *
+     * @param context camel context
+     * @return the created event
+     */
+    EventObject createCamelContextSuspendingEvent(CamelContext context);
+
+    /**
+     * Creates an {@link EventObject} for Camel has been suspended successfully.
+     *
+     * @param context camel context
+     * @return the created event
+     */
+    EventObject createCamelContextSuspendedEvent(CamelContext context);
+
+    /**
+     * Creates an {@link EventObject} for Camel is resuming.
+     *
+     * @param context camel context
+     * @return the created event
+     */
+    EventObject createCamelContextResumingEvent(CamelContext context);
+
+    /**
+     * Creates an {@link EventObject} for Camel has been resumed successfully.
+     *
+     * @param context camel context
+     * @return the created event
+     */
+    EventObject createCamelContextResumedEvent(CamelContext context);
+
+    /**
+     * Creates an {@link EventObject} for Camel failing to resume
+     *
+     * @param context camel context
+     * @param cause   the cause exception
+     * @return the created event
+     */
+    EventObject createCamelContextResumeFailureEvent(CamelContext context, Throwable cause);
+
 }

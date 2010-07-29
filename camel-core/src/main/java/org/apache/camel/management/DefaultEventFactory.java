@@ -23,12 +23,17 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.management.event.CamelContextResumeFailureEvent;
+import org.apache.camel.management.event.CamelContextResumedEvent;
+import org.apache.camel.management.event.CamelContextResumingEvent;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.management.event.CamelContextStartingEvent;
 import org.apache.camel.management.event.CamelContextStartupFailureEvent;
 import org.apache.camel.management.event.CamelContextStopFailureEvent;
 import org.apache.camel.management.event.CamelContextStoppedEvent;
 import org.apache.camel.management.event.CamelContextStoppingEvent;
+import org.apache.camel.management.event.CamelContextSuspendedEvent;
+import org.apache.camel.management.event.CamelContextSuspendingEvent;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
@@ -110,5 +115,25 @@ public class DefaultEventFactory implements EventFactory {
 
     public EventObject createExchangeSentEvent(Exchange exchange, Endpoint endpoint, long timeTaken) {
         return new ExchangeSentEvent(exchange, endpoint, timeTaken);
+    }
+
+    public EventObject createCamelContextSuspendingEvent(CamelContext context) {
+        return new CamelContextSuspendingEvent(context);
+    }
+
+    public EventObject createCamelContextSuspendedEvent(CamelContext context) {
+        return new CamelContextSuspendedEvent(context);
+    }
+
+    public EventObject createCamelContextResumingEvent(CamelContext context) {
+        return new CamelContextResumingEvent(context);
+    }
+
+    public EventObject createCamelContextResumedEvent(CamelContext context) {
+        return new CamelContextResumedEvent(context);
+    }
+
+    public EventObject createCamelContextResumeFailureEvent(CamelContext context, Throwable cause) {
+        return new CamelContextResumeFailureEvent(context, cause);
     }
 }

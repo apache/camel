@@ -14,32 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.management.event;
+
+import java.util.EventObject;
+
+import org.apache.camel.CamelContext;
 
 /**
- * A runtime exception thrown if a routing processor such as a
- * {@link org.apache.camel.processor.RecipientList RecipientList} is unable to resolve an
- * {@link Endpoint} from a URI.
- *
  * @version $Revision$
  */
-public class NoSuchEndpointException extends RuntimeCamelException {
-    private static final long serialVersionUID = -8721487431101572630L;
-    private final String uri;
+public class CamelContextSuspendedEvent extends EventObject {
+    private static final long serialVersionUID = 6761726800283072242L;
 
-    public NoSuchEndpointException(String uri) {
-        super("No endpoint could be found for: " + uri
-              + ", please check your classpath contains the needed camel component jar.");
-        this.uri = uri;
-    }
-    
-    public NoSuchEndpointException(String uri, String resolveMethod) {
-        super("No endpoint could be found for: " + uri
-              + ", please " + resolveMethod);
-        this.uri = uri;
+    private final CamelContext context;
+
+    public CamelContextSuspendedEvent(CamelContext source) {
+        super(source);
+        this.context = source;
     }
 
-    public String getUri() {
-        return uri;
+    public CamelContext getContext() {
+        return context;
+    }
+
+    @Override
+    public String toString() {
+        return "Suspended CamelContext: " + context.getName();
     }
 }

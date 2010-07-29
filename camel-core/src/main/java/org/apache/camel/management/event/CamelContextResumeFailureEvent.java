@@ -14,32 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.management.event;
+
+import java.util.EventObject;
+
+import org.apache.camel.CamelContext;
 
 /**
- * A runtime exception thrown if a routing processor such as a
- * {@link org.apache.camel.processor.RecipientList RecipientList} is unable to resolve an
- * {@link Endpoint} from a URI.
- *
  * @version $Revision$
  */
-public class NoSuchEndpointException extends RuntimeCamelException {
-    private static final long serialVersionUID = -8721487431101572630L;
-    private final String uri;
+public class CamelContextResumeFailureEvent extends EventObject {
+    private static final long serialVersionUID = -4271899927507894566L;
 
-    public NoSuchEndpointException(String uri) {
-        super("No endpoint could be found for: " + uri
-              + ", please check your classpath contains the needed camel component jar.");
-        this.uri = uri;
-    }
-    
-    public NoSuchEndpointException(String uri, String resolveMethod) {
-        super("No endpoint could be found for: " + uri
-              + ", please " + resolveMethod);
-        this.uri = uri;
+    private CamelContext context;
+    private Throwable cause;
+
+    public CamelContextResumeFailureEvent(CamelContext context, Throwable cause) {
+        super(context);
+        this.context = context;
+        this.cause = cause;
     }
 
-    public String getUri() {
-        return uri;
+    public CamelContext getContext() {
+        return context;
+    }
+
+    public Throwable getCause() {
+        return cause;
+    }
+
+    @Override
+    public String toString() {
+        return "Failed to resume Camel: " + context.getName() + " due to " + cause.getMessage();
     }
 }

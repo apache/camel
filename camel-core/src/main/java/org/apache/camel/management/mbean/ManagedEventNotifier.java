@@ -130,7 +130,8 @@ public class ManagedEventNotifier extends NotificationBroadcasterSupport impleme
         // all the class names in the event package
         String[] names = {"CamelContextStartedEvent", "CamelContextStartingEvent", "CamelContextStartupFailureEvent"
                 , "CamelContextStopFailureEvent", "CamelContextStoppedEvent", "CamelContextStoppingEvent"
-                , "ExchangeCompletedEvent", "ExchangeCreatedEvent", "ExchangeFailedEvent"
+                , "CamelContextSuspendingEvent", "CamelContextSuspendedEvent", "CamelContextResumingEvent", "CamelContextResumedEvent"
+                , "CamelContextResumeFailureEvent", "ExchangeCompletedEvent", "ExchangeCreatedEvent", "ExchangeFailedEvent"
                 , "ExchangeFailureHandledEvent", "ExchangeRedeliveryEvents", "ExchangeSentEvent", "RouteStartedEvent"
                 , "RouteStoppedEvent", "ServiceStartupFailureEvent", "ServiceStopFailureEvent"};
 

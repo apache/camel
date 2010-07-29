@@ -989,6 +989,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         if (!suspended.get()) {
             if (suspending.compareAndSet(false, true)) {
                 try {
+                    EventHelper.notifyCamelContextSuspending(this);
+
                     LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is suspending");
                     StopWatch watch = new StopWatch();
 
@@ -1007,13 +1009,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                         shutdownRoute(entry.getKey());
                     }
 
-                    // TODO: suspended/resumed notification events
                     // TODO: more unit test to ensure suspend/resume with startup ordering is as expected
 
                     watch.stop();
                     if (LOG.isInfoEnabled()) {
                         LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is suspended in " + TimeUtils.printDuration(watch.taken()));
                     }
+
+                    EventHelper.notifyCamelContextSuspended(this);
                 } finally {
                     suspended.set(true);
                     suspending.set(false);
@@ -1027,6 +1030,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         if (suspended.get()) {
             if (resuming.compareAndSet(false, true)) {
                 try {
+                    EventHelper.notifyCamelContextResuming(this);
+
                     LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is resuming");
                     StopWatch watch = new StopWatch();
 
@@ -1041,6 +1046,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
                     // and clear the list as they have been resumed
                     suspendedRouteServices.clear();
+
+                    EventHelper.notifyCamelContextResumed(this);
+                } catch (Exception e) {
+                    EventHelper.notifyCamelContextResumeFailed(this, e);
+                    throw e;
                 } finally {
                     suspended.set(false);
                     suspending.set(false);
