@@ -23,7 +23,7 @@ public class ApplicationContextClassLoaderTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/endpointReference.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/disableJmxConfig.xml");
     }
     
     public void testClassLoader() {

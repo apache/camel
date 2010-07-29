@@ -33,6 +33,12 @@ public class NoSuchEndpointException extends RuntimeCamelException {
               + ", please check your classpath contains the needed camel component jar.");
         this.uri = uri;
     }
+    
+    public NoSuchEndpointException(String uri, String resolveMethod) {
+        super("No endpoint could be found for: " + uri
+              + ", please " + resolveMethod);
+        this.uri = uri;
+    }
 
     public String getUri() {
         return uri;

@@ -37,5 +37,10 @@
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->
+  
+  <camelContext id="camel2" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+    </route>
+  </camelContext>
 
 </beans>

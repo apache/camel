@@ -40,7 +40,6 @@ public class EnricherRefTest extends ContextTestSupport {
     }
 
     public void testEnrichRef() throws Exception {
-        cool.setCamelContext(context);
         cool.whenAnyExchangeReceived(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getOut().setBody("Bye World");
@@ -60,6 +59,7 @@ public class EnricherRefTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 cool.setEndpointUriIfNotSpecified("cool");
+                cool.setCamelContext(context);
 
                 from("direct:start").enrichRef("cool", "agg");
             }

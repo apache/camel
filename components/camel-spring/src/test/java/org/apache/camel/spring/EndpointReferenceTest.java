@@ -16,8 +16,12 @@
  */
 package org.apache.camel.spring;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultRouteContext;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spring.example.DummyBean;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -63,6 +67,16 @@ public class EndpointReferenceTest extends SpringTestSupport {
         }
 
         testEndpointConfiguration();
+    }
+    
+    public void testReferenceEndpointFromOtherCamelContext() throws Exception {
+        CamelContext context = (CamelContext)applicationContext.getBean("camel2");
+        RouteContext routeContext = new DefaultRouteContext(context);
+        try {
+            routeContext.resolveEndpoint(null, "endpoint1");
+        } catch (NoSuchEndpointException exception) {
+            assertTrue("Get a wrong exception message", exception.getMessage().contains("make sure the endpoint has the same camel context as the route does"));
+        }
     }
 
     protected AbstractXmlApplicationContext createApplicationContext() {

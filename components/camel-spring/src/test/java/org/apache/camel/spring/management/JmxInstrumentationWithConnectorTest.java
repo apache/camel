@@ -16,8 +16,12 @@
  */
 package org.apache.camel.spring.management;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.spi.ManagementAgent;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spring.EndpointReferenceTest;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -43,5 +47,9 @@ public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
 
     public void testGetContext() {
         assertNotNull(this.applicationContext.getBean("camel"));
+    }
+    
+    public void testReferenceEndpointFromOtherCamelContext() throws Exception {
+        // don't run the test in this method
     }
 }
