@@ -66,6 +66,7 @@
       <include name="**/optional/activemq-pool-*.jar"/>
       <include name="**/optional/commons-pool-*.jar"/>
       <include name="**/optional/xbean-*.jar"/>
+      <include name="**/optional/org.osgi.core-*.jar"/>
     </fileset>
   </path>
 
@@ -118,8 +119,8 @@
       <include name="**/camel-core-*.jar"/>
       <include name="**/commons-logging-*.jar"/>
       <include name="**/commons-management-*.jar"/>
-      <include name="**/jaxb-api-*.jar"/>
-      <include name="**/spring-*.jar"/>
+      <include name="**/spring/spring-*.jar"/>
+      <include name="**/jdk15/*.jar"/>
       <exclude name="**/*-tests.jar"/>
     </fileset>
   </path>
@@ -128,7 +129,7 @@
     <path refid="camel.core.classpath"/>
     <fileset dir="${camel.lib}">
       <include name="**/camel-spring-*.jar"/>
-      <exclude name="**/camel-spring-osgi*.jar"/>
+      <exclude name="**/camel-spring-security*.jar"/>
       <exclude name="**/camel-spring-integration*.jar"/>
       <include name="**/activation-*.jar"/>
       <include name="**/jaxb-impl-*.jar"/>
