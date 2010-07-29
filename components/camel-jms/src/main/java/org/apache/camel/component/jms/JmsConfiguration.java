@@ -84,7 +84,7 @@ public class JmsConfiguration implements Cloneable {
     private long receiveTimeout = -1;
     private long requestTimeout = 20000L;
     private int idleTaskExecutionLimit = 1;
-    private int maxConcurrentConsumers = 0;
+    private int maxConcurrentConsumers;
     // JmsTemplate only
     private Boolean explicitQosEnabled;
     private boolean deliveryPersistent = true;

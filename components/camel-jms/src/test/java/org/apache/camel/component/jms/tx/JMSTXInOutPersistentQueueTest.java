@@ -29,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class JMSTXInOutPersistentQueueTest extends CamelSpringTestSupport {
 
-    private static int counter = 0;
+    private static int counter;
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
