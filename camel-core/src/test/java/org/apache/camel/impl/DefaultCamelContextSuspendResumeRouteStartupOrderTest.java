@@ -14,36 +14,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
-
-import java.util.List;
+package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.RouteStartupOrder;
 
 /**
  * @version $Revision$
  */
-public class RouteStartupOrderSimpleTest extends ContextTestSupport {
+public class DefaultCamelContextSuspendResumeRouteStartupOrderTest extends ContextTestSupport {
 
-    public void testRouteStartupOrder() throws Exception {
+    public void testSuspendResume() throws Exception {
+        assertFalse(context.isSuspended());
+
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("A");
 
-        template.sendBody("direct:start", "Hello World");
-
+        template.sendBody("seda:foo", "A");
+        
         assertMockEndpointsSatisfied();
 
-        // assert correct order
-        DefaultCamelContext dcc = (DefaultCamelContext) context;
-        List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
+        log.info("Suspending");
 
-        assertEquals(2, order.size());
-        assertEquals("direct://start", order.get(0).getRoute().getEndpoint().getEndpointUri());
-        assertEquals("seda://foo", order.get(1).getRoute().getEndpoint().getEndpointUri());
+        // now suspend and dont expect a message to be routed
+        resetMocks();
+        mock.expectedMessageCount(0);
+        context.suspend();
+        template.sendBody("seda:foo", "B");
+        mock.assertIsSatisfied(1000);
+
+        assertTrue(context.isSuspended());
+
+        log.info("Resuming");
+
+        // now resume and expect the previous message to be routed
+        resetMocks();
+        mock.expectedBodiesReceived("B");
+        context.resume();
+        assertMockEndpointsSatisfied();
+
+        assertFalse(context.isSuspended());
+
+        context.stop();
     }
 
     @Override
@@ -51,9 +64,11 @@ public class RouteStartupOrderSimpleTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").startupOrder(2).routeId("b").to("mock:result");
+                from("seda:foo").routeId("C").startupOrder(3).to("log:foo").to("direct:bar");
 
-                from("direct:start").startupOrder(1).routeId("a").to("seda:foo");
+                from("direct:baz").routeId("A").startupOrder(1).to("log:baz").to("mock:result");
+
+                from("direct:bar").routeId("B").startupOrder(2).to("log:bar").to("direct:baz");
             }
         };
     }

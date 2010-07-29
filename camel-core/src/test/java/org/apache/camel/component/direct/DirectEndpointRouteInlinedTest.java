@@ -33,6 +33,9 @@ public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
         });
         context.start();
 
+        // invoke start a 2nd time wont break stuff
+        context.start();
+
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");

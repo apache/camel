@@ -167,9 +167,7 @@ public class RouteService extends ServiceSupport {
     }
 
     protected void doStop() throws Exception {
-        // clear inputs
-        inputs.clear();
-        
+
         // if we are stopping CamelContext then we are shutting down
         boolean isShutdownCamelContext = camelContext.isStopping();
 
@@ -206,6 +204,12 @@ public class RouteService extends ServiceSupport {
         }
 
         camelContext.removeRouteCollection(routes);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // clear inputs on shutdown
+        inputs.clear();
     }
 
     protected void startChildService(Route route, Service... services) throws Exception {

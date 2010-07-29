@@ -34,29 +34,37 @@ import org.apache.camel.util.AsyncProcessorHelper;
 public abstract class QueueLoadBalancer extends LoadBalancerSupport {
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        boolean sync;
-
         List<Processor> list = getProcessors();
-        if (list.isEmpty()) {
-            throw new IllegalStateException("No processors available to process " + exchange);
-        }
-        Processor processor = chooseProcessor(list, exchange);
-        if (processor == null) {
-            throw new IllegalStateException("No processors could be chosen to process " + exchange);
-        } else {
-            AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);
-            sync = AsyncProcessorHelper.process(albp, exchange, new AsyncCallback() {
-                public void done(boolean doneSync) {
-                    // only handle the async case
-                    if (doneSync) {
-                        return;
+        if (!list.isEmpty()) {
+            Processor processor = chooseProcessor(list, exchange);
+            if (processor == null) {
+                throw new IllegalStateException("No processors could be chosen to process " + exchange);
+            } else {
+                AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);
+                boolean sync = AsyncProcessorHelper.process(albp, exchange, new AsyncCallback() {
+                    public void done(boolean doneSync) {
+                        // only handle the async case
+                        if (doneSync) {
+                            return;
+                        }
+
+                        callback.done(false);
                     }
-                    callback.done(false);
+                });
+
+                if (!sync) {
+                    // will continue routing asynchronously
+                    return false;
                 }
-            });
+
+                callback.done(true);
+                return true;
+            }
         }
 
-        return sync;
+        // no processors but indicate we are done
+        callback.done(true);
+        return true;
     }
 
     public void process(Exchange exchange) throws Exception {

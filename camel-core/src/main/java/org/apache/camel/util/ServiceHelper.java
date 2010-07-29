@@ -194,6 +194,32 @@ public final class ServiceHelper {
         }
     }
 
+    public static void resumeServices(Collection<?> services) throws Exception {
+        Exception firstException = null;
+        for (Object value : services) {
+            if (value instanceof Service) {
+                Service service = (Service)value;
+                try {
+                    resumeService(service);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Resumed service: " + service);
+                    }
+                    service.stop();
+                } catch (Exception e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Caught exception resuming service: " + service, e);
+                    }
+                    if (firstException == null) {
+                        firstException = e;
+                    }
+                }
+            }
+        }
+        if (firstException != null) {
+            throw firstException;
+        }
+    }
+
     /**
      * Resumes the given service.
      * <p/>
@@ -222,17 +248,35 @@ public final class ServiceHelper {
             } else {
                 return false;
             }
-        } else if (service instanceof ServiceSupport) {
-            ServiceSupport ss = (ServiceSupport) service;
-            if (ss.getStatus().isStartable()) {
-                startService(service);
-                return true;
-            } else {
-                return false;
-            }
         } else {
             startService(service);
             return true;
+        }
+    }
+
+    public static void suspendServices(Collection<?> services) throws Exception {
+        Exception firstException = null;
+        for (Object value : services) {
+            if (value instanceof Service) {
+                Service service = (Service)value;
+                try {
+                    suspendService(service);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Suspending service: " + service);
+                    }
+                    service.stop();
+                } catch (Exception e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Caught exception suspending service: " + service, e);
+                    }
+                    if (firstException == null) {
+                        firstException = e;
+                    }
+                }
+            }
+        }
+        if (firstException != null) {
+            throw firstException;
         }
     }
 
@@ -260,14 +304,6 @@ public final class ServiceHelper {
                     LOG.trace("Suspending service " + service);
                 }
                 ss.suspend();
-                return true;
-            } else {
-                return false;
-            }
-        } else if (service instanceof ServiceSupport) {
-            ServiceSupport ss = (ServiceSupport) service;
-            if (ss.getStatus().isStoppable()) {
-                stopServices(service);
                 return true;
             } else {
                 return false;

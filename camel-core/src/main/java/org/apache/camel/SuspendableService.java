@@ -31,13 +31,17 @@ public interface SuspendableService extends Service {
 
     /**
      * Suspends the service.
+     *
+     * @throws Exception is thrown if suspending failed
      */
-    void suspend();
+    void suspend() throws Exception;
 
     /**
      * Resumes the service.
+     *
+     * @throws Exception is thrown if resuming failed
      */
-    void resume();
+    void resume() throws Exception;
 
     /**
      * Tests whether the service is suspended or not.

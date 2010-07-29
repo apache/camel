@@ -56,6 +56,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -102,7 +103,6 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
-import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.ServiceHelper;
@@ -112,19 +112,17 @@ import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static org.apache.camel.util.ServiceHelper.stopServices;
-
 /**
  * Represents the context used to configure routes and the policies to use.
  *
  * @version $Revision$
  */
-public class DefaultCamelContext extends ServiceSupport implements CamelContext {
+public class DefaultCamelContext extends ServiceSupport implements CamelContext, SuspendableService {
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
     private static final String NAME_PREFIX = "camel-";
     private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
     private ClassLoader applicationContextClassLoader;
-    private boolean routeDefinitionInitiated;
+    private final AtomicBoolean routeDefinitionInitiated = new AtomicBoolean(false);
     private String name;
     private final Map<String, Endpoint> endpoints = new EndpointRegistry();
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
@@ -147,6 +145,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
+    private final AtomicBoolean suspending = new AtomicBoolean(false);
+    private final AtomicBoolean suspended = new AtomicBoolean(false);
+    private final AtomicBoolean resuming = new AtomicBoolean(false);
     private boolean firstStartDone;
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
@@ -162,6 +163,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private FactoryFinder defaultFactoryFinder;
     private final Map<String, FactoryFinder> factories = new HashMap<String, FactoryFinder>();
     private final Map<String, RouteService> routeServices = new LinkedHashMap<String, RouteService>();
+    private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<String, RouteService>();
     private ClassResolver classResolver = new DefaultClassResolver();
     private PackageScanClassResolver packageScanClassResolver;
     // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
@@ -980,6 +982,75 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return TimeUtils.printDuration(delta);
     }
 
+    public boolean isSuspended() {
+        return suspended.get();
+    }
+
+    public void suspend() throws Exception {
+        if (!suspended.get()) {
+            if (suspending.compareAndSet(false, true)) {
+                try {
+                    LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is suspending");
+                    StopWatch watch = new StopWatch();
+
+                    // update list of started routes to be suspended
+                    // because we only want to suspend started routes
+                    // (so when we resume we only resume the routes which actually was suspended)
+                    for (Map.Entry<String, RouteService> entry : getRouteServices().entrySet()) {
+                        if (entry.getValue().getStatus().isStarted()) {
+                            suspendedRouteServices.put(entry.getKey(), entry.getValue());
+                        }
+                    }
+
+                    // suspend routes using the shutdown strategy so it can shutdown in correct order
+                    // TODO: leverage shutdown strategy to let it run in suspend mode, so it can suspend routes in correct order
+                    for (Map.Entry<String, RouteService> entry : suspendedRouteServices.entrySet()) {
+                        shutdownRoute(entry.getKey());
+                    }
+
+                    // TODO: suspended/resumed notification events
+                    // TODO: more unit test to ensure suspend/resume with startup ordering is as expected
+
+                    watch.stop();
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is suspended in " + TimeUtils.printDuration(watch.taken()));
+                    }
+                } finally {
+                    suspended.set(true);
+                    suspending.set(false);
+                    resuming.set(false);
+                }
+            }
+        }
+    }
+
+    public void resume() throws Exception {
+        if (suspended.get()) {
+            if (resuming.compareAndSet(false, true)) {
+                try {
+                    LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is resuming");
+                    StopWatch watch = new StopWatch();
+
+                    // start the suspended routes (do not check for route clashes, and indicate )
+                    doStartRoutes(suspendedRouteServices, false);
+
+                    watch.stop();
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("Resumed " + suspendedRouteServices.size() + " routes");
+                        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") resumed in " + TimeUtils.printDuration(watch.taken()));
+                    }
+
+                    // and clear the list as they have been resumed
+                    suspendedRouteServices.clear();
+                } finally {
+                    suspended.set(false);
+                    suspending.set(false);
+                    resuming.set(false);
+                }
+            }
+        }
+    }
+
     public void start() throws Exception {
         boolean doNotStart = !firstStartDone && !isAutoStartup();
         firstStartDone = true;
@@ -992,27 +1063,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // super will invoke doStart which will prepare internal services before we continue and start the routes below
         super.start();
 
-        LOG.debug("Starting routes...");
-
-        // the context is now considered started (i.e. isStarted() == true))
-        // starting routes is done after, not during context startup
-        safelyStartRouteServices(false, routeServices.values());
-
-        for (int i = 0; i < getRoutes().size(); i++) {
-            Route route = getRoutes().get(i);
-            LOG.info("Route: " + route.getId() + " started and consuming from: " + route.getEndpoint());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Route " + i + ": " + getRoutes().get(i));
-            }
-        }
-
-        // now notify any startup aware listeners as all the routes etc has been started.
-        for (StartupListener startup : startupListeners) {
-            startup.onCamelContextStarted(this, false);
-        }
-        // and then get rid of the list as we dont need it anymore
-        startupListeners.clear();
-
         stopWatch.stop();
         if (LOG.isInfoEnabled()) {
             LOG.info("Started " + getRoutes().size() + " routes");
@@ -1023,6 +1073,35 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     // Implementation methods
     // -----------------------------------------------------------------------
+
+    /**
+     * Starts the routes
+     *
+     * @param routeServices  the routes to start (will only start a route if its not already started)
+     * @param checkClash     whether to check for startup ordering clash
+     * @throws Exception is thrown if error starting routes
+     */
+    protected void doStartRoutes(Map<String, RouteService> routeServices, boolean checkClash) throws Exception {
+        // filter out already started routes
+        Map<String, RouteService> filtered = new LinkedHashMap<String, RouteService>();
+        for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
+            if (entry.getValue().getStatus().isStartable()) {
+                filtered.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        if (!filtered.isEmpty()) {
+            // the context is now considered started (i.e. isStarted() == true))
+            // starting routes is done after, not during context startup
+            safelyStartRouteServices(false, checkClash, filtered.values());
+        }
+
+        // now notify any startup aware listeners as all the routes etc has been started,
+        // allowing the listeners to do custom work after routes has been started
+        for (StartupListener startup : startupListeners) {
+            startup.onCamelContextStarted(this, isStarted());
+        }
+    }
 
     protected synchronized void doStart() throws Exception {
         startDate = new Date();
@@ -1118,11 +1197,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         startServices(components.values());
 
-        // To avoid initiating the routeDefinitions after stopping the camel context
-        if (!routeDefinitionInitiated) {
+        // the route definitions is only started once, even if Camel is stopped
+        if (routeDefinitionInitiated.compareAndSet(false, true)) {
+            // TODO: we should re-create route defs on start, people should use suspend/resume for hot restart
             startRouteDefinitions(routeDefinitions);
-            routeDefinitionInitiated = true;
         }
+
+        // start routes
+        doStartRoutes(routeServices, true);
 
         // starting will continue in the start method
     }
@@ -1141,7 +1223,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         getRouteStartupOrder().clear();
 
         shutdownServices(routeServices.values());
-        // do not clear route services as we can start Camel again and get the route back as before
+        // do not clear route services or startup listeners as we can start Camel again and get the route back as before
+
+        // but clear any suspend routes
+        suspendedRouteServices.clear();
+        suspended.set(false);
 
         // the stop order is important
 
@@ -1162,7 +1248,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // shutdown services as late as possible
         shutdownServices(servicesToClose);
         servicesToClose.clear();
-        startupListeners.clear();
 
         // must notify that we are stopped before stopping the management strategy
         EventHelper.notifyCamelContextStopped(this);
@@ -1177,11 +1262,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
-
-        // reset values (mark routes as not initialized so they can be started again)
-        routeDefinitionInitiated = false;
-        firstStartDone = false;
-        defaultRouteStartupOrder = 1000;
 
         stopWatch.stop();
         if (LOG.isInfoEnabled()) {
@@ -1277,7 +1357,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         } else {
             routeServices.put(key, routeService);
             if (shouldStartRoutes()) {
-                safelyStartRouteServices(true, routeService);
+                safelyStartRouteServices(true, true, routeService);
             }
         }
     }
@@ -1289,10 +1369,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
      * This method <b>must</b> be used to start routes in a safe manner.
      *
      * @param forceAutoStart whether to force auto starting the routes, despite they may be configured not do do so
+     * @param checkClash whether to check for startup order clash
      * @param routeServices  the routes
      * @throws Exception is thrown if error starting the routes
      */
-    protected synchronized void safelyStartRouteServices(boolean forceAutoStart, Collection<RouteService> routeServices) throws Exception {
+    protected synchronized void safelyStartRouteServices(boolean forceAutoStart, boolean checkClash, Collection<RouteService> routeServices) throws Exception {
         // list of inputs to start when all the routes have been prepared for starting
         // we use a tree map so the routes will be ordered according to startup order defined on the route
         Map<Integer, DefaultRouteStartupOrder> inputs = new TreeMap<Integer, DefaultRouteStartupOrder>();
@@ -1301,8 +1382,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         for (RouteService routeService : routeServices) {
             DefaultRouteStartupOrder order = doPrepareRouteToBeStarted(routeService, forceAutoStart);
             // check for clash before we add it as input
-            if (order != null && doCheckStartupOrderClash(order, inputs)) {
-                inputs.put(order.getStartupOrder(), order);
+            if (order != null) {
+                if (checkClash && doCheckStartupOrderClash(order, inputs)) {
+                    inputs.put(order.getStartupOrder(), order);
+                } else {
+                    inputs.put(order.getStartupOrder(), order);
+                }
             }
         }
 
@@ -1311,14 +1396,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         // and now start the routes
         // and check for clash with multiple consumers of the same endpoints which is not allowed
-        List<Endpoint> routeInputs = new ArrayList<Endpoint>();
-        doStartRoutes(inputs, routeInputs);
+        doStartRoutes(inputs);
         // inputs no longer needed
         inputs.clear();
     }
 
-    protected synchronized void safelyStartRouteServices(boolean forceAutoStart, RouteService... routeServices) throws Exception {
-        safelyStartRouteServices(forceAutoStart, Arrays.asList(routeServices));
+    protected synchronized void safelyStartRouteServices(boolean forceAutoStart, boolean checkClash, RouteService... routeServices) throws Exception {
+        safelyStartRouteServices(forceAutoStart, checkClash, Arrays.asList(routeServices));
     }
 
     private DefaultRouteStartupOrder doPrepareRouteToBeStarted(RouteService routeService, boolean forceAutoStart) throws Exception {
@@ -1350,6 +1434,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     private boolean doCheckStartupOrderClash(DefaultRouteStartupOrder answer, Map<Integer, DefaultRouteStartupOrder> inputs) throws FailedToStartRouteException {
+        // TODO: There could potential be routeId clash as well, so we should check for that as well
+
         // check for clash by startupOrder id
         DefaultRouteStartupOrder other = inputs.get(answer.getStartupOrder());
         if (other != null && answer != other) {
@@ -1360,7 +1446,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // check in existing already started as well
         for (RouteStartupOrder order : routeStartupOrder) {
             String otherId = order.getRoute().getId();
-            if (answer.getStartupOrder() == order.getStartupOrder()) {
+            if (answer.getRoute().getId().equals(otherId)) {
+                // its the same route id so skip clash check as its the same route (can happen when using suspend/resume)
+            } else if (answer.getStartupOrder() == order.getStartupOrder()) {
                 throw new FailedToStartRouteException(answer.getRoute().getId(), "startupOrder clash. Route " + otherId + " already has startupOrder "
                     + answer.getStartupOrder() + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
             }
@@ -1386,7 +1474,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
     }
 
-    private void doStartRoutes(Map<Integer, DefaultRouteStartupOrder> inputs, List<Endpoint> routeInputs) throws Exception {
+    private void doStartRoutes(Map<Integer, DefaultRouteStartupOrder> inputs) throws Exception {
+        List<Endpoint> routeInputs = new ArrayList<Endpoint>();
+
         for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
             Integer order = entry.getKey();
             Route route = entry.getValue().getRoute();
@@ -1412,8 +1502,25 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
                 routeInputs.add(endpoint);
 
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Route: " + route.getId() + " >>> " + route);
+                }
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Route: " + route.getId() + " started and consuming from: " + endpoint);
+                }
+
                 // add to the order which they was started, so we know how to stop them in reverse order
-                routeStartupOrder.add(entry.getValue());
+                // but only add if we haven't already registered it before (we dont want to double add when restarting)
+                boolean found = false;
+                for (RouteStartupOrder other : routeStartupOrder) {
+                    if (other.getRoute().getId() == route.getId()) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    routeStartupOrder.add(entry.getValue());
+                }
             }
         }
     }

@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.util.ExchangeHelper;
@@ -47,8 +48,8 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
     private LoadBalancer loadBalancer;
     private Trigger trigger;
     private JobDetail jobDetail;
-    private boolean started;
-    private boolean stateful;
+    private volatile boolean started;
+    private volatile boolean stateful;
 
     public QuartzEndpoint(final String endpointUri, final QuartzComponent component) {
         super(endpointUri, component);
@@ -87,12 +88,24 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
      * @param jobExecutionContext the Quartz Job context
      */
     public void onJobExecute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        boolean run = true;
+        LoadBalancer balancer = getLoadBalancer();
+        if (balancer instanceof ServiceSupport) {
+            run = ((ServiceSupport) balancer).isRunAllowed();
+        }
+
+        if (!run) {
+            // quartz scheduler could potential trigger during a route has been shutdown
+            LOG.warn("Cannot execute Quartz Job with context: " + jobExecutionContext + " because processor is not started: " + balancer);
+            return;
+        }
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Firing Quartz Job with context: " + jobExecutionContext);
         }
         Exchange exchange = createExchange(jobExecutionContext);
         try {
-            getLoadBalancer().process(exchange);
+            balancer.process(exchange);
 
             if (exchange.getException() != null) {
                 // propagate the exception back to Quartz
@@ -194,11 +207,12 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
 
     public synchronized void consumerStopped(final QuartzConsumer consumer) throws SchedulerException {
         ObjectHelper.notNull(trigger, "trigger");
-        getLoadBalancer().removeProcessor(consumer.getProcessor());
-        if (getLoadBalancer().getProcessors().isEmpty() && started) {
+        if (started) {
             removeTrigger(getTrigger(), getJobDetail());
             started = false;
         }
+
+        getLoadBalancer().removeProcessor(consumer.getProcessor());
     }
 
     protected LoadBalancer createLoadBalancer() {

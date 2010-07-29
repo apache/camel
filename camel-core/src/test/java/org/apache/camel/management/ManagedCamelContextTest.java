@@ -55,6 +55,9 @@ public class ManagedCamelContextTest extends ContextTestSupport {
         String uptime = (String) mbeanServer.getAttribute(on, "Uptime");
         assertNotNull(uptime);
 
+        Boolean suspended = (Boolean) mbeanServer.getAttribute(on, "Suspended");
+        assertEquals(false, suspended.booleanValue());
+
         // invoke operations
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

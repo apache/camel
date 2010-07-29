@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ManagementStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -61,12 +60,17 @@ public class ManagedCamelContext {
     @ManagedAttribute(description = "Camel State")
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
-        ServiceStatus status = ((ServiceSupport) context).getStatus();
+        ServiceStatus status = (context).getStatus();
         // if no status exists then its stopped
         if (status == null) {
             status = ServiceStatus.Stopped;
         }
         return status.name();
+    }
+
+    @ManagedAttribute(description = "Is Camel suspended")
+    public Boolean getSuspended() {
+        return context.isSuspended();
     }
 
     @ManagedAttribute(description = "Uptime")
@@ -135,6 +139,16 @@ public class ManagedCamelContext {
     @ManagedOperation(description = "Stop Camel")
     public void stop() throws Exception {
         context.stop();
+    }
+
+    @ManagedOperation(description = "Suspend Camel")
+    public void suspend() throws Exception {
+        context.suspend();
+    }
+
+    @ManagedOperation(description = "Resume Camel")
+    public void resume() throws Exception {
+        context.resume();
     }
 
     @ManagedOperation(description = "Send body (in only)")
