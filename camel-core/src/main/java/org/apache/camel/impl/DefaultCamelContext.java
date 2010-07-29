@@ -122,7 +122,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private static final String NAME_PREFIX = "camel-";
     private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
     private ClassLoader applicationContextClassLoader;
-    private final AtomicBoolean routeDefinitionInitiated = new AtomicBoolean(false);
     private String name;
     private final Map<String, Endpoint> endpoints = new EndpointRegistry();
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
@@ -1197,11 +1196,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
         startServices(components.values());
 
-        // the route definitions is only started once, even if Camel is stopped
-        if (routeDefinitionInitiated.compareAndSet(false, true)) {
-            // TODO: we should re-create route defs on start, people should use suspend/resume for hot restart
-            startRouteDefinitions(routeDefinitions);
-        }
+        // start the route definitions before the routes is started
+        startRouteDefinitions(routeDefinitions);
 
         // start routes
         doStartRoutes(routeServices, true);

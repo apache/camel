@@ -70,7 +70,6 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
-    @Ignore("There is a bug in CxfRsComponent when restarting using stop/start")
     public void testGetConsumerAfterReStartCamelContext() throws Exception {
         URL url = new URL("http://localhost:9000/customerservice/customers/123");
 
