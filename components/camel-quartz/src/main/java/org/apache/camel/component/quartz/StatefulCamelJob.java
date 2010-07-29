@@ -16,31 +16,11 @@
  */
 package org.apache.camel.component.quartz;
 
-import java.io.Serializable;
-
-import org.apache.camel.CamelContext;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.SchedulerContext;
-import org.quartz.SchedulerException;
 import org.quartz.StatefulJob;
 
 /**
  * Stateful job
  */
-public class StatefulCamelJob implements StatefulJob, Serializable {
+public class StatefulCamelJob extends CamelJob implements StatefulJob {
 
-    public void execute(final JobExecutionContext context) throws JobExecutionException {
-        SchedulerContext schedulerContext;
-        try {
-            schedulerContext = context.getScheduler().getContext();
-        } catch (SchedulerException e) {
-            throw new JobExecutionException("Failed to obtain scheduler context for job " + context.getJobDetail().getName());
-        }
-
-        CamelContext camelContext = (CamelContext) schedulerContext.get(QuartzConstants.QUARTZ_CAMEL_CONTEXT);
-        String endpointUri = (String) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT);
-        QuartzEndpoint quartzEndpoint = (QuartzEndpoint) camelContext.getEndpoint(endpointUri);
-        quartzEndpoint.onJobExecute(context);
-    }
 }

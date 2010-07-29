@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -53,11 +55,30 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     private static final transient Log LOG = LogFactory.getLog(QuartzComponent.class);
     private static final AtomicInteger JOBS = new AtomicInteger();
     private static Scheduler scheduler;
+    private final List<JobToAdd> jobsToAdd = new ArrayList<JobToAdd>();
     private SchedulerFactory factory;
     private Properties properties;
     private String propertiesFile;
     private int startDelayedSeconds;
     private boolean autoStartScheduler = true;
+
+    private final class JobToAdd {
+        private final JobDetail job;
+        private final Trigger trigger;
+
+        private JobToAdd(JobDetail job, Trigger trigger) {
+            this.job = job;
+            this.trigger = trigger;
+        }
+
+        public JobDetail getJob() {
+            return job;
+        }
+
+        public Trigger getTrigger() {
+            return trigger;
+        }
+    }
 
     public QuartzComponent() {
     }
@@ -125,6 +146,11 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     }
 
     public void onCamelContextStarted(CamelContext camelContext, boolean alreadyStarted) throws Exception {
+        if (scheduler != null) {
+            // register current camel context to scheduler so we can look it up when jobs is being triggered
+            scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + getCamelContext().getName(), getCamelContext());
+        }
+
         // if not configure to auto start then don't start it
         if (!isAutoStartScheduler()) {
             LOG.info("QuartzComponent configured to not auto start Quartz scheduler.");
@@ -160,7 +186,12 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         }
     }
 
-    public void addJob(JobDetail job, Trigger trigger) throws SchedulerException {
+    public void addJob(JobDetail job, Trigger trigger) {
+        // add job to internal list because we will defer adding to the scheduler when camel context has been fully started
+        jobsToAdd.add(new JobToAdd(job, trigger));
+    }
+
+    private void doAddJob(JobDetail job, Trigger trigger) throws SchedulerException {
         JOBS.incrementAndGet();
 
         if (getScheduler().getTrigger(trigger.getName(), trigger.getGroup()) == null) {
@@ -228,13 +259,18 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
      * @throws SchedulerException can be thrown if error starting
      */
     public void startScheduler() throws SchedulerException {
-        if (scheduler != null && !scheduler.isStarted()) {
+        for (JobToAdd add : jobsToAdd) {
+            doAddJob(add.getJob(), add.getTrigger());
+        }
+        jobsToAdd.clear();
+
+        if (!getScheduler().isStarted()) {
             if (getStartDelayedSeconds() > 0) {
-                LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName() + " delayed: " + getStartDelayedSeconds() + " seconds.");
-                scheduler.startDelayed(getStartDelayedSeconds());
+                LOG.info("Starting Quartz scheduler: " + getScheduler().getSchedulerName() + " delayed: " + getStartDelayedSeconds() + " seconds.");
+                getScheduler().startDelayed(getStartDelayedSeconds());
             } else {
-                LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName());
-                scheduler.start();
+                LOG.info("Starting Quartz scheduler: " + getScheduler().getSchedulerName());
+                getScheduler().start();
             }
         }
     }
@@ -333,7 +369,9 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
     protected Scheduler createScheduler() throws SchedulerException {
         Scheduler scheduler = getFactory().getScheduler();
-        scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT, getCamelContext());
+        // register current camel context to scheduler so we can look it up when jobs is being triggered
+        scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + getCamelContext().getName(), getCamelContext());
         return scheduler;
     }
+
 }

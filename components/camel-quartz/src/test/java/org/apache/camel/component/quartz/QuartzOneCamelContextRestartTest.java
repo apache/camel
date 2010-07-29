@@ -37,7 +37,7 @@ public class QuartzOneCamelContextRestartTest {
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").to("mock:one");
+                from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").to("log:one", "mock:one");
             }
         });
         camel1.start();
@@ -56,9 +56,10 @@ public class QuartzOneCamelContextRestartTest {
 
         camel1.stop();
 
+        // fetch mock endpoint again because we have stopped camel context
+        mock1 = camel1.getEndpoint("mock:one", MockEndpoint.class);
         // should resume triggers when we start camel 1 again
-        mock1.reset();
-        mock1.expectedMinimumMessageCount(2);
+        mock1.expectedMinimumMessageCount(3);
         camel1.start();
 
         mock1.assertIsSatisfied();

@@ -21,7 +21,9 @@ package org.apache.camel.component.quartz;
  */
 public final class QuartzConstants {
 
-    public static final String QUARTZ_ENDPOINT = "CamelQuartzEndpoint";
+    public static final String QUARTZ_ENDPOINT_URI = "CamelQuartzEndpoint";
+
+    public static final String QUARTZ_CAMEL_CONTEXT_NAME = "CamelQuartzCamelContextName";
 
     public static final String QUARTZ_CAMEL_CONTEXT = "CamelQuartzCamelContext";
 

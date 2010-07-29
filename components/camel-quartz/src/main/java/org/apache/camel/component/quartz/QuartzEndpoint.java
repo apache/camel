@@ -68,7 +68,8 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
         if (trigger.getStartTime() == null) {
             trigger.setStartTime(new Date());
         }
-        detail.getJobDataMap().put(QuartzConstants.QUARTZ_ENDPOINT, isStateful() ? getEndpointUri() : this);
+        detail.getJobDataMap().put(QuartzConstants.QUARTZ_ENDPOINT_URI, getEndpointUri());
+        detail.getJobDataMap().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, getCamelContext().getName());
         if (detail.getJobClass() == null) {
             detail.setJobClass(isStateful() ? StatefulCamelJob.class : CamelJob.class);
         }
@@ -196,6 +197,9 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
     // -------------------------------------------------------------------------
     public synchronized void consumerStarted(final QuartzConsumer consumer) throws SchedulerException {
         ObjectHelper.notNull(trigger, "trigger");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Adding consumer " + consumer.getProcessor());
+        }
         getLoadBalancer().addProcessor(consumer.getProcessor());
 
         // if we have not yet added our default trigger, then lets do it
@@ -212,6 +216,9 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
             started = false;
         }
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Removing consumer " + consumer.getProcessor());
+        }
         getLoadBalancer().removeProcessor(consumer.getProcessor());
     }
 

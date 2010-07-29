@@ -18,9 +18,12 @@ package org.apache.camel.component.quartz;
 
 import java.io.Serializable;
 
+import org.apache.camel.CamelContext;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.SchedulerContext;
+import org.quartz.SchedulerException;
 
 /**
  * @version $Revision$
@@ -28,10 +31,25 @@ import org.quartz.JobExecutionException;
 public class CamelJob implements Job, Serializable {
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        QuartzEndpoint endpoint = (QuartzEndpoint) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT);
+        String camelContextName = (String) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME);
+        String endpointUri = (String) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT_URI);
+
+        SchedulerContext schedulerContext;
+        try {
+            schedulerContext = context.getScheduler().getContext();
+        } catch (SchedulerException e) {
+            throw new JobExecutionException("Failed to obtain scheduler context for job " + context.getJobDetail().getName());
+        }
+
+        CamelContext camelContext = (CamelContext) schedulerContext.get(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName);
+        if (camelContext == null) {
+            throw new JobExecutionException("No CamelContext could be found with name: " + camelContextName);
+        }
+        QuartzEndpoint endpoint = camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
         if (endpoint == null) {
-            throw new JobExecutionException("No quartz endpoint available for key: " + QuartzConstants.QUARTZ_ENDPOINT);
+            throw new JobExecutionException("No QuartzEndpoint could be found with uri: " + endpointUri);
         }
         endpoint.onJobExecute(context);
     }
+
 }
