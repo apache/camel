@@ -141,19 +141,16 @@ public class EventNotifierEventsTest extends ContextTestSupport {
 
         context.suspend();
 
-        assertEquals(8, events.size());
+        assertEquals(6, events.size());
         assertIsInstanceOf(CamelContextSuspendingEvent.class, events.get(4));
-        assertIsInstanceOf(RouteStoppedEvent.class, events.get(5));
-        assertIsInstanceOf(RouteStoppedEvent.class, events.get(6));
-        assertIsInstanceOf(CamelContextSuspendedEvent.class, events.get(7));
+        // notice direct component is not suspended (as they are internal)
+        assertIsInstanceOf(CamelContextSuspendedEvent.class, events.get(5));
 
         context.resume();
 
-        assertEquals(12, events.size());
-        assertIsInstanceOf(CamelContextResumingEvent.class, events.get(8));
-        assertIsInstanceOf(RouteStartedEvent.class, events.get(9));
-        assertIsInstanceOf(RouteStartedEvent.class, events.get(10));
-        assertIsInstanceOf(CamelContextResumedEvent.class, events.get(11));
+        assertEquals(8, events.size());
+        assertIsInstanceOf(CamelContextResumingEvent.class, events.get(6));
+        assertIsInstanceOf(CamelContextResumedEvent.class, events.get(7));
     }
 
     @Override

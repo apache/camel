@@ -478,8 +478,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     /**
      * Returns the order in which the route inputs was started.
+     * <p/>
+     * The order may not be according to the startupOrder defined on the route.
+     * For example a route could be started manually later, or new routes added at runtime.
      *
-     * @return a list ordered by the starting order of the route inputs
+     * @return a list in the order how routes was started
      */
     public List<RouteStartupOrder> getRouteStartupOrder() {
         return routeStartupOrder;
@@ -1003,13 +1006,19 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                         }
                     }
 
-                    // suspend routes using the shutdown strategy so it can shutdown in correct order
-                    // TODO: leverage shutdown strategy to let it run in suspend mode, so it can suspend routes in correct order
+                    // assemble list of startup ordering so routes can be shutdown accordingly
+                    List<RouteStartupOrder> orders = new ArrayList<RouteStartupOrder>();
                     for (Map.Entry<String, RouteService> entry : suspendedRouteServices.entrySet()) {
-                        shutdownRoute(entry.getKey());
+                        Route route = entry.getValue().getRoutes().iterator().next();
+                        Integer order = entry.getValue().getRouteDefinition().getStartupOrder();
+                        if (order == null) {
+                            order = defaultRouteStartupOrder++;
+                        }
+                        orders.add(new DefaultRouteStartupOrder(order, route, entry.getValue()));
                     }
 
-                    // TODO: more unit test to ensure suspend/resume with startup ordering is as expected
+                    // suspend routes using the shutdown strategy so it can shutdown in correct order
+                    getShutdownStrategy().suspend(this, orders);
 
                     watch.stop();
                     if (LOG.isInfoEnabled()) {
@@ -1094,7 +1103,21 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         // filter out already started routes
         Map<String, RouteService> filtered = new LinkedHashMap<String, RouteService>();
         for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
-            if (entry.getValue().getStatus().isStartable()) {
+            boolean startable;
+
+            Consumer consumer = entry.getValue().getRoutes().iterator().next().getConsumer();
+            if (consumer instanceof SuspendableService) {
+                // consumer could be suspended, which is not reflected in the RouteService status
+                startable = ((SuspendableService) consumer).isSuspended();
+            } else if (consumer instanceof ServiceSupport) {
+                // consumer could be stopped, which is not reflected in the RouteService status
+                startable = ((ServiceSupport) consumer).getStatus().isStartable();
+            } else {
+                // no consumer so use state from route service
+                startable = entry.getValue().getStatus().isStartable();
+            }
+
+            if (startable) {
                 filtered.put(entry.getKey(), entry.getValue());
             }
         }

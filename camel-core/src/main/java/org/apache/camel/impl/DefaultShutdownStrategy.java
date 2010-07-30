@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -83,11 +84,28 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         shutdown(context, routes, getTimeout(), getTimeUnit());
     }
 
+    public void suspend(CamelContext context, List<RouteStartupOrder> routes) throws Exception {
+        doShutdown(context, routes, getTimeout(), getTimeUnit(), true);
+    }
+
     public void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
+        doShutdown(context, routes, timeout, timeUnit, false);
+    }
+
+    public void suspend(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
+        doShutdown(context, routes, timeout, timeUnit, true);
+    }
+
+    protected void doShutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit, boolean suspendOnly) throws Exception {
         StopWatch watch = new StopWatch();
 
-        // should the order of routes be reversed?
+        // at first sort according to route startup order
         List<RouteStartupOrder> routesOrdered = new ArrayList<RouteStartupOrder>(routes);
+        Collections.sort(routesOrdered, new Comparator<RouteStartupOrder>() {
+            public int compare(RouteStartupOrder o1, RouteStartupOrder o2) {
+                return o1.getStartupOrder() - o2.getStartupOrder();
+            }
+        });
         if (shutdownRoutesInReverseOrder) {
             Collections.reverse(routesOrdered);
         }
@@ -99,7 +117,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
 
         // use another thread to perform the shutdowns so we can support timeout
-        Future future = getExecutorService().submit(new ShutdownTask(context, routesOrdered));
+        Future future = getExecutorService().submit(new ShutdownTask(context, routesOrdered, suspendOnly));
         try {
             if (timeout > 0) {
                 future.get(timeout, timeUnit);
@@ -227,18 +245,18 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     /**
-     * Suspends the consumer immediately.
+     * Suspends/stops the consumer immediately.
      *
-     * @param service the suspendable consumer
      * @param consumer the consumer to suspend
      */
-    protected void suspendNow(SuspendableService service, Consumer consumer) {
+    protected void suspendNow(Consumer consumer) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Suspending: " + consumer);
         }
 
+        // allow us to do custom work before delegating to service helper
         try {
-            service.suspend();
+            ServiceHelper.suspendService(consumer);
         } catch (Throwable e) {
             LOG.warn("Error occurred while suspending route: " + consumer + ". This exception will be ignored.", e);
             // fire event
@@ -301,10 +319,12 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
         private final CamelContext context;
         private final List<RouteStartupOrder> routes;
+        private final boolean suspendOnly;
 
-        public ShutdownTask(CamelContext context, List<RouteStartupOrder> routes) {
+        public ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, boolean suspendOnly) {
             this.context = context;
             this.routes = routes;
+            this.suspendOnly = suspendOnly;
         }
 
         public void run() {
@@ -316,7 +336,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // 3) shutdown the deferred routes
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("There are " + routes.size() + " routes to shutdown");
+                LOG.debug("There are " + routes.size() + " routes to " + (suspendOnly ? "suspend" : "shutdown"));
             }
 
             // list of deferred consumers to shutdown when all exchanges has been completed routed
@@ -329,7 +349,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 ShutdownRunningTask shutdownRunningTask = order.getRoute().getRouteContext().getShutdownRunningTask();
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Shutting down route: " + order.getRoute().getId() + " with options [" + shutdownRoute + "," + shutdownRunningTask + "]");
+                    LOG.trace((suspendOnly ? "Suspending route: " : "Shutting down route: ") + order.getRoute().getId()
+                            + " with options [" + shutdownRoute + "," + shutdownRunningTask + "]");
                 }
 
                 for (Consumer consumer : order.getInputs()) {
@@ -356,7 +377,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
                     if (suspend) {
                         // only suspend it and then later shutdown it
-                        suspendNow((SuspendableService) consumer, consumer);
+                        suspendNow(consumer);
                         // add it to the deferred list so the route will be shutdown later
                         deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
                         LOG.info("Route: " + order.getRoute().getId() + " suspended and shutdown deferred, was consuming from: "
@@ -369,7 +390,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         // we will stop it later, but for now it must run to be able to help all inflight messages
                         // be safely completed
                         deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
-                        LOG.info("Route: " + order.getRoute().getId() + " shutdown deferred.");
+                        LOG.info("Route: " + order.getRoute().getId() + (suspendOnly ? " shutdown deferred." : " suspension deferred."));
                     }
                 }
             }
@@ -413,8 +434,13 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
             // now all messages has been completed then stop the deferred consumers
             for (ShutdownDeferredConsumer deferred : deferredConsumers) {
-                shutdownNow(deferred.getConsumer());
-                LOG.info("Route: " + deferred.getRoute().getId() + " shutdown complete.");
+                if (suspendOnly) {
+                    suspendNow(deferred.getConsumer());
+                    LOG.info("Route: " + deferred.getRoute().getId() + " suspend complete.");
+                } else {
+                    shutdownNow(deferred.getConsumer());
+                    LOG.info("Route: " + deferred.getRoute().getId() + " shutdown complete.");
+                }
             }
         }
 

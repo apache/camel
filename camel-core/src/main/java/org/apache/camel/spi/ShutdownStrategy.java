@@ -50,6 +50,15 @@ public interface ShutdownStrategy extends Service {
     void shutdown(CamelContext context, List<RouteStartupOrder> routes) throws Exception;
 
     /**
+     * Suspends the routes
+     *
+     * @param context   the camel context
+     * @param routes    the routes, ordered by the order they was started
+     * @throws Exception is thrown if error suspending the consumers, however its preferred to avoid this
+     */
+    void suspend(CamelContext context, List<RouteStartupOrder> routes) throws Exception;
+
+    /**
      * Shutdown the routes using a specified timeout instead of the default timeout values
      *
      * @param context   the camel context
@@ -59,6 +68,17 @@ public interface ShutdownStrategy extends Service {
      * @throws Exception is thrown if error shutting down the consumers, however its preferred to avoid this
      */
     void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception;
+
+    /**
+     * Suspends the routes using a specified timeout instead of the default timeout values
+     *
+     * @param context   the camel context
+     * @param routes    the routes, ordered by the order they was started
+     * @param timeout   timeout
+     * @param timeUnit  the unit to use
+     * @throws Exception is thrown if error suspending the consumers, however its preferred to avoid this
+     */
+    void suspend(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception;
 
     /**
      * Set an timeout to wait for the shutdown to complete.
