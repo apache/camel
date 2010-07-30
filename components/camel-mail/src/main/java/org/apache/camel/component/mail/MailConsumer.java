@@ -32,6 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -162,13 +163,27 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            // process the current exchange
+            // must use the original message in case we need to workaround a charset issue when extracting mail content
+            final Message mail = exchange.getIn(MailMessage.class).getOriginalMessage();
+
+            // add on completion to handle after work when the exchange is done
+            exchange.addOnCompletion(new Synchronization() {
+                public void onComplete(Exchange exchange) {
+                    processCommit(mail, exchange);
+                }
+
+                public void onFailure(Exchange exchange) {
+                    processRollback(mail, exchange);
+                }
+
+                @Override
+                public String toString() {
+                    return "MailConsumerOnCompletion";
+                }
+            });
+
+            // process the exchange
             processExchange(exchange);
-            if (!exchange.isFailed()) {
-                processCommit(exchange);
-            } else {
-                processRollback(exchange);
-            }
         }
     }
 
@@ -242,25 +257,32 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
 
     /**
      * Strategy to flag the message after being processed.
+     *
+     * @param mail the mail message
+     * @param exchange the exchange
      */
-    protected void processCommit(Exchange exchange) throws MessagingException {
-        MailMessage msg = (MailMessage) exchange.getIn();
-        // Use the "original" Message, in case a copy ended up being made
-        Message message = msg.getOriginalMessage();
-
-        if (endpoint.getConfiguration().isDelete()) {
-            LOG.debug("Exchange processed, so flagging message as DELETED");
-            message.setFlag(Flags.Flag.DELETED, true);
-        } else {
-            LOG.debug("Exchange processed, so flagging message as SEEN");
-            message.setFlag(Flags.Flag.SEEN, true);
+    protected void processCommit(Message mail, Exchange exchange) {
+        try {
+            if (endpoint.getConfiguration().isDelete()) {
+                LOG.debug("Exchange processed, so flagging message as DELETED");
+                mail.setFlag(Flags.Flag.DELETED, true);
+            } else {
+                LOG.debug("Exchange processed, so flagging message as SEEN");
+                mail.setFlag(Flags.Flag.SEEN, true);
+            }
+        } catch (MessagingException e) {
+            LOG.warn("Error occurred during flagging message as DELETED/SEEN", e);
+            exchange.setException(e);
         }
     }
 
     /**
      * Strategy when processing the exchange failed.
+     *
+     * @param mail the mail message
+     * @param exchange the exchange
      */
-    protected void processRollback(Exchange exchange) throws MessagingException {
+    protected void processRollback(Message mail, Exchange exchange) {
         Exception cause = exchange.getException();
         if (cause != null) {
             LOG.warn("Exchange failed, so rolling back message status: " + exchange, cause);
