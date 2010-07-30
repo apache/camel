@@ -59,7 +59,6 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
 
         // assert route service was started in order as well
         assertEquals("22114433", startOrder);
-
     }
 
     @Override

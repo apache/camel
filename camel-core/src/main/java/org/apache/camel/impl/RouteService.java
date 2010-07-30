@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -52,8 +53,8 @@ public class RouteService extends ServiceSupport {
     private final List<Route> routes;
     private final String id;
     private boolean removingRoutes;
-    private boolean startInputs = true;
     private final Map<Route, Consumer> inputs = new HashMap<Route, Consumer>();
+    private final AtomicBoolean warmUpDone = new AtomicBoolean(false);
 
     public RouteService(DefaultCamelContext camelContext, RouteDefinition routeDefinition, List<RouteContext> routeContexts, List<Route> routes) {
         this.camelContext = camelContext;
@@ -84,17 +85,6 @@ public class RouteService extends ServiceSupport {
     }
 
     /**
-     * Sets whether inputs (consumers) should be started when starting the routes
-     * <p/>
-     * By default inputs are started.
-     *
-     * @param flag flag to either start inputs or not
-     */
-    public void startInputs(boolean flag) {
-        this.startInputs = flag;
-    }
-
-    /**
      * Gets the inputs to the routes.
      *
      * @return list of {@link Consumer} as inputs for the routes
@@ -111,7 +101,7 @@ public class RouteService extends ServiceSupport {
         this.removingRoutes = removingRoutes;
     }
 
-    protected void doStart() throws Exception {
+    public void warmUp() throws Exception {
         camelContext.addRouteCollection(routes);
 
         for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
@@ -148,21 +138,23 @@ public class RouteService extends ServiceSupport {
                 }
             }
             startChildService(route, childServices);
+        }
 
+        warmUpDone.set(true);
+    }
+
+    protected void doStart() throws Exception {
+        // ensure we are warmed up before starting the route
+        if (warmUpDone.compareAndSet(false, true)) {
+            warmUp();
+        }
+
+        for (Route route : routes) {
             // start the route itself
             ServiceHelper.startService(route);
 
             // fire event
             EventHelper.notifyRouteStarted(camelContext, route);
-        }
-
-        if (startInputs) {
-            // start the input consumers
-            for (Map.Entry<Route, Consumer> entry : inputs.entrySet()) {
-                Route route = entry.getKey();
-                Consumer consumer = entry.getValue();
-                startChildService(route, consumer);
-            }
         }
     }
 
@@ -204,17 +196,14 @@ public class RouteService extends ServiceSupport {
         }
 
         camelContext.removeRouteCollection(routes);
+        warmUpDone.set(false);
     }
 
     @Override
     protected void doShutdown() throws Exception {
         // clear inputs on shutdown
         inputs.clear();
-    }
-
-    protected void startChildService(Route route, Service... services) throws Exception {
-        List<Service> list = new ArrayList<Service>(Arrays.asList(services));
-        startChildService(route, list);
+        warmUpDone.set(false);
     }
 
     protected void startChildService(Route route, List<Service> services) throws Exception {

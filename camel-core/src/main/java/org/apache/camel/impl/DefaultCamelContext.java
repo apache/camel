@@ -147,7 +147,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private final AtomicBoolean suspending = new AtomicBoolean(false);
     private final AtomicBoolean suspended = new AtomicBoolean(false);
     private final AtomicBoolean resuming = new AtomicBoolean(false);
-    private boolean firstStartDone;
+    // special flags to control the first startup which can are special
+    private volatile boolean firstStartDone;
+    private volatile boolean doNotStartRoutesOnFirstStart;
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
     private Boolean streamCache = Boolean.FALSE;
@@ -608,7 +610,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public synchronized void stopRoute(String routeId) throws Exception {
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
-            routeService.stop();
+            stopRouteService(routeService);
         }
     }
 
@@ -622,7 +624,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
             getShutdownStrategy().shutdown(this, routes);
             // must stop route service as well
-            routeService.stop();
+            stopRouteService(routeService);
         }
     }
 
@@ -636,7 +638,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
             getShutdownStrategy().shutdown(this, routes, timeout, timeUnit);
             // must stop route service as well
-            routeService.stop();
+            stopRouteService(routeService);
         }
     }
 
@@ -1044,8 +1046,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is resuming");
                     StopWatch watch = new StopWatch();
 
-                    // start the suspended routes (do not check for route clashes, and indicate )
-                    doStartRoutes(suspendedRouteServices, false);
+                    // start the suspended routes (do not check for route clashes, and indicate)
+                    doStartRoutes(suspendedRouteServices, false, true);
 
                     watch.stop();
                     if (LOG.isInfoEnabled()) {
@@ -1070,20 +1072,26 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public void start() throws Exception {
-        boolean doNotStart = !firstStartDone && !isAutoStartup();
+        startDate = new Date();
+        stopWatch.restart();
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
+
+        doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
         firstStartDone = true;
 
-        if (doNotStart) {
-            LOG.info("Cannot start Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") as it has been configured to not auto start");
-            return;
-        }
-
-        // super will invoke doStart which will prepare internal services before we continue and start the routes below
+        // super will invoke doStart which will prepare internal services and start routes etc.
         super.start();
 
         stopWatch.stop();
         if (LOG.isInfoEnabled()) {
-            LOG.info("Started " + getRoutes().size() + " routes");
+            // count how many routes are actually started
+            int started = 0;
+            for (Route route : getRoutes()) {
+                if (getRouteStatus(route.getId()).isStarted()) {
+                    started++;
+                }
+            }
+            LOG.info("Total " + getRoutes().size() + " routes, of which " + started + " is started.");
             LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started in " + TimeUtils.printDuration(stopWatch.taken()));
         }
         EventHelper.notifyCamelContextStarted(this);
@@ -1097,9 +1105,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      *
      * @param routeServices  the routes to start (will only start a route if its not already started)
      * @param checkClash     whether to check for startup ordering clash
+     * @param startConsumer  whether the route consumer should be started. Can be used to warmup the route without starting the consumer
      * @throws Exception is thrown if error starting routes
      */
-    protected void doStartRoutes(Map<String, RouteService> routeServices, boolean checkClash) throws Exception {
+    protected void doStartRoutes(Map<String, RouteService> routeServices, boolean checkClash, boolean startConsumer) throws Exception {
         // filter out already started routes
         Map<String, RouteService> filtered = new LinkedHashMap<String, RouteService>();
         for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
@@ -1125,7 +1134,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         if (!filtered.isEmpty()) {
             // the context is now considered started (i.e. isStarted() == true))
             // starting routes is done after, not during context startup
-            safelyStartRouteServices(false, checkClash, filtered.values());
+            safelyStartRouteServices(false, checkClash, startConsumer, filtered.values());
         }
 
         // now notify any startup aware listeners as all the routes etc has been started,
@@ -1136,10 +1145,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     protected synchronized void doStart() throws Exception {
-        startDate = new Date();
-        stopWatch.restart();
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
-
         try {
             doStartCamel();
         } catch (Exception e) {
@@ -1233,7 +1238,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         startRouteDefinitions(routeDefinitions);
 
         // start routes
-        doStartRoutes(routeServices, true);
+        if (doNotStartRoutesOnFirstStart) {
+            LOG.info("Cannot start routes as CamelContext has been configured with autoStartup=false");
+        }
+
+        // invoke this logic to warmup the routes and if possible also start the routes
+        doStartRoutes(routeServices, true, !doNotStartRoutesOnFirstStart);
 
         // starting will continue in the start method
     }
@@ -1386,8 +1396,26 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         } else {
             routeServices.put(key, routeService);
             if (shouldStartRoutes()) {
-                safelyStartRouteServices(true, true, routeService);
+                safelyStartRouteServices(true, true, true, routeService);
             }
+        }
+    }
+
+    protected synchronized void stopRouteService(RouteService routeService) throws Exception {
+        String key = routeService.getId();
+        ServiceStatus status = getRouteStatus(key);
+
+        if (status != null && status.isStopped()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Route " + key + " is already stopped");
+            }
+        } else {
+            for (Route route : routeService.getRoutes()) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Route: " + route.getId() + " stopped, was consuming from: " + route.getConsumer().getEndpoint());
+                }
+            }
+            routeService.stop();
         }
     }
 
@@ -1398,11 +1426,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * This method <b>must</b> be used to start routes in a safe manner.
      *
      * @param forceAutoStart whether to force auto starting the routes, despite they may be configured not do do so
-     * @param checkClash whether to check for startup order clash
+     * @param checkClash     whether to check for startup order clash
+     * @param startConsumer  whether the route consumer should be started. Can be used to warmup the route without starting the consumer
      * @param routeServices  the routes
      * @throws Exception is thrown if error starting the routes
      */
-    protected synchronized void safelyStartRouteServices(boolean forceAutoStart, boolean checkClash, Collection<RouteService> routeServices) throws Exception {
+    protected synchronized void safelyStartRouteServices(boolean forceAutoStart, boolean checkClash, boolean startConsumer,
+                                                         Collection<RouteService> routeServices) throws Exception {
         // list of inputs to start when all the routes have been prepared for starting
         // we use a tree map so the routes will be ordered according to startup order defined on the route
         Map<Integer, DefaultRouteStartupOrder> inputs = new TreeMap<Integer, DefaultRouteStartupOrder>();
@@ -1421,17 +1451,24 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
 
         // warm up routes before we start them
-        doWarmUpRoutes(inputs);
+        doWarmUpRoutes(inputs, startConsumer);
 
-        // and now start the routes
-        // and check for clash with multiple consumers of the same endpoints which is not allowed
-        doStartRoutes(inputs);
+        if (startConsumer) {
+            // and now start the routes
+            // and check for clash with multiple consumers of the same endpoints which is not allowed
+            doStartRouteConsumers(inputs);
+        }
+
         // inputs no longer needed
         inputs.clear();
     }
 
-    protected synchronized void safelyStartRouteServices(boolean forceAutoStart, boolean checkClash, RouteService... routeServices) throws Exception {
-        safelyStartRouteServices(forceAutoStart, checkClash, Arrays.asList(routeServices));
+    /**
+     * @see #safelyStartRouteServices(boolean, boolean, boolean, java.util.Collection)
+     */
+    protected synchronized void safelyStartRouteServices(boolean forceAutoStart, boolean checkClash, boolean startConsumer,
+                                                         RouteService... routeServices) throws Exception {
+        safelyStartRouteServices(forceAutoStart, checkClash, startConsumer, Arrays.asList(routeServices));
     }
 
     private DefaultRouteStartupOrder doPrepareRouteToBeStarted(RouteService routeService, boolean forceAutoStart) throws Exception {
@@ -1485,7 +1522,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return true;
     }
 
-    private void doWarmUpRoutes(Map<Integer, DefaultRouteStartupOrder> inputs) throws Exception {
+    private void doWarmUpRoutes(Map<Integer, DefaultRouteStartupOrder> inputs, boolean autoStartup) throws Exception {
         // now prepare the routes by starting its services before we start the input
         for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
             // defer starting inputs till later as we want to prepare the routes by starting
@@ -1494,23 +1531,23 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             // what this does is to ensure Camel is more robust on starting routes as all routes
             // will then be prepared in time before we start inputs which will consume messages to be routed
             RouteService routeService = entry.getValue().getRouteService();
-            routeService.startInputs(false);
-            try {
-                routeService.start();
-            } finally {
-                routeService.startInputs(true);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Warming up route id: " + routeService.getId() + " having autoStartup=" + autoStartup);
             }
+            routeService.warmUp();
         }
     }
 
-    private void doStartRoutes(Map<Integer, DefaultRouteStartupOrder> inputs) throws Exception {
+    private void doStartRouteConsumers(Map<Integer, DefaultRouteStartupOrder> inputs) throws Exception {
         List<Endpoint> routeInputs = new ArrayList<Endpoint>();
 
         for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
             Integer order = entry.getKey();
             Route route = entry.getValue().getRoute();
 
+            // start the service
             RouteService routeService = entry.getValue().getRouteService();
+
             for (Consumer consumer : routeService.getInputs().values()) {
                 Endpoint endpoint = consumer.getEndpoint();
 
@@ -1551,6 +1588,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     routeStartupOrder.add(entry.getValue());
                 }
             }
+
+            // and start the route service (no need to start children as they are alredy warmed up)
+            routeService.start(false);
         }
     }
 

@@ -44,12 +44,16 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
     private String version;
 
     public void start() throws Exception {
+        start(true);
+    }
+
+    public void start(boolean startChildren) throws Exception {
         if (!started.get()) {
             if (starting.compareAndSet(false, true)) {
                 boolean childrenStarted = false;
                 Exception ex = null;
                 try {
-                    if (childServices != null) {
+                    if (childServices != null && startChildren) {
                         ServiceHelper.startServices(childServices);
                     }
                     childrenStarted = true;
