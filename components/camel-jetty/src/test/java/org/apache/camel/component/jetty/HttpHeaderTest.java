@@ -45,8 +45,7 @@ public class HttpHeaderTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
-                .setHeader("SOAPAction", constant("http://xxx.com/interfaces/ticket"))
+                from("direct:start").setHeader("SOAPAction", constant("http://xxx.com/interfaces/ticket"))
                     .setHeader("Content-Type", constant("text/xml; charset=utf-8"))
                     .setHeader(Exchange.HTTP_PROTOCOL_VERSION, constant("HTTP/1.0"))
                     .to("http://localhost:9080/myapp/mytest");
