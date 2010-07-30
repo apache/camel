@@ -14,30 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.sql;
+package org.apache.camel.lanaguage.sql;
 
 import java.util.List;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
-
-import static org.apache.camel.builder.sql.SqlBuilder.sql;
+import org.apache.camel.builder.sql.Person;
+import org.apache.camel.builder.sql.SqlTest;
+import org.apache.camel.spi.Language;
 
 /**
  * @version $Revision$
  */
-public class SqlTest extends ContextTestSupport {
-
-    //protected CamelContext context = new DefaultCamelContext();
-    protected Exchange exchange;
+public class SqlLanguageTest extends SqlTest {
 
     public void testExpression() throws Exception {
-        Expression expression = sql("SELECT * FROM org.apache.camel.builder.sql.Person where city = 'London'");
+        Language language = assertResolveLanguage(getLanguageName());
+
+        Expression expression = language.createExpression("SELECT * FROM org.apache.camel.builder.sql.Person where city = 'London'");        
         Object value = expression.evaluate(exchange);
         assertIsInstanceOf(List.class, value);
 
@@ -49,11 +43,13 @@ public class SqlTest extends ContextTestSupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void testExpressionWithHeaderVariable() throws Exception {
-        Expression expression = sql("SELECT * FROM org.apache.camel.builder.sql.Person where name = :fooHeader");
+        Language language = assertResolveLanguage(getLanguageName());
+
+        Expression expression = language.createExpression("SELECT * FROM org.apache.camel.builder.sql.Person where name = :fooHeader");
         Object value = expression.evaluate(exchange);
         assertIsInstanceOf(List.class, value);
-
         List<Person> list = (List<Person>)value;
         assertEquals("List size", 1, list.size());
 
@@ -65,32 +61,18 @@ public class SqlTest extends ContextTestSupport {
     }
 
     public void testPredicates() throws Exception {
-        assertPredicate(sql("SELECT * FROM org.apache.camel.builder.sql.Person where city = 'London'"), exchange, true);
-        assertPredicate(sql("SELECT * FROM org.apache.camel.builder.sql.Person where city = 'Manchester'"), exchange, false);
+        Language language = assertResolveLanguage(getLanguageName());
+        assertPredicate(language.createPredicate("SELECT * FROM org.apache.camel.builder.sql.Person where city = 'London'"), exchange, true);
+        assertPredicate(language.createPredicate("SELECT * FROM org.apache.camel.builder.sql.Person where city = 'Manchester'"), exchange, false);
     }
 
     public void testPredicateWithHeaderVariable() throws Exception {
-        assertPredicate(sql("SELECT * FROM org.apache.camel.builder.sql.Person where name = :fooHeader"), exchange, true);
+        Language language = assertResolveLanguage(getLanguageName());
+        assertPredicate(language.createPredicate("SELECT * FROM org.apache.camel.builder.sql.Person where name = :fooHeader"), exchange, true);
     }
 
-    protected void setUp() throws Exception {
-        super.setUp();
-        exchange = createExchange();
+    protected String getLanguageName() {
+        return "sql";
     }
-
-    protected Exchange createExchange() {
-        Exchange exchange = new DefaultExchange(context);
-        Message message = exchange.getIn();
-        message.setHeader("fooHeader", "James");
-
-        Person[] people = {
-            new Person("James", "London"), 
-            new Person("Guillaume", "Normandy"), 
-            new Person("Rob", "London"), 
-            new Person("Hiram", "Tampa")
-        };
-
-        message.setBody(people);
-        return exchange;
-    }
+    
 }
