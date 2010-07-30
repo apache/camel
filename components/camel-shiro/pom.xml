@@ -7,9 +7,9 @@
 		<version>2.5-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>camel-shiro-security</artifactId>
+	<artifactId>camel-shiro</artifactId>
 	<packaging>bundle</packaging>
-	<name>Camel :: Shiro :: Security </name>
+	<name>Camel :: Shiro </name>
 	<description>Camel Shiro Security support</description>
 
 	<properties>

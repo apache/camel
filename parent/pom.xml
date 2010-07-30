@@ -534,7 +534,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-shiro-security</artifactId>
+        <artifactId>camel-shiro</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
