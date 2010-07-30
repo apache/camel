@@ -19,6 +19,9 @@ package org.apache.camel.component.jetty;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -35,20 +38,26 @@ public class HttpHeaderTest extends CamelTestSupport {
     public void testHttpHeaders() throws Exception {
         String result = template.requestBody("direct:start", "hello", String.class);
         assertEquals("Should send a right http header to the server.", "Find the key!", result);
+       
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").setHeader("SOAPAction", constant("http://xxx.com/interfaces/ticket"))
+                from("direct:start")
+                .setHeader("SOAPAction", constant("http://xxx.com/interfaces/ticket"))
                     .setHeader("Content-Type", constant("text/xml; charset=utf-8"))
+                    .setHeader(Exchange.HTTP_PROTOCOL_VERSION, constant("HTTP/1.0"))
                     .to("http://localhost:9080/myapp/mytest");
 
                 from("jetty:http://localhost:9080/myapp/mytest").process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
                         Map<String, Object> headers = exchange.getIn().getHeaders();
+                        ServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, ServletRequest.class);
+                        assertNotNull(request);
+                        assertEquals("Get a wong http protocol version", request.getProtocol(), "HTTP/1.0");
                         for (Entry<String, Object> entry : headers.entrySet()) {
                             if ("SOAPAction".equals(entry.getKey()) && "http://xxx.com/interfaces/ticket".equals(entry.getValue())) {
                                 exchange.getOut().setBody("Find the key!");

@@ -50,6 +50,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.params.CoreProtocolPNames;
 
 /**
  * @version $Revision$
@@ -71,6 +72,11 @@ public class HttpProducer extends DefaultProducer {
         }
         HttpRequestBase httpRequest = createMethod(exchange);
         Message in = exchange.getIn();
+        String httpProtocolVersion = in.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
+        if (httpProtocolVersion != null) {
+            // set the HTTP protocol version
+            httpRequest.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpProducerHelper.parserHttpVersion(httpProtocolVersion));
+        }
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
 
         // propagate headers as HTTP headers

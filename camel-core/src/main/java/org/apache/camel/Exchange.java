@@ -76,6 +76,7 @@ public interface Exchange {
     String HTTP_CHARACTER_ENCODING = "CamelHttpCharacterEncoding";
     String HTTP_METHOD             = "CamelHttpMethod";
     String HTTP_PATH               = "CamelHttpPath";
+    String HTTP_PROTOCOL_VERSION   = "CamelHttpProtocolVersion";
     String HTTP_QUERY              = "CamelHttpQuery";
     String HTTP_RESPONSE_CODE      = "CamelHttpResponseCode";
     String HTTP_URI                = "CamelHttpUri";
@@ -83,6 +84,7 @@ public interface Exchange {
     String HTTP_CHUNKED            = "CamelHttpChunked";
     String HTTP_SERVLET_REQUEST    = "CamelHttpServletRequest";
     String HTTP_SERVLET_RESPONSE   = "CamelHttpServletResponse";
+    
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
 

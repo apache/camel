@@ -39,11 +39,13 @@ import org.apache.camel.util.IOHelper;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.FileRequestEntity;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -65,8 +67,15 @@ public class HttpProducer extends DefaultProducer {
         if (((HttpEndpoint)getEndpoint()).isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
         }
-        HttpMethod method = createMethod(exchange);
+        HttpMethod method = createMethod(exchange);        
         Message in = exchange.getIn();
+        String httpProtocolVersion = in.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
+        if (httpProtocolVersion != null) {
+            // set the HTTP protocol version
+            HttpMethodParams params = method.getParams();
+            params.setVersion(HttpVersion.parse(httpProtocolVersion));
+        }
+        
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
 
         // propagate headers as HTTP headers

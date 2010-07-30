@@ -22,6 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http4.HttpEndpoint;
 import org.apache.camel.component.http4.HttpMethods;
+import org.apache.http.HttpVersion;
+import org.apache.http.ProtocolException;
 
 /**
  * Helper methods for HTTP producers.
@@ -121,6 +123,36 @@ public final class HttpProducerHelper {
         }
 
         return answer;
+    }
+    
+    public static HttpVersion parserHttpVersion(String s) throws ProtocolException {
+        int major;
+        int minor;
+        if (s == null) {
+            throw new IllegalArgumentException("String may not be null");
+        }
+        if (!s.startsWith("HTTP/")) {
+            throw new ProtocolException("Invalid HTTP version string: " + s);
+        }
+        int i1 = "HTTP/".length();
+        int i2 = s.indexOf(".", i1);
+        if (i2 == -1) {
+            throw new ProtocolException("Invalid HTTP version number: " + s);
+        }
+        try {
+            major = Integer.parseInt(s.substring(i1, i2)); 
+        } catch (NumberFormatException e) {
+            throw new ProtocolException("Invalid HTTP major version number: " + s);
+        }
+        i1 = i2 + 1;
+        i2 = s.length();
+        try {
+            minor = Integer.parseInt(s.substring(i1, i2)); 
+        } catch (NumberFormatException e) {
+            throw new ProtocolException("Invalid HTTP minor version number: " + s);
+        }
+        return new HttpVersion(major, minor);
+        
     }
 
 }

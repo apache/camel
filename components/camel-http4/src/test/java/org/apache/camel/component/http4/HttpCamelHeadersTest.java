@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.http4;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.HeaderValidationHandler;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
 
 /**
@@ -37,6 +43,7 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader("TestHeader", "test");
                 exchange.getIn().setHeader("Accept-Language", "pl");
+                exchange.getIn().setHeader(Exchange.HTTP_PROTOCOL_VERSION, "HTTP/1.0");
             }
         });
 
@@ -57,6 +64,26 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
         expectedHeaders.put("TestHeader", "test");
         expectedHeaders.put("Accept-Language", "pl");
 
-        server.register("/", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders));
+        server.register("/", new MyHeaderValidationHandler("GET", "HTTP/1.0", getExpectedContent(), expectedHeaders));
+    }
+    
+    class MyHeaderValidationHandler extends HeaderValidationHandler {
+        private String expectProtocolVersion;
+
+        public MyHeaderValidationHandler(String expectedMethod, String protocolVersion, 
+                                         String responseContent, Map<String, String> expectedHeaders) {
+            super(expectedMethod, null, null, responseContent, expectedHeaders);
+            expectProtocolVersion = protocolVersion;
+        }
+        
+        public void handle(final HttpRequest request, final HttpResponse response,
+                           final HttpContext context) throws HttpException, IOException {
+            if (!expectProtocolVersion.equals(request.getProtocolVersion().toString())) {
+                response.setStatusCode(HttpStatus.SC_HTTP_VERSION_NOT_SUPPORTED);
+                return;
+            }
+            super.handle(request, response, context);
+        }
+        
     }
 }

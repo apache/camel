@@ -47,17 +47,17 @@ public class HeaderValidationHandler extends BasicValidationHandler {
 
         if (expectedHeaders != null) {
             for (Entry<String, String> entry : expectedHeaders.entrySet()) {
-                boolean haederExist = false;
+                boolean headerExist = false;
                 Header[] headers = request.getHeaders(entry.getKey());
 
                 for (Header header : headers) {
                     if (header.getValue().equalsIgnoreCase(entry.getValue())) {
-                        haederExist = true;
+                        headerExist = true;
                         break;
                     }
                 }
 
-                if (!haederExist) {
+                if (!headerExist) {
                     response.setStatusCode(HttpStatus.SC_EXPECTATION_FAILED);
                     return;
                 }
