@@ -25,13 +25,21 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class GracefulShutdownNoAutoStartOrderClashTest extends ContextTestSupport {
 
-    public void testStartupOrderClash() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-        template.sendBody("direct:foo", "Hello World");
-        assertMockEndpointsSatisfied();
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
+    public void testStartupOrderClash() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:foo").routeId("foo").startupOrder(5).to("mock:foo");
+                from("direct:bar").routeId("bar").startupOrder(5).noAutoStartup().to("mock:bar");
+            }
+        });
         try {
-            context.startRoute("bar");
+            context.start();
             fail("Should have thrown an exception");
         } catch (FailedToStartRouteException e) {
             assertEquals("Failed to start route bar because of startupOrder clash. Route foo already has startupOrder 5 configured"
@@ -39,14 +47,4 @@ public class GracefulShutdownNoAutoStartOrderClashTest extends ContextTestSuppor
         }
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:foo").routeId("foo").startupOrder(5).to("mock:foo");
-                from("direct:bar").routeId("bar").startupOrder(5).noAutoStartup().to("mock:bar");
-            }
-        };
-    }
 }

@@ -40,6 +40,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
@@ -1439,7 +1440,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
         // figure out the order in which the routes should be started
         for (RouteService routeService : routeServices) {
-            DefaultRouteStartupOrder order = doPrepareRouteToBeStarted(routeService, forceAutoStart);
+            DefaultRouteStartupOrder order = doPrepareRouteToBeStarted(routeService);
             // check for clash before we add it as input
             if (order != null) {
                 if (checkClash && doCheckStartupOrderClash(order, inputs)) {
@@ -1471,32 +1472,18 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         safelyStartRouteServices(forceAutoStart, checkClash, startConsumer, Arrays.asList(routeServices));
     }
 
-    private DefaultRouteStartupOrder doPrepareRouteToBeStarted(RouteService routeService, boolean forceAutoStart) throws Exception {
-        DefaultRouteStartupOrder answer = null;
-
-        Boolean autoStart = routeService.getRouteDefinition().isAutoStartup();
-        if (autoStart == null || autoStart || forceAutoStart) {
-            try {
-                // add the inputs from this route service to the list to start afterwards
-                // should be ordered according to the startup number
-                Integer startupOrder = routeService.getRouteDefinition().getStartupOrder();
-                if (startupOrder == null) {
-                    // auto assign a default startup order
-                    startupOrder = defaultRouteStartupOrder++;
-                }
-
-                // create holder object that contains information about this route to be started
-                Route route = routeService.getRoutes().iterator().next();
-                answer = new DefaultRouteStartupOrder(startupOrder, route, routeService);
-            } catch (Exception e) {
-                throw new FailedToStartRouteException(e);
-            }
-        } else {
-            // should not start on startup
-            LOG.info("Cannot start route " + routeService.getId() + " as it is configured with auto startup disabled.");
+    private DefaultRouteStartupOrder doPrepareRouteToBeStarted(RouteService routeService) {
+        // add the inputs from this route service to the list to start afterwards
+        // should be ordered according to the startup number
+        Integer startupOrder = routeService.getRouteDefinition().getStartupOrder();
+        if (startupOrder == null) {
+            // auto assign a default startup order
+            startupOrder = defaultRouteStartupOrder++;
         }
 
-        return answer;
+        // create holder object that contains information about this route to be started
+        Route route = routeService.getRoutes().iterator().next();
+        return new DefaultRouteStartupOrder(startupOrder, route, routeService);
     }
 
     private boolean doCheckStartupOrderClash(DefaultRouteStartupOrder answer, Map<Integer, DefaultRouteStartupOrder> inputs) throws FailedToStartRouteException {
@@ -1544,10 +1531,16 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
             Integer order = entry.getKey();
             Route route = entry.getValue().getRoute();
-
-            // start the service
             RouteService routeService = entry.getValue().getRouteService();
 
+            // if we are starting camel, then skip routes which are configured to not be auto started
+            boolean autoStartup = routeService.getRouteDefinition().isAutoStartup();
+            if (isStarting() && !autoStartup) {
+                LOG.info("Cannot start route " + routeService.getId() + " as its configured with autoStartup=false");
+                continue;
+            }
+
+            // start the service
             for (Consumer consumer : routeService.getInputs().values()) {
                 Endpoint endpoint = consumer.getEndpoint();
 
@@ -1589,7 +1582,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 }
             }
 
-            // and start the route service (no need to start children as they are alredy warmed up)
+            // and start the route service (no need to start children as they are already warmed up)
             routeService.start(false);
         }
     }
