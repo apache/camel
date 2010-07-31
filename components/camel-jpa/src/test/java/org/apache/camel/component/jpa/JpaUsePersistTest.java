@@ -168,6 +168,9 @@ public class JpaUsePersistTest extends Assert {
         assertEquals(customer.getAddress().getAddressLine1(), receivedCustomer.getAddress().getAddressLine1());
         assertEquals(customer.getAddress().getAddressLine2(), receivedCustomer.getAddress().getAddressLine2());
         assertEquals(customer.getAddress().getId(), receivedCustomer.getAddress().getId());
+
+        // give a bit tiem for consumer to delete after done
+        Thread.sleep(1000);
         
         assertEntitiesInDatabase(0, Customer.class.getName());
         assertEntitiesInDatabase(0, Address.class.getName());
