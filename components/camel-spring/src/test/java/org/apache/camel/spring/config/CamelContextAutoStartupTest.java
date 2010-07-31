@@ -20,8 +20,6 @@ import junit.framework.TestCase;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,27 +28,23 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CamelContextAutoStartupTest extends TestCase {
 
-    private static final transient Log LOG = LogFactory.getLog(CamelContextAutoStartupTest.class);
-
     public void testAutoStartupFalse() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelContextAutoStartupTestFalse.xml");
 
         SpringCamelContext camel = (SpringCamelContext) ac.getBean("myCamel");
         assertEquals("myCamel", camel.getName());
-        assertEquals(false, camel.isStarted());
-        assertEquals(Boolean.FALSE, camel.isAutoStartup());
-        assertEquals(0, camel.getRoutes().size());
-
-        // now start Camel
-        LOG.info("******** now starting Camel manually *********");
-        camel.start();
-
-        // now its started
         assertEquals(true, camel.isStarted());
-        // but auto startup is still fasle
         assertEquals(Boolean.FALSE, camel.isAutoStartup());
-        // but now we have one route
         assertEquals(1, camel.getRoutes().size());
+
+        assertEquals(false, camel.getRouteStatus("foo").isStarted());
+
+        // now starting route manually
+        camel.startRoute("foo");
+
+        assertEquals(Boolean.FALSE, camel.isAutoStartup());
+        assertEquals(1, camel.getRoutes().size());
+        assertEquals(true, camel.getRouteStatus("foo").isStarted());
 
         // and now we can send a message to the route and see that it works
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);

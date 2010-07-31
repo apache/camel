@@ -34,6 +34,7 @@ import org.springframework.core.io.ClassPathResource;
  * @version $Revision$
  */
 public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
+
     public void testClassPathRouteLoading() throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
@@ -95,12 +96,14 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
         SpringCamelContext context = (SpringCamelContext) applicationContext.getBean("camel4");
-        assertNotNull("No context found!", context);        
-        assertFalse("The context should not start yet", context.isAutoStartup());
-        assertEquals("There should have not route", context.getRoutes().size(), 0);
+        assertFalse(context.isAutoStartup());
+        // there is 1 route but its not started
+        assertEquals(1, context.getRoutes().size());
+
         context = (SpringCamelContext) applicationContext.getBean("camel3");
-        assertTrue("The context should started",  context.isAutoStartup());
-        assertEquals("There should have one route", context.getRoutes().size(), 1);
+        assertTrue(context.isAutoStartup());
+        // there is 1 route but and its started
+        assertEquals(1, context.getRoutes().size());
     }
 
 }

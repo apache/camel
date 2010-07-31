@@ -23,7 +23,7 @@
     ">
 
     <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring" autoStartup="false">
-        <route>
+        <route id="foo">
             <from uri="direct:start"/>
             <to uri="mock:result"/>
         </route>

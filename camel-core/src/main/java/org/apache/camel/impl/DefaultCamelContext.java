@@ -40,7 +40,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
@@ -128,7 +127,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
-    private List<Route> routes;
+    private Set<Route> routes;
     private final List<Service> servicesToClose = new ArrayList<Service>();
     private final Set<StartupListener> startupListeners = new LinkedHashSet<StartupListener>();
     private TypeConverter typeConverter;
@@ -493,7 +492,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public synchronized List<Route> getRoutes() {
         if (routes == null) {
-            routes = new ArrayList<Route>();
+            routes = new LinkedHashSet<Route>();
         }
 
         // lets return a copy of the collection as objects are removed later
@@ -510,8 +509,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return null;
     }
 
+    @Deprecated
     public void setRoutes(List<Route> routes) {
-        this.routes = routes;
         throw new UnsupportedOperationException("Overriding existing routes is not supported yet, use addRoutes instead");
     }
 
@@ -523,7 +522,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     synchronized void addRouteCollection(Collection<Route> routes) throws Exception {
         if (this.routes == null) {
-            this.routes = new ArrayList<Route>();
+            this.routes = new LinkedHashSet<Route>();
         }
 
         if (routes != null) {
