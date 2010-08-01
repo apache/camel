@@ -130,6 +130,21 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         context.stopRoute(getRouteId());
     }
 
+    @ManagedOperation(description = "Suspend Route")
+    public void suspend() throws Exception {
+        context.suspendRoute(getRouteId());
+    }
+
+    @ManagedOperation(description = "Graceful Suspend Route using timeout in seconds")
+    public void suspend(long timeout) throws Exception {
+        context.suspendRoute(getRouteId(), timeout, TimeUnit.SECONDS);
+    }
+
+    @ManagedOperation(description = "Resume Route")
+    public void resume() throws Exception {
+        context.resumeRoute(getRouteId());
+    }
+
     @ManagedOperation(description = "Graceful Shutdown Route")
     public void shutdown() throws Exception {
         context.shutdownRoute(getRouteId());
