@@ -19,6 +19,7 @@ package org.apache.camel.component.direct;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spi.ShutdownAware;
 
@@ -27,7 +28,7 @@ import org.apache.camel.spi.ShutdownAware;
  *
  * @version $Revision$
  */
-public class DirectConsumer extends DefaultConsumer implements ShutdownAware {
+public class DirectConsumer extends DefaultConsumer implements ShutdownAware, SuspendableService {
 
     private DirectEndpoint endpoint;
 
@@ -36,22 +37,26 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware {
         this.endpoint = (DirectEndpoint) endpoint;
     }
 
-    public void start() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
         // add consumer to endpoint
-        boolean existing = this == endpoint.getConsumer(); 
+        boolean existing = this == endpoint.getConsumer();
         if (!existing && endpoint.hasConsumer(this)) {
             throw new IllegalArgumentException("Cannot add a 2nd consumer to the same endpoint. Endpoint " + endpoint + " only allows one consumer.");
         }
         if (!existing) {
             endpoint.addConsumer(this);
         }
-        super.start();
     }
 
     @Override
-    public void stop() throws Exception {
+    protected void doStop() throws Exception {
         endpoint.removeConsumer(this);
-        super.stop();
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        endpoint.removeConsumer(this);
     }
 
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {

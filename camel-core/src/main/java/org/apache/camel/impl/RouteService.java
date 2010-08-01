@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -101,53 +103,51 @@ public class RouteService extends ServiceSupport {
         this.removingRoutes = removingRoutes;
     }
 
-    public void warmUp() throws Exception {
-        camelContext.addRouteCollection(routes);
+    public synchronized void warmUp() throws Exception {
+        if (warmUpDone.compareAndSet(false, true)) {
 
-        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-            strategy.onRoutesAdd(routes);
-        }
-
-        for (Route route : routes) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Starting route services: " + route);
-            }
-
-            // TODO: We should also consider processors which are not services then we can manage all processors as well
-            // otherwise its only the processors which is a Service
-
-            List<Service> services = route.getServices();
-
-            // callback that we are staring these services
-            route.onStartingServices(services);
-
-            // gather list of services to start as we need to start child services as well
-            List<Service> list = new ArrayList<Service>();
-            for (Service service : services) {
-                doGetChildServices(list, service);
-            }
-
-            // split into consumers and child services as we need to start the consumers
-            // afterwards to avoid them being active while the others start
-            List<Service> childServices = new ArrayList<Service>();
-            for (Service service : list) {
-                if (service instanceof Consumer) {
-                    inputs.put(route, (Consumer) service);
-                } else {
-                    childServices.add(service);
+            for (Route route : routes) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Starting route services: " + route);
                 }
-            }
-            startChildService(route, childServices);
-        }
 
-        warmUpDone.set(true);
+                List<Service> services = route.getServices();
+
+                // callback that we are staring these services
+                route.onStartingServices(services);
+
+                // gather list of services to start as we need to start child services as well
+                Set<Service> list = new LinkedHashSet<Service>();
+                for (Service service : services) {
+                    doGetChildServices(list, service);
+                }
+
+                // split into consumers and child services as we need to start the consumers
+                // afterwards to avoid them being active while the others start
+                List<Service> childServices = new ArrayList<Service>();
+                for (Service service : list) {
+                    if (service instanceof Consumer) {
+                        inputs.put(route, (Consumer) service);
+                    } else {
+                        childServices.add(service);
+                    }
+                }
+                startChildService(route, childServices);
+            }
+
+            // ensure lifecycle strategy is invoked which among others enlist the route in JMX
+            for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+                strategy.onRoutesAdd(routes);
+            }
+
+            // add routes to camel context
+            camelContext.addRouteCollection(routes);
+        }
     }
 
     protected void doStart() throws Exception {
         // ensure we are warmed up before starting the route
-        if (warmUpDone.compareAndSet(false, true)) {
-            warmUp();
-        }
+        warmUp();
 
         for (Route route : routes) {
             // start the route itself
@@ -178,7 +178,7 @@ public class RouteService extends ServiceSupport {
             List<Service> services = route.getServices();
 
             // gather list of services to stop as we need to start child services as well
-            List<Service> list = new ArrayList<Service>();
+            Set<Service> list = new LinkedHashSet<Service>();
             for (Service service : services) {
                 doGetChildServices(list, service);
             }
@@ -206,6 +206,22 @@ public class RouteService extends ServiceSupport {
         warmUpDone.set(false);
     }
 
+    @Override
+    protected void doSuspend() throws Exception {
+        // we need to warm up when resuming
+        warmUpDone.set(false);
+        // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
+        // to safely suspend and resume
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        // ensure we are warmed up before resuming
+        warmUp();
+        // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
+        // to safely suspend and resume
+    }
+
     protected void startChildService(Route route, List<Service> services) throws Exception {
         for (Service service : services) {
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
@@ -216,7 +232,7 @@ public class RouteService extends ServiceSupport {
         }
     }
 
-    protected void stopChildService(Route route, List<Service> services, boolean shutdown) throws Exception {
+    protected void stopChildService(Route route, Set<Service> services, boolean shutdown) throws Exception {
         for (Service service : services) {
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
                 strategy.onServiceRemove(camelContext, service, route);
@@ -233,7 +249,7 @@ public class RouteService extends ServiceSupport {
     /**
      * Need to recursive start child services for routes
      */
-    private static void doGetChildServices(List<Service> services, Service service) throws Exception {
+    private static void doGetChildServices(Set<Service> services, Service service) throws Exception {
         services.add(service);
 
         if (service instanceof Navigate) {

@@ -642,6 +642,54 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
+    public synchronized void resumeRoute(String routeId) throws Exception {
+        RouteService routeService = routeServices.get(routeId);
+        if (routeService != null) {
+            String key = routeService.getId();
+            ServiceStatus status = getRouteStatus(key);
+
+            if (status != null && status.isStarted()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Route " + key + " is already started");
+                }
+            } else {
+                if (shouldStartRoutes()) {
+                    safelyStartRouteServices(true, false, true, routeService);
+                    // must resume route service as well
+                    routeService.resume();
+                }
+            }
+        }
+    }
+
+    public synchronized void suspendRoute(String routeId) throws Exception {
+        RouteService routeService = routeServices.get(routeId);
+        if (routeService != null) {
+            routeService.setRemovingRoutes(false);
+            List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
+            RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
+            routes.add(order);
+
+            getShutdownStrategy().suspend(this, routes);
+            // must suspend route service as well
+            suspendRouteService(routeService);
+        }
+    }
+
+    public synchronized void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
+        RouteService routeService = routeServices.get(routeId);
+        if (routeService != null) {
+            routeService.setRemovingRoutes(false);
+            List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
+            RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
+            routes.add(order);
+
+            getShutdownStrategy().suspend(this, routes, timeout, timeUnit);
+            // must suspend route service as well
+            suspendRouteService(routeService);
+        }
+    }
+
     public void addService(Object object) throws Exception {
         if (object instanceof Service) {
             Service service = (Service) object;
@@ -986,88 +1034,78 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return TimeUtils.printDuration(delta);
     }
 
-    public boolean isSuspended() {
-        return suspended.get();
-    }
+    @Override
+    protected void doSuspend() throws Exception {
+        EventHelper.notifyCamelContextSuspending(this);
 
-    public void suspend() throws Exception {
-        if (!suspended.get()) {
-            if (suspending.compareAndSet(false, true)) {
-                try {
-                    EventHelper.notifyCamelContextSuspending(this);
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is suspending");
+        StopWatch watch = new StopWatch();
 
-                    LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is suspending");
-                    StopWatch watch = new StopWatch();
-
-                    // update list of started routes to be suspended
-                    // because we only want to suspend started routes
-                    // (so when we resume we only resume the routes which actually was suspended)
-                    for (Map.Entry<String, RouteService> entry : getRouteServices().entrySet()) {
-                        if (entry.getValue().getStatus().isStarted()) {
-                            suspendedRouteServices.put(entry.getKey(), entry.getValue());
-                        }
-                    }
-
-                    // assemble list of startup ordering so routes can be shutdown accordingly
-                    List<RouteStartupOrder> orders = new ArrayList<RouteStartupOrder>();
-                    for (Map.Entry<String, RouteService> entry : suspendedRouteServices.entrySet()) {
-                        Route route = entry.getValue().getRoutes().iterator().next();
-                        Integer order = entry.getValue().getRouteDefinition().getStartupOrder();
-                        if (order == null) {
-                            order = defaultRouteStartupOrder++;
-                        }
-                        orders.add(new DefaultRouteStartupOrder(order, route, entry.getValue()));
-                    }
-
-                    // suspend routes using the shutdown strategy so it can shutdown in correct order
-                    getShutdownStrategy().suspend(this, orders);
-
-                    watch.stop();
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is suspended in " + TimeUtils.printDuration(watch.taken()));
-                    }
-
-                    EventHelper.notifyCamelContextSuspended(this);
-                } finally {
-                    suspended.set(true);
-                    suspending.set(false);
-                    resuming.set(false);
-                }
+        // update list of started routes to be suspended
+        // because we only want to suspend started routes
+        // (so when we resume we only resume the routes which actually was suspended)
+        for (Map.Entry<String, RouteService> entry : getRouteServices().entrySet()) {
+            if (entry.getValue().getStatus().isStarted()) {
+                suspendedRouteServices.put(entry.getKey(), entry.getValue());
             }
         }
+
+        // assemble list of startup ordering so routes can be shutdown accordingly
+        List<RouteStartupOrder> orders = new ArrayList<RouteStartupOrder>();
+        for (Map.Entry<String, RouteService> entry : suspendedRouteServices.entrySet()) {
+            Route route = entry.getValue().getRoutes().iterator().next();
+            Integer order = entry.getValue().getRouteDefinition().getStartupOrder();
+            if (order == null) {
+                order = defaultRouteStartupOrder++;
+            }
+            orders.add(new DefaultRouteStartupOrder(order, route, entry.getValue()));
+        }
+
+        // suspend routes using the shutdown strategy so it can shutdown in correct order
+        getShutdownStrategy().suspend(this, orders);
+
+        // mark the route services as suspended as well
+        for (RouteService service : suspendedRouteServices.values()) {
+            service.suspend();
+        }
+
+        watch.stop();
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is suspended in " + TimeUtils.printDuration(watch.taken()));
+        }
+
+        EventHelper.notifyCamelContextSuspended(this);
     }
 
-    public void resume() throws Exception {
-        if (suspended.get()) {
-            if (resuming.compareAndSet(false, true)) {
-                try {
-                    EventHelper.notifyCamelContextResuming(this);
+    @Override
+    protected void doResume() throws Exception {
+        try {
+            EventHelper.notifyCamelContextResuming(this);
 
-                    LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is resuming");
-                    StopWatch watch = new StopWatch();
+            LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is resuming");
+            StopWatch watch = new StopWatch();
 
-                    // start the suspended routes (do not check for route clashes, and indicate)
-                    doStartRoutes(suspendedRouteServices, false, true);
+            // start the suspended routes (do not check for route clashes, and indicate)
+            doStartRoutes(suspendedRouteServices, false, true);
 
-                    watch.stop();
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Resumed " + suspendedRouteServices.size() + " routes");
-                        LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") resumed in " + TimeUtils.printDuration(watch.taken()));
-                    }
-
-                    // and clear the list as they have been resumed
-                    suspendedRouteServices.clear();
-
-                    EventHelper.notifyCamelContextResumed(this);
-                } catch (Exception e) {
-                    EventHelper.notifyCamelContextResumeFailed(this, e);
-                    throw e;
-                } finally {
-                    suspended.set(false);
-                    suspending.set(false);
-                    resuming.set(false);
-                }
+            // mark the route services as resumed as well
+            for (RouteService service : suspendedRouteServices.values()) {
+                service.resume();
             }
+
+            watch.stop();
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Resumed " + suspendedRouteServices.size() + " routes");
+                LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") resumed in " + TimeUtils.printDuration(watch.taken()));
+            }
+
+            // and clear the list as they have been resumed
+            suspendedRouteServices.clear();
+
+            EventHelper.notifyCamelContextResumed(this);
+        } catch (Exception e) {
+            EventHelper.notifyCamelContextResumeFailed(this, e);
+            throw e;
         }
     }
 
@@ -1416,6 +1454,24 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 }
             }
             routeService.stop();
+        }
+    }
+
+    protected synchronized void suspendRouteService(RouteService routeService) throws Exception {
+        String key = routeService.getId();
+        ServiceStatus status = getRouteStatus(key);
+
+        if (status != null && status.isSuspended()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Route " + key + " is already suspended");
+            }
+        } else {
+            for (Route route : routeService.getRoutes()) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Route: " + route.getId() + " suspended, was consuming from: " + route.getConsumer().getEndpoint());
+                }
+            }
+            routeService.suspend();
         }
     }
 

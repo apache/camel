@@ -47,12 +47,14 @@ public class HttpConsumer extends DefaultConsumer implements SuspendableService 
 
     @Override
     protected void doStart() throws Exception {
+        suspended = false;
         super.doStart();
         endpoint.connect(this);
     }
 
     @Override
     protected void doStop() throws Exception {
+        suspended = false;
         endpoint.disconnect(this);
         super.doStop();
     }

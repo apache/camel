@@ -380,6 +380,32 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void shutdownRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
 
     /**
+     * Resumes the given route if it has been previously suspended
+     *
+     * @param routeId the route id
+     * @throws Exception is thrown if the route could not be resumed for whatever reason
+     */
+    void resumeRoute(String routeId) throws Exception;
+
+    /**
+     * Suspends the given route using {@link org.apache.camel.spi.ShutdownStrategy}.
+     *
+     * @param routeId the route id
+     * @throws Exception is thrown if the route could not be suspended for whatever reason
+     */
+    void suspendRoute(String routeId) throws Exception;
+
+    /**
+     * Suspends the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.
+     *
+     * @param routeId  the route id
+     * @param timeout  timeout
+     * @param timeUnit the unit to use
+     * @throws Exception is thrown if the route could not be suspended for whatever reason
+     */
+    void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
+
+    /**
      * Returns the current status of the given route
      *
      * @param routeId the route id

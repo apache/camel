@@ -24,14 +24,18 @@ import java.io.Serializable;
  * @version $Revision$
  */
 public enum ServiceStatus implements Serializable {
-    Starting, Started, Stopping, Stopped;
+    Starting, Started, Stopping, Stopped, Suspending, Suspended;
 
     public boolean isStartable() {
-        return this == Stopped;
+        return this == Stopped || this == Suspended;
     }
 
     public boolean isStoppable() {
-        return this == Starting || this == Started;
+        return this == Started || this == Suspended;
+    }
+
+    public boolean isSuspendable() {
+        return this == Started;
     }
 
     public boolean isStarted() {
@@ -41,4 +45,9 @@ public enum ServiceStatus implements Serializable {
     public boolean isStopped() {
         return this == Stopped;
     }
+
+    public boolean isSuspended() {
+        return this == Suspended;
+    }
+
 }

@@ -26,9 +26,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @version $Revision$
+ * @version $Revision: 980370 $
  */
-public class ManagedCamelContextTest extends ContextTestSupport {
+public class ManagedCamelContextSuspendResumeTest extends ContextTestSupport {
 
     @Override
     protected boolean useJmx() {
@@ -62,15 +62,23 @@ public class ManagedCamelContextTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        mbeanServer.invoke(on, "sendBody", new Object[]{"direct:start", "Hello World"}, new String[]{"java.lang.String", "java.lang.String"});
-
-        assertMockEndpointsSatisfied();
-
         Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.String"});
         assertEquals("Bye World", reply);
 
-        // stop Camel
-        mbeanServer.invoke(on, "stop", null, null);
+        // suspend Camel
+        mbeanServer.invoke(on, "suspend", null, null);
+
+        status = (String) mbeanServer.getAttribute(on, "State");
+        assertEquals("Suspended", status);
+
+        // resume Camel
+        mbeanServer.invoke(on, "resume", null, null);
+
+        status = (String) mbeanServer.getAttribute(on, "State");
+        assertEquals("Started", status);
+
+        reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello Camel"}, new String[]{"java.lang.String", "java.lang.String"});
+        assertEquals("Bye World", reply);
     }
 
     @Override
@@ -78,8 +86,6 @@ public class ManagedCamelContextTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:result");
-
                 from("direct:foo").transform(constant("Bye World"));
             }
         };

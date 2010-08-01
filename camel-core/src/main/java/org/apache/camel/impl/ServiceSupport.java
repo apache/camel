@@ -16,8 +16,8 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Collection;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Service;
@@ -28,7 +28,10 @@ import org.apache.camel.util.ServiceHelper;
 
 /**
  * A useful base class which ensures that a service is only initialized once and
- * provides some helper methods for enquiring of its status
+ * provides some helper methods for enquiring of its status.
+ * <p/>
+ * Implementations can extend this base class and implement {@link org.apache.camel.SuspendableService}
+ * in case they support suspend/resume.
  *
  * @version $Revision$
  */
@@ -38,9 +41,11 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
     private final AtomicBoolean starting = new AtomicBoolean(false);
     private final AtomicBoolean stopping = new AtomicBoolean(false);
     private final AtomicBoolean stopped = new AtomicBoolean(false);
+    private final AtomicBoolean suspending = new AtomicBoolean(false);
+    private final AtomicBoolean suspended = new AtomicBoolean(false);
     private final AtomicBoolean shuttingdown = new AtomicBoolean(false);
     private final AtomicBoolean shutdown = new AtomicBoolean(false);
-    private Collection<Object> childServices;
+    private Set<Object> childServices;
     private String version;
 
     public void start() throws Exception {
@@ -73,6 +78,8 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
                         starting.set(false);
                         stopping.set(false);
                         stopped.set(false);
+                        suspending.set(false);
+                        suspended.set(false);
                         shutdown.set(false);
                         shuttingdown.set(false);
                     }
@@ -86,11 +93,13 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
             try {
                 try {
                     starting.set(false);
+                    suspending.set(false);
                     if (childrenStarted) {
                         doStop();
                     }
                 } finally {
                     started.set(false);
+                    suspended.set(false);
                     if (childServices != null) {
                         ServiceHelper.stopServices(childServices);
                     }
@@ -100,6 +109,8 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
                 stopping.set(false);
                 starting.set(false);
                 started.set(false);
+                suspending.set(false);
+                suspended.set(false);
                 shutdown.set(false);
                 shuttingdown.set(false);
             }
@@ -107,8 +118,48 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
     }
 
     public void stop() throws Exception {
-        if (started.get()) {
+        if (!stopped.get()) {
             stop(true);
+        }
+    }
+
+    public void suspend() throws Exception {
+        if (!suspended.get()) {
+            if (suspending.compareAndSet(false, true)) {
+                try {
+                    starting.set(false);
+                    stopping.set(false);
+                    doSuspend();
+                } finally {
+                    stopped.set(false);
+                    stopping.set(false);
+                    starting.set(false);
+                    started.set(false);
+                    suspending.set(false);
+                    suspended.set(true);
+                    shutdown.set(false);
+                    shuttingdown.set(false);
+                }
+            }
+        }
+    }
+
+    public void resume() throws Exception {
+        if (suspended.get()) {
+            if (starting.compareAndSet(false, true)) {
+                try {
+                    doResume();
+                } finally {
+                    started.set(true);
+                    starting.set(false);
+                    stopping.set(false);
+                    stopped.set(false);
+                    suspending.set(false);
+                    suspended.set(false);
+                    shutdown.set(false);
+                    shuttingdown.set(false);
+                }
+            }
         }
     }
 
@@ -150,6 +201,12 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
         if (isStopped()) {
             return ServiceStatus.Stopped;
         }
+        if (isSuspending()) {
+            return ServiceStatus.Suspending;
+        }
+        if (isSuspended()) {
+            return ServiceStatus.Suspended;
+        }
 
         // use stopped as fallback
         return ServiceStatus.Stopped;
@@ -184,10 +241,24 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
     }
 
     /**
+     * @return true if this service is in the process of suspending
+     */
+    public boolean isSuspending() {
+        return suspending.get();
+    }
+
+    /**
+     * @return true if this service is suspended
+     */
+    public boolean isSuspended() {
+        return suspended.get();
+    }
+
+    /**
      * Helper methods so the service knows if it should keep running.
-     * Returns false if the service is being stopped or is stopped.
+     * Returns <tt>false</tt> if the service is being stopped or is stopped.
      *
-     * @return true if the service should continue to run.
+     * @return <tt>true</tt> if the service should continue to run.
      */
     public boolean isRunAllowed() {
         return !(stopping.get() || stopped.get());
@@ -197,6 +268,21 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
 
     protected abstract void doStop() throws Exception;
 
+    /**
+     * Implementations override this method to support customized suspend/resume.
+     */
+    protected void doSuspend() throws Exception {
+    }
+
+    /**
+     * Implementations override this method to support customized suspend/resume.
+     */
+    protected void doResume() throws Exception {
+    }
+
+    /**
+     * Implementations override this method to perform customized shutdown
+     */
     protected void doShutdown() throws Exception {
         // noop
     }
@@ -205,7 +291,7 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
     protected void addChildService(Object childService) {
         synchronized (this) {
             if (childServices == null) {
-                childServices = new CopyOnWriteArrayList();
+                childServices = new LinkedHashSet();
             }
         }
         childServices.add(childService);

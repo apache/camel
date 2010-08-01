@@ -243,11 +243,11 @@ public class DefaultCamelContextTest extends TestSupport {
         assertEquals(false, ctx.isSuspended());
 
         ctx.suspend();
-        assertEquals(true, ctx.isStarted());
+        assertEquals(false, ctx.isStarted());
         assertEquals(true, ctx.isSuspended());
 
         ctx.suspend();
-        assertEquals(true, ctx.isStarted());
+        assertEquals(false, ctx.isStarted());
         assertEquals(true, ctx.isSuspended());
 
         ctx.stop();
@@ -289,7 +289,7 @@ public class DefaultCamelContextTest extends TestSupport {
         assertEquals(false, ctx.isSuspended());
 
         ctx.suspend();
-        assertEquals(true, ctx.isStarted());
+        assertEquals(false, ctx.isStarted());
         assertEquals(true, ctx.isSuspended());
 
         ctx.resume();

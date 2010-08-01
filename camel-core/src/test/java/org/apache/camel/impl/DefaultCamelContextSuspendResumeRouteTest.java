@@ -45,6 +45,9 @@ public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSuppor
         mock.assertIsSatisfied(1000);
 
         assertTrue(context.isSuspended());
+        assertFalse(context.getStatus().isStarted());
+        assertTrue(context.getStatus().isSuspended());
+        assertFalse(context.getStatus().isStopped());
 
         log.info("Resuming");
 
@@ -55,6 +58,10 @@ public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
 
         assertFalse(context.isSuspended());
+
+        assertTrue(context.getStatus().isStarted());
+        assertFalse(context.getStatus().isSuspended());
+        assertFalse(context.getStatus().isStopped());
 
         context.stop();
     }

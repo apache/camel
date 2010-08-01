@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSupport {
 
     private static int counter;
-    private static String event = "";
+    private static volatile String event = "";
 
     private String fileUrl = "file://target/pollstrategy/?pollStrategy=#myPoll";
 
@@ -55,9 +55,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
         mock.expectedMessageCount(0);
 
         // let it run for a little while and since it fails first time we should never get a message
-        Thread.sleep(1000);
-
-        assertMockEndpointsSatisfied();
+        mock.assertIsSatisfied(2000);
 
         assertEquals("rollback", event);
     }

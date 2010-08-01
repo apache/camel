@@ -172,6 +172,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
     public void testServiceStatus() {
         assertTrue(ServiceStatus.Started.isStarted());
         assertFalse(ServiceStatus.Starting.isStarted());
+        assertFalse(ServiceStatus.Starting.isStoppable());
         assertFalse(ServiceStatus.Stopped.isStarted());
         assertFalse(ServiceStatus.Stopping.isStarted());
 
@@ -186,7 +187,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertFalse(ServiceStatus.Stopping.isStartable());
 
         assertTrue(ServiceStatus.Started.isStoppable());
-        assertTrue(ServiceStatus.Starting.isStoppable());
+        assertFalse(ServiceStatus.Starting.isStoppable());
         assertFalse(ServiceStatus.Stopped.isStoppable());
         assertFalse(ServiceStatus.Stopping.isStoppable());
     }

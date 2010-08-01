@@ -33,8 +33,7 @@ import org.springframework.jms.support.JmsUtils;
 public class JmsConsumer extends DefaultConsumer implements SuspendableService {
     private AbstractMessageListenerContainer listenerContainer;
     private EndpointMessageListener messageListener;
-    private boolean initialized;
-    private boolean suspended;
+    private volatile boolean initialized;
 
     public JmsConsumer(JmsEndpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
@@ -138,22 +137,18 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         super.doStop();
     }
 
-    public void suspend() {
+    @Override
+    protected void doSuspend() throws Exception {
         if (listenerContainer != null) {
             listenerContainer.stop();
-            suspended = true;
         }
     }
 
-    public void resume() {
+    @Override
+    protected void doResume() throws Exception {
         if (listenerContainer != null) {
             startListenerContainer();
-            suspended = false;
         }
-    }
-
-    public boolean isSuspended() {
-        return suspended;
     }
 
     private String getDestinationName() {
@@ -163,6 +158,5 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
             return listenerContainer.getDestinationName();
         }
     }
-
 
 }

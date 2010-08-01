@@ -68,11 +68,6 @@ public class ManagedCamelContext {
         return status.name();
     }
 
-    @ManagedAttribute(description = "Is Camel suspended")
-    public Boolean getSuspended() {
-        return context.isSuspended();
-    }
-
     @ManagedAttribute(description = "Uptime")
     public String getUptime() {
         return context.getUptime();
@@ -136,7 +131,7 @@ public class ManagedCamelContext {
         context.start();
     }
 
-    @ManagedOperation(description = "Stop Camel")
+    @ManagedOperation(description = "Stop Camel (shutdown)")
     public void stop() throws Exception {
         context.stop();
     }

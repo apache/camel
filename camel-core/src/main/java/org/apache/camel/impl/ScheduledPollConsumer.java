@@ -45,7 +45,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private boolean useFixedDelay;
     private PollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
-    private volatile boolean suspended;
 
     public ScheduledPollConsumer(DefaultEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -66,7 +65,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
      * Invoked whenever we should be polled
      */
     public void run() {
-        if (suspended) {
+        if (isSuspended()) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Cannot start to poll: " + this.getEndpoint() + " as its suspended");
             }
@@ -171,18 +170,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         this.pollStrategy = pollStrategy;
     }
 
-    public void suspend() {
-        suspended = true;
-    }
-
-    public void resume() {
-        suspended = false;
-    }
-
-    public boolean isSuspended() {
-        return suspended;
-    }
-
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -209,5 +196,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             future.cancel(false);
         }
         super.doStop();
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        // dont stop/cancel the future task since we just check in the run method
     }
 }

@@ -23,11 +23,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class DefaultCamelContextSuspendResumeRouteStartupOrderTest extends ContextTestSupport {
+public class RouteSuspendResumeTest extends ContextTestSupport {
 
     public void testSuspendResume() throws Exception {
-        assertFalse(context.isSuspended());
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A");
 
@@ -40,21 +38,22 @@ public class DefaultCamelContextSuspendResumeRouteStartupOrderTest extends Conte
         // now suspend and dont expect a message to be routed
         resetMocks();
         mock.expectedMessageCount(0);
-        context.suspend();
+        context.suspendRoute("foo");
+
         template.sendBody("seda:foo", "B");
         mock.assertIsSatisfied(1000);
 
-        assertTrue(context.isSuspended());
+        assertTrue(context.getRouteStatus("foo").isSuspended());
 
         log.info("Resuming");
 
         // now resume and expect the previous message to be routed
         resetMocks();
         mock.expectedBodiesReceived("B");
-        context.resume();
+        context.resumeRoute("foo");
         assertMockEndpointsSatisfied();
 
-        assertFalse(context.isSuspended());
+        assertFalse(context.getRouteStatus("foo").isSuspended());
     }
 
     @Override
@@ -62,11 +61,7 @@ public class DefaultCamelContextSuspendResumeRouteStartupOrderTest extends Conte
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("C").startupOrder(3).to("log:foo").to("direct:bar");
-
-                from("direct:baz").routeId("A").startupOrder(1).to("log:baz").to("mock:result");
-
-                from("direct:bar").routeId("B").startupOrder(2).to("log:bar").to("direct:baz");
+                from("seda:foo").routeId("foo").to("log:foo").to("mock:result");
             }
         };
     }
