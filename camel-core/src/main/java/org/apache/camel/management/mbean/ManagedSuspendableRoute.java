@@ -32,16 +32,25 @@ public class ManagedSuspendableRoute extends ManagedRoute {
 
     @ManagedOperation(description = "Suspend route")
     public void suspend() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         context.suspendRoute(getRouteId());
     }
 
     @ManagedOperation(description = "Suspend route (using timeout in seconds)")
     public void suspend(long timeout) throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         context.suspendRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }
 
     @ManagedOperation(description = "Resume Route")
     public void resume() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         context.resumeRoute(getRouteId());
     }
 

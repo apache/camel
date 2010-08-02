@@ -106,11 +106,17 @@ public class ManagedProcessor extends ManagedPerformanceCounter {
 
     @ManagedOperation(description = "Start Processor")
     public void start() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         ServiceHelper.startService(getProcessor());
     }
 
     @ManagedOperation(description = "Stop Processor")
     public void stop() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         ServiceHelper.stopService(getProcessor());
     }
 

@@ -122,26 +122,51 @@ public class ManagedRoute extends ManagedPerformanceCounter {
 
     @ManagedOperation(description = "Start route")
     public void start() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         context.startRoute(getRouteId());
     }
 
     @ManagedOperation(description = "Stop route")
     public void stop() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         context.stopRoute(getRouteId());
     }
 
     @ManagedOperation(description = "Stop route (using timeout in seconds)")
     public void stop(long timeout) throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         context.stopRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }
 
     @ManagedOperation(description = "Shutdown and remove route")
+    @Deprecated
     public void shutdown() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         context.shutdownRoute(getRouteId());
     }
 
     @ManagedOperation(description = "Shutdown and remove route (using timeout in seconds)")
+    @Deprecated
     public void shutdown(long timeout) throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         context.shutdownRoute(getRouteId(), timeout, TimeUnit.SECONDS);
+    }
+
+    @ManagedOperation(description = "Remove route (must be stopped)")
+    public boolean remove() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
+        return context.removeRoute(getRouteId());
     }
 }

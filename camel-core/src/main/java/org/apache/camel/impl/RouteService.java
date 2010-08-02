@@ -94,10 +94,12 @@ public class RouteService extends ServiceSupport {
         return inputs;
     }
     
+    @Deprecated
     public boolean isRemovingRoutes() {
         return removingRoutes;
     }
-    
+
+    @Deprecated
     public void setRemovingRoutes(boolean removingRoutes) {
         this.removingRoutes = removingRoutes;
     }
@@ -201,6 +203,11 @@ public class RouteService extends ServiceSupport {
 
     @Override
     protected void doShutdown() throws Exception {
+        // need to call onRoutesRemove when the CamelContext is shutting down or Route is shutdown
+        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+            strategy.onRoutesRemove(routes);
+        }
+
         // clear inputs on shutdown
         inputs.clear();
         warmUpDone.set(false);

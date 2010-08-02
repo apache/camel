@@ -128,7 +128,11 @@ public class ManagedCamelContext {
 
     @ManagedOperation(description = "Start Camel")
     public void start() throws Exception {
-        context.start();
+        if (context.isSuspended()) {
+            context.resume();
+        } else {
+            context.start();
+        }
     }
 
     @ManagedOperation(description = "Stop Camel (shutdown)")
@@ -143,7 +147,11 @@ public class ManagedCamelContext {
 
     @ManagedOperation(description = "Resume Camel")
     public void resume() throws Exception {
-        context.resume();
+        if (context.isSuspended()) {
+            context.resume();
+        } else {
+            throw new IllegalStateException("CamelContext is not suspended");
+        }
     }
 
     @ManagedOperation(description = "Send body (in only)")

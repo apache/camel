@@ -90,11 +90,17 @@ public class ManagedService {
 
     @ManagedOperation(description = "Start Service")
     public void start() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         service.start();
     }
 
     @ManagedOperation(description = "Stop Service")
     public void stop() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         service.stop();
     }
 
@@ -115,6 +121,9 @@ public class ManagedService {
 
     @ManagedOperation(description = "Suspend Service")
     public void suspend() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         if (service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             ss.suspend();
@@ -125,6 +134,9 @@ public class ManagedService {
 
     @ManagedOperation(description = "Resume Service")
     public void resume() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
         if (service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             ss.resume();

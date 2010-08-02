@@ -676,6 +676,23 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
+    public synchronized boolean removeRoute(String routeId) throws Exception {
+        RouteService routeService = routeServices.get(routeId);
+        if (routeService != null) {
+            if (getRouteStatus(routeId).isStopped()) {
+                routeService.setRemovingRoutes(true);
+                shutdownRouteService(routeService);
+                removeRouteDefinition(routeId);
+                ServiceHelper.stopAndShutdownServices(routeService);
+                routeServices.remove(routeId);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
     public synchronized void suspendRoute(String routeId) throws Exception {
         if (!routeSupportsSuspension(routeId)) {
             // stop if we suspend is not supported
@@ -1526,6 +1543,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         for (Route route : routeService.getRoutes()) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Route: " + route.getId() + " stopped, was consuming from: " + route.getConsumer().getEndpoint());
+            }
+        }
+    }
+
+    protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
+        routeService.shutdown();
+        for (Route route : routeService.getRoutes()) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Route: " + route.getId() + " shutdown and removed, was consuming from: " + route.getConsumer().getEndpoint());
             }
         }
     }

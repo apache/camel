@@ -370,7 +370,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param routeId the route id
      * @throws Exception is thrown if the route could not be shutdown for whatever reason
+     * @deprecated use {@link #stopRoute(String)}
      */
+    @Deprecated
     void shutdownRoute(String routeId) throws Exception;
 
     /**
@@ -380,8 +382,24 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param timeout  timeout
      * @param timeUnit the unit to use
      * @throws Exception is thrown if the route could not be shutdown for whatever reason
+     * @deprecated use {@link #stopRoute(String, long, java.util.concurrent.TimeUnit)}
      */
+    @Deprecated
     void shutdownRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
+
+    /**
+     * Removes the given route (the route <b>must</b> be stopped before it can be removed).
+     * <p/>
+     * <br/>A route which is removed will be unregistered from JMX, have its services stopped/shutdown and the route
+     * definition etc. will also be removed. All the resources related to the route will be stopped and cleared.
+     * <p/>
+     * <br/>End users can use this method to remove unwanted routes or temporary routes which no longer is in demand.
+     *
+     * @param routeId the route id
+     * @return <tt>true</tt> if the route was removed, <tt>false</tt> if the route could not be removed because its not stopped
+     * @throws Exception is thrown if the route could not be shutdown for whatever reason
+     */
+    boolean removeRoute(String routeId) throws Exception;
 
     /**
      * Resumes the given route if it has been previously suspended
