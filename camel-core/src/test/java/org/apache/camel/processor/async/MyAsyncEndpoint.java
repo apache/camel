@@ -21,6 +21,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.SynchronousDelegateProducer;
 
 /**
  * @version $Revision$
@@ -36,7 +37,13 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new MyAsyncProducer(this);
+        Producer answer = new MyAsyncProducer(this);
+        if (isSynchronous()) {
+            // force it to be synchronously
+            return new SynchronousDelegateProducer(answer);
+        } else {
+            return answer;
+        }
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {

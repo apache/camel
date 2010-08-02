@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.server.Handler;
 
@@ -52,7 +53,11 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     public Producer createProducer() throws Exception {
         JettyHttpProducer answer = new JettyHttpProducer(this, getClient());
         answer.setBinding(getJettyBinding());
-        return answer;
+        if (isSynchronous()) {
+            return new SynchronousDelegateProducer(answer);
+        } else {
+            return answer;
+        }
     }
 
     @Override

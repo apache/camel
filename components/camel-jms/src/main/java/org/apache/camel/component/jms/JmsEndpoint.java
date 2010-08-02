@@ -18,8 +18,6 @@ package org.apache.camel.component.jms;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -36,13 +34,14 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.component.jms.reply.PersistentQueueReplyManager;
-import org.apache.camel.component.jms.reply.ReplyHolder;
 import org.apache.camel.component.jms.reply.ReplyManager;
 import org.apache.camel.component.jms.reply.TemporaryQueueReplyManager;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.ManagementAware;
@@ -138,8 +137,13 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
     }
 
-    public JmsProducer createProducer() throws Exception {
-        return new JmsProducer(this);
+    public Producer createProducer() throws Exception {
+        Producer answer = new JmsProducer(this);
+        if (isSynchronous()) {
+            return new SynchronousDelegateProducer(answer);
+        } else {
+            return answer;
+        }
     }
 
     public JmsConsumer createConsumer(Processor processor) throws Exception {

@@ -16,16 +16,15 @@
  */
 package org.apache.camel.component.netty;
 
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timer;
 
 public class NettyEndpoint extends DefaultEndpoint {
@@ -42,7 +41,12 @@ public class NettyEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new NettyProducer(this, configuration);
+        Producer answer = new NettyProducer(this, configuration);
+        if (isSynchronous()) {
+            return new SynchronousDelegateProducer(answer);
+        } else {
+            return answer;
+        }
     }
 
     public Exchange createExchange(ChannelHandlerContext ctx, MessageEvent messageEvent) {

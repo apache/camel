@@ -27,7 +27,7 @@ package org.apache.camel;
  * <b>Important:<b/> Use the {@link org.apache.camel.util.AsyncProcessorHelper#process(AsyncProcessor, Exchange, AsyncCallback)}
  * method to invoke the process method, which ensure Camel have a chance to interweave and invoke it in a reliable manner.
  * For example when using transactions all the invocations has to occur in synchronous manner to ensure the transaction
- * work is done in the same thread, which is required by Spring TransactionMananger.
+ * work is done in the same thread, which is required by Spring TransactionManager.
  *
  * @version $Revision$
  */

@@ -30,7 +30,12 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A default endpoint useful for implementation inheritance
+ * A default endpoint useful for implementation inheritance.
+ * <p/>
+ * Components which leverages <a href="http://camel.apache.org/asynchronous-routing-engine.html">asynchronous processing model</a>
+ * should check the {@link #isSynchronous()} to determine if asynchronous processing is allowed.
+ * The <tt>synchronous</tt> option on the endpoint allows Camel end users to dictate whether they want the asynchronous model or not.
+ * The option is default <tt>false</tt> which means asynchronous processing is allowed.
  *
  * @version $Revision$
  */
@@ -39,6 +44,8 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
     private CamelContext camelContext;
     private Component component;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
+    // option to allow end user to dictate whether async processing should be used or not (if possible)
+    private boolean synchronous;
 
     protected DefaultEndpoint(String endpointUri, Component component) {
         this(endpointUri, component.getCamelContext());
@@ -161,6 +168,23 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
 
     public void setExchangePattern(ExchangePattern exchangePattern) {
         this.exchangePattern = exchangePattern;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    /**
+     * Sets whether synchronous processing should be strictly used, or Camel is allowed to use
+     * asynchronous processing (if supported).
+     * <p/>
+     * The default value is <tt>null</tt> which means this option hasn't been specified
+     * and the component can decide.
+     *
+     * @param synchronous <tt>true</tt> to enforce synchronous processing
+     */
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     public void configureProperties(Map<String, Object> options) {
