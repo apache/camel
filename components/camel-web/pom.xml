@@ -826,16 +826,7 @@
 					<optional>true</optional>
 					<scope>provided</scope>
 				</dependency>
-				<dependency>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-					<scope>provided</scope>
-				</dependency>
+
 
 				<!--  Required jars in WEB-INF/lib folder -->
 				<dependency>
