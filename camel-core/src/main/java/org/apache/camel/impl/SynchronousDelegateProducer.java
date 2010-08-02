@@ -72,4 +72,9 @@ public class SynchronousDelegateProducer implements Producer {
     public boolean isSingleton() {
         return producer.isSingleton();
     }
+
+    @Override
+    public String toString() {
+        return producer.toString();
+    }
 }

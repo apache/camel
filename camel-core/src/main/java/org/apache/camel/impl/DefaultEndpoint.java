@@ -177,9 +177,6 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
     /**
      * Sets whether synchronous processing should be strictly used, or Camel is allowed to use
      * asynchronous processing (if supported).
-     * <p/>
-     * The default value is <tt>null</tt> which means this option hasn't been specified
-     * and the component can decide.
      *
      * @param synchronous <tt>true</tt> to enforce synchronous processing
      */
