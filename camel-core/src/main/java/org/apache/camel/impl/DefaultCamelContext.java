@@ -1469,14 +1469,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
 
-        // and register startup aware so they can be notified when
-        // camel context has been started
-        if (service instanceof StartupListener) {
-            StartupListener listener = (StartupListener) service;
-            addStartupListener(listener);
-        }
-        // TODO: routes which doesnt support resume may have to leverage these callbacks
-
         // and then start the service
         ServiceHelper.resumeService(service);
     }
