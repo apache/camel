@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.spi.RouteContext;
 
@@ -83,5 +84,9 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
 
     public Consumer getConsumer() {
         return consumer;
+    }
+
+    public boolean supportsSuspension() {
+        return consumer instanceof SuspendableService;
     }
 }

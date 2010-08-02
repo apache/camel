@@ -54,6 +54,7 @@ import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedService;
+import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
@@ -390,7 +391,12 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         for (Route route : routes) {
-            ManagedRoute mr = new ManagedRoute(camelContext, route);
+            ManagedRoute mr;
+            if (route.supportsSuspension()) {
+                mr = new ManagedSuspendableRoute(camelContext, route);
+            } else {
+                mr = new ManagedRoute(camelContext, route);
+            }
             mr.init(getManagementStrategy());
 
             // skip already managed routes, for example if the route has been restarted

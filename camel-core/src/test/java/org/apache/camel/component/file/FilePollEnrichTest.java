@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -61,8 +62,8 @@ public class FilePollEnrichTest extends ContextTestSupport {
                     .to("mock:result")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            // stop route after use to prevent firing timer again
-                            exchange.getContext().stopRoute("foo");
+                            // force stop route after use to prevent firing timer again
+                            exchange.getContext().stopRoute("foo", 100, TimeUnit.MILLISECONDS);
                         }
                     });
             }

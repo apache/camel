@@ -23,7 +23,6 @@ import java.util.List;
 import org.apache.camel.Service;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.SuspendableService;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -236,7 +235,7 @@ public final class ServiceHelper {
      * <tt>false</tt> if the service is already in the desired state.
      * @throws Exception is thrown if error occurred
      */
-    public static boolean resumeService(Service service) throws Exception {
+    public static boolean resumeService(Object service) throws Exception {
         if (service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (ss.isSuspended()) {
@@ -287,7 +286,7 @@ public final class ServiceHelper {
      * operation is <b>only</b> invoked if the service is <b>not</b> suspended.
      * <p/>
      * If the service is a {@link org.apache.camel.impl.ServiceSupport} then the <tt>stop</tt>
-     * operation is <b>only</b> invoked if the service is stopable.
+     * operation is <b>only</b> invoked if the service is stoppable.
      * <p/>
      * Otherwise the service is stopped.
      *

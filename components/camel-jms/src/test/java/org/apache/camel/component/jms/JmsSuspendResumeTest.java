@@ -14,54 +14,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.component.jms;
 
-import org.apache.camel.ContextTestSupport;
+import java.util.concurrent.TimeUnit;
+import javax.jms.ConnectionFactory;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision$
  */
-public class RouteSuspendResumeTest extends ContextTestSupport {
+public class JmsSuspendResumeTest extends CamelTestSupport {
 
+    @Test
     public void testSuspendResume() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("A");
+        MockEndpoint mock = getMockEndpoint("mock:foo");
+        mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("seda:foo", "A");
-        
+        template.sendBody("activemq:queue:foo", "Hello World");
+
         assertMockEndpointsSatisfied();
 
-        log.info("Suspending");
-
-        // now suspend and dont expect a message to be routed
-        resetMocks();
-        mock.expectedMessageCount(0);
         context.suspendRoute("foo");
 
-        template.sendBody("seda:foo", "B");
-        mock.assertIsSatisfied(1000);
-
-        assertTrue(context.getRouteStatus("foo").isSuspended());
-
-        log.info("Resuming");
-
-        // now resume and expect the previous message to be routed
         resetMocks();
-        mock.expectedBodiesReceived("B");
-        context.resumeRoute("foo");
-        assertMockEndpointsSatisfied();
+        mock.expectedMessageCount(0);
 
-        assertFalse(context.getRouteStatus("foo").isSuspended());
+        template.sendBody("activemq:queue:foo", "Bye World");
+
+        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
+
+        resetMocks();
+        mock.expectedBodiesReceived("Bye World");
+
+        context.resumeRoute("foo");
+
+        assertMockEndpointsSatisfied();
     }
 
-    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        deleteDirectory("activemq-data");
+        CamelContext camelContext = super.createCamelContext();
+
+        // must use persistent so the message is not lost
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=true");
+        camelContext.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
+
+        return camelContext;
+    }
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("foo").to("log:foo").to("mock:result");
+                from("activemq:queue:foo").routeId("foo").to("mock:foo");
             }
         };
     }

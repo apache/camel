@@ -339,8 +339,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Stops the given route.
-     * It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
-     * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
      *
      * @param route the route to stop
      * @throws Exception is thrown if the route could not be stopped for whatever reason
@@ -348,19 +346,27 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void stopRoute(RouteDefinition route) throws Exception;
 
     /**
-     * Stops the given route.
-     * It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
-     * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
+     * Stops the given route using {@link org.apache.camel.spi.ShutdownStrategy}.
      *
      * @param routeId the route id
      * @throws Exception is thrown if the route could not be stopped for whatever reason
+     * @see #suspendRoute(String)
      */
     void stopRoute(String routeId) throws Exception;
 
     /**
-     * Shutdown the given route using {@link org.apache.camel.spi.ShutdownStrategy}.
-     * It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
-     * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
+     * Stops the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.
+     *
+     * @param routeId the route id
+     * @param timeout  timeout
+     * @param timeUnit the unit to use
+     * @throws Exception is thrown if the route could not be stopped for whatever reason
+     * @see #suspendRoute(String, long, java.util.concurrent.TimeUnit)
+     */
+    void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
+
+    /**
+     * Shutdown and <b>removes</b> the given route using {@link org.apache.camel.spi.ShutdownStrategy}.
      *
      * @param routeId the route id
      * @throws Exception is thrown if the route could not be shutdown for whatever reason
@@ -368,9 +374,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void shutdownRoute(String routeId) throws Exception;
 
     /**
-     * Shutdown the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.
-     * It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
-     * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
+     * Shutdown and <b>removes</b> the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.
      *
      * @param routeId  the route id
      * @param timeout  timeout
@@ -381,6 +385,8 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Resumes the given route if it has been previously suspended
+     * <p/>
+     * If the route does <b>not</b> support suspension the route will be started instead
      *
      * @param routeId the route id
      * @throws Exception is thrown if the route could not be resumed for whatever reason
@@ -389,6 +395,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Suspends the given route using {@link org.apache.camel.spi.ShutdownStrategy}.
+     * <p/>
+     * Suspending a route is more gently than stopping, as the route consumers will be suspended (if they support)
+     * otherwise the consumers will be stopped.
+     * <p/>
+     * By suspending the route services will be kept running (if possible) and therefore its faster to resume the route.
+     * <p/>
+     * If the route does <b>not</b> support suspension the route will be stopped instead
      *
      * @param routeId the route id
      * @throws Exception is thrown if the route could not be suspended for whatever reason
@@ -397,6 +410,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Suspends the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.
+     * <p/>
+     * Suspending a route is more gently than stopping, as the route consumers will be suspended (if they support)
+     * otherwise the consumers will be stopped.
+     * <p/>
+     * By suspending the route services will be kept running (if possible) and therefore its faster to resume the route.
+     * <p/>
+     * If the route does <b>not</b> support suspension the route will be stopped instead
      *
      * @param routeId  the route id
      * @param timeout  timeout

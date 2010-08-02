@@ -33,9 +33,9 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 public class ManagedRoute extends ManagedPerformanceCounter {
 
     public static final String VALUE_UNKNOWN = "Unknown";
-    private Route route;
-    private String description;
-    private CamelContext context;
+    protected Route route;
+    protected String description;
+    protected CamelContext context;
 
     public ManagedRoute(CamelContext context, Route route) {
         this.route = route;
@@ -120,37 +120,27 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         return null;
     }
 
-    @ManagedOperation(description = "Start Route")
+    @ManagedOperation(description = "Start route")
     public void start() throws Exception {
         context.startRoute(getRouteId());
     }
 
-    @ManagedOperation(description = "Stop Route")
+    @ManagedOperation(description = "Stop route")
     public void stop() throws Exception {
         context.stopRoute(getRouteId());
     }
 
-    @ManagedOperation(description = "Suspend Route")
-    public void suspend() throws Exception {
-        context.suspendRoute(getRouteId());
+    @ManagedOperation(description = "Stop route (using timeout in seconds)")
+    public void stop(long timeout) throws Exception {
+        context.stopRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }
 
-    @ManagedOperation(description = "Graceful Suspend Route using timeout in seconds")
-    public void suspend(long timeout) throws Exception {
-        context.suspendRoute(getRouteId(), timeout, TimeUnit.SECONDS);
-    }
-
-    @ManagedOperation(description = "Resume Route")
-    public void resume() throws Exception {
-        context.resumeRoute(getRouteId());
-    }
-
-    @ManagedOperation(description = "Graceful Shutdown Route")
+    @ManagedOperation(description = "Shutdown and remove route")
     public void shutdown() throws Exception {
         context.shutdownRoute(getRouteId());
     }
 
-    @ManagedOperation(description = "Graceful Shutdown Route using timeout in seconds")
+    @ManagedOperation(description = "Shutdown and remove route (using timeout in seconds)")
     public void shutdown(long timeout) throws Exception {
         context.shutdownRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }

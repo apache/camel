@@ -27,7 +27,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.component.cxf.util.CxfMessageHelper;
@@ -61,7 +60,6 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     Consumer consumer;
     String camelDestinationUri;
 
-    private ProducerTemplate camelTemplate;
     private Endpoint destinationEndpoint;
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean checkException;
@@ -107,13 +105,11 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     public void activate() {
         getLogger().log(Level.FINE, "CamelDestination activate().... ");
         ObjectHelper.notNull(camelContext, "CamelContext", this);
-
         try {
             getLogger().log(Level.FINE, "establishing Camel connection");
             destinationEndpoint = getCamelContext().getEndpoint(camelDestinationUri);
             consumer = destinationEndpoint.createConsumer(new ConsumerProcessor());
-            consumer.start();
-
+            ServiceHelper.startService(consumer);
         } catch (Exception ex) {
             throw new FailedToCreateConsumerException(destinationEndpoint, ex);
         }
@@ -151,7 +147,6 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         // Handling the incoming message
         // The response message will be send back by the outgoing chain
         incomingObserver.onMessage(inMessage);
-
     }
 
     public String getBeanName() {
@@ -180,7 +175,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             try {
                 incoming(exchange);
             } catch (Throwable ex) {
-                getLogger().log(Level.WARNING, "Failed to process incoming message : ", ex);
+                getLogger().log(Level.WARNING, "Failed to process incoming message: ", ex);
             }
         }
     }
@@ -215,7 +210,6 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         public void prepare(Message message) throws IOException {
             message.put(CxfConstants.CAMEL_EXCHANGE, inMessage.get(CxfConstants.CAMEL_EXCHANGE));
             message.setContent(OutputStream.class, new CamelOutputStream(message));
-
         }
 
         protected Logger getLogger() {
@@ -232,7 +226,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
      * @return <tt>true</tt> if partial responses is supported
      */
     protected boolean markPartialResponse(Message partialResponse,
-                                       EndpointReferenceType decoupledTarget) {
+                                          EndpointReferenceType decoupledTarget) {
         return true;
     }
 
@@ -271,7 +265,6 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
             camelExchange.getOut().setBody(outputStream.getBytes());
             getLogger().log(Level.FINE, "send the response message: " + outputStream);
-
         }
 
         @Override

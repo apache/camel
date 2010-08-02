@@ -17,7 +17,6 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -196,6 +195,7 @@ public class RouteService extends ServiceSupport {
         }
 
         camelContext.removeRouteCollection(routes);
+        // need to warm up again
         warmUpDone.set(false);
     }
 
@@ -208,16 +208,12 @@ public class RouteService extends ServiceSupport {
 
     @Override
     protected void doSuspend() throws Exception {
-        // we need to warm up when resuming
-        warmUpDone.set(false);
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
     }
 
     @Override
     protected void doResume() throws Exception {
-        // ensure we are warmed up before resuming
-        warmUp();
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
     }

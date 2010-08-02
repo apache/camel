@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class TwoRouteSuspendResumeTest extends ContextTestSupport {
+public class RouteSedaSuspendResumeTest extends ContextTestSupport {
 
     public void testSuspendResume() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -38,22 +38,13 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
         // now suspend and dont expect a message to be routed
         resetMocks();
         mock.expectedMessageCount(0);
-
-        MockEndpoint mockBar = getMockEndpoint("mock:bar");
-        mockBar.expectedMessageCount(1);
-
         context.suspendRoute("foo");
-
-        template.sendBody("seda:foo", "B");
-        template.sendBody("direct:bar", "C");
-
-        // we can still send a message to bar when foo route is suspended
-        mockBar.assertIsSatisfied();
-        mock.assertIsSatisfied(1000);
 
         // seda consumer doesnt support suspension so it will stop instead
         assertEquals("Stopped", context.getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteStatus("bar").name());
+
+        template.sendBody("seda:foo", "B");
+        mock.assertIsSatisfied(1000);
 
         log.info("Resuming");
 
@@ -64,7 +55,6 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals("Started", context.getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteStatus("bar").name());
     }
 
     @Override
@@ -73,8 +63,6 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo").routeId("foo").to("log:foo").to("mock:result");
-
-                from("direct:bar").routeId("bar").to("log:bar").to("mock:bar");
             }
         };
     }

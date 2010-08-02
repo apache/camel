@@ -50,6 +50,11 @@ public interface Route {
     Consumer getConsumer();
 
     /**
+     * Whether or not the route supports suspension
+     */
+    boolean supportsSuspension();
+
+    /**
      * This property map is used to associate information about the route.
      *
      * @return properties
