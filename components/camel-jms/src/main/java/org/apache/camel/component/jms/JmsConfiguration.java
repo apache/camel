@@ -1090,7 +1090,19 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public void setJmsMessageType(JmsMessageType jmsMessageType) {
+        if (jmsMessageType == JmsMessageType.Blob && !supportBlobMessage()) {
+            throw new IllegalArgumentException("BlobMessage is not supported by this implementation");
+        }
         this.jmsMessageType = jmsMessageType;
+    }
+
+    /**
+     * Should get overridden by implementations which support BlobMessages
+     *
+     * @return false
+     */
+    protected boolean supportBlobMessage() {
+        return false;
     }
 
     public JmsKeyFormatStrategy getJmsKeyFormatStrategy() {

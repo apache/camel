@@ -450,17 +450,7 @@ public class JmsBinding {
             // force a specific type from the endpoint configuration
             type = endpoint.getConfiguration().getJmsMessageType();
         } else {
-            // let body determine the type
-            if (body instanceof Node || body instanceof String) {
-                type = Text;
-            } else if (body instanceof byte[] || body instanceof GenericFile || body instanceof File || body instanceof Reader
-                    || body instanceof InputStream || body instanceof ByteBuffer || body instanceof StreamCache) {
-                type = Bytes;
-            } else if (body instanceof Map) {
-                type = Map;
-            } else if (body instanceof Serializable) {
-                type = Object;
-            }
+            type = getJMSMessageTypeForBody(exchange, body, headers, session, context);
         }
 
         // create the JmsMessage based on the type
@@ -468,40 +458,7 @@ public class JmsBinding {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using JmsMessageType: " + type);
             }
-
-            switch (type) {
-            case Text: {
-                TextMessage message = session.createTextMessage();
-                String payload = context.getTypeConverter().convertTo(String.class, exchange, body);
-                message.setText(payload);
-                return message;
-            }
-            case Bytes: {
-                BytesMessage message = session.createBytesMessage();
-                byte[] payload = context.getTypeConverter().convertTo(byte[].class, exchange, body);
-                message.writeBytes(payload);
-                return message;
-            }
-            case Map: {
-                MapMessage message = session.createMapMessage();
-                Map payload = context.getTypeConverter().convertTo(Map.class, exchange, body);
-                populateMapMessage(message, payload, context);
-                return message;
-            }
-            case Object:
-                Serializable payload;
-                try {
-                    payload = context.getTypeConverter().mandatoryConvertTo(Serializable.class, exchange, body);
-                } catch (NoTypeConversionAvailableException e) {
-                    // cannot convert to serializable then thrown an exception to avoid sending a null message
-                    JMSException cause = new MessageFormatException(e.getMessage());
-                    cause.initCause(e);
-                    throw cause;
-                }
-                return session.createObjectMessage(payload);
-            default:
-                break;
-            }
+            return createJmsMessageForType(exchange, body, headers, session, context, type);
         }
 
         // warn if the body could not be mapped
@@ -517,6 +474,70 @@ public class JmsBinding {
         return session.createMessage();
     }
 
+    /**
+     * Return the {@link JmsMessageType} 
+     * 
+     * @return type or null if no mapping was possible
+     */
+    protected JmsMessageType getJMSMessageTypeForBody(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) {
+        JmsMessageType type = null;
+
+        // let body determine the type
+        if (body instanceof Node || body instanceof String) {
+            type = Text;
+        } else if (body instanceof byte[] || body instanceof GenericFile || body instanceof File || body instanceof Reader
+                || body instanceof InputStream || body instanceof ByteBuffer || body instanceof StreamCache) {
+            type = Bytes;
+        } else if (body instanceof Map) {
+            type = Map;
+        } else if (body instanceof Serializable) {
+            type = Object;
+        }
+        return type;
+    }
+    
+    /**
+     * 
+     * Create the {@link Message} 
+     * 
+     * @return jmsMessage or null if the mapping was not successfully
+     */
+    protected Message createJmsMessageForType(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context, JmsMessageType type) throws JMSException {
+        switch (type) {
+        case Text: {
+            TextMessage message = session.createTextMessage();
+            String payload = context.getTypeConverter().convertTo(String.class, exchange, body);
+            message.setText(payload);
+            return message;
+        }
+        case Bytes: {
+            BytesMessage message = session.createBytesMessage();
+            byte[] payload = context.getTypeConverter().convertTo(byte[].class, exchange, body);
+            message.writeBytes(payload);
+            return message;
+        }
+        case Map: {
+            MapMessage message = session.createMapMessage();
+            Map payload = context.getTypeConverter().convertTo(Map.class, exchange, body);
+            populateMapMessage(message, payload, context);
+            return message;
+        }
+        case Object:
+            Serializable payload;
+            try {
+                payload = context.getTypeConverter().mandatoryConvertTo(Serializable.class, exchange, body);
+            } catch (NoTypeConversionAvailableException e) {
+                // cannot convert to serializable then thrown an exception to avoid sending a null message
+                JMSException cause = new MessageFormatException(e.getMessage());
+                cause.initCause(e);
+                throw cause;
+            }
+            return session.createObjectMessage(payload);
+        default:
+            break;
+        }
+        return null;
+    }
     /**
      * Populates a {@link MapMessage} from a {@link Map} instance.
      */
