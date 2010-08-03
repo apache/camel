@@ -204,11 +204,12 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     protected void doStop() throws Exception {
         endpoint.onStopped(this);
         // must shutdown executor on stop to avoid overhead of having them running
-        endpoint.getCamelContext().getExecutorServiceStrategy().shutdownNow(executor);
+        endpoint.getCamelContext().getExecutorServiceStrategy().shutdown(executor);
         executor = null;
 
         if (multicast != null) {
-            ServiceHelper.stopServices(multicast);
+            ServiceHelper.stopService(multicast);
+            multicast = null;
         }
     }
 
