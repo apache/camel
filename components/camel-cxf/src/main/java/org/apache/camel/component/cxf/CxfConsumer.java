@@ -92,14 +92,17 @@ public class CxfConsumer extends DefaultConsumer {
                 Map<String, Object> context = new HashMap<String, Object>();
                 binding.extractJaxWsContext(cxfExchange, context);                 
                 // send Camel exchange to the target processor
-                LOG.trace("Processing +++ START +++");
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing +++ START +++");
+                }
                 try {
                     getProcessor().process(camelExchange);
                 } catch (Exception e) {
                     throw new Fault(e);
                 }
-                LOG.trace("Processing +++ END +++");
-
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing +++ END +++");
+                }
                 checkFailure(camelExchange);
               
                 // bind the Camel response into a CXF response
@@ -120,8 +123,11 @@ public class CxfConsumer extends DefaultConsumer {
                 if (camelExchange.isFailed()) {
                     // either Fault or Exception
                     Throwable t = (camelExchange.hasOut() && camelExchange.getOut().isFault()) 
-                        ? (Throwable)camelExchange.getOut().getBody() : camelExchange.getException();
-                    throw (t instanceof Fault) ? (Fault)t : new Fault(t);
+                        ? camelExchange.getOut().getBody(Throwable.class) : camelExchange.getException();
+                    // There is no exception and the Fault message is set to the out message
+                    if (t != null) {
+                        throw (t instanceof Fault) ? (Fault)t : new Fault(t);
+                    }
                 }
                                 
             }
