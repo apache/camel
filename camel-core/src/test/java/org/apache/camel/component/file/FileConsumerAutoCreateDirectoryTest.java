@@ -100,7 +100,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
             });
             fail("Should have thrown an exception");
         } catch (FileNotFoundException e) {
-            assertEquals("Starting directory does not exist: target/file/foo", e.getMessage());
+            assertTrue(e.getMessage().startsWith("Starting directory does not exist"));
         }
 
         // the directory should NOT exists
