@@ -197,7 +197,7 @@ public class JmsConfiguration implements Cloneable {
                 message = messageCreator.createMessage(session);
                 doSend(producer, message);
                 if (message != null && callback != null) {
-                    callback.sent(message, destination);
+                    callback.sent(session, message, destination);
                 }
                 // Check commit - avoid commit call within a JTA transaction.
                 if (session.getTransacted() && isSessionLocallyTransacted(session)) {
@@ -260,6 +260,8 @@ public class JmsConfiguration implements Cloneable {
                     logger.trace("Sent JMS message to: " + producer.getDestination() + " with message: " + message);
                 }
             }
+
+
         }
     }
 

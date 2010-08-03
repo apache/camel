@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import javax.jms.Destination;
 import javax.jms.Message;
+import javax.jms.Session;
 
 /**
  * Callback when a {@link Message} has been sent.
@@ -29,8 +30,9 @@ public interface MessageSentCallback {
     /**
      * Callback when the message has been sent.
      *
+     * @param session     the session
      * @param message     the message
      * @param destination the destination
      */
-    void sent(Message message, Destination destination);
+    void sent(Session session, Message message, Destination destination);
 }

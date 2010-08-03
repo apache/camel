@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.reply;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.Session;
 
 import org.apache.camel.component.jms.MessageSentCallback;
 
@@ -42,7 +43,7 @@ public class UseMessageIdAsCorrelationIdMessageSentCallback implements MessageSe
         this.requestTimeout = requestTimeout;
     }
 
-    public void sent(Message message, Destination destination) {
+    public void sent(Session session, Message message, Destination destination) {
         String newCorrelationID = null;
         try {
             newCorrelationID = message.getJMSMessageID();
