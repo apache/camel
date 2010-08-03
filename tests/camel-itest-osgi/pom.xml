@@ -99,6 +99,11 @@
       <artifactId>camel-protobuf</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-shiro</artifactId>
+      <scope>test</scope>
+    </dependency>
 	<dependency>
 	  <groupId>org.apache.camel.tests</groupId>
 	  <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
