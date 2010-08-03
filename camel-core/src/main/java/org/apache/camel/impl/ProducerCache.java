@@ -276,7 +276,7 @@ public class ProducerCache extends ServiceSupport {
                 exchange.setException(e);
             }
         } finally {
-            if (exchange != null) {
+            if (exchange != null && exchange.getException() == null) {
                 long timeTaken = watch.stop();
                 // emit event that the exchange was sent to the endpoint
                 EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
