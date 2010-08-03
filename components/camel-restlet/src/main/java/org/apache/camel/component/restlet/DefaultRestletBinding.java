@@ -36,6 +36,7 @@ import org.restlet.data.CharacterSet;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
+import org.restlet.data.Parameter;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -57,32 +58,30 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 inMessage.setHeader(entry.getKey(), entry.getValue());
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Populate exchange from Restlet request header: " 
+                    LOG.debug("Populate exchange from Restlet request header: "
                             + entry.getKey() + " value: " + entry.getValue());
                 }
             }
         }
-        
+
         // copy query string to header
         String query = request.getResourceRef().getQuery();
         if (query != null) {
             inMessage.setHeader(Exchange.HTTP_QUERY, query);
         }
-        
+
         // copy URI to header
         inMessage.setHeader(Exchange.HTTP_URI, request.getResourceRef().getIdentifier(true));
-        
+
         // copy HTTP method to header
         inMessage.setHeader(Exchange.HTTP_METHOD, request.getMethod().toString());
 
         if (!request.isEntityAvailable()) {
             return;
         }
-        
-        
 
         // only deal with the form if the content type is "application/x-www-form-urlencoded"
-        if (request.getEntity().getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {            
+        if (request.getEntity().getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {
             Form form = new Form(request.getEntity());
             for (Map.Entry<String, String> entry : form.getValuesMap().entrySet()) {
                 if (entry.getValue() == null) {
@@ -103,7 +102,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         } else {
             inMessage.setBody(request.getEntity().getStream());
         }
-        
+
     }
 
     public void populateRestletRequestFromExchange(Request request, Exchange exchange) {
@@ -112,20 +111,20 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         Form form = new Form();
         // add the body as the key in the form with null value
         form.add(body, null);
-        
+
         MediaType mediaType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, MediaType.class);
         if (mediaType == null) {
             mediaType = MediaType.APPLICATION_WWW_FORM;
         }
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Populate Restlet request from exchange body: " + body + " using media type " + mediaType);
         }
-        
+
         // login and password are filtered by header filter strategy
         String login = exchange.getIn().getHeader(RestletConstants.RESTLET_LOGIN, String.class);
         String password = exchange.getIn().getHeader(RestletConstants.RESTLET_PASSWORD, String.class);
-          
+
         if (login != null && password != null) {
             ChallengeResponse authentication = new ChallengeResponse(ChallengeScheme.HTTP_BASIC, login, password);
             request.setChallengeResponse(authentication);
@@ -133,7 +132,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 LOG.debug("Basic HTTP Authentication has been applied");
             }
         }
-        
+
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 // Use forms only for GET and POST/x-www-form-urlencoded
@@ -143,22 +142,21 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                         request.getAttributes().put(entry.getKey(), entry.getValue());
                     } else {
                         // put the user stuff in the form
-                        form.add(entry.getKey(), entry.getValue().toString());   
+                        form.add(entry.getKey(), entry.getValue().toString());
                     }
                 } else {
                     // For non-form post put all the headers in attributes
                     request.getAttributes().put(entry.getKey(), entry.getValue());
                 }
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Populate Restlet request from exchange header: " 
+                    LOG.debug("Populate Restlet request from exchange header: "
                             + entry.getKey() + " value: " + entry.getValue());
                 }
             }
         }
-        
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Using Content Type: " 
-                    + mediaType + " for POST data:  " + body);
+            LOG.debug("Using Content Type: " + mediaType + " for POST data: " + body);
         }
 
         // Only URL Encode for GET and form POST
@@ -170,7 +168,6 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
     }
 
     public void populateRestletResponseFromExchange(Exchange exchange, Response response) {
-        
         Message out;
         if (exchange.isFailed()) {
             // 500 for internal server error which can be overridden by response code in header
@@ -189,7 +186,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         } else {
             out = exchange.getOut();
         }
-             
+
         // get content type
         MediaType mediaType = out.getHeader(Exchange.CONTENT_TYPE, MediaType.class);
         if (mediaType == null) {
@@ -201,7 +198,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 mediaType = MediaType.TEXT_XML;
             }
         }
-                
+
         // get response code
         Integer responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
         if (responseCode != null) {
@@ -212,31 +209,30 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 response.getAttributes().put(entry.getKey(), entry.getValue());
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Populate Restlet response from exchange header: " 
+                    LOG.debug("Populate Restlet response from exchange header: "
                             + entry.getKey() + " value: " + entry.getValue());
                 }
             }
         }
-        
+
         String text = out.getBody(String.class);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Populate Restlet response from exchange body: " + text);
         }
         response.setEntity(text, mediaType);
-        
+
         if (exchange.getProperty(Exchange.CHARSET_NAME) != null) {
-            response.getEntity().setCharacterSet(CharacterSet.valueOf(exchange.getProperty(Exchange.CHARSET_NAME, 
-                                                                                           String.class)));
-        } 
+            response.getEntity().setCharacterSet(CharacterSet.valueOf(exchange.getProperty(Exchange.CHARSET_NAME,
+                    String.class)));
+        }
     }
 
     public void populateExchangeFromRestletResponse(Exchange exchange, Response response) throws Exception {
-        
         for (Map.Entry<String, Object> entry : response.getAttributes().entrySet()) {
             if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 exchange.getOut().setHeader(entry.getKey(), entry.getValue());
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Populate exchange from Restlet response header: " 
+                    LOG.debug("Populate exchange from Restlet response header: "
                             + entry.getKey() + " value: " + entry.getValue());
                 }
             }
@@ -246,7 +242,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (LOG.isDebugEnabled()) {
             LOG.debug("Populate exchange from Restlet response: " + text);
         }
-        
+
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().setBody(text);
         } else {
