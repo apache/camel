@@ -192,7 +192,7 @@ public class JmsConfiguration implements Cloneable {
 
             Assert.notNull(messageCreator, "MessageCreator must not be null");
             MessageProducer producer = createProducer(session, destination);
-            Message message = null;
+            Message message;
             try {
                 message = messageCreator.createMessage(session);
                 doSend(producer, message);
@@ -256,6 +256,9 @@ public class JmsConfiguration implements Cloneable {
                     logger.debug("Sending JMS message to: " + producer.getDestination() + " with message: " + message);
                 }
                 super.doSend(producer, message);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Sent JMS message to: " + producer.getDestination() + " with message: " + message);
+                }
             }
         }
     }

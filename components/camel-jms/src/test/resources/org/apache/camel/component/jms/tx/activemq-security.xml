@@ -1,0 +1,60 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:broker="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <!-- you may want to use a specific activemq-core.xsd version
+         that matches your broker, such as activemq-core-5.3.0.xsd -->
+
+    <broker:broker id="broker" useJmx="true" brokerName="myBroker" persistent="false" dataDirectory="target/activemq">
+
+        <broker:plugins>
+            <broker:simpleAuthenticationPlugin>
+                <broker:users>
+                    <broker:authenticationUser username="admin" password="secret" groups="admin,user"/>
+                    <broker:authenticationUser username="scott" password="tiger" groups="user"/>
+                </broker:users>
+            </broker:simpleAuthenticationPlugin>
+
+            <broker:authorizationPlugin>
+                <broker:map>
+                    <broker:authorizationMap>
+                        <broker:authorizationEntries>
+                            <broker:authorizationEntry queue=">" read="admin" write="admin" admin="admin"/>
+                            <broker:authorizationEntry queue="foo" read="admin,user" write="admin,user" admin="admin,user"/>
+                            <broker:authorizationEntry queue="bar" read="admin,user" write="admin" admin="admin,user"/>
+                            <broker:authorizationEntry queue="ActiveMQ.DLQ" read="admin,user" write="admin,user" admin="admin,user"/>
+                            <broker:authorizationEntry topic="ActiveMQ.Advisory.>" read="admin,user" write="admin,user"
+                                                       admin="admin,user"/>
+                        </broker:authorizationEntries>
+                    </broker:authorizationMap>
+                </broker:map>
+            </broker:authorizationPlugin>
+        </broker:plugins>
+
+        <broker:transportConnectors>
+            <broker:transportConnector name="openwire" uri="vm://myBroker"/>
+        </broker:transportConnectors>
+
+    </broker:broker>
+
+</beans>
