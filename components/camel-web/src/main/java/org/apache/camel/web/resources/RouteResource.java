@@ -158,7 +158,7 @@ public class RouteResource extends CamelChildResourceSupport {
         DefaultCamelContext defaultCamelContext = (DefaultCamelContext)getCamelContext();
         // stop and remove the original route
         defaultCamelContext.stopRoute(id);
-        defaultCamelContext.removeRouteDefinition(id);
+        defaultCamelContext.removeRoute(id);
 
         // add the routes in a route builder
         defaultCamelContext.addRoutes(builder);
