@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ShutdownGracefulWithTimerTest extends ContextTestSupport {
 
-    private static String foo = "";
+    private static volatile String foo = "";
 
     public void testShutdownGraceful() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);

@@ -25,7 +25,10 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -35,13 +38,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -122,17 +128,18 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     private final boolean streaming;
     private final boolean stopOnException;
     private final ExecutorService executorService;
+    private final long timeout;
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors) {
         this(camelContext, processors, null);
     }
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
-        this(camelContext, processors, aggregationStrategy, false, null, false, false);
+        this(camelContext, processors, aggregationStrategy, false, null, false, false, 0);
     }
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
-                              boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException) {
+                              boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException, long timeout) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
         this.processors = processors;
@@ -142,6 +149,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         this.stopOnException = stopOnException;
         // must enable parallel if executor service is provided
         this.parallelProcessing = parallelProcessing || executorService != null;
+        this.timeout = timeout;
     }
 
     @Override
@@ -213,13 +221,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         final AtomicInteger total = new AtomicInteger(0);
 
+        final List<Future<Exchange>> tasks = new ArrayList<Future<Exchange>>();
         final Iterator<ProcessorExchangePair> it = pairs.iterator();
         while (it.hasNext()) {
             final ProcessorExchangePair pair = it.next();
             final Exchange subExchange = pair.getExchange();
             updateNewExchange(subExchange, total.intValue(), pairs, it);
 
-            completion.submit(new Callable<Exchange>() {
+            Future<Exchange> task = completion.submit(new Callable<Exchange>() {
                 public Exchange call() throws Exception {
                     if (!running.get()) {
                         // do not start processing the task if we are not running
@@ -245,16 +254,56 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     return subExchange;
                 }
             });
+            tasks.add(task);
 
             total.incrementAndGet();
         }
 
         // its to hard to do parallel async routing so we let the caller thread be synchronously
         // and have it pickup the replies and do the aggregation
+        boolean timedOut = false;
         for (int i = 0; i < total.intValue(); i++) {
-            Future<Exchange> future = completion.take();
-            Exchange subExchange = future.get();
-            doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+            Future<Exchange> future;
+            if (timedOut) {
+                // we are timed out but try to grab if some tasks has been completed
+                // poll will return null if no tasks is present
+                future = completion.poll();
+            } else if (timeout > 0) {
+                future = completion.poll(timeout, TimeUnit.MILLISECONDS);
+            } else {
+                // take will wait until the task is complete
+                future = completion.take();
+            }
+
+            if (future == null && timedOut) {
+                // we are timed out and no more tasks complete so break out
+                break;
+            } else if (future == null) {
+                // timeout occurred
+                AggregationStrategy strategy = getAggregationStrategy(null);
+                if (strategy instanceof TimeoutAwareAggregationStrategy) {
+                    // notify the strategy we timed out
+                    ((TimeoutAwareAggregationStrategy) strategy).timeout(result.get(), i, total.intValue(), timeout);
+                } else {
+                    LOG.warn("Parallel processing timed out after " + timeout + " millis for number " + i + ". Cannot aggregate");
+                }
+                timedOut = true;
+            } else {
+                // we got a result so aggregate it
+                Exchange subExchange = future.get();
+                AggregationStrategy strategy = getAggregationStrategy(subExchange);
+                doAggregate(strategy, result, subExchange);
+            }
+        }
+
+        if (timedOut) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Cancelling future tasks due timeout after " + timeout + " millis.");
+            }
+            // cancel tasks as we timed out (its safe to cancel done tasks)
+            for (Future future : tasks) {
+                future.cancel(true);
+            }
         }
 
         if (LOG.isDebugEnabled()) {
@@ -572,6 +621,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         if (isParallelProcessing() && executorService == null) {
             throw new IllegalArgumentException("ParallelProcessing is enabled but ExecutorService has not been set");
         }
+        if (timeout > 0 && !isParallelProcessing()) {
+            throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled");
+        }
         ServiceHelper.startServices(processors);
     }
 
@@ -586,9 +638,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
     }
 
-    protected AggregationStrategy getAggregationStrategy(Exchange exhange) {
+    protected AggregationStrategy getAggregationStrategy(Exchange exchange) {
+        AggregationStrategy answer = null;
+
         // prefer to use per Exchange aggregation strategy over a global strategy
-        AggregationStrategy answer = exhange.getProperty(Exchange.AGGREGATION_STRATEGY, AggregationStrategy.class);
+        if (exchange != null) {
+            answer = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, AggregationStrategy.class);
+        }
         if (answer == null) {
             // fallback to global strategy
             answer = getAggregationStrategy();
@@ -622,6 +678,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      */
     public Collection<Processor> getProcessors() {
         return processors;
+    }
+
+    /**
+     * An optional timeout in millis when using parallel processing
+     */
+    public long getTimeout() {
+        return timeout;
     }
 
     /**

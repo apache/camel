@@ -40,6 +40,8 @@ import org.apache.camel.Exchange;
  */
 public interface AggregationStrategy {
 
+    // TODO: In Camel 3.0 we should move this to org.apache.camel package
+
     /**
      * Aggregates an old and new exchange together to create a single combined exchange
      *

@@ -59,6 +59,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
     private Boolean ignoreInvalidEndpoints;
     @XmlAttribute(required = false)
     private Boolean streaming;
+    @XmlAttribute(required = false)
+    private Long timeout;
 
     public RecipientListDefinition() {
     }
@@ -100,13 +102,18 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
         if (ignoreInvalidEndpoints != null) {
             answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
         }
-
+        if (getTimeout() != null) {
+            answer.setTimeout(getTimeout());
+        }
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "RecipientList", this);
         if (isParallelProcessing() && executorService == null) {
             // we are running in parallel so create a cached thread pool which grows/shrinks automatic
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "RecipientList");
         }
         answer.setExecutorService(executorService);
+        if (getTimeout() > 0 && !isParallelProcessing()) {
+            throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
+        }
 
         return answer;
     }
@@ -207,6 +214,17 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
         return this;
     }
 
+    /**
+     * Sets a timeout value in millis to use when using parallelProcessing.
+     *
+     * @param timeout timeout in millis
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> timeout(long timeout) {
+        setTimeout(timeout);
+        return this;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
@@ -280,5 +298,13 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
 
     public boolean isStreaming() {
         return streaming != null ? streaming : false;
+    }
+
+    public Long getTimeout() {
+        return timeout != null ? timeout : 0;
+    }
+
+    public void setTimeout(Long timeout) {
+        this.timeout = timeout;
     }
 }

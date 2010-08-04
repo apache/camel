@@ -51,6 +51,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     private Boolean streaming;
     @XmlAttribute(required = false)
     private Boolean stopOnException;
+    @XmlAttribute(required = false)
+    private Long timeout;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
 
@@ -137,6 +139,17 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         return this;
     }
 
+    /**
+     * Sets a timeout value in millis to use when using parallelProcessing.
+     *
+     * @param timeout timeout in millis
+     * @return the builder
+     */
+    public MulticastDefinition timeout(long timeout) {
+        setTimeout(timeout);
+        return this;
+    }
+
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
         if (strategyRef != null) {
             aggregationStrategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
@@ -151,9 +164,12 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
             // we are running in parallel so create a cached thread pool which grows/shrinks automatic
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "Multicast");
         }
+        if (getTimeout() > 0 && !isParallelProcessing()) {
+            throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
+        }
 
         return new MulticastProcessor(routeContext.getCamelContext(), list, aggregationStrategy, isParallelProcessing(),
-                                      executorService, isStreaming(), isStopOnException());
+                                      executorService, isStreaming(), isStopOnException(), getTimeout());
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -211,5 +227,13 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
+    }
+
+    public Long getTimeout() {
+        return timeout != null ? timeout : 0;
+    }
+
+    public void setTimeout(Long timeout) {
+        this.timeout = timeout;
     }
 }

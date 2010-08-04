@@ -55,6 +55,8 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     private Boolean streaming = false;
     @XmlAttribute(required = false)
     private Boolean stopOnException;
+    @XmlAttribute(required = false)
+    private Long timeout;
 
     public SplitDefinition() {
     }
@@ -93,10 +95,13 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
             // we are running in parallel so create a cached thread pool which grows/shrinks automatic
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "Split");
         }
+        if (getTimeout() > 0 && !isParallelProcessing()) {
+            throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
+        }
 
         Expression exp = getExpression().createExpression(routeContext);
         return new Splitter(routeContext.getCamelContext(), exp, childProcessor, aggregationStrategy,
-                            isParallelProcessing(), executorService, isStreaming(), isStopOnException());
+                            isParallelProcessing(), executorService, isStreaming(), isStopOnException(), getTimeout());
     }
 
     
@@ -184,6 +189,17 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         return this;
     }
 
+    /**
+     * Sets a timeout value in millis to use when using parallelProcessing.
+     *
+     * @param timeout timeout in millis
+     * @return the builder
+     */
+    public SplitDefinition timeout(long timeout) {
+        setTimeout(timeout);
+        return this;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
@@ -248,5 +264,13 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
 
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
+    }
+
+    public Long getTimeout() {
+        return timeout != null ? timeout : 0;
+    }
+
+    public void setTimeout(Long timeout) {
+        this.timeout = timeout;
     }
 }

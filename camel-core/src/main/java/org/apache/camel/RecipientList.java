@@ -51,4 +51,5 @@ public @interface RecipientList {
     boolean ignoreInvalidEndpoints() default false;
     String strategyRef() default "";
     String executorServiceRef() default "";
+    long timeout() default 0;
 }

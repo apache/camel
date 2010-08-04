@@ -186,7 +186,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
             ExecutorService multicastExecutor = endpoint.getCamelContext().getExecutorServiceStrategy()
                                                     .newFixedThreadPool(this, endpoint.getEndpointUri() + "(multicast)", size);
-            multicast = new MulticastProcessor(endpoint.getCamelContext(), processors, null, true, multicastExecutor, false, false);
+            multicast = new MulticastProcessor(endpoint.getCamelContext(), processors, null, true, multicastExecutor, false, false, 0);
         }
         return multicast;
     }

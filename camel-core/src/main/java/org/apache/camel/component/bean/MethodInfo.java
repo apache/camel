@@ -105,6 +105,7 @@ public class MethodInfo {
             recipientList.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
             recipientList.setParallelProcessing(annotation.parallelProcessing());
             recipientList.setStreaming(annotation.streaming());
+            recipientList.setTimeout(annotation.timeout());
 
             if (ObjectHelper.isNotEmpty(annotation.executorServiceRef())) {
                 ExecutorService executor = CamelContextHelper.mandatoryLookup(camelContext, annotation.executorServiceRef(), ExecutorService.class);
