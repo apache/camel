@@ -307,19 +307,36 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Adds a collection of route definitions to the context
      *
-     * @param routeDefinitions the route definitions to add
-     * @throws Exception if the route definition could not be created for whatever reason
+     * @param routeDefinitions the route(s) definition to add
+     * @throws Exception if the route definitions could not be created for whatever reason
      */
     void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
+
+    /**
+     * Add a route definition to the context
+     *
+     * @param routeDefinition the route definition to add
+     * @throws Exception if the route definition could not be created for whatever reason
+     */
+    void addRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
     /**
      * Removes a collection of route definitions from the context - stopping any previously running
      * routes if any of them are actively running
      *
-     * @param routeDefinitions route definitions
-     * @throws Exception if the route definition could not be removed for whatever reason
+     * @param routeDefinitions route(s) definitions to remove
+     * @throws Exception if the route definitions could not be removed for whatever reason
      */
     void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
+
+    /**
+     * Removes a route definition from the context - stopping any previously running
+     * routes if any of them are actively running
+     *
+     * @param routeDefinition route definition to remove
+     * @throws Exception if the route definition could not be removed for whatever reason
+     */
+    void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
     /**
      * Starts the given route if it has been previously stopped

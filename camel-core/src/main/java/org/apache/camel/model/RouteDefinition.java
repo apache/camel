@@ -182,9 +182,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
 
         // stop and remove this existing route
-        List<RouteDefinition> list = new ArrayList<RouteDefinition>(1);
-        list.add(this);
-        camelContext.removeRouteDefinitions(list);
+        camelContext.removeRouteDefinition(this);
 
         // now merge which also ensures that interceptors and the likes get mixed in correctly as well
         RouteDefinition merged = routes.route(this);
