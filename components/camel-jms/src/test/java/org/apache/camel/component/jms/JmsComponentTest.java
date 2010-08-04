@@ -35,7 +35,7 @@ public class JmsComponentTest extends CamelTestSupport {
 
     @Test
     public void testComponentOptions() throws Exception {
-        String reply = template.requestBody("activemq123:queue:hello?requestTimeout=0", "Hello World", String.class);
+        String reply = template.requestBody("activemq123:queue:hello?requestTimeout=5000", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
         assertEquals(true, endpoint.isAcceptMessagesWhileStopping());
