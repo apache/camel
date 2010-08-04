@@ -85,6 +85,8 @@ public class IBatisShutdownAllTasksTest extends IBatisTestSupport {
 
     @Test
     public void testShutdownAllTasks() throws Exception {
+        context.startRoute("route1");
+
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
         bar.setResultWaitTime(3000);
@@ -103,7 +105,7 @@ public class IBatisShutdownAllTasksTest extends IBatisTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ibatis:selectAllAccounts?statementType=QueryForList").routeId("route1")
+                from("ibatis:selectAllAccounts?statementType=QueryForList").noAutoStartup().routeId("route1")
                      // let it complete all tasks
                      .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
                      .delay(1000).to("seda:foo");
