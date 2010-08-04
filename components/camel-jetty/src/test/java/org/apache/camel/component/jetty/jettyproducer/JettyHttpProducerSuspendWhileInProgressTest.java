@@ -38,6 +38,11 @@ public class JettyHttpProducerSuspendWhileInProgressTest extends CamelTestSuppor
 
     @Test
     public void testJettySuspendWhileInProgress() throws Exception {
+        // these tests does not run well on AIX
+        if (isPlatform("aix")) {
+            return;
+        }
+
         context.getShutdownStrategy().setTimeout(50);
 
         // send a request/reply and have future handle so we can shutdown while in progress
