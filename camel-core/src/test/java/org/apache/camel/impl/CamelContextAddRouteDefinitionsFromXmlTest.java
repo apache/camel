@@ -22,7 +22,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.model.Constants;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 
 /**
@@ -103,6 +106,52 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testAddRouteDefinitionsFromXmlIsPrepared() throws Exception {
+        RouteDefinition route = loadRoute("route1.xml");
+        assertNotNull(route);
+
+        assertEquals("foo", route.getId());
+        assertEquals(0, context.getRoutes().size());
+
+        context.addRouteDefinition(route);
+        assertEquals(1, context.getRoutes().size());
+        assertTrue("Route should be started", context.getRouteStatus("foo").isStarted());
+
+        // should be prepared, check parents has been set
+        assertNotNull("Parent should be set on outputs");
+        route = context.getRouteDefinition("foo");
+        for (ProcessorDefinition output : route.getOutputs()) {
+            assertNotNull("Parent should be set on output", output.getParent());
+            assertEquals(route, output.getParent());
+        }
+    }
+
+    public void testAddRouteDefinitionsFromXml3() throws Exception {
+        RouteDefinition route = loadRoute("route3.xml");
+        assertNotNull(route);
+
+        assertEquals("foo", route.getId());
+        assertEquals(0, context.getRoutes().size());
+
+        context.addRouteDefinition(route);
+        assertEquals(1, context.getRoutes().size());
+        assertTrue("Route should be started", context.getRouteStatus("foo").isStarted());
+
+        getMockEndpoint("mock:foo").whenExchangeReceived(2, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setException(new IllegalArgumentException("Damn"));
+            }
+        });
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:handled").expectedBodiesReceived("Bye World");
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
         assertMockEndpointsSatisfied();
     }
 

@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -57,6 +58,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlType(propOrder = {"inputs", "outputs" })
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
+    private final AtomicBoolean prepared = new AtomicBoolean(false);
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     private String group;
@@ -80,6 +82,40 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     public RouteDefinition(Endpoint endpoint) {
         from(endpoint);
+    }
+
+    /**
+     * Prepares the route definition to be ready to be added to {@link CamelContext}
+     */
+    public void prepare() {
+        if (prepared.compareAndSet(false, true)) {
+            // at first init the parent
+            RouteDefinitionHelper.initParent(this);
+
+            // abstracts is the cross cutting concerns
+            List<ProcessorDefinition> abstracts = new ArrayList<ProcessorDefinition>();
+
+            // upper is the cross cutting concerns such as interceptors, error handlers etc
+            List<ProcessorDefinition> upper = new ArrayList<ProcessorDefinition>();
+
+            // lower is the regular route
+            List<ProcessorDefinition> lower = new ArrayList<ProcessorDefinition>();
+
+            RouteDefinitionHelper.prepareRouteForInit(this, abstracts, lower);
+
+            // rebuild route as upper + lower
+            this.clearOutput();
+            this.getOutputs().addAll(lower);
+            this.getOutputs().addAll(0, upper);
+        }
+    }
+
+    /**
+     * Marks the route definition as already prepared, for example using custom logic
+     * such as a {@link RouteBuilder} or from <tt>camel-core-xml</tt> component.
+     */
+    public void customPrepared() {
+        prepared.set(true);
     }
 
     @Override

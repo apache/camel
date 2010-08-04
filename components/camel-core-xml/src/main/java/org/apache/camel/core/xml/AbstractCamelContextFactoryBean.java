@@ -53,6 +53,7 @@ import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
@@ -274,7 +275,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         for (RouteDefinition route : getRoutes()) {
 
             // at first init the parent
-            initParent(route);
+            RouteDefinitionHelper.initParent(route);
 
             // abstracts is the cross cutting concerns
             List<ProcessorDefinition> abstracts = new ArrayList<ProcessorDefinition>();
@@ -285,7 +286,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             // lower is the regular route
             List<ProcessorDefinition> lower = new ArrayList<ProcessorDefinition>();
 
-            prepareRouteForInit(route, abstracts, lower);
+            RouteDefinitionHelper.prepareRouteForInit(route, abstracts, lower);
 
             // interceptors should be first for the cross cutting concerns
             initInterceptors(route, upper);
@@ -300,6 +301,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             route.clearOutput();
             route.getOutputs().addAll(lower);
             route.getOutputs().addAll(0, upper);
+
+            // mark as custom prepared
+            route.customPrepared();
         }
 
         if (getDataFormats() != null) {
@@ -318,47 +322,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
 
     protected abstract void initCustomRegistry(T context);
 
-    private void prepareRouteForInit(RouteDefinition route, List<ProcessorDefinition> abstracts,
-                                     List<ProcessorDefinition> lower) {
-        // filter the route into abstracts and lower
-        for (ProcessorDefinition output : route.getOutputs()) {
-            if (output.isAbstract()) {
-                abstracts.add(output);
-            } else {
-                lower.add(output);
-            }
-        }
-    }
-
-    private void initParent(RouteDefinition route) {
-        for (ProcessorDefinition output : route.getOutputs()) {
-            output.setParent(route);
-            if (output.getOutputs() != null) {
-                // recursive the outputs
-                initParent(output);
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void initParent(ProcessorDefinition parent) {
-        List<ProcessorDefinition> children = parent.getOutputs();
-        for (ProcessorDefinition child : children) {
-            child.setParent(parent);
-            if (child.getOutputs() != null) {
-                // recursive the children
-                initParent(child);
-            }
-        }
-    }
-
     private void initOnExceptions(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper) {
         // add global on exceptions if any
         List<OnExceptionDefinition> onExceptions = getOnExceptions();
         if (onExceptions != null && !onExceptions.isEmpty()) {
             // init the parent
             for (OnExceptionDefinition global : onExceptions) {
-                initParent(global);
+                RouteDefinitionHelper.initParent(global);
             }
             abstracts.addAll(onExceptions);
         }
@@ -378,7 +348,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         for (InterceptDefinition intercept : getIntercepts()) {
             intercept.afterPropertiesSet();
             // init the parent
-            initParent(intercept);
+            RouteDefinitionHelper.initParent(intercept);
             // add as first output so intercept is handled before the actual route and that gives
             // us the needed head start to init and be able to intercept all the remaining processing steps
             upper.add(0, intercept);
@@ -402,7 +372,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             if (match) {
                 intercept.afterPropertiesSet();
                 // init the parent
-                initParent(intercept);
+                RouteDefinitionHelper.initParent(intercept);
                 // add as first output so intercept is handled before the actual route and that gives
                 // us the needed head start to init and be able to intercept all the remaining processing steps
                 upper.add(0, intercept);
@@ -413,7 +383,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         for (InterceptSendToEndpointDefinition intercept : getInterceptSendToEndpoints()) {
             intercept.afterPropertiesSet();
             // init the parent
-            initParent(intercept);
+            RouteDefinitionHelper.initParent(intercept);
             // add as first output so intercept is handled before the actual route and that gives
             // us the needed head start to init and be able to intercept all the remaining processing steps
             upper.add(0, intercept);
@@ -435,7 +405,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             completions = getOnCompletions();
             // init the parent
             for (OnCompletionDefinition global : completions) {
-                initParent(global);
+                RouteDefinitionHelper.initParent(global);
             }
         }
 

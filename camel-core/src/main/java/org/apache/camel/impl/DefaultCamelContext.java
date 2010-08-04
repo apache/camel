@@ -595,6 +595,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         List<Route> routes = new ArrayList<Route>();
         List<RouteContext> routeContexts = route.addRoutes(this, routes);
         RouteService routeService = new RouteService(this, route, routeContexts, routes);
+        // must ensure route is prepared, before we can start it 
+        route.prepare();
         startRouteService(routeService, true);
     }
 
