@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -24,7 +27,6 @@ import javax.persistence.PersistenceException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
 import org.springframework.orm.jpa.JpaCallback;
 
 /**
@@ -42,25 +44,59 @@ public class JpaProducer extends DefaultProducer {
         this.template = endpoint.createTransactionStrategy();
     }
 
-    public void process(Exchange exchange) {
+    public void process(final Exchange exchange) {
         exchange.getIn().setHeader(JpaConstants.JPA_TEMPLATE, endpoint.getTemplate());
         final Object values = expression.evaluate(exchange, Object.class);
         if (values != null) {
             template.execute(new JpaCallback() {
+                @SuppressWarnings("unchecked")
                 public Object doInJpa(EntityManager entityManager) throws PersistenceException {
-                    Iterator iter = ObjectHelper.createIterator(values);
-                    while (iter.hasNext()) {
-                        Object value = iter.next();
-                        if (endpoint.isUsePersist()) {
-                            entityManager.persist(value);
-                        } else {
-                            entityManager.merge(value);
+                    if (values.getClass().isArray()) {
+                        Object[] array = (Object[]) values;
+                        for (int index = 0; index < array.length; index++) {
+                            Object managedEntity = save(array[index], entityManager);
+                            if (!endpoint.isUsePersist()) {
+                                array[index] = managedEntity;
+                            }
+                        }
+                    } else if (values instanceof Collection) {
+                        Collection collection = (Collection) values;
+                        List managedEntities = new ArrayList();
+                        for (Iterator iter = collection.iterator(); iter.hasNext();) {
+                            Object managedEntity = save(iter.next(), entityManager);
+                            managedEntities.add(managedEntity);
+                        }
+                        if (!endpoint.isUsePersist()) {
+                            collection.clear();
+                            collection.addAll(managedEntities);
+                        }
+                    } else {
+                        Object managedEntity = save(values, entityManager);
+                        if (!endpoint.isUsePersist()) {
+                            exchange.getIn().setBody(managedEntity);                            
                         }
                     }
+                    
                     if (endpoint.isFlushOnSend()) {
                         entityManager.flush();
                     }
                     return null;
+                }
+
+                /**
+                 * save the given entity end return the managed entity
+                 * 
+                 * @param entity
+                 * @param entityManager
+                 * @return the managed entity
+                 */
+                private Object save(final Object entity, EntityManager entityManager) {
+                    if (endpoint.isUsePersist()) {
+                        entityManager.persist(entity);
+                        return entity;
+                    } else {
+                        return entityManager.merge(entity);
+                    }
                 }
             });
         }
