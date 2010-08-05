@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.bean;
 
-public class MyCustomException extends Exception {
+/**
+ * @version $Revision$
+ */
+public class MyApplicationException extends Exception {
 
-    public MyCustomException(String message) {
+    private final int code;
+
+    public MyApplicationException(String message, int code) {
         super(message);
+        this.code = code;
     }
 
-    public MyCustomException(String message, Throwable cause) {
-        super(message, cause);
+    public int getCode() {
+        return code;
     }
 }

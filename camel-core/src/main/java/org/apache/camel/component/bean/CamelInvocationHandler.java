@@ -25,6 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -64,16 +65,22 @@ public class CamelInvocationHandler implements InvocationHandler {
         producer.process(exchange);
 
         // check if we had an exception
-        Throwable fault = exchange.getException();
-        if (fault != null) {
-            if (fault instanceof RuntimeCamelException) {
-                // if the inner cause is a runtime exception we can throw it directly
-                if (fault.getCause() instanceof RuntimeException) {
-                    throw (RuntimeException) ((RuntimeCamelException) fault).getCause();
-                }
-                throw (RuntimeCamelException) fault;
+        Throwable cause = exchange.getException();
+        if (cause != null) {
+            Throwable found = findSuitableException(cause, method);
+            if (found != null) {
+                throw found;
             }
-            throw fault;
+            // special for runtime camel exceptions as they can be nested
+            if (cause instanceof RuntimeCamelException) {
+                // if the inner cause is a runtime exception we can throw it directly
+                if (cause.getCause() instanceof RuntimeException) {
+                    throw (RuntimeException) ((RuntimeCamelException) cause).getCause();
+                }
+                throw (RuntimeCamelException) cause;
+            }
+            // okay just throw the exception as is
+            throw cause;
         }
 
         // do not return a reply if the method is VOID or the MEP is not OUT capable
@@ -96,5 +103,32 @@ public class CamelInvocationHandler implements InvocationHandler {
         }
         return answer;
     }
+
+    /**
+     * Tries to find the best suited exception to throw.
+     * <p/>
+     * It looks in the exception hierarchy from the caused exception and matches this against the declared exceptions
+     * being thrown on the method.
+     *
+     * @param cause   the caused exception
+     * @param method  the method
+     * @return the exception to throw, or <tt>null</tt> if not possible to find a suitable exception
+     */
+    protected Throwable findSuitableException(Throwable cause, Method method) {
+        if (method.getExceptionTypes() == null || method.getExceptionTypes().length == 0) {
+            return null;
+        }
+
+        // see if there is any exception which matches the declared exception on the method
+        for (Class<?> type : method.getExceptionTypes()) {
+            Object fault = ObjectHelper.getException(type, cause);
+            if (fault != null) {
+                return Throwable.class.cast(fault);
+            }
+        }
+
+        return null;
+    }
+
 }
 

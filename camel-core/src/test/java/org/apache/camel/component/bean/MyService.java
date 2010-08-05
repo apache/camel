@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.bean;
 
-public class MyCustomException extends Exception {
+/**
+ * @version $Revision$
+ */
+public interface MyService {
 
-    public MyCustomException(String message) {
-        super(message);
-    }
+    String method(String in) throws MyApplicationException;
 
-    public MyCustomException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }
