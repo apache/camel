@@ -80,9 +80,9 @@
 		
 		<!-- temporary repo until scalate-1.3 is out -->
     <repository>
-      <id>fusesource.m2-snapshot</id>
-      <name>FuseSource Community Snapshot Repository</name>
-      <url>http://repo.fusesource.com/maven2-snapshot</url>
+      <id>fusesource.snapshots</id>
+      <name>FuseSource Snapshot Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -90,7 +90,7 @@
         <enabled>false</enabled>
       </releases>
     </repository>
-	</repositories>
+  </repositories>
 
 	<pluginRepositories>
 		<pluginRepository>
