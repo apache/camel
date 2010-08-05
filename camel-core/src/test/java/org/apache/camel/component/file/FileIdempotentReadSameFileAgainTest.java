@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileIdempotentReadSameFileAgainTest extends ContextTestSupport {
 
     private String uri = "file://target/inbox?idempotent=false&move=../done&moveFailed=../error"
-        + "&preMove=working/${date:now:yyyyMMddHHmmssSSS}-${file:name}&readLock=rename";
+        + "&preMove=working/${date:now:yyyyMMddHHmmssSSS}-${file:name}&readLock=none";
 
     @Override
     protected void setUp() throws Exception {
@@ -37,15 +37,16 @@ public class FileIdempotentReadSameFileAgainTest extends ContextTestSupport {
 
     public void testConsumeSameFileAgain() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World", "Foo", "Bye World");
+        // some file systems may read files in different order 
+        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Foo");
 
         template.sendBodyAndHeader("file://target/inbox", "Hello World", Exchange.FILE_NAME, "foo.txt");
-
-        Thread.sleep(1000);
-
         template.sendBodyAndHeader("file://target/inbox", "Foo", Exchange.FILE_NAME, "bar.txt");
 
-        Thread.sleep(1000);
+        assertMockEndpointsSatisfied();
+
+        mock.reset();
+        mock.expectedBodiesReceived("Bye World");
 
         template.sendBodyAndHeader("file://target/inbox", "Bye World", Exchange.FILE_NAME, "foo.txt");
 
