@@ -1,0 +1,21 @@
+<%@ import val it: ConvertersResource %>
+
+#{ attributes("title") = "Type Converters"}#
+
+
+<h1>Type Converters</h1>
+
+
+<table>
+  <tr>
+    <th>From Type</th>
+  </tr>
+  #for(entry <- it.getFromClassTypes)
+    <tr>
+      <td><a href="converters/${entry.getValue.getName}">${entry.getKey}</a></td>
+    </tr>
+  #end
+</table>
+
+
+

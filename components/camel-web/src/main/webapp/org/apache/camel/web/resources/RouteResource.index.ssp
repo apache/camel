@@ -1,0 +1,24 @@
+<%@ import val it: RouteResource %>
+
+#{ attributes("title") = "Route ${it.getRoute.getId}"}#
+
+  <link href='${uri("/css/prettify/prettify.css")}' type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src='${uri("/js/prettify/prettify.js")}'></script>
+
+<body onload="prettyPrint()">
+
+<h2>Route  ${it.getRoute.getId}</h2>
+
+<p>${it.getRoute.getDescription.getText}</p>
+
+<div class="route">
+<pre class="prettyprint">${escape(it.getRouteXml)}</pre>
+</div>
+
+<ul>
+<li><a href='${uri("/routes/" + it.getRoute.getId + "/lang/xml/edit")}'>Edit Route in Xml</a>
+<li><a href='${uri("/routes/" + it.getRoute.getId + "/lang/groovy/edit")}'>Edit Route in Groovy</a>
+<li>Edit Route in Ruby
+<li>Edit Route in Scala 
+</ul>
+

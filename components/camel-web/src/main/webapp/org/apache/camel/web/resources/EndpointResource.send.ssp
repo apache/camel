@@ -1,0 +1,13 @@
+<%@ import val it: EndpointResource %>
+
+#{ attributes("title") = "Endpoint " + it.getUri}#
+
+
+<h1>Endpoint: ${it.getUri}</h1>
+
+<form action='${uri(it.getHref)}' method="post" name="sendMessage">
+  <input type="submit" value="Send"> <input type="reset"> <br>
+  <textarea name="body" rows="30" cols="80"></textarea>
+</form>
+
+

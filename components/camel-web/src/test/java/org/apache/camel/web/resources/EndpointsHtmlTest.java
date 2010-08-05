@@ -28,14 +28,14 @@ public class EndpointsHtmlTest extends TestSupport {
     public void testCamelAsHtml() throws Exception {
         String response = resource("/").accept("text/html").get(String.class);
 
-        assertTrue("Should contain <html> but was: " + response, response.contains("<html>"));
+        assertTrue("Should contain <html> but was: " + response, response.contains("<html"));
     }
 
     @Test
     public void testEndpointsAsHtml() throws Exception {
         String response = resource("endpoints").accept("text/html").get(String.class);
 
-        assertTrue("Should contain <html> but was: " + response, response.contains("<html>"));
+        assertTrue("Should contain <html> but was: " + response, response.contains("<html"));
     }
 
 }

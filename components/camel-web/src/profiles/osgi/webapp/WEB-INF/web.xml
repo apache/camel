@@ -38,15 +38,6 @@
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
 
-  <filter>
-    <filter-name>sitemesh</filter-name>
-    <filter-class>com.opensymphony.module.sitemesh.filter.PageFilter</filter-class>
-  </filter>
-
-  <filter-mapping>
-    <filter-name>sitemesh</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
 
   <filter>
     <filter-name>Jersey Filter</filter-name>
@@ -57,7 +48,7 @@
       <param-value>org.apache.camel.web.util.CamelOSGIResourceConfig</param-value>
     </init-param>
     <init-param>
-      <param-name>com.sun.jersey.config.feature.Redirect</param-name>
+      <param-name>com.sun.jersey.config.feature.FilterForwardOn404</param-name>
       <param-value>true</param-value>
     </init-param>
     <init-param>
@@ -65,12 +56,16 @@
       <param-value>true</param-value>
     </init-param>
     <init-param>
-      <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>org.apache.camel.web</param-value>
+      <param-name>com.sun.jersey.config.feature.Trace</param-name>
+      <param-value>true</param-value>
     </init-param>
     <init-param>
-      <param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>
-      <param-value>/(images|css|js)/.*</param-value>
+      <param-name>com.sun.jersey.config.feature.Redirect</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>com.sun.jersey.config.property.packages</param-name>
+      <param-value>org.apache.camel.web</param-value>
     </init-param>
     <init-param>
       <param-name>com.sun.jersey.config.property.WadlResourceUri</param-name>
@@ -83,11 +78,4 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
-
-  <jsp-config>
-    <jsp-property-group>
-      <url-pattern>*.jsp</url-pattern>
-      <include-prelude>/WEB-INF/jspf/header.jspf</include-prelude>
-    </jsp-property-group>
-  </jsp-config>
 </web-app>

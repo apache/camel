@@ -46,6 +46,7 @@ public class CamelResourceConfig extends PackagesResourceConfig {
 
         properties.put(PackagesResourceConfig.PROPERTY_PACKAGES, packages);
 
+/*
         WadlGeneratorConfig config = WadlGeneratorConfig
                 .generator(WadlGeneratorApplicationDoc.class)
                 .prop("applicationDocsFile", "classpath:/application-doc.xml")
@@ -56,6 +57,7 @@ public class CamelResourceConfig extends PackagesResourceConfig {
                 .build();
 
         properties.put(ResourceConfig.PROPERTY_WADL_GENERATOR_CONFIG, config);
+*/
         return properties;
     }
 

@@ -31,16 +31,6 @@
   </listener>
 
   <filter>
-    <filter-name>sitemesh</filter-name>
-    <filter-class>com.opensymphony.module.sitemesh.filter.PageFilter</filter-class>
-  </filter>
-
-  <filter-mapping>
-    <filter-name>sitemesh</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
     <filter-name>Jersey Filter</filter-name>
     <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
     <init-param>
@@ -48,20 +38,31 @@
       <param-value>org.apache.camel.web.util.CamelResourceConfig</param-value>
     </init-param>
     <init-param>
-      <param-name>com.sun.jersey.config.feature.Redirect</param-name>
+      <param-name>com.sun.jersey.config.feature.FilterForwardOn404</param-name>
       <param-value>true</param-value>
+    </init-param>
+    <!--
+    TODO scrap this when we move to latest jersey: 1.4-ea05
+    -->
+    <init-param>
+      <param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>
+      <param-value>/(images|css|js)/.*</param-value>
     </init-param>
     <init-param>
       <param-name>com.sun.jersey.config.feature.ImplicitViewables</param-name>
       <param-value>true</param-value>
     </init-param>
     <init-param>
-      <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>org.apache.camel.web</param-value>
+      <param-name>com.sun.jersey.config.feature.Trace</param-name>
+      <param-value>true</param-value>
     </init-param>
     <init-param>
-      <param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>
-      <param-value>/(images|css|js)/.*</param-value>
+      <param-name>com.sun.jersey.config.feature.Redirect</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>com.sun.jersey.config.property.packages</param-name>
+      <param-value>org.apache.camel.web:</param-value>
     </init-param>
     <init-param>
       <param-name>com.sun.jersey.config.property.WadlResourceUri</param-name>
@@ -74,11 +75,27 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <servlet>
+    <servlet-name>TemplateEngineServlet</servlet-name>
+    <servlet-class>org.fusesource.scalate.servlet.TemplateEngineServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
 
-  <jsp-config>
-    <jsp-property-group>
-      <url-pattern>*.jsp</url-pattern>
-      <include-prelude>/WEB-INF/jspf/header.jspf</include-prelude>
-    </jsp-property-group>
-  </jsp-config>
+  <servlet-mapping>
+    <servlet-name>TemplateEngineServlet</servlet-name>
+    <url-pattern>*.mustache</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>TemplateEngineServlet</servlet-name>
+    <url-pattern>*.scaml</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>TemplateEngineServlet</servlet-name>
+    <url-pattern>*.ssp</url-pattern>
+  </servlet-mapping>
+
+  <error-page>
+    <error-code>500</error-code>
+    <location>/WEB-INF/scalate/errors/500.scaml</location>
+  </error-page>
 </web-app>
