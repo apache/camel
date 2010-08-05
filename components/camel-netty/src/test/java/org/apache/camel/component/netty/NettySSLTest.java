@@ -60,6 +60,11 @@ public class NettySSLTest extends CamelTestSupport {
     
     @Test
     public void testSSLInOutWithNettyConsumer() throws Exception {
+        // ibm jdks dont have sun security algorithms
+        if (isJavaVendor("ibm")) {
+            return;
+        }
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("netty:tcp://localhost:5150?sync=true&ssl=true&passphrase=#password&keyStoreFile=#ksf&trustStoreFile=#tsf")
