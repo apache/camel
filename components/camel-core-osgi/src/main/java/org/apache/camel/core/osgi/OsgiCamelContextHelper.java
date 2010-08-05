@@ -19,6 +19,7 @@ package org.apache.camel.core.osgi;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.DefaultTypeConverter;

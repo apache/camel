@@ -17,13 +17,13 @@
 package org.apache.camel.blueprint;
 
 import org.apache.camel.TypeConverter;
-import org.apache.camel.core.osgi.CompositeRegistry;
 import org.apache.camel.core.osgi.OsgiCamelContextHelper;
 import org.apache.camel.core.osgi.OsgiClassResolver;
 import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
 import org.apache.camel.core.osgi.OsgiPackageScanClassResolver;
 import org.apache.camel.core.osgi.OsgiServiceRegistry;
 import org.apache.camel.core.osgi.OsgiTypeConverter;
+import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.commons.logging.Log;
