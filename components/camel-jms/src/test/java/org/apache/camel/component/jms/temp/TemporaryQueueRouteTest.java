@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.jms.temp;
 
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQTempQueue;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -32,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
-
 
 /**
  * @version $Revision$
@@ -49,7 +46,9 @@ public class TemporaryQueueRouteTest extends CamelTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Result");
 
-        template.sendBody(endpointUri, ExchangePattern.InOut, expectedBody);
+        Thread.sleep(1000);
+        log.info("Sending: " + expectedBody + " to: " + endpointUri);
+        template.sendBody(endpointUri, expectedBody);
 
         endpoint.assertIsSatisfied();
 
@@ -67,9 +66,11 @@ public class TemporaryQueueRouteTest extends CamelTestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
+        deleteDirectory("activemq-data");
+
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=true");
         camelContext.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
 
         return camelContext;
