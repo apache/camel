@@ -32,7 +32,15 @@ public class MulticastParallelTimeoutTest extends ContextTestSupport {
         // A will timeout so we only get B and C
         mock.expectedBodiesReceived("BC");
 
+        getMockEndpoint("mock:A").expectedMessageCount(0);
+        getMockEndpoint("mock:B").expectedMessageCount(1);
+        getMockEndpoint("mock:C").expectedMessageCount(1);
+
         template.sendBody("direct:start", "Hello");
+
+        // wait at least longer than the delay in A so we can ensure its being cancelled
+        // and wont continue routing
+        Thread.sleep(4000);
 
         assertMockEndpointsSatisfied();
     }
@@ -60,11 +68,11 @@ public class MulticastParallelTimeoutTest extends ContextTestSupport {
                     .end()
                     .to("mock:result");
 
-                from("direct:a").delay(3000).setBody(constant("A"));
+                from("direct:a").delay(3000).to("mock:A").setBody(constant("A"));
 
-                from("direct:b").setBody(constant("B"));
+                from("direct:b").to("mock:B").setBody(constant("B"));
 
-                from("direct:c").delay(500).setBody(constant("C"));
+                from("direct:c").delay(500).to("mock:C").setBody(constant("C"));
                 // END SNIPPET: e1
             }
         };

@@ -117,7 +117,11 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
                         exchange.setException(new RejectedExecutionException());
                     } else {
                         // let caller run by processing
-                        delay(delay, exchange);
+                        try {
+                            delay(delay, exchange);
+                        } catch (InterruptedException ie) {
+                            exchange.setException(ie);
+                        }
                         // then continue routing
                         return super.process(exchange, callback);
                     }
@@ -157,7 +161,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
      * @param delay the delay time in millis
      * @param exchange the exchange being processed
      */
-    protected void delay(long delay, Exchange exchange) {
+    protected void delay(long delay, Exchange exchange) throws InterruptedException {
         // only run is we are started
         if (!isRunAllowed()) {
             return;
@@ -169,19 +173,20 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
             try {
                 sleep(delay);
             } catch (InterruptedException e) {
-                handleSleepInterruptedException(e);
+                handleSleepInterruptedException(e, exchange);
             }
         }
     }
 
     /**
-     * Called when a sleep is interrupted; allows derived classes to handle this
-     * case differently
+     * Called when a sleep is interrupted; allows derived classes to handle this case differently
      */
-    protected void handleSleepInterruptedException(InterruptedException e) {
+    protected void handleSleepInterruptedException(InterruptedException e, Exchange exchange) throws InterruptedException {
         if (log.isDebugEnabled()) {
             log.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
         }
+        Thread.currentThread().interrupt();
+        throw e;
     }
 
     protected long currentSystemTime() {

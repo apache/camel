@@ -236,7 +236,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
             if (doStop) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Exchange is marked to stop routing: " + exchange);
+                    LOG.debug("ExchangeId: " + exchange.getExchangeId() + " is marked to stop routing: " + exchange);
                 }
                 answer = false;
             }
@@ -246,7 +246,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Continue routing: " + answer);
+            LOG.trace("ExchangeId: " + exchange.getExchangeId() + " should continue routing: " + answer);
         }
         return answer;
     }

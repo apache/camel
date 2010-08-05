@@ -270,6 +270,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                         } catch (InterruptedException e) {
                             // we was interrupted so break out
                             exchange.setException(e);
+                            // mark the exchange to stop continue routing when interrupted
+                            // as we do not want to continue routing (for example a task has been cancelled)
+                            exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
                             callback.done(data.sync);
                             return data.sync;
                         }
@@ -396,15 +399,38 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * Strategy to determine if the exchange is done so we can continue
      */
     protected boolean isDone(Exchange exchange) {
+        boolean answer = isCancelledOrInterrupted(exchange);
+
         // only done if the exchange hasn't failed
         // and it has not been handled by the failure processor
         // or we are exhausted
-        boolean answer = exchange.getException() == null
+        if (!answer) {
+            answer = exchange.getException() == null
                 || ExchangeHelper.isFailureHandled(exchange)
                 || ExchangeHelper.isRedeliveryExhausted(exchange);
+        }
 
         if (log.isTraceEnabled()) {
             log.trace("Is exchangeId: " + exchange.getExchangeId() + " done? " + answer);
+        }
+        return answer;
+    }
+
+    /**
+     * Strategy to determine if the exchange was cancelled or interrupted
+     */
+    protected boolean isCancelledOrInterrupted(Exchange exchange) {
+        boolean answer = false;
+
+        if (ExchangeHelper.isInterrupted(exchange)) {
+            // mark the exchange to stop continue routing when interrupted
+            // as we do not want to continue routing (for example a task has been cancelled)
+            exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
+            answer = true;
+        }
+
+        if (log.isTraceEnabled()) {
+            log.trace("Is exchangeId: " + exchange.getExchangeId() + " interrupted? " + answer);
         }
         return answer;
     }

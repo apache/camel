@@ -261,6 +261,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         // its to hard to do parallel async routing so we let the caller thread be synchronously
         // and have it pickup the replies and do the aggregation
+        // TODO: use a stopwatch to keep track of timeout left
         boolean timedOut = false;
         for (int i = 0; i < total.intValue(); i++) {
             Future<Exchange> future;

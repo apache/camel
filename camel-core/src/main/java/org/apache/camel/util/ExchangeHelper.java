@@ -433,6 +433,10 @@ public final class ExchangeHelper {
         return exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
     }
 
+    public static boolean isInterrupted(Exchange exchange) {
+        return exchange.getException(InterruptedException.class) != null;
+    }
+
     /**
      * Extracts the body from the given exchange.
      * <p/>
