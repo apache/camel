@@ -96,6 +96,8 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
             fail("expect UnknownPersonFault");
         } catch (UnknownPersonFault e) {
             t = e;
+            assertEquals("Get the wrong fault detail", 
+                         "", e.getFaultInfo().getPersonId());
         }
         
         assertNotNull(t);
