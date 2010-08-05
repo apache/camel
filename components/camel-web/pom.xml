@@ -357,8 +357,10 @@
 						<goals>
 							<goal>javadoc</goal>
 						</goals>
+<!--
 						<phase>compile</phase>
-						<!--<phase>package</phase>-->
+-->
+						<phase>package</phase>
 					</execution>
 				</executions>
 
@@ -433,7 +435,10 @@
 						<goals>
 							<goal>generate</goal>
 						</goals>
+<!--
 						<phase>compile</phase>
+-->
+						<phase>package</phase>
 					</execution>
 				</executions>
 				<configuration>
