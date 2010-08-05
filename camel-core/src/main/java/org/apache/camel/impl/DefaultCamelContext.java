@@ -99,6 +99,7 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;
@@ -182,6 +183,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private ExecutorServiceStrategy executorServiceStrategy = new DefaultExecutorServiceStrategy(this);
     private Debugger debugger;
+    private UuidGenerator uuidGenerator = new DefaultUuidGenerator();
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
 
@@ -2074,6 +2076,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public void setDebugger(Debugger debugger) {
         this.debugger = debugger;
+    }
+    
+    public UuidGenerator getUuidGenerator() {
+        return uuidGenerator;
+    }
+
+    public void setUuidGenerator(UuidGenerator uuidGenerator) {
+        this.uuidGenerator = uuidGenerator;
     }
 
     protected String getEndpointKey(String uri, Endpoint endpoint) {

@@ -30,7 +30,6 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.UuidGenerator;
 
 /**
  * A default implementation of {@link Exchange}
@@ -373,7 +372,7 @@ public final class DefaultExchange implements Exchange {
             answer = in.createExchangeId();
         }
         if (answer == null) {
-            answer = UuidGenerator.get().generateUuid();
+            answer = context.getUuidGenerator().generateUuid();
         }
         return answer;
     }

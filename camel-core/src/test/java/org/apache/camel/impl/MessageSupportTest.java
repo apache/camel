@@ -50,4 +50,17 @@ public class MessageSupportTest extends ContextTestSupport {
         assertEquals("Hello World", in.getMandatoryBody());
     }
 
+    public void testGetMessageId() {
+        context.setUuidGenerator(new SimpleUuidGenerator());
+        Exchange exchange = new DefaultExchange(context);
+        Message in = exchange.getIn();
+        
+        assertEquals("1", in.getMessageId());
+    }
+    
+    public void testGetMessageIdWithoutAnExchange() {
+        Message in = new DefaultMessage();
+        
+        assertNotNull(in.getMessageId());
+    }
 }

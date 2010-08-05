@@ -14,39 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.impl;
 
 import java.util.UUID;
 
-/**
- * Generator for Globally unique Strings.
- */
-public class UuidGenerator {
+import org.apache.camel.spi.UuidGenerator;
 
-    private static UuidGenerator instance = new UuidGenerator();
+public class DefaultUuidGenerator implements UuidGenerator {
     
-    UuidGenerator() {
-    }
-
-    /**
-     * Returns a UUID generator. The instance returned by this method makes use
-     * of {@link java.util.UUID#randomUUID()} for generating UUIDs. Other
-     * generation strategies are currently not supported (but maybe added in
-     * future versions).
-     * 
-     * @return a UUID generator singleton.
-     */
-    public static UuidGenerator get() {
-        return instance;
-    }
-
-    /**
-     * Generates a UUID string representation.  
-     * 
-     * @return a UUID string.
-     */
     public String generateUuid() {
         return UUID.randomUUID().toString();
     }
-    
 }

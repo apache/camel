@@ -45,6 +45,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.UuidGenerator;
 
 /**
  * Interface used to represent the context used to configure routes and the
@@ -881,4 +882,17 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     void setDebugger(Debugger debugger);
 
+    /**
+     * Gets the current {@link UuidGenerator}
+     *
+     * @return the uuidGenerator
+     */
+    UuidGenerator getUuidGenerator();
+    
+    /**
+     * Sets a custom {@link UuidGenerator} (should only be set once) 
+     *
+     * @param uuidGenerator the UUID Generator
+     */
+    void setUuidGenerator(UuidGenerator uuidGenerator);
 }

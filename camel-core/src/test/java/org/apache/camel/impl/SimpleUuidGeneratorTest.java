@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.impl;
 
 import junit.framework.TestCase;
 
-/**
- * Unit test for UuidGenerator
- */
-public class UuidGeneratorTest extends TestCase {
+public class SimpleUuidGeneratorTest extends TestCase {
+    
+    private SimpleUuidGenerator uuidGenerator;
 
-    public void testSanitized() {
-        String out = UuidGenerator.get().generateUuid();
-        assertTrue("Should not contain : ", out.indexOf(':') == -1);
-        assertTrue("Should not contain . ", out.indexOf('.') == -1);
+    public void setUp() throws Exception {
+        uuidGenerator = new SimpleUuidGenerator();
     }
 
+    public void testGenerateUUID() {
+        assertEquals("1", uuidGenerator.generateUuid());
+        assertEquals("2", uuidGenerator.generateUuid());
+    }
 }

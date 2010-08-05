@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Service;
@@ -34,7 +35,6 @@ import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.OrderedComparator;
-import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -47,6 +47,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private static final transient Log LOG = LogFactory.getLog(DefaultUnitOfWork.class);
 
     private String id;
+    private CamelContext context;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private final TracedRouteNodes tracedRouteNodes;
@@ -58,6 +59,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             LOG.trace("UnitOfWork created for ExchangeId: " + exchange.getExchangeId() + " with " + exchange);
         }
         tracedRouteNodes = new DefaultTracedRouteNodes();
+        context = exchange.getContext();
 
         // TODO: the copy on facade strategy will help us here in the future
         // TODO: optimize to only copy original message if enabled to do so in the route
@@ -202,7 +204,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     public String getId() {
         if (id == null) {
-            id = UuidGenerator.get().generateUuid();
+            id = context.getUuidGenerator().generateUuid();
         }
         return id;
     }

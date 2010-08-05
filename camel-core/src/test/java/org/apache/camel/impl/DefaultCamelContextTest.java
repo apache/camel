@@ -32,6 +32,7 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
@@ -53,6 +54,14 @@ public class DefaultCamelContextTest extends TestSupport {
         ctx.setAutoCreateComponents(false);
         Component component = ctx.getComponent("bean");
         assertNull(component);
+    }
+    
+    public void testCreateDefaultUuidGenerator() {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.disableJMX();
+        UuidGenerator uuidGenerator = ctx.getUuidGenerator();
+        assertNotNull(uuidGenerator);
+        assertEquals(uuidGenerator.getClass(), DefaultUuidGenerator.class);
     }
 
     public void testGetComponents() throws Exception {

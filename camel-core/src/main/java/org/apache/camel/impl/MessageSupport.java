@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.util.UuidGenerator;
 
 /**
  * A base class for implementation inheritance providing the core
@@ -189,6 +188,14 @@ public abstract class MessageSupport implements Message {
      * Lets allow implementations to auto-create a messageId
      */
     protected String createMessageId() {
-        return UuidGenerator.get().generateUuid();
+        String uuid = null;
+        if (exchange != null) {
+            uuid = exchange.getContext().getUuidGenerator().generateUuid();
+        }
+        // fall back to the default UUID generator
+        if (uuid == null) {
+            uuid = new DefaultUuidGenerator().generateUuid();
+        }
+        return uuid;
     }
 }
