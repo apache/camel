@@ -49,10 +49,6 @@ public class CxfConsumerFaultTest extends CxfConsumerPayloadFaultTest {
                         exchange.getOut().setBody(fault);
                         exchange.getOut().setFault(true);
                     }
-                }).process(new Processor() {
-                    public void process(final Exchange exchange) throws Exception {
-                        System.out.println("Send out message");
-                    }
                 });
                 
             }
