@@ -77,6 +77,7 @@ import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -156,12 +157,12 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             LOG.info("Using custom ProcessorFactory: " + processorFactory);
             getContext().setProcessorFactory(processorFactory);
         }
-
         Debugger debugger = getBeanForType(Debugger.class);
         if (debugger != null) {
             LOG.info("Using custom Debugger: " + debugger);
             getContext().setDebugger(debugger);
         }
+        lookupUuidGenerator();
 
         // set the custom registry if defined
         initCustomRegistry(getContext());
@@ -318,6 +319,16 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         }
         findRouteBuilders();
         installRoutes();
+    }
+
+    // TODO: workaround for source check failure in the afterPropertiesSet() method:
+    // Executable statement count is 101 (max allowed is 100)
+    private void lookupUuidGenerator() {
+        UuidGenerator uuidGenerator = getBeanForType(UuidGenerator.class);
+        if (uuidGenerator != null) {
+            LOG.info("Using custom UuidGenerator: " + uuidGenerator);
+            getContext().setUuidGenerator(uuidGenerator);
+        }
     }
 
     protected abstract void initCustomRegistry(T context);
