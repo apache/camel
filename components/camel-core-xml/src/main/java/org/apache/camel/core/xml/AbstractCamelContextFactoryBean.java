@@ -126,7 +126,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         if (ObjectHelper.isEmpty(getId())) {
             throw new IllegalArgumentException("Id must be set");
         }
-
         if (getProperties() != null) {
             getContext().setProperties(getProperties().asMap());
         }
@@ -162,7 +161,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             LOG.info("Using custom Debugger: " + debugger);
             getContext().setDebugger(debugger);
         }
-        lookupUuidGenerator();
+        UuidGenerator uuidGenerator = getBeanForType(UuidGenerator.class);
+        if (uuidGenerator != null) {
+            LOG.info("Using custom UuidGenerator: " + uuidGenerator);
+            getContext().setUuidGenerator(uuidGenerator);
+        }
 
         // set the custom registry if defined
         initCustomRegistry(getContext());
@@ -183,37 +186,31 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             LOG.info("Using custom Tracer: " + tracer);
             getContext().addInterceptStrategy(tracer);
         }
-
         HandleFault handleFault = getBeanForType(HandleFault.class);
         if (handleFault != null) {
             LOG.info("Using custom HandleFault: " + handleFault);
             getContext().addInterceptStrategy(handleFault);
         }
-
         Delayer delayer = getBeanForType(Delayer.class);
         if (delayer != null) {
             LOG.info("Using custom Delayer: " + delayer);
             getContext().addInterceptStrategy(delayer);
         }
-
         InflightRepository inflightRepository = getBeanForType(InflightRepository.class);
         if (delayer != null) {
             LOG.info("Using custom InflightRepository: " + inflightRepository);
             getContext().setInflightRepository(inflightRepository);
         }
-
         ManagementStrategy managementStrategy = getBeanForType(ManagementStrategy.class);
         if (managementStrategy != null) {
             LOG.info("Using custom ManagementStrategy: " + managementStrategy);
             getContext().setManagementStrategy(managementStrategy);
         }
-
         EventFactory eventFactory = getBeanForType(EventFactory.class);
         if (eventFactory != null) {
             LOG.info("Using custom EventFactory: " + eventFactory);
             getContext().getManagementStrategy().setEventFactory(eventFactory);
         }
-
         // set the event notifier strategies if defined
         Map<String, EventNotifier> eventNotifiers = getContext().getRegistry().lookupByType(EventNotifier.class);
         if (eventNotifiers != null && !eventNotifiers.isEmpty()) {
@@ -226,13 +223,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
                 }
             }
         }
-
         ShutdownStrategy shutdownStrategy = getBeanForType(ShutdownStrategy.class);
         if (shutdownStrategy != null) {
             LOG.info("Using custom ShutdownStrategy: " + shutdownStrategy);
             getContext().setShutdownStrategy(shutdownStrategy);
         }
-
         // add global interceptors
         Map<String, InterceptStrategy> interceptStrategies = getContext().getRegistry().lookupByType(InterceptStrategy.class);
         if (interceptStrategies != null && !interceptStrategies.isEmpty()) {
@@ -245,7 +240,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
                 }
             }
         }
-
         // set the lifecycle strategy if defined
         Map<String, LifecycleStrategy> lifecycleStrategies = getContext().getRegistry().lookupByType(LifecycleStrategy.class);
         if (lifecycleStrategies != null && !lifecycleStrategies.isEmpty()) {
@@ -265,6 +259,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // Set the application context and camelContext for the beanPostProcessor
         initBeanPostProcessor(getContext());
 
+        // init camel context
         initCamelContext(getContext());
 
         // must init route refs before we prepare the routes below
@@ -273,6 +268,24 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // do special preparation for some concepts such as interceptors and policies
         // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
         // using route builders. So we have here a little custom code to fix the JAXB gaps
+        prepareRoutes();
+
+        // and add the routes
+        getContext().addRouteDefinitions(getRoutes());
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found JAXB created routes: " + getRoutes());
+        }
+        findRouteBuilders();
+        installRoutes();
+    }
+
+    /**
+     * Do special preparation for some concepts such as interceptors and policies
+     * this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
+     * using route builders. So we have here a little custom code to fix the JAXB gaps
+     */
+    private void prepareRoutes() {
         for (RouteDefinition route : getRoutes()) {
 
             // at first init the parent
@@ -305,29 +318,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
 
             // mark as custom prepared
             route.customPrepared();
-        }
-
-        if (getDataFormats() != null) {
-            getContext().setDataFormats(getDataFormats().asMap());
-        }
-
-        // lets force any lazy creation
-        getContext().addRouteDefinitions(getRoutes());
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found JAXB created routes: " + getRoutes());
-        }
-        findRouteBuilders();
-        installRoutes();
-    }
-
-    // TODO: workaround for source check failure in the afterPropertiesSet() method:
-    // Executable statement count is 101 (max allowed is 100)
-    private void lookupUuidGenerator() {
-        UuidGenerator uuidGenerator = getBeanForType(UuidGenerator.class);
-        if (uuidGenerator != null) {
-            LOG.info("Using custom UuidGenerator: " + uuidGenerator);
-            getContext().setUuidGenerator(uuidGenerator);
         }
     }
 
@@ -678,6 +668,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         }
         if (getShutdownRunningTask() != null) {
             ctx.setShutdownRunningTask(getShutdownRunningTask());
+        }
+        if (getDataFormats() != null) {
+            ctx.setDataFormats(getDataFormats().asMap());
         }
     }
 
