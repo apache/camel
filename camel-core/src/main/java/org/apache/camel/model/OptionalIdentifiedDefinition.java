@@ -137,6 +137,13 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
         return customId;
     }
 
+    /**
+     * Returns the description text or null if there is no description text associated with this node
+     */
+    public String getDescriptionText() {
+        return (description != null) ? description.getText() : null;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
