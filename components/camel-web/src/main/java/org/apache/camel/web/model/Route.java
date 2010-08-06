@@ -54,6 +54,7 @@ public class Route {
         DescriptionDefinition definition = getDescription();
         return (definition != null) ? definition.getText() : "";
     }
+
     public ServiceStatus getStatus() {
         return route.getStatus(camelContext);
     }
