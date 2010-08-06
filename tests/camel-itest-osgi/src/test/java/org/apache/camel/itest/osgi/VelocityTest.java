@@ -43,8 +43,8 @@ public class VelocityTest extends OSGiIntegrationTestSupport {
     
     @Test
     public void testReceivesResponse() throws Exception {        
-        assertRespondsWith("foo", "<hello>foo</hello>");
-        assertRespondsWith("bar", "<hello>bar</hello>");
+        assertRespondsWith("foo", "<header>foo</header><hello>foo</hello>");
+        assertRespondsWith("bar", "<header>bar</header><hello>bar</hello>");
     }
 
     protected void assertRespondsWith(final String value, String expectedBody) throws InvalidPayloadException {
@@ -61,6 +61,8 @@ public class VelocityTest extends OSGiIntegrationTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // need to update the CCL to current bundle's as it could be no defined
+                Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
                 // START SNIPPET: example
                 from("direct:a").
                         to("velocity:org/apache/camel/itest/osgi/example.vm");
