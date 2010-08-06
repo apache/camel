@@ -115,7 +115,20 @@
     <module>camel-xmlsecurity</module>
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
-    <module>camel-web</module>
-    <module>camel-web-standalone</module>
   </modules>
+  
+  <profiles>
+    <profile>
+      <id>jdk1.6-modules</id>
+      <activation>
+        <!-- for maven 2.0.x syntax -->
+        <jdk>1.6</jdk>
+      </activation>
+      <modules>
+        <module>camel-web</module>
+        <module>camel-web-standalone</module>
+      </modules>
+    </profile>
+  </profiles>
+  
 </project>
