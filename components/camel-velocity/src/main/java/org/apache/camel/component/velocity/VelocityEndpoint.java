@@ -82,6 +82,9 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
             }
 
             properties.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? "true" : "false");
+            properties.setProperty(Velocity.RESOURCE_LOADER, "file, class");
+            properties.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
+            properties.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
             properties.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
             properties.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, VelocityEndpoint.class.getName());
             velocityEngine.init(properties);
