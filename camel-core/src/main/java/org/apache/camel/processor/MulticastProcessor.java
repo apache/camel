@@ -261,8 +261,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         // its to hard to do parallel async routing so we let the caller thread be synchronously
         // and have it pickup the replies and do the aggregation
-        // TODO: use a stopwatch to keep track of timeout left
         boolean timedOut = false;
+        final StopWatch watch = new StopWatch();
         for (int i = 0; i < total.intValue(); i++) {
             Future<Exchange> future;
             if (timedOut) {
@@ -270,9 +270,19 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 // poll will return null if no tasks is present
                 future = completion.poll();
             } else if (timeout > 0) {
-                future = completion.poll(timeout, TimeUnit.MILLISECONDS);
+                long left = timeout - watch.taken();
+                if (left < 0) {
+                    left = 0;
+                }
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Polling completion task #" + i + " using timeout " + left + " millis.");
+                }
+                future = completion.poll(left, TimeUnit.MILLISECONDS);
             } else {
                 // take will wait until the task is complete
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Polling completion task #" + i);
+                }
                 future = completion.take();
             }
 
@@ -286,7 +296,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     // notify the strategy we timed out
                     ((TimeoutAwareAggregationStrategy) strategy).timeout(result.get(), i, total.intValue(), timeout);
                 } else {
-                    LOG.warn("Parallel processing timed out after " + timeout + " millis for number " + i + ". Cannot aggregate");
+                    // log a WARN we timed out since it will not be aggregated and the Exchange will be lost
+                    LOG.warn("Parallel processing timed out after " + timeout + " millis for number " + i + ". This task will be cancelled and will not be aggregated.");
                 }
                 timedOut = true;
             } else {
