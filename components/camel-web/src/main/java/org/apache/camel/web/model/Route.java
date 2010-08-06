@@ -42,6 +42,10 @@ public class Route {
         return route.getId();
     }
 
+    public String idOrCreate() {
+        return route.idOrCreate(camelContext.getNodeIdFactory());
+    }
+
     public DescriptionDefinition getDescription() {
         return route.getDescription();
     }
