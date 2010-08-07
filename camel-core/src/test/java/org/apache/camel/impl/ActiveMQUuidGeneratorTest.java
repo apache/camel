@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 
 public class ActiveMQUuidGeneratorTest extends TestCase {
     
+    private static final String PATTERN = "^ID-.*/\\d{4,5}-\\d{13}/\\d{1}-\\d{1}$";
     private ActiveMQUuidGenerator uuidGenerator;
 
     public void setUp() throws Exception {
@@ -29,9 +30,9 @@ public class ActiveMQUuidGeneratorTest extends TestCase {
     public void testGenerateUUID() {
         String firstUUID = uuidGenerator.generateUuid();
         String secondUUID = uuidGenerator.generateUuid();
-        
-        assertTrue(firstUUID.matches("^ID-.*/\\d{5}-\\d{13}/\\d{1}-\\d{1}$"));
-        assertTrue(secondUUID.matches("^ID-.*/\\d{5}-\\d{13}/\\d{1}-\\d{1}$"));
+
+        assertTrue(firstUUID.matches(PATTERN));
+        assertTrue(secondUUID.matches(PATTERN));
         assertFalse(firstUUID.equals(secondUUID));
     }
 }
