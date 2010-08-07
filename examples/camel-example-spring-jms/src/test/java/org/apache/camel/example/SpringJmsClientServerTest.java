@@ -43,7 +43,6 @@ public class SpringJmsClientServerTest extends Assert {
         if (serverContext != null) {
             serverContext.stop();
         }
-        
     }
     
     @Test
@@ -59,14 +58,12 @@ public class SpringJmsClientServerTest extends Assert {
         assertEquals("Get a wrong response", 66, response);
         
         context.stop();
-        
     }
     
     @Test
     public void testCamelEndpointInvocation() throws Exception {
-        
         ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
-        CamelContext camel = (CamelContext) context.getBean("camel");
+        CamelContext camel = (CamelContext) context.getBean("camel-client");
 
         // get the endpoint from the camel context
         Endpoint endpoint = camel.getEndpoint("jms:queue:numbers");
@@ -95,12 +92,10 @@ public class SpringJmsClientServerTest extends Assert {
         // stop and exit the client
         producer.stop();
         context.stop();
-        
     }
     
     @Test
     public void testCamelRemotingInvocation() {
-
         ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("camel-client-remoting.xml");
         // just get the proxy to the service and we as the client can use the "proxy" as it was
         // a local object we are invoking. Camel will under the covers do the remote communication
@@ -112,7 +107,6 @@ public class SpringJmsClientServerTest extends Assert {
         assertEquals("Get a wrong response", 99, response);
         
         context.stop();
-        
     }
 
 }

@@ -23,7 +23,7 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camel:camelContext id="camel">
+    <camel:camelContext id="camel-client-2">
     	<camel:template id="camelTemplate"/>
     	<!-- START SNIPPET: e1 -->
         <!-- Camel proxy for a given service, in this case the JMS queue 
