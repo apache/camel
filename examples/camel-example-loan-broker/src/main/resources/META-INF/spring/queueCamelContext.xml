@@ -39,7 +39,7 @@
     
     <bean id="loanBroker" class="org.apache.camel.loanbroker.queue.version.LoanBroker"/>
     
-    <camel:camelContext>
+    <camel:camelContext id="myCamel">
        <camel:routeBuilder ref="loanBroker"/>
     </camel:camelContext>
 

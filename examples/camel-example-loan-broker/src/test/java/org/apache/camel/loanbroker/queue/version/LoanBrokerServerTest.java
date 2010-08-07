@@ -28,7 +28,7 @@ public class LoanBrokerServerTest extends Assert {
     public void startLoanBroker() throws Exception {
         AbstractApplicationContext applicationContext = 
             new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/queueCamelContext.xml"});
-        CamelContext camelContext = (CamelContext)applicationContext.getBean("camelContext");
+        CamelContext camelContext = (CamelContext)applicationContext.getBean("myCamel");
         assertNotNull("The camel context should not be null", camelContext);
         Thread.sleep(2000);        
         camelContext.stop();

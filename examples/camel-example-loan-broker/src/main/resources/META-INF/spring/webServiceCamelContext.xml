@@ -54,7 +54,7 @@
     		implementor="#bank3"
     		address="http://localhost:9003/bank3"/>
 
-  <camel:camelContext>
+  <camel:camelContext id="myCamel">
      <camel:routeBuilder ref="loanBroker"/>
   </camel:camelContext>
   
