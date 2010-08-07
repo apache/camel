@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -28,8 +28,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CamelContextAutoStartupTest extends TestCase {
 
+    private AbstractXmlApplicationContext ac;
+
     public void testAutoStartupFalse() throws Exception {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelContextAutoStartupTestFalse.xml");
+        ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelContextAutoStartupTestFalse.xml");
 
         SpringCamelContext camel = (SpringCamelContext) ac.getBean("myCamel");
         assertEquals("myCamel", camel.getName());
@@ -59,7 +61,7 @@ public class CamelContextAutoStartupTest extends TestCase {
     }
 
     public void testAutoStartupTrue() throws Exception {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelContextAutoStartupTestTrue.xml");
+        ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelContextAutoStartupTestTrue.xml");
 
         SpringCamelContext camel = (SpringCamelContext) ac.getBean("myCamel");
         assertEquals("myCamel", camel.getName());
@@ -79,4 +81,11 @@ public class CamelContextAutoStartupTest extends TestCase {
         mock.assertIsSatisfied();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        if (ac != null) {
+            ac.close();
+        }
+        super.tearDown();
+    }
 }

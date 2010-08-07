@@ -23,7 +23,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
 
         <!-- define a custom thread pool -->
         <threadPool id="myPool" poolSize="2" maxPoolSize="4" threadName="myPool"/>

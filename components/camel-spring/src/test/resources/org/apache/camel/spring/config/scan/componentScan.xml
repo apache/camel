@@ -25,7 +25,7 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="camelScan" xmlns="http://camel.apache.org/schema/spring">
         <packageScan>
             <package>org.apache.camel.spring.config.scan</package>
             <excludes>**/*Excluded*</excludes>

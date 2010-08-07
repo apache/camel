@@ -34,7 +34,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
     }
 
     public void testLowProfile() throws Exception {
-        CamelContext context = getMandatoryBean(CamelContext.class, "camel");
+        CamelContext context = getMandatoryBean(CamelContext.class, "camel-C");
 
         ThreadPoolProfile profile = context.getExecutorServiceStrategy().getThreadPoolProfile("low");
         assertEquals(1, profile.getPoolSize().intValue());
@@ -54,7 +54,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
     }
 
     public void testBigProfile() throws Exception {
-        CamelContext context = getMandatoryBean(CamelContext.class, "camel");
+        CamelContext context = getMandatoryBean(CamelContext.class, "camel-C");
 
         ThreadPoolProfile profile = context.getExecutorServiceStrategy().getThreadPoolProfile("big");
         assertEquals(50, profile.getPoolSize().intValue());

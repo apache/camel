@@ -28,7 +28,7 @@
          is created, which allows us to do stuff to the route before its created -->
     <bean id="customFactory" class="org.apache.camel.processor.CustomProcessorFactoryTest$MyFactory"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <!-- a simple route -->
         <route>
             <from uri="direct:start"/>

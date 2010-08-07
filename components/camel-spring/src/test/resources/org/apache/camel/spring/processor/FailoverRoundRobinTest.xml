@@ -30,7 +30,7 @@
         <constructor-arg index="0" value="Damn Again"/>
     </bean>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
 
         <!-- START SNIPPET: e1 -->
         <route>

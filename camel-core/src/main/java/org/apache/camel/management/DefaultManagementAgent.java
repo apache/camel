@@ -232,6 +232,9 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     public void unregister(ObjectName name) throws JMException {
         if (server.isRegistered(name)) {
             server.unregisterMBean(name);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unregistered MBean with objectname: " + name);
+            }
         }
         mbeansRegistered.remove(name);
     }

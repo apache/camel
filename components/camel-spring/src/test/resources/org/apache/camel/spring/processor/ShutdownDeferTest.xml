@@ -28,7 +28,7 @@
     </bean>
 
     <!-- START SNIPPET: e1 -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route startupOrder="1">
             <from uri="seda:foo"/>
             <delay><constant>1000</constant></delay>

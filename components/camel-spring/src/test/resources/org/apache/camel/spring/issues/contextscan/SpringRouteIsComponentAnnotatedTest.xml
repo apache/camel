@@ -28,7 +28,7 @@
     <!-- enable Spring @Component scan -->
     <context:component-scan base-package="org.apache.camel.spring.issues.contextscan"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <!-- and then let Camel use those @Component scanned route builders -->
         <contextScan/>
     </camelContext>

@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 
 /**
@@ -36,8 +37,10 @@ public interface LifecycleStrategy {
      * Notification on starting a {@link CamelContext}.
      *
      * @param context the camel context
+     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}.
+     * Any other runtime exceptions will be logged at <tt>WARN</tt> level by Camel will continue starting itself.
      */
-    void onContextStart(CamelContext context);
+    void onContextStart(CamelContext context) throws VetoCamelContextStartException;
 
     /**
      * Notification on stopping a {@link CamelContext}.

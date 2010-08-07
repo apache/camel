@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
@@ -79,6 +80,10 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the name
      */
     String getName();
+
+    CamelContextNameStrategy getNameStrategy();
+
+    void setNameStrategy(CamelContextNameStrategy nameStrategy);
 
     /**
      * Gets the version of the this context.

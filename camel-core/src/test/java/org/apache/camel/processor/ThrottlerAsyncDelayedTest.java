@@ -63,7 +63,8 @@ public class ThrottlerAsyncDelayedTest extends ContextTestSupport {
 
         // now assert that they have actually been throttled
         long minimumTime = (messageCount - 1) * INTERVAL;
-        assertTrue("Should take at least " + minimumTime + "ms", System.currentTimeMillis() - start >= minimumTime);
+        long delta = System.currentTimeMillis() - start;
+        assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
     }
 
     protected RouteBuilder createRouteBuilder() {

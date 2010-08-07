@@ -38,6 +38,8 @@ import org.apache.camel.model.ProcessorDefinition;
  */
 public interface ManagementNamingStrategy {
 
+    ObjectName getObjectNameForCamelContext(String name) throws MalformedObjectNameException;
+
     ObjectName getObjectNameForCamelContext(CamelContext context) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForComponent(Component component, String name) throws MalformedObjectNameException;

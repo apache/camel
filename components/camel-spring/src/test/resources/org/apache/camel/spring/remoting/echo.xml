@@ -24,7 +24,7 @@
 
     <bean id="echoService" class="org.apache.camel.spring.remoting.EchoService"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <export id="echo" serviceInterface="org.apache.camel.spring.remoting.Echo" serviceRef="echoService" uri="direct:echo"/>
 
         <route>

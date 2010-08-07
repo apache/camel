@@ -22,7 +22,7 @@
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 	<!-- START SNIPPET: e1 -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <template id="myTemplate"/>
 		<!-- set the errorHandlerRef to our DeadLetterChannel, this applies for this route only -->
         <route errorHandlerRef="myDeadLetterErrorHandler">

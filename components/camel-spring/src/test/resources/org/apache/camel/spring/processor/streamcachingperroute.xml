@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camelContext id="camel" streamCache="true" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext streamCache="true" xmlns="http://camel.apache.org/schema/spring">
 
         <route streamCache="true">
             <from uri="direct:a"/>

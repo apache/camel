@@ -55,7 +55,7 @@
 
     <bean id="myThrowProcessor" class="org.apache.camel.processor.DeadLetterChannelUseOriginalInBodyWithFileTest$MyThrowProcessor"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="dead">
+    <camelContext xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="dead">
         <route>
             <from uri="file://target/originalexchange?noop=true"/>
             <transform><simple>${in.body} World</simple></transform>

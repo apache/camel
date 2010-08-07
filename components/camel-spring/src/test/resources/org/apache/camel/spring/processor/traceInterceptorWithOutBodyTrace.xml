@@ -23,7 +23,7 @@
     ">
     
   <!-- START SNIPPET: example -->
-  <camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext trace="true" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
       <transform>

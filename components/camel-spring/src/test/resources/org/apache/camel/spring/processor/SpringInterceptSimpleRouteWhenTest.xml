@@ -23,7 +23,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <!-- here we intercept each processing step in the routing and do a detour
              routing where we route the exhange to the mock:intercepted endpoint.
              We have applied a when predicate so the interceptor only applies

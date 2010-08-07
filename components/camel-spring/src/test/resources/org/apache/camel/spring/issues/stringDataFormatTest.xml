@@ -26,7 +26,7 @@
         <property name="charset" value="utf-8"/>
     </bean>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:marshal"/>
             <!-- using a bean id -->

@@ -53,7 +53,7 @@
     </bean>
 
     <!-- use the error handler -->
-    <camelContext errorHandlerRef="myErrorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext errorHandlerRef="myErrorHandler" xmlns="http://camel.apache.org/schema/spring">
 
         <!-- define a global on exception to log the exception -->
         <onException>

@@ -27,7 +27,7 @@
         <property name="springTransactionPolicy" ref="PROPAGATION_REQUIRED"/>
     </bean>
 
-    <camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:okay"/>
             <policy ref="PROPAGATION_REQUIRED">

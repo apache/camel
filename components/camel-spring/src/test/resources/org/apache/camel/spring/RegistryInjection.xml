@@ -25,7 +25,7 @@
     
   <bean id="registry" class="org.apache.camel.impl.JndiRegistry"/>
   
-  <camel:camelContext id="camel">
+  <camel:camelContext>
     <camel:route>
       <camel:from uri="seda:start"/>
       <camel:to uri="mock:result"/>

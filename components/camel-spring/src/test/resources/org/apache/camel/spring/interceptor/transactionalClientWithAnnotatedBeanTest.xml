@@ -40,7 +40,7 @@
     <!-- bean for book business logic -->
     <bean id="bookService" class="org.apache.camel.spring.interceptor.AnnotatedBookServiceImpl"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <routeBuilder ref="annotatedRoute"/>
     </camelContext>
 

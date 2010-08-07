@@ -33,7 +33,7 @@
         <property name="ignoreServiceEvents" value="true"/>
     </bean>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
             <to uri="log:foo"/>

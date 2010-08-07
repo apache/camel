@@ -27,7 +27,7 @@
         <property name="deadLetterUri" value="mock:error?foo=bar"/>
     </bean>
 
-    <camelContext id="camel" errorHandlerRef="myDLC" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext errorHandlerRef="myDLC" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
             <to uri="mock:result"/>

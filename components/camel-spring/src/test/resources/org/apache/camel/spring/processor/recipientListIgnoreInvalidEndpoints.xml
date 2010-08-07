@@ -25,7 +25,7 @@
     from("direct:a").recipientList(property("myProperty"));
   -->
 
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:startA" />
       <recipientList ignoreInvalidEndpoints="true">

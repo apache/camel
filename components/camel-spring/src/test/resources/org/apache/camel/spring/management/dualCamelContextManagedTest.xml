@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camelContext id="camel1" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="camel-A" xmlns="http://camel.apache.org/schema/spring">
         
         <endpoint id="fromFile" uri="file://target/route1"/>
         <endpoint id="mock1" uri="mock:mock1"/>
@@ -34,7 +34,7 @@
 
     </camelContext>
 
-    <camelContext id="camel2" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="camel-B" xmlns="http://camel.apache.org/schema/spring">
         
         <endpoint id="fromFile2" uri="file://target/route2"/>
         <endpoint id="mock2" uri="mock:mock2"/>

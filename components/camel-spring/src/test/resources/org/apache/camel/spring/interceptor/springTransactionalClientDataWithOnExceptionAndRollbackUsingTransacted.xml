@@ -24,7 +24,7 @@
     <import resource="transactionalClientDataSource.xml"/>
 
     <!-- START SNIPPET: e1 -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
 
         <onException>
             <exception>java.lang.IllegalArgumentException</exception>

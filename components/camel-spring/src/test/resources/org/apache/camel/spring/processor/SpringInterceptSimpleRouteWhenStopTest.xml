@@ -23,7 +23,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <intercept>
             <!-- only trigger this interceptor if the message body contains the word Hello -->
             <when>

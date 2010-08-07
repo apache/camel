@@ -28,7 +28,7 @@
     from("direct:c").routingSlip("aRoutingSlipHeader", "#");
     from("direct:d").routingSlip(ExpressionBuilder.bodyExpression());
   -->
-  <camelContext id="camel"
+  <camelContext
     xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:a" />

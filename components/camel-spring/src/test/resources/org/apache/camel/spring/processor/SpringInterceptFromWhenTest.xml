@@ -23,7 +23,7 @@
     ">
 
     <!-- START SNIPPET: example -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <interceptFrom>
             <when>
                 <simple>${body} contains 'Goofy'</simple>

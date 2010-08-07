@@ -23,7 +23,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
 
         <!-- define a thread pool profile -->
         <threadPoolProfile id="myProfile" poolSize="2" maxQueueSize="8" rejectedPolicy="Abort"/>

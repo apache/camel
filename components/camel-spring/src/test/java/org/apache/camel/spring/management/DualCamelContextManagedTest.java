@@ -69,16 +69,16 @@ public class DualCamelContextManagedTest extends SpringTestSupport {
             
             if (name.contains("mock://mock1")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
-                assertEquals("camel1", id);
+                assertEquals("camel-A", id);
             } else if (name.contains("mock://mock2")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
-                assertEquals("camel2", id);
+                assertEquals("camel-B", id);
             } else if (name.contains("file://target/route1")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
-                assertEquals("camel1", id);
+                assertEquals("camel-A", id);
             } else if (name.contains("file://target/route2")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
-                assertEquals("camel2", id);
+                assertEquals("camel-B", id);
             }
         }
     }

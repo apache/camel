@@ -23,7 +23,7 @@
     ">
 
   <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="camel-A" xmlns="http://camel.apache.org/schema/spring">
     <routeBuilder ref="myRoutes"/>
   </camelContext>
   <!-- END SNIPPET: example -->

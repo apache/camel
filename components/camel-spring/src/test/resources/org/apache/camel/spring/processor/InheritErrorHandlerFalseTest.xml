@@ -34,7 +34,7 @@
 
     <bean id="myProcessor" class="org.apache.camel.processor.InheritErrorHandlerFalseTest$MyProcessor"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route errorHandlerRef="errorHandler">
             <from uri="direct:start"/>
             <process ref="myProcessor" inheritErrorHandler="false"/>

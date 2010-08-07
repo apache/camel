@@ -30,7 +30,7 @@
   <camel:export id="say" uri="direct:sayImpl" serviceRef="sayService"
                          serviceInterface="org.apache.camel.spring.remoting.ISay"/>
   
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
      <route>
       <from uri="direct:say"/>
       <to uri="direct:sayImpl"/>

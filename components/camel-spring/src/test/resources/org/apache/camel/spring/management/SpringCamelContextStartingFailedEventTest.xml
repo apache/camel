@@ -24,7 +24,7 @@
 
     <bean id="myEventNotifier" class="org.apache.camel.spring.management.MyEventNotifier"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:foo"/>
             <to uri="xxx:foo"/>

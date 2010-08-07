@@ -23,7 +23,7 @@
     ">
 
   <!-- START SNIPPET: example -->   
-  <camelContext id="camel" useJmx="false" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext useJmx="false" xmlns="http://camel.apache.org/schema/spring">
     <jmxAgent id="agent" disabled="true"/> 
       
     <route>

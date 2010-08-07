@@ -29,8 +29,11 @@ public class SpringComponentScanTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        if (context != null) {
+            context.stop();
+        }
         ApplicationContext c = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScan.xml");
-        context = (CamelContext)c.getBean("camelContext");
+        context = (CamelContext)c.getBean("camelScan");
         template = context.createProducerTemplate();
         template.start();
     }

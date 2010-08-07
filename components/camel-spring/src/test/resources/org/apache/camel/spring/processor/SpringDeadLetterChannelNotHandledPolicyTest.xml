@@ -41,7 +41,7 @@
 
     <bean id="myThrowProcessor" class="org.apache.camel.processor.DeadLetterChannelHandledPolicyTest$MyThrowExceptionProcessor"/>
 
-    <camelContext id="camel" errorHandlerRef="myDLC" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext errorHandlerRef="myDLC" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
             <process ref="myThrowProcessor"/>

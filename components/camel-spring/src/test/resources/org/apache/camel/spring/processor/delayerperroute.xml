@@ -23,7 +23,7 @@
     ">
 
     <!-- define a global delayer using 2000 ms -->
-    <camelContext id="camel" delayer="2000" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext delayer="2000" xmlns="http://camel.apache.org/schema/spring">
 
         <!-- this route uses a 1000 ms delayer -->
         <route delayer="1000">

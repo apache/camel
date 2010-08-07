@@ -38,7 +38,7 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
     public void testXMLRouteLoading() throws Exception {
         applicationContext = createApplicationContext();
 
-        SpringCamelContext context = (SpringCamelContext) applicationContext.getBean("camel");
+        SpringCamelContext context = (SpringCamelContext) applicationContext.getBean("camel-A");
         assertValidContext(context);
 
         MockEndpoint resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:result");

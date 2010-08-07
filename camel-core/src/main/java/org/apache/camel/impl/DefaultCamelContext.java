@@ -58,6 +58,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
@@ -73,6 +74,7 @@ import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormat;
@@ -120,10 +122,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultCamelContext extends ServiceSupport implements CamelContext, SuspendableService {
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
-    private static final String NAME_PREFIX = "camel-";
-    private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
+    private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
     private ClassLoader applicationContextClassLoader;
-    private String name;
     private final Map<String, Endpoint> endpoints = new EndpointRegistry();
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
@@ -145,9 +145,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
-    private final AtomicBoolean suspending = new AtomicBoolean(false);
-    private final AtomicBoolean suspended = new AtomicBoolean(false);
-    private final AtomicBoolean resuming = new AtomicBoolean(false);
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
@@ -189,7 +186,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public DefaultCamelContext() {
         super();
-        name = NAME_PREFIX + CONTEXT_COUNTER.incrementAndGet();
 
         // use WebSphere specific resolver if running on WebSphere
         if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
@@ -221,7 +217,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public String getName() {
-        return name;
+        return getNameStrategy().getName();
     }
 
     /**
@@ -230,7 +226,16 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * @param name the name
      */
     public void setName(String name) {
-        this.name = name;
+        // use an explicit name strategy since an explicit name was provided to be used
+        this.nameStrategy = new ExplicitCamelContextNameStrategy(name);
+    }
+
+    public CamelContextNameStrategy getNameStrategy() {
+        return nameStrategy;
+    }
+
+    public void setNameStrategy(CamelContextNameStrategy nameStrategy) {
+        this.nameStrategy = nameStrategy;
     }
 
     public Component hasComponent(String componentName) {
@@ -1255,6 +1260,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             LifecycleStrategy strategy = it.next();
             try {
                 strategy.onContextStart(this);
+            } catch (VetoCamelContextStartException e) {
+                // okay we should not start Camel since it was vetoed
+                LOG.warn("Lifecycle strategy vetoed starting CamelContext (" + getName() + ")", e);
+                throw e;
             } catch (Exception e) {
                 // not all containers allow access to its MBeanServer (such as OC4j)
                 // so here we remove the troublesome strategy to be able to continue
@@ -1317,7 +1326,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
         // but clear any suspend routes
         suspendedRouteServices.clear();
-        suspended.set(false);
 
         // the stop order is important
 
@@ -2143,11 +2151,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     /**
-     * Reset CONTEXT_COUNTER to a preset value. Mostly used for tests to ensure a predictable getName()
+     * Reset conext counter to a preset value. Mostly used for tests to ensure a predictable getName()
      *
-     * @param value new value for the CONTEXT_COUNTER
+     * @param value new value for the context counter
      */
     public static void setContextCounter(int value) {
-        CONTEXT_COUNTER.set(value);
+        DefaultCamelContextNameStrategy.setCounter(value);
     }
 }

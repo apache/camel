@@ -35,7 +35,7 @@
   <!-- END SNIPPET: proxy -->
 
   <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:say"/>
       <to uri="bean:sayService"/>

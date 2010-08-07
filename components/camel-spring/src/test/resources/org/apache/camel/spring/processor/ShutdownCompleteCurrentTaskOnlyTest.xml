@@ -27,7 +27,7 @@
         <property name="timeout" value="20"/>
     </bean>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route startupOrder="1" shutdownRunningTask="CompleteCurrentTaskOnly">
             <from uri="file:target/pending"/>
             <delay><constant>1000</constant></delay>

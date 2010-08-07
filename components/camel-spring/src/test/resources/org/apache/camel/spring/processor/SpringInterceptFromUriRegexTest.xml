@@ -23,7 +23,7 @@
     ">
 
     <!-- START SNIPPET: example -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <!-- intercept incoming message arriving on either seda:foo or seda:bar endpoints as we use regex -->
         <interceptFrom uri="seda:(foo|bar)">
             <to uri="mock:intercept"/>

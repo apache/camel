@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="camel-C" xmlns="http://camel.apache.org/schema/spring">
 
         <!-- define a low profile -->
         <threadPoolProfile id="low"

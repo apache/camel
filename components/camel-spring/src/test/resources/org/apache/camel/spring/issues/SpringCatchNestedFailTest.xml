@@ -30,7 +30,7 @@
         <constructor-arg index="0" value="Damn Kong"/>
     </bean>
 
-    <camelContext trace="true" id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext trace="true" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
             <doTry>

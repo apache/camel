@@ -25,7 +25,7 @@
     
   <bean id="lifecycleStrategy" class="org.apache.camel.spring.DummyLifecycleStrategy"/>
   
-  <camel:camelContext id="camel">
+  <camel:camelContext>
     <camel:route>
       <camel:from uri="seda:start"/>
       <camel:to uri="mock:result"/>

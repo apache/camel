@@ -25,7 +25,7 @@
   <!--
      from("direct:a").to("mock:x", "mock:y", "mock:z");
   -->
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:a"/>
       <to uri="mock:x"/>

@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <c:camelContext id="camel" xmlns:c="http://camel.apache.org/schema/spring">
+  <c:camelContext xmlns:c="http://camel.apache.org/schema/spring">
     <c:template id="myTemplate" defaultEndpoint="mock:results"/>
   </c:camelContext>
 

@@ -24,7 +24,7 @@
 
     <bean id="cbrBean" class="org.apache.camel.processor.CBRHeaderPredicateTest$MyCBRBean"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
             <choice>

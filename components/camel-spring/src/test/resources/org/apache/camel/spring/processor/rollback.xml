@@ -34,7 +34,7 @@
     </bean>
 
     <!-- START SNIPPET: e1 -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route errorHandlerRef="errorHandler">
             <from uri="direct:start"/>
             <choice>

@@ -26,6 +26,7 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -242,7 +243,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
             // lets avoid folks having to explicitly give an ID to a camel context
             if (ObjectHelper.isEmpty(contextId)) {
-                contextId = "camelContext";
+                // if no explicit id was set then use a default auto generated name
+                contextId = DefaultCamelContextNameStrategy.getNextName();
                 element.setAttribute("id", contextId);
             }
 

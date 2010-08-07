@@ -43,7 +43,7 @@
 
     <bean id="myBean" class="org.apache.camel.spring.aop.MyCoolAopBean"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
             <to uri="myBean"/>

@@ -23,7 +23,7 @@
     ">
 
     <!-- START SNIPPET: example -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <!-- intercept incoming message arriving on any of the seda endpoints as we use * wildcard -->
         <interceptFrom uri="seda:*">
             <to uri="mock:intercept"/>

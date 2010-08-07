@@ -32,7 +32,7 @@
         <property name="logName" value="com.mycompany.messages"/>
     </bean>
 
-    <camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext trace="true" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
             <to uri="mock:result"/>

@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="camel-D" xmlns="http://camel.apache.org/schema/spring">
 
         <!-- define the default thread pool profile to be used in Camel -->
         <threadPoolProfile id="myDefaultProfile"

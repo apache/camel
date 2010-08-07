@@ -26,7 +26,7 @@
   <bean id="sayService" class="org.apache.camel.spring.remoting.SayService"/>
 
   <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
      <!-- START SNIPPET: proxy -->
      <!--  Creates a proxy to the direct:say endpoint. -->
      <camel:proxy id="sayProxy" serviceUrl="direct:say"

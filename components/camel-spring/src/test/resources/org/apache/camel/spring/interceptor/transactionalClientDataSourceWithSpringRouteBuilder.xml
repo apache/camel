@@ -23,7 +23,7 @@
 
    <import resource="transactionalClientDataSource.xml"/>
    
-   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+   <camelContext xmlns="http://camel.apache.org/schema/spring">
       <package>org.apache.camel.spring.interceptor.route</package>
    </camelContext>
 

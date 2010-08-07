@@ -36,8 +36,6 @@ public class DependencyInjectCamelTemplateTest extends AbstractJUnit38SpringCont
     @EndpointInject(uri = "mock:results")
     private MockEndpoint endpoint;
 
-
-
     public void testBeanHasCamelTemplateInjected() throws Exception {
         assertNotNull("Bean should be injected", bean);
         ProducerTemplate template = bean.getTemplate();

@@ -43,7 +43,7 @@
     <!-- END SNIPPET: e1 -->
 
     <!-- START SNIPPET: e2 -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:okay"/>
             <!-- we mark this route as transacted. Camel will lookup the spring transaction manager

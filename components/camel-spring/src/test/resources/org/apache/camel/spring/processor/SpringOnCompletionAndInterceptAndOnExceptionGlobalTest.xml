@@ -24,7 +24,7 @@
 
     <bean id="myProcessor" class="org.apache.camel.processor.OnCompletionTest$MyProcessor"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
 
         <onException>
             <exception>java.lang.Exception</exception>

@@ -25,7 +25,7 @@
 
     <context:component-scan base-package="org.apache.camel.spring.postprocessor"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <package>org.apache.camel.spring.postprocessor</package>
     </camelContext>
 

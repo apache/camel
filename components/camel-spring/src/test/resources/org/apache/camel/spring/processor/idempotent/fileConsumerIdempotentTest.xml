@@ -34,7 +34,7 @@
         <property name="cacheSize" value="250"/>
     </bean>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="file://target/fileidempotent/?idempotent=true&amp;idempotentRepository=#fileStore&amp;move=done/${file:name}"/>
             <to uri="mock:result"/>

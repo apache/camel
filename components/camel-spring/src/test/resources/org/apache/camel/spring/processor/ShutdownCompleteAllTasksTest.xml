@@ -28,7 +28,7 @@
     </bean>
 
     <!-- START SNIPPET: e1 -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <!-- let this route complete all its pending messages when asked to shutdown -->
         <route startupOrder="1" shutdownRunningTask="CompleteAllTasks">
             <from uri="file:target/pending"/>

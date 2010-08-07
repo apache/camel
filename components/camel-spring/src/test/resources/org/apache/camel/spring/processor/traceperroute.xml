@@ -27,7 +27,7 @@
         <property name="logName" value="foo"/>
     </bean>
 
-    <camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext trace="true" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:a"/>
             <to uri="mock:a"/>

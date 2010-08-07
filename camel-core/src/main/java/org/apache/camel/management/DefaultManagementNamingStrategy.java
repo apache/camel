@@ -78,6 +78,15 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         }
     }
 
+    public ObjectName getObjectNameForCamelContext(String name) throws MalformedObjectNameException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(name)).append(",");
+        buffer.append(KEY_TYPE + "=" + TYPE_CONTEXT + ",");
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(name));
+        return createObjectName(buffer);
+    }
+
     public ObjectName getObjectNameForCamelContext(CamelContext context) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
@@ -278,7 +287,12 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     protected String getContextId(CamelContext context) {
-        return hostName + "/" + (context != null ? context.getName() : VALUE_UNKNOWN);
+        String name = context != null ? context.getName() : VALUE_UNKNOWN;
+        return getContextId(name);
+    }
+
+    protected String getContextId(String name) {
+        return hostName + "/" + (name != null ? name : VALUE_UNKNOWN);
     }
 
     protected String getEndpointId(Endpoint ep) {
