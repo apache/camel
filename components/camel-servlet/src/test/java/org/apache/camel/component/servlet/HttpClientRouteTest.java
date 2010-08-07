@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.servlet;
 
 import java.io.ByteArrayInputStream;
@@ -30,12 +29,12 @@ import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
     private static final String POST_DATA = "<request> hello world </request>";
     private static final String CONTENT_TYPE = "text/xml";
-    
 
     @Test
     public void testHttpClient() throws Exception {

@@ -50,6 +50,7 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         if (startCamelContext) {
             super.tearDown();
         }
+        sr.shutDown();
     }
     
     protected void loadServlets() throws Exception {
