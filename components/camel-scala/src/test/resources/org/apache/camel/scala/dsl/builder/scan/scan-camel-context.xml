@@ -22,7 +22,7 @@
 	http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
     <package>org.apache.camel.scala.dsl.builder.scan</package>
   </camelContext>
 

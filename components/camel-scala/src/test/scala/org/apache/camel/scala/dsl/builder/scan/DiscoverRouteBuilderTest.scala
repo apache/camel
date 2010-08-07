@@ -29,7 +29,7 @@ class DiscoverRouteBuilderTest extends TestCase {
   
   def testDiscovery = {
     val spring = new ClassPathXmlApplicationContext("org/apache/camel/scala/dsl/builder/scan/scan-camel-context.xml")
-    val camel = spring.getBean("camelContext").asInstanceOf[CamelContext]
+    val camel = spring.getBean("myCamel").asInstanceOf[CamelContext]
     assertNotNull(camel)
     assertEquals(1, camel.getRoutes().size())
     
