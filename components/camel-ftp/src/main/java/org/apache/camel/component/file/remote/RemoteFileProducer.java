@@ -21,6 +21,7 @@ import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Generic remote file producer for all the FTP variations.
@@ -162,10 +163,20 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         try {
             connectIfNecessary();
         } catch (Exception e) {
+            loggedIn = false;
+
+            // are we interrupted
+            InterruptedException ie = ObjectHelper.getException(InterruptedException.class, e);
+            if (ie != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Interrupted during connect to: " + getEndpoint(), ie);
+                }
+                throw ie;
+            }
+
             if (log.isDebugEnabled()) {
                 log.debug("Could not connect to: " + getEndpoint() + ". Will try to recover.", e);
             }
-            loggedIn = false;
         }
 
         // recover by re-creating operations which should most likely be able to recover

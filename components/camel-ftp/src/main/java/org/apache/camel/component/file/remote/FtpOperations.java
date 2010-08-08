@@ -100,6 +100,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), "Server refused connection");
                 }
             } catch (Exception e) {
+                // check if we are interrupted so we can break out
+                if (Thread.currentThread().isInterrupted()) {
+                    throw new GenericFileOperationFailedException("Interrupted during connecting", new InterruptedException("Interrupted during connecting"));
+                }
+
                 GenericFileOperationFailedException failed;
                 if (e instanceof GenericFileOperationFailedException) {
                     failed = (GenericFileOperationFailedException) e;
@@ -118,7 +123,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     try {
                         Thread.sleep(endpoint.getReconnectDelay());
                     } catch (InterruptedException ie) {
-                        // ignore
+                        // we could potentially also be interrupted during sleep
+                        Thread.currentThread().interrupt();
+                        throw new GenericFileOperationFailedException("Interrupted during sleeping", ie);
                     }
                 }
             }

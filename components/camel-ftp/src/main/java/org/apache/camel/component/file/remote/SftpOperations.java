@@ -105,6 +105,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                 // yes we could connect
                 connected = true;
             } catch (Exception e) {
+                // check if we are interrupted so we can break out
+                if (Thread.currentThread().isInterrupted()) {
+                    throw new GenericFileOperationFailedException("Interrupted during connecting", new InterruptedException("Interrupted during connecting"));
+                }
+
                 GenericFileOperationFailedException failed = new GenericFileOperationFailedException("Cannot connect to " + configuration.remoteServerInformation(), e);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot connect due: " + failed.getMessage());
@@ -116,8 +121,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                 if (endpoint.getReconnectDelay() > 0) {
                     try {
                         Thread.sleep(endpoint.getReconnectDelay());
-                    } catch (InterruptedException e1) {
-                        // ignore
+                    } catch (InterruptedException ie) {
+                        // we could potentially also be interrupted during sleep
+                        Thread.currentThread().interrupt();
+                        throw new GenericFileOperationFailedException("Interrupted during sleeping", ie);
                     }
                 }
             }
