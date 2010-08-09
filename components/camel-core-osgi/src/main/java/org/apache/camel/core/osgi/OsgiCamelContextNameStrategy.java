@@ -14,16 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.core.osgi;
 
-import org.apache.camel.impl.DefaultCamelContextNameStrategy;
+import org.apache.camel.spi.CamelContextNameStrategy;
 import org.osgi.framework.BundleContext;
 
-public class OsgiCamelContextNameStrategy extends DefaultCamelContextNameStrategy {
+public class OsgiCamelContextNameStrategy implements CamelContextNameStrategy {
+
+    private final String name;
     
     public OsgiCamelContextNameStrategy(BundleContext context) {
-        name = "Bundle:" + context.getBundle().getBundleId() + ":" + getNextName();
+        name = "camel-" + context.getBundle().getBundleId();
     }
 
+    public String getName() {
+        return name;
+    }
 }
