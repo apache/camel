@@ -337,7 +337,7 @@
         <artifactId>tomcat-maven-plugin</artifactId>
         <version>1.0</version>
         <configuration>
-          <path>/rider</path>
+          <path>/</path>
         </configuration>
       </plugin>
 
