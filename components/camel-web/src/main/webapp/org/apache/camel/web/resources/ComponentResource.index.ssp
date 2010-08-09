@@ -1,6 +1,6 @@
 <%@ import val it: ComponentResource %>
 
-#{ attributes("title") = "${it.getId}"}#
+#{ attributes("title") = it.getId}#
 
 
 <h1>${it.getId}</h1>

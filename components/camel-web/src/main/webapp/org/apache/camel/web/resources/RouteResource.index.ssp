@@ -1,6 +1,6 @@
 <%@ import val it: RouteResource %>
 
-#{ attributes("title") = "Route ${it.getId}"}#
+#{ attributes("title") = "Route " + it.getId}#
 
   <link href='${uri("/css/prettify/prettify.css")}' type="text/css" rel="stylesheet" />
   <script type="text/javascript" src='${uri("/js/prettify/prettify.js")}'></script>
