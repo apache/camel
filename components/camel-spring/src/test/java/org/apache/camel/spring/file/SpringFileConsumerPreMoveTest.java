@@ -23,8 +23,6 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-
 /**
  * @version $Revision$
  */

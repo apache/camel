@@ -27,7 +27,6 @@ public class Activator implements BundleActivator {
 
     public static Bundle getBundle() {
         return bundle;
-
     }
 
     public void start(BundleContext context) throws Exception {
