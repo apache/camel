@@ -16,14 +16,9 @@
  */
 package org.apache.camel.core.osgi;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
-import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.converter.TypeConverterLoader;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;

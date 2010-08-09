@@ -16,8 +16,6 @@
  */
 package org.apache.camel.core.osgi;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.spi.ComponentResolver;

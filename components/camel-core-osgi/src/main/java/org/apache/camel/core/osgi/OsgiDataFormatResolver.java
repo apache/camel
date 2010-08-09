@@ -17,7 +17,6 @@
 package org.apache.camel.core.osgi;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultDataFormatResolver;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
