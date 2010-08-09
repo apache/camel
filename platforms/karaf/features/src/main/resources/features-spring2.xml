@@ -455,7 +455,7 @@
   <feature name='camel-rss' version='${pom.version}'>
     <feature version='${pom.version}'>camel-atom</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
-    <bundle>mvn:http://download.java.net/maven/2!rome/rome/1.0</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rome/${rome-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rss/${pom.version}</bundle>
   </feature>
   <feature name='camel-saxon' version='${pom.version}'>
