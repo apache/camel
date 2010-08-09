@@ -1,6 +1,6 @@
 <%@ import val it: CamelContextResource %>
 
-#{ attributes("title") = "Apache Camel ${it.getVersion}"}#
+#{ attributes("title") = "Apache Camel " + it.getVersion }#
 
 
 <h1>Welcome to Apache Camel ${it.getVersion}</h1>

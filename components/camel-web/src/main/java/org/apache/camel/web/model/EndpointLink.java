@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.HasId;
 import org.apache.camel.web.util.UriCharactersEncoder;
 
 /**
@@ -55,12 +56,12 @@ public class EndpointLink {
 
     public void load(Endpoint endpoint) {
         this.uri = endpoint.getEndpointUri();
-        this.href = createHref(uri);
+        this.href = createHref(uri, endpoint);
     }
 
     public void load(String key, Endpoint endpoint) {
         this.uri = endpoint.getEndpointUri();
-        this.href = createHref(key);
+        this.href = createHref(key, endpoint);
     }
 
     public String getHref() {
@@ -79,10 +80,16 @@ public class EndpointLink {
         this.uri = uri;
     }
 
-    protected String createHref(String uri) {
-        // must not include :// in endpoint link
-        // TODO: might need to use org.apache.camel.util.UnsafeUriCharactersEncoder to safely encode URI for the web
-        return "/endpoints/" + UriCharactersEncoder.encode(uri);
+    protected String createHref(String uri, Endpoint endpoint) {
+        if (endpoint instanceof HasId) {
+            HasId hasId = (HasId) endpoint;
+            String id = hasId.getId();
+            return "/endpoints/" + id;
+        } else {
+            // must not include :// in endpoint link
+            // TODO: might need to use org.apache.camel.util.UnsafeUriCharactersEncoder to safely encode URI for the web
+            return "/endpoints/" + UriCharactersEncoder.encode(uri);
+        }
     }
 
 }

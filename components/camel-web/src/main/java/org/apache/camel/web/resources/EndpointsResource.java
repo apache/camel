@@ -33,8 +33,11 @@ import javax.ws.rs.core.UriInfo;
 import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.api.view.Viewable;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.HasId;
 import org.apache.camel.web.model.EndpointLink;
 import org.apache.camel.web.model.Endpoints;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The active endpoints in Camel
@@ -42,6 +45,8 @@ import org.apache.camel.web.model.Endpoints;
  * @version $Revision$
  */
 public class EndpointsResource extends CamelChildResourceSupport {
+    private static final transient Log LOG = LogFactory.getLog(EndpointsResource.class);
+    
     private String error = "";
     private String newUri = "mock:someName";
 
@@ -75,9 +80,22 @@ public class EndpointsResource extends CamelChildResourceSupport {
                 endpoint = getCamelContext().getEndpoint(id);
             }
         }
+        if (endpoint == null) {
+            for (Endpoint e : getCamelContext().getEndpoints()) {
+                if (e instanceof HasId) {
+                    HasId hasId = (HasId) e;
+                    String value = hasId.getId();
+                    if (value != null && value.equals(id)) {
+                        endpoint = e;
+                        break;
+                    }
+                }
+            }
+        }
         if (endpoint != null) {
             return new EndpointResource(getContextResource(), id, endpoint);
         } else {
+            LOG.warn("No endpoint found for id: " + id);
             return null;
         }
     }
