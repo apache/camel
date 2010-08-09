@@ -45,12 +45,17 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     protected BundleContext bundleContext;
         
     protected CamelContext createCamelContext() throws Exception {
+        setThreadContextClassLoader();
         CamelContextFactory factory = new CamelContextFactory();
         factory.setBundleContext(bundleContext);
         LOG.info("Get the bundleContext is " + bundleContext);
         return factory.createContext();
     }
     
+    protected void setThreadContextClassLoader() {
+        // set the thread context classloader current bundle classloader
+        Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+    }
     
     public static UrlReference getCamelKarafFeatureUrl() {
         String springVersion = System.getProperty("springVersion");

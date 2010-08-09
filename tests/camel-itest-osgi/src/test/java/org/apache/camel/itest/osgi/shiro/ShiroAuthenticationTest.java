@@ -119,8 +119,6 @@ public class ShiroAuthenticationTest extends OSGiIntegrationTestSupport {
          
         return new RouteBuilder() {
             public void configure() {
-                // need to update the CCL as it could be no defined
-                Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
                 
                 final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("classpath:/org/apache/camel/itest/osgi/shiro/securityconfig.ini", passPhrase);
                 
