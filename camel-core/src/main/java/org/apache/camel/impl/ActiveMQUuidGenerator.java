@@ -73,7 +73,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
 
     /**
      * As we have to find the hostname as a side-affect of generating a unique
-     * stub, we allow it's easy retrevial here
+     * stub, we allow it's easy retrieval here
      * 
      * @return the local host name
      */

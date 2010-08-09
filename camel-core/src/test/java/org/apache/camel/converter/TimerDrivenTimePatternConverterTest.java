@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(TimerDrivenTimePatternConverterTest.class);
     
-    //Timer test
     public void testTimerInvocation() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result"); 
         mock.expectedMinimumMessageCount(2);
@@ -43,16 +42,16 @@ public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
         long interval = watch.stop();
         
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Should take approx 5000 milliseconds, was: " + interval);
+            LOG.trace("Should take approx 2000 milliseconds, was: " + interval);
         }
-        assertTrue("Should take approx 5000 milliseconds, was: " + interval, interval >= 4995);
+        assertTrue("Should take approx 2000 milliseconds, was: " + interval, interval >= 1700);
     }
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=5s").to("mock:result");
+                from("timer://foo?fixedRate=true&delay=0&period=2s").to("mock:result");
             }
         };
     } 
