@@ -38,6 +38,8 @@ public final class OsgiCamelContextHelper {
     }
     
     public static void osgiUpdate(DefaultCamelContext camelContext, BundleContext bundleContext) {
+        LOG.debug("Using the OsgiCamelContextNameStrategy");
+        camelContext.setNameStrategy(new OsgiCamelContextNameStrategy(bundleContext));
         LOG.debug("Using the OsgiClassResolver");
         camelContext.setClassResolver(new OsgiClassResolver(bundleContext));
         LOG.debug("Using OsgiFactoryFinderResolver");
