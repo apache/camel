@@ -31,15 +31,9 @@
 	<properties>
 		<camel.osgi.export.pkg>org.apache.camel.web.*</camel.osgi.export.pkg>
 		<scalate-version>1.3-SNAPSHOT</scalate-version>
-    <jersey-version>1.4-ea04</jersey-version>
-<!--
-    <jersey-version>1.4-SNAPSHOT</jersey-version>
--->
+    <jersey-version>1.4-ea05</jersey-version>
     <logback-version>0.9.24</logback-version>
 		<jetty-port>8080</jetty-port>
-<!--
-		<webdriver-version>0.6.1039</webdriver-version>
--->
 		<webdriver-version>0.9.7376</webdriver-version>
 	</properties>
 
