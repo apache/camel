@@ -27,6 +27,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.spi.HasId;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -39,13 +41,15 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
+public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAware {
+
     private String endpointUri;
     private CamelContext camelContext;
     private Component component;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     // option to allow end user to dictate whether async processing should be used or not (if possible)
     private boolean synchronous;
+    private final String id = EndpointHelper.createEndpointId();
 
     protected DefaultEndpoint(String endpointUri, Component component) {
         this(endpointUri, component.getCamelContext());
@@ -81,6 +85,14 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
     @Override
     public String toString() {
         return "Endpoint[" + getEndpointUri() + "]";
+    }
+
+    /**
+     * Returns a unique String ID which can be used for aliasing without having to use the whole URI which
+     * is not unique 
+     */
+    public String getId() {
+        return id;
     }
 
     public String getEndpointUri() {

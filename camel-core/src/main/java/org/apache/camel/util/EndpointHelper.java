@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.camel.CamelContext;
@@ -42,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 public final class EndpointHelper {
 
     private static final transient Log LOG = LogFactory.getLog(EndpointHelper.class);
+    private static final AtomicLong endpointCounter = new AtomicLong(0);
 
     private EndpointHelper() {
         //Utility Class
@@ -363,4 +365,10 @@ public final class EndpointHelper {
         return null;
     }
 
+    /**
+     * A helper method for Endpoint implementations to create new Ids for Endpoints which also implement {@link HasId}
+     */
+    public static String createEndpointId() {
+        return "endpoint" + endpointCounter.incrementAndGet();
+    }
 }
