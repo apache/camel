@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.itest.osgi;
 
 import org.apache.camel.CamelContext;
@@ -58,7 +57,7 @@ public abstract class OSGiIntegrationSpringTestSupport extends OSGiIntegrationTe
         applicationContext.refresh();
         String[] names = applicationContext.getBeanNamesForType(SpringCamelContext.class);
         if (names.length == 1) {
-            return (SpringCamelContext)applicationContext.getBean(names[0], SpringCamelContext.class);
+            return applicationContext.getBean(names[0], SpringCamelContext.class);
         } else {
             throw new RuntimeCamelException("can't create a right camel context from the application context"); 
         }

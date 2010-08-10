@@ -26,8 +26,6 @@ import org.apache.camel.component.shiro.security.ShiroSecurityPolicy;
 import org.apache.camel.component.shiro.security.ShiroSecurityToken;
 import org.apache.camel.component.shiro.security.ShiroSecurityTokenInjector;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;

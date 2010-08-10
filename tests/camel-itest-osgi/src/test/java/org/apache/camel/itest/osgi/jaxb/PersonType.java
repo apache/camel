@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.itest.osgi.jaxb;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,7 +23,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.util.ObjectHelper;
-
 
 /**
  * <p>Java class for PersonType complex type.
@@ -43,8 +41,7 @@ import org.apache.camel.util.ObjectHelper;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
  */
 @XmlRootElement(name = "Person")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,50 +53,18 @@ public class PersonType {
     @XmlElement(required = true)
     protected String lastName;
 
-    /**
-     * Gets the value of the firstName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getFirstName() {
         return firstName;
     }
 
-    /**
-     * Sets the value of the firstName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setFirstName(String value) {
         this.firstName = value;
     }
 
-    /**
-     * Gets the value of the lastName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getLastName() {
         return lastName;
     }
 
-    /**
-     * Sets the value of the lastName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setLastName(String value) {
         this.lastName = value;
     }
@@ -118,6 +83,5 @@ public class PersonType {
     public int hashCode() {
         return firstName.hashCode() + lastName.hashCode() * 100;
     }
-    
 
 }

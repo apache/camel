@@ -21,8 +21,6 @@ import org.apache.camel.osgi.CamelContextFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
-import org.junit.Before;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
@@ -31,16 +29,14 @@ import org.osgi.framework.BundleContext;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 public class OSGiIntegrationTestSupport extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(OSGiIntegrationTestSupport.class);
+    protected static final transient Log LOG = LogFactory.getLog(OSGiIntegrationTestSupport.class);
     @Inject
     protected BundleContext bundleContext;
         
@@ -49,6 +45,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         CamelContextFactory factory = new CamelContextFactory();
         factory.setBundleContext(bundleContext);
         LOG.info("Get the bundleContext is " + bundleContext);
+        LOG.info("Application installed as bundle id: " + bundleContext.getBundle().getBundleId());
         return factory.createContext();
     }
     
@@ -81,7 +78,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
                           "camel-core", "camel-spring", "camel-test"),
             
             workingDirectory("target/paxrunner/"),
-             
+
             equinox(),
             felix());
         

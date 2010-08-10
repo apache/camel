@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.itest.osgi;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,9 +22,6 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-/**
- * 
- */
 @RunWith(JUnit4TestRunner.class)
 public class OSGiIntegrationSpringTest extends OSGiIntegrationSpringTestSupport {
     

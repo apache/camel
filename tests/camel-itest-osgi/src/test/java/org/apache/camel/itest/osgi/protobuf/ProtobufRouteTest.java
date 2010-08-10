@@ -57,12 +57,9 @@ public class ProtobufRouteTest extends OSGiIntegrationTestSupport {
     public void testMarshalAndUnmashalWithDSL3() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
-    
-                @Override
                 public void configure() throws Exception {
                     from("direct:unmarshalC").unmarshal().protobuf(new CamelException("wrong instance"))
                         .to("mock:reverse");
-    
                 }
             });
             fail("Expect the exception here");
@@ -71,7 +68,6 @@ public class ProtobufRouteTest extends OSGiIntegrationTestSupport {
             assertTrue("Get a wrong reason", ex.getCause() instanceof IllegalArgumentException);
         }
     }
-    
     
     private void marshalAndUnmarshal(String inURI, String outURI) throws Exception {
         AddressBookProtos.Person input = AddressBookProtos.Person
@@ -107,7 +103,6 @@ public class ProtobufRouteTest extends OSGiIntegrationTestSupport {
                 from("direct:unmarshalA").unmarshal().protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
                 
                 from("direct:unmarshalB").unmarshal().protobuf(AddressBookProtos.Person.getDefaultInstance()).to("mock:reverse");
-                
             }
         };
     }

@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.itest.osgi.servlet;
-
 
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.junit.Test;
@@ -27,7 +25,6 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
@@ -74,7 +71,5 @@ public class ServletComponentTest extends OSGiIntegrationSpringTestSupport {
         return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/servlet/ServletService.xml",
                                                                 "org/apache/camel/itest/osgi/servlet/CamelServletContext.xml"});
     }
-   
-
 
 }

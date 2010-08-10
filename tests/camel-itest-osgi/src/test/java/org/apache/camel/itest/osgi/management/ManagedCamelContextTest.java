@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi;
+package org.apache.camel.itest.osgi.management;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.CamelContext;
+import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.apache.camel.management.DefaultManagementNamingStrategy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
@@ -26,24 +27,30 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
  * @version $Revision$
  */
 @RunWith(JUnit4TestRunner.class)
-public class OSGiIntegrationTest extends OSGiIntegrationTestSupport {
-    
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() {
-                from("seda:foo").to("mock:bar");
-            }
-        };
+public class ManagedCamelContextTest extends OSGiIntegrationTestSupport {
+
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
+        naming.setHostName("localhost");
+        naming.setDomainName("org.apache.camel");
+        return context;
     }
 
     @Test
-    public void testSendMessage() throws Exception {
-        MockEndpoint mock =  getMandatoryEndpoint("mock:bar", MockEndpoint.class);
-        assertNotNull("The mock endpoint should not be null", mock);
-        
-        mock.expectedBodiesReceived("Hello World");
-        template.sendBody("seda:foo", "Hello World");
-        assertMockEndpointsSatisfied();        
+    public void testManagedCamelContext() throws Exception {
+        // TODO access MBeanServer with OSGi
     }
-   
+
 }

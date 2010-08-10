@@ -19,11 +19,9 @@ package org.apache.camel.itest.osgi.jpa;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +41,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
@@ -97,7 +94,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
     }
 
     private void assertEntityInDB() throws Exception {
-        jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
         List list = jpaTemplate.find(SELECT_ALL_STRING);
         assertEquals(1, list.size());
@@ -106,7 +103,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
     }
 
     protected void cleanupRepository() {
-        jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
         TransactionTemplate transactionTemplate = new TransactionTemplate();
         transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));

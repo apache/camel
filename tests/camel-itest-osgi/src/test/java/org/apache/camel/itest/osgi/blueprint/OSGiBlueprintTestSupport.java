@@ -177,5 +177,4 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
         return new UrlProvisionOption(store.getLocation(store.store(stream)).toURL().toExternalForm());
     }
 
-
 }
