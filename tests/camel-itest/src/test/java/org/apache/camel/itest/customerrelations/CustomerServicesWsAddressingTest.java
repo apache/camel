@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.customerrelations;
 
-import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

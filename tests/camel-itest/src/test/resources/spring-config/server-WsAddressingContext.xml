@@ -45,16 +45,13 @@
 
 	<destination xmlns="http://cxf.apache.org/transports/camel"
 		name="{http://camel.apache.org/itest/customerrelations}CustomerServiceV1CamelPort.camel-destination">
-		<camelContextRef>camelContext</camelContextRef>
+		<camelContextRef>camel-server</camelContextRef>
 	</destination>
 
-	<camelContext id="camelContext"
-		xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="camel-server" xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from
-				uri="jms://org.apache.camel.itest.customerrelations.Addressing" />
-			<to
-				uri="direct:serverInbound" />
+			<from uri="jms://org.apache.camel.itest.customerrelations.Addressing" />
+			<to uri="direct:serverInbound" />
 		</route>
 	</camelContext>
 

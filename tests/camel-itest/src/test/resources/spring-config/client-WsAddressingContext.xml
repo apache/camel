@@ -37,18 +37,14 @@
 
 	<conduit xmlns="http://cxf.apache.org/transports/camel"
 		name="{http://www.mycompany.com/examples/customerrelations}CustomerServiceV1CamelPort.camel-conduit">
-		<camelContextRef>camelContext</camelContextRef>
+		<camelContextRef>camel-client</camelContextRef>
 	</conduit>
 
-	<camelContext id="camelContext"
-		xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="camel-client" xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from
-				uri="direct:clientOutbound" />
-			<to
-				uri="jms://org.apache.camel.itest.customerrelations.Addressing" />
+			<from uri="direct:clientOutbound" />
+			<to uri="jms://org.apache.camel.itest.customerrelations.Addressing" />
 		</route>
 	</camelContext>
-
 
 </beans>
