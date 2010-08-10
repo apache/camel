@@ -24,31 +24,41 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class FilterTest extends ContextTestSupport {
+public class FilterNotMatchedTest extends ContextTestSupport {
 
     public void testSendMatchingMessage() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).property(Exchange.FILTER_MATCHED).isEqualTo(true);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).property(Exchange.FILTER_MATCHED).isEqualTo(true);
+
+        getMockEndpoint("mock:end").message(0).property(Exchange.FILTER_MATCHED).isNotNull();
+        getMockEndpoint("mock:end").message(0).property(Exchange.FILTER_MATCHED).isEqualTo(true);
 
         template.sendBodyAndHeader("direct:start", "<matched/>", "foo", "bar");
 
-        resultEndpoint.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendNotMatchingMessage() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(0);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+
+        getMockEndpoint("mock:end").message(0).property(Exchange.FILTER_MATCHED).isNotNull();
+        getMockEndpoint("mock:end").message(0).property(Exchange.FILTER_MATCHED).isEqualTo(false);
 
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
 
-        resultEndpoint.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").filter(header("foo").isEqualTo("bar")).to("mock:result");
+                from("direct:start")
+                    .filter(header("foo").isEqualTo("bar"))
+                        .to("mock:result")
+                    .end()
+                    .to("mock:end");
             }
         };
     }
