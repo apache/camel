@@ -42,6 +42,7 @@ import org.apache.aries.blueprint.mutable.MutableReferenceMetadata;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.blueprint.CamelContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
+import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.DataFormatDefinition;
@@ -111,9 +112,14 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         if (element.getNodeName().equals(CAMEL_CONTEXT)) {
             // Find the id, generate one if needed
             String contextId = element.getAttribute("id");
+            boolean implicitId = false;
+
+            // lets avoid folks having to explicitly give an ID to a camel context
             if (ObjectHelper.isEmpty(contextId)) {
-                contextId = "camelContext";
+                // if no explicit id was set then use a default auto generated name
+                contextId = DefaultCamelContextNameStrategy.getNextName();
                 element.setAttribute("id", contextId);
+                implicitId = true;
             }
 
             // now lets parse the routes with JAXB
@@ -134,6 +140,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 ccfb.setBlueprintContainer((BlueprintContainer) ptm.getObject());
                 ptm = (PassThroughMetadata) context.getComponentDefinitionRegistry().getComponentDefinition("blueprintBundleContext");
                 ccfb.setBundleContext((BundleContext) ptm.getObject());
+                ccfb.setImplicitId(implicitId);
                 ccfb.afterPropertiesSet();
             } catch (Exception e) {
                 throw new ComponentDefinitionException("Unable to initialize camel context factory", e);

@@ -140,6 +140,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private BlueprintContainer blueprintContainer;
     @XmlTransient
     private BundleContext bundleContext;
+    @XmlTransient
+    private boolean implicitId;
 
 
     public Class getObjectType() {
@@ -150,6 +152,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     public BlueprintCamelContext getContext(boolean create) {
         if (context == null && create) {
             context = createContext();
+            if (!isImplicitId()) {
+                context.setName(getId());
+            }
         }
         return context;
     }
@@ -417,6 +422,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public ClassLoader getContextClassLoaderOnStart() {
         return contextClassLoaderOnStart;
+    }
+    
+    public boolean isImplicitId() {
+        return implicitId;
+    }
+    
+    public void setImplicitId(boolean flag) {
+        implicitId = flag;
     }
 
 }
