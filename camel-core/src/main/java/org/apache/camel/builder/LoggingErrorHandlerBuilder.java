@@ -50,7 +50,9 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     public Processor createErrorHandler(final RouteContext routeContext, final Processor processor) {
-        LoggingErrorHandler handler = new LoggingErrorHandler(processor, log, level);
+        Logger logger = new Logger(log, level);
+
+        LoggingErrorHandler handler = new LoggingErrorHandler(routeContext.getCamelContext(), processor, logger, getExceptionPolicyStrategy());
         configure(handler);
         return handler;
     }

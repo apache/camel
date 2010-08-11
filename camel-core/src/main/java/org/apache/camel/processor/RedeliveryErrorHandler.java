@@ -35,6 +35,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -174,6 +175,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     public RedeliveryErrorHandler(CamelContext camelContext, Processor output, Logger logger, Processor redeliveryProcessor,
                                   RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy, Processor deadLetter,
                                   String deadLetterUri, boolean useOriginalMessagePolicy) {
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+        ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
+
         this.camelContext = camelContext;
         this.redeliveryProcessor = redeliveryProcessor;
         this.deadLetter = deadLetter;
