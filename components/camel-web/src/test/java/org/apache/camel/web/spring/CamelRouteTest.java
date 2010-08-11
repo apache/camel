@@ -58,7 +58,7 @@ public class CamelRouteTest extends Assert {
     public void setUp() throws Exception {
         applicationContext = new FileSystemXmlApplicationContext("src/main/webapp/WEB-INF/applicationContext.xml");
         applicationContext.start();
-        camelContext = (CamelContext)applicationContext.getBean("camelContext", CamelContext.class);
+        camelContext = applicationContext.getBean(CamelContext.class);
         assertNotNull("camelContext", camelContext);
     }
 
