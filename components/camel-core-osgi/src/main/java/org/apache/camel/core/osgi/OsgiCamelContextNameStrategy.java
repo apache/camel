@@ -23,11 +23,11 @@ import org.osgi.framework.BundleContext;
 
 public class OsgiCamelContextNameStrategy implements CamelContextNameStrategy {
 
-    private final AtomicInteger counter = new AtomicInteger(0);
+    private static final AtomicInteger COUNTER = new AtomicInteger(0);
     private final String name;
     
     public OsgiCamelContextNameStrategy(BundleContext context) {
-        name = "camel-" + context.getBundle().getBundleId() + "-" + counter.incrementAndGet();
+        name = "camel-" + context.getBundle().getBundleId() + "-" + COUNTER.incrementAndGet();
     }
 
     public String getName() {
