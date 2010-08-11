@@ -22,20 +22,7 @@ package org.apache.camel;
  * 
  * @version $Revision$
  */
-public interface Component {
-
-    /**
-     * Returns the context
-     * 
-     * @return the context of this component
-     */
-    CamelContext getCamelContext();
-
-    /**
-     * The {@link CamelContext} is injected into the component when it is added
-     * to it
-     */
-    void setCamelContext(CamelContext context);
+public interface Component extends CamelContextAware {
 
     /**
      * Attempt to resolve an endpoint for the given URI if the component is
@@ -44,6 +31,7 @@ public interface Component {
      * @param uri the URI to create
      * @return a newly created endpoint or null if this component cannot create
      *         instances of the given uri
+     * @throws Exception is thrown if error creating the endpoint
      */
     Endpoint createEndpoint(String uri) throws Exception;
     
