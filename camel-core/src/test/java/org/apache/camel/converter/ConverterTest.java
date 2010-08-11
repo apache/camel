@@ -220,7 +220,6 @@ public class ConverterTest extends TestCase {
     }
     
     public void testMandatoryConvertTo() {
-        
         CamelContext camel = new DefaultCamelContext();
         Exchange e = new DefaultExchange(camel);
         try {
@@ -229,6 +228,21 @@ public class ConverterTest extends TestCase {
         } catch (Exception ex) {
             assertTrue("Expect to get a NoTypeConversionAvailableException here", ex instanceof NoTypeConversionAvailableException); 
         }
-        
     }
+
+    public void testStringToChar() throws Exception {
+        char ch = converter.convertTo(char.class, "A");
+        assertEquals('A', ch);
+
+        ch = converter.convertTo(char.class, " ");
+        assertEquals(' ', ch);
+
+        try {
+            converter.mandatoryConvertTo(char.class, "ABC");
+            fail("Should have thrown an exception");
+        } catch (NoTypeConversionAvailableException e) {
+            assertEquals("java.lang.IllegalArgumentException: String must have exactly a length of 1: ABC", e.getCause().getMessage());
+        }
+    }
+
 }

@@ -94,6 +94,15 @@ public final class ObjectConverter {
     }
 
     @Converter
+    public static char toChar(String value) {
+        // must be 1 length string
+        if (value == null || value.length() != 1) {
+            throw new IllegalArgumentException("String must have exactly a length of 1: " + value);
+        }
+        return value.toCharArray()[0];
+    }
+
+    @Converter
     public static String fromCharArray(char[] value) {
         return new String(value);
     }
