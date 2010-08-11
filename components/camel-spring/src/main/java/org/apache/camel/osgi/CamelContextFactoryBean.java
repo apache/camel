@@ -46,6 +46,15 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
         this.bundleContext = bundleContext;
     }
     
+    protected SpringCamelContext createContext() {
+        SpringCamelContext ctx = newCamelContext();
+        // we don't the the ImplicitId as it will override the OsgiCamelContextNameStratgy
+        if (!isImplicitId()) {
+            ctx.setName(getId());
+        }
+        return ctx;
+    }
+    
     protected SpringCamelContext newCamelContext() {
         return new OsgiSpringCamelContext(getApplicationContext(), getBundleContext());
     }

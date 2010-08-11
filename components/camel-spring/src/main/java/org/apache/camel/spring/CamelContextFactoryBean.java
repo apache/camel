@@ -36,6 +36,7 @@ import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
+import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -51,6 +52,7 @@ import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -150,6 +152,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private ApplicationContext applicationContext;
     @XmlTransient
     private BeanPostProcessor beanPostProcessor;
+    @XmlTransient
+    private boolean implicitId;
+    
 
     @Override
     public Class getObjectType() {
@@ -276,8 +281,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      * Create the context
      */
     protected SpringCamelContext createContext() {
-        SpringCamelContext ctx = newCamelContext();
-        ctx.setName(getId());
+        SpringCamelContext ctx = newCamelContext();        
+        ctx.setName(getId());        
         return ctx;
     }
 
@@ -524,6 +529,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setDependsOn(String dependsOn) {
         this.dependsOn = dependsOn;
+    }
+    
+    public boolean isImplicitId() {
+        return implicitId;
+    }
+    
+    public void setImplicitId(boolean flag) {
+        implicitId = flag;
     }
 
 }
