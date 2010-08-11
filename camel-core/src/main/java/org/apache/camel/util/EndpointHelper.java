@@ -43,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
 public final class EndpointHelper {
 
     private static final transient Log LOG = LogFactory.getLog(EndpointHelper.class);
-    private static final AtomicLong endpointCounter = new AtomicLong(0);
+    private static final AtomicLong ENDPOINT_COUNTER = new AtomicLong(0);
 
     private EndpointHelper() {
         //Utility Class
@@ -369,6 +369,6 @@ public final class EndpointHelper {
      * A helper method for Endpoint implementations to create new Ids for Endpoints which also implement {@link HasId}
      */
     public static String createEndpointId() {
-        return "endpoint" + endpointCounter.incrementAndGet();
+        return "endpoint" + ENDPOINT_COUNTER.incrementAndGet();
     }
 }

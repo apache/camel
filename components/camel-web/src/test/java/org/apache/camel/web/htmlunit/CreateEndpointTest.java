@@ -24,16 +24,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.WebElement;
 
-import static org.junit.Assert.assertThat;
-
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 import static org.openqa.selenium.By.xpath;
 import static org.openqa.selenium.lift.Finders.links;
 import static org.openqa.selenium.lift.Matchers.atLeast;
 import static org.openqa.selenium.lift.Matchers.text;
-
 /**
  * @version $Revision$
  */
