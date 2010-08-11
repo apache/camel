@@ -47,7 +47,9 @@
               <tasks>
                 <replace casesensitive="true" file="${project.build.directory}/classes/archetype-resources/pom.xml">
                   <replacefilter token="$CAMEL_VERSION_REPLACEME$" value="${project.version}" /> 
-                  <replacefilter token="$LOG4J_VERSION_REPLACEME$" value="${log4j-version}" /> 
+                  <replacefilter token="$LOG4J_VERSION_REPLACEME$" value="${log4j-version}" />
+                  <replacefilter token="$JAXB_API_VERSION_REPLACEME$" value="${jaxb-api-version}" /> 
+                  <replacefilter token="$JAXB_IMPL_VERSION_REPLACEME$" value="${jaxb-version}" />
                 </replace>
               </tasks>
             </configuration>

@@ -34,6 +34,9 @@
     <activemq-version>$ACTIVEMQ_VERSION_REPLACEME$</activemq-version>
     <xbean-spring-version>$XBEAN_VERSION_REPLACEME$</xbean-spring-version>
     <log4j-version>$LOG4J_VERSION_REPLACEME$</log4j-version>
+    <spring-version>$SPRING_VESRION_REPLACEME$</spring-version>
+    <jaxb-api-version>$JAXB_API_VERSION_REPLACEME$</jaxb-api-version>
+    <jaxb-impl-version>$JAXB_IMPL_VERSION_REPLACEME$</jaxb-impl-version>
   </properties>
 
   <dependencies>
@@ -66,7 +69,12 @@
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-spring</artifactId>
       <version>${xbean-spring-version}</version>
-    </dependency>    
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring-version}</version>
+    </dependency>   
     <dependency>
       <groupId>log4j</groupId> 
       <artifactId>log4j</artifactId> 
@@ -96,4 +104,26 @@
 
     </plugins>
   </build>
+  
+  <profiles>
+  	<profile>
+      <id>jdk1.5</id>
+      <activation>
+        <jdk>1.5</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>javax.xml.bind</groupId>
+          <artifactId>jaxb-api</artifactId>
+          <version>${jaxb-api-version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-impl</artifactId>
+          <version>${jaxb-impl-version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+  
 </project>

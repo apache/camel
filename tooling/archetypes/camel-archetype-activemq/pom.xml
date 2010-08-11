@@ -49,7 +49,10 @@
                   <replacefilter token="$CAMEL_VERSION_REPLACEME$" value="${project.version}" /> 
                   <replacefilter token="$ACTIVEMQ_VERSION_REPLACEME$" value="${activemq-version}" /> 
                   <replacefilter token="$XBEAN_VERSION_REPLACEME$" value="${xbean-spring-version}" /> 
-                  <replacefilter token="$LOG4J_VERSION_REPLACEME$" value="${log4j-version}" /> 
+                  <replacefilter token="$LOG4J_VERSION_REPLACEME$" value="${log4j-version}" />
+                  <replacefilter token="$SPRING_VESRION_REPLACEME$" value="${spring-version}" />
+                  <replacefilter token="$JAXB_API_VERSION_REPLACEME$" value="${jaxb-api-version}" /> 
+                  <replacefilter token="$JAXB_IMPL_VERSION_REPLACEME$" value="${jaxb-version}" />
                 </replace>
               </tasks>
             </configuration>
