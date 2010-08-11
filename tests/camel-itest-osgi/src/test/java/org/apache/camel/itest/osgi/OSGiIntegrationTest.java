@@ -16,6 +16,7 @@
  */
 package org.apache.camel.itest.osgi;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -44,6 +45,17 @@ public class OSGiIntegrationTest extends OSGiIntegrationTestSupport {
         mock.expectedBodiesReceived("Hello World");
         template.sendBody("seda:foo", "Hello World");
         assertMockEndpointsSatisfied();        
+    }
+    
+    @Test
+    public void testCamelContextName() throws Exception {
+        // should get the context name here
+        assertTrue("Get the wrong camel context name.", context.getName().indexOf("-1") > 0);
+        assertTrue("Get the wrong camel context name.", context.getName().indexOf("camel-1") < 0);
+        
+        CamelContext context2 = createCamelContext();
+        assertTrue("Get the wrong camel context name.", context2.getName().indexOf("-2") > 0);
+        assertTrue("Get the wrong camel context name.", context2.getName().indexOf("camel-2") < 0);
     }
    
 }
