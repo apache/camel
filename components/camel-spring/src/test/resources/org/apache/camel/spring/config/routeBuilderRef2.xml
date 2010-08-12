@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="configuredRouteBuilder2" class="org.apache.camel.spring.xml.ConfiguredRouteBuilder2" depends-on="myQueue">
+    <bean id="configuredRouteBuilder2" class="org.apache.camel.spring.xml.ConfiguredRouteBuilder2">
         <property name="queueName" ref="myQueue"/>
     </bean>
 
