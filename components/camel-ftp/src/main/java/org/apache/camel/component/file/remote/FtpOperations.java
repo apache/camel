@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -172,6 +173,25 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
 
+        // site commands
+        if (endpoint.getConfiguration().getSiteCommand() != null) {
+            // commands can be separated using new line
+            Iterator it = ObjectHelper.createIterator(endpoint.getConfiguration().getSiteCommand(), "\n");
+            while (it.hasNext()) {
+                Object next = it.next();
+                String command = endpoint.getCamelContext().getTypeConverter().convertTo(String.class, next);
+                if (log.isTraceEnabled()) {
+                    log.trace("Site command to sent: " + command);
+                }
+                if (command != null) {
+                    boolean result = sendSiteCommand(command);
+                    if (!result) {
+                        throw new GenericFileOperationFailedException("Site command: " + command + " returned false");
+                    }
+                }
+            }
+        }
+
         return true;
     }
 
@@ -218,7 +238,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
         if (log.isTraceEnabled()) {
-            log.trace("Building directory: " + directory);
+            log.trace("makeDirectory(" + directory + ")");
         }
         try {
             String originalDirectory = client.printWorkingDirectory();
@@ -251,6 +271,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+        if (log.isTraceEnabled()) {
+            log.trace("retrieveFile(" + name + ")");
+        }
         if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
             // local work directory is configured so we should store file content as files in this local directory
             return retrieveFileToFileInLocalWorkDirectory(name, exchange);
@@ -386,6 +409,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+        if (log.isTraceEnabled()) {
+            log.trace("storeFile(" + name + ")");
+        }
 
         // if an existing file already exists what should we do?
         if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail) {
@@ -419,6 +445,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
+        if (log.isTraceEnabled()) {
+            log.trace("existsFile(" + name + ")");
+        }
         // check whether a file already exists
         String directory = FileUtil.onlyPath(name);
         if (directory == null) {
@@ -444,6 +473,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
+        if (log.isTraceEnabled()) {
+            log.trace("printWorkingDirectory()");
+        }
         try {
             return client.printWorkingDirectory();
         } catch (IOException e) {
@@ -453,7 +485,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         if (log.isTraceEnabled()) {
-            log.trace("Changing current directory to: " + path);
+            log.trace("changeWorkingDirectory(" + path + ")");
         }
         try {
             client.changeWorkingDirectory(path);
@@ -463,6 +495,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public List<FTPFile> listFiles() throws GenericFileOperationFailedException {
+        if (log.isTraceEnabled()) {
+            log.trace("listFiles()");
+        }
         try {
             final List<FTPFile> list = new ArrayList<FTPFile>();
             FTPFile[] files = client.listFiles();
@@ -477,6 +512,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public List<FTPFile> listFiles(String path) throws GenericFileOperationFailedException {
+        if (log.isTraceEnabled()) {
+            log.trace("listFiles(" + path + ")");
+        }
         // use current directory if path not given
         if (ObjectHelper.isEmpty(path)) {
             path = ".";
@@ -496,8 +534,22 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean sendNoop() throws GenericFileOperationFailedException {
+        if (log.isTraceEnabled()) {
+            log.trace("sendNoOp");
+        }
         try {
             return client.sendNoOp();
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        }
+    }
+
+    public boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
+        if (log.isTraceEnabled()) {
+            log.trace("sendSiteCommand(" + command + ")");
+        }
+        try {
+            return client.sendSiteCommand(command);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }

@@ -545,4 +545,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         // is not implemented
         return true;
     }
+
+    public boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
+        // is not implemented
+        return true;
+    }
 }

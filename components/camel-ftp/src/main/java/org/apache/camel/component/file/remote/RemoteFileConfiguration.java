@@ -35,6 +35,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int timeout = 30000;
     private int soTimeout;
     private boolean throwExceptionOnConnectFailed;
+    private String siteCommand;
 
     public RemoteFileConfiguration() {
     }
@@ -183,5 +184,20 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      */
     public void setThrowExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
         this.throwExceptionOnConnectFailed = throwExceptionOnConnectFailed;
+    }
+
+    public String getSiteCommand() {
+        return siteCommand;
+    }
+
+    /**
+     * Sets optional site command(s) to be executed after successful login.
+     * <p/>
+     * Multiple site commands can be separated using a new line character (\n).
+     *
+     * @param siteCommand the site command(s).
+     */
+    public void setSiteCommand(String siteCommand) {
+        this.siteCommand = siteCommand;
     }
 }
