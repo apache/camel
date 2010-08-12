@@ -140,7 +140,8 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
 
             workingDirectory("target/paxrunner/"),
 
-            felix(), equinox());
+            //felix(),
+            equinox());
 
         return options;
     }

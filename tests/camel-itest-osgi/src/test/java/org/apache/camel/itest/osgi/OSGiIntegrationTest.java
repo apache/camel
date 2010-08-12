@@ -49,7 +49,7 @@ public class OSGiIntegrationTest extends OSGiIntegrationTestSupport {
     
     @Test
     public void testCamelContextName() throws Exception {
-        // should get the context name here
+        // should get the context name with osgi bundle id
         assertTrue("Get the wrong camel context name.", context.getName().indexOf("-1") > 0);
         assertTrue("Get the wrong camel context name.", context.getName().indexOf("camel-1") < 0);
         
