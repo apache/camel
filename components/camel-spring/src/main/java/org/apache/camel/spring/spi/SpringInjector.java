@@ -66,7 +66,6 @@ public class SpringInjector implements Injector {
         this.dependencyCheck = dependencyCheck;
     }
 
-
     public ConfigurableApplicationContext getApplicationContext() {
         return applicationContext;
     }
