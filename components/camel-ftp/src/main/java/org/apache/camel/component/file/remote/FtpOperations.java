@@ -181,7 +181,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 Object next = it.next();
                 String command = endpoint.getCamelContext().getTypeConverter().convertTo(String.class, next);
                 if (log.isTraceEnabled()) {
-                    log.trace("Site command to sent: " + command);
+                    log.trace("Site command to send: " + command);
                 }
                 if (command != null) {
                     boolean result = sendSiteCommand(command);
