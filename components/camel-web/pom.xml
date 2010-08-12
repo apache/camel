@@ -148,7 +148,18 @@
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-atom</artifactId>
 			<version>${jersey-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>rome</groupId>
+					<artifactId>rome</artifactId>
+				</exclusion>
+			</exclusions>      
 		</dependency>
+		<dependency>
+                        <groupId>rome</groupId>
+                        <artifactId>rome</artifactId>
+                        <version>${rome-version}</version>
+                </dependency>
 		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>jsr250-api</artifactId>
