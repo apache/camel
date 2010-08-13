@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * A bridge to have regular interceptors implemented as {@link org.apache.camel.Processor}
@@ -99,12 +100,13 @@ public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        ServiceHelper.startServices(target, interceptor);
     }
 
     @Override
     protected void doStop() throws Exception {
         callback.remove();
         interceptorDone.remove();
+        ServiceHelper.stopServices(interceptor, target);
     }
 }
