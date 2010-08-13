@@ -44,4 +44,18 @@ public class StringHelperTest extends TestCase {
         assertEquals(0, StringHelper.countChar(null, ' '));
     }
 
+    public void testRemoveQuotes() throws Exception {
+        assertEquals("Hello World", StringHelper.removeQuotes("Hello World"));
+        assertEquals("", StringHelper.removeQuotes(""));
+        assertEquals(null, StringHelper.removeQuotes(null));
+        assertEquals(" ", StringHelper.removeQuotes(" "));
+        assertEquals("foo", StringHelper.removeQuotes("'foo'"));
+        assertEquals("foo", StringHelper.removeQuotes("'foo"));
+        assertEquals("foo", StringHelper.removeQuotes("foo'"));
+        assertEquals("foo", StringHelper.removeQuotes("\"foo\""));
+        assertEquals("foo", StringHelper.removeQuotes("\"foo"));
+        assertEquals("foo", StringHelper.removeQuotes("foo\""));
+        assertEquals("foo", StringHelper.removeQuotes("'foo\""));
+    }
+
 }

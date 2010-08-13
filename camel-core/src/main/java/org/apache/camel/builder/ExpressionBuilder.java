@@ -102,6 +102,68 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for the header value with the given name converted to the given type
+     * <p/>
+     * Will fallback and look in properties if not found in headers.
+     *
+     * @param headerName the name of the header the expression will return
+     * @param type the type to convert to
+     * @return an expression object which will return the header value
+     */
+    public static <T> Expression headerExpression(final String headerName, final Class<T> type) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Object header = exchange.getIn().getHeader(headerName, type);
+                if (header == null) {
+                    // fall back on a property
+                    header = exchange.getProperty(headerName, type);
+                }
+                return header;
+            }
+
+            @Override
+            public String toString() {
+                return "headerAs(" + headerName + ", " + type + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for the header value with the given name converted to the given type
+     * <p/>
+     * Will fallback and look in properties if not found in headers.
+     *
+     * @param headerName the name of the header the expression will return
+     * @param name the type to convert to as a FQN class name
+     * @return an expression object which will return the header value
+     */
+    public static Expression headerExpression(final String headerName, final String name) {
+        return new ExpressionAdapter() {
+            @SuppressWarnings("unchecked")
+            public Object evaluate(Exchange exchange) {
+                Class type;
+                try {
+                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(name);
+                } catch (ClassNotFoundException e) {
+                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                }
+
+                Object header = exchange.getIn().getHeader(headerName, type);
+                if (header == null) {
+                    // fall back on a property
+                    header = exchange.getProperty(headerName, type);
+                }
+                return header;
+            }
+
+            @Override
+            public String toString() {
+                return "headerAs(" + headerName + ", " + name + ")";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the exchanges inbound message header invoking methods defined
      * in a simple OGNL notation
      *

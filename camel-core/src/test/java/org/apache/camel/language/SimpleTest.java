@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelAuthorizationException;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
@@ -162,9 +163,47 @@ public class SimpleTest extends LanguageTestSupport {
 
     public void testBodyAs() throws Exception {
         assertExpression("${bodyAs(String)}", "<hello id='m123'>world!</hello>");
+        assertExpression("${bodyAs('String')}", "<hello id='m123'>world!</hello>");
 
         exchange.getIn().setBody(456);
         assertExpression("${bodyAs(Integer)}", 456);
+        assertExpression("${bodyAs(int)}", 456);
+        assertExpression("${bodyAs('int')}", 456);
+
+        try {
+            assertExpression("${bodyAs(XXX)}", 456);
+            fail("Should have thrown an exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+        }
+    }
+
+    public void testHeaderAs() throws Exception {
+        assertExpression("${headerAs(foo,String)}", "abc");
+
+        assertExpression("${headerAs(bar,int)}", 123);
+        assertExpression("${headerAs(bar, int)}", 123);
+        assertExpression("${headerAs('bar', int)}", 123);
+        assertExpression("${headerAs('bar','int')}", 123);
+        assertExpression("${headerAs('bar','Integer')}", 123);
+        assertExpression("${headerAs('bar',\"int\")}", 123);
+        assertExpression("${headerAs(bar,String)}", "123");
+        
+        assertExpression("${headerAs(unknown,String)}", null);
+
+        try {
+            assertExpression("${headerAs(unknown String)}", null);
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertEquals("Illegal syntax: Valid syntax: ${headerAs(key, type)} was: headerAs(unknown String)", e.getMessage());
+        }
+
+        try {
+            assertExpression("${headerAs(bar,XXX)}", 123);
+            fail("Should have thrown an exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+        }
     }
 
     public void testIllegalSyntax() throws Exception {

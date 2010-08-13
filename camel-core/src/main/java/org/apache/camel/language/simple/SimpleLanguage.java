@@ -21,6 +21,7 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A <a href="http://camel.apache.org/simple.html">simple language</a>
@@ -128,6 +129,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             if (type == null) {
                 throw new ExpressionIllegalSyntaxException("Valid syntax: ${bodyAs(type)} was: " + expression);
             }
+            type = StringHelper.removeQuotes(type);
             return ExpressionBuilder.bodyExpression(type);
         }
 
@@ -152,6 +154,24 @@ public class SimpleLanguage extends SimpleLanguageSupport {
                 throw new ExpressionIllegalSyntaxException("Valid syntax: ${exception.OGNL} was: " + expression);
             }
             return ExpressionBuilder.exchangeExceptionOgnlExpression(remainder);        
+        }
+
+        // headerAs
+        remainder = ifStartsWithReturnRemainder("headerAs", expression);
+        if (remainder != null) {
+            String keyAndType = ObjectHelper.between(remainder, "(", ")");
+            if (keyAndType == null) {
+                throw new ExpressionIllegalSyntaxException("Valid syntax: ${headerAs(key, type)} was: " + expression);
+            }
+
+            String key = ObjectHelper.before(keyAndType, ",");
+            String type = ObjectHelper.after(keyAndType, ",");
+            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type)) {
+                throw new ExpressionIllegalSyntaxException("Valid syntax: ${headerAs(key, type)} was: " + expression);
+            }
+            key = StringHelper.removeQuotes(key);
+            type = StringHelper.removeQuotes(type);
+            return ExpressionBuilder.headerExpression(key, type);
         }
 
         // in header expression

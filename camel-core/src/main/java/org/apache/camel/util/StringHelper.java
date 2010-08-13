@@ -30,11 +30,9 @@ public final class StringHelper {
     /**
      * Ensures that <code>s</code> is friendly for a URL or file system.
      * 
-     * @param s
-     *            String to be sanitized.
+     * @param s String to be sanitized.
      * @return sanitized version of <code>s</code>.
-     * @throws NullPointerException
-     *             if <code>s</code> is <code>null</code>.
+     * @throws NullPointerException if <code>s</code> is <code>null</code>.
      */
     public static String sanitize(String s) {
         return s
@@ -66,6 +64,16 @@ public final class StringHelper {
         }
 
         return matches;
+    }
+
+    public static String removeQuotes(String s) {
+        if (ObjectHelper.isEmpty(s)) {
+            return s;
+        }
+
+        s = s.replaceAll("'", "");
+        s = s.replaceAll("\"", "");
+        return s;
     }
     
 }
