@@ -93,6 +93,26 @@ public class ValidatingProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testNonWellFormedXml() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:invalid");
+        mock.expectedMessageCount(1);
+
+        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>"
+            + "user xmlns=\"http://foo.com/bar\">"
+            + "  <id>1</id>"
+            + "  <username>davsclaus</username>";
+
+        try {
+            template.sendBody("direct:start", xml);
+            fail("Should have thrown a RuntimeCamelException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof SchemaValidationException);
+            // expected
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
     public void testNoXMLBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:invalid");
         mock.expectedMessageCount(1);

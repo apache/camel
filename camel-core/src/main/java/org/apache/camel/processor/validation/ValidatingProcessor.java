@@ -19,6 +19,7 @@ package org.apache.camel.processor.validation;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
@@ -32,6 +33,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -82,7 +84,15 @@ public class ValidatingProcessor implements Processor {
         ValidatorErrorHandler handler = errorHandler.getClass().newInstance();
         validator.setErrorHandler(handler);
 
-        validator.validate(source, result);
+        try {
+            validator.validate(source, result);
+        } catch (SAXParseException e) {
+            // can be thrown for non well formed XML
+            throw new SchemaValidationException(exchange, schema, 
+                                                Collections.singletonList(e), 
+                                                Collections.<SAXParseException>emptyList(), 
+                                                Collections.<SAXParseException>emptyList());
+        }
 
         handler.handleErrors(exchange, schema, result);
     }
