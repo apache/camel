@@ -59,13 +59,13 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
 
     @Autowired
     protected CamelContext context;
-    private Endpoint endpoint;
+    protected Endpoint endpoint;
 
     @Before
     public void setUp() throws Exception {
-        endpoint = Endpoint.publish("http://localhost:9092/jaxws-mtom/hello", new HelloImpl());
+        endpoint = Endpoint.publish("http://localhost:9092/jaxws-mtom/hello", getServiceImpl());
         SOAPBinding binding = (SOAPBinding)endpoint.getBinding();
-        binding.setMTOMEnabled(true);
+        binding.setMTOMEnabled(isMtomEnabled());
     }
     
     @After
@@ -139,4 +139,12 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
 
     }
     
+    protected boolean isMtomEnabled() {
+        return true;
+    }
+
+    protected Object getServiceImpl() {
+        return new HelloImpl();
+    }
+
 }

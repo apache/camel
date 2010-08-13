@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.cxf.message.Message;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a> 
@@ -70,6 +71,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
                 Map<String, Object> copy = new HashMap<String, Object>();
                 copy.putAll(bean.getProperties());     
                 setProperties(result, copy);      
+                result.setMtomEnabled(Boolean.valueOf((String)copy.get(Message.MTOM_ENABLED)));
             }
             
         } else {

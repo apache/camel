@@ -96,6 +96,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean isSetDefaultBus;
     private boolean loggingFeatureEnabled;
     private String address;
+    private boolean mtomEnabled;
 
     public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
         super(remaining, cxfComponent);
@@ -562,6 +563,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public String getAddress() {
         return address;
+    }
+
+    public void setMtomEnabled(boolean mtomEnabled) {
+        this.mtomEnabled = mtomEnabled;
+    }
+
+    public boolean isMtomEnabled() {
+        return mtomEnabled;
     }
 
     /**

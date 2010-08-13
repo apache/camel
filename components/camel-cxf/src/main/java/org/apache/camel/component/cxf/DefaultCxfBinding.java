@@ -94,12 +94,13 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         // propagate attachments
         Set<Attachment> attachments = null;
+        boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
         for (Map.Entry<String, DataHandler> entry : camelExchange.getIn().getAttachments().entrySet()) {
             if (attachments == null) {
                 attachments = new HashSet<Attachment>();
             }
             AttachmentImpl attachment = new AttachmentImpl(entry.getKey(), entry.getValue());
-            attachment.setXOP(true); // only supports MTOM
+            attachment.setXOP(isXop);
             attachments.add(attachment);
         }
         
@@ -329,12 +330,13 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         // propagate attachments
         Set<Attachment> attachments = null;
+        boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
         for (Map.Entry<String, DataHandler> entry : camelExchange.getOut().getAttachments().entrySet()) {
             if (attachments == null) {
                 attachments = new HashSet<Attachment>();
             }
             AttachmentImpl attachment = new AttachmentImpl(entry.getKey(), entry.getValue());
-            attachment.setXOP(true); // only supports MTOM
+            attachment.setXOP(isXop); 
             attachments.add(attachment);
         }
         

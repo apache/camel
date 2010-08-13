@@ -20,7 +20,7 @@
        xmlns:cxf="http://camel.apache.org/schema/cxf"
 
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
@@ -32,9 +32,8 @@
             xmlns:ns="http://apache.org/camel/cxf/mtom_feature">
 
         <cxf:properties>
-            <entry key="mtom-enabled" value="true"/>
             <entry key="dataFormat" value="PAYLOAD"/>
-            <entry key="loggingFeatureEnabled" value="false"/>
+            <entry key="loggingFeatureEnabled" value="false"/>            
         </cxf:properties>      
 
    </cxf:cxfEndpoint>            
@@ -45,5 +44,5 @@
           <to uri="cxf:bean:serviceEndpoint" />
       </route>
    </camelContext>
-   
+
 </beans>

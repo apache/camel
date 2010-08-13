@@ -44,6 +44,11 @@ public final class MtomTestHelper {
         + " href=\"cid:" + REQ_PHOTO_CID + "\"/>"
         + "</photo><image><xop:Include xmlns:xop=\"http://www.w3.org/2004/08/xop/include\""
         + " href=\"cid:" + REQ_IMAGE_CID + "\"/></image></Detail>";
+
+    static final String MTOM_DISABLED_REQ_MESSAGE = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        + "<Detail xmlns=\"http://apache.org/camel/cxf/mtom_feature/types\">"
+        + "<photo>cid:" + REQ_PHOTO_CID + "</photo>"
+        + "<image>cid:" + REQ_IMAGE_CID + "</image></Detail>";
     
     static final String RESP_PHOTO_CID = "4c7b78dc-356a-4fca-8877-068ee2f31824-7@apache.org";
     static final String RESP_IMAGE_CID = "4c7b78dc-356a-4fca-8877-068ee2f31824-8@apache.org";
@@ -54,6 +59,11 @@ public final class MtomTestHelper {
         + " href=\"cid:" + RESP_PHOTO_CID + "\"/>"
         + "</photo><image><xop:Include xmlns:xop=\"http://www.w3.org/2004/08/xop/include\""
         + " href=\"cid:" + RESP_IMAGE_CID + "\"/></image></DetailResponse>";
+
+    static final String MTOM_DISABLED_RESP_MESSAGE = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        + "<DetailResponse xmlns=\"http://apache.org/camel/cxf/mtom_feature/types\">"
+        + "<photo>cid:" + RESP_PHOTO_CID + "</photo>"
+        + "<image>cid:" + RESP_IMAGE_CID + "</image></DetailResponse>";
 
     static byte[] requestJpeg;
     static byte[] responseJpeg;

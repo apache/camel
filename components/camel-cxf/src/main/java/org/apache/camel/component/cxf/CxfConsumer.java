@@ -27,6 +27,7 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Exchange;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
@@ -84,6 +85,8 @@ public class CxfConsumer extends DefaultConsumer {
                     LOG.trace("Set Exchange property: " + DataFormat.class.getName() 
                             + "=" + dataFormat);
                 }
+                
+                camelExchange.setProperty(Message.MTOM_ENABLED, String.valueOf(endpoint.isMtomEnabled()));
                 
                 // bind the CXF request into a Camel exchange
                 binding.populateExchangeFromCxfRequest(cxfExchange, camelExchange);

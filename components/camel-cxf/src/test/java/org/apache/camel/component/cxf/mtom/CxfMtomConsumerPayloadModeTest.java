@@ -62,7 +62,7 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 List<Element> elements = new ArrayList<Element>();
-                elements.add(DOMUtils.readXml(new StringReader(MtomTestHelper.REQ_MESSAGE)).getDocumentElement());
+                elements.add(DOMUtils.readXml(new StringReader(getRequestMessage())).getDocumentElement());
                 CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
                     elements);
                 exchange.getIn().setBody(body);
@@ -123,5 +123,9 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
         }
     }
     // END SNIPPET: consumer
+
+    protected String getRequestMessage() {
+        return MtomTestHelper.REQ_MESSAGE;
+    }
 
 }

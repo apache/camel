@@ -141,6 +141,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         // create invocation context
         WrappedMessageContext requestContext = new WrappedMessageContext(
                 new HashMap<String, Object>(), null, Scope.APPLICATION);
+
+        camelExchange.setProperty(Message.MTOM_ENABLED, String.valueOf(endpoint.isMtomEnabled()));
         
         // set data format mode in exchange
         DataFormat dataFormat = endpoint.getDataFormat();
