@@ -16,6 +16,10 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.validation.NoXmlBodyValidationException;
+
 /**
  * Unit test of ValidatingProcessor.
  */
@@ -26,6 +30,26 @@ public class ValidatingDomProcessorTest extends ValidatingProcessorTest {
         super.setUp();
         validating.setUseDom(true);
         assertEquals(true, validating.isUseDom());
+    }
+
+    public void testNonWellFormedXml() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:invalid");
+        mock.expectedMessageCount(1);
+
+        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>"
+            + "user xmlns=\"http://foo.com/bar\">"
+            + "  <id>1</id>"
+            + "  <username>davsclaus</username>";
+
+        try {
+            template.sendBody("direct:start", xml);
+            fail("Should have thrown a RuntimeCamelException");
+        } catch (CamelExecutionException e) {
+            // cannot be converted to DOM
+            assertIsInstanceOf(NoXmlBodyValidationException.class, e.getCause());
+        }
+
+        assertMockEndpointsSatisfied();
     }
 
 }
