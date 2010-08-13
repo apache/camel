@@ -89,7 +89,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.foo} == def", false);
         assertExpression("${in.header.foo} == '1'", false);
 
-        // integer to string comparioson
+        // integer to string comparison
         assertExpression("${in.header.bar} == '123'", true);
         assertExpression("${in.header.bar} == 123", true);
         assertExpression("${in.header.bar} == '444'", false);
@@ -105,7 +105,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.foo} != def", true);
         assertExpression("${in.header.foo} != '1'", true);
 
-        // integer to string comparioson
+        // integer to string comparison
         assertExpression("${in.header.bar} != '123'", false);
         assertExpression("${in.header.bar} != 123", false);
         assertExpression("${in.header.bar} != '444'", true);
@@ -113,14 +113,14 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.bar} != '1'", true);
     }
 
-    public void testGreatherThanOperator() throws Exception {
+    public void testGreaterThanOperator() throws Exception {
         // string to string comparison
         assertExpression("${in.header.foo} > 'aaa'", true);
         assertExpression("${in.header.foo} > aaa", true);
         assertExpression("${in.header.foo} > 'def'", false);
         assertExpression("${in.header.foo} > def", false);
 
-        // integer to string comparioson
+        // integer to string comparison
         assertExpression("${in.header.bar} > '100'", true);
         assertExpression("${in.header.bar} > 100", true);
         assertExpression("${in.header.bar} > '123'", false);
@@ -128,7 +128,43 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.bar} > '200'", false);
     }
 
-    public void testGreatherThanOrEqualOperator() throws Exception {
+    public void testGreaterThanStringToInt() throws Exception {
+        // set a String value
+        exchange.getIn().setHeader("num", "70");
+
+        // string to int comparison
+        assertExpression("${in.header.num} > 100", false);
+        assertExpression("${in.header.num} > 100", false);
+        assertExpression("${in.header.num} > 80", false);
+        assertExpression("${in.header.num} > 800", false);
+        assertExpression("${in.header.num} > 1", true);
+        assertExpression("${in.header.num} > 8", true);
+        assertExpression("${in.header.num} > 48", true);
+        assertExpression("${in.header.num} > 69", true);
+        assertExpression("${in.header.num} > 71", false);
+        assertExpression("${in.header.num} > 88", false);
+        assertExpression("${in.header.num} > 777", false);
+    }
+
+    public void testLessThanStringToInt() throws Exception {
+        // set a String value
+        exchange.getIn().setHeader("num", "70");
+
+        // string to int comparison
+        assertExpression("${in.header.num} < 100", true);
+        assertExpression("${in.header.num} < 100", true);
+        assertExpression("${in.header.num} < 80", true);
+        assertExpression("${in.header.num} < 800", true);
+        assertExpression("${in.header.num} < 1", false);
+        assertExpression("${in.header.num} < 8", false);
+        assertExpression("${in.header.num} < 48", false);
+        assertExpression("${in.header.num} < 69", false);
+        assertExpression("${in.header.num} < 71", true);
+        assertExpression("${in.header.num} < 88", true);
+        assertExpression("${in.header.num} < 777", true);
+    }
+
+    public void testGreaterThanOrEqualOperator() throws Exception {
         // string to string comparison
         assertExpression("${in.header.foo} >= 'aaa'", true);
         assertExpression("${in.header.foo} >= aaa", true);
@@ -136,7 +172,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.foo} >= abc", true);
         assertExpression("${in.header.foo} >= 'def'", false);
 
-        // integer to string comparioson
+        // integer to string comparison
         assertExpression("${in.header.bar} >= '100'", true);
         assertExpression("${in.header.bar} >= 100", true);
         assertExpression("${in.header.bar} >= '123'", true);
@@ -151,7 +187,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.foo} < 'def'", true);
         assertExpression("${in.header.foo} < def", true);
 
-        // integer to string comparioson
+        // integer to string comparison
         assertExpression("${in.header.bar} < '100'", false);
         assertExpression("${in.header.bar} < 100", false);
         assertExpression("${in.header.bar} < '123'", false);
@@ -167,7 +203,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.foo} <= abc", true);
         assertExpression("${in.header.foo} <= 'def'", true);
 
-        // integer to string comparioson
+        // integer to string comparison
         assertExpression("${in.header.bar} <= '100'", false);
         assertExpression("${in.header.bar} <= 100", false);
         assertExpression("${in.header.bar} <= '123'", true);

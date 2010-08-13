@@ -113,6 +113,13 @@ public final class ObjectHelper {
     @SuppressWarnings("unchecked")
     public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
 
+        // if both values is numeric then compare using numeric
+        Long leftNum = converter.convertTo(Long.class, leftValue);
+        Long rightNum = converter.convertTo(Long.class, rightValue);
+        if (leftNum != null && rightNum != null) {
+            return leftNum.compareTo(rightNum);
+        }
+
         // prefer to NOT coerce to String so use the type which is not String
         // for example if we are comparing String vs Integer then prefer to coerce to Integer
         // as all types can be converted to String which does not work well for comparison
