@@ -142,15 +142,18 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
             
             dh = map.get(MtomTestHelper.REQ_IMAGE_CID);
             Assert.assertEquals("image/jpeg", dh.getContentType());
-            Object content = null;
-            try {
-                content = (BufferedImage)dh.getContent();
+
+            BufferedImage bufferedImage = null;
+            try {  
+                bufferedImage = ImageIO.read(dh.getInputStream());
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Assert.assertEquals(41, ((BufferedImage)content).getWidth());
-            Assert.assertEquals(39, ((BufferedImage)content).getHeight());  
-            
+            Assert.assertNotNull(bufferedImage);
+            Assert.assertEquals(41, bufferedImage.getWidth());
+            Assert.assertEquals(39, bufferedImage.getHeight());  
+
             // add output attachments
             map = (Map) ctx.getMessageContext().get(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS); 
 
