@@ -19,44 +19,25 @@ package org.apache.camel.core.osgi;
 import org.apache.camel.core.osgi.test.MyService;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
+import org.osgi.application.ApplicationContext;
 
 public class ServiceRegistryTest extends CamelOsgiTestSupport {
 
     @Test
     public void camelContextFactoryServiceRegistryTest() throws Exception {
-//        CamelContextFactory factory = new CamelContextFactory();
-//        factory.setBundleContext(getBundleContext());
-//        DefaultCamelContext context = factory.createContext();
-//        context.start();
-//        MyService myService = context.getRegistry().lookup(MyService.class.getName(), MyService.class);
-//        assertNotNull("MyService should not be null", myService);
-//
-//        Object service = context.getRegistry().lookup(MyService.class.getName());
-//        assertNotNull("MyService should not be null", service);
-//
-//        service = context.getRegistry().lookupByType(MyService.class);
-//        assertNotNull("MyService should not be null", service);
-//        context.stop();
+        
+        DefaultCamelContext context = new OsgiDefaultCamelContext(getBundleContext());
+        context.start();
+        MyService myService = context.getRegistry().lookup(MyService.class.getName(), MyService.class);
+        assertNotNull("MyService should not be null", myService);
+
+        Object service = context.getRegistry().lookup(MyService.class.getName());
+        assertNotNull("MyService should not be null", service);
+
+        service = context.getRegistry().lookupByType(MyService.class);
+        assertNotNull("MyService should not be null", service);
+        context.stop();
     }
     
-    @Test
-    public void camelContextFactoryBeanServiceRegistryTest() throws Exception {
-//        CamelContextFactoryBean factoryBean = new CamelContextFactoryBean();
-//        factoryBean.setBundleContext(getBundleContext());
-//        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/osgi/camelContext.xml");
-//        factoryBean.setApplicationContext(applicationContext);
-//        DefaultCamelContext context = factoryBean.getContext();
-//        context.start();
-//        MyService myService = context.getRegistry().lookup(MyService.class.getName(), MyService.class);
-//        assertNotNull("MyService should not be null", myService);
-//
-//        Object service = context.getRegistry().lookup(MyService.class.getName());
-//        assertNotNull("MyService should not be null", service);
-//
-//        service = context.getRegistry().lookupByType(MyService.class);
-//        assertNotNull("MyService should not be null", service);
-//
-//        context.stop();
-    }
-
+   
 }

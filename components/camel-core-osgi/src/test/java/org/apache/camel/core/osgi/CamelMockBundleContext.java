@@ -38,7 +38,7 @@ public class CamelMockBundleContext extends MockBundleContext {
 
     public Object getService(ServiceReference reference) {
         String[] classNames = (String[]) reference.getProperty(Constants.OBJECTCLASS);        
-        if (classNames[0].equals("org.apache.camel.osgi.test.MyService")) {
+        if (classNames[0].equals("org.apache.camel.core.osgi.test.MyService")) {
             return new MyService();
         } else if (classNames[0].equals(ComponentResolver.class.getName())) {
             return new ComponentResolver() {
