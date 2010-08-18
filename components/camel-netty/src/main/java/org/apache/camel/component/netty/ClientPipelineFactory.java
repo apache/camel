@@ -16,95 +16,53 @@
  */
 package org.apache.camel.component.netty;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import javax.net.ssl.SSLEngine;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.netty.handlers.ClientChannelHandler;
-import org.apache.camel.component.netty.ssl.SSLEngineFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.channel.Channels;
-import org.jboss.netty.handler.ssl.SslHandler;
-import org.jboss.netty.handler.timeout.ReadTimeoutHandler;
 
-public class ClientPipelineFactory implements ChannelPipelineFactory {
-    private static final transient Log LOG = LogFactory.getLog(ClientPipelineFactory.class);
-    private final NettyProducer producer;
-    private final Exchange exchange;
-    private final AsyncCallback callback;
+public abstract class ClientPipelineFactory implements ChannelPipelineFactory {
+    protected NettyProducer producer;
+    protected Exchange exchange;
+    protected AsyncCallback callback;
 
+    public ClientPipelineFactory() {
+    }
+    
     public ClientPipelineFactory(NettyProducer producer, Exchange exchange, AsyncCallback callback) {
         this.producer = producer;
         this.exchange = exchange;
         this.callback = callback;
     }
-
+    
     public ChannelPipeline getPipeline() throws Exception {
-        // create a new pipeline
         ChannelPipeline channelPipeline = Channels.pipeline();
-
-        SslHandler sslHandler = configureClientSSLOnDemand();
-        if (sslHandler != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Client SSL handler configured and added to the ChannelPipeline");
-            }
-            channelPipeline.addLast("ssl", sslHandler);
-        }
-
-        // use read timeout handler to handle timeout while waiting for a remote reply (while reading from the remote host)
-        if (producer.getConfiguration().getTimeout() > 0) {
-            channelPipeline.addLast("timeout", new ReadTimeoutHandler(producer.getEndpoint().getTimer(), producer.getConfiguration().getTimeout(), TimeUnit.MILLISECONDS));
-        }
-
-        List<ChannelUpstreamHandler> decoders = producer.getConfiguration().getDecoders();
-        for (int x = 0; x < decoders.size(); x++) {
-            channelPipeline.addLast("decoder-" + x, decoders.get(x));
-        }
-
-        List<ChannelDownstreamHandler> encoders = producer.getConfiguration().getEncoders();
-        for (int x = 0; x < encoders.size(); x++) {
-            channelPipeline.addLast("encoder-" + x, encoders.get(x));
-        }
-
-        // our handler must be added last
-        channelPipeline.addLast("handler", new ClientChannelHandler(producer, exchange, callback));
-
         return channelPipeline;
     }
 
-    private SslHandler configureClientSSLOnDemand() throws Exception {
-        if (!producer.getConfiguration().isSsl()) {
-            return null;
-        }
+    public NettyProducer getProducer() {
+        return producer;
+    }
 
-        if (producer.getConfiguration().getSslHandler() != null) {
-            return producer.getConfiguration().getSslHandler();
-        } else {
-            if (producer.getConfiguration().getKeyStoreFile() == null) {
-                LOG.debug("keystorefile is null");
-            }
-            if (producer.getConfiguration().getTrustStoreFile() == null) {
-                LOG.debug("truststorefile is null");
-            }
-            if (producer.getConfiguration().getPassphrase().toCharArray() == null) {
-                LOG.debug("passphrase is null");
-            }
-            SSLEngineFactory sslEngineFactory = new SSLEngineFactory(
-                producer.getConfiguration().getKeyStoreFormat(),
-                producer.getConfiguration().getSecurityProvider(),
-                producer.getConfiguration().getKeyStoreFile(),
-                producer.getConfiguration().getTrustStoreFile(),
-                producer.getConfiguration().getPassphrase().toCharArray());
-            SSLEngine sslEngine = sslEngineFactory.createClientSSLEngine();
-            return new SslHandler(sslEngine);
-        }
+    public void setProducer(NettyProducer producer) {
+        this.producer = producer;
+    }
+
+    public Exchange getExchange() {
+        return exchange;
+    }
+
+    public void setExchange(Exchange exchange) {
+        this.exchange = exchange;
+    }
+
+    public AsyncCallback getCallback() {
+        return callback;
+    }
+
+    public void setCallback(AsyncCallback callback) {
+        this.callback = callback;
     }
 
 }

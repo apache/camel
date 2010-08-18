@@ -77,7 +77,9 @@ public class NettyConfiguration implements Cloneable {
     private boolean disconnectOnNoReply = true;
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
     private boolean allowDefaultCodec = true;
-
+    private ClientPipelineFactory clientPipelineFactory;
+    private ServerPipelineFactory serverPipelineFactory;
+    
     /**
      * Returns a copy of this configuration
      */
@@ -111,6 +113,8 @@ public class NettyConfiguration implements Cloneable {
         securityProvider = component.getAndRemoveParameter(parameters, "securityProvider", String.class, "SunX509");
         keyStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "keyStoreFile", File.class, null);
         trustStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "trustStoreFile", File.class, null);
+        clientPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "clientPipelineFactory", ClientPipelineFactory.class, null);
+        serverPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "serverPipelineFactory", ServerPipelineFactory.class, null);
 
         // set custom encoders and decoders first
         List<ChannelDownstreamHandler> referencedEncoders = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelDownstreamHandler.class, null);
@@ -474,6 +478,22 @@ public class NettyConfiguration implements Cloneable {
                 }
             }
         }
+    }
+
+    public void setClientPipelineFactory(ClientPipelineFactory clientPipelineFactory) {
+        this.clientPipelineFactory = clientPipelineFactory;
+    }
+
+    public ClientPipelineFactory getClientPipelineFactory() {
+        return clientPipelineFactory;
+    }
+
+    public void setServerPipelineFactory(ServerPipelineFactory serverPipelineFactory) {
+        this.serverPipelineFactory = serverPipelineFactory;
+    }
+
+    public ServerPipelineFactory getServerPipelineFactory() {
+        return serverPipelineFactory;
     }
 
 }

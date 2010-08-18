@@ -232,11 +232,20 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
 
     private ChannelFuture openConnection(Exchange exchange, AsyncCallback callback) throws Exception {
         ChannelFuture answer;
+        ChannelPipeline clientPipeline;
 
-        // initialize client pipeline factory
-        ClientPipelineFactory clientPipelineFactory = new ClientPipelineFactory(this, exchange, callback);
-        // must get the pipeline from the factory when opening a new connection
-        ChannelPipeline clientPipeline = clientPipelineFactory.getPipeline();
+        if (configuration.getClientPipelineFactory() != null) {
+            // initialize user defined client pipeline factory
+            configuration.getClientPipelineFactory().setProducer(this);
+            configuration.getClientPipelineFactory().setExchange(exchange);
+            configuration.getClientPipelineFactory().setCallback(callback);
+            clientPipeline = configuration.getClientPipelineFactory().getPipeline();
+        } else {
+            // initialize client pipeline factory
+            ClientPipelineFactory clientPipelineFactory = new DefaultClientPipelineFactory(this, exchange, callback);
+            // must get the pipeline from the factory when opening a new connection
+            clientPipeline = clientPipelineFactory.getPipeline();
+        }
 
         if (isTcp()) {
             ClientBootstrap clientBootstrap = new ClientBootstrap(channelFactory);

@@ -154,7 +154,12 @@ public class NettyConsumer extends DefaultConsumer {
 
         channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor);
         serverBootstrap = new ServerBootstrap(channelFactory);
-        serverBootstrap.setPipelineFactory(new ServerPipelineFactory(this));
+        if (configuration.getServerPipelineFactory() != null) {
+            configuration.getServerPipelineFactory().setConsumer(this);
+            serverBootstrap.setPipelineFactory(configuration.getServerPipelineFactory());
+        } else {
+            serverBootstrap.setPipelineFactory(new DefaultServerPipelineFactory(this));
+        }
         serverBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
         serverBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
         serverBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
@@ -171,7 +176,12 @@ public class NettyConsumer extends DefaultConsumer {
 
         datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
         connectionlessServerBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
-        connectionlessServerBootstrap.setPipelineFactory(new ServerPipelineFactory(this));
+        if (configuration.getServerPipelineFactory() != null) {
+            configuration.getServerPipelineFactory().setConsumer(this);
+            connectionlessServerBootstrap.setPipelineFactory(configuration.getServerPipelineFactory());
+        } else {
+            connectionlessServerBootstrap.setPipelineFactory(new DefaultServerPipelineFactory(this));
+        }
         connectionlessServerBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
         connectionlessServerBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
         connectionlessServerBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
