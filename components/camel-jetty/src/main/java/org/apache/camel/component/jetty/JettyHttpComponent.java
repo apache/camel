@@ -25,7 +25,6 @@ import javax.management.MBeanServer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpBinding;
