@@ -56,6 +56,10 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
     @Override
     public boolean add(Exchange exchange) {
         Object correlationKey = correlationExpression.evaluate(exchange);
+        if (correlationKey == null) {
+            // warn if correlation key could not be evaluated
+            LOG.warn("CorrelationKey was evaluated as null using expression: " + correlationExpression + " on Exchange: " + exchange);
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug("evaluated expression: " + correlationExpression + " as CorrelationKey: " + correlationKey);
         }
@@ -68,7 +72,14 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
                 count = 1;
             }
             count++;
-            newExchange = aggregationStrategy.aggregate(oldExchange, newExchange);
+            try {
+                newExchange = aggregationStrategy.aggregate(oldExchange, newExchange);
+            } catch (Throwable t) {
+                LOG.error("Exception occurred in aggregation strategy: " + aggregationStrategy
+                    + " with oldExchange: " + oldExchange + " and newExchange: " + newExchange, t);
+                // we cannot deal with this exception, as if we throw an exception the batch sender
+                // thread will die, so at best log it and we lose that single message
+            }
             newExchange.setProperty(Exchange.AGGREGATED_COUNT, count);
         }
 

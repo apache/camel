@@ -31,6 +31,8 @@ import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A base class for any kind of {@link Processor} which implements some kind of batch processing.
@@ -41,6 +43,7 @@ public class BatchProcessor extends ServiceSupport implements Processor {
 
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
+    protected static final transient Log LOG = LogFactory.getLog(BatchProcessor.class);
 
     private long batchTimeout = DEFAULT_BATCH_TIMEOUT;
     private int batchSize = DEFAULT_BATCH_SIZE;
@@ -211,6 +214,8 @@ public class BatchProcessor extends ServiceSupport implements Processor {
             // Unlocking is important as the process of sending out the exchanges
             // would otherwise block new exchanges from being queued.
 
+            BatchProcessor.LOG.info("BatchSender thread +++ START +++");
+
             queueLock.lock();
             try {
                 do {
@@ -250,9 +255,15 @@ public class BatchProcessor extends ServiceSupport implements Processor {
 
                 } while (true);
 
+            } catch (Throwable t) {
+                BatchProcessor.LOG.error("BatchSender thread caught exception", t);
+                // a fail safe to handle all exceptions being thrown
+                getExceptionHandler().handleException(t);
             } finally {
                 queueLock.unlock();
             }
+
+            BatchProcessor.LOG.info("BatchSender thread +++ END +++");
         }
 
         /**
