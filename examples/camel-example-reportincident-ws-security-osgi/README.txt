@@ -25,7 +25,15 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 1.x / 2.x
   1) launch the server
   karaf.bat
   
+  For Karaf 2.0 : edit the file jre.properties to add the following packages to be exported
+  jre-1.6=, \
+ com.sun.org.apache.xerces.internal.dom, \
+ com.sun.org.apache.xerces.internal.jaxp, \
+ 
+ They are required by the following bundle : org.apache.servicemix.bundles/org.apache.servicemix.bundles.saaj-impl/1.3.2_1
+  
   2) Add features required
+  features:addUrl mvn:org.apache.camel.karaf/apache-camel/2.5-SNAPSHOT/xml/features
   features:install http
   features:install camel
   features:install camel-cxf
@@ -36,7 +44,7 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 1.x / 2.x
           SMTP Server (James by example). User = someone and password = secret
   
   3) Deploy our example
-  osgi:install -s mvn:org.apache.example.reportincident/camel-example-reportincident-wssecurity
+  osgi:install -s mvn:org.apache.camel/camel-example-reportincident-wssecurity
   
   4) Verify that your service is available using in the browser the following url
   http://localhost:9080/camel-example-reportincident/webservices/incident?wsdl
