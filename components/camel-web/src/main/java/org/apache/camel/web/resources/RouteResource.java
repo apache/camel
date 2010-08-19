@@ -31,6 +31,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -91,6 +92,25 @@ public class RouteResource extends CamelChildResourceSupport {
         return route;
     }
 
+    /**
+     * Removes this route
+     * @return
+     */
+    @GET
+    @Path("remove")
+    @Produces(MediaType.TEXT_HTML)
+    public Response removeRoute() {
+        URI routesURI = null;
+        try {
+            routesURI = new URI("/routes");
+            getCamelContext().removeRouteDefinition(route);
+            return Response.seeOther(routesURI).build();
+        } catch (Exception e) {
+            LOG.error("failed to remove route " + id + ", error " + e.getMessage());
+            return Response.seeOther(routesURI).build();
+        }
+    }    
+    
     /**
      * Returns the XML text
      */

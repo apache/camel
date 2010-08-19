@@ -9,6 +9,7 @@
   <tr>
     <th>Route</th>
     <th colspan="2">Status</th>
+    <th>Remove</th>
   </tr>
 <ul>
   #for(i <- it.getRoutes)
@@ -30,6 +31,9 @@
         <input type="submit" value="Stop">
       #end
       </form>
+    </td>
+    <td>
+      <a href='${uri("/routes/" + i.getId + "/remove")}'>remove</a>
     </td>
   </tr>
   #end
