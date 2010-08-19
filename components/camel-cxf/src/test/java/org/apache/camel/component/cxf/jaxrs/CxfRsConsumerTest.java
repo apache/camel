@@ -74,6 +74,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                             }
                         }
                         if ("updateCustomer".equals(operationName)) {
+                            assertEquals("Get a wrong customer message header", "header1;header2", inMessage.getHeader("test"));
                             String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
                             assertEquals("Get a wrong http method", "PUT", httpMethod);
                             Customer customer = inMessage.getBody(Customer.class);
@@ -117,6 +118,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         HttpPut put = new HttpPut("http://localhost:9000/rest/customerservice/customers");
         StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
+        put.addHeader("test", "header1;header2");
         put.setEntity(entity);
         HttpClient httpclient = new DefaultHttpClient();
 

@@ -109,6 +109,9 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         
         copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.ACCEPT_CONTENT_TYPE, Exchange.ACCEPT_CONTENT_TYPE);
         
+        //copy the protocol header
+        copyProtocolHeader(cxfMessage, camelMessage, camelMessage.getExchange());
+        
         camelMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, method.getReturnType());
         
         camelMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, method.getGenericReturnType());
@@ -249,6 +252,22 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     protected void copyMessageHeader(org.apache.cxf.message.Message cxfMessage, Message camelMessage, String cxfKey, String camelKey) {
         if (cxfMessage.get(cxfKey) != null) {
             camelMessage.setHeader(camelKey, cxfMessage.get(cxfKey));
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected void copyProtocolHeader(org.apache.cxf.message.Message cxfMessage, Message camelMessage, Exchange camelExchange) {
+        Map<String, List<String>> headers = (Map<String, List<String>>)cxfMessage.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS);
+        for (Map.Entry<String, List<String>>entry : headers.entrySet()) {
+            if (headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Drop CXF message protocol header: " + entry.getKey() + "=" + entry.getValue());
+                }
+            } else {
+                // just put the first String element, as the complex one is filtered
+                camelMessage.setHeader(entry.getKey(), entry.getValue().get(0));
+            }
+            continue;
         }
     }
     
