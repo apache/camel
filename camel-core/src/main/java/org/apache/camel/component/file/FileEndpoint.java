@@ -52,12 +52,13 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         ObjectHelper.notNull(file, "file");
 
         // we assume its a file if the name has a dot in it (eg foo.txt)
-        if (file.getName().contains(".")) {
+        boolean isDirectory = file.isDirectory();
+        if (!isDirectory && file.getName().contains(".")) {
             throw new IllegalArgumentException("Only directory is supported. Endpoint must be configured with a valid starting directory: " + file);
         }
 
         // auto create starting directory if needed
-        if (!file.exists() && !file.isDirectory()) {
+        if (!file.exists() && !isDirectory) {
             if (isAutoCreate()) {
                 if (log.isDebugEnabled()) {
                     log.debug("Creating non existing starting directory: " + file);
