@@ -25,6 +25,7 @@ import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.options.UrlReference;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
@@ -39,6 +40,19 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     protected static final transient Log LOG = LogFactory.getLog(OSGiIntegrationTestSupport.class);
     @Inject
     protected BundleContext bundleContext;
+    
+    protected Bundle getInstalledBundle(String symbolicName) {
+        for (Bundle b : bundleContext.getBundles()) {
+            if (b.getSymbolicName().equals(symbolicName)) {
+                return b;
+            }
+        }
+        for (Bundle b : bundleContext.getBundles()) {
+            System.err.println("Bundle: " + b.getSymbolicName());
+        }
+        throw new RuntimeException("Bundle " + symbolicName + " does not exist");
+    }
+
         
     protected CamelContext createCamelContext() throws Exception {
         setThreadContextClassLoader();

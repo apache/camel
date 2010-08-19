@@ -20,6 +20,7 @@ import java.net.ConnectException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -43,9 +44,8 @@ public class SpringJettyNoConnectionRedeliveryTest extends CamelSpringTestSuppor
 
     @Test
     public void testConnectionNotOk() throws Exception {
-        // stop Jetty so there should not be a connection
-        JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
-        jetty.stop();
+        // stop Jetty route so there should not be a connection
+        context.stopRoute("jetty");
 
         Exchange exchange = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {

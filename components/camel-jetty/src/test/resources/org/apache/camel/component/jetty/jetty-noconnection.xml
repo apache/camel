@@ -28,7 +28,7 @@
             <to uri="http://localhost:9222/hi"/>
         </route>
 
-        <route>
+        <route id="jetty">
             <from uri="jetty:http://localhost:9222/hi"/>
             <transform><simple>Bye ${body}</simple></transform>
         </route>

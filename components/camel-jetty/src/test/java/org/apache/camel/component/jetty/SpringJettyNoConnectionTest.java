@@ -42,9 +42,8 @@ public class SpringJettyNoConnectionTest extends CamelSpringTestSupport {
 
     @Test
     public void testConnectionNotOk() throws Exception {
-        // stop Jetty so there should not be a connection
-        JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
-        jetty.stop();
+        // stop Jetty route so there should not be a connection
+        context.stopRoute("jetty");
 
         try {
             template.requestBody("direct:start", "Moon", String.class);

@@ -111,6 +111,10 @@ public class JettyHttpComponent extends HttpComponent {
         public int decrement() {
             return --refCount;
         }
+        
+        public int getRefCount() {
+            return refCount;
+        }
     }
 
     @Override
@@ -673,18 +677,21 @@ public class JettyHttpComponent extends HttpComponent {
     protected void doStop() throws Exception {
         super.doStop();
         if (CONNECTORS.size() > 0) {
-            for (ConnectorRef connectorRef : CONNECTORS.values()) {
-                connectorRef.server.removeConnector(connectorRef.connector);
-                connectorRef.connector.stop();
-                connectorRef.server.stop();
-                // Camel controls the lifecycle of these entities so remove the
-                // registered MBeans when Camel is done with the managed objects.
-                if (mbContainer != null) {
-                    mbContainer.removeBean(connectorRef.server);
-                    mbContainer.removeBean(connectorRef.connector);
+            for (String connectorKey : CONNECTORS.keySet()) {
+                ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
+                if (connectorRef != null && connectorRef.getRefCount() == 0) {
+                    connectorRef.server.removeConnector(connectorRef.connector);
+                    connectorRef.connector.stop();
+                    connectorRef.server.stop();
+                    // Camel controls the lifecycle of these entities so remove the
+                    // registered MBeans when Camel is done with the managed objects.
+                    if (mbContainer != null) {
+                        mbContainer.removeBean(connectorRef.server);
+                        mbContainer.removeBean(connectorRef.connector);
+                    }
+                    CONNECTORS.remove(connectorKey);
                 }
             }
-            CONNECTORS.clear();
         }
         if (httpClient != null) {
             httpClient.stop();
