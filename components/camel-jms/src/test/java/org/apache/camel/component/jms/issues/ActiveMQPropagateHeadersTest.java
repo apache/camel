@@ -62,9 +62,8 @@ public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        Object replyTo = exchange.getIn().getHeader("JMSReplyTo");
-        Destination destination = assertIsInstanceOf(Destination.class, replyTo);
-        assertEquals("ReplyTo", replyQueue.toString(), destination.toString());
+        String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);        
+        assertEquals("ReplyTo", replyQueue.toString(), replyTo);
     }
 
     protected CamelContext createCamelContext() throws Exception {
