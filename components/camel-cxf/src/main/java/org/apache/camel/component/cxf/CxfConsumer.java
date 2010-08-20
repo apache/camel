@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import javax.xml.ws.WebFault;
+
+import org.w3c.dom.Element;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -123,21 +127,48 @@ public class CxfConsumer extends DefaultConsumer {
             }
 
             private void checkFailure(org.apache.camel.Exchange camelExchange) throws Fault {
+                final Throwable t;
                 if (camelExchange.isFailed()) {
-                    // either Fault or Exception
-                    Throwable t = (camelExchange.hasOut() && camelExchange.getOut().isFault()) 
-                        ? camelExchange.getOut().getBody(Throwable.class) : camelExchange.getException();
-                    // There is no exception and the Fault message is set to the out message
-                    if (t != null) {
-                        throw (t instanceof Fault) ? (Fault)t : new Fault(t);
+                    t = (camelExchange.hasOut() && camelExchange.getOut().isFault()) ? camelExchange.getOut()
+                        .getBody(Throwable.class) : camelExchange.getException();
+                    if (t instanceof Fault) {
+                        throw (Fault)t;
+                    } else if (t != null) {                        
+                        // This is not a CXF Fault. Build the CXF Fault manuallly.
+                        Fault fault = new Fault(t);
+                        if (fault.getMessage() == null) {
+                            // The Fault has no Message. This is the case if t had
+                            // no message, for
+                            // example was a NullPointerException.
+                            fault.setMessage(t.getClass().getSimpleName());
+                        }
+                        WebFault faultAnnotation = t.getClass().getAnnotation(WebFault.class);
+                        Object faultInfo = null;
+                        try {
+                            Method method = t.getClass().getMethod("getFaultInfo", new Class[0]);
+                            faultInfo = method.invoke(t, new Object[0]);
+                        } catch (Exception e) {
+                            // do nothing here                            
+                        }
+                        if (faultAnnotation != null && faultInfo == null) {
+                            // t has a JAX-WS WebFault annotation, which describes
+                            // in detail the Web Service Fault that should be thrown. Add the
+                            // detail.
+                            Element detail = fault.getOrCreateDetail();
+                            Element faultDetails = detail.getOwnerDocument()
+                                .createElementNS(faultAnnotation.targetNamespace(), faultAnnotation.name());
+                            detail.appendChild(faultDetails);
+                        }
+
+                        throw fault;
                     }
+
                 }
-                                
             }
-            
+
         });
-        server = svrBean.create();        
-    }   
+        server = svrBean.create();
+    }
     
     @Override
     protected void doStart() throws Exception {
