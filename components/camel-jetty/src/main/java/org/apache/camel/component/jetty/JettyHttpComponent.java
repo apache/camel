@@ -129,6 +129,8 @@ public class JettyHttpComponent extends HttpComponent {
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
+        Boolean enableMultipartFilter = getAndRemoveParameter(parameters, "enableMultipartFilter",
+                                                              Boolean.class, true);
 
         // configure http client if we have url configuration for it
         // http client is only used for jetty http producer (hence not very commonly used)
@@ -185,6 +187,8 @@ public class JettyHttpComponent extends HttpComponent {
             // set this option based on setting of JettyHttpComponent
             endpoint.setEnableJmx(isEnableJmx());
         }
+        
+        endpoint.setEnableMultipartFilter(enableMultipartFilter);
 
         setProperties(endpoint, parameters);
         return endpoint;
@@ -237,6 +241,10 @@ public class JettyHttpComponent extends HttpComponent {
             if (endpoint.isSessionSupport()) {
                 enableSessionSupport(connectorRef.server, connectorKey);
             }
+            
+            if (endpoint.isEnableMultipartFilter()) {
+                enableMultipartFilter(endpoint, connectorRef.server, connectorKey);
+            }
             connectorRef.servlet.connect(consumer);
         }
     }
@@ -262,6 +270,33 @@ public class JettyHttpComponent extends HttpComponent {
                 context.setSessionHandler(sessionHandler);
             }
         }
+    }
+    
+    private void enableMultipartFilter(HttpEndpoint endpoint, Server server, String connectorKey) throws Exception {
+        ServletContextHandler context = (ServletContextHandler) server
+                .getChildHandlerByClass(ServletContextHandler.class);
+        CamelContext camelContext = this.getCamelContext();
+        FilterHolder filterHolder = new FilterHolder();
+        filterHolder.setInitParameter("deleteFiles", "true");
+        if (ObjectHelper.isNotEmpty(camelContext.getProperties().get(TMP_DIR))) {
+            File file = new File(camelContext.getProperties().get(TMP_DIR));
+            if (!file.isDirectory()) {
+                throw new RuntimeCamelException(
+                        "The temp file directory of camel-jetty is not exists, please recheck it with directory name :"
+                                + camelContext.getProperties().get(TMP_DIR));
+            }
+            context.setAttribute("javax.servlet.context.tempdir", file);
+        }
+        filterHolder.setFilter(new CamelMultipartFilter());
+        // add the default MultiPartFilter filter for it
+        String pathSpec = endpoint.getPath();
+        if (pathSpec == null || "".equals(pathSpec)) {
+            pathSpec = "/";
+        }
+        if (endpoint.isMatchOnUriPrefix()) {
+            pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
+        }
+        context.addFilter(filterHolder, pathSpec, 0);
     }
 
     /**
@@ -590,20 +625,6 @@ public class JettyHttpComponent extends HttpComponent {
         CamelServlet camelServlet = new CamelContinuationServlet();
         ServletHolder holder = new ServletHolder();
         holder.setServlet(camelServlet);
-        CamelContext camelContext = this.getCamelContext();
-        FilterHolder filterHolder = new FilterHolder();
-        filterHolder.setInitParameter("deleteFiles", "true");
-        if (ObjectHelper.isNotEmpty(camelContext.getProperties().get(TMP_DIR))) {
-            File file =  new File(camelContext.getProperties().get(TMP_DIR));            
-            if (!file.isDirectory()) {
-                throw new RuntimeCamelException("The temp file directory of camel-jetty is not exists, please recheck it with directory name :"
-                                                + camelContext.getProperties().get(TMP_DIR));
-            }
-            context.setAttribute("javax.servlet.context.tempdir", file);
-        }
-        filterHolder.setFilter(new CamelMultipartFilter());
-        //add the default MultiPartFilter filter for it
-        context.addFilter(filterHolder, "/*", 0);
         context.addServlet(holder, "/*");
 
         return camelServlet;

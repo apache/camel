@@ -39,6 +39,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private HttpClient client;
     private JettyHttpBinding jettyBinding;
     private boolean enableJmx;
+    private boolean enableMultipartFilter;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -112,4 +113,12 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
     }
+    
+    public boolean isEnableMultipartFilter() {
+        return enableMultipartFilter;
+    }
+
+    public void setEnableMultipartFilter(boolean enableMultipartFilter) {
+        this.enableMultipartFilter = enableMultipartFilter;
+    }    
 }
