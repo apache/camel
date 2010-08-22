@@ -20,14 +20,15 @@
 <archetype>
   <id>camel-component</id>  
   <sources>
-    <source>src/main/java/DirectComponent.java</source>
-    <source>src/main/java/DirectConsumer.java</source>         
-    <source>src/main/java/DirectEndpoint.java</source>
-    <source>src/main/java/DirectProducer.java</source>         
+    <source>src/main/java/HelloWorldComponent.java</source>
+    <source>src/main/java/HelloWorldConsumer.java</source>         
+    <source>src/main/java/HelloWorldEndpoint.java</source>
+    <source>src/main/java/HelloWorldProducer.java</source>
+    <source>src/test/java/HelloWorldComponentTest.java</source>                    
   </sources>
   <resources>    
     <resource>ReadMe.txt</resource>
-    <resource>src/main/resources/META-INF/services/org/apache/camel/component/direct</resource>
+    <resource>src/main/resources/META-INF/services/org/apache/camel/component/helloworld</resource>
     <resource>src/main/resources/log4j.properties</resource>   
   </resources>
 </archetype>

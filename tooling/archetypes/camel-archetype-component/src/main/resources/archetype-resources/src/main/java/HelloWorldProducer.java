@@ -23,27 +23,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * The direct producer.
- *
- * @version $Revision$
+ * The HelloWorld producer.
  */
-public class DirectProducer extends DefaultProducer {
-    private static final transient Log LOG = LogFactory.getLog(DirectProducer.class);
-    private DirectEndpoint endpoint;
+public class HelloWorldProducer extends DefaultProducer {
+    private static final transient Log LOG = LogFactory.getLog(HelloWorldProducer.class);
+    private HelloWorldEndpoint endpoint;
 
-    public DirectProducer(DirectEndpoint endpoint) {
+    public HelloWorldProducer(HelloWorldEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (endpoint.getConsumers().isEmpty()) {
-            LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
-        } else {
-            for (DefaultConsumer consumer : endpoint.getConsumers()) {
-                consumer.getProcessor().process(exchange);
-            }
-        }
+        System.out.println(exchange.getIn().getBody());    
     }
 
 }

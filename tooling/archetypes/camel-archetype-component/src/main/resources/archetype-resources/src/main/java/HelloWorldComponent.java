@@ -22,15 +22,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * Represents the component that manages {@link DirectEndpoint}. It holds the
- * list of named direct endpoints.
- *
- * @version $Revision$
+ * Represents the component that manages {@link HelloWorldEndpoint}.
  */
-public class DirectComponent extends DefaultComponent {
+public class HelloWorldComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new DirectEndpoint(uri, this);
+        Endpoint endpoint = new HelloWorldEndpoint(uri, this);
         setProperties(endpoint, parameters);
         return endpoint;
     }

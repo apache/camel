@@ -26,38 +26,29 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
- * Represents a direct endpoint that synchronously invokes the consumers of the
- * endpoint when a producer sends a message to it.
- *
- * @version $Revision$
+ * Represents a HelloWorld endpoint.
  */
-public class DirectEndpoint extends DefaultEndpoint {
-    private final CopyOnWriteArrayList<DefaultConsumer> consumers = new CopyOnWriteArrayList<DefaultConsumer>();
-
-    public DirectEndpoint() {
+public class HelloWorldEndpoint extends DefaultEndpoint {
+    public HelloWorldEndpoint() {
     }
 
-    public DirectEndpoint(String uri, DirectComponent component) {
+    public HelloWorldEndpoint(String uri, HelloWorldComponent component) {
         super(uri, component);
     }
 
-    public DirectEndpoint(String endpointUri) {
+    public HelloWorldEndpoint(String endpointUri) {
         super(endpointUri);
     }
 
     public Producer createProducer() throws Exception {
-        return new DirectProducer(this);
+        return new HelloWorldProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new DirectConsumer(this, processor);
+        return new HelloWorldConsumer(this, processor);
     }
 
     public boolean isSingleton() {
         return true;
-    }
-
-    public List<DefaultConsumer> getConsumers() {
-        return consumers;
     }
 }
