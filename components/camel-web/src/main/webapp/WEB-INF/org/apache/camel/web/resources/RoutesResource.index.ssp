@@ -33,7 +33,12 @@
       </form>
     </td>
     <td>
-      <a href='${uri("/routes/" + i.getId + "/remove")}'>remove</a>
+    	#if(i.isStoppable)
+      		(stop first)
+      	#end
+    	#if(i.isStartable)
+      		<a href='${uri("/routes/" + i.getId + "/remove")}'>remove</a>
+      	#end
     </td>
   </tr>
   #end
