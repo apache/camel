@@ -97,6 +97,7 @@
     <module>camel-scala</module>
     <module>camel-script</module>
     <module>camel-servlet</module>
+    <module>camel-sip</module>
     <module>camel-shiro</module>
     <module>camel-smpp</module>
     <module>camel-snmp</module>

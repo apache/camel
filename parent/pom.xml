@@ -78,6 +78,8 @@
     <httpclient4-version>4.0.1</httpclient4-version>
     <httpclient-version>3.1</httpclient-version>
     <jackson-version>1.5.4</jackson-version>
+    <jain-api-version>1.2</jain-api-version>
+    <jain-sip-version>1.2.153</jain-sip-version>
     <javassist-version>3.9.0.GA</javassist-version>
     <javax-mail-version>1.4.3</javax-mail-version>
     <jaxb-version>2.1.13</jaxb-version>
@@ -531,6 +533,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-servlet</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-sip</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
