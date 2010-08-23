@@ -16,12 +16,6 @@
  */
 package org.apache.camel.example.guice.jms;
 
-import java.net.URL;
-import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -29,22 +23,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.springframework.osgi.util.BundleDelegatingClassLoader;
 
 public class MyActivator implements BundleActivator {
-    CamelContext camelContext;
+    protected CamelContext camelContext;
    
     public void start(BundleContext context) throws Exception {
-
         Injector injector = Guice.createInjector(new MyOSGiModule(context));
 
         camelContext = injector.getInstance(CamelContext.class);
-
         if (camelContext instanceof DefaultCamelContext) {
             if (!((DefaultCamelContext)camelContext).isStarted()) {
-                ((DefaultCamelContext)camelContext).start();
+                camelContext.start();
             }
-
         }
     }
 

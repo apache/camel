@@ -14,23 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.example.guice.jms;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import com.google.inject.Injector;
-import com.google.inject.Provides;
 import com.google.inject.name.Names;
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
-import org.apache.camel.osgi.CamelContextFactory;
-import org.guiceyfruit.jndi.JndiBind;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -39,29 +30,22 @@ import org.osgi.framework.BundleContext;
  *
  * @version $Revision$
  */
-
 public class MyOSGiModule extends MyModule {
     private OSGiCamelContextProvider provider;
     private Properties properties;
     
-    MyOSGiModule(BundleContext bundleContext) {
+    MyOSGiModule(BundleContext bundleContext) throws IOException {
         super();
         provider = new OSGiCamelContextProvider(bundleContext);
         properties = new Properties();
-        URL jndiPropertiesUrl = null;
+        URL jndiPropertiesUrl;
         if (bundleContext != null) {
             jndiPropertiesUrl = bundleContext.getBundle().getEntry("camel.properties");
-            
         } else {
             jndiPropertiesUrl = this.getClass().getResource("/camel.properties");
         }
-        try {
-            if (jndiPropertiesUrl != null) {
-                properties.load(jndiPropertiesUrl.openStream());
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (jndiPropertiesUrl != null) {
+            properties.load(jndiPropertiesUrl.openStream());
         }
     }
     

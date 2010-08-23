@@ -22,9 +22,9 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.guice.GuiceCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.guiceyfruit.Injectors;
+
 
 // Test loading the Guice Module directly 
 public class GuiceTest extends TestCase {
@@ -35,7 +35,7 @@ public class GuiceTest extends TestCase {
 
         if (camelContext instanceof DefaultCamelContext) {
             if (!((DefaultCamelContext)camelContext).isStarted()) {
-                ((DefaultCamelContext)camelContext).start();
+                camelContext.start();
             }
         }
         Thread.sleep(2000);

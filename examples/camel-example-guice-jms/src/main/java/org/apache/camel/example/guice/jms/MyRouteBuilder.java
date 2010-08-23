@@ -28,9 +28,6 @@ public class MyRouteBuilder extends RouteBuilder {
 
     /**
      * Allow this route to be run as an application
-     *
-     * @param args
-     * @throws Exception 
      */
     public static void main(String[] args) throws Exception {
         new Main().run(args);
@@ -38,11 +35,9 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         // populate the message queue with some messages
-        from("file:src/data?noop=true").
-                to("jms:test.MyQueue");
+        from("file:src/data?noop=true").to("jms:test.MyQueue");
 
-        from("jms:test.MyQueue").
-                to("file://target/routeOutput");
+        from("jms:test.MyQueue").to("file://target/routeOutput");
 
         // set up a listener on the file component
         from("file://target/routeOutput?noop=true").beanRef("myBean");

@@ -27,7 +27,6 @@ public class SomeBean {
 
     public void someMethod(String body) {
         printer.print(body);
-        //System.out.println("Received: " + body);
     }
 
     @Override
