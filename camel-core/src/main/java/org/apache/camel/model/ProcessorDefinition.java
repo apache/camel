@@ -219,9 +219,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // add interceptor strategies to the channel must be in this order: camel context, route context, local
         addInterceptStrategies(routeContext, channel, routeContext.getCamelContext().getInterceptStrategies());
         addInterceptStrategies(routeContext, channel, routeContext.getInterceptStrategies());
-        if (routeContext.getManagedInterceptStrategy() != null) {
-            channel.addInterceptStrategy(routeContext.getManagedInterceptStrategy());
-        }
         addInterceptStrategies(routeContext, channel, this.getInterceptStrategies());
 
         // must do this ugly cast to avoid compiler error on AIX/HP-UX

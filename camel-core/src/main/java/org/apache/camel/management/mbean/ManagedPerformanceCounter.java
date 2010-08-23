@@ -185,5 +185,4 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         lastExchangeFailureTimestamp.updateValue(now);
     }
 
-
 }
