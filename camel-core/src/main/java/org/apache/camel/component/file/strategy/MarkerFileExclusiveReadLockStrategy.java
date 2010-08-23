@@ -24,7 +24,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +34,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
     private static final transient Log LOG = LogFactory.getLog(MarkerFileExclusiveReadLockStrategy.class);
+    private File lock;
+    private String lockFileName;
 
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
         String dir = endpoint.getConfiguration().getDirectory();
@@ -49,18 +50,17 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations,
                                             GenericFile<File> file, Exchange exchange) throws Exception {
-
-        String lockFileName = file.getAbsoluteFilePath() + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+        lockFileName = file.getAbsoluteFilePath() + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
         if (LOG.isTraceEnabled()) {
             LOG.trace("Locking the file: " + file + " using the lock file name: " + lockFileName);
         }
 
         // create a plain file as marker filer for locking (do not use FileLock)
-        File lock = new File(lockFileName);
+        lock = new File(lockFileName);
         boolean acquired = lock.createNewFile();
-        if (acquired) {
-            exchange.setProperty("CamelFileLock", lock);
-            exchange.setProperty("CamelFileLockName", lockFileName);
+        if (!acquired) {
+            lock = null;
+
         }
 
         return acquired;
@@ -68,17 +68,15 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
     public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
                                          GenericFile<File> file, Exchange exchange) throws Exception {
+        if (lock != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Unlocking file: " + lockFileName);
+            }
 
-        File lock = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLock", File.class);
-        String lockFileName = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLockName", String.class);
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Unlocking file: " + lockFileName);
-        }
-
-        boolean deleted = FileUtil.deleteFile(lock);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Lock file: " + lockFileName + " was deleted: " + deleted);
+            boolean deleted = FileUtil.deleteFile(lock);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Lock file: " + lockFileName + " was deleted: " + deleted);
+            }
         }
     }
 

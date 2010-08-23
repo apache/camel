@@ -28,7 +28,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.commons.logging.Log;
@@ -42,6 +41,8 @@ import org.apache.commons.logging.LogFactory;
 public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
     private static final transient Log LOG = LogFactory.getLog(FileLockExclusiveReadLockStrategy.class);
     private long timeout;
+    private FileLock lock;
+    private String lockFileName;
 
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
         // noop
@@ -73,7 +74,6 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
                 }
 
                 // get the lock using either try lock or not depending on if we are using timeout or not
-                FileLock lock = null;
                 try {
                     lock = timeout > 0 ? channel.tryLock() : channel.lock();
                 } catch (IllegalStateException ex) {
@@ -83,11 +83,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Acquired exclusive read lock: " + lock + " to file: " + target);
                     }
-
-                    // store lock so we can release it later
-                    exchange.setProperty("CamelFileLock", lock);
-                    exchange.setProperty("CamelFileLockName", target.getName());
-
+                    lockFileName = target.getName();
                     exclusive = true;
                 } else {
                     boolean interrupted = sleep();
@@ -119,14 +115,14 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
 
     public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
                                          GenericFile<File> file, Exchange exchange) throws Exception {
-        FileLock lock = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLock", FileLock.class);
-        String lockFileName = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLockName", String.class);
-        Channel channel = lock.channel();
-        try {
-            lock.release();
-        } finally {
-            // must close channel first
-            IOHelper.close(channel, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
+        if (lock != null) {
+            Channel channel = lock.channel();
+            try {
+                lock.release();
+            } finally {
+                // must close channel first
+                IOHelper.close(channel, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
+            }
         }
     }
 
@@ -152,7 +148,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
     /**
      * Sets an optional timeout period.
      * <p/>
-     * If the readlock could not be granted within the timeperiod then the wait is stopped and the
+     * If the readlock could not be granted within the time period then the wait is stopped and the
      * acquireReadLock returns <tt>false</tt>.
      *
      * @param timeout period in millis

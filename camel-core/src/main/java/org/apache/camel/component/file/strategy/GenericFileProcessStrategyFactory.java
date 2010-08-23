@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.io.File;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;

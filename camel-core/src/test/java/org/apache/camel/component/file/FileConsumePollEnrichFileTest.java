@@ -59,9 +59,9 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/enrich?move=.done&readLock=none")
+                from("file://target/enrich?move=.done")
                     .to("mock:start")
-                    .pollEnrich("file://target/enrichdata?move=.done&readLock=none")
+                    .pollEnrich("file://target/enrichdata?move=.done")
                     .to("mock:result");
             }
         };
