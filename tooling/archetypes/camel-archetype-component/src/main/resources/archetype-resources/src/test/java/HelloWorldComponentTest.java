@@ -16,13 +16,15 @@
  */
 package ${packageName};
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class HelloWorldComponentTest extends ContextTestSupport {
+public class HelloWorldComponentTest extends CamelTestSupport {
 
-    public void testHelloWorld() throws Exception {
+    @Test
+    public void testTimerInvokesBeanMethod() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);       
         

@@ -49,11 +49,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-test</artifactId>
       <version>${camel-version}</version>      
-      <type>test-jar</type>
       <scope>test</scope>
-    </dependency>        
+    </dependency>      
   </dependencies>
 
   <build>
