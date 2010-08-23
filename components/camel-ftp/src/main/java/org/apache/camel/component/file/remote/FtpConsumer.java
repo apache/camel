@@ -124,7 +124,6 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
-        answer.setFileName(file.getName());
         answer.setFileNameOnly(file.getName());
         answer.setFileLength(file.getSize());
         if (file.getTimestamp() != null) {
@@ -145,6 +144,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         // skip leading /
         relativePath = FileUtil.stripLeadingSeparator(relativePath);
         answer.setRelativeFilePath(relativePath);
+
+        // the file name should be the relative path
+        answer.setFileName(answer.getRelativeFilePath());
 
         return answer;
     }

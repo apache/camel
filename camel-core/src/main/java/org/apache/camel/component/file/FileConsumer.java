@@ -127,7 +127,6 @@ public class FileConsumer extends GenericFileConsumer<File> {
 
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
-        answer.setFileName(file.getName());
         answer.setFileNameOnly(file.getName());
         answer.setFileLength(file.length());
         // must use FileUtil.isAbsolute to have consistent check for whether the file is
@@ -157,6 +156,9 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 answer.setRelativeFilePath(path.getName());
             }
         }
+
+        // the file name should be the relative path
+        answer.setFileName(answer.getRelativeFilePath());
 
         // use file as body as we have converters if needed as stream
         answer.setBody(file);

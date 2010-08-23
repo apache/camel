@@ -33,25 +33,19 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
         super.setUp();
     }
 
-
-    // TODO: CAMEL-1895
-    public void xxxTestPollEnrich() throws Exception {
+    public void testPollEnrich() throws Exception {
         getMockEndpoint("mock:start").expectedBodiesReceived("Start");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Big file");
 
-        mock.expectedFileExists("target/enrich/.done/AAA.fin");
-        mock.expectedFileExists("target/enrichdata/.done/AAA.dat");
+        mock.expectedFileExists("target/enrich/.done/AAA.fin", "Start");
+        mock.expectedFileExists("target/enrichdata/.done/AAA.dat", "Big file");
 
         template.sendBodyAndHeader("file://target/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
         template.sendBodyAndHeader("file://target/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
 
         assertMockEndpointsSatisfied();
-    }
-
-    public void testNothing() {
-        //
     }
 
     @Override

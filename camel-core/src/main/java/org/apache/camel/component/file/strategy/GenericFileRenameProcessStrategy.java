@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.io.IOException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
-import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 
 public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
@@ -57,7 +54,14 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         super.rollback(operations, endpoint, exchange, file);
 
         if (failureRenamer != null) {
-            GenericFile<T> newName = failureRenamer.renameFile(exchange, file);
+            // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
+            Exchange copy = exchange.copy();
+            file.bindToExchange(copy);
+            // must preserve message id
+            copy.getIn().setMessageId(exchange.getIn().getMessageId());
+            copy.setExchangeId(exchange.getExchangeId());
+
+            GenericFile<T> newName = failureRenamer.renameFile(copy, file);
             renameFile(operations, file, newName);
         }
     }
@@ -68,7 +72,14 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         super.commit(operations, endpoint, exchange, file);
 
         if (commitRenamer != null) {
-            GenericFile<T> newName = commitRenamer.renameFile(exchange, file);
+            // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
+            Exchange copy = exchange.copy();
+            file.bindToExchange(copy);
+            // must preserve message id
+            copy.getIn().setMessageId(exchange.getIn().getMessageId());
+            copy.setExchangeId(exchange.getExchangeId());
+
+            GenericFile<T> newName = commitRenamer.renameFile(copy, file);
             renameFile(operations, file, newName);
         }
     }

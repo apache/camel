@@ -46,7 +46,7 @@ public interface GenericFileProcessStrategy<T> {
      * @throws Exception can be thrown in case of errors
      */
     boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint,
-            Exchange exchange, GenericFile<T> file) throws Exception;
+                  Exchange exchange, GenericFile<T> file) throws Exception;
 
     /**
      * Releases any file locks and possibly deletes or moves the file after
@@ -59,7 +59,7 @@ public interface GenericFileProcessStrategy<T> {
      * @throws Exception can be thrown in case of errors
      */
     void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint,
-            Exchange exchange, GenericFile<T> file) throws Exception;
+                Exchange exchange, GenericFile<T> file) throws Exception;
 
     /**
      * Releases any file locks and possibly deletes or moves the file after
@@ -72,6 +72,6 @@ public interface GenericFileProcessStrategy<T> {
      * @throws Exception can be thrown in case of errors
      */
     void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint,
-            Exchange exchange, GenericFile<T> file) throws Exception;
+                  Exchange exchange, GenericFile<T> file) throws Exception;
 
 }

@@ -35,19 +35,18 @@ public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
         super.setUp();
         template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
         template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Godday World", Exchange.FILE_NAME, "sub/sub2/godday.txt");
+        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
     }
 
     public void testMultiDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Godday World");
+        mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");
 
         mock.expectedFileExists("target/multidir/.done/bye.txt.old");
         mock.expectedFileExists("target/multidir/.done/sub/hello.txt.old");
-        mock.expectedFileExists("target/multidir/.done/sub/sub2/godday.txt.old");
+        mock.expectedFileExists("target/multidir/.done/sub/sub2/goodday.txt.old");
 
         assertMockEndpointsSatisfied();
-
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

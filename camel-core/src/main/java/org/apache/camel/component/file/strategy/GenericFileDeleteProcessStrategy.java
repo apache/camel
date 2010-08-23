@@ -89,7 +89,14 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
 
         // moved the failed file if specifying the moveFailed option
         if (failureRenamer != null) {
-            GenericFile<T> newName = failureRenamer.renameFile(exchange, file);
+            // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
+            Exchange copy = exchange.copy();
+            file.bindToExchange(copy);
+            // must preserve message id
+            copy.getIn().setMessageId(exchange.getIn().getMessageId());
+            copy.setExchangeId(exchange.getExchangeId());
+
+            GenericFile<T> newName = failureRenamer.renameFile(copy, file);
             renameFile(operations, file, newName);
         }
     }

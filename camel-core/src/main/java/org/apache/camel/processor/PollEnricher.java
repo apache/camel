@@ -19,13 +19,13 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.EventDrivenPollingConsumer;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
 
 /**
@@ -169,18 +169,7 @@ public class PollEnricher extends ServiceSupport implements Processor {
      * @param exchange the current exchange
      */
     protected void preCheckPoll(Exchange exchange) throws Exception {
-        // cannot poll a file endpoint if already consuming from a file endpoint (CAMEL-1895)
-        if (consumer instanceof EventDrivenPollingConsumer) {
-            EventDrivenPollingConsumer edpc = (EventDrivenPollingConsumer) consumer;
-            boolean fileBasedConsumer = edpc.getEndpoint().getEndpointKey().startsWith("file") || edpc.getEndpoint().getEndpointKey().startsWith("ftp");
-            boolean fileBasedExchange = exchange.getFromEndpoint() != null
-                    && (exchange.getFromEndpoint().getEndpointUri().startsWith("file") || exchange.getFromEndpoint().getEndpointUri().startsWith("ftp"));
-            if (fileBasedConsumer && fileBasedExchange) {
-                throw new IllegalArgumentException("Camel currently does not support pollEnrich from a file/ftp endpoint"
-                        + " when the route also started from a file/ftp endpoint."
-                        + " Started from: " + exchange.getFromEndpoint().getEndpointUri() + " pollEnrich: " + edpc.getEndpoint().getEndpointUri());
-            }
-        }
+        // noop
     }
 
     private static void prepareResult(Exchange exchange) {

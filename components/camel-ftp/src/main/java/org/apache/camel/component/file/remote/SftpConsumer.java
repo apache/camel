@@ -107,7 +107,6 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
-        answer.setFileName(file.getFilename());
         answer.setFileNameOnly(file.getFilename());
         answer.setFileLength(file.getAttrs().getSize());
         answer.setLastModified(file.getAttrs().getMTime() * 1000L);
@@ -125,6 +124,9 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         // skip trailing /
         relativePath = FileUtil.stripLeadingSeparator(relativePath);
         answer.setRelativeFilePath(relativePath);
+
+        // the file name should be the relative path
+        answer.setFileName(answer.getRelativeFilePath());
 
         return answer;
     }
