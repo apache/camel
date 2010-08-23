@@ -85,7 +85,7 @@
     <jaxen-version>1.1.1</jaxen-version>
     <jetty-version>7.1.6.v20100715</jetty-version>
     <jettison-version>1.2</jettison-version>
-    <jruby-version>1.5.1</jruby-version>
+    <jruby-version>1.5.2</jruby-version>
     <jsch-version>0.1.43</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
