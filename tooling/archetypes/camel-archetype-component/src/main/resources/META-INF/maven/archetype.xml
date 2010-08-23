@@ -24,8 +24,10 @@
     <source>src/main/java/HelloWorldConsumer.java</source>         
     <source>src/main/java/HelloWorldEndpoint.java</source>
     <source>src/main/java/HelloWorldProducer.java</source>
-    <source>src/test/java/HelloWorldComponentTest.java</source>                    
   </sources>
+  <testSources>
+    <source>src/test/java/HelloWorldComponentTest.java</source>
+  </testSources>
   <resources>    
     <resource>ReadMe.txt</resource>
     <resource>src/main/resources/META-INF/services/org/apache/camel/component/helloworld</resource>
