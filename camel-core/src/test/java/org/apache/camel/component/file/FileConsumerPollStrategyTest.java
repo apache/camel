@@ -56,7 +56,7 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give file consumer a bit time
-        Thread.sleep(1000);
+        Thread.sleep(1500);
 
         assertTrue(event.startsWith("rollbackcommit"));
     }

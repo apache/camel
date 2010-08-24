@@ -47,6 +47,46 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.foo} == abc and ${in.header.bar} < 200", true);
     }
 
+    public void testTwoAnd() throws Exception {
+        exchange.getIn().setBody("Hello World");
+        assertExpression("${in.header.foo} == abc and ${in.header.bar} == 123 and ${body} == 'Hello World'", true);
+        assertExpression("${in.header.foo} == 'abc' and ${in.header.bar} == 123 and ${body} == 'Hello World'", true);
+        assertExpression("${in.header.foo} == abc and ${in.header.bar} == 123 and ${body} == 'Bye World'", false);
+        assertExpression("${in.header.foo} == 'abc' and ${in.header.bar} == 123 and ${body} == 'Bye World'", false);
+    }
+
+    public void testThreeAnd() throws Exception {
+        exchange.getIn().setBody("Hello World");
+        assertExpression("${in.header.foo} == abc and ${in.header.bar} == 123 and ${body} == 'Hello World' and ${in.header.xx}} == null", true);
+        assertExpression("${in.header.foo} == 'abc' and ${in.header.bar} == 123 and ${body} == 'Hello World' and ${in.header.xx}} == null", true);
+    }
+
+    public void testTwoOr() throws Exception {
+        exchange.getIn().setBody("Hello World");
+        assertExpression("${in.header.foo} == abc or ${in.header.bar} == 44 or ${body} == 'Bye World'", true);
+        assertExpression("${in.header.foo} == 'abc' or ${in.header.bar} == 44 or ${body} == 'Bye World'", true);
+        assertExpression("${in.header.foo} == xxx or ${in.header.bar} == 44 or ${body} == 'Bye World'", false);
+        assertExpression("${in.header.foo} == 'xxx' or ${in.header.bar} == 44 or ${body} == 'Bye World'", false);
+        assertExpression("${in.header.foo} == xxx or ${in.header.bar} == 44 or ${body} == 'Hello World'", true);
+        assertExpression("${in.header.foo} == 'xxx' or ${in.header.bar} == 44 or ${body} == 'Hello World'", true);
+        assertExpression("${in.header.foo} == xxx or ${in.header.bar} == 123 or ${body} == 'Bye World'", true);
+        assertExpression("${in.header.foo} == 'xxx' or ${in.header.bar} == 123 or ${body} == 'Bye World'", true);
+    }
+
+    public void testThreeOr() throws Exception {
+        exchange.getIn().setBody("Hello World");
+        assertExpression("${in.header.foo} == xxx or ${in.header.bar} == 44 or ${body} == 'Bye Moon' or ${body} contains 'World'", true);
+        assertExpression("${in.header.foo} == 'xxx' or ${in.header.bar} == 44 or ${body} == 'Bye Moon' or ${body} contains 'World'", true);
+        assertExpression("${in.header.foo} == xxx or ${in.header.bar} == 44 or ${body} == 'Bye Moon' or ${body} contains 'Moon'", false);
+        assertExpression("${in.header.foo} == 'xxx' or ${in.header.bar} == 44 or ${body} == 'Bye Moon' or ${body} contains 'Moon'", false);
+        assertExpression("${in.header.foo} == abc or ${in.header.bar} == 44 or ${body} == 'Bye Moon' or ${body} contains 'Moon'", true);
+        assertExpression("${in.header.foo} == 'abc' or ${in.header.bar} == 44 or ${body} == 'Bye Moon' or ${body} contains 'Moon'", true);
+        assertExpression("${in.header.foo} == xxx or ${in.header.bar} == 123 or ${body} == 'Bye Moon' or ${body} contains 'Moon'", true);
+        assertExpression("${in.header.foo} == 'xxx' or ${in.header.bar} == 123 or ${body} == 'Bye Moon' or ${body} contains 'Moon'", true);
+        assertExpression("${in.header.foo} == xxx or ${in.header.bar} == 44 or ${body} == 'Hello World' or ${body} contains 'Moon'", true);
+        assertExpression("${in.header.foo} == 'xxx' or ${in.header.bar} == 44 or ${body} == 'Hello World' or ${body} contains 'Moon'", true);
+    }
+
     public void testAndWithQuotation() throws Exception {
         assertExpression("${in.header.foo} == 'abc' and ${in.header.bar} == '123'", true);
         assertExpression("${in.header.foo} == 'abc' and ${in.header.bar} == '444'", false);

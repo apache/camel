@@ -30,6 +30,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,27 +42,49 @@ import static org.apache.camel.language.simple.SimpleLanguageOperator.*;
 public abstract class SimpleLanguageSupport implements Language, IsSingleton {
 
     // this is a regex for a given group in a simple expression that uses operators
-    protected static final String GROUP_PATTERN =
+    protected static final String OPERATOR_REGEX =
         "\\$\\{(\\S+)\\}\\s+(==|>|>=|<|<=|!=|contains|not contains|regex|not regex|in|not in|is|not is|range|not range)\\s+('.*?'|\\S+)";
 
     // this is the operator reg ex pattern used to match if a given expression is operator based or not
-    protected static final Pattern PATTERN = Pattern.compile("^(" + GROUP_PATTERN + ")(\\s+(and|or)\\s+(" + GROUP_PATTERN + "))?$");
+    protected static final Pattern OPERATOR_PATTERN = Pattern.compile(OPERATOR_REGEX);
+
+    // two specialized pattern for matching/finding multiple expressions combined using multiple and|or operators
+    protected static final Pattern ANDOR_PATTERN = Pattern.compile("\\s+(and|or)\\s+" + OPERATOR_REGEX);
+    protected static final Pattern START_ANDOR_PATTERN = Pattern.compile("^" + OPERATOR_REGEX + "\\s+(and|or)\\s+.*$");
 
     // this is special for the range operator where you define the range as from..to (where from and to are numbers)
     protected static final Pattern RANGE_PATTERN = Pattern.compile("^(\\d+)(\\.\\.)(\\d+)$");
     protected final Log log = LogFactory.getLog(getClass());
+
+    /**
+     * A holder class to hold an operator and the expression.
+     * <p/>
+     * This is used for expression with multiple expressions grouped using and/or operators
+     */
+    private final class ExpressionGroup extends KeyValueHolder<SimpleLanguageOperator, Expression> {
+
+        public ExpressionGroup(SimpleLanguageOperator key, Expression value) {
+            super(key, value);
+        }
+
+        @Override
+        public String toString() {
+            return getKey() + " " + getValue();
+        }
+    }
 
     public Predicate createPredicate(String expression) {
         return PredicateBuilder.toPredicate(createExpression(expression));
     }
 
     public Expression createExpression(String expression) {
-        Matcher matcher = PATTERN.matcher(expression);
-        if (matcher.matches()) {
+        Matcher matcher = OPERATOR_PATTERN.matcher(expression);
+        Matcher startMatcher = START_ANDOR_PATTERN.matcher(expression);
+        if (matcher.matches() || startMatcher.matches()) {
             if (log.isDebugEnabled()) {
-                log.debug("Expression is evaluated as simple expression with operator: " + expression);
+                log.debug("Expression is evaluated as simple (with operator) expression: " + expression);
             }
-            return createOperatorExpression(matcher, expression);
+            return createOperatorExpression(matcher, startMatcher, expression);
         } else if (expression.indexOf("${") >= 0) {
             if (log.isDebugEnabled()) {
                 log.debug("Expression is evaluated as simple (strict) expression: " + expression);
@@ -75,54 +98,80 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
         }
     }
 
-    private Expression createOperatorExpression(final Matcher matcher, final String expression) {
-        int groupCount = matcher.groupCount();
+    private Expression createOperatorExpression(Matcher matcher, Matcher startMatcher, String expression) {
+        Expression answer = null;
 
-        if (log.isTraceEnabled()) {
-            log.trace("Matcher expression: " + expression);
-            log.trace("Matcher group count: " + groupCount);
-            for (int i = 0; i < matcher.groupCount() + 1; i++) {
-                String group = matcher.group(i);
-                if (log.isTraceEnabled()) {
-                    log.trace("Matcher group #" + i + ": " + group);
-                }
-            }
+        if (startMatcher.matches()) {
+            answer = doCreateOperatorExpression(expression, startMatcher.group(1), startMatcher.group(2), startMatcher.group(3));
+        } else if (matcher.matches()) {
+            answer = doCreateOperatorExpression(expression, matcher.group(1), matcher.group(2), matcher.group(3));
         }
 
-        // a simple expression with operator can either be a single group or a dual group
-        String operatorText = matcher.group(6);
-        if (operatorText == null) {
-            // single group
-            return doCreateOperatorExpression(expression, matcher.group(2), matcher.group(3), matcher.group(4));
-        } else {
-            // dual group with an and/or operator between the two groups
-            final Expression first = doCreateOperatorExpression(expression, matcher.group(2), matcher.group(3), matcher.group(4));
-            final SimpleLanguageOperator operator = asOperator(operatorText);
-            final Expression last = doCreateOperatorExpression(expression, matcher.group(8), matcher.group(9), matcher.group(10));
+        // append any additional operators
+        answer = appendAdditionalOperatorExpressions(answer, expression);
 
-            // create a compound predicate to combine the two groups with the operator
-            final Predicate compoundPredicate;
-            if (operator == AND) {
-                compoundPredicate = PredicateBuilder.and(PredicateBuilder.toPredicate(first), PredicateBuilder.toPredicate(last));
-            } else if (operator == OR) {
-                compoundPredicate = PredicateBuilder.or(PredicateBuilder.toPredicate(first), PredicateBuilder.toPredicate(last));
-            } else {
+        return answer;
+    }
+
+    private Expression appendAdditionalOperatorExpressions(final Expression answer, final String expression) {
+        Matcher matcher = ANDOR_PATTERN.matcher(expression);
+
+        // now go through the and/or and append those sub expressions
+        final List<ExpressionGroup> expressions = new ArrayList<ExpressionGroup>();
+        while (matcher.find()) {
+            dumpMatcher(matcher);
+
+            // we only support AND/OR operator between expression groups
+            final SimpleLanguageOperator operator = asOperator(matcher.group(1));
+            if (operator != AND && operator != OR) {
                 throw new IllegalArgumentException("Syntax error in expression: " + expression
                     + ". Expected operator as either and/or but was: " + operator);
             }
+            final Expression exp = doCreateOperatorExpression(expression, matcher.group(2), matcher.group(3), matcher.group(4));
 
-            // return the expression that evaluates this expression
-            return new Expression() {
-                public <T> T evaluate(Exchange exchange, Class<T> type) {
-                    boolean matches = compoundPredicate.matches(exchange);
-                    return exchange.getContext().getTypeConverter().convertTo(type, matches);
-                }
+            // add this group
+            expressions.add(new ExpressionGroup(operator, exp));
+        }
 
-                @Override
-                public String toString() {
-                    return first + " " + operator + " " + last;
+        // return the expression that evaluates the entire expression with multiple groups
+        return new Expression() {
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
+                boolean matches = PredicateBuilder.toPredicate(answer).matches(exchange);
+                for (ExpressionGroup group : expressions) {
+                    boolean result = PredicateBuilder.toPredicate(group.getValue()).matches(exchange);
+                    if (group.getKey() == AND) {
+                        matches &= result;
+                    } else {
+                        matches |= result;
+                    }
                 }
-            };
+                return exchange.getContext().getTypeConverter().convertTo(type, matches);
+            }
+
+            @Override
+            public String toString() {
+                StringBuilder msg = new StringBuilder(answer.toString());
+                for (ExpressionGroup group : expressions) {
+                    msg.append(" ");
+                    msg.append(group.getKey());
+                    msg.append(" ");
+                    msg.append(group.getValue());
+                }
+                return msg.toString();
+            }
+        };
+    }
+
+    private void dumpMatcher(Matcher matcher) {
+        if (log.isTraceEnabled()) {
+            log.trace("Matcher start: " + matcher.start());
+            log.trace("Matcher end: " + matcher.end());
+            log.trace("Matcher group: " + matcher.group());
+            log.trace("Matcher group count: " + matcher.groupCount());
+            for (int i = 0; i < matcher.groupCount() + 1; i++) {
+                String group = matcher.group(i);
+                log.trace("Matcher group #" + i + ": " + group);
+            }
         }
     }
 
