@@ -30,12 +30,14 @@ public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
     protected int entryIndex;
     protected EntryFilter entryFilter;
     protected List list;
+    protected boolean throttleEntries;
 
-    public FeedEntryPollingConsumer(FeedEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate) {
+    public FeedEntryPollingConsumer(FeedEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
         super(endpoint, processor);
         if (filter) {
             entryFilter = createEntryFilter(lastUpdate);
         }
+        this.throttleEntries = throttleEntries;
     }
 
     public void poll() throws Exception {
@@ -52,8 +54,10 @@ public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
             if (valid) {
                 Exchange exchange = endpoint.createExchange(feed, entry);
                 getProcessor().process(exchange);
-                // return and wait for the next poll to continue from last time (this consumer is stateful)
-                return;
+                if (this.throttleEntries) {
+                    // return and wait for the next poll to continue from last time (this consumer is stateful)
+                    return;
+                }
             }
         }
 

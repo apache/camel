@@ -62,8 +62,8 @@ public class AtomEndpoint extends FeedEndpoint {
     }
 
     @Override
-    protected FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate) {
-        return new AtomEntryPollingConsumer(this, processor, filter, lastUpdate);
+    protected FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
+        return new AtomEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
     }  
     
     @Override

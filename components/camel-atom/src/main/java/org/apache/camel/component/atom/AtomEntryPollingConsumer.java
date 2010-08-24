@@ -34,8 +34,8 @@ import org.apache.camel.component.feed.FeedEntryPollingConsumer;
 public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
     private Document<Feed> document;
 
-    public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate) {
-        super(endpoint, processor, filter, lastUpdate);
+    public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
+        super(endpoint, processor, filter, lastUpdate, throttleEntries);
     }   
     
     private Document<Feed> getDocument() throws IOException, ParseException {

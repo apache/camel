@@ -36,6 +36,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     protected boolean filter = true;
     private boolean feedHeader = true;
     private boolean sortEntries;
+    private boolean throttleEntries = true;
 
     public FeedEndpoint() {
     }
@@ -67,7 +68,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
         FeedPollingConsumer answer;
         if (isSplitEntries()) {
-            answer = createEntryPollingConsumer(this, processor, filter, lastUpdate);
+            answer = createEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
         } else {
             answer = createPollingConsumer(this, processor);
         }
@@ -81,7 +82,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
     protected abstract FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor);
 
-    protected abstract FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate);
+    protected abstract FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries);
 
     protected Exchange createExchangeWithFeedHeader(Object feed, String header) {
         Exchange exchange = createExchange();
@@ -190,6 +191,18 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     public boolean isLenientProperties() {
         // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
         return true;
+    }
+
+    /**
+     * Sets whether all entries identified in a single feed poll should be delivered immediately. If true, only one
+     * entry is processed per consumer.delay. Only applicable when splitEntries = true.
+     */
+    public void setThrottleEntries(boolean throttleEntries) {
+        this.throttleEntries = throttleEntries;
+    }
+
+    public boolean isThrottleEntries() {
+        return this.throttleEntries;
     }
 
     // Implementation methods
