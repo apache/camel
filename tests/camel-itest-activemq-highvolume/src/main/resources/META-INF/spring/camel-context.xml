@@ -14,7 +14,7 @@
 	    <endpoint id="Split" uri="bean:messages?method=split"/>
 	    <endpoint id="GenerateMessages" uri="bean:messages?method=generate"/>
 	    <endpoint id="JmsQueueProducer" uri="jmsProducer:topic:highVolume"/>
-	    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume?concurrentConsumers=1"/>
+	    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume?concurrentConsumers=10"/>
 	    <endpoint id="Log" uri="log:org.apache.camel.example?level=WARN"/>
 	    
 	    <route id="ProduceMessages" trace="false">
@@ -26,7 +26,7 @@
 			<from ref="Direct"/>
 			<doTry>
 				<to ref="Split"/>
-				<to uri="JmsQueueProducer"/>
+				<to ref="JmsQueueProducer"/>
 				<doCatch>
 					<exception>javax.jms.ResourceAllocationException</exception>
 					<log message=">>>>>> PRODUCER SHOULD BE STOPPED"/>
@@ -36,9 +36,11 @@
 	    
     	<route id="ConsumeMessages" trace="false">
 		    <from ref="JmsQueueConsumer"/>
+		    <!-- 
 		    <delay>
             	<constant>100</constant>
             </delay>
+             -->
 			<to ref="Log"/>
 		</route>
 
@@ -46,12 +48,13 @@
 	
     <!-- ******************************************************************************************* -->
 	
-	<!-- Create an embedded broker -->
+	<!-- THIS TEXT MUST BE COMMENTED WHEN WE DEPLOY THIS BUNDLE ON SMX/KARAF -->
+	<!-- Create an embedded broker 
 	<bean id="broker" class="org.apache.activemq.xbean.BrokerFactoryBean">
 	    <property name="config" value="classpath:META-INF/activemq.xml" />
 	    <property name="start" value="true" />
 	</bean>
-	
+    	-->
 	
     <!-- ******************************************************************************************* -->
 
@@ -77,7 +80,7 @@
         <property name="transacted" value="false"/>
     </bean>
     
-    <bean id="jmsProducer" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <bean id="jmsProducer" class="org.apache.camel.component.jms.JmsComponent">
         <property name="configuration" ref="jmsConfigProducer"/>
     </bean>
     
@@ -97,7 +100,8 @@
         <property name="transacted" value="false"/>
     </bean>
     
-    <bean id="jmsConsumer" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <!-- org.apache.activemq.camel.component.ActiveMQComponent  -->
+    <bean id="jmsConsumer" class="org.apache.camel.component.jms.JmsComponent">
         <property name="configuration" ref="jmsConfigConsumer"/>
       
     </bean>
