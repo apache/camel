@@ -23,11 +23,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 public class SipComponent extends DefaultComponent {
-    private SipConfiguration config;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        config = new SipConfiguration();
+        SipConfiguration config = new SipConfiguration();
         config.initialize(new URI(uri), parameters, this);
         
         SipEndpoint sipEndpoint = new SipEndpoint(remaining, this, config);

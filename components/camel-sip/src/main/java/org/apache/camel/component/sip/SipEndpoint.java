@@ -54,5 +54,4 @@ public class SipEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    
 }

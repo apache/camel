@@ -47,7 +47,6 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
     protected int notifyCount;
     private SipPresenceAgent sipPresenceAgent;
 
-
     public SipPresenceAgentListener(SipPresenceAgent sipPresenceAgent) {
         this.sipPresenceAgent = sipPresenceAgent;
     }
@@ -195,7 +194,7 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
     }
 
     public synchronized void processResponse(ResponseEvent responseReceivedEvent) {
-        Response response = (Response) responseReceivedEvent.getResponse();
+        Response response = responseReceivedEvent.getResponse();
         Integer statusCode = response.getStatusCode();
         if (SIP_MESSAGE_CODES.containsKey(statusCode)) {
             LOG.debug(SIP_MESSAGE_CODES.get(statusCode) + " received from Subscriber");

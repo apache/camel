@@ -79,7 +79,6 @@ public class SipSubscriptionListener implements SipListener {
         if (request.getMethod().equals(Request.NOTIFY)) {
             processNotify(requestReceivedEvent, serverTransactionId);
         } 
-
     }
 
     public synchronized void processNotify(RequestEvent requestEvent,
@@ -128,7 +127,7 @@ public class SipSubscriptionListener implements SipListener {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Response received at Subscriber");
         }
-        Response response = (Response) responseReceivedEvent.getResponse();
+        Response response = responseReceivedEvent.getResponse();
         Transaction clientTransactionId = responseReceivedEvent.getClientTransaction();
 
         if (LOG.isDebugEnabled()) {
@@ -136,7 +135,7 @@ public class SipSubscriptionListener implements SipListener {
         }
         if (clientTransactionId == null) {
             if (LOG.isWarnEnabled()) {
-                LOG.warn("Stray response -- dropping ");
+                LOG.warn("Stray response -- dropping");
             }
             return;
         }

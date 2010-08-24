@@ -38,9 +38,8 @@ public class SipSubscriber extends DefaultConsumer {
 
     public SipSubscriber(SipEndpoint sipEndpoint, Processor processor, SipConfiguration configuration) {
         super(sipEndpoint, processor);
-        this.configuration = sipEndpoint.getConfiguration();
+        this.configuration = configuration;
         this.configuration.setConsumer(true);
-
     }
 
     @Override

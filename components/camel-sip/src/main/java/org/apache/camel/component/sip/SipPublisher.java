@@ -23,7 +23,7 @@ import javax.sip.SipProvider;
 import javax.sip.SipStack;
 import javax.sip.message.Request;
 
-import org.apache.camel.CamelException;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.sip.listener.SipPublishListener;
@@ -83,13 +83,12 @@ public class SipPublisher extends DefaultProducer implements ServicePoolAware {
     public void process(Exchange exchange) throws Exception {
         String requestMethod = exchange.getIn().getHeader("REQUEST_METHOD", String.class);
         if (requestMethod == null) {
-            throw new CamelException("Missing mandatory Header in REQUEST_HEADER in exchange");
+            throw new CamelExchangeException("Missing mandatory Header: REQUEST_HEADER", exchange);
         }
         Object body = exchange.getIn().getBody();
         
         Request request = configuration.createSipRequest(sequenceNumber, requestMethod, body);
         provider.sendRequest(request);
-        
     }
 
     public void setConfiguration(SipConfiguration configuration) {
@@ -107,4 +106,5 @@ public class SipPublisher extends DefaultProducer implements ServicePoolAware {
     public SipStack getSipStack() {
         return sipStack;
     }
+
 }

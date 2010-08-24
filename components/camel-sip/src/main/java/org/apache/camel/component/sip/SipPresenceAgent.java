@@ -34,7 +34,7 @@ public class SipPresenceAgent extends DefaultConsumer {
     public SipPresenceAgent(SipEndpoint sipEndpoint, Processor processor,
         SipConfiguration configuration) {
         super(sipEndpoint, processor);
-        this.configuration = sipEndpoint.getConfiguration();
+        this.configuration = configuration;
         this.configuration.setConsumer(true);
     }
 

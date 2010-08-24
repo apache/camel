@@ -274,7 +274,6 @@ public class SipConfiguration {
             createExpiresHeader();
         }
         extensionHeader = component.resolveAndRemoveReferenceParameter(parameters, "extensionHeader", ExtensionHeader.class, null);
-        
     }
 
     public Request createSipRequest(long sequenceNumber, String requestMethod, Object body) throws ParseException, InvalidArgumentException {
@@ -410,7 +409,6 @@ public class SipConfiguration {
     public void setSipStack(SipStack sipStack) {
         this.sipStack = sipStack;
     }
-
 
     public String getProtocol() {
         return protocol;
