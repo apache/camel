@@ -49,9 +49,9 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-csv</artifactId>
-      <version>1.0-r706899</version>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.commons-csv</artifactId>
+      <version>${commons-csv}</version>
     </dependency>
 
     <!-- testing -->
