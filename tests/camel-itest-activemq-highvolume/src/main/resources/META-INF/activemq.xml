@@ -14,15 +14,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<!-- 
-<beans
-  xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans
-                      http://www.springframework.org/schema/beans/spring-beans.xsd
-                      http://activemq.apache.org/schema/core
-                      http://activemq.apache.org/schema/core/activemq-core-5.3.0.xsd">
--->
 <beans
   xmlns="http://www.springframework.org/schema/beans"
   xmlns:amq="http://activemq.apache.org/schema/core"
@@ -40,7 +31,7 @@
             brokerName="brokerHighVolume"
             persistent="false"
             useJmx="true"
-            enableStatistics="true"
+            enableStatistics="false"
             advisorySupport="false">
         
  	      <destinationInterceptors>
@@ -107,6 +98,7 @@
             http://activemq.apache.org/configuring-transports.html 
         -->
         <transportConnectors>
+            <transportConnector name="vm" uri="vm://0.0.0.0:61615" />
             <transportConnector name="tcp" uri="tcp://0.0.0.0:61616" />
         </transportConnectors>
 

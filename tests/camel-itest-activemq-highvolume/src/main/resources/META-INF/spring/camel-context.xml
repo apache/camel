@@ -14,7 +14,7 @@
 	    <endpoint id="Split" uri="bean:messages?method=split"/>
 	    <endpoint id="GenerateMessages" uri="bean:messages?method=generate"/>
 	    <endpoint id="JmsQueueProducer" uri="jmsProducer:topic:highVolume"/>
-	    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume?concurrentConsumers=10"/>
+	    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume"/>
 	    <endpoint id="Log" uri="log:org.apache.camel.example?level=WARN"/>
 	    
 	    <route id="ProduceMessages" trace="false">
@@ -40,7 +40,7 @@
 		    <delay>
             	<constant>100</constant>
             </delay>
-             -->
+            --> 
 			<to ref="Log"/>
 		</route>
 
@@ -49,12 +49,12 @@
     <!-- ******************************************************************************************* -->
 	
 	<!-- THIS TEXT MUST BE COMMENTED WHEN WE DEPLOY THIS BUNDLE ON SMX/KARAF -->
-	<!-- Create an embedded broker 
+	<!-- Create an embedded broker -->
 	<bean id="broker" class="org.apache.activemq.xbean.BrokerFactoryBean">
 	    <property name="config" value="classpath:META-INF/activemq.xml" />
 	    <property name="start" value="true" />
 	</bean>
-    	-->
+    	
 	
     <!-- ******************************************************************************************* -->
 
@@ -63,9 +63,12 @@
 	     and connection pool 
 	     -->
 	
-	<!-- Connection for the client producing -->	
+	<!-- Connection for the client PRODUCING -->	
     <bean id="jmsConnectionFactoryProducer" class="org.apache.activemq.ActiveMQConnectionFactory">
-		<property name="brokerURL" value="vm://localhost:61616" />
+		<property name="brokerURL" value="vm://localhost:61615" />
+		<property name="objectMessageSerializationDefered" value="true" />
+		<property name="optimizeAcknowledge" value="true" />
+		<!-- <property name="useAsyncSend" value="true" /> --> 		
 	</bean>
 
 	<bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
@@ -86,18 +89,25 @@
     
     <!-- ******************************************************************************************* -->
     <!-- Config used to consume the messages 
-         Transport layer is different tcp:// instead of vm://
+         Transport layer is different tcp:// instead of vm://   jms.prefetchPolicy.queuePrefetch=1
+         
          and not connection pool is used -->
          
-    <!-- Connection for the client consuming -->	
+    <!-- Connection for the client CONSUMING -->	
     <bean id="jmsConnectionFactoryConsumer" class="org.apache.activemq.ActiveMQConnectionFactory">
 		<property name="brokerURL" value="tcp://localhost:61616" />
+	    <property name="objectMessageSerializationDefered" value="true" />
+	    <property name="optimizeAcknowledge" value="true" />
+        <property name="optimizedMessageDispatch" value="true"/>
+        <property name="dispatchAsync" value="true"/>
 	</bean>
     
     <!-- Use simple connection factory to consume messages -->
     <bean id="jmsConfigConsumer" class="org.apache.camel.component.jms.JmsConfiguration">
         <property name="connectionFactory" ref="jmsConnectionFactoryConsumer"/>
         <property name="transacted" value="false"/>
+        <!--  <property name="acknowledgementModeName" value="DUPS_OK_ACKNOWLEDGE" /> -->
+        <property name="concurrentConsumers" value="10" />
     </bean>
     
     <!-- org.apache.activemq.camel.component.ActiveMQComponent  -->
