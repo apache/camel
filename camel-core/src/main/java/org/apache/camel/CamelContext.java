@@ -81,8 +81,18 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     String getName();
 
+    /**
+     * Gets the current name strategy
+     *
+     * @return name strategy
+     */
     CamelContextNameStrategy getNameStrategy();
 
+    /**
+     * Sets a custom name strategy
+     *
+     * @param nameStrategy name strategy
+     */
     void setNameStrategy(CamelContextNameStrategy nameStrategy);
 
     /**
