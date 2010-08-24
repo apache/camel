@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+	
+        <endpoint id="Timer" uri="timer:messages?period=1s"/>
+	    <endpoint id="Direct" uri="direct:messages"/>
+	    <endpoint id="Split" uri="bean:messages?method=split"/>
+	    <endpoint id="GenerateMessages" uri="bean:messages?method=generate"/>
+	    <endpoint id="JmsQueueProducer" uri="jmsProducer:topic:highVolume"/>
+	    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume?concurrentConsumers=1"/>
+	    <endpoint id="Log" uri="log:org.apache.camel.example?level=WARN"/>
+	    
+	    <route id="ProduceMessages" trace="false">
+			<from ref="Timer"/>
+			<to ref="GenerateMessages"/>
+		</route>
+
+		<route id="SplitandProduceMessagesOnActiveMq" trace="false">
+			<from ref="Direct"/>
+			<doTry>
+				<to ref="Split"/>
+				<to uri="JmsQueueProducer"/>
+				<doCatch>
+					<exception>javax.jms.ResourceAllocationException</exception>
+					<log message=">>>>>> PRODUCER SHOULD BE STOPPED"/>
+				</doCatch>
+			</doTry>
+		</route>
+	    
+    	<route id="ConsumeMessages" trace="false">
+		    <from ref="JmsQueueConsumer"/>
+		    <delay>
+            	<constant>100</constant>
+            </delay>
+			<to ref="Log"/>
+		</route>
+
+	</camelContext>
+	
+    <!-- ******************************************************************************************* -->
+	
+	<!-- Create an embedded broker -->
+	<bean id="broker" class="org.apache.activemq.xbean.BrokerFactoryBean">
+	    <property name="config" value="classpath:META-INF/activemq.xml" />
+	    <property name="start" value="true" />
+	</bean>
+	
+	
+    <!-- ******************************************************************************************* -->
+
+	<!-- Config used when we produce the messages 
+	     protocol vm:// is used
+	     and connection pool 
+	     -->
+	
+	<!-- Connection for the client producing -->	
+    <bean id="jmsConnectionFactoryProducer" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="vm://localhost:61616" />
+	</bean>
+
+	<bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+		<property name="maxConnections" value="10" />
+		<property name="maximumActive" value="500" />
+		<property name="connectionFactory" ref="jmsConnectionFactoryProducer" />
+	</bean>
+
+	<!-- Use pooled connection factory to produce messages -->
+    <bean id="jmsConfigProducer" class="org.apache.camel.component.jms.JmsConfiguration">
+        <property name="connectionFactory" ref="pooledConnectionFactory"/>
+        <property name="transacted" value="false"/>
+    </bean>
+    
+    <bean id="jmsProducer" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="configuration" ref="jmsConfigProducer"/>
+    </bean>
+    
+    <!-- ******************************************************************************************* -->
+    <!-- Config used to consume the messages 
+         Transport layer is different tcp:// instead of vm://
+         and not connection pool is used -->
+         
+    <!-- Connection for the client consuming -->	
+    <bean id="jmsConnectionFactoryConsumer" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://localhost:61616" />
+	</bean>
+    
+    <!-- Use simple connection factory to consume messages -->
+    <bean id="jmsConfigConsumer" class="org.apache.camel.component.jms.JmsConfiguration">
+        <property name="connectionFactory" ref="jmsConnectionFactoryConsumer"/>
+        <property name="transacted" value="false"/>
+    </bean>
+    
+    <bean id="jmsConsumer" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="configuration" ref="jmsConfigConsumer"/>
+      
+    </bean>
+
+    <!-- ******************************************************************************************* -->
+	
+	<bean name="messages" class="org.apache.camel.itest.highvolume.Messages" />
+
+</beans>
