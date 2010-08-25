@@ -19,14 +19,21 @@ package org.apache.camel.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
 
 /**
  * @version $Revision$
  */
 public class EndpointHelperTest extends ContextTestSupport {
+
+    private Endpoint foo;
+    private Endpoint bar;
 
     public void testPollEndpoint() throws Exception {
         template.sendBody("seda:foo", "Hello World");
@@ -58,6 +65,25 @@ public class EndpointHelperTest extends ContextTestSupport {
         assertEquals(2, bodies.size());
         assertEquals("Hello World", bodies.get(0));
         assertEquals("Bye World", bodies.get(1));
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        SimpleRegistry reg = new SimpleRegistry();
+        CamelContext context = new DefaultCamelContext(reg);
+
+        foo = context.getEndpoint("mock:foo");
+        bar = context.getEndpoint("mock:bar");
+        reg.put("foo", foo);
+        reg.put("coolbar", bar);
+
+        return context;
+    }
+
+    public void testLookupEndpointRegistryId() throws Exception {
+        assertEquals("foo", EndpointHelper.lookupEndpointRegistryId(foo));
+        assertEquals("coolbar", EndpointHelper.lookupEndpointRegistryId(bar));
+        assertEquals(null, EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
     }
 
 }

@@ -21,5 +21,11 @@ package org.apache.camel.spi;
  * in REST or JMX style APIs
  */
 public interface HasId {
+
+    /**
+     * Returns the id
+     *
+     * @return the id
+     */
     String getId();
 }

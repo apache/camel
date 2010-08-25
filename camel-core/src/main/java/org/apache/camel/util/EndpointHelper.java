@@ -366,9 +366,32 @@ public final class EndpointHelper {
     }
 
     /**
-     * A helper method for Endpoint implementations to create new Ids for Endpoints which also implement {@link HasId}
+     * A helper method for Endpoint implementations to create new Ids for Endpoints which also implement
+     * {@link org.apache.camel.spi.HasId}
      */
     public static String createEndpointId() {
         return "endpoint" + ENDPOINT_COUNTER.incrementAndGet();
+    }
+
+    /**
+     * Lookup the id the given endpoint has been enlisted with in the {@link org.apache.camel.spi.Registry}.
+     *
+     * @param endpoint  the endpoint
+     * @return the endpoint id, or <tt>null</tt> if not found
+     */
+    public static String lookupEndpointRegistryId(Endpoint endpoint) {
+        if (endpoint == null || endpoint.getCamelContext() == null) {
+            return null;
+        }
+
+        Map<String, Endpoint> map = endpoint.getCamelContext().getRegistry().lookupByType(Endpoint.class);
+        for (Map.Entry<String, Endpoint> entry : map.entrySet()) {
+            if (entry.getValue().equals(endpoint)) {
+                return entry.getKey();
+            }
+        }
+
+        // not found
+        return null;
     }
 }
