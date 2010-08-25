@@ -39,7 +39,7 @@ import org.quartz.Trigger;
 
 /**
  * A <a href="http://activemq.apache.org/quartz.html">Quartz Endpoint</a>
- * 
+ *
  * @version $Revision:520964 $
  */
 public class QuartzEndpoint extends DefaultEndpoint implements Service {
@@ -74,7 +74,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
             detail.setJobClass(isStateful() ? StatefulCamelJob.class : CamelJob.class);
         }
         if (detail.getName() == null) {
-            detail.setName(getEndpointUri());
+            detail.setName(getJobName());
         }
         getComponent().addJob(detail, trigger);
     }
@@ -85,7 +85,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
 
     /**
      * This method is invoked when a Quartz job is fired.
-     * 
+     *
      * @param jobExecutionContext the Quartz Job context
      */
     public void onJobExecute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -143,6 +143,14 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
         return "quartz://" + getTrigger().getGroup() + "/" + getTrigger().getName();
     }
 
+    protected String getJobName() {
+        String jobName = getEndpointUri();
+        if (jobName.contains("?")) {
+            jobName = ObjectHelper.before(jobName, "?");
+        }
+        return jobName;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -195,6 +203,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
 
     // Implementation methods
     // -------------------------------------------------------------------------
+
     public synchronized void consumerStarted(final QuartzConsumer consumer) throws SchedulerException {
         ObjectHelper.notNull(trigger, "trigger");
         if (LOG.isDebugEnabled()) {

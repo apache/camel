@@ -30,6 +30,8 @@ import org.quartz.SchedulerException;
  */
 public class CamelJob implements Job, Serializable {
 
+    private static final long serialVersionUID = 26L;
+
     public void execute(JobExecutionContext context) throws JobExecutionException {
         String camelContextName = (String) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME);
         String endpointUri = (String) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT_URI);

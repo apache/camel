@@ -23,4 +23,6 @@ import org.quartz.StatefulJob;
  */
 public class StatefulCamelJob extends CamelJob implements StatefulJob {
 
+    private static final long serialVersionUID = 25L;
+
 }

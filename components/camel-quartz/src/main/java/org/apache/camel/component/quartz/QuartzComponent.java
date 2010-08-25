@@ -194,16 +194,36 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     private void doAddJob(JobDetail job, Trigger trigger) throws SchedulerException {
         JOBS.incrementAndGet();
 
-        if (getScheduler().getTrigger(trigger.getName(), trigger.getGroup()) == null) {
+        Trigger existingTrigger = getScheduler().getTrigger(trigger.getName(), trigger.getGroup());
+        if (existingTrigger == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Adding job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
             }
             getScheduler().scheduleJob(job, trigger);
+        } else if (hasTriggerChanged(existingTrigger, trigger)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Trigger: " + trigger.getGroup() + "/" + trigger.getName() + " already exists and will be updated by Quartz.");
+            }
+            scheduler.addJob(job, true);
+            trigger.setJobName(job.getName());
+            scheduler.rescheduleJob(trigger.getName(), trigger.getGroup(), trigger);
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Resuming job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
+                LOG.debug("Trigger: " + trigger.getGroup() + "/" + trigger.getName() + " already exists and will be resumed automatically by Quartz.");
             }
-            getScheduler().resumeTrigger(trigger.getName(), trigger.getGroup());
+            if (!isClustered()) {
+                scheduler.resumeTrigger(trigger.getName(), trigger.getGroup());
+            }
+        }
+    }
+
+    private boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
+        if (oldTrigger instanceof CronTrigger && oldTrigger.equals(newTrigger)) {
+            CronTrigger oldCron = (CronTrigger) oldTrigger;
+            CronTrigger newCron = (CronTrigger) newTrigger;
+            return !oldCron.getCronExpression().equals(newCron.getCronExpression());
+        } else {
+            return !newTrigger.equals(oldTrigger);
         }
     }
 
