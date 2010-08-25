@@ -25,7 +25,7 @@ public class Messages {
     
     public void generate(Exchange exchange) {
      	StringBuilder messages = new StringBuilder();
-        for (int i = 1; i < 10000; i++) {
+        for (int i = 1; i < 20000; i++) {
         	messages.append("Test Message: " + i + ",");
         }
         template.sendBody(messages.toString());
