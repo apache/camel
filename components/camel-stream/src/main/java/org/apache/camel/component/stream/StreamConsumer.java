@@ -25,8 +25,10 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Exchange;
@@ -52,6 +54,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private StreamEndpoint endpoint;
     private String uri;
     private boolean initialPromptDone;
+    private final List<Object> lines = new CopyOnWriteArrayList<Object>();
 
     public StreamConsumer(StreamEndpoint endpoint, Processor processor, String uri) throws Exception {
         super(endpoint, processor);
@@ -68,6 +71,10 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
         executor = endpoint.getCamelContext().getExecutorServiceStrategy().newSingleThreadExecutor(this, endpoint.getEndpointUri());
         executor.execute(this);
+
+        if (endpoint.getGroupLines() < 0) {
+            throw new IllegalArgumentException("Option groupLines must be 0 or positive number, was " + endpoint.getGroupLines());
+        }
     }
 
     @Override
@@ -78,6 +85,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             executor.shutdownNow();
             executor = null;
         }
+        lines.clear();
         super.doStop();
     }
 
@@ -151,14 +159,37 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     /**
      * Strategy method for processing the line
      */
-    protected void processLine(Object line) throws Exception {
-        Exchange exchange = endpoint.createExchange();
+    protected synchronized void processLine(Object line) throws Exception {
+        if (endpoint.getGroupLines() > 0) {
+            // remember line
+            lines.add(line);
 
-        Message msg = new DefaultMessage();
-        msg.setBody(line);
-        exchange.setIn(msg);
+            // should we flush lines?
+            if (lines.size() >= endpoint.getGroupLines()) {
+                // spit out lines
+                Exchange exchange = endpoint.createExchange();
 
-        getProcessor().process(exchange);
+                // create message with the lines
+                Message msg = new DefaultMessage();
+                List<Object> copy = new ArrayList<Object>(lines);
+                msg.setBody(copy);
+                exchange.setIn(msg);
+
+                // clear lines
+                lines.clear();
+
+                getProcessor().process(exchange);
+            }
+        } else {
+            // single line
+            Exchange exchange = endpoint.createExchange();
+
+            Message msg = new DefaultMessage();
+            msg.setBody(line);
+            exchange.setIn(msg);
+
+            getProcessor().process(exchange);
+        }
     }
 
     /**

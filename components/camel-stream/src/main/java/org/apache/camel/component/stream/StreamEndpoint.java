@@ -38,6 +38,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     private String promptMessage;
     private long promptDelay;
     private long initialPromptDelay = 2000;
+    private int groupLines;
 
     public StreamEndpoint(String endpointUri, Component component) throws Exception {
         super(endpointUri, component);
@@ -132,6 +133,14 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     public void setScanStreamDelay(long scanStreamDelay) {
         this.scanStreamDelay = scanStreamDelay;
+    }
+
+    public int getGroupLines() {
+        return groupLines;
+    }
+
+    public void setGroupLines(int groupLines) {
+        this.groupLines = groupLines;
     }
 
     // Implementations
