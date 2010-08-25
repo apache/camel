@@ -31,7 +31,7 @@
             brokerName="brokerHighVolume"
             persistent="false"
             useJmx="true"
-            enableStatistics="false"
+            enableStatistics="true"
             advisorySupport="false">
         
  	      <destinationInterceptors>
@@ -42,10 +42,9 @@
 	        </virtualDestinationInterceptor>
 	      </destinationInterceptors>
 
-            <destinationPolicy>
+        <destinationPolicy>
             <policyMap> 
               <policyEntries>
-              
                 <policyEntry topic=">"
                              producerFlowControl="true"
                              memoryLimit="10 mb">                	
@@ -58,7 +57,7 @@
                              optimizedDispatch="true"
                              lazyDispatch="false"
                              producerFlowControl="false"
-                             memoryLimit="10 mb">
+                             memoryLimit="20 mb">
                   <pendingQueuePolicy>
                     <vmQueueCursor/>
                   </pendingQueuePolicy>

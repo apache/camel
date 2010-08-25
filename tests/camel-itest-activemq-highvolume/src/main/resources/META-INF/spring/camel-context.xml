@@ -10,20 +10,19 @@
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 	
-        <endpoint id="Timer" uri="timer:messages?delay=3000&amp;period=1s"/>
-	    <endpoint id="Direct" uri="direct:messages"/>
-	    <endpoint id="Split" uri="bean:messages?method=split"/>
-	    <endpoint id="GenerateMessages" uri="bean:messages?method=generate"/>
-	    <endpoint id="JmsQueueProducer" uri="jmsProducer:topic:highVolume"/>
-	    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume?concurrentConsumers=20"/>
-	    <endpoint id="Mock" uri="mock:virtualConsumer"/>
-	    <endpoint id="Log" uri="log:org.apache.camel.example?level=WARN"/>
+    <endpoint id="Timer" uri="timer:messages?delay=3000&amp;period=1s"/>
+    <endpoint id="Direct" uri="direct:messages"/>
+    <endpoint id="Split" uri="bean:messages?method=split"/>
+    <endpoint id="GenerateMessages" uri="bean:messages?method=generate"/>
+    <endpoint id="JmsQueueProducer" uri="jmsProducer:topic:highVolume"/>
+    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume?concurrentConsumers=200"/>
+    <endpoint id="Mock" uri="mock:virtualConsumer"/>
+    <endpoint id="Log" uri="log:org.apache.camel.example?level=WARN"/>
 	        
-	    <route id="ProduceMessages" trace="false">
+	  <route id="ProduceMessages" trace="false">
 			<from ref="Timer"/>
 			<to ref="GenerateMessages"/>
 		</route>
-		
 
 		<route id="SplitandProduceMessagesOnActiveMq" trace="false">
 			<from ref="Direct"/>
@@ -34,18 +33,17 @@
 						<log message=">>>>>> PRODUCER SHOULD BE STOPPED"/>
 					</doCatch>
 				</doTry>
-
 		</route>
 	    
-    	<route id="ConsumeMessages" trace="false">
-		    <from ref="JmsQueueConsumer"/>
-		    <!-- 
-		    <delay>
-            	<constant>100</constant>
-            </delay>
-            --> 
+  	<route id="ConsumeMessages" trace="false">
+	    <from ref="JmsQueueConsumer"/>
+ 	    <to uri="seda:log?concurrentConsumers=20"/>
+	  </route>
+		  
+	  <route id="SendToLog" trace="false">
+	    <from uri="seda:log?concurrentConsumers=20"/>
 			<to ref="Log"/>
-		</route>
+	  </route>
 
 	</camelContext>
 	
