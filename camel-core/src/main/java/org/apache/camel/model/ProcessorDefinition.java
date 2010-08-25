@@ -1871,13 +1871,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * <a href="http://camel.apache.org/exception-clause.html">Exception clause</a>
-     * for cathing certain exceptions and handling them.
+     * for catching certain exceptions and handling them.
      *
      * @param exceptionType  the exception to catch
      * @return the exception builder to configure
      */
     public OnExceptionDefinition onException(Class exceptionType) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/exception-clause.html">Exception clause</a>
+     * for catching certain exceptions and handling them.
+     *
+     * @param exceptions list of exceptions to catch
+     * @return the exception builder to configure
+     */
+    public OnExceptionDefinition onException(Class... exceptions) {
+        OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
         addOutput(answer);
         return answer;
     }
