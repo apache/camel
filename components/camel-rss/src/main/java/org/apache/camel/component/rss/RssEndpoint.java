@@ -30,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * An <a href="http://camel.apache.org/rss.html">RSS Endpoint</a>.
- * 
  */
 public class RssEndpoint extends FeedEndpoint {
     protected static final transient Log LOG = LogFactory.getLog(RssEndpoint.class);
@@ -73,8 +72,9 @@ public class RssEndpoint extends FeedEndpoint {
     }
 
     @Override
-    protected FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate) {
-        return new RssEntryPollingConsumer(this, processor, filter, lastUpdate);
+    protected FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor,
+                                                             boolean filter, Date lastUpdate, boolean throttleEntries) {
+        return new RssEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
     }  
     
     @Override

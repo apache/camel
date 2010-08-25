@@ -24,14 +24,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
 
-
 /**
  * Consumer to poll RSS feeds and return each entry from the feed step by step.
  */
 public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
 
-    public RssEntryPollingConsumer(RssEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate) {
-        super(endpoint, processor, filter, lastUpdate);
+    public RssEntryPollingConsumer(RssEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
+        super(endpoint, processor, filter, lastUpdate, throttleEntries);
     }
     
     @Override
