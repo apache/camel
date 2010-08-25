@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.mina;
 
 import java.net.SocketAddress;
@@ -39,7 +38,7 @@ public class MessageIOSessionTest extends ContextTestSupport {
 
         Exchange exchange = mock.getExchanges().get(0);
         Message message = exchange.getIn();
-        assertNotNull(message.getHeader(MinaEndpoint.HEADER_MINA_IOSESSION));
+        assertNotNull(message.getHeader(MinaConstants.MINA_IOSESSION));
         
     }
     
@@ -52,8 +51,8 @@ public class MessageIOSessionTest extends ContextTestSupport {
         Message message = mock.getExchanges().get(0).getIn();
         // Not making assumptions on what these headers contain, because it might differ 
         // on different machines/OSs.
-        assertNotNull(message.getHeader(MinaEndpoint.HEADER_LOCAL_ADDRESS, SocketAddress.class));
-        assertNotNull(message.getHeader(MinaEndpoint.HEADER_REMOTE_ADDRESS, SocketAddress.class));
+        assertNotNull(message.getHeader(MinaConstants.MINA_LOCAL_ADDRESS, SocketAddress.class));
+        assertNotNull(message.getHeader(MinaConstants.MINA_REMOTE_ADDRESS, SocketAddress.class));
     }
 
     @Override

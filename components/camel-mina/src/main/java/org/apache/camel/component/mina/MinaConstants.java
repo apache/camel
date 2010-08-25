@@ -25,6 +25,13 @@ public final class MinaConstants {
 
     public static final transient String MINA_CLOSE_SESSION_WHEN_COMPLETE = "CamelMinaCloseSessionWhenComplete";
 
+    /** The key of the IoSession which is stored in the message header*/
+    public static final transient String MINA_IOSESSION = "CamelMinaIoSession";
+    /** The socket address of local machine that received the message. */
+    public static final transient String MINA_LOCAL_ADDRESS = "CamelMinaLocalAddress";
+    /** The socket address of the remote machine that send the message. */
+    public static final transient String MINA_REMOTE_ADDRESS = "CamelMinaRemoteAddress";
+
     private MinaConstants() {
         // Utility class
     }
