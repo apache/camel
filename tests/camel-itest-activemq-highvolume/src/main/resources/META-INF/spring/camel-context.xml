@@ -12,22 +12,27 @@
 	
     <endpoint id="Timer" uri="timer:messages?delay=3000&amp;period=1s"/>
     <endpoint id="Direct" uri="direct:messages"/>
-    <endpoint id="Split" uri="bean:messages?method=split"/>
-    <endpoint id="GenerateMessages" uri="bean:messages?method=generate"/>
+
+    <endpoint id="GenerateStringMessages" uri="bean:messages?method=generateString"/>
+    <endpoint id="SplitString" uri="bean:messages?method=splitString"/>
+    
+    <endpoint id="GenerateObjectMessages" uri="bean:messages?method=generateObject"/>
+    <endpoint id="SplitObject" uri="bean:messages?method=splitObject"/>
+        
     <endpoint id="JmsQueueProducer" uri="jmsProducer:topic:highVolume"/>
-    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume?concurrentConsumers=200"/>
+    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume?concurrentConsumers=500"/>
     <endpoint id="Mock" uri="mock:virtualConsumer"/>
     <endpoint id="Log" uri="log:org.apache.camel.example?level=WARN"/>
 	        
 	  <route id="ProduceMessages" trace="false">
 			<from ref="Timer"/>
-			<to ref="GenerateMessages"/>
+			<to ref="GenerateObjectMessages"/>
 		</route>
 
 		<route id="SplitandProduceMessagesOnActiveMq" trace="false">
 			<from ref="Direct"/>
 				<doTry>
-    				<to ref="Split"/>
+    				<to ref="SplitObject"/>
 					<doCatch>
 						<exception>javax.jms.ResourceAllocationException</exception>
 						<log message=">>>>>> PRODUCER SHOULD BE STOPPED"/>
@@ -35,7 +40,7 @@
 				</doTry>
 		</route>
 	    
-  	<route id="ConsumeMessages" trace="false">
+  	  <route id="ConsumeMessages" trace="false">
 	    <from ref="JmsQueueConsumer"/>
  	    <to uri="seda:log?concurrentConsumers=20"/>
 	  </route>
