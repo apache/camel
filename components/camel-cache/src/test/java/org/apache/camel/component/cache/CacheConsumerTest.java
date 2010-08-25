@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 public class CacheConsumerTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(CacheConsumerTest.class);
+    protected static final transient Log LOG = LogFactory.getLog(CacheConsumerTest.class);
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;

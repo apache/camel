@@ -20,10 +20,7 @@ import java.net.URI;
 import java.util.Map;
 
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
-
 import org.apache.camel.util.URISupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class CacheConfiguration {
     private String cacheName;
@@ -78,7 +75,12 @@ public class CacheConfiguration {
         if (cacheSettings.containsKey("diskExpiryThreadIntervalSeconds")) {
             setDiskExpiryThreadIntervalSeconds(Long.valueOf((String) cacheSettings.get("diskExpiryThreadIntervalSeconds")).longValue());
         }
-        
+        if (cacheSettings.containsKey("memoryStoreEvictionPolicy")) {
+            String policy = (String) cacheSettings.get("memoryStoreEvictionPolicy");
+            // remove leading if any given as fromString uses LRU, LFU or FIFO
+            policy = policy.replace("MemoryStoreEvictionPolicy.", "");
+            setMemoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.fromString(policy));
+        }
     }
     
     public String getCacheName() {
