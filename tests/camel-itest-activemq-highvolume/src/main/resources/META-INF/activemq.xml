@@ -45,13 +45,20 @@
             <destinationPolicy>
             <policyMap> 
               <policyEntries>
-                <policyEntry topic=">" producerFlowControl="true" memoryLimit="1mb">                	
+              
+                <policyEntry topic=">"
+                             producerFlowControl="true"
+                             memoryLimit="10 mb">                	
                   <pendingSubscriberPolicy>
                     <vmCursor />
                   </pendingSubscriberPolicy>
                 </policyEntry>
                 
-                <policyEntry queue=">" producerFlowControl="true" memoryLimit="1mb">
+                <policyEntry queue=">"
+                             optimizedDispatch="true"
+                             lazyDispatch="false"
+                             producerFlowControl="false"
+                             memoryLimit="10 mb">
                   <pendingQueuePolicy>
                     <vmQueueCursor/>
                   </pendingQueuePolicy>
@@ -100,6 +107,7 @@
         <transportConnectors>
             <transportConnector name="vm" uri="vm://0.0.0.0:61615" />
             <transportConnector name="tcp" uri="tcp://0.0.0.0:61616" />
+            <transportConnector name="openwire nio" uri="nio://0.0.0.0:62828?useQueueForAccept=false"/>
         </transportConnectors>
 
     </broker>

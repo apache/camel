@@ -15,10 +15,10 @@
 	    <endpoint id="Split" uri="bean:messages?method=split"/>
 	    <endpoint id="GenerateMessages" uri="bean:messages?method=generate"/>
 	    <endpoint id="JmsQueueProducer" uri="jmsProducer:topic:highVolume"/>
-	    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume?concurrentConsumers=10"/>
+	    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume?concurrentConsumers=20"/>
 	    <endpoint id="Mock" uri="mock:virtualConsumer"/>
-	    <!-- <endpoint id="Log" uri="log:org.apache.camel.example?level=WARN"/> -->
-	    
+	    <endpoint id="Log" uri="log:org.apache.camel.example?level=WARN"/>
+	        
 	    <route id="ProduceMessages" trace="false">
 			<from ref="Timer"/>
 			<to ref="GenerateMessages"/>
@@ -29,7 +29,6 @@
 			<from ref="Direct"/>
 				<doTry>
     				<to ref="Split"/>
-					<to ref="JmsQueueProducer"/>
 					<doCatch>
 						<exception>javax.jms.ResourceAllocationException</exception>
 						<log message=">>>>>> PRODUCER SHOULD BE STOPPED"/>
@@ -45,7 +44,7 @@
             	<constant>100</constant>
             </delay>
             --> 
-			<to ref="Mock"/>
+			<to ref="Log"/>
 		</route>
 
 	</camelContext>
