@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:camel="http://camel.apache.org/schema/spring"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -9,29 +10,32 @@
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 	
-        <endpoint id="Timer" uri="timer:messages?period=1s"/>
+        <endpoint id="Timer" uri="timer:messages?delay=3000&amp;period=1s"/>
 	    <endpoint id="Direct" uri="direct:messages"/>
 	    <endpoint id="Split" uri="bean:messages?method=split"/>
 	    <endpoint id="GenerateMessages" uri="bean:messages?method=generate"/>
 	    <endpoint id="JmsQueueProducer" uri="jmsProducer:topic:highVolume"/>
-	    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume"/>
-	    <endpoint id="Log" uri="log:org.apache.camel.example?level=WARN"/>
+	    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume?concurrentConsumers=10"/>
+	    <endpoint id="Mock" uri="mock:virtualConsumer"/>
+	    <!-- <endpoint id="Log" uri="log:org.apache.camel.example?level=WARN"/> -->
 	    
 	    <route id="ProduceMessages" trace="false">
 			<from ref="Timer"/>
 			<to ref="GenerateMessages"/>
 		</route>
+		
 
 		<route id="SplitandProduceMessagesOnActiveMq" trace="false">
 			<from ref="Direct"/>
-			<doTry>
-				<to ref="Split"/>
-				<to ref="JmsQueueProducer"/>
-				<doCatch>
-					<exception>javax.jms.ResourceAllocationException</exception>
-					<log message=">>>>>> PRODUCER SHOULD BE STOPPED"/>
-				</doCatch>
-			</doTry>
+				<doTry>
+    				<to ref="Split"/>
+					<to ref="JmsQueueProducer"/>
+					<doCatch>
+						<exception>javax.jms.ResourceAllocationException</exception>
+						<log message=">>>>>> PRODUCER SHOULD BE STOPPED"/>
+					</doCatch>
+				</doTry>
+
 		</route>
 	    
     	<route id="ConsumeMessages" trace="false">
@@ -41,7 +45,7 @@
             	<constant>100</constant>
             </delay>
             --> 
-			<to ref="Log"/>
+			<to ref="Mock"/>
 		</route>
 
 	</camelContext>
@@ -95,19 +99,19 @@
          
     <!-- Connection for the client CONSUMING -->	
     <bean id="jmsConnectionFactoryConsumer" class="org.apache.activemq.ActiveMQConnectionFactory">
-		<property name="brokerURL" value="tcp://localhost:61616" />
-	    <property name="objectMessageSerializationDefered" value="true" />
+		<property name="brokerURL" value="vm://localhost:61615" />
 	    <property name="optimizeAcknowledge" value="true" />
+	    <!-- <property name="objectMessageSerializationDefered" value="true" />
         <property name="optimizedMessageDispatch" value="true"/>
-        <property name="dispatchAsync" value="true"/>
+        <property name="dispatchAsync" value="true"/> -->
 	</bean>
     
     <!-- Use simple connection factory to consume messages -->
     <bean id="jmsConfigConsumer" class="org.apache.camel.component.jms.JmsConfiguration">
         <property name="connectionFactory" ref="jmsConnectionFactoryConsumer"/>
         <property name="transacted" value="false"/>
-        <!--  <property name="acknowledgementModeName" value="DUPS_OK_ACKNOWLEDGE" /> -->
-        <property name="concurrentConsumers" value="10" />
+        <!--  <property name="acknowledgementModeName" value="DUPS_OK_ACKNOWLEDGE" /> 
+        <property name="concurrentConsumers" value="10" /> -->
     </bean>
     
     <!-- org.apache.activemq.camel.component.ActiveMQComponent  -->
