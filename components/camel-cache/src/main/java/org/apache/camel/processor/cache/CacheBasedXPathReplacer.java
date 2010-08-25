@@ -39,7 +39,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 public class CacheBasedXPathReplacer extends CacheValidate implements Processor {
     private static final transient Log LOG = LogFactory.getLog(CacheBasedXPathReplacer.class);
     private String cacheName;

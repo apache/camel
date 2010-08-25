@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cache;
 
 import java.io.InputStream;
@@ -132,7 +131,7 @@ public class CacheProducer extends DefaultProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Quering an element with key " + key + " from the Cache");
             }
-            if (cache.isKeyInCache(key)) {
+            if (cache.isKeyInCache(key) && cache.get(key) != null) {
                 exchange.getIn().setHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND, true);
                 exchange.getIn().setBody(cache.get(key).getValue());
             } else {
