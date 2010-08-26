@@ -90,12 +90,9 @@
               <childDelegation>false</childDelegation>
               <useFile>true</useFile>
               <failIfNoTests>false</failIfNoTests>
-              <systemProperties>
-                <property>
-                  <name>javax.xml.transform.TransformerFactory</name>
-                  <value>org.apache.xalan.xsltc.trax.TransformerFactoryImpl</value>
-                </property>
-              </systemProperties>
+              <systemPropertyVariables>
+               <javax.xml.transform.TransformerFactory>org.apache.xalan.xsltc.trax.TransformerFactoryImpl</javax.xml.transform.TransformerFactory>
+              </systemPropertyVariables>
             </configuration>
           </plugin>
         </plugins>

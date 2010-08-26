@@ -153,16 +153,10 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <systemProperties>
-            <property>
-              <name>ftp.enable</name>
-              <value>${ftp.enable}</value>
-            </property>
-            <property>
-              <name>ftp.server</name>
-              <value>${ftp.url}</value>
-            </property>
-          </systemProperties>
+          <systemPropertyVariables>
+            <ftp.enable>${ftp.enable}</ftp.enable>
+            <ftp.server>${ftp.url}</ftp.server>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
 
