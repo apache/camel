@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty;
 
-import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -40,16 +39,6 @@ public class NettyInOutWithForcedNoResponseTest extends CamelTestSupport {
             fail("Should throw an exception");
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause().getMessage().startsWith("No response"));
-        }
-    }
-
-    @Test
-    public void testNoResponseDisconnectOnNoReplyFalse() throws Exception {
-        try {
-            template.requestBody("netty:tcp://localhost:4445?sync=true&timeout=3000", "London");
-            fail("Should throw an exception");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
         }
     }
 

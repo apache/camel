@@ -19,7 +19,6 @@ package org.apache.camel.component.netty.handlers;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyHelper;
@@ -33,7 +32,6 @@ import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
-import org.jboss.netty.handler.timeout.TimeoutException;
 
 /**
  * Client handler which cannot be shared
@@ -73,26 +71,17 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         exceptionHandled = true;
         Throwable cause = exceptionEvent.getCause();
 
-        // was it the timeout
-        if (cause instanceof TimeoutException) {
-            // timeout occurred
-            exchange.setException(new ExchangeTimedOutException(exchange, producer.getConfiguration().getTimeout()));
-
-            // signal callback
-            callback.done(false);
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Closing channel as an exception was thrown from Netty", cause);
-            }
-            // set the cause on the exchange
-            exchange.setException(cause);
-
-            // close channel in case an exception was thrown
-            NettyHelper.close(exceptionEvent.getChannel());
-
-            // signal callback
-            callback.done(false);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Closing channel as an exception was thrown from Netty", cause);
         }
+        // set the cause on the exchange
+        exchange.setException(cause);
+
+        // close channel in case an exception was thrown
+        NettyHelper.close(exceptionEvent.getChannel());
+
+        // signal callback
+        callback.done(false);
     }
 
     @Override

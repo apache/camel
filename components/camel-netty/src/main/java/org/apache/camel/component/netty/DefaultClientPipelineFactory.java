@@ -17,7 +17,6 @@
 package org.apache.camel.component.netty;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.AsyncCallback;
@@ -31,7 +30,6 @@ import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.ssl.SslHandler;
-import org.jboss.netty.handler.timeout.ReadTimeoutHandler;
 
 public class DefaultClientPipelineFactory extends ClientPipelineFactory {
     private static final transient Log LOG = LogFactory.getLog(ClientPipelineFactory.class);
@@ -50,11 +48,6 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory {
                 LOG.debug("Client SSL handler configured and added to the ChannelPipeline");
             }
             channelPipeline.addLast("ssl", sslHandler);
-        }
-
-        // use read timeout handler to handle timeout while waiting for a remote reply (while reading from the remote host)
-        if (producer.getConfiguration().getTimeout() > 0) {
-            channelPipeline.addLast("timeout", new ReadTimeoutHandler(producer.getEndpoint().getTimer(), producer.getConfiguration().getTimeout(), TimeUnit.MILLISECONDS));
         }
 
         List<ChannelUpstreamHandler> decoders = producer.getConfiguration().getDecoders();

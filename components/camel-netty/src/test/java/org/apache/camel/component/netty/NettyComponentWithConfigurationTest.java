@@ -29,7 +29,6 @@ public class NettyComponentWithConfigurationTest extends CamelTestSupport {
         NettyComponent comp = context.getComponent("netty", NettyComponent.class);
 
         NettyConfiguration cfg = new NettyConfiguration();
-        cfg.setTimeout(15000);
 
         comp.setConfiguration(cfg);
         assertSame(cfg, comp.getConfiguration());
@@ -45,8 +44,6 @@ public class NettyComponentWithConfigurationTest extends CamelTestSupport {
 
         assertEquals(true, e1.getConfiguration().isSync());
         assertEquals(false, e2.getConfiguration().isSync());
-        assertEquals(15000, e1.getConfiguration().getTimeout());
-        assertEquals(15000, e2.getConfiguration().getTimeout());
         assertEquals(4455, e1.getConfiguration().getPort());
         assertEquals(5566, e2.getConfiguration().getPort());
     }

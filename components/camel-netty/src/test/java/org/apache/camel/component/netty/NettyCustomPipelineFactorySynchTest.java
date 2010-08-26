@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.netty;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
@@ -30,15 +27,12 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
 import org.jboss.netty.handler.codec.frame.Delimiters;
 import org.jboss.netty.handler.codec.string.StringDecoder;
 import org.jboss.netty.handler.codec.string.StringEncoder;
-import org.jboss.netty.handler.timeout.ReadTimeoutHandler;
 import org.jboss.netty.util.CharsetUtil;
 import org.junit.Test;
 
@@ -110,18 +104,12 @@ public class NettyCustomPipelineFactorySynchTest extends CamelTestSupport {
             
             ChannelPipeline channelPipeline = Channels.pipeline();
 
-            // In Sync mode,adding a read timeout handler to handle timeout while waiting for a remote reply
-            if (producer.getConfiguration().getTimeout() > 0) {
-                channelPipeline.addLast("timeout", new ReadTimeoutHandler(producer.getEndpoint().getTimer(), producer.getConfiguration().getTimeout(), TimeUnit.MILLISECONDS));
-            }
-
             channelPipeline.addLast("decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));            
             channelPipeline.addLast("handler", new ClientChannelHandler(producer, exchange, callback));
 
             return channelPipeline;
-
         }
         
         public boolean isfactoryInvoked() {
@@ -149,7 +137,7 @@ public class NettyCustomPipelineFactorySynchTest extends CamelTestSupport {
         public boolean isfactoryInvoked() {
             return invoked;
         }
-        
     }
+
 }
 

@@ -50,7 +50,6 @@ public class NettyConfiguration implements Cloneable {
     private boolean tcpNoDelay = true;
     private boolean broadcast;
     private long connectTimeout = 10000;
-    private long timeout = 30000;
     private boolean reuseAddress = true;
     private boolean sync = true;
     private boolean textline;
@@ -327,14 +326,6 @@ public class NettyConfiguration implements Cloneable {
 
     public void setDecoders(List<ChannelUpstreamHandler> decoders) {
         this.decoders = decoders;
-    }
-
-    public long getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(long timeout) {
-        this.timeout = timeout;
     }
 
     public long getSendBufferSize() {
