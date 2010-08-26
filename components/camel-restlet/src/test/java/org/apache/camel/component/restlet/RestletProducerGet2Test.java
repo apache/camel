@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,12 +28,16 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-public class RestletProducerTest extends CamelTestSupport {
+public class RestletProducerGet2Test extends CamelTestSupport {
 
     @Test
-    public void testRestletProducer() throws Exception {
-        String out = template.requestBodyAndHeader("direct:start", "Hello World", "id", 123, String.class);
-        assertEquals("123;Donald Duck;Hello World", out);
+    public void testRestletProducerGet2() throws Exception {
+        Map headers = new HashMap();
+        headers.put("id", 123);
+        headers.put("beverage.beer", "Carlsberg");
+
+        String out = template.requestBodyAndHeaders("direct:start", null, headers, String.class);
+        assertEquals("123;Donald Duck;Carlsberg", out);
     }
 
     @Override
@@ -38,16 +45,14 @@ public class RestletProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // TODO: CAMEL-3021: Should support the {id} uri
-                // from("direct:start").to("restlet:http://localhost:9080/users/{id}/basic?restletMethod=post");
-                from("direct:start").to("restlet:http://localhost:9080/users/123/basic?restletMethod=post");
+                from("direct:start").to("restlet:http://localhost:9080/users/{id}/like/{beverage.beer}");
 
-                from("restlet:http://localhost:9080/users/{id}/basic?restletMethod=post")
+                from("restlet:http://localhost:9080/users/{id}/like/{beer}")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String id = exchange.getIn().getHeader("id", String.class);
-                            String body = exchange.getIn().getBody(String.class);
-                            exchange.getOut().setBody(id + ";Donald Duck;" + body);
+                            String beer = exchange.getIn().getHeader("beer", String.class);
+                            exchange.getOut().setBody(id + ";Donald Duck;" + beer);
                         }
                     });
             }

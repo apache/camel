@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
@@ -32,6 +36,7 @@ import org.restlet.data.Response;
  */
 public class RestletProducer extends DefaultProducer {
     private static final Log LOG = LogFactory.getLog(RestletProducer.class);
+    private static final Pattern PATTERN = Pattern.compile("\\{([\\w\\.]*)\\}");
     private Client client;
 
     public RestletProducer(RestletEndpoint endpoint) throws Exception {
@@ -55,7 +60,7 @@ public class RestletProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         RestletEndpoint endpoint = (RestletEndpoint)getEndpoint();
         
-        String resourceUri = buildUri(endpoint);
+        String resourceUri = buildUri(endpoint, exchange);
         Request request = new Request(endpoint.getRestletMethod(), resourceUri);
 
         RestletBinding binding = endpoint.getRestletBinding();
@@ -70,9 +75,37 @@ public class RestletProducer extends DefaultProducer {
         binding.populateExchangeFromRestletResponse(exchange, response);
     }
 
-    private static String buildUri(RestletEndpoint endpoint) {
-        return endpoint.getProtocol() + "://" + endpoint.getHost() + ":" 
+    private static String buildUri(RestletEndpoint endpoint, Exchange exchange) throws CamelExchangeException {
+        String uri = endpoint.getProtocol() + "://" + endpoint.getHost() + ":" 
             + endpoint.getPort() + endpoint.getUriPattern();
+
+        // substitute { } placeholders in uri and use mandatory headers
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Substituting { } placeholders in uri: " + uri);
+        }
+        Matcher matcher = PATTERN.matcher(uri);
+        while (matcher.find()) {
+            String key = matcher.group(1);
+            String header = exchange.getIn().getHeader(key, String.class);
+            // header should be mandatory
+            if (header == null) {
+                throw new CamelExchangeException("Header with key: " + key + " not found in Exchange", exchange);
+            }
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Replacing: " + matcher.group(0) + " with header value: " + header);
+            }
+
+            uri = matcher.replaceFirst(header);
+            // we replaced uri so reset and go again
+            matcher.reset(uri);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Using uri: " + uri);
+        }
+
+        return uri;
     }
 
 }
