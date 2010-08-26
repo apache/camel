@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.produce;
 
+import java.util.Map;
+
 import org.apache.camel.Consume;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,10 +34,14 @@ public class MyListenerService implements MyListener {
     public MyListenerService() {
         LOG.debug("Instantiated service: " + this);
     }
-
-    @Consume(uri = "direct:myService")
+    
     public String sayHello(String name) {
         LOG.debug("Invoked sayHello with: " + name);
         return "Hello " + name;
+    }
+
+    @Consume(uri = "direct:end")
+    public String greet(Map<String, Object> headers, String name) {
+        return headers.get("greeter") + name;
     }
 }

@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring"/>
+    <camelContext xmlns="http://camel.apache.org/schema/spring"/>
 
     <bean id="cool" class="org.apache.camel.spring.produce.MyCoolBean"/>
 

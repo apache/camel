@@ -29,6 +29,11 @@
   <context:component-scan base-package="org.apache.camel.spring.produce"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+     <route>
+  	   <from uri="direct:start"/>
+  	   <to uri="log:TraceMessage"/>
+  	   <to uri="direct:end"/>
+  	</route>
   </camelContext>
 
 </beans>

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.spring.produce;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Produce;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
@@ -26,12 +29,19 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
 @ContextConfiguration
 public class ProduceTest extends AbstractJUnit38SpringContextTests {
     
-    @Produce(uri = "direct:myService")
+    @Produce(uri = "direct:start")
     protected MyListener producer;
 
     public void testInvokeService() throws Exception {
         // lets send a message
         String actual = producer.sayHello("James");
         assertEquals("response", "Hello James", actual);
+    }
+    
+    public void testInvokeServiceWithMessageHeader() throws Exception {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("greeter", "Nihao ");
+        String response = producer.greet(headers, "Willem");
+        assertEquals("response is wrong", "Nihao Willem", response);
     }
 }

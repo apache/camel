@@ -16,11 +16,18 @@
  */
 package org.apache.camel.spring.produce;
 
+import java.util.Map;
+
+import org.apache.camel.Body;
+import org.apache.camel.Headers;
+
 /**
  * @version $Revision$
  */
 public interface MyListener {
 
     String sayHello(String name);
+    
+    String greet(@Headers Map<String, Object>headers, @Body String name);
 
 }
