@@ -35,7 +35,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
     protected final transient Log log = LogFactory.getLog(getClass());
     private final Endpoint endpoint;
     private final Processor processor;
-    private AsyncProcessor asyncProcessor;
+    private volatile AsyncProcessor asyncProcessor;
     private ExceptionHandler exceptionHandler;
 
     public DefaultConsumer(Endpoint endpoint, Processor processor) {
@@ -61,8 +61,8 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
      * processor on the consumer. If the processor does not implement the interface,
      * it will be adapted so that it does.
      */
-    public AsyncProcessor getAsyncProcessor() {
-        if (asyncProcessor == null) {
+    public synchronized AsyncProcessor getAsyncProcessor() {
+        if (asyncProcessor == null) {            
             asyncProcessor = AsyncProcessorTypeConverter.convert(processor);
         }
         return asyncProcessor;
