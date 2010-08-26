@@ -57,7 +57,6 @@ public class Order {
     @GET
     @Path("products/{productId}/")
     public Product getProduct(@PathParam("productId")int productId) {
-        System.out.println("----invoking getProduct with id: " + productId);
         Product p = products.get(new Long(productId));
         return p;
     }
