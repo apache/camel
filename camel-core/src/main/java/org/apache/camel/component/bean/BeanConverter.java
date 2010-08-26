@@ -48,7 +48,7 @@ public final class BeanConverter {
             Object body = bi.getArgs()[0];
 
             // maybe from is already the type we want
-            if (from.isAssignableFrom(type)) {
+            if (type.isAssignableFrom(from)) {
                 return body;
             }
 
