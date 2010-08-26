@@ -36,4 +36,13 @@ public class CorrelationMap extends DefaultTimeoutMap<String, ReplyHandler> {
         return true;
     }
 
+    @Override
+    public void put(String key, ReplyHandler value, long timeoutMillis) {
+        if (timeoutMillis <= 0) {
+            // no timeout (must use Integer.MAX_VALUE)
+            super.put(key, value, Integer.MAX_VALUE);
+        } else {
+            super.put(key, value, timeoutMillis);
+        }
+    }
 }
