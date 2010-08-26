@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.management.MBeanServer;
 
 import org.apache.camel.CamelContext;
@@ -50,7 +51,7 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -77,7 +78,7 @@ public class JettyHttpComponent extends HttpComponent {
     protected String sslKeyPassword;
     protected String sslPassword;
     protected String sslKeystore;
-    protected Map<Integer, SslSocketConnector> sslSocketConnectors;
+    protected Map<Integer, SslSelectChannelConnector> sslSocketConnectors;
     protected Map<Integer, SelectChannelConnector> socketConnectors;
     protected Map<String, Object> sslSocketConnectorProperties;
     protected Map<String, Object> socketConnectorProperties;
@@ -359,8 +360,8 @@ public class JettyHttpComponent extends HttpComponent {
         return sslKeystore;
     }
 
-    protected SslSocketConnector getSslSocketConnector(int port) throws Exception {
-        SslSocketConnector answer = null;
+    protected SslSelectChannelConnector getSslSocketConnector(int port) throws Exception {
+        SslSelectChannelConnector answer = null;
         if (sslSocketConnectors != null) {
             answer = sslSocketConnectors.get(port);
         }
@@ -370,8 +371,8 @@ public class JettyHttpComponent extends HttpComponent {
         return answer;
     }
     
-    protected SslSocketConnector createSslSocketConnector() throws Exception {
-        SslSocketConnector answer = new SslSocketConnector();
+    protected SslSelectChannelConnector createSslSocketConnector() throws Exception {
+        SslSelectChannelConnector answer = new SslSelectChannelConnector();
         // with default null values, jetty ssl system properties
         // and console will be read by jetty implementation
 
@@ -410,11 +411,11 @@ public class JettyHttpComponent extends HttpComponent {
         return answer;
     }
 
-    public Map<Integer, SslSocketConnector> getSslSocketConnectors() {
+    public Map<Integer, SslSelectChannelConnector> getSslSocketConnectors() {
         return sslSocketConnectors;
     }
 
-    public void setSslSocketConnectors(Map <Integer, SslSocketConnector> connectors) {
+    public void setSslSocketConnectors(Map <Integer, SslSelectChannelConnector> connectors) {
         sslSocketConnectors = connectors;
     }
 

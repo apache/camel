@@ -24,13 +24,15 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
 
 public class ExplicitHttpsRouteTest extends HttpsRouteTest {
 
     // START SNIPPET: e2
-    private SslSocketConnector createSslSocketConnector() throws URISyntaxException {
-        SslSocketConnector sslSocketConnector = new SslSocketConnector();
+    private SslSelectChannelConnector createSslSocketConnector() throws URISyntaxException {
+        // From Camel 2.5.0 Camel-Jetty is using SslSelectChannelConnector instead of SslSocketConnector
+        SslSelectChannelConnector sslSocketConnector = new SslSelectChannelConnector();
         sslSocketConnector.setKeyPassword(pwd);
         sslSocketConnector.setPassword(pwd);
         URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
@@ -45,8 +47,8 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
                 // START SNIPPET: e1
-                // create SSL socket connectors for port 9080 and 9090
-                Map<Integer, SslSocketConnector> connectors = new HashMap<Integer, SslSocketConnector>();
+                // create SSL select channel connectors for port 9080 and 9090
+                Map<Integer, SslSelectChannelConnector> connectors = new HashMap<Integer, SslSelectChannelConnector>();
                 connectors.put(9080, createSslSocketConnector());
                 connectors.put(9090, createSslSocketConnector());
 
