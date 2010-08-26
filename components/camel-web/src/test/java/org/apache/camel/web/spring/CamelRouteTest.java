@@ -18,12 +18,14 @@ package org.apache.camel.web.spring;
 
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.web.resources.CamelContextResource;
 import org.junit.After;
 import org.junit.Assert;
@@ -58,7 +60,8 @@ public class CamelRouteTest extends Assert {
     public void setUp() throws Exception {
         applicationContext = new FileSystemXmlApplicationContext("src/main/webapp/WEB-INF/applicationContext.xml");
         applicationContext.start();
-        camelContext = applicationContext.getBean(CamelContext.class);
+        Map<String, CamelContext> beansOfType = CastUtils.cast(applicationContext.getBeansOfType(CamelContext.class));
+        camelContext = beansOfType.isEmpty() ? null : beansOfType.values().iterator().next();
         assertNotNull("camelContext", camelContext);
     }
 
