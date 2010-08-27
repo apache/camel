@@ -61,6 +61,19 @@ public class ProtobufDataFormat implements DataFormat {
         }
     }
     
+    public synchronized Message getInstance(Exchange exchange) throws Exception {
+        if (defaultInstance == null) {
+            if (instanceClassName == null) {
+                throw new CamelException("There is not defaultInstance for protobuf unmarshaling");
+            } else {
+                if (defaultInstance == null) {
+                    defaultInstance = loadDefaultInstance(instanceClassName, exchange.getContext());
+                }
+            }
+        }
+        return defaultInstance;
+    }
+    
     public void setInstanceClass(String className) throws Exception {
         ObjectHelper.notNull(className, "ProtobufDataFormat instaceClass");
         instanceClassName = className;
@@ -97,22 +110,11 @@ public class ProtobufDataFormat implements DataFormat {
      * java.io.InputStream)
      */
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-               
-        if (defaultInstance == null) {
-            if (instanceClassName == null) {
-                throw new CamelException("There is not defaultInstance for protobuf unmarshaling");
-            } else {
-                synchronized (this) {
-                    if (defaultInstance == null) {
-                        defaultInstance = loadDefaultInstance(instanceClassName, exchange.getContext());
-                    }
-                }
-            }
-        }
-        Builder builder = this.defaultInstance.newBuilderForType().mergeFrom(inputStream);
+        Message instance = getInstance(exchange);
+        Builder builder = instance.newBuilderForType().mergeFrom(inputStream);
         if (!builder.isInitialized()) {
             // TODO which exception should be thrown here?
-            throw new InvalidPayloadException(exchange, this.defaultInstance.getClass());
+            throw new InvalidPayloadException(exchange, instance.getClass());
         }
 
         return builder.build();
