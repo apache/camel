@@ -32,7 +32,7 @@
 
   <properties>
 	<camel.osgi.export.pkg>org.apache.camel.component.gae.*</camel.osgi.export.pkg>
-    <appengine-sdk-version>1.3.2</appengine-sdk-version>
+    <appengine-sdk-version>1.3.6</appengine-sdk-version>
     <gdata-version>1.41.1</gdata-version>
   </properties>
 
