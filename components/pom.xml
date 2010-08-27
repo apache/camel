@@ -81,9 +81,6 @@
     <module>camel-mvel</module>
     <module>camel-netty</module>
     <module>camel-nagios</module>
-<!-- ode is under active development
-    <module>camel-ode</module>
--->
     <module>camel-ognl</module>
     <module>camel-printer</module>
     <module>camel-protobuf</module>
