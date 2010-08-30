@@ -49,7 +49,7 @@ public class HttpAsyncCallbackTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // give on completion time to complete properly before we do assertions on its size
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         // assert that we got all the correct data in our callback
         assertEquals(3, callback.getData().size());
