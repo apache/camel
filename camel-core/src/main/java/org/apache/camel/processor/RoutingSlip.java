@@ -33,7 +33,6 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -53,41 +52,42 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * pipeline to ensure it works the same and the async routing engine is flawless.
  */
 public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Traceable {
-    private static final transient Log LOG = LogFactory.getLog(RoutingSlip.class);
-    private ProducerCache producerCache;
-    private boolean ignoreInvalidEndpoints;
-    private String header;
-    private Expression expression;    
-    private String uriDelimiter;
-    private final CamelContext camelContext;
-    
+    protected final transient Log log = LogFactory.getLog(getClass());
+    protected ProducerCache producerCache;
+    protected boolean ignoreInvalidEndpoints;
+    protected String header;
+    protected Expression expression;
+    protected String uriDelimiter;
+    protected final CamelContext camelContext;
+
+    /**
+     * The iterator to be used for retrieving the next routing slip(s) to be used.
+     */
+    protected interface RoutingSlipIterator {
+
+        /**
+         * Are the more routing slip(s)?
+         *
+         * @param exchange the current exchange
+         * @return <tt>true</tt> if more slips, <tt>false</tt> otherwise.
+         */
+        boolean hasNext(Exchange exchange);
+
+        /**
+         * Returns the next routing slip(s).
+         *
+         * @param exchange the current exchange
+         * @return the slip(s).
+         */
+        Object next(Exchange exchange);
+
+    }
+
     public RoutingSlip(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
-    /**
-     * Will be removed in Camel 2.5
-     */
-    @Deprecated
-    public RoutingSlip(CamelContext camelContext, String header) {
-        this(camelContext, header, RoutingSlipDefinition.DEFAULT_DELIMITER);
-    }
-
-    /**
-     * Will be removed in Camel 2.5
-     */
-    @Deprecated
-    public RoutingSlip(CamelContext camelContext, String header, String uriDelimiter) {
         notNull(camelContext, "camelContext");
-        notNull(header, "header");
-        notNull(uriDelimiter, "uriDelimiter");
-
         this.camelContext = camelContext;
-        this.header = header;
-        expression = ExpressionBuilder.headerExpression(header);
-        this.uriDelimiter = uriDelimiter;
     }
-    
+
     public RoutingSlip(CamelContext camelContext, Expression expression, String uriDelimiter) {
         notNull(camelContext, "camelContext");
         notNull(expression, "expression");
@@ -128,15 +128,49 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
             throw new IllegalStateException("RoutingSlip has not been started: " + this);
         }
 
-        Object routingSlip = expression.evaluate(exchange, Object.class);
-        return doRoutingSlip(exchange, routingSlip, callback);
+        return doRoutingSlip(exchange, callback);
     }
 
     public boolean doRoutingSlip(Exchange exchange, Object routingSlip, AsyncCallback callback) {
-        Iterator<Object> iter = ObjectHelper.createIterator(routingSlip, uriDelimiter);
-        Exchange current = exchange;
+        if (routingSlip instanceof Expression) {
+            this.expression = (Expression) routingSlip;
+        } else {
+            this.expression = ExpressionBuilder.constantExpression(routingSlip);
+        }
+        return doRoutingSlip(exchange, callback);
+    }
 
-        while (iter.hasNext()) {
+    /**
+     * Creates the route slip iterator to be used.
+     *
+     * @param exchange the exchange
+     * @return the iterator, should never be <tt>null</tt>
+     */
+    protected RoutingSlipIterator createRoutingSlipIterator(final Exchange exchange) {
+        Object slip = expression.evaluate(exchange, Object.class);
+        final Iterator<Object> delegate = ObjectHelper.createIterator(slip, uriDelimiter);
+
+        return new RoutingSlipIterator() {
+            public boolean hasNext(Exchange exchange) {
+                return delegate.hasNext();
+            }
+
+            public Object next(Exchange exchange) {
+                return delegate.next();
+            }
+        };
+    }
+
+    private boolean doRoutingSlip(Exchange exchange, AsyncCallback callback) {
+        Exchange current = exchange;
+        RoutingSlipIterator iter = createRoutingSlipIterator(exchange);
+
+        // ensure the slip is empty when we start
+        if (current.hasProperties()) {
+            current.setProperty(Exchange.SLIP_ENDPOINT, null);
+        }
+
+        while (iter.hasNext(current)) {
             Endpoint endpoint;
             try {
                 endpoint = resolveEndpoint(iter, exchange);
@@ -151,28 +185,28 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
             }
 
             // prepare and process the routing slip
-            Exchange copy = prepareExchangeForRoutingSlip(current);
+            Exchange copy = prepareExchangeForRoutingSlip(current, endpoint);
             boolean sync = processExchange(endpoint, copy, exchange, callback, iter);
             current = copy;
 
             if (!sync) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
+                if (log.isTraceEnabled()) {
+                    log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
                 }
                 // the remainder of the routing slip will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
+            if (log.isTraceEnabled()) {
+                log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
             }
 
             // we ignore some kind of exceptions and allow us to continue
             if (isIgnoreInvalidEndpoints()) {
                 FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
                 if (e != null) {
-                    LOG.info("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
+                    log.info("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
                     current.setException(null);
                 }
             }
@@ -182,7 +216,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
             if (current.isFailed() || current.isRollbackOnly() || exceptionHandled) {
                 // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
                 // by the error handler. It's still an exception, the exchange still failed.
-                if (LOG.isDebugEnabled()) {
+                if (log.isDebugEnabled()) {
                     StringBuilder sb = new StringBuilder();
                     sb.append("Message exchange has failed so breaking out of the routing slip: ").append(current);
                     if (current.isRollbackOnly()) {
@@ -197,17 +231,17 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                     if (exceptionHandled) {
                         sb.append(" Handled by the error handler.");
                     }
-                    LOG.debug(sb.toString());
+                    log.debug(sb.toString());
                 }
                 break;
             }
         }
 
-        if (LOG.isTraceEnabled()) {
+        if (log.isTraceEnabled()) {
             // logging nextExchange as it contains the exchange that might have altered the payload and since
             // we are logging the completion if will be confusing if we log the original instead
             // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-            LOG.trace("Processing complete for exchangeId: " + exchange.getExchangeId() + " >>> " + current);
+            log.trace("Processing complete for exchangeId: " + exchange.getExchangeId() + " >>> " + current);
         }
 
         // copy results back to the original exchange
@@ -217,14 +251,14 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
         return true;
     }
 
-    protected Endpoint resolveEndpoint(Iterator<Object> iter, Exchange exchange) throws Exception {
-        Object nextRecipient = iter.next();
+    protected Endpoint resolveEndpoint(RoutingSlipIterator iter, Exchange exchange) throws Exception {
+        Object nextRecipient = iter.next(exchange);
         Endpoint endpoint = null;
         try {
             endpoint = ExchangeHelper.resolveEndpoint(exchange, nextRecipient);
         } catch (Exception e) {
             if (isIgnoreInvalidEndpoints()) {
-                LOG.info("Endpoint uri is invalid: " + nextRecipient + ". This exception will be ignored.", e);
+                log.info("Endpoint uri is invalid: " + nextRecipient + ". This exception will be ignored.", e);
             } else {
                 throw e;
             }
@@ -232,7 +266,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
         return endpoint;
     }
 
-    protected Exchange prepareExchangeForRoutingSlip(Exchange current) {
+    protected Exchange prepareExchangeForRoutingSlip(Exchange current, Endpoint endpoint) {
         Exchange copy = new DefaultExchange(current);
         // we must use the same id as this is a snapshot strategy where Camel copies a snapshot
         // before processing the next step in the pipeline, so we have a snapshot of the exchange
@@ -240,24 +274,25 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
         // DeadLetterChannel. That is why it's important the id is the same, as it is the *same*
         // exchange being routed.
         copy.setExchangeId(current.getExchangeId());
-        updateRoutingSlipHeader(current);
         copyOutToIn(copy, current);
         return copy;
     }
 
     protected boolean processExchange(final Endpoint endpoint, final Exchange exchange, final Exchange original,
-                                      final AsyncCallback callback, final Iterator<Object> iter) {
+                                      final AsyncCallback callback, final RoutingSlipIterator iter) {
 
-        if (LOG.isTraceEnabled()) {
+        if (log.isTraceEnabled()) {
             // this does the actual processing so log at trace level
-            LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
+            log.trace("Processing exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
         }
 
         boolean sync = producerCache.doInAsyncProducer(endpoint, exchange, null, callback, new AsyncProducerCallback() {
             public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, final Exchange exchange,
                                              ExchangePattern exchangePattern, final AsyncCallback callback) {
                 // set property which endpoint we send to
-                exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
+                exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
+                exchange.setProperty(Exchange.SLIP_ENDPOINT, endpoint.getEndpointUri());
+
                 boolean sync = AsyncProcessorHelper.process(asyncProducer, exchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
                         // we only have to handle async completion of the routing slip
@@ -268,13 +303,13 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                         // continue processing the routing slip asynchronously
                         Exchange current = exchange;
 
-                        while (iter.hasNext()) {
+                        while (iter.hasNext(current)) {
 
                             // we ignore some kind of exceptions and allow us to continue
                             if (isIgnoreInvalidEndpoints()) {
                                 FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
                                 if (e != null) {
-                                    LOG.info("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
+                                    log.info("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
                                     current.setException(null);
                                 }
                             }
@@ -284,7 +319,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                             if (current.isFailed() || current.isRollbackOnly() || exceptionHandled) {
                                 // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
                                 // by the error handler. It's still an exception, the exchange still failed.
-                                if (LOG.isDebugEnabled()) {
+                                if (log.isDebugEnabled()) {
                                     StringBuilder sb = new StringBuilder();
                                     sb.append("Message exchange has failed so breaking out of the routing slip: ").append(current);
                                     if (current.isRollbackOnly()) {
@@ -299,7 +334,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                                     if (exceptionHandled) {
                                         sb.append(" Handled by the error handler.");
                                     }
-                                    LOG.debug(sb.toString());
+                                    log.debug(sb.toString());
                                 }
                                 break;
                             }
@@ -318,23 +353,23 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                             }
 
                             // prepare and process the routing slip
-                            Exchange copy = prepareExchangeForRoutingSlip(current);
+                            Exchange copy = prepareExchangeForRoutingSlip(current, endpoint);
                             boolean sync = processExchange(endpoint, copy, original, callback, iter);
                             current = copy;
 
                             if (!sync) {
-                                if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Processing exchangeId: " + original.getExchangeId() + " is continued being processed asynchronously");
+                                if (log.isTraceEnabled()) {
+                                    log.trace("Processing exchangeId: " + original.getExchangeId() + " is continued being processed asynchronously");
                                 }
                                 return;
                             }
                         }
 
-                        if (LOG.isTraceEnabled()) {
+                        if (log.isTraceEnabled()) {
                             // logging nextExchange as it contains the exchange that might have altered the payload and since
                             // we are logging the completion if will be confusing if we log the original instead
                             // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-                            LOG.trace("Processing complete for exchangeId: " + original.getExchangeId() + " >>> " + current);
+                            log.trace("Processing complete for exchangeId: " + original.getExchangeId() + " >>> " + current);
                         }
 
                         // copy results back to the original exchange
@@ -365,19 +400,6 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
 
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
-    }
-
-    private void updateRoutingSlipHeader(Exchange current) {
-        // only update the header value which used as the routing slip
-        if (header != null) {
-            Message message = getResultMessage(current);
-            String oldSlip = message.getHeader(header, String.class);
-            if (oldSlip != null) {
-                int delimiterIndex = oldSlip.indexOf(uriDelimiter);
-                String newSlip = delimiterIndex > 0 ? oldSlip.substring(delimiterIndex + 1) : "";
-                message.setHeader(header, newSlip);
-            }
-        }
     }
 
     /**

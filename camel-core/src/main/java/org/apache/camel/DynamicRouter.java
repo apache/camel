@@ -24,26 +24,26 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates that this method is to be used as a 
- * <a href="http://camel.apache.org/routing-slip.html">Routing Slip</a> routing the incoming message
+ * <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router</a> routing the incoming message
  * through a series of processing steps.
  *
- * When a message {@link org.apache.camel.Exchange} is received from an {@link org.apache.camel.Endpoint} then the
+ * When a message {@link Exchange} is received from an {@link Endpoint} then the
  * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
- * mechanism is used to map the incoming {@link org.apache.camel.Message} to the method parameters.
+ * mechanism is used to map the incoming {@link Message} to the method parameters.
  *
  * The return value of the method is then converted to either a {@link java.util.Collection} or array of objects where each
- * element is converted to an {@link Endpoint} or a {@link String}, or if it is not a collection/array then it is converted
- * to an {@link Endpoint} or {@link String}.
+ * element is converted to an {@link org.apache.camel.Endpoint} or a {@link String}, or if it is not a collection/array then it is converted
+ * to an {@link org.apache.camel.Endpoint} or {@link String}.
  *
  * Then for each endpoint or URI the message is routed in a pipes and filter fashion.
  *
- * @see org.apache.camel.DynamicRouter
+ * @see org.apache.camel.RoutingSlip
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
-public @interface RoutingSlip {
+public @interface DynamicRouter {
     String context() default "";
     String delimiter() default ",";
     boolean ignoreInvalidEndpoints() default false;

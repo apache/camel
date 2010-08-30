@@ -106,7 +106,6 @@ public class NodeData {
             this.image = imagePrefix + "RoutingTableIcon.png";
             this.nodeType = "Routing Slip";
             this.url = "http://camel.apache.org/routing-slip.html";
-            this.tooltop = ((RoutingSlipDefinition) node).getHeaderName();
         } else if (node instanceof SplitDefinition) {
             this.image = imagePrefix + "SplitterIcon.png";
             this.nodeType = "Splitter";

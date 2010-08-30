@@ -24,6 +24,7 @@ ContextScanDefinition
 DataFormatDefinition
 DelayDefinition
 DescriptionDefinition
+DynamicRouterDefinition
 EnrichDefinition
 ExpressionSubElementDefinition
 FilterDefinition

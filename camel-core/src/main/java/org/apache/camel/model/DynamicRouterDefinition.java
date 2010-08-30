@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.Collections;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,67 +25,53 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.Builder;
-import org.apache.camel.processor.RoutingSlip;
+import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;routingSlip/&gt; element
+ * Represents an XML &lt;dynamicRouter/&gt; element
  */
-@XmlRootElement(name = "routingSlip")
+@XmlRootElement(name = "dynamicRouter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RoutingSlipDefinition<Type extends ProcessorDefinition> extends NoOutputExpressionNode {
+public class DynamicRouterDefinition<Type extends ProcessorDefinition> extends NoOutputExpressionNode {
+
     public static final String DEFAULT_DELIMITER = ",";
     @XmlAttribute
-    private String uriDelimiter;
+    private String uriDelimiter = DEFAULT_DELIMITER;
     @XmlAttribute
     private Boolean ignoreInvalidEndpoints;
 
-    public RoutingSlipDefinition() {
-        this((String)null, DEFAULT_DELIMITER);
+    public DynamicRouterDefinition() {
     }
 
-    public RoutingSlipDefinition(String headerName) {
-        this(headerName, DEFAULT_DELIMITER);
-    }
-
-    public RoutingSlipDefinition(String headerName, String uriDelimiter) {
-        super(Builder.header(headerName));
-        setUriDelimiter(uriDelimiter);
-    }
-    
-    public RoutingSlipDefinition(Expression expression, String uriDelimiter) {
+    public DynamicRouterDefinition(Expression expression) {
         super(expression);
-        setUriDelimiter(uriDelimiter);
-    }
-    
-    public RoutingSlipDefinition(Expression expression) {
-        this(expression, DEFAULT_DELIMITER);
     }
 
     @Override
     public String toString() {
-        return "RoutingSlip[" + getExpression() + "]";
+        return "DynamicRouter[" + getExpression() + "]";
     }
 
     @Override
     public String getShortName() {
-        return "routingSlip";
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Expression expression = getExpression().createExpression(routeContext);
-        RoutingSlip routingSlip = new RoutingSlip(routeContext.getCamelContext(), expression, getUriDelimiter());
-        if (getIgnoreInvalidEndpoint() != null) {
-            routingSlip.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoint());
-        }
-        return routingSlip;
+        return "dynamicRouter";
     }
 
     @Override
     public List<ProcessorDefinition> getOutputs() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        Expression expression = getExpression().createExpression(routeContext);
+
+        DynamicRouter dynamicRouter = new DynamicRouter(routeContext.getCamelContext(), expression, getUriDelimiter());
+        if (getIgnoreInvalidEndpoint() != null) {
+            dynamicRouter.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoint());
+        }
+        return dynamicRouter;
     }
 
     public void setUriDelimiter(String uriDelimiter) {
@@ -96,15 +81,15 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition> extends NoO
     public String getUriDelimiter() {
         return uriDelimiter;
     }
-    
+
     public void setIgnoreInvalidEndpoints(Boolean ignoreInvalidEndpoints) {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
-    
+
     public Boolean getIgnoreInvalidEndpoint() {
         return ignoreInvalidEndpoints;
     }
-    
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -114,13 +99,13 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition> extends NoO
         // allow end() to return to previous type so you can continue in the DSL
         return (Type) super.end();
     }
-    
+
     /**
      * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
      *
      * @return the builder
      */
-    public RoutingSlipDefinition<Type> ignoreInvalidEndpoints() {
+    public DynamicRouterDefinition<Type> ignoreInvalidEndpoints() {
         setIgnoreInvalidEndpoints(true);
         return this;
     }
@@ -131,8 +116,9 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition> extends NoO
      * @param uriDelimiter the delimiter
      * @return the builder
      */
-    public RoutingSlipDefinition<Type> uriDelimiter(String uriDelimiter) {
+    public DynamicRouterDefinition<Type> uriDelimiter(String uriDelimiter) {
         setUriDelimiter(uriDelimiter);
         return this;
     }
+
 }

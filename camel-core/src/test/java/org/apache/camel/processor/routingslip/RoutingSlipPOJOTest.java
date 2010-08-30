@@ -40,15 +40,12 @@ public class RoutingSlipPOJOTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                
                 from("direct:a").bean(new MyRoutingSlipPOJO());
                 
                 from("direct:b").process(new Processor() {
-
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody(exchange.getIn().getBody() + " is processed!");                        
                     }
-                    
                 });
             }
         };
@@ -60,7 +57,5 @@ public class RoutingSlipPOJOTest extends ContextTestSupport {
             return new String[]{"mock:foo", "direct:b", "mock:result"};
         }
     }
-    
-    
 
 }

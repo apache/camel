@@ -34,6 +34,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
+import org.apache.camel.impl.ExpressionAdapter;
+import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -64,6 +66,34 @@ public class MethodInfo {
     private ExchangePattern pattern = ExchangePattern.InOut;
     private RecipientList recipientList;
     private RoutingSlip routingSlip;
+    private DynamicRouter dynamicRouter;
+
+    /**
+     * Adapter to invoke the method which has been annotated with the @DynamicRouter
+     */
+    private final class DynamicRouterExpression extends ExpressionAdapter {
+        private final Object pojo;
+
+        private DynamicRouterExpression(Object pojo) {
+            this.pojo = pojo;
+        }
+
+        @Override
+        public Object evaluate(Exchange exchange) {
+            // evaluate arguments on each invocation as the parameters can have changed/updated since last invocation
+            final Object[] arguments = parametersExpression.evaluate(exchange, Object[].class);
+            try {
+                return invoke(method, pojo, arguments, exchange);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "DynamicRouter[invoking: " + method + " on bean: " + pojo + "]";
+        }
+    }
 
     public MethodInfo(CamelContext camelContext, Class<?> type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
                       boolean hasCustomAnnotation, boolean hasHandlerAnnotation) {
@@ -87,9 +117,23 @@ public class MethodInfo {
             routingSlip = new RoutingSlip(camelContext);
             routingSlip.setDelimiter(annotation.delimiter());
             routingSlip.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
-            // add created recipientList as a service so we have its lifecycle managed
+            // add created routingSlip as a service so we have its lifecycle managed
             try {
                 camelContext.addService(routingSlip);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        if (method.getAnnotation(org.apache.camel.DynamicRouter.class) != null
+                && matchContext(method.getAnnotation(org.apache.camel.DynamicRouter.class).context())) {
+            org.apache.camel.DynamicRouter annotation = method.getAnnotation(org.apache.camel.DynamicRouter.class);
+            dynamicRouter = new DynamicRouter(camelContext);
+            dynamicRouter.setDelimiter(annotation.delimiter());
+            dynamicRouter.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
+            // add created dynamicRouter as a service so we have its lifecycle managed
+            try {
+                camelContext.addService(dynamicRouter);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
@@ -160,10 +204,25 @@ public class MethodInfo {
             }
 
             public Object proceed(AsyncCallback callback, AtomicBoolean doneSync) throws Exception {
+                // dynamic router should be invoked beforehand
+                if (dynamicRouter != null) {
+                    if (!dynamicRouter.isStarted()) {
+                        ServiceHelper.startService(dynamicRouter);
+                    }
+                    // use a expression which invokes the method to be used by dynamic router
+                    Expression expression = new DynamicRouterExpression(pojo);
+                    boolean sync = dynamicRouter.doRoutingSlip(exchange, expression, callback);
+                    // must remember the done sync returned from the dynamic router
+                    doneSync.set(sync);
+                    return Void.TYPE;
+                }
+
+                // invoke pojo
                 if (LOG.isTraceEnabled()) {
                     LOG.trace(">>>> invoking: " + method + " on bean: " + pojo + " with arguments: " + asString(arguments) + " for exchange: " + exchange);
                 }
                 Object result = invoke(method, pojo, arguments, exchange);
+
                 if (recipientList != null) {
                     // ensure its started
                     if (!recipientList.isStarted()) {
@@ -185,6 +244,7 @@ public class MethodInfo {
                     doneSync.set(sync);
                     return Void.TYPE;
                 }
+
                 return result;
             }
 

@@ -1218,6 +1218,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
      * Creates a routing slip allowing you to route a message consecutively through a series of processing
      * steps where the sequence of steps is not known at design time and can vary for each message.
+     * <p/>
+     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
      *
      * @param header  is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
      *                class will look in for the list of URIs to route the message to.
@@ -1236,8 +1238,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
      * Creates a routing slip allowing you to route a message consecutively through a series of processing
      * steps where the sequence of steps is not known at design time and can vary for each message.
-     * <p>
+     * <p/>
      * The list of URIs will be split based on the default delimiter {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
+     * <p/>
+     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
      *
      * @param header  is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
      *                class will look in for the list of URIs to route the message to.
@@ -1254,6 +1258,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
      * Creates a routing slip allowing you to route a message consecutively through a series of processing
      * steps where the sequence of steps is not known at design time and can vary for each message.
+     * <p/>
+     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
      *
      * @param header  is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
      *                class will look in for the list of URIs to route the message to.
@@ -1275,8 +1281,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
      * Creates a routing slip allowing you to route a message consecutively through a series of processing
      * steps where the sequence of steps is not known at design time and can vary for each message.
-     * <p>
+     * <p/>
      * The list of URIs will be split based on the default delimiter {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
+     * <p/>
+     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
      *
      * @param header  is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
      *                class will look in for the list of URIs to route the message to.
@@ -1296,6 +1304,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
      * Creates a routing slip allowing you to route a message consecutively through a series of processing
      * steps where the sequence of steps is not known at design time and can vary for each message.
+     * <p/>
+     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
      *
      * @param expression  to decide the destinations
      * @param uriDelimiter  is the delimiter that will be used to split up
@@ -1313,8 +1323,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
      * Creates a routing slip allowing you to route a message consecutively through a series of processing
      * steps where the sequence of steps is not known at design time and can vary for each message.
-     * <p>
+     * <p/>
      * The list of URIs will be split based on the default delimiter {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
+     * <p/>
+     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
      *
      * @param expression  to decide the destinations
      * 
@@ -1330,14 +1342,50 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
      * Creates a routing slip allowing you to route a message consecutively through a series of processing
      * steps where the sequence of steps is not known at design time and can vary for each message.
-     * <p>
+     * <p/>
      * The list of URIs will be split based on the default delimiter {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
+     * <p/>
+     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
      *
-     * 
      * @return the expression clause to configure the expression to decide the destinations
      */
     public ExpressionClause<RoutingSlipDefinition<Type>> routingSlip() {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>();
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
+    }
+
+    /**
+     * <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router EIP:</a>
+     * Creates a dynamic router allowing you to route a message consecutively through a series of processing
+     * steps where the sequence of steps is not known at design time and can vary for each message.
+     * <p/>
+     * <br/><b>Important:</b> The expression will be invoked repeatedly until it returns <tt>null</tt>, so be sure it does that,
+     * otherwise it will be invoked endlessly.
+     *
+     * @param expression  to decide the destinations, which will be invoked repeatedly
+     *                    until it evaluates <tt>null</tt> to indicate no more destinations.
+     * @return the builder
+     */
+    public DynamicRouterDefinition<Type> dynamicRouter(Expression expression) {
+        DynamicRouterDefinition<Type> answer = new DynamicRouterDefinition<Type>(expression);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router EIP:</a>
+     * Creates a dynamic router allowing you to route a message consecutively through a series of processing
+     * steps where the sequence of steps is not known at design time and can vary for each message.
+     * <p/>
+     * <br/><b>Important:</b> The expression will be invoked repeatedly until it returns <tt>null</tt>, so be sure it does that,
+     * otherwise it will be invoked endlessly.
+     *
+     * @return the expression clause to configure the expression to decide the destinations,
+     * which will be invoked repeatedly until it evaluates <tt>null</tt> to indicate no more destinations.
+     */
+    public ExpressionClause<DynamicRouterDefinition<Type>> dynamicRouter() {
+        DynamicRouterDefinition<Type> answer = new DynamicRouterDefinition<Type>();
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
     }
