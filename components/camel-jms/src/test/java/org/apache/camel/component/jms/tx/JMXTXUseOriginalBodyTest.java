@@ -94,7 +94,7 @@ public class JMXTXUseOriginalBodyTest extends CamelSpringTestSupport {
         public void configure() throws Exception {
             onException(Exception.class)
                     .handled(true)
-                    .useOriginalBody()
+                    .useOriginalMessage()
                     .maximumRedeliveries(2)
                     .to("mock:error");
 

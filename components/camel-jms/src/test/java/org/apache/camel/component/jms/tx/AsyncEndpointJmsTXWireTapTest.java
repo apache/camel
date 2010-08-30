@@ -31,9 +31,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
     private static String beforeThreadName;
     private static String afterThreadName;
-    private static volatile boolean txA;
-    private static volatile boolean txB;
-
+    
 
     @Override
     protected int getExpectedRouteCount() {

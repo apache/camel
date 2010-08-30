@@ -116,7 +116,7 @@ public class JMXTXUseOriginalBodyWithDLCErrorHandlerTest extends JMXTXUseOrigina
 
             onException(Exception.class)
                     .handled(true)
-                    .useOriginalBody()
+                    .useOriginalMessage()
                     .redeliveryDelay(0)
                     .maximumRedeliveries(2)
                     .to("mock:error");

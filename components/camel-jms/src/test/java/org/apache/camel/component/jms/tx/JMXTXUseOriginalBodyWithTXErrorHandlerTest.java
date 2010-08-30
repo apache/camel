@@ -96,7 +96,7 @@ public class JMXTXUseOriginalBodyWithTXErrorHandlerTest extends JMXTXUseOriginal
 
             onException(Exception.class)
                     .handled(true)
-                    .useOriginalBody()
+                    .useOriginalMessage()
                     .maximumRedeliveries(2)
                     .to("mock:error");
 
