@@ -128,6 +128,8 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def routingSlip(header: String, separator: String) = wrap(target.routingSlip(header, separator))
   def routingSlip(expression: Exchange => Any) = wrap(target.routingSlip(expression))
   
+  def dynamicRouter(expression: Exchange => Any) = wrap(target.dynamicRouter(expression))
+
   def setbody(expression: Exchange => Any) = wrap(target.setBody(expression))
 
   def setfaultbody(expression: Exchange => Any) = wrap(target.setFaultBody(expression))

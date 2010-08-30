@@ -121,6 +121,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages {
   def routingSlip(header: String) = stack.top.routingSlip(header)
   def routingSlip(header: String, separator: String) = stack.top.routingSlip(header, separator)
   def routingSlip(expression: Exchange => Any) = stack.top.routingSlip(expression)
+  def dynamicRouter(expression: Exchange => Any) = stack.top.dynamicRouter(expression)
   def setbody(expression : Exchange => Any) = stack.top.setbody(expression)
   def setfaultbody(expression: Exchange => Any) = stack.top.setfaultbody(expression)
   def setheader(name: String, expression: Exchange => Any) = stack.top.setheader(name, expression)
