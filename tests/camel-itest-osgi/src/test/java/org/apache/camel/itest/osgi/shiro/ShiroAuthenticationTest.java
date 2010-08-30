@@ -99,12 +99,8 @@ public class ShiroAuthenticationTest extends OSGiIntegrationTestSupport {
             
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
-                          "camel-core", "camel-spring", "camel-test"),
-            // add the camel-shior bundles
-            wrappedBundle(maven().groupId("org.apache.shiro").artifactId("shiro-core").version("1.0.0-incubating")),
-                                        
-            mavenBundle().groupId("org.apache.camel").artifactId("camel-shiro").versionAsInProject(),
-                          
+                          "camel-core", "camel-spring", "camel-test", "camel-shiro"),
+                         
             workingDirectory("target/paxrunner/"),
 
             felix());
