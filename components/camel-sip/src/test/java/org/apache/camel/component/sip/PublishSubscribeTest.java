@@ -47,8 +47,7 @@ public class PublishSubscribeTest extends CamelTestSupport {
         }
 
         unreachableEndpoint.expectedMessageCount(0);
-        // we get a header and a body hence 2 messages
-        resultEndpoint.expectedMessageCount(2);
+        resultEndpoint.expectedMinimumMessageCount(1);
         
         producerTemplate.sendBodyAndHeader(
             "sip://agent@localhost:5152?stackName=client&eventHeaderName=evtHdrName&eventId=evtid&fromUser=user2&fromHost=localhost&fromPort=3534", 
