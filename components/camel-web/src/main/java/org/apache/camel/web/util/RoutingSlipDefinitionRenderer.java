@@ -27,7 +27,7 @@ public final class RoutingSlipDefinitionRenderer {
 
     public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         RoutingSlipDefinition routingSlip = (RoutingSlipDefinition)processor;
-        buffer.append(".").append(routingSlip.getShortName()).append("(\"").append(routingSlip.getHeaderName())
+        buffer.append(".").append(routingSlip.getShortName()).append("(\"").append(routingSlip.getExpression())
             .append("\", \"").append(routingSlip.getUriDelimiter()).append("\")");
     }
 }
