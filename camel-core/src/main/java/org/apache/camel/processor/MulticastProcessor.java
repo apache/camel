@@ -294,7 +294,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 AggregationStrategy strategy = getAggregationStrategy(null);
                 if (strategy instanceof TimeoutAwareAggregationStrategy) {
                     // notify the strategy we timed out
-                    ((TimeoutAwareAggregationStrategy) strategy).timeout(result.get(), i, total.intValue(), timeout);
+                    Exchange oldExchange = result.get();
+                    if (oldExchange == null) {
+                        // if they all timed out the result may not have been set yet, so use the original exchange
+                        oldExchange = original;
+                    }
+                    ((TimeoutAwareAggregationStrategy) strategy).timeout(oldExchange, i, total.intValue(), timeout);
                 } else {
                     // log a WARN we timed out since it will not be aggregated and the Exchange will be lost
                     LOG.warn("Parallel processing timed out after " + timeout + " millis for number " + i + ". This task will be cancelled and will not be aggregated.");

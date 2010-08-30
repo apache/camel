@@ -30,7 +30,8 @@ public interface TimeoutAwareAggregationStrategy extends AggregationStrategy {
     /**
      * A timeout occurred
      *
-     * @param oldExchange  the oldest exchange (is <tt>null</tt> on first aggregation as we only have the new exchange)
+     * @param oldExchange  the current aggregated exchange, or the original {@link Exchange} if no aggregation
+     *                     has been done before the timeout occurred
      * @param index        the index
      * @param total        the total
      * @param timeout      the timeout value in millis

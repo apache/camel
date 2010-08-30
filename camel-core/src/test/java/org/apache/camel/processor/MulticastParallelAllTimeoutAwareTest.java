@@ -16,24 +16,21 @@
  */
 package org.apache.camel.processor;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
-import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * @version $Revision$
+ * @version $Revision: 777808 $
  */
-public class BeanRecipientListTimeoutTest extends ContextTestSupport {
+public class MulticastParallelAllTimeoutAwareTest extends ContextTestSupport {
 
-    public void testBeanRecipientListParallelTimeout() throws Exception {
+    public void testMulticastParallelAllTimeoutAware() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // A will timeout so we only get B and C
-        mock.expectedBodiesReceived("BC");
+        // ABC will timeout so we only get our canned response
+        mock.expectedBodiesReceived("AllTimeout");
 
         template.sendBody("direct:start", "Hello");
 
@@ -41,53 +38,39 @@ public class BeanRecipientListTimeoutTest extends ContextTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-        answer.bind("myBean", new MyBean());
-        answer.bind("myStrategy", new MyAggregationStrategy());
-        return answer;
-    }
-
-    protected RouteBuilder createRouteBuilder() {
+    protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
-                from("direct:start").beanRef("myBean", "route").to("mock:result");
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .multicast(new MyAggregationStrategy())
+                        .parallelProcessing().timeout(500).to("direct:a", "direct:b", "direct:c")
+                        // use end to indicate end of multicast route
+                        .end()
+                        .to("mock:result");
 
-                from("direct:a").delay(3000).setBody(constant("A"));
+                from("direct:a").delay(1000).setBody(constant("A"));
 
-                from("direct:b").setBody(constant("B"));
+                from("direct:b").delay(2000).setBody(constant("B"));
 
-                from("direct:c").delay(500).setBody(constant("C"));
+                from("direct:c").delay(1500).setBody(constant("C"));
             }
         };
-    }
-
-    public static class MyBean {
-
-        @org.apache.camel.RecipientList(strategyRef = "myStrategy", parallelProcessing = true, timeout = 2000)
-        public String[] route(String body) {
-            return new String[] {"direct:a", "direct:b", "direct:c"};
-        }
     }
 
     private class MyAggregationStrategy implements TimeoutAwareAggregationStrategy {
 
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
-            assertEquals(2000, timeout);
+            assertEquals(500, timeout);
             assertEquals(3, total);
             assertEquals(0, index);
             assertNotNull(oldExchange);
+            oldExchange.getIn().setBody("AllTimeout");
         }
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            if (oldExchange == null) {
-                return newExchange;
-            }
-
-            String body = oldExchange.getIn().getBody(String.class);
-            oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
+            // noop
             return oldExchange;
         }
     }
-
 }

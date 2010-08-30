@@ -68,6 +68,7 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
             assertEquals(2000, timeout);
             assertEquals(3, total);
             assertEquals(0, index);
+            assertNotNull(oldExchange);
         }
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
