@@ -17,9 +17,6 @@
       <input type="submit" value="Save">&nbsp; as &nbsp;<select
 			id="language" name="language">
 			<option value="Xml" selected>Xml</option>
-			<option value="Groovy">Groovy</option>
-			<option value="Ruby">Ruby</option>
-			<option value="Scala">Scala</option>
 		</select>
     </td>
   </tr>

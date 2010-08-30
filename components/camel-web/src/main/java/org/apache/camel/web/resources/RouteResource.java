@@ -31,7 +31,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -44,30 +43,22 @@ import javax.xml.bind.Unmarshaller;
 
 import com.sun.jersey.api.view.Viewable;
 
-import groovy.lang.GroovyClassLoader;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.ruby.RubyCamel;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.RouteDotGenerator;
-import org.apache.camel.web.util.GroovyRenderer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jruby.Main;
 
 /**
  * A single Camel Route which is used to implement one or more
- * <a href="http://camel.apache.org/enterprise-integration-patterns.html">Enterprise Integration Paterns</a>
+ * <a href="http://camel.apache.org/enterprise-integration-patterns.html">Enterprise Integration Patterns</a>
  *
  * @version $Revision$
  */
 public class RouteResource extends CamelChildResourceSupport {
     public static final String LANGUAGE_XML = "Xml";
-    public static final String LANGUAGE_GROOVY = "Groovy";
-    public static final String LANGUAGE_RUBY = "Ruby";
-    public static final String LANGUAGE_SCALA = "Scala";
     private static final transient Log LOG = LogFactory.getLog(RouteResource.class);
 
     private RouteDefinition route;
@@ -94,7 +85,6 @@ public class RouteResource extends CamelChildResourceSupport {
 
     /**
      * Removes this route
-     * @return
      */
     @GET
     @Path("remove")
@@ -136,10 +126,6 @@ public class RouteResource extends CamelChildResourceSupport {
             } catch (JAXBException e) {
                 return "Error on marshal the route definition!";
             }
-        } else if (language.equalsIgnoreCase(LANGUAGE_GROOVY)) {
-            StringBuilder buffer = new StringBuilder();
-            GroovyRenderer.renderRoute(buffer, route);
-            return GroovyRenderer.HEADER + buffer.toString() + GroovyRenderer.FOOTER;
         } else {
             return "Unsupported language!";
         }
@@ -209,7 +195,7 @@ public class RouteResource extends CamelChildResourceSupport {
         }
         
         if (LOG.isDebugEnabled()) {
-            LOG.debug("new Route is: " + body);
+            LOG.debug("New Route is: " + body);
         }
         
         LOG.info(body);
@@ -217,16 +203,9 @@ public class RouteResource extends CamelChildResourceSupport {
             error = "No Route submitted!";
         } else if (language.equals(LANGUAGE_XML)) {
             return parseXml(body);
-        } else if (language.equals(LANGUAGE_GROOVY)) {
-            return parseGroovy(body);
-        } else if (language.equals(LANGUAGE_RUBY)) {
-            return parseRuby(body);
-        } else if (language.equals(LANGUAGE_SCALA)) {
-            return parseScala(body);
         }
         error = "Not supproted language!";
         return Response.ok(new Viewable("edit", this)).build();
-
     }
 
     /**
@@ -248,101 +227,6 @@ public class RouteResource extends CamelChildResourceSupport {
             error = "Failed to parse XML: " + e.getMessage();
         } catch (Exception e) {
             error = "Failed to install route: " + e.getMessage();
-        }
-        // lets re-render the form
-        return Response.ok(new Viewable("edit", this)).build();
-    }
-
-    /**
-     * process the route configuration defined in Groovy class
-     */
-    private Response parseGroovy(String route) {
-        try {
-            // load the definition class into a RouteBuilder instance
-            GroovyClassLoader classLoader = new GroovyClassLoader();
-            Class<?> clazz = classLoader.parseClass(route);
-            RouteBuilder builder = (RouteBuilder)clazz.newInstance();
-            LOG.info("Loaded builder: " + builder);
-
-            postRoutes(builder);
-
-            return Response.seeOther(new URI("/routes")).build();
-
-        } catch (IOException e) {
-            // e.printStackTrace();
-            error = "Failed to store the route: " + e.getMessage();
-        } catch (InstantiationException e) {
-            // e.printStackTrace();
-            error = "Failed to instantiate the route: " + e.getMessage();
-
-        } catch (IllegalAccessException e) {
-            // e.printStackTrace();
-            error = "Failed to instantiate the route: " + e.getMessage();
-        } catch (Exception e) {
-            // e.printStackTrace();
-            error = "Failed to edit the route: " + e.getMessage();
-        }
-        // lets re-render the form
-        return Response.ok(new Viewable("edit", this)).build();
-    }
-
-    /**
-     * process the route configuration defined in Ruby class
-     */
-    private Response parseRuby(String route) {
-        try {
-            // add the script of addRouteBuilder into ruby script
-            route += "\n RubyCamel.addRouteBuilder(RubyRoute.new)";
-
-            // store the route definition
-            File file = storeRoute(route, LANGUAGE_RUBY);
-
-            // execute the ruby script, which will store the RouteBuilder
-            // instances into RubyCamel
-            String[] args = {file.getAbsolutePath()};
-            Main.main(args);
-
-            // get the route builders from the RubyCamel and add them into this
-            // route
-            List<RouteBuilder> list = RubyCamel.getRoutes();
-            for (RouteBuilder builder : list) {
-                postRoutes(builder);
-            }
-
-            return Response.seeOther(new URI("/routes")).build();
-
-        } catch (IOException e) {
-            // e.printStackTrace();
-            error = "Failed to store the route: " + e.getMessage();
-        } catch (Exception e) {
-            // e.printStackTrace();
-            error = "Failed to edit the route: " + e.getMessage();
-
-        }
-        // lets re-render the form
-        return Response.ok(new Viewable("edit", this)).build();
-    }
-
-    /**
-     * process the route configuration defined in Scala class
-     */
-    private Response parseScala(String route) {
-        try {
-
-            // store the route definition
-            storeRoute(route, LANGUAGE_SCALA);
-
-            // load the definition class
-            //TODO: process the route definition using scala route builder
-            
-            return Response.seeOther(new URI("/routes")).build();
-
-        } catch (IOException e) {
-            // e.printStackTrace();
-            error = "Failed to store the route: " + e.getMessage();
-        } catch (Exception e) {
-            // e.printStackTrace();
-            error = "Failed to edit the route: " + e.getMessage();
         }
         // lets re-render the form
         return Response.ok(new Viewable("edit", this)).build();
@@ -371,17 +255,7 @@ public class RouteResource extends CamelChildResourceSupport {
     }
 
     public void setLanguage(String language) {
-        if (language.equalsIgnoreCase(LANGUAGE_GROOVY)) {
-            this.language = LANGUAGE_GROOVY;
-        } else if (language.equalsIgnoreCase(LANGUAGE_GROOVY)) {
-            this.language = LANGUAGE_GROOVY;
-        } else if (language.equalsIgnoreCase(LANGUAGE_RUBY)) {
-            this.language = LANGUAGE_RUBY;
-        } else if (language.equalsIgnoreCase(LANGUAGE_SCALA)) {
-            this.language = LANGUAGE_SCALA;
-        } else {
-            this.language = LANGUAGE_XML;
-        }
+        this.language = LANGUAGE_XML;
     }
 
     /**

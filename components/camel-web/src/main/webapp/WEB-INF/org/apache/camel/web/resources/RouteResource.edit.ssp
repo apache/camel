@@ -19,12 +19,6 @@
 			id="language" name="language">
 			<option value="Xml"
 				#if(it.getLanguage == "Xml")selected#end>Xml</option>
-			<option value="Groovy"
-				#if(it.getLanguage == "Groovy")selected#end>Groovy</option>
-			<option value="Ruby"
-				#if(it.getLanguage == "Ruby")selected#end>Ruby</option>
-			<option value="Scala"
-				#if(it.getLanguage == "Scala")selected#end>Scala</option>
 		</select></td>
 	</tr>
 	<tr>

@@ -17,8 +17,5 @@
 
 <ul>
 <li><a href='${uri("/routes/" + it.getId + "/lang/xml/edit")}'>Edit Route in Xml</a>
-<li><a href='${uri("/routes/" + it.getId + "/lang/groovy/edit")}'>Edit Route in Groovy</a>
-<li>Edit Route in Ruby
-<li>Edit Route in Scala 
 </ul>
 

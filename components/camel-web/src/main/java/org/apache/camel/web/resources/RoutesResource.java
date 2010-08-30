@@ -40,10 +40,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import com.sun.jersey.api.view.Viewable;
-import groovy.lang.GroovyClassLoader;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.util.ObjectHelper;
@@ -55,7 +53,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * The active routes in Camel which are used to implement one or more <a
  * href="http://camel.apache.org/enterprise-integration-patterns.html"
- * >Enterprise Integration Paterns</a>
+ * >Enterprise Integration Patterns</a>
  *
  * @version $Revision$
  */
@@ -138,7 +136,7 @@ public class RoutesResource extends CamelChildResourceSupport {
                                   @FormParam("route") String body) throws URISyntaxException {
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("new Route is: " + body);
+            LOG.debug("New Route is: " + body);
         }
         
         LOG.info(body);
@@ -146,13 +144,10 @@ public class RoutesResource extends CamelChildResourceSupport {
             error = "No Route submitted!";
         } else if (language.equals(RouteResource.LANGUAGE_XML)) {
             return parseXml(body);
-        } else if (language.equals(RouteResource.LANGUAGE_GROOVY)) {
-            return parseGroovy(body);
         }
         
         error = "Not supported language!";
         return Response.ok(new Viewable("edit", this)).build();
-
     }
     
     // Properties
@@ -196,34 +191,4 @@ public class RoutesResource extends CamelChildResourceSupport {
         return Response.ok(new Viewable("create", this)).build();
     }
 
-    /**
-     * process the route configuration defined in Groovy class
-     */
-    private Response parseGroovy(String route) {
-        try {
-            // load the definition class into a RouteBuilder instance
-            GroovyClassLoader classLoader = new GroovyClassLoader();
-            Class<?> clazz = classLoader.parseClass(route);
-            RouteBuilder builder = (RouteBuilder)clazz.newInstance();
-            LOG.info("Loaded builder: " + builder);
-            // add the route builder
-            getCamelContext().addRoutes(builder);
-            return Response.seeOther(new URI("/routes")).build();
-        } catch (IOException e) {
-            // e.printStackTrace();
-            error = "Failed to store the route: " + e.getMessage();
-        } catch (InstantiationException e) {
-            // e.printStackTrace();
-            error = "Failed to instantiate the route: " + e.getMessage();
-        } catch (IllegalAccessException e) {
-            // e.printStackTrace();
-            error = "Failed to instantiate the route: " + e.getMessage();
-        } catch (Exception e) {
-            // e.printStackTrace();
-            error = "Failed to edit the route: " + e.getMessage();
-        }
-        // lets re-render the form
-        return Response.ok(new Viewable("create", this)).build();
-    }
-    
 }
