@@ -143,7 +143,7 @@ public class SmppProducer extends DefaultProducer {
                         false,
                         false,
                         MessageClass.CLASS1,
-                        Alphabet.valueOf(configuration.getDataCoding())),
+                        Alphabet.valueOf(submitSm.getDataCoding())),
                 (byte) 0,
                 submitSm.getShortMessage());
 

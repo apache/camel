@@ -65,6 +65,7 @@ public class SmppBinding {
     public static final String ESME_ADDR_TON = "CamelSmppEsmeAddrTon";
     public static final String ESME_ADDR = "CamelSmppEsmeAddr";
     public static final String FINAL_STATUS = "CamelSmppStatus";
+    public static final String DATA_CODING = "CamelSmppDataCoding";
 
     private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
 
@@ -162,6 +163,14 @@ public class SmppBinding {
         } else {
             submitSm.setReplaceIfPresent(configuration.getReplaceIfPresentFlag());
         }
+        
+        if (in.getHeaders().containsKey(DATA_CODING)) {
+            System.out.println("1");
+            submitSm.setDataCoding((Byte) in.getHeader(DATA_CODING));
+        } else {
+            System.out.println("2");
+            submitSm.setDataCoding(configuration.getDataCoding());
+        }
 
         return submitSm;
     }
@@ -235,6 +244,7 @@ public class SmppBinding {
         smppMessage.setHeader(DEST_ADDR_TON, dataSm.getDestAddrTon());
         smppMessage.setHeader(SERVICE_TYPE, dataSm.getServiceType());
         smppMessage.setHeader(REGISTERED_DELIVERY, dataSm.getRegisteredDelivery());
+        smppMessage.setHeader(DATA_CODING, dataSm.getDataCoding());
 
         return smppMessage;
     }

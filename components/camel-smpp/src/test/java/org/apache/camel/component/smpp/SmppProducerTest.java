@@ -109,6 +109,7 @@ public class SmppProducerTest {
         expect(submitSm.getRegisteredDelivery())
             .andReturn(SMSCDeliveryReceipt.SUCCESS_FAILURE.value());
         expect(submitSm.getReplaceIfPresent()).andReturn((byte) 0);
+        expect(submitSm.getDataCoding()).andReturn((byte) 0);
         expect(submitSm.getShortMessage()).andReturn("Hello SMPP world!".getBytes("ISO-8859-1"));
     }
     
@@ -261,7 +262,22 @@ public class SmppProducerTest {
         expect(exchange.getExchangeId()).andReturn("ID-muellerc-macbookpro/3690-1214458315718/2-0");
         expect(endpoint.getBinding()).andReturn(binding);
         expect(binding.createSubmitSm(exchange)).andReturn(submitSm);
-        submitSmExpectations(exchange, binding, submitSm);
+        expect(submitSm.getServiceType()).andReturn("CMT");
+        expect(submitSm.getSourceAddrTon()).andReturn(TypeOfNumber.UNKNOWN.value());
+        expect(submitSm.getSourceAddrNpi()).andReturn(NumberingPlanIndicator.UNKNOWN.value());
+        expect(submitSm.getSourceAddr()).andReturn("1616");
+        expect(submitSm.getDestAddrTon()).andReturn(TypeOfNumber.UNKNOWN.value());
+        expect(submitSm.getDestAddrNpi()).andReturn(NumberingPlanIndicator.UNKNOWN.value());
+        expect(submitSm.getDestAddress()).andReturn("1717");
+        expect(submitSm.getProtocolId()).andReturn((byte) 0);
+        expect(submitSm.getPriorityFlag()).andReturn((byte) 1);
+        expect(submitSm.getScheduleDeliveryTime()).andReturn("090830230627004+");
+        expect(submitSm.getValidityPeriod()).andReturn("090831232000004+");
+        expect(submitSm.getRegisteredDelivery())
+            .andReturn(SMSCDeliveryReceipt.SUCCESS_FAILURE.value());
+        expect(submitSm.getReplaceIfPresent()).andReturn((byte) 0);
+        expect(submitSm.getDataCoding()).andReturn((byte) 4);
+        expect(submitSm.getShortMessage()).andReturn("Hello SMPP world!".getBytes("ISO-8859-1"));
         expect(session.submitShortMessage(
                 eq("CMT"),
                 eq(TypeOfNumber.UNKNOWN),
