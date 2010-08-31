@@ -54,7 +54,7 @@ public class MulticastParallelTwoTimeoutTest extends ContextTestSupport {
                                 return oldExchange;
                             }
                         })
-                        .parallelProcessing().timeout(2000).to("direct:a", "direct:b", "direct:c")
+                        .parallelProcessing().timeout(1000).to("direct:a", "direct:b", "direct:c")
                     // use end to indicate end of multicast route
                     .end()
                     .to("mock:result");

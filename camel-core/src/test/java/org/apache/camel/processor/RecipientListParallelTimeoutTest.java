@@ -29,8 +29,8 @@ public class RecipientListParallelTimeoutTest extends ContextTestSupport {
 
     public void testRecipientListParallelTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // A will timeout so we only get B and C
-        mock.expectedBodiesReceived("BC");
+        // A will timeout so we only get B and/or C
+        mock.message(0).body().not(body().contains("A"));
 
         template.sendBodyAndHeader("direct:start", "Hello", "slip", "direct:a,direct:b,direct:c");
 
@@ -55,10 +55,10 @@ public class RecipientListParallelTimeoutTest extends ContextTestSupport {
                                 return oldExchange;
                             }
                         })
-                        .parallelProcessing().timeout(2000)
+                        .parallelProcessing().timeout(1000)
                     .to("mock:result");
 
-                from("direct:a").delay(3000).setBody(constant("A"));
+                from("direct:a").delay(5000).setBody(constant("A"));
 
                 from("direct:b").setBody(constant("B"));
 
