@@ -250,6 +250,55 @@ public class SmppProducerTest {
     }
     
     @Test
+    public void processInOutShouldHonorTheDataCoding() throws Exception {
+        configuration.setDataCoding((byte) 4);
+        
+        doStartExpectations();
+        SmppBinding binding = createMock(SmppBinding.class);
+        Exchange exchange = createMock(Exchange.class);
+        Message message = createMock(Message.class);
+        SubmitSm submitSm = createMock(SubmitSm.class);
+        expect(exchange.getExchangeId()).andReturn("ID-muellerc-macbookpro/3690-1214458315718/2-0");
+        expect(endpoint.getBinding()).andReturn(binding);
+        expect(binding.createSubmitSm(exchange)).andReturn(submitSm);
+        submitSmExpectations(exchange, binding, submitSm);
+        expect(session.submitShortMessage(
+                eq("CMT"),
+                eq(TypeOfNumber.UNKNOWN),
+                eq(NumberingPlanIndicator.UNKNOWN),
+                eq("1616"),
+                eq(TypeOfNumber.UNKNOWN),
+                eq(NumberingPlanIndicator.UNKNOWN),
+                eq("1717"),
+                isA(ESMClass.class),
+                eq((byte) 0),
+                eq((byte) 1),
+                eq("090830230627004+"),
+                eq("090831232000004+"),
+                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                eq((byte) 0),
+                eq(new GeneralDataCoding(
+                        false,
+                        false,
+                        MessageClass.CLASS1,
+                        Alphabet.ALPHA_8_BIT)),
+                eq((byte) 0),
+                aryEq("Hello SMPP world!".getBytes("ISO-8859-1"))))
+            .andReturn("1");
+        expect(exchange.getPattern()).andReturn(ExchangePattern.InOut);
+        expect(exchange.getOut()).andReturn(message);
+        message.setHeader(SmppBinding.ID, "1"); // expectation without return value
+        expect(exchange.getExchangeId()).andReturn("ID-muellerc-macbookpro/3690-1214458315718/2-0");
+        
+        replay(session, endpoint, binding, exchange, message, submitSm);
+        
+        producer.doStart();
+        producer.process(exchange);
+        
+        verify(session, endpoint, binding, exchange, message, submitSm);
+    }
+    
+    @Test
     public void getterShouldReturnTheSetValues() {
         assertSame(endpoint, producer.getEndpoint());
         assertSame(configuration, producer.getConfiguration());

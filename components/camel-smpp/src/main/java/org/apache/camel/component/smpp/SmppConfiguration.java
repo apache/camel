@@ -36,6 +36,7 @@ public class SmppConfiguration implements Cloneable {
     private String systemId = "smppclient";
     private String password = "password";
     private String systemType = "cp";
+    private byte dataCoding = (byte) 0;
     private String encoding = "ISO-8859-1";
     private Integer enquireLinkTimer = new Integer(5000);
     private Integer transactionTimer = new Integer(10000);
@@ -105,6 +106,14 @@ public class SmppConfiguration implements Cloneable {
 
     public String getPassword() {
         return password;
+    }
+    
+    public byte getDataCoding() {
+        return dataCoding;
+    }
+
+    public void setDataCoding(byte dataCoding) {
+        this.dataCoding = dataCoding;
     }
     
     public String getEncoding() {
@@ -279,7 +288,9 @@ public class SmppConfiguration implements Cloneable {
             + ", password=" + password 
             + ", port=" + port 
             + ", systemId=" + systemId 
-            + ", systemType=" + systemType 
+            + ", systemType=" + systemType
+            + ", dataCoding=" + dataCoding
+            + ", encoding=" + encoding
             + ", transactionTimer=" + transactionTimer
             + ", registeredDelivery=" + registeredDelivery
             + ", serviceType=" + serviceType 
