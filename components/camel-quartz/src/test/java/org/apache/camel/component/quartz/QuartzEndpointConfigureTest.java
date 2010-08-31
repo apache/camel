@@ -18,7 +18,6 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 import org.quartz.CronTrigger;
 import org.quartz.SimpleTrigger;
@@ -88,7 +87,7 @@ public class QuartzEndpointConfigureTest extends CamelTestSupport {
         assertEquals("getGroup()", "myGroup", trigger.getGroup());
     }
 
-    // FIXME (CAMEL-3091): @Test
+    @Test
     public void testConfigureNoDoubleSlashQuestionCron() throws Exception {
         QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz:myGroup/myTimerName?cron=0+0+*+*+*+?");
         CronTrigger trigger = assertIsInstanceOf(CronTrigger.class, endpoint.getTrigger());

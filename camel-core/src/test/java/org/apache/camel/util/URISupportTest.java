@@ -112,4 +112,17 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals("jms://queue:foo?foo=bar&selector=somekey%3D%27somevalue%27", out);
     }
 
+    public void testParseParameters() throws Exception {
+        URI u = new URI("quartz:myGroup/myTimerName?cron=0+0+*+*+*+?");
+        Map<String, Object> params = URISupport.parseParameters(u);
+        assertEquals(1, params.size());
+        assertEquals("0 0 * * * ?", params.get("cron"));
+
+        u = new URI("quartz:myGroup/myTimerName?cron=0+0+*+*+*+?&bar=123");
+        params = URISupport.parseParameters(u);
+        assertEquals(2, params.size());
+        assertEquals("0 0 * * * ?", params.get("cron"));
+        assertEquals("123", params.get("bar"));
+    }
+
 }
