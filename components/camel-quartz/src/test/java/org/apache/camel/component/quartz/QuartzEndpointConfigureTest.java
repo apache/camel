@@ -80,6 +80,23 @@ public class QuartzEndpointConfigureTest extends CamelTestSupport {
         assertEquals("getJobName", "hadrian", endpoint.getJobName());
     }
 
+    @Test
+    public void testConfigureNoDoubleSlashNoCron() throws Exception {
+        QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz:myGroup/myTimerName");
+        Trigger trigger = endpoint.getTrigger();
+        assertEquals("getName()", "myTimerName", trigger.getName());
+        assertEquals("getGroup()", "myGroup", trigger.getGroup());
+    }
+
+    // FIXME (CAMEL-3091): @Test
+    public void testConfigureNoDoubleSlashQuestionCron() throws Exception {
+        QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz:myGroup/myTimerName?cron=0+0+*+*+*+?");
+        CronTrigger trigger = assertIsInstanceOf(CronTrigger.class, endpoint.getTrigger());
+        assertEquals("getName()", "myTimerName", trigger.getName());
+        assertEquals("getGroup()", "myGroup", trigger.getGroup());
+        assertEquals("cron expression", "0 0 * * * ?", trigger.getCronExpression());
+    }
+
     @Override
     protected QuartzEndpoint resolveMandatoryEndpoint(String uri) {
         Endpoint endpoint = super.resolveMandatoryEndpoint(uri);
