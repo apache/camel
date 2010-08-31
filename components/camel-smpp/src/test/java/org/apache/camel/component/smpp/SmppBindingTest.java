@@ -32,10 +32,7 @@ import org.jsmpp.util.DeliveryReceiptState;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppBinding</code>
@@ -95,7 +92,18 @@ public class SmppBindingTest {
         //assertEquals(0, submitSm.getCommandStatus());
         //assertEquals(0, submitSm.getSequenceNumber());
     }
-    
+
+    @Test
+    public void createSubmitSmWithDifferentEncoding() throws UnsupportedEncodingException {
+        binding.getConfiguration().setEncoding("UTF-16");
+        
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        exchange.getIn().setBody("Hello SMPP world!");
+        SubmitSm submitSm = binding.createSubmitSm(exchange);
+
+        assertArrayEquals("Hello SMPP world!".getBytes("UTF-16"), submitSm.getShortMessage());
+    }
+
     @Test
     public void createSubmitSmShouldCreateASubmitSmFromHeaders() throws UnsupportedEncodingException {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
