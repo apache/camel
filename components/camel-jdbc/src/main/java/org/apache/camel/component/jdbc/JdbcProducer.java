@@ -97,8 +97,8 @@ public class JdbcProducer extends DefaultProducer {
             }
         }
 
-        // preserve headers
-        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        // populate headers
+        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
     }
 
     /**
