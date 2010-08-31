@@ -27,6 +27,7 @@
     </bean>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="jmxAgent" disabled="true"/>
         <route>
             <from uri="direct:foo"/>
             <to uri="mock:foo"/>

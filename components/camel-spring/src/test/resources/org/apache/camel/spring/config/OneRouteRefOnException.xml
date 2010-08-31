@@ -45,7 +45,7 @@
         </route>
     </routeContext>
 
-    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <routeContextRef ref="oneRoutes"/>
     </camelContext>
 

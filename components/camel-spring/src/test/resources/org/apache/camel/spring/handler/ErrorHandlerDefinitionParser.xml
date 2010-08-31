@@ -48,7 +48,7 @@
     <camel:errorHandler id="txEH" type="TransactionErrorHandler" transactionManagerRef="txManager"/>
 
     <!-- You can also define the errorHandler inside the camelContext -->
-    <camelContext id="camel" errorHandlerRef="noErrorHandler" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext errorHandlerRef="noErrorHandler" xmlns="http://camel.apache.org/schema/spring">
         <errorHandler id="noErrorHandler" type="NoErrorHandler"/>
     </camelContext>
     <!-- END SNIPPET: example -->

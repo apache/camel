@@ -39,7 +39,7 @@
         </route>
     </routeContext>
 
-    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <!-- we can include multiple route contexts -->
         <routeContextRef ref="myCoolRoute"/>
         <routeContextRef ref="myOtherRoute"/>

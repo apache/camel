@@ -30,7 +30,7 @@
     <!-- START SNIPPET: example -->
     <bean id="myProcessor" class="org.apache.camel.builder.MyProcessor"/>
 
-    <camelContext errorHandlerRef="errorHandler" streamCache="false" id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="seda:a"/>
             <filter>

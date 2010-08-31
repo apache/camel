@@ -33,6 +33,4 @@
     <camel:template id="template" camelContextId="camel" />
     <camel:consumerTemplate id="consumerTemplate" camelContextId="camel"/>
 
-    
-    
 </beans>

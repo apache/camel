@@ -36,7 +36,7 @@
         </route>
     </routeContext>
 
-    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
 
         <!-- refer to a given route to be used -->
         <routeContextRef ref="myCoolRoutes"/>

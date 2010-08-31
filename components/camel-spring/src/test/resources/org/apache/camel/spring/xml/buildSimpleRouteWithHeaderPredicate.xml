@@ -28,7 +28,7 @@
     </bean>
 
     <!-- START SNIPPET: example -->
-    <camelContext errorHandlerRef="errorHandler" streamCache="false" id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="seda:a"/>
             <filter>

@@ -28,7 +28,7 @@
         <property name="endpointName" value="mock:result"/>
     </bean>
 
-    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <routeBuilder ref="myRouteBuilder"/>
     </camelContext>
 

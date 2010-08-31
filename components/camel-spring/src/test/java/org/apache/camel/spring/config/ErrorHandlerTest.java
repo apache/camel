@@ -18,12 +18,12 @@ package org.apache.camel.spring.config;
 
 import java.util.List;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
 import org.apache.camel.Route;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -35,7 +35,7 @@ public class ErrorHandlerTest extends SpringTestSupport {
     }
 
     public void testEndpointConfiguration() throws Exception {
-        CamelContext context = getMandatoryBean(CamelContext.class, "camel");
+        SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         List<Route> list = context.getRoutes();
         assertEquals("Number routes created" + list, 2, list.size());
         for (Route route : list) {

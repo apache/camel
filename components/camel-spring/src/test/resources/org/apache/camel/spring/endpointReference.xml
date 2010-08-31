@@ -28,6 +28,7 @@
   </bean>
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="agent" disabled="true"/>
     <endpoint id="endpoint1" uri="direct:start"/>
     <endpoint id="endpoint2" uri="mock:end"/>
 
@@ -39,6 +40,7 @@
   <!-- END SNIPPET: example -->
   
   <camelContext id="camel2" xmlns="http://camel.apache.org/schema/spring">
+      <jmxAgent id="agent2" disabled="true"/>
   </camelContext>
 
 </beans>

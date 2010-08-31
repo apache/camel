@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring" autoStartup="false">
+    <camelContext xmlns="http://camel.apache.org/schema/spring" autoStartup="false">
         <route id="foo">
             <from uri="direct:start"/>
             <to uri="mock:result"/>

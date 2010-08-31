@@ -23,11 +23,10 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-
     <!-- import the routes from another XML file -->
     <import resource="myCoolRoutes.xml"/>
 
-    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
 
         <!-- refer to a given route to be used -->
         <routeContextRef ref="myCoolRoutes"/>

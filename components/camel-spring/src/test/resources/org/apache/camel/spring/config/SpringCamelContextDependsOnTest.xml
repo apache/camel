@@ -32,7 +32,7 @@
 
     <!-- and therefore we use depends-on here to tell Spring that bean must be created first -->
     <!-- you can use comma, semi color or whitespace if you need to define multiple beans -->
-    <camelContext id="myCamel" depends-on="myDependsOnBean" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext depends-on="myDependsOnBean" xmlns="http://camel.apache.org/schema/spring">
         <routeBuilder ref="myRouteBuilder"/>
     </camelContext>
     <!-- END SNIPPET: e1 -->

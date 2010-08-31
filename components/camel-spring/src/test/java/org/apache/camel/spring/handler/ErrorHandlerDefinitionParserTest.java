@@ -23,7 +23,6 @@ import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.processor.RedeliveryPolicy;
-import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -81,12 +80,6 @@ public class ErrorHandlerDefinitionParserTest extends TestCase {
         assertEquals("Wrong redeliveryDelay", 1000, policy.getRedeliveryDelay());
         assertEquals("Wrong logStackTrace", true, policy.isLogHandled());
         assertEquals("Wrong asyncRedeliveryDelayed", true, policy.isAsyncDelayedRedelivery());
-    }
-    
-    public void testErrorHandlerInsideCamelContext() {
-        CamelContextFactoryBean factoryBean = (CamelContextFactoryBean) ctx.getBean("&camel");
-        assertNotNull(factoryBean);
-        assertEquals("Wrong ErrorHandlerRef", "noErrorHandler", factoryBean.getErrorHandlerRef());
     }
 
 }

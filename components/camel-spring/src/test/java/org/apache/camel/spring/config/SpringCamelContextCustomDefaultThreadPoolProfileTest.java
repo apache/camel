@@ -16,9 +16,9 @@
  */
 package org.apache.camel.spring.config;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,7 +30,7 @@ public class SpringCamelContextCustomDefaultThreadPoolProfileTest extends Spring
     }
 
     public void testDefaultThreadPoolProfile() throws Exception {
-        CamelContext context = getMandatoryBean(CamelContext.class, "camel");
+        SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
 
         ThreadPoolProfile profile = context.getExecutorServiceStrategy().getDefaultThreadPoolProfile();
         assertEquals(5, profile.getPoolSize().intValue());

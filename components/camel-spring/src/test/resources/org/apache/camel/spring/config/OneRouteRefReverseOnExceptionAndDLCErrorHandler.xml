@@ -45,7 +45,7 @@
         </route>
     </routeContext>
 
-    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <errorHandler id="dlc" deadLetterUri="mock:dead" type="DeadLetterChannel"/>
         <routeContextRef ref="oneRoutes"/>
     </camelContext>

@@ -23,7 +23,7 @@
     ">
 
 
-    <camelContext id="camel" errorHandlerRef="deadLetterErrorHandler" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext errorHandlerRef="deadLetterErrorHandler" xmlns="http://camel.apache.org/schema/spring">
         <jmxAgent id="agent" disabled="true"/>
         <route>
             <from uri="seda:a"/>

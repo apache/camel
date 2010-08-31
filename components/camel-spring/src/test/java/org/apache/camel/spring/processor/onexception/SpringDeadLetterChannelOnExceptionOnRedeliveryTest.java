@@ -21,7 +21,7 @@ import org.apache.camel.processor.DeadLetterChannelOnExceptionOnRedeliveryTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * Unit test for per on exception specificy on redelivery.
+ * Unit test for per on exception specific on redelivery.
  */
 public class SpringDeadLetterChannelOnExceptionOnRedeliveryTest extends DeadLetterChannelOnExceptionOnRedeliveryTest {
 
