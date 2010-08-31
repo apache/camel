@@ -74,9 +74,6 @@ public class JdbcProducer extends DefaultProducer {
                 LOG.debug("Executing JDBC statement: " + sql);
             }
 
-            // preserve headers, but allow overwriting
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-
             if (stmt.execute(sql)) {
                 rs = stmt.getResultSet();
                 setResultSet(exchange, rs);
@@ -99,6 +96,9 @@ public class JdbcProducer extends DefaultProducer {
                 LOG.warn("Error closing JDBC resource: " + e, e);
             }
         }
+
+        // preserve headers
+        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
     }
 
     /**

@@ -42,10 +42,6 @@ public class JdbcPreserveHeadersTest extends CamelTestSupport {
 
     @Test
     public void testPreserveHeaders() throws Exception {
-        // windows may fail this test
-        if (isPlatform("windows")) {
-            return;
-        }
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("foo", "bar");
@@ -67,7 +63,7 @@ public class JdbcPreserveHeadersTest extends CamelTestSupport {
                                 e.getIn().setHeader("foo", "bar");
                             }
                         }).
-                        setBody(constant("select * from customer")).
+                        setBody(constant("select name from customer where id = 'cust1'")).
                         to("jdbc:testdb").
                         to("mock:result");
             }

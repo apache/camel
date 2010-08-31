@@ -26,7 +26,7 @@ public class JdbcRouteUsingSqlSelectAliasJdbc3Test extends JdbcRouteUsingSqlSele
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:hello").to("jdbc:testdb?readSize=100?useJDBC4ColumnNameAndLabelSemantics=false");
+                from("direct:hello").to("jdbc:testdb?readSize=100&useJDBC4ColumnNameAndLabelSemantics=false");
             }
         };
     }
