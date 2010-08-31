@@ -53,6 +53,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
 
     public QuartzEndpoint(final String endpointUri, final QuartzComponent component) {
         super(endpointUri, component);
+        getJobDetail().setName("quartz-" + getId());
     }
 
     public void addTrigger(final Trigger trigger, final JobDetail detail) throws SchedulerException {
@@ -144,11 +145,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
     }
 
     protected String getJobName() {
-        String jobName = getEndpointUri();
-        if (jobName.contains("?")) {
-            jobName = ObjectHelper.before(jobName, "?");
-        }
-        return jobName;
+        return getJobDetail().getName();
     }
 
     // Properties

@@ -89,7 +89,6 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
     @Override
     protected QuartzEndpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-        QuartzEndpoint answer = new QuartzEndpoint(uri, this);
 
         // lets split the remaining into a group/name
         URI u = new URI(uri);
@@ -126,19 +125,20 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
                 }
             }
         }
-        answer.setTrigger(trigger);
 
-        trigger.setName(name);
-        trigger.setGroup(group);
+        QuartzEndpoint answer = new QuartzEndpoint(uri, this);
+        setProperties(answer.getJobDetail(), jobParameters);
 
         setProperties(trigger, triggerParameters);
-        setProperties(answer.getJobDetail(), jobParameters);
+        trigger.setName(name);
+        trigger.setGroup(group);
+        answer.setTrigger(trigger);
 
         return answer;
     }
 
     protected CronTrigger createCronTrigger(String path) throws ParseException {
-        // replace + back to space so its a cron expression
+        // replace + back to space so it's a cron expression
         path = path.replaceAll("\\+", " ");
         CronTrigger cron = new CronTrigger();
         cron.setCronExpression(path);
