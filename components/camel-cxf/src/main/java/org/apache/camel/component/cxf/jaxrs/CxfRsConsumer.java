@@ -32,7 +32,7 @@ public class CxfRsConsumer extends DefaultConsumer {
 
     public CxfRsConsumer(CxfRsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        CxfRsInvoker cxfRsInvoker = new CxfRsInvoker(endpoint, processor);
+        CxfRsInvoker cxfRsInvoker = new CxfRsInvoker(endpoint, this);
         JAXRSServerFactoryBean svrBean = endpoint.createJAXRSServerFactoryBean();
         svrBean.setInvoker(cxfRsInvoker);
         server = svrBean.create();

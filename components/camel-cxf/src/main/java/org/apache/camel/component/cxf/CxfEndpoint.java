@@ -100,7 +100,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
         super(remaining, cxfComponent);
-        setAddress(remaining);
+        setAddress(remaining);        
     }
     
     public CxfEndpoint(String remaining, CamelContext context) {
