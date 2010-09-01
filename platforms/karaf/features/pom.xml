@@ -57,7 +57,7 @@
       <el-api-1.0-version>1.0.1</el-api-1.0-version>
       <fastinfoset-version>1.2.7_2</fastinfoset-version>
       <features.file>features.xml</features.file>
-      <flatpack-bundle-version>3.1.1_3</flatpack-bundle-version>
+      <flatpack-bundle-version>3.2.0_1</flatpack-bundle-version>
       <felix.configadmin.version>1.2.4</felix.configadmin.version>
       <felix.framework.version>2.0.5</felix.framework.version>
       <fuse-maven-repo-url>http://repo.fusesource.com/nexus/content/groups/public</fuse-maven-repo-url>

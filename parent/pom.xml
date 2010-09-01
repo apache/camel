@@ -53,7 +53,7 @@
     <derby-version>10.4.2.0</derby-version>
     <dozer-version>5.2.2</dozer-version>
     <easymock-version>2.5.2</easymock-version>
-    <flatpack-version>3.1.1</flatpack-version>
+    <flatpack-version>3.2.0</flatpack-version>
     <ftpserver-version>1.0.3</ftpserver-version>
     <fuse-commons-management-version>1.0</fuse-commons-management-version>
     <freemarker-version>2.3.15</freemarker-version>
@@ -156,7 +156,7 @@
       org.jivesoftware.smack.*;version="[3.0,4)",
       org.ccil.cowan.tagsoup.*;version="[1.2,2)",
       org.mortbay.cometd.*;version="[6.1,7)",
-      net.sf.flatpack.*;version="[3.1.1,4)",
+      net.sf.flatpack.*;version="[3.2.0,4)",
       freemarker.*;version="[2.3.15,3)",
       javax.persistence.*;version="[1.1,2)",
     </camel.osgi.import.defaults>
