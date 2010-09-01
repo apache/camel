@@ -73,7 +73,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     // so we don't delegate the sync process call to the async process 
     public boolean process(Exchange camelExchange, AsyncCallback callback) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Process exchange: " + camelExchange);
+            LOG.trace("Process exchange: " + camelExchange + " in an async way.");
         }
         
         try {
@@ -109,7 +109,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     public void process(Exchange camelExchange) throws Exception {
         
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Process exchange: " + camelExchange);
+            LOG.trace("Process exchange: " + camelExchange + "in sync way.");
         }
         
         // create CXF exchange
