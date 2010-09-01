@@ -44,10 +44,29 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>
+    <!-- Using the servicemix wrapped one as the centrl mvn repo doesn't have one -->
     <dependency>
-      <groupId>net.sf.flatpack</groupId>
-      <artifactId>flatpack</artifactId>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.flatpack</artifactId>
       <version>${flatpack-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>jexcelapi</groupId>
+      <artifactId>jxl</artifactId>
+      <version>2.4.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
     </dependency>
 
     <!-- testing -->
