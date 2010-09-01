@@ -71,6 +71,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("${file:absolute}", FileUtil.isAbsolute(file));
         assertExpression("${file:absolute.path}", file.getAbsolutePath());
         assertExpression("${file:length}", file.length());
+        assertExpression("${file:size}", file.length());
 
         // modified is a Date object
         Date modified = SimpleLanguage.simple("file:modified").evaluate(exchange, Date.class);

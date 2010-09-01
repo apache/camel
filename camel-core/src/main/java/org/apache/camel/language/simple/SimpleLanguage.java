@@ -303,7 +303,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             return ExpressionBuilder.fileAbsoluteExpression();
         } else if (ObjectHelper.equal(remainder, "absolute.path")) {
             return ExpressionBuilder.fileAbsolutePathExpression();
-        } else if (ObjectHelper.equal(remainder, "length")) {
+        } else if (ObjectHelper.equal(remainder, "length") || ObjectHelper.equal(remainder, "size")) {
             return ExpressionBuilder.fileSizeExpression();
         } else if (ObjectHelper.equal(remainder, "modified")) {
             return ExpressionBuilder.fileLastModifiedExpression();
