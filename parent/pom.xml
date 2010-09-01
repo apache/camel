@@ -86,8 +86,10 @@
     <jaxb-version>2.1.13</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
     <jaxen-version>1.1.1</jaxen-version>
+    <jdom-version>1.1</jdom-version>
     <jetty-version>7.1.6.v20100715</jetty-version>
     <jettison-version>1.2</jettison-version>
+    <jexcelapi-version>2.4.2</jexcelapi-version>
     <jruby-version>1.5.2</jruby-version>
     <jsch-version>0.1.43</jsch-version>
     <juel-version>2.1.2</juel-version>

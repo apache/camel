@@ -34,6 +34,14 @@
     <camel.osgi.export.pkg>org.apache.camel.component.flatpack.*</camel.osgi.export.pkg>
   </properties>
 
+  <repositories>
+      <repository>
+          <id>fusesource.m2</id>
+          <name>Fusesource Dependency Repository</name>
+          <url>http://repo.fusesource.com/maven2-all</url>
+      </repository>
+  </repositories>
+
   <dependencies>
 
     <dependency>
@@ -50,36 +58,34 @@
       <artifactId>org.apache.servicemix.bundles.flatpack</artifactId>
       <version>${flatpack-version}</version>
     </dependency>
-    <dependency>
-      <groupId>jdom</groupId>
-      <artifactId>jdom</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>jexcelapi</groupId>
-      <artifactId>jxl</artifactId>
-      <version>2.4.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
+	<dependency> 
+	  <groupId>org.jdom</groupId> 
+	  <artifactId>jdom</artifactId> 
+	  <version>${jdom-version}</version> 
+	</dependency>
+    <dependency> 
+      <groupId>jexcelapi</groupId> 
+      <artifactId>jxl</artifactId> 
+      <version>${jexcelapi-version}</version>
     </dependency>
 
+	<!-- logging -->
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-api</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>log4j</groupId>
+		<artifactId>log4j</artifactId>
+		<scope>test</scope>
+	</dependency>
+
     <!-- testing -->
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

@@ -70,7 +70,7 @@
       <hibernate-validator-bundle-version>4.0.2.GA_1</hibernate-validator-bundle-version>
       <ibatis-bundle-version>2.3.4.726_2</ibatis-bundle-version>
       <jackrabbit-version>1.5.3</jackrabbit-version>
-      <jaxb-bundle-version>2.1.13_1-SNAPSHOT</jaxb-bundle-version>
+      <jaxb-bundle-version>2.1.13_1</jaxb-bundle-version>
       <jetty6-bundle-version>6.1.22_1</jetty6-bundle-version>
       <jexcelapi-bundle-version>2.4.2_2</jexcelapi-bundle-version>
       <hapi-bundle-version>0.5.1_3</hapi-bundle-version>
@@ -85,7 +85,7 @@
       <jing-bundle-version>20030619_1</jing-bundle-version>
       <jodatime-bundle-version>1.5.2_2</jodatime-bundle-version>
       <josql-bundle-version>1.5_3</josql-bundle-version>
-      <jsch-bundle-version>0.1.43_1-SNAPSHOT</jsch-bundle-version>
+      <jsch-bundle-version>0.1.43_1</jsch-bundle-version>
       <jsendnsca-bundle-version>1.3.1_1</jsendnsca-bundle-version>
       <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
       <juel-bundle-version>2.1.2_1</juel-bundle-version>
@@ -100,11 +100,11 @@
       <opensaml-version>1.1_3</opensaml-version>
       <oscache-bundle-version>2.4_3</oscache-bundle-version>
       <osgi.compendium.version>4.2.0</osgi.compendium.version>
-      <protobuf-java-bundle-version>2.3.0_1-SNAPSHOT</protobuf-java-bundle-version>
+      <protobuf-java-bundle-version>2.3.0_1</protobuf-java-bundle-version>
       <pax.web.version>0.7.2</pax.web.version>
       <quartz-bundle-version>1.8.3_1</quartz-bundle-version>
       <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
-      <rome-bundle-version>1.0_1-SNAPSHOT</rome-bundle-version>
+      <rome-bundle-version>1.0_1</rome-bundle-version>
       <saxon-bundle-version>9.1.0.1_3</saxon-bundle-version>
       <scala-bundle-version>2.8.0.RC7_1</scala-bundle-version>
       <servicemix-specs-version>1.5.0</servicemix-specs-version>
@@ -118,10 +118,10 @@
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
       <stringtemplate-bundle-version>3.2_3</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_3</tagsoup-bundle-version>
-      <velocity-bundle-version>1.6.4_1-SNAPSHOT</velocity-bundle-version>
+      <velocity-bundle-version>1.6.4_1</velocity-bundle-version>
       <xalan-bundle-version>2.7.1_2</xalan-bundle-version>
       <xerces-bundle-version>2.9.1_3</xerces-bundle-version>
-      <xmlbeans-bundle-version>2.5.0_1-SNAPSHOT</xmlbeans-bundle-version>
+      <xmlbeans-bundle-version>2.5.0_1</xmlbeans-bundle-version>
       <xmlschema-version>1.4.5</xmlschema-version>
       <xmlsec-bundle-version>1.4.3_2</xmlsec-bundle-version>
       <xmlresolver-bundle-version>1.2_2</xmlresolver-bundle-version>
