@@ -50,7 +50,7 @@ public class CxfConsumer extends DefaultConsumer {
     private static final Log LOG = LogFactory.getLog(CxfConsumer.class);
     private Server server;
 
-    public CxfConsumer(CxfEndpoint endpoint, Processor processor) throws Exception {
+    public CxfConsumer(final CxfEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         
         // create server
@@ -63,7 +63,7 @@ public class CxfConsumer extends DefaultConsumer {
                     LOG.trace("Received CXF Request: " + cxfExchange);
                 }                
                 Continuation continuation = getContinuation(cxfExchange);
-                if (continuation != null) {
+                if (continuation != null && !endpoint.isSynchronous()) {
                     return asyncInvoke(cxfExchange, continuation);
                 } else {
                     return syncInvoke(cxfExchange);
@@ -77,8 +77,8 @@ public class CxfConsumer extends DefaultConsumer {
                     // use the asynchronous API to process the exchange
                     boolean sync = getAsyncProcessor().process(camelExchange, new AsyncCallback() {
                         public void done(boolean doneSync) {
-                            if (log.isTraceEnabled()) {
-                                log.trace("Resuming continuation of exchangeId: "
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Resuming continuation of exchangeId: "
                                           + camelExchange.getExchangeId());
                             }
                             // resume processing after both, sync and async callbacks
@@ -90,8 +90,8 @@ public class CxfConsumer extends DefaultConsumer {
                     // before the continuation.suspend is called
                     if (continuation.getObject() != camelExchange && !sync) {
                         // Now we don't set up the timeout value
-                        if (log.isTraceEnabled()) {
-                            log.trace("Suspending continuation of exchangeId: "
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Suspending continuation of exchangeId: "
                                       + camelExchange.getExchangeId());
                         }
                         // The continuation could be called before the suspend
@@ -100,8 +100,8 @@ public class CxfConsumer extends DefaultConsumer {
                     } else {
                         // just set the response back, as the invoking thread is
                         // not changed
-                        if (log.isTraceEnabled()) {
-                            log.trace("Processed the Exchange : " + camelExchange.getExchangeId());
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Processed the Exchange : " + camelExchange.getExchangeId());
                         }
                         setResponseBack(cxfExchange, camelExchange);
                     }
