@@ -35,7 +35,8 @@ public class ErrorHandlerTest extends SpringTestSupport {
     }
 
     public void testEndpointConfiguration() throws Exception {
-        SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        // must type cast to work with Spring 2.5.x
+        SpringCamelContext context = (SpringCamelContext) applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         List<Route> list = context.getRoutes();
         assertEquals("Number routes created" + list, 2, list.size());
         for (Route route : list) {

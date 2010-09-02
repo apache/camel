@@ -39,7 +39,8 @@ public class CamelProxyTest extends TestCase {
         
         // test sending inOnly message
         MyProxySender anotherSender = (MyProxySender) ac.getBean("myAnotherProxySender");
-        SpringCamelContext context = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        // must type cast to work with Spring 2.5.x
+        SpringCamelContext context = (SpringCamelContext) ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         MockEndpoint result = TestSupport.resolveMandatoryEndpoint(context, "mock:result", MockEndpoint.class);
         result.expectedBodiesReceived("Hello my friends!");
         

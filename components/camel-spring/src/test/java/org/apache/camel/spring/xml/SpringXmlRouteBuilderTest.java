@@ -100,7 +100,8 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
 
     protected List<Route> getRoutesFromContext(String classpathConfigFile) {
         applicationContext = new ClassPathXmlApplicationContext(classpathConfigFile);
-        SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        // must type cast to work with Spring 2.5.x
+        SpringCamelContext context = (SpringCamelContext) applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         assertNotNull("No Camel Context in file: " + classpathConfigFile, context);
         List<Route> routes = context.getRoutes();
         assertNotNull("No routes available for context: " + context.getName() + " in file: " + classpathConfigFile, routes);

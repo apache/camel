@@ -33,7 +33,8 @@ public class CamelContextAutoStartupTest extends TestCase {
     public void testAutoStartupFalse() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelContextAutoStartupTestFalse.xml");
 
-        SpringCamelContext camel = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        // must type cast to work with Spring 2.5.x
+        SpringCamelContext camel = (SpringCamelContext) ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         assertNotNull(camel.getName());
         assertEquals(true, camel.isStarted());
         assertEquals(Boolean.FALSE, camel.isAutoStartup());
@@ -63,7 +64,8 @@ public class CamelContextAutoStartupTest extends TestCase {
     public void testAutoStartupTrue() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelContextAutoStartupTestTrue.xml");
 
-        SpringCamelContext camel = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        // must type cast to work with Spring 2.5.x
+        SpringCamelContext camel = (SpringCamelContext) ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         assertNotNull(camel.getName());
         assertEquals(true, camel.isStarted());
         assertEquals(Boolean.TRUE, camel.isAutoStartup());

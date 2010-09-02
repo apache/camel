@@ -38,7 +38,8 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
     public void testXMLRouteLoading() throws Exception {
         applicationContext = createApplicationContext();
 
-        SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        // must type cast to work with Spring 2.5.x
+        SpringCamelContext context = (SpringCamelContext) applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         assertValidContext(context);
 
         // now lets send a message
