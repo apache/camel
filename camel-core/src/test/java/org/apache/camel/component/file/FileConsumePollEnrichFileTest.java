@@ -55,7 +55,7 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("file://target/enrich?move=.done")
                     .to("mock:start")
-                    .pollEnrich("file://target/enrichdata?move=.done")
+                    .pollEnrich("file://target/enrichdata?move=.done", 5000)
                     .to("mock:result");
             }
         };

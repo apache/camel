@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.management;
 
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -33,9 +32,8 @@ public class SpringCamelContextStartingFailedEventTest extends SpringTestSupport
     }
 
     protected AbstractXmlApplicationContext createApplicationContext() {
-        AbstractXmlApplicationContext answer = null;
         try {
-            answer = new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringCamelContextStartingFailedEventTest.xml");
+            new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringCamelContextStartingFailedEventTest.xml");
             fail("Should thrown an exception");
         } catch (Exception e) {
             assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause().getCause());
@@ -43,8 +41,7 @@ public class SpringCamelContextStartingFailedEventTest extends SpringTestSupport
         }
 
         // fallback to load another file that works
-        answer = new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringManagedErrorHandlerTest.xml");
-        return answer;
+        return new ClassPathXmlApplicationContext("/org/apache/camel/spring/disableJmxConfig.xml");
     }
 
     public void testReady() {
