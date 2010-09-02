@@ -26,12 +26,12 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerIntercepEmptyFileTest extends ContextTestSupport {
 
-    public void testExludePreAndPostfixes() throws Exception {
+    public void testExludeZeroLengthFiles() throws Exception {
         deleteDirectory("./target/exclude");
         
         MockEndpoint mock1 = getMockEndpoint("mock:result");
-        mock1.expectedMessageCount(4);
-        
+        mock1.expectedMessageCount(2);
+        mock1.expectedBodiesReceived("Hello World", "Bye World");
         MockEndpoint mock2 = getMockEndpoint("mock:skip");
         mock2.expectedMessageCount(2);
         
@@ -53,7 +53,7 @@ public class FileConsumerIntercepEmptyFileTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                interceptFrom().when(simple("${file:length} == 0")).to("mock:skip");
+                interceptFrom().when(simple("${file:length} == 0")).to("mock:skip").stop();
                 from("file://target/exclude/")
                     .convertBodyTo(String.class).to("log:test").to("mock:result");
             }
