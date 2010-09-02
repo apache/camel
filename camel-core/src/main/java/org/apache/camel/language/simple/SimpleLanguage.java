@@ -72,6 +72,7 @@ import org.apache.camel.util.StringHelper;
  *   <li><tt>file:absolute</tt> is the file regarded as absolute or relative</li>
  *   <li><tt>file:absolute.path</tt> to access the absolute file path name</li>
  *   <li><tt>file:length</tt> to access the file length as a Long type</li>
+ *   <li><tt>file:size</tt> to access the file length as a Long type</li>
  *   <li><tt>file:modified</tt> to access the file last modified as a Date type</li>
  *   <li><tt>date:&lt;command&gt;:&lt;pattern&gt;</tt> for date formatting using the {@link java.text.SimpleDateFormat} patterns.
  *     Additional Supported commands are: <tt>file</tt> for the last modified timestamp of the file.
