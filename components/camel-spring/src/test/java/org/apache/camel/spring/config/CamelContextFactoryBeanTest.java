@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
@@ -34,6 +35,20 @@ import org.springframework.core.io.ClassPathResource;
  * @version $Revision$
  */
 public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
+
+    @Override
+    protected void setUp() throws Exception {
+        // disable JMX
+        System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
+        super.setUp();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        // enable JMX
+        System.clearProperty(JmxSystemPropertyKeys.DISABLED);
+    }
 
     public void testClassPathRouteLoading() throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
