@@ -23,6 +23,7 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -51,7 +52,7 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultDebugger implements Debugger, CamelContextAware {
 
     private static final Log LOG = LogFactory.getLog(DefaultDebugger.class);
-    private final List<BreakpointConditions> breakpoints = new ArrayList<BreakpointConditions>();
+    private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<BreakpointConditions>();
     private final int maxConcurrentSingleSteps = 1;
     private final Map<String, Breakpoint> singleSteps = new HashMap<String, Breakpoint>(maxConcurrentSingleSteps);
     private CamelContext camelContext;
@@ -97,7 +98,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     public void addBreakpoint(Breakpoint breakpoint) {
-        addBreakpoint(breakpoint, (Condition) null);
+        breakpoints.add(new BreakpointConditions(breakpoint));
     }
 
     public void addBreakpoint(Breakpoint breakpoint, Condition... conditions) {
@@ -154,7 +155,11 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     public void removeBreakpoint(Breakpoint breakpoint) {
-        breakpoints.remove(breakpoint);
+        for (BreakpointConditions condition : breakpoints) {
+            if (condition.getBreakpoint().equals(breakpoint)) {
+                breakpoints.remove(condition);
+            }
+        }
     }
 
     public void suspendAllBreakpoints() {
@@ -357,7 +362,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
             onEvent(exchange, event);
 
             if (event instanceof ExchangeCompletedEvent) {
-                // failsafe to ensure we remote single steps when the Exchange is complete
+                // fail safe to ensure we remove single steps when the Exchange is complete
                 singleSteps.remove(exchange.getExchangeId());
             }
         }
@@ -366,14 +371,13 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
             return event instanceof AbstractExchangeEvent;
         }
 
-        @Override
         protected void doStart() throws Exception {
             // noop
         }
 
-        @Override
         protected void doStop() throws Exception {
             // noop
         }
     }
+
 }

@@ -147,6 +147,33 @@ public class DebugTest extends ContextTestSupport {
         assertEquals("Breakpoint at To[mock:result] with body: Hello Camel", logs.get(0));
     }
 
+    public void testDebugRemoveBreakpoint() throws Exception {
+        context.getDebugger().addBreakpoint(breakpoint);
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(7, logs.size());
+
+        // remove the breakpoint
+        context.getDebugger().removeBreakpoint(breakpoint);
+
+        // reset and test again now the breakpoint is removed
+        resetMocks();
+        logs.clear();
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");
+
+        template.sendBody("direct:start", "Hello Camel");
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(0, logs.size());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
