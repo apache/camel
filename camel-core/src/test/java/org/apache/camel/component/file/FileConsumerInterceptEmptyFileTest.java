@@ -22,11 +22,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test that file consumer will exclude pre and postfixes
+ * Unit test for empty files
  */
-public class FileConsumerIntercepEmptyFileTest extends ContextTestSupport {
+public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
 
-    public void testExludeZeroLengthFiles() throws Exception {
+    public void testExcludeZeroLengthFiles() throws Exception {
         deleteDirectory("./target/exclude");
         
         MockEndpoint mock1 = getMockEndpoint("mock:result");
@@ -36,9 +36,7 @@ public class FileConsumerIntercepEmptyFileTest extends ContextTestSupport {
         mock2.expectedMessageCount(2);
         
         prepareFiles();
-        
-        
-        
+
         assertMockEndpointsSatisfied();
     }
 
