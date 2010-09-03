@@ -110,11 +110,12 @@ public final class PropertiesParser {
     private static String createPlaceholderPart(String placeholderPart, Properties properties, List<String> replaced) {
         String propertyValue;
         
+        replaced.add(placeholderPart);
+        
         propertyValue = System.getProperty(placeholderPart);
         if (propertyValue != null) {
             LOG.info("Found a JVM system property: " + placeholderPart + ". Overriding property set via Property Location");
         } else {
-            replaced.add(placeholderPart);
             propertyValue = properties.getProperty(placeholderPart);
         }
         
