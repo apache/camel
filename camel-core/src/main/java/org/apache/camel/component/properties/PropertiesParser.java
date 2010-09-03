@@ -20,13 +20,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * A parser to parse a string which contains property placeholders
  *
  * @version $Revision$
  */
 public final class PropertiesParser {
-
+    private static final transient Log LOG = LogFactory.getLog(PropertiesParser.class);
+    
     private PropertiesParser() {
     }
 
@@ -103,8 +108,17 @@ public final class PropertiesParser {
     }
 
     private static String createPlaceholderPart(String placeholderPart, Properties properties, List<String> replaced) {
-        replaced.add(placeholderPart);
-        return properties.getProperty(placeholderPart);
+        String propertyValue;
+        
+        propertyValue = System.getProperty(placeholderPart);
+        if (propertyValue != null) {
+            LOG.info("Found a JVM system property: " + placeholderPart + ". Overriding property set via Property Location");
+        } else {
+            replaced.add(placeholderPart);
+            propertyValue = properties.getProperty(placeholderPart);
+        }
+        
+        return propertyValue;
     }
 
 }
