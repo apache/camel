@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -42,6 +43,10 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAware {
+
+    //Match any key-value pair in the URI query string whose key contains "passphrase" or "password" (case-insensitive).
+    //First capture group is the key, second is the value.
+    private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password)[^=]*)=([^&]*)", Pattern.CASE_INSENSITIVE);
 
     private String endpointUri;
     private CamelContext camelContext;
@@ -84,12 +89,12 @@ public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAw
 
     @Override
     public String toString() {
-        return "Endpoint[" + getEndpointUri() + "]";
+        return String.format("Endpoint[%s]", sanitizeUri(getEndpointUri()));
     }
 
     /**
      * Returns a unique String ID which can be used for aliasing without having to use the whole URI which
-     * is not unique 
+     * is not unique
      */
     public String getId() {
         return id;
@@ -201,7 +206,7 @@ public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAw
     }
 
     /**
-     * A factory method to lazily create the endpointUri if none is specified 
+     * A factory method to lazily create the endpointUri if none is specified
      */
     protected String createEndpointUri() {
         return null;
@@ -217,6 +222,7 @@ public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAw
             setEndpointUri(value);
         }
     }
+
     protected void setEndpointUri(String endpointUri) {
         this.endpointUri = endpointUri;
     }
@@ -233,4 +239,9 @@ public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAw
     public void stop() throws Exception {
         // noop
     }
+
+    public static String sanitizeUri(String uri) {
+        return uri == null ? null : SECRETS.matcher(uri).replaceAll("$1=******");
+    }
+
 }
