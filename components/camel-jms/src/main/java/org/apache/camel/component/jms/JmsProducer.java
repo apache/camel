@@ -231,7 +231,39 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         MessageCreator messageCreator = new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
-                return endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
+                Message answer = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
+
+                // if the binding did not create the reply to then we have to try to create it here
+                String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);
+                if (replyTo != null && answer.getJMSReplyTo() == null) {
+                    Destination destination = null;
+                    // try using destination resolver to lookup the destination
+                    if (endpoint.getDestinationResolver() != null) {
+                        destination = endpoint.getDestinationResolver().resolveDestinationName(session, replyTo, endpoint.isPubSubDomain());
+                    }
+                    if (destination == null) {
+                        // okay then fallback and create the queue
+                        if (endpoint.isPubSubDomain()) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Creating JMSReplyTo topic: " + replyTo);
+                            }
+                            destination = session.createTopic(replyTo);
+                        } else {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Creating JMSReplyTo queue: " + replyTo);
+                            }
+                            destination = session.createQueue(replyTo);
+                        }
+                    }
+                    if (destination != null) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Using JMSReplyTo destination: " + destination);
+                        }
+                        answer.setJMSReplyTo(destination);
+                    }
+                }
+
+                return answer;
             }
         };
 
