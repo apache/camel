@@ -275,6 +275,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setRecoveryInterval(recoveryInterval);
     }
 
+    @Deprecated
     public void setSubscriptionDurable(boolean subscriptionDurable) {
         getConfiguration().setSubscriptionDurable(subscriptionDurable);
     }

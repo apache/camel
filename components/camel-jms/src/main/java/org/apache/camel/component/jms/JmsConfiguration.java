@@ -455,10 +455,12 @@ public class JmsConfiguration implements Cloneable {
         this.exceptionListener = exceptionListener;
     }
 
+    @Deprecated
     public boolean isSubscriptionDurable() {
         return subscriptionDurable;
     }
 
+    @Deprecated
     public void setSubscriptionDurable(boolean subscriptionDurable) {
         this.subscriptionDurable = subscriptionDurable;
     }
@@ -820,19 +822,15 @@ public class JmsConfiguration implements Cloneable {
         }
         container.setAutoStartup(autoStartup);
 
-        if (clientId != null) {
-            container.setClientId(clientId);
-        }
-        container.setSubscriptionDurable(subscriptionDurable);
         if (durableSubscriptionName != null) {
             container.setDurableSubscriptionName(durableSubscriptionName);
-        }
-
-        // lets default to durable subscription if the subscriber name and
-        // client ID are specified (as there's
-        // no reason to specify them if not! :)
-        if (durableSubscriptionName != null && clientId != null) {
             container.setSubscriptionDurable(true);
+        }
+        if (durableSubscriptionName != null && clientId == null) {
+            throw new IllegalArgumentException("ClientId must be configured when subscription is durable for " + endpoint);
+        }
+        if (clientId != null) {
+            container.setClientId(clientId);
         }
 
         if (exceptionListener != null) {
