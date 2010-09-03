@@ -34,8 +34,8 @@ public class HawtDBAggregateRecoverDeadLetterChannelFailedTest extends CamelTest
         repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
         // enable recovery
         repo.setUseRecovery(true);
-        // exhaust after at most 3 attempts
-        repo.setMaximumRedeliveries(3);
+        // exhaust after at most 2 attempts
+        repo.setMaximumRedeliveries(2);
         // and move to this dead letter channel
         repo.setDeadLetterUri("direct:dead");
         // check faster
@@ -48,16 +48,14 @@ public class HawtDBAggregateRecoverDeadLetterChannelFailedTest extends CamelTest
     public void testHawtDBAggregateRecoverDeadLetterChannelFailed() throws Exception {
         // should fail all times
         getMockEndpoint("mock:result").expectedMessageCount(0);
-        getMockEndpoint("mock:aggregated").expectedMessageCount(4);
-        // it should keep sending to DLC if it failed, so test for min 3 attempts
-        getMockEndpoint("mock:dead").expectedMinimumMessageCount(3);
-        // all the details should be the same about redelivered and redelivered 3 times
-        getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
+        getMockEndpoint("mock:aggregated").expectedMessageCount(3);
+        // it should keep sending to DLC if it failed, so test for min 2 attempts
+        getMockEndpoint("mock:dead").expectedMinimumMessageCount(2);
+        // all the details should be the same about redelivered and redelivered 2 times
+        getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
         getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        getMockEndpoint("mock:dead").message(1).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
+        getMockEndpoint("mock:dead").message(1).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
         getMockEndpoint("mock:dead").message(1).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        getMockEndpoint("mock:dead").message(2).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
-        getMockEndpoint("mock:dead").message(2).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
