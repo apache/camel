@@ -39,6 +39,7 @@ public class PropertiesComponent extends DefaultComponent {
     private static final transient Log LOG = LogFactory.getLog(PropertiesComponent.class);
     private final Map<String[], Properties> cacheMap = new LRUCache<String[], Properties>(1000);
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
+    private PropertiesParser propertiesParser = new DefaultPropertiesParser();
     private String[] locations;
     private boolean cache = true;
 
@@ -89,7 +90,7 @@ public class PropertiesComponent extends DefaultComponent {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Parsing uri " + uri + " with properties: " + prop);
         }
-        return PropertiesParser.parseUri(uri, prop, PREFIX_TOKEN, SUFFIX_TOKEN);
+        return propertiesParser.parseUri(uri, prop, PREFIX_TOKEN, SUFFIX_TOKEN);
     }
 
     public String[] getLocations() {
@@ -110,6 +111,14 @@ public class PropertiesComponent extends DefaultComponent {
 
     public void setPropertiesResolver(PropertiesResolver propertiesResolver) {
         this.propertiesResolver = propertiesResolver;
+    }
+
+    public PropertiesParser getPropertiesParser() {
+        return propertiesParser;
+    }
+
+    public void setPropertiesParser(PropertiesParser propertiesParser) {
+        this.propertiesParser = propertiesParser;
     }
 
     public boolean isCache() {
