@@ -68,6 +68,7 @@
     <module>camel-jing</module>
     <module>camel-jms</module>
     <module>camel-josql</module>
+    <module>camel-jasypt</module>
     <module>camel-jcr</module>
     <module>camel-jpa</module>
     <module>camel-jt400</module>

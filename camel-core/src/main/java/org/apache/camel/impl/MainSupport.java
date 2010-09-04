@@ -46,17 +46,17 @@ import org.apache.commons.logging.LogFactory;
 public abstract class MainSupport extends ServiceSupport {
     protected static final Log LOG = LogFactory.getLog(MainSupport.class);
     protected String dotOutputDir;
-    private final List<Option> options = new ArrayList<Option>();
-    private final CountDownLatch latch = new CountDownLatch(1);
-    private final AtomicBoolean completed = new AtomicBoolean(false);
-    private long duration = -1;
-    private TimeUnit timeUnit = TimeUnit.MILLISECONDS;    
-    private String routesOutputFile;
-    private boolean aggregateDot;
-    private boolean trace;
-    private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
-    private final List<CamelContext> camelContexts = new ArrayList<CamelContext>();
-    private ProducerTemplate camelTemplate;
+    protected final List<Option> options = new ArrayList<Option>();
+    protected final CountDownLatch latch = new CountDownLatch(1);
+    protected final AtomicBoolean completed = new AtomicBoolean(false);
+    protected long duration = -1;
+    protected TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+    protected String routesOutputFile;
+    protected boolean aggregateDot;
+    protected boolean trace;
+    protected List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
+    protected final List<CamelContext> camelContexts = new ArrayList<CamelContext>();
+    protected ProducerTemplate camelTemplate;
 
     protected MainSupport() {
         addOption(new Option("h", "help", "Displays the help screen") {
