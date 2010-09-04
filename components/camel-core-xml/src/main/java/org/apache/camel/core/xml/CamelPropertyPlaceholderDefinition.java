@@ -38,6 +38,9 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     @XmlAttribute
     private String propertiesResolverRef;
 
+    @XmlAttribute
+    private String propertiesParserRef;
+
     public String getLocation() {
         return location;
     }
@@ -54,4 +57,11 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
         this.propertiesResolverRef = propertiesResolverRef;
     }
 
+    public String getPropertiesParserRef() {
+        return propertiesParserRef;
+    }
+
+    public void setPropertiesParserRef(String propertiesParserRef) {
+        this.propertiesParserRef = propertiesParserRef;
+    }
 }

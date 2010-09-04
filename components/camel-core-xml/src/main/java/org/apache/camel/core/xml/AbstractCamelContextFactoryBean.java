@@ -33,6 +33,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.core.xml.scan.PatternBasedPackageScanFilter;
 import org.apache.camel.management.DefaultManagementAgent;
@@ -486,6 +487,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
                 PropertiesResolver resolver = CamelContextHelper.mandatoryLookup(getContext(), def.getPropertiesResolverRef(),
                                                                                  PropertiesResolver.class);
                 pc.setPropertiesResolver(resolver);
+            }
+
+            // if using a custom parser
+            if (ObjectHelper.isNotEmpty(def.getPropertiesParserRef())) {
+                PropertiesParser parser = CamelContextHelper.mandatoryLookup(getContext(), def.getPropertiesParserRef(),
+                                                                             PropertiesParser.class);
+                pc.setPropertiesParser(parser);
             }
 
             // register the properties component

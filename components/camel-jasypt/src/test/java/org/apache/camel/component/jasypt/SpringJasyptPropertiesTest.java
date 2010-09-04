@@ -16,31 +16,28 @@
  */
 package org.apache.camel.component.jasypt;
 
-import junit.framework.TestCase;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-public class JasyptPropertiesParserTest extends TestCase {
+public class SpringJasyptPropertiesTest extends CamelSpringTestSupport {
 
-    public void testJasyptPropertiesParser() throws Exception {
-        JasyptPropertiesParser parser = new JasyptPropertiesParser();
-        parser.setPassword("secret");
+    @Test
+    public void testJasyptProperties() throws Exception {
+        getMockEndpoint("mock:tiger").expectedBodiesReceived("Hello World");
 
-        assertEquals("foo", parser.parsePropertyValue("foo"));
-        assertEquals("tiger", parser.parsePropertyValue("ENC(bsW9uV37gQ0QHFu7KO03Ww==)"));
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
 
-    public void testJasyptPropertiesParserSys() throws Exception {
-        System.setProperty("myfoo", "secret");
-
-        JasyptPropertiesParser parser = new JasyptPropertiesParser();
-        parser.setPassword("sys:myfoo");
-
-        assertEquals("foo", parser.parsePropertyValue("foo"));
-        assertEquals("tiger", parser.parsePropertyValue("ENC(bsW9uV37gQ0QHFu7KO03Ww==)"));
-
-        System.clearProperty("myfoo");
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jasypt/SpringJasyptPropertiesTest.xml");
     }
 
 }

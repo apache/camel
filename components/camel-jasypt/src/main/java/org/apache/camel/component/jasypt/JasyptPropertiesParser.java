@@ -43,7 +43,15 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     }
 
     public void setPassword(String password) {
+        // lookup password as either environment or JVM system property
+        if (password.startsWith("sysenv:")) {
+            password = System.getenv(ObjectHelper.after(password, "sysenv:"));
+        }
+        if (password.startsWith("sys:")) {
+            password = System.getProperty(ObjectHelper.after(password, "sys:"));
+        }
         this.password = password;
+
     }
 
     public String getAlgorithm() {
@@ -56,10 +64,13 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
 
     public synchronized StandardPBEStringEncryptor getEncryptor() {
         if (encryptor == null) {
+            // password is mandatory
+            ObjectHelper.notEmpty("password", getPassword());
+
             encryptor = new StandardPBEStringEncryptor();
-            encryptor.setPassword(password);
+            encryptor.setPassword(getPassword());
             if (algorithm != null) {
-                encryptor.setAlgorithm(algorithm);
+                encryptor.setAlgorithm(getAlgorithm());
             }
         }
         return encryptor;
