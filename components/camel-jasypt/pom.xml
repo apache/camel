@@ -112,7 +112,6 @@
                     <archive>
                         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                         <manifest>
-                            <addClasspath>true</addClasspath>
                             <mainClass>org.apache.camel.component.jasypt.Main</mainClass>
                         </manifest>
                     </archive>

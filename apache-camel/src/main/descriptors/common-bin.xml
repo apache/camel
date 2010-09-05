@@ -162,14 +162,18 @@
         <include>log4j:log4j</include>
         <include>org.slf4j:slf4j-api</include>
         <include>org.slf4j:slf4j-log4j12</include>
-        <!-- commons-XXX is needed when running examples using ANT -->
+        <!-- commons-XXX is needed when running examples using ANT or camel-jasypt tooling -->
         <include>commons-beanutils:commons-beanutils</include>
         <include>commons-collections:commons-collections</include>
         <include>commons-dbcp:commons-dbcp</include>
         <include>commons-pool:commons-pool</include>
+        <include>commons-lang:commons-lang</include>
+        <include>commons-codec:commons-codec</include>
         <include>org.apache.geronimo.specs:geronimo-j2ee-management_1.0_spec</include>
         <include>org.apache.geronimo.specs:geronimo-jms_1.1_spec</include>
         <include>org.apache.geronimo.specs:geronimo-j2ee-jacc_1.0_spec</include>
+        <include>org.jasypt:jasypt</include>
+        <include>com.ibm.icu:icu4j</include>
       </includes>
     </dependencySet>
   </dependencySets>
