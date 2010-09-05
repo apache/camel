@@ -21,8 +21,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
 /**
- * A {@link org.apache.camel.component.properties.PropertiesParser} which is using Jasypt
- * to decrypt any encrypted values.
+ * A {@link org.apache.camel.component.properties.PropertiesParser} which is using
+ * <a href="http://www.jasypt.org/">Jasypt</a> to decrypt any encrypted values.
  * <p/>
  * The values must be enclosed in the prefix and suffix token.
  *
@@ -30,8 +30,8 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
  */
 public class JasyptPropertiesParser extends DefaultPropertiesParser {
 
-    public static final String JASYPT_PREFIX_TOEKN = "ENC(";
-    public static final String JASYPT_SUFFIX_TOEKN = ")";
+    public static final String JASYPT_PREFIX_TOKEN = "ENC(";
+    public static final String JASYPT_SUFFIX_TOKEN = ")";
 
     // TODO: A JasyptComponent we can leverage instead of directly from here
     private StandardPBEStringEncryptor encryptor;
@@ -51,7 +51,6 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
             password = System.getProperty(ObjectHelper.after(password, "sys:"));
         }
         this.password = password;
-
     }
 
     public String getAlgorithm() {
@@ -79,7 +78,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     @Override
     public String parsePropertyValue(String value) {
         // check if the value is using the tokens
-        String text = ObjectHelper.between(value, JASYPT_PREFIX_TOEKN, JASYPT_SUFFIX_TOEKN);
+        String text = ObjectHelper.between(value, JASYPT_PREFIX_TOKEN, JASYPT_SUFFIX_TOKEN);
         if (text == null) {
             // not encrypted
             return value;

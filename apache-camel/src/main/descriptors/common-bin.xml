@@ -63,6 +63,7 @@
         <include>org.apache.camel:camel-ibatis</include>
         <include>org.apache.camel:camel-irc</include>
         <include>org.apache.camel:camel-jackson</include>
+        <include>org.apache.camel:camel-jasypt</include>
         <include>org.apache.camel:camel-javaspace</include>
         <include>org.apache.camel:camel-jaxb</include>
         <include>org.apache.camel:camel-jcr</include>

@@ -27,7 +27,8 @@
     </parent>
 
     <artifactId>camel-jasypt</artifactId>
-    <packaging>bundle</packaging>
+    <!-- the packaging will be a bundle, however we need to add maniclass etc so we use the jar packaging -->
+    <packaging>jar</packaging>
     <name>Camel :: Jasypt</name>
     <description>Camel Jasypt support</description>
 
@@ -85,6 +86,40 @@
         </dependency>
     </dependencies>
 
-    <!-- TODO: maven stuff to define a Main class in MANIFEST.MF so we can easily run it from cmd line, using java -jar camel-jasypt -->
+    <build>
+        <plugins>
+
+            <!-- add OSGi to the MANIFEST.MF file -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- add main class and classpath to the MANIFEST.MF file -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>org.apache.camel.component.jasypt.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 
 </project>
