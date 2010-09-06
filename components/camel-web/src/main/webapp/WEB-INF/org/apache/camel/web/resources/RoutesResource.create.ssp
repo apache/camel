@@ -3,7 +3,6 @@
 #{ attributes("title") = "Create New Route"}#
 
   <script type='text/javascript' src="${uri("/js/dojo/dojo.js")}"></script>
-  <script type='text/javascript' src="${uri("/js/bespin/editor/embed.js")}"></script>
   <script type='text/javascript' src="${uri("/js/route.js")}"></script>
 
 
@@ -38,35 +37,5 @@
 
 </form>
 
-<!--
-
-<form id="routeForm" action="${uri("/routes")}" method="post">
-<table>
-  <tr>
-    <td>
-      <h2>Create New Route</h2>
-    </td>
-    <td>
-      <input type="button" value="Save" onclick="submitRoute()">
-    </td>
-    <td>
-      <textarea id="route" name="route" rows="1" cols="1"  style="visibility: hidden;"></textarea>
-    </td>
-  </tr>
-</table>
-
-<div class="error">${it.getError}</div>
-
-<div id="editor"
-     style="height: 300px; border: 10px solid #ddd; -moz-border-radius: 10px; -webkit-border-radius: 10px;">
-<route xmlns="http://camel.apache.org/schema/spring">
-  <from uri="seda:Some.Endpoint"/>
-  <to uri="seda:Some.Other.Endpoint"/>
-</route>
-</div>
-
-</form>
-
--->
 
 
