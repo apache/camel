@@ -16,20 +16,34 @@
  */
 package org.apache.camel.language.groovy;
 
-import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class GroovyLanguageTest extends LanguageTestSupport {
+public class LanguageGroovyRouteTest extends CamelTestSupport {
 
-    public void testGroovyExpressions() throws Exception {
-        assertExpression("exchange.in.headers.foo", "abc");
-        assertExpression("request.headers.foo", "abc");
-        assertExpression("headers.foo", "abc");
+    @Test
+    public void testLanguage() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived(6);
+
+        template.sendBody("direct:start", 3);
+
+        assertMockEndpointsSatisfied();
     }
 
-    protected String getLanguageName() {
-        return "groovy";
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // START SNIPPET: e1
+                from("direct:start").to("language:groovy:request.body * 2").to("mock:result");
+                // END SNIPPET: e1
+            }
+        };
     }
+
 }

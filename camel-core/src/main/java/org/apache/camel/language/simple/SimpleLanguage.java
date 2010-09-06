@@ -133,6 +133,16 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             type = StringHelper.removeQuotes(type);
             return ExpressionBuilder.bodyExpression(type);
         }
+        // mandatoryBodyAs
+        remainder = ifStartsWithReturnRemainder("mandatoryBodyAs", expression);
+        if (remainder != null) {
+            String type = ObjectHelper.between(remainder, "(", ")");
+            if (type == null) {
+                throw new ExpressionIllegalSyntaxException("Valid syntax: ${mandatoryBodyAs(type)} was: " + expression);
+            }
+            type = StringHelper.removeQuotes(type);
+            return ExpressionBuilder.mandatoryBodyExpression(type);
+        }
 
         // body OGNL
         remainder = ifStartsWithReturnRemainder("body", expression);

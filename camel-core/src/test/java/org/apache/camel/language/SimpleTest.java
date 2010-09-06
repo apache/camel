@@ -28,6 +28,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
@@ -165,6 +166,9 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${bodyAs(String)}", "<hello id='m123'>world!</hello>");
         assertExpression("${bodyAs('String')}", "<hello id='m123'>world!</hello>");
 
+        exchange.getIn().setBody(null);
+        assertExpression("${bodyAs('String')}", null);
+
         exchange.getIn().setBody(456);
         assertExpression("${bodyAs(Integer)}", 456);
         assertExpression("${bodyAs(int)}", 456);
@@ -172,6 +176,30 @@ public class SimpleTest extends LanguageTestSupport {
 
         try {
             assertExpression("${bodyAs(XXX)}", 456);
+            fail("Should have thrown an exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+        }
+    }
+
+    public void testMandatoryBodyAs() throws Exception {
+        assertExpression("${mandatoryBodyAs(String)}", "<hello id='m123'>world!</hello>");
+        assertExpression("${mandatoryBodyAs('String')}", "<hello id='m123'>world!</hello>");
+
+        exchange.getIn().setBody(null);
+        try {
+            assertExpression("${mandatoryBodyAs('String')}", "");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(InvalidPayloadException.class, e.getCause());
+        }
+
+        exchange.getIn().setBody(456);
+        assertExpression("${mandatoryBodyAs(Integer)}", 456);
+        assertExpression("${mandatoryBodyAs(int)}", 456);
+        assertExpression("${mandatoryBodyAs('int')}", 456);
+
+        try {
+            assertExpression("${mandatoryBodyAs(XXX)}", 456);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(ClassNotFoundException.class, e.getCause());

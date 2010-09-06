@@ -14,25 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.component.language;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * A pluggable strategy for resolving different languages in a loosely coupled manner
- * 
  * @version $Revision$
  */
-public interface LanguageResolver {
+public class LanguageRouteNoTransformTest extends ContextTestSupport {
 
-    /**
-     * Resolves the given language.
-     *
-     * @param name    the name of the language
-     * @param context the camel context
-     * @return the resolved language
-     * @throws NoSuchLanguageException is thrown if language could not be resolved
-     */
-    Language resolveLanguage(String name, CamelContext context) throws NoSuchLanguageException;
+    public void testLanguage() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("World");
+
+        template.sendBody("direct:start", "World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("language:simple:Hello ${body}?transform=false").to("mock:result");
+            }
+        };
+    }
 }

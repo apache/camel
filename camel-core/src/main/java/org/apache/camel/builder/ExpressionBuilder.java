@@ -660,6 +660,34 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the exchanges inbound message body converted
+     * to the given type
+     */
+    public static Expression mandatoryBodyExpression(final String name) {
+        return new ExpressionAdapter() {
+            @SuppressWarnings("unchecked")
+            public Object evaluate(Exchange exchange) {
+                Class type;
+                try {
+                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(name);
+                } catch (ClassNotFoundException e) {
+                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                }
+                try {
+                    return exchange.getIn().getMandatoryBody(type);
+                } catch (InvalidPayloadException e) {
+                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "mandatoryBodyAs[" + name + "]";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the current thread name
      */
     public static Expression threadNameExpression() {

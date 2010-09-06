@@ -85,10 +85,10 @@ public interface Exchange {
     String HTTP_CHUNKED            = "CamelHttpChunked";
     String HTTP_SERVLET_REQUEST    = "CamelHttpServletRequest";
     String HTTP_SERVLET_RESPONSE   = "CamelHttpServletResponse";
-    
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
 
+    String LANGUAGE_SCRIPT          = "CamelLanguageScript";
     String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
     String LOG_DEBUG_BODY_STREAMS   = "CamelLogDebugStreams";
     String LOOP_INDEX               = "CamelLoopIndex";
