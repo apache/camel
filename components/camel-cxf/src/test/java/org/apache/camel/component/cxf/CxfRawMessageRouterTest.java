@@ -46,10 +46,13 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
         client.echo("hello world");
         assertMockEndpointsSatisfied();        
         Map context = (Map)result.assertExchangeReceived(0).getIn().getHeaders().get("ResponseContext");
-        Map protocalHeaders = (Map) context.get("org.apache.cxf.message.Message.PROTOCOL_HEADERS");
-        assertTrue("Should get the content type", protocalHeaders.get("content-type").toString().startsWith("[text/xml; charset="));
+        Map protocalHeaders = (Map) context.get("org.apache.cxf.message.Message.PROTOCOL_HEADERS");        
+        assertTrue("Should get a right content type", protocalHeaders.get("content-type").toString().startsWith("[text/xml;"));
+        assertTrue("Should get a right context type with a charset",  protocalHeaders.get("content-type").toString().indexOf("charset=") > 0);
         assertEquals("Should get the response code ", context.get("org.apache.cxf.message.Message.RESPONSE_CODE"), 200);
-        assertTrue("Should get the content type", result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().startsWith("text/xml; charset="));        
+        assertTrue("Should get the content type", result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().startsWith("text/xml;")); 
+        assertTrue("Should get the content type", result.assertExchangeReceived(0).getIn().getHeaders().get("content-type").toString().indexOf("charset=") > 0); 
+        
     }
     
     @Test

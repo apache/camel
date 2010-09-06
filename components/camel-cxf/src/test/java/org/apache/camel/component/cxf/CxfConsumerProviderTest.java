@@ -41,8 +41,9 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
     protected static final String REQUEST_MESSAGE = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"test/service\">"
         + "<soapenv:Header/><soapenv:Body><ser:ping/></soapenv:Body></soapenv:Envelope>";
     
-    protected static final String RESPONSE_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-        + "<soap:Body><pong xmlns=\"test/service\" /></soap:Body></soap:Envelope>";
+    protected static final String RESPONSE_MESSAGE_BEGINE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        + "<soap:Body><pong xmlns=\"test/service\"";
+    protected static final String RESPONSE_MESSAGE_END = "/></soap:Body></soap:Envelope>";
     
     protected static final String RESPONSE = "<pong xmlns=\"test/service\"/>";
   
@@ -72,7 +73,8 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
         // call the service with right post message
         
         String response = template.requestBody(SIMPLE_ENDPOINT_ADDRESS, REQUEST_MESSAGE, String.class);
-        assertEquals("Get a wrong response ", RESPONSE_MESSAGE, response);
+        assertTrue("Get a wrong response ", response.startsWith(RESPONSE_MESSAGE_BEGINE));
+        assertTrue("Get a wrong response ", response.endsWith(RESPONSE_MESSAGE_END));
         try {
             response = template.requestBody(SIMPLE_ENDPOINT_ADDRESS, null, String.class);
             fail("Excpetion to get exception here");
@@ -81,7 +83,8 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
         }
        
         response = template.requestBody(SIMPLE_ENDPOINT_ADDRESS, REQUEST_MESSAGE, String.class);
-        assertEquals("Get a wrong response ", RESPONSE_MESSAGE, response);
+        assertTrue("Get a wrong response ", response.startsWith(RESPONSE_MESSAGE_BEGINE));
+        assertTrue("Get a wrong response ", response.endsWith(RESPONSE_MESSAGE_END));
     }
 
 
