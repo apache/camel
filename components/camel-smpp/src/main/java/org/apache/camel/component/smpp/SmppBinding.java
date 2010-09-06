@@ -123,7 +123,7 @@ public class SmppBinding {
         if (in.getHeaders().containsKey(SOURCE_ADDR_NPI)) {
             submitSm.setSourceAddrNpi((Byte) in.getHeader(SOURCE_ADDR_NPI));
         } else {
-            submitSm.setSourceAddrNpi(configuration.getDestAddrNpi());
+            submitSm.setSourceAddrNpi(configuration.getSourceAddrNpi());
         }
 
         if (in.getHeaders().containsKey(SERVICE_TYPE)) {
