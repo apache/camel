@@ -190,9 +190,10 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
+        
         Me response = proxy.inOutOfBandHeader(me);
         assertTrue("Expected the out of band header to propagate but it didn't", 
-                   response.getFirstName().equals("pass"));
+                       response.getFirstName().equals("pass"));
     }
 
     @Test
@@ -357,7 +358,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
     }
     
     @Test
-    @Ignore
+   
     public void testInoutHeaderCXFClientNoServiceClassNoRelay() throws Exception {
         // TODO: Fix this test later
         QName qname = QName.valueOf("{http://apache.org/camel/component/cxf/soap/headers}SOAPHeaderInfo");
@@ -596,7 +597,8 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
                 new QName(Constants.TEST_HDR_NS, Constants.TEST_HDR_REQUEST_ELEM), 
                 ob, 
                 new JAXBDataBinding(ob.getClass()));
-        hdr.setMustUnderstand(true);
+        
+        hdr.setMustUnderstand(invalid);
 
         List<Header> headers = new ArrayList<Header>();
         headers.add(hdr);
