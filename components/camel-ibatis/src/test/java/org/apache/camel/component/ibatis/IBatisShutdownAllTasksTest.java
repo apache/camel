@@ -96,6 +96,9 @@ public class IBatisShutdownAllTasksTest extends IBatisTestSupport {
         // shutdown during processing
         context.stop();
 
+        // sleep a little
+        Thread.sleep(1000);
+
         // should route all 8
         assertEquals("Should complete all messages", 8, bar.getReceivedCounter());
     }
