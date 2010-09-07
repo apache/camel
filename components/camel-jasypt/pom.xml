@@ -41,6 +41,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -52,6 +53,11 @@
             <groupId>com.ibm.icu</groupId>
             <artifactId>icu4j</artifactId>
             <version>${icu4j-version}</version>
+        </dependency>
+        <dependency>                               
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang-version}</version>
         </dependency>
 
         <dependency>
@@ -112,6 +118,8 @@
                     <archive>
                         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                         <manifest>
+                            <addClasspath>true</addClasspath>
+                             <classpathPrefix>optional/</classpathPrefix>
                             <mainClass>org.apache.camel.component.jasypt.Main</mainClass>
                         </manifest>
                     </archive>
