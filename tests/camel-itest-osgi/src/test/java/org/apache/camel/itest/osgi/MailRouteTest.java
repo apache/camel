@@ -135,7 +135,8 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
             mavenBundle().groupId("org.apache.camel").artifactId("camel-mail").versionAsInProject(),
             
             // Added the mock_java_mail bundle for testing
-            mavenBundle().groupId("org.apache.camel.tests").artifactId("org.apache.camel.tests.mock-javamail_1.7").versionAsInProject(),
+            // just using the mock_java_mail version for testing
+            mavenBundle().groupId("org.apache.camel.tests").artifactId("org.apache.camel.tests.mock-javamail_1.7").version("2.4.0"),
             
             workingDirectory("target/paxrunner/"),
 
