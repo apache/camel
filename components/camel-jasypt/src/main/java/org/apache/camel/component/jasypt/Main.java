@@ -16,36 +16,93 @@
  */
 package org.apache.camel.component.jasypt;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Map;
-import javax.xml.bind.JAXBException;
+import java.util.List;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.MainSupport;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.view.ModelFileGenerator;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
 /**
  * @version $Revision$
  */
-public class Main extends MainSupport {
+public class Main {
 
-    private StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
-
+    private final StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+    private final List<Option> options = new ArrayList<Option>();
     private String command;
     private String password;
     private String input;
     private String algorithm;
 
-    public Main() {
-        options.clear();
+    private abstract class Option {
+        private String abbreviation;
+        private String fullName;
+        private String description;
 
+        protected Option(String abbreviation, String fullName, String description) {
+            this.abbreviation = "-" + abbreviation;
+            this.fullName = "-" + fullName;
+            this.description = description;
+        }
+
+        public boolean processOption(String arg, LinkedList<String> remainingArgs) {
+            if (arg.equalsIgnoreCase(abbreviation) || fullName.startsWith(arg)) {
+                doProcess(arg, remainingArgs);
+                return true;
+            }
+            return false;
+        }
+
+        public String getAbbreviation() {
+            return abbreviation;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getFullName() {
+            return fullName;
+        }
+
+        public String getInformation() {
+            return "  " + getAbbreviation() + " or " + getFullName() + " = " + getDescription();
+        }
+
+        protected abstract void doProcess(String arg, LinkedList<String> remainingArgs);
+    }
+
+    private abstract class ParameterOption extends Option {
+        private String parameterName;
+
+        protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
+            super(abbreviation, fullName, description);
+            this.parameterName = parameterName;
+        }
+
+        protected void doProcess(String arg, LinkedList<String> remainingArgs) {
+            if (remainingArgs.isEmpty()) {
+                System.err.println("Expected fileName for ");
+                showOptions();
+            } else {
+                String parameter = remainingArgs.removeFirst();
+                doProcess(arg, parameter, remainingArgs);
+            }
+        }
+
+        public String getInformation() {
+            return "  " + getAbbreviation() + " or " + getFullName()
+                    + " <" + parameterName + "> = " + getDescription();
+        }
+
+        protected abstract void doProcess(String arg, String parameter, LinkedList<String> remainingArgs);
+    }
+
+    public Main() {
         addOption(new Option("h", "help", "Displays the help screen") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
                 showOptions();
-                completed();
             }
         });
 
@@ -78,37 +135,68 @@ public class Main extends MainSupport {
         });
     }
 
-    @Override
-    public void showOptionsHeader() {
+    private void addOption(Option option) {
+        options.add(option);
+    }
+
+    private void showOptions() {
         System.out.println("Apache Camel Jasypt takes the following options");
+        System.out.println();
+        for (Option option : options) {
+            System.out.println(option.getInformation());
+        }
+        System.out.println();
         System.out.println();
     }
 
-    protected ProducerTemplate findOrCreateCamelTemplate() {
-        // noop
-        return null;
-    }
+    private boolean parseArguments(String[] arguments) {
+        LinkedList<String> args = new LinkedList<String>(Arrays.asList(arguments));
 
-    protected Map<String, CamelContext> getCamelContextMap() {
-        // noop
-        return null;
-    }
+        boolean valid = true;
+        while (!args.isEmpty()) {
+            String arg = args.removeFirst();
 
-    protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        // noop
-        return null;
-    }
-
-    @Override
-    public void run() throws Exception {
-        if (ObjectHelper.isEmpty(command)) {
-            throw new IllegalArgumentException("Command is empty");
+            boolean handled = false;
+            for (Option option : options) {
+                if (option.processOption(arg, args)) {
+                    handled = true;
+                    break;
+                }
+            }
+            if (!handled) {
+                System.out.println("Error: Unknown option: " + arg);
+                System.out.println();
+                valid = false;
+                break;
+            }
         }
-        if (ObjectHelper.isEmpty(password)) {
-            throw new IllegalArgumentException("Password is empty");
+
+        return valid;
+    }
+
+    public void run(String[] args) throws Exception {
+        if (!parseArguments(args)) {
+            showOptions();
+            return;
         }
-        if (ObjectHelper.isEmpty(input)) {
-            throw new IllegalArgumentException("Input is empty");
+
+        if (command == null) {
+            System.out.println("Error: Command is empty");
+            System.out.println();
+            showOptions();
+            return;
+        }
+        if (password == null) {
+            System.out.println("Error: Password is empty");
+            System.out.println();
+            showOptions();
+            return;
+        }
+        if (input == null) {
+            System.out.println("Error: Input is empty");
+            System.out.println();
+            showOptions();
+            return;
         }
 
         encryptor.setPassword(password);

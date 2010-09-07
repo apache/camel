@@ -41,4 +41,22 @@ public class MainTest extends TestCase {
         main.run("-c decrypt -p secret -i bsW9uV37gQ0QHFu7KO03Ww==".split(" "));
     }
 
+    @Test
+    public void testUnknownOption() throws Exception {
+        Main main = new Main();
+        main.run("-c encrypt -xxx foo".split(" "));
+    }
+
+    @Test
+    public void testMissingPassword() throws Exception {
+        Main main = new Main();
+        main.run("-c encrypt -i tiger".split(" "));
+    }
+
+    @Test
+    public void testMissingInput() throws Exception {
+        Main main = new Main();
+        main.run("-c encrypt -p secret".split(" "));
+    }
+
 }
