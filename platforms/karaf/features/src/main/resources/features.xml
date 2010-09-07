@@ -313,6 +313,13 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jackson/${pom.version}</bundle>
   </feature>    
+  <feature name='camel-jasypt' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-jasypt/${pom.version}</bundle>
+    <bundle>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
+    <bundle>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle>wrap:mvn:com.ibm.icu/icu4j/${icu4j-version}</bundle>
+  </feature>
   <feature name='camel-jaxb' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jaxb/${pom.version}</bundle>

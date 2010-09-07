@@ -46,7 +46,8 @@
       <cglib-version>2.1_3_4</cglib-version>
       <commons-beanutils-bundle-version>1.7.0_3</commons-beanutils-bundle-version>
       <commons-csv-version>1.0-r706899_3</commons-csv-version>
-      <commons-codec-bundle-version>1.3_2</commons-codec-bundle-version>
+      <commons-codec-version>1.4</commons-codec-version>
+      <commons-codec-bundle-version>1.3_3</commons-codec-bundle-version>
       <commons-httpclient-bundle-version>3.1_4</commons-httpclient-bundle-version>
       <commons-io-bundle-version>1.3.2_3</commons-io-bundle-version>
       <commons-jxpath-version>1.3</commons-jxpath-version>
