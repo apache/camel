@@ -135,6 +135,6 @@
     </build>
    
    <modules>
-     <module>mock-javamail_1.7</module>
+     <!--module>mock-javamail_1.7</module-->
    </modules>
 </project>
