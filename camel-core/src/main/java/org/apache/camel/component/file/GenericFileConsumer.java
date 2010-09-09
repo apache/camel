@@ -69,7 +69,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         // such as are we connected to the FTP Server still?
         if (!prePollCheck()) {
             if (log.isDebugEnabled()) {
-                log.debug("Skipping pool as pre poll check returned false");
+                log.debug("Skipping poll as pre poll check returned false");
             }
             return;
         }
@@ -83,7 +83,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         boolean limitHit = !pollDirectory(name, files);
         long delta = stop.stop();
         if (log.isDebugEnabled()) {
-            log.debug("Took " + TimeUtils.printDuration(delta) + " to pool: " + name);
+            log.debug("Took " + TimeUtils.printDuration(delta) + " to poll: " + name);
         }
 
         // log if we hit the limit
