@@ -70,6 +70,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected boolean eagerDeleteTargetFile = true;
     protected String include;
     protected String exclude;
+    protected String charset;
     protected Expression fileName;
     protected Expression move;
     protected Expression moveFailed;
@@ -277,6 +278,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public Boolean isIdempotent() {
         return idempotent != null ? idempotent : false;
+    }
+    
+    public String getCharset() {
+        return charset;
+    }
+    
+    public void setCharset(String charset) {
+        this.charset = charset;
     }
 
     boolean isIdempotentSet() {
@@ -501,6 +510,17 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
             // adjust filename
             message.setHeader(Exchange.FILE_NAME, name);
+        }
+    }
+    
+    /**
+     * Set up the exchange properties with the options of the file endpoint
+     * @param exchange
+     */
+    public void configureExchange(Exchange exchange) {
+        // Now we just set the charset property here
+        if (getCharset() != null) {
+            exchange.setProperty(Exchange.CHARSET_NAME, getCharset());
         }
     }
 

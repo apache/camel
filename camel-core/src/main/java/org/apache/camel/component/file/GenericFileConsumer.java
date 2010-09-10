@@ -102,6 +102,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         LinkedList<Exchange> exchanges = new LinkedList<Exchange>();
         for (GenericFile<T> file : files) {
             Exchange exchange = endpoint.createExchange(file);
+            endpoint.configureExchange(exchange);
             endpoint.configureMessage(file, exchange.getIn());
             exchanges.add(exchange);
         }

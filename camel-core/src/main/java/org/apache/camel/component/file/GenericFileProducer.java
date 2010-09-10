@@ -54,6 +54,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         Exchange fileExchange = endpoint.createExchange(exchange);
+        endpoint.configureExchange(fileExchange);
         processExchange(fileExchange);
         ExchangeHelper.copyResults(exchange, fileExchange);
     }

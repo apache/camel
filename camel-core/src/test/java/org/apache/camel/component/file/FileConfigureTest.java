@@ -50,6 +50,12 @@ public class FileConfigureTest extends ContextTestSupport {
         assertFileEndpoint("file:/", File.separator, true);
         assertFileEndpoint("file:///", File.separator, true);
     }
+    
+    public void testUriWithCharset() throws Exception {
+        FileEndpoint endpoint = resolveMandatoryEndpoint("file://target/foo/bar?charset=UTF-8", FileEndpoint.class);
+        assertNotNull("Could not find endpoint: file://target/foo/bar?charset=UTF-8", endpoint);
+        assertEquals("Get a wrong charset", "UTF-8", endpoint.getCharset());
+    }
 
     public void testConsumerConfigurations() throws Exception {
         FileConsumer consumer = createFileConsumer("file://target/foo/bar?recursive=true");
