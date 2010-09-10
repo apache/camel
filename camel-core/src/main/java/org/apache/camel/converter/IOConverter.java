@@ -40,6 +40,8 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -405,6 +407,16 @@ public final class IOConverter {
         } else {
             return null;
         }
+    }
+    
+    public static void isValidateCharset(String charset) throws UnsupportedCharsetException {
+        if (charset != null) {
+            if (Charset.isSupported(charset)) {
+                Charset.forName(charset);
+                return;
+            }
+        }
+        throw new UnsupportedCharsetException(charset);
     }
     
 }

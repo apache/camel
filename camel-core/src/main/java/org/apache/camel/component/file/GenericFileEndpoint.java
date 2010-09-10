@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.FactoryFinder;
@@ -285,6 +286,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     }
     
     public void setCharset(String charset) {
+        IOConverter.isValidateCharset(charset);
         this.charset = charset;
     }
 

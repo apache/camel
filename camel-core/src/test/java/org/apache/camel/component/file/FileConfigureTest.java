@@ -55,6 +55,14 @@ public class FileConfigureTest extends ContextTestSupport {
         FileEndpoint endpoint = resolveMandatoryEndpoint("file://target/foo/bar?charset=UTF-8", FileEndpoint.class);
         assertNotNull("Could not find endpoint: file://target/foo/bar?charset=UTF-8", endpoint);
         assertEquals("Get a wrong charset", "UTF-8", endpoint.getCharset());
+        
+        try {
+            resolveMandatoryEndpoint("file://target/foo/bar?charset=ASSI", FileEndpoint.class);
+            // The charset is wrong
+            fail("Expect a configure exception here");
+        } catch (Exception ex) {
+            assertTrue("Get the wrong exception type here", ex instanceof ResolveEndpointFailedException);
+        }
     }
 
     public void testConsumerConfigurations() throws Exception {
