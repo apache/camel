@@ -59,6 +59,8 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
         // verb
         String verb = getVerb(camelMessage);
         
+        String queryString = getQueryString(camelMessage);
+        
         if (LOG.isTraceEnabled()) {
             LOG.trace("Processing " + camelExchange + ", requestContentType = " + requestContentType 
                     + ", acceptContentTypes = " + acceptContentTypes + ", encoding = " + enc
@@ -76,6 +78,7 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
         answer.put(org.apache.cxf.message.Message.CONTENT_TYPE, requestContentType);
         answer.put(org.apache.cxf.message.Message.ACCEPT_CONTENT_TYPE, acceptContentTypes);
         answer.put(org.apache.cxf.message.Message.ENCODING, enc);
+        answer.put(org.apache.cxf.message.Message.QUERY_STRING, queryString);
         
         // TODO propagate security context
 
@@ -145,6 +148,11 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
 
     protected String getVerb(org.apache.camel.Message camelMessage) {
         String answer = camelMessage.getHeader(Exchange.HTTP_METHOD, String.class);
+        return answer;
+    }
+    
+    protected String getQueryString(org.apache.camel.Message camelMessage) {
+        String answer = camelMessage.getHeader(Exchange.HTTP_QUERY, String.class);
         return answer;
     }
 

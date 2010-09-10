@@ -68,6 +68,18 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", CxfUtils.getStringFromInputStream(in));
         // END SNIPPET: clientInvocation
     }
+    
+    @Test
+    public void testGetConsumerWithQueryParam() throws Exception {
+        URL url = new URL("http://localhost:9000/customerservice/customers?id=123");
+
+        try {
+            InputStream in = url.openStream();
+            assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", CxfUtils.getStringFromInputStream(in));
+        } catch (Exception ex) {
+            Thread.sleep(3000000);
+        }
+    }
 
     @Test
     public void testGetConsumerAfterReStartCamelContext() throws Exception {

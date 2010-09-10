@@ -28,6 +28,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 
@@ -55,12 +56,21 @@ public class CustomerService {
     }
     
     @GET
+    @Path("/customers")
+    public Customer getCustomerByQueryParam(@QueryParam("id") String id) {
+        long idNumber = Long.parseLong(id);
+        Customer c = customers.get(idNumber);
+        return c;
+    }
+    
+    @GET
     @Path("/customers/")
     @Produces("application/xml")
     public List<Customer> getCustomers() {
         List<Customer> l = new ArrayList<Customer>(customers.values());
         return l;
     }
+    
 
     @PUT
     @Path("/customers/")
