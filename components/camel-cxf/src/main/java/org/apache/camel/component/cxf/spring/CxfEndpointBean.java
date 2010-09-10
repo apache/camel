@@ -19,16 +19,14 @@ package org.apache.camel.component.cxf.spring;
 import java.util.List;
 
 import org.apache.cxf.BusFactory;
-import org.apache.cxf.frontend.AbstractServiceFactory;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
-import org.apache.cxf.wsdl11.WSDLEndpointFactory;
 
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.NamedBean;
 
-public class CxfEndpointBean extends AbstractServiceFactory
+public class CxfEndpointBean extends AbstractWSDLBasedEndpointFactory
     implements DisposableBean, BeanNameAware, NamedBean {
     
     private List handlers;
@@ -64,5 +62,4 @@ public class CxfEndpointBean extends AbstractServiceFactory
     public String getBeanName() {
         return beanName;
     }
-
 }
