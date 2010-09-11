@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Date;
 import java.util.Locale;
 
@@ -28,6 +29,21 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 public class ConvertBodyTest extends ContextTestSupport {
+    
+    public void testConvertBodyTo() {
+        try {
+            context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                    // set an invalid charset
+                    from("direct:invalid").convertBodyTo(String.class, "ASSI").to("mock:endpoint");
+                }
+            });
+            fail("Except an exception here ");
+        } catch (Exception ex) {
+            assertTrue("Get a wrong exception", ex instanceof UnsupportedCharsetException);
+        }
+        
+    }
 
     public void testConvertToInteger() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");

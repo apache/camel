@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.spi.RouteContext;
 
@@ -110,6 +111,7 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ConvertBodyDefini
     }
 
     public void setCharset(String charset) {
+        IOConverter.validateCharset(charset);
         this.charset = charset;
     }
 }

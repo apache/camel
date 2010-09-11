@@ -409,7 +409,7 @@ public final class IOConverter {
         }
     }
     
-    public static void isValidateCharset(String charset) throws UnsupportedCharsetException {
+    public static void validateCharset(String charset) throws UnsupportedCharsetException {
         if (charset != null) {
             if (Charset.isSupported(charset)) {
                 Charset.forName(charset);

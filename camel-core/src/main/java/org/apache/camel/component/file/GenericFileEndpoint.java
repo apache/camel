@@ -286,7 +286,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     }
     
     public void setCharset(String charset) {
-        IOConverter.isValidateCharset(charset);
+        IOConverter.validateCharset(charset);
         this.charset = charset;
     }
 
