@@ -26,6 +26,7 @@
         <packageScan>
             <package>org.apache.camel.spring.issues</package>
             <excludes>**/*MyInjectionRouteBuilder*</excludes>
+            <excludes>**/*SampleInitializingRouteBuilder*</excludes>
             <excludes>*contextscan*</excludes>
         </packageScan>
     </camelContext>

@@ -17,6 +17,7 @@
 package org.apache.camel.spring.handler;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -362,8 +363,18 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             // set depends-on to the context for a routeBuilder bean
             try {
                 BeanDefinition definition = parserContext.getRegistry().getBeanDefinition(routeBuilderName);
+                Method getDependsOn = definition.getClass().getMethod("getDependsOn", new Class[]{});
+                String[] dependsOn = (String[])getDependsOn.invoke(definition, new Object[]{});
+                if (dependsOn == null || dependsOn.length == 0) {
+                    dependsOn = new String[]{contextId};
+                } else {
+                    String[] temp = new String[dependsOn.length + 1];
+                    System.arraycopy(dependsOn, 0, temp, 0, dependsOn.length);
+                    temp[dependsOn.length] = contextId;
+                    dependsOn = temp;
+                }
                 Method method = definition.getClass().getMethod("setDependsOn", String[].class);
-                method.invoke(definition, (Object) new String[]{contextId});
+                method.invoke(definition, (Object)dependsOn);
             } catch (Exception e) {
                 // Do nothing here
             }
