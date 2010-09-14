@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
@@ -37,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ProtobufDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = false)
     private String instanceClass;
-    
+    @XmlTransient
     private Object defaultInstance;
     
     public ProtobufDataFormat() {

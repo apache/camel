@@ -25,7 +25,7 @@ import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class ProtobufMarshalTest extends CamelTestSupport {
+public class ProtobufMarshalAndUnmarshallTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalWithDataFormat() throws Exception {
