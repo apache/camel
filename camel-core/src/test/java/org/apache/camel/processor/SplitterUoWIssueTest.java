@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version $Revision$
  */
-public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
+public class SplitterUoWIssueTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
@@ -32,7 +32,7 @@ public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
         super.setUp();
     }
 
-    public void testSplitterStreamingUoWIssue() throws Exception {
+    public void testSplitterUoWIssue() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("A", "B", "C", "D", "E");
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E");
 
@@ -41,7 +41,7 @@ public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testSplitterTwoFilesStreamingUoWIssue() throws Exception {
+    public void testSplitterTwoFilesUoWIssue() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("A", "B", "C", "D", "E", "F", "G", "H", "I");
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E", "F,G,H,I");
 
@@ -57,7 +57,7 @@ public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/splitter?delete=true&sortBy=file:name")
-                    .split(body().tokenize(",")).streaming()
+                    .split(body().tokenize(","))
                         .to("seda:queue")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
