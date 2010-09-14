@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
@@ -41,6 +42,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *
@@ -54,6 +58,29 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     @Qualifier("camel")
     protected CamelContext camelContext;
+    
+    /**
+     * Test that we have an endpoint with 2 providers.
+     */
+    @Test
+    public void testConsumerWithProviders() throws Exception {
+        boolean testedEndpointWithProviders = false;
+        for (Endpoint endpoint : camelContext.getEndpoints()) {
+            if (endpoint instanceof CxfBeanEndpoint) {
+                CxfBeanEndpoint beanEndpoint = (CxfBeanEndpoint)endpoint;
+                if (beanEndpoint.getEndpointUri().equals("customerServiceBean")) {
+                    assertNotNull("The bean endpoint should have provider", beanEndpoint.getProviders());
+                    if (beanEndpoint.getProviders().size() == 2) {
+                        testedEndpointWithProviders = true;
+                        break;
+                    } else if (beanEndpoint.getProviders().size() != 0) {
+                        fail("Unexpected number of providers present");
+                    }
+                }
+            }
+        }
+        assertTrue(testedEndpointWithProviders);
+    }
     
     @Test
     public void testGetConsumer() throws Exception {

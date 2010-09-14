@@ -51,6 +51,7 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
     private HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
     private boolean loggingFeatureEnabled;
     private boolean populateFromClass = true;
+    private List<Object> providers;
 
     public CxfBeanEndpoint(String remaining, CxfBeanComponent component) {
         super(remaining, component);
@@ -72,7 +73,7 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
         if (obj instanceof List) {
             serviceBeans = (List)obj;
         } else {
-            serviceBeans = new ArrayList<Object>();
+            serviceBeans = new ArrayList<Object>(1);
             serviceBeans.add(obj);
         }
         
@@ -120,7 +121,8 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
             bean.setBus(bus);
             if (loggingFeatureEnabled) {
                 bean.getFeatures().add(new LoggingFeature());
-            }  
+            }
+            bean.setProviders(providers);
             server = bean.create();
         }
     }
@@ -188,5 +190,13 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
 
     public boolean isPopulateFromClass() {
         return populateFromClass;
+    }
+
+    public List<Object> getProviders() {
+        return providers;
+    }
+
+    public void setProviders(List<Object> providers) {
+        this.providers = providers;
     }
 }

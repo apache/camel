@@ -75,9 +75,19 @@
 		<route>
 			<from uri="jetty:http://localhost:9090?matchOnUriPrefix=true" />
 			<to uri="cxfbean:jaxwsBean" />
+		</route>
+		<!-- Provide an RS route for the purposes of testing that providers are added -->				
+		<route>
+			<from uri="direct:start" />
+			<to uri="cxfbean:customerServiceBean?providers=#provider1,#provider2" />
 		</route>				
 	</camelContext>
-	
+
+	<!-- A couple of beans to declare as providers - 
+	     they can be an object of any kind for the purposes of our test. -->
+    <bean id="provider1" class="java.lang.String" />
+    <bean id="provider2" class="java.lang.String" />
+
 	  <camel:conduit name="{http://camel.apache.org/wsdl-first}soap3.camel-conduit">
        <camelContext id="PersonServiceClientContext" xmlns="http://camel.apache.org/schema/spring">
            <route>

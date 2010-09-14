@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.cxfbean;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;       
@@ -37,7 +38,15 @@ public class CxfBeanComponent extends HeaderFilterStrategyComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining,
             Map parameters) throws Exception {
+
+        // Extract the comma separated list of providers in advance of the auto-extraction
+        // that a DefaultEndpoint will perform (as the default one does not understand lists).
+        List<Object> providers = resolveAndRemoveReferenceListParameter(parameters, "providers", Object.class);
+
         CxfBeanEndpoint answer = new CxfBeanEndpoint(remaining, this);
+        if (providers != null) {
+            answer.setProviders(providers);
+        }
         setEndpointHeaderFilterStrategy(answer);
         setProperties(answer, parameters);
 
