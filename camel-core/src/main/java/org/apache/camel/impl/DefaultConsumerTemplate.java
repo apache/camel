@@ -16,12 +16,18 @@
  */
 package org.apache.camel.impl;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.UnitOfWorkHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
@@ -34,6 +40,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerTemplate {
 
+    private static final transient Log LOG = LogFactory.getLog(DefaultConsumerTemplate.class);
     private final CamelContext context;
     private ConsumerCache consumerCache;
     private int maximumCacheSize;
@@ -89,8 +96,14 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     }
 
     public Object receiveBody(String endpointUri) {
+        Object answer = null;
         Exchange exchange = receive(endpointUri);
-        return extractResultBody(exchange);
+        try {
+            answer = extractResultBody(exchange);
+        } finally {
+            doneUoW(exchange);
+        }
+        return answer;
     }
 
     public Object receiveBody(Endpoint endpoint) {
@@ -98,8 +111,14 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     }
 
     public Object receiveBody(String endpointUri, long timeout) {
+        Object answer = null;
         Exchange exchange = receive(endpointUri, timeout);
-        return extractResultBody(exchange);
+        try {
+            answer = extractResultBody(exchange);
+        } finally {
+            doneUoW(exchange);
+        }
+        return answer;
     }
 
     public Object receiveBody(Endpoint endpoint, long timeout) {
@@ -107,35 +126,65 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     }
 
     public Object receiveBodyNoWait(String endpointUri) {
+        Object answer = null;
         Exchange exchange = receiveNoWait(endpointUri);
-        return extractResultBody(exchange);
+        try {
+            answer = extractResultBody(exchange);
+        } finally {
+            doneUoW(exchange);
+        }
+        return answer;
     }
 
     public Object receiveBodyNoWait(Endpoint endpoint) {
         return receiveBodyNoWait(endpoint.getEndpointUri());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T receiveBody(String endpointUri, Class<T> type) {
-        Object body = receiveBody(endpointUri);
-        return context.getTypeConverter().convertTo(type, body);
+        Object answer = null;
+        Exchange exchange = receive(endpointUri);
+        try {
+            answer = extractResultBody(exchange);
+            answer = context.getTypeConverter().convertTo(type, answer);
+        } finally {
+            doneUoW(exchange);
+        }
+        return (T) answer;
     }
 
     public <T> T receiveBody(Endpoint endpoint, Class<T> type) {
         return receiveBody(endpoint.getEndpointUri(), type);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T receiveBody(String endpointUri, long timeout, Class<T> type) {
-        Object body = receiveBody(endpointUri, timeout);
-        return context.getTypeConverter().convertTo(type, body);
+        Object answer = null;
+        Exchange exchange = receive(endpointUri, timeout);
+        try {
+            answer = extractResultBody(exchange);
+            answer = context.getTypeConverter().convertTo(type, answer);
+        } finally {
+            doneUoW(exchange);
+        }
+        return (T) answer;
     }
 
     public <T> T receiveBody(Endpoint endpoint, long timeout, Class<T> type) {
         return receiveBody(endpoint.getEndpointUri(), timeout, type);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T receiveBodyNoWait(String endpointUri, Class<T> type) {
-        Object body = receiveBodyNoWait(endpointUri);
-        return context.getTypeConverter().convertTo(type, body);
+        Object answer = null;
+        Exchange exchange = receiveNoWait(endpointUri);
+        try {
+            answer = extractResultBody(exchange);
+            answer = context.getTypeConverter().convertTo(type, answer);
+        } finally {
+            doneUoW(exchange);
+        }
+        return (T) answer;
     }
 
     public <T> T receiveBodyNoWait(Endpoint endpoint, Class<T> type) {
@@ -173,6 +222,22 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             }
         }
         return answer;
+    }
+
+    private static void doneUoW(Exchange exchange) {
+        try {
+            if (exchange.getUnitOfWork() == null) {
+                // handover completions and done them manually to ensure they are being executed
+                List<Synchronization> synchronizations = exchange.handoverCompletions();
+                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, LOG);
+            } else {
+                // done the unit of work
+                exchange.getUnitOfWork().done(exchange);
+            }
+        } catch (Throwable e) {
+            LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
+                    + ". This exception will be ignored.", e);
+        }
     }
 
     private ConsumerCache getConsumerCache() {

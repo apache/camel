@@ -17,7 +17,6 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -34,7 +33,7 @@ import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.EventHelper;
-import org.apache.camel.util.OrderedComparator;
+import org.apache.camel.util.UnitOfWorkHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -170,31 +169,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             LOG.warn("Exception occurred during event notification. This exception will be ignored.", e);
         }
 
-        if (synchronizations != null && !synchronizations.isEmpty()) {
-            // reverse so we invoke it FILO style instead of FIFO
-            Collections.reverse(synchronizations);
-            // and honor if any was ordered by sorting it accordingly
-            Collections.sort(synchronizations, new OrderedComparator());
-            // invoke synchronization callbacks
-            for (Synchronization synchronization : synchronizations) {
-                try {
-                    if (failed) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Invoking synchronization.onFailure: " + synchronization + " with " + exchange);
-                        }
-                        synchronization.onFailure(exchange);
-                    } else {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Invoking synchronization.onComplete: " + synchronization + " with " + exchange);
-                        }
-                        synchronization.onComplete(exchange);
-                    }
-                } catch (Exception e) {
-                    // must catch exceptions to ensure all synchronizations have a chance to run
-                    LOG.warn("Exception occurred during onCompletion. This exception will be ignored.", e);
-                }
-            }
-        }
+        // done the synchronizations
+        UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, LOG);
 
         // unregister from inflight registry
         if (exchange.getContext() != null) {

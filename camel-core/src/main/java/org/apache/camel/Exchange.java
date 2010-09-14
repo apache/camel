@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.Synchronization;
@@ -409,5 +410,12 @@ public interface Exchange {
      * @param target the target exchange
      */
     void handoverCompletions(Exchange target);
+
+    /**
+     * Handover all the on completions from this exchange
+     *
+     * @return the on completions
+     */
+    List<Synchronization> handoverCompletions();
 
 }

@@ -356,6 +356,16 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
+    public List<Synchronization> handoverCompletions() {
+        List<Synchronization> answer = null;
+        if (onCompletions != null) {
+            answer = new ArrayList<Synchronization>(onCompletions);
+            onCompletions.clear();
+            onCompletions = null;
+        }
+        return answer;
+    }
+
     /**
      * Configures the message after it has been set on the exchange
      */
