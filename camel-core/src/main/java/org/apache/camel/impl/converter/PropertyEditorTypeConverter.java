@@ -74,10 +74,8 @@ public class PropertyEditorTypeConverter implements TypeConverter, Service {
     }
 
     private <T> PropertyEditor lookupEditor(Class<T> type, Object value) {
-        Class key = value.getClass();
-
         // check misses first
-        if (misses.containsKey(key)) {
+        if (misses.containsKey(type)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("No previously found property editor for type: " + type);
             }
@@ -86,23 +84,23 @@ public class PropertyEditorTypeConverter implements TypeConverter, Service {
 
         synchronized (cache) {
             // not a miss then try to lookup the editor
-            PropertyEditor editor = cache.get(key);
+            PropertyEditor editor = cache.get(type);
             if (editor == null) {
                 // findEditor is synchronized and very slow so we want to only lookup once for a given key
                 // and then we use our own local cache for faster lookup
-                editor = PropertyEditorManager.findEditor(key);
+                editor = PropertyEditorManager.findEditor(type);
 
                 // either we found an editor, or if not then register it as a miss
                 if (editor != null) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Found property editor for type: " + type + " -> " + editor);
                     }
-                    cache.put(key, editor);
+                    cache.put(type, editor);
                 } else {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Cannot find property editor for type: " + type);
                     }
-                    misses.put(key, key);
+                    misses.put(type, type);
                 }
             }
             return editor;
