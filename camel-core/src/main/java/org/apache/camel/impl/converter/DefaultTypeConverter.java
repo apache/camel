@@ -38,6 +38,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.apache.commons.logging.Log;
@@ -57,6 +58,7 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
     private final List<FallbackTypeConverter> fallbackConverters = new ArrayList<FallbackTypeConverter>();
     private Injector injector;
     private final FactoryFinder factoryFinder;
+    private final PropertyEditorTypeConverter propertyEditorTypeConverter = new PropertyEditorTypeConverter();
 
     public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
         this.injector = injector;
@@ -68,7 +70,7 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
         // ToStringTypeConverter should NOT allow to be promoted
         addFallbackTypeConverter(new ToStringTypeConverter(), false);
         // do not assume property editor as it has a String converter
-        addFallbackTypeConverter(new PropertyEditorTypeConverter(), false);
+        addFallbackTypeConverter(propertyEditorTypeConverter, false);
         // enum is okay to be promoted
         addFallbackTypeConverter(new EnumTypeConverter(), true);
         // arrays is okay to be promoted
@@ -415,6 +417,7 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
 
     @Override
     protected void doStart() throws Exception {
+        ServiceHelper.startService(propertyEditorTypeConverter);
         loadTypeConverters();
     }
 
@@ -422,6 +425,8 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
     protected void doStop() throws Exception {
         typeMappings.clear();
         misses.clear();
+        // let property editor type converter stop and cleanup resources
+        ServiceHelper.stopService(propertyEditorTypeConverter);
     }
 
     /**

@@ -18,9 +18,13 @@ package org.apache.camel.impl.converter;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,9 +35,14 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class PropertyEditorTypeConverter implements TypeConverter {
+public class PropertyEditorTypeConverter implements TypeConverter, Service {
 
     private static final Log LOG = LogFactory.getLog(PropertyEditorTypeConverter.class);
+    // use a bound cache to avoid using too much memory in case a lot of different classes
+    // is being converted to string
+    private final Map<Class, Class> misses = new LRUCache<Class, Class>(1000);
+    // we don't anticipate so many property editors so we have unbounded map
+    private final Map<Class, PropertyEditor> cache = new HashMap<Class, PropertyEditor>();
 
     public <T> T convertTo(Class<T> type, Object value) {
         // We can't convert null values since we can't figure out a property
@@ -48,21 +57,13 @@ public class PropertyEditorTypeConverter implements TypeConverter {
                 return ObjectHelper.cast(type, value);
             }
 
-            // TODO: findEditor is synchronized so we want to avoid calling it
-            // we should have a local hit cache
-            PropertyEditor editor = PropertyEditorManager.findEditor(type);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Finding property editor for type: " + type + " -> " + editor);
-            }
+            PropertyEditor editor = lookupEditor(type, value);
             if (editor != null) {
                 editor.setAsText(value.toString());
                 return ObjectHelper.cast(type, editor.getValue());
             }
         } else if (type == String.class) {
-            PropertyEditor editor = PropertyEditorManager.findEditor(value.getClass());
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Finding property editor for type: " + type + " -> " + editor);
-            }
+            PropertyEditor editor = lookupEditor(type, value);
             if (editor != null) {
                 editor.setValue(value);
                 return ObjectHelper.cast(type, editor.getAsText());
@@ -70,6 +71,42 @@ public class PropertyEditorTypeConverter implements TypeConverter {
         }
 
         return null;
+    }
+
+    private <T> PropertyEditor lookupEditor(Class<T> type, Object value) {
+        Class key = value.getClass();
+
+        // check misses first
+        if (misses.containsKey(key)) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("No previously found property editor for type: " + type);
+            }
+            return null;
+        }
+
+        synchronized (cache) {
+            // not a miss then try to lookup the editor
+            PropertyEditor editor = cache.get(key);
+            if (editor == null) {
+                // findEditor is synchronized and very slow so we want to only lookup once for a given key
+                // and then we use our own local cache for faster lookup
+                editor = PropertyEditorManager.findEditor(key);
+
+                // either we found an editor, or if not then register it as a miss
+                if (editor != null) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Found property editor for type: " + type + " -> " + editor);
+                    }
+                    cache.put(key, editor);
+                } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Cannot find property editor for type: " + type);
+                    }
+                    misses.put(key, key);
+                }
+            }
+            return editor;
+        }
     }
 
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
@@ -82,6 +119,14 @@ public class PropertyEditorTypeConverter implements TypeConverter {
 
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value);
+    }
+
+    public void start() throws Exception {
+    }
+
+    public void stop() throws Exception {
+        cache.clear();
+        misses.clear();
     }
 
 }
