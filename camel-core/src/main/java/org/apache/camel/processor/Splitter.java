@@ -157,27 +157,14 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     private Iterable<ProcessorExchangePair> createProcessorExchangePairsList(Exchange exchange, Object value) {
-        List<ProcessorExchangePair> result;
-        Integer collectionSize = CollectionHelper.size(value);
-        if (collectionSize != null) {
-            result = new ArrayList<ProcessorExchangePair>(collectionSize);
-        } else {
-            result = new ArrayList<ProcessorExchangePair>();
+        List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>();
+
+        // reuse iterable and add it to the result list
+        Iterable<ProcessorExchangePair> pairs = createProcessorExchangePairsIterable(exchange, value);
+        for (ProcessorExchangePair pair : pairs) {
+            result.add(pair);
         }
 
-        int index = 0;
-        Iterator<Object> iter = ObjectHelper.createIterator(value);
-        while (iter.hasNext()) {
-            Object part = iter.next();
-            Exchange newExchange = exchange.copy();
-            if (part instanceof Message) {
-                newExchange.setIn((Message)part);
-            } else {
-                Message in = newExchange.getIn();
-                in.setBody(part);
-            }
-            result.add(createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange));
-        }
         return result;
     }
 
