@@ -207,4 +207,14 @@ public final class ObjectConverter {
         return value.toString();
     }
 
+    @Converter
+    public static String toString(StringBuffer value) {
+        return value.toString();
+    }
+
+    @Converter
+    public static String toString(StringBuilder value) {
+        return value.toString();
+    }
+
 }

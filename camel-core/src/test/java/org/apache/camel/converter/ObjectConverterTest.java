@@ -76,11 +76,18 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(null, ObjectConverter.toFloat(new Date()));
     }
 
-    public void testToDouable() {
+    public void testToDouble() {
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Double.valueOf("4")));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Integer.valueOf("4")));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble("4"));
         assertEquals(null, ObjectConverter.toDouble(new Date()));
+    }
+
+    public void testToString() {
+        assertEquals("ABC", ObjectConverter.toString(new StringBuffer("ABC")));
+        assertEquals("ABC", ObjectConverter.toString(new StringBuilder("ABC")));
+        assertEquals("", ObjectConverter.toString(new StringBuffer("")));
+        assertEquals("", ObjectConverter.toString(new StringBuilder("")));
     }
 
 }

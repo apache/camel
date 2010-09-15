@@ -22,6 +22,8 @@ import java.beans.PropertyEditorManager;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Uses the {@link java.beans.PropertyEditor} conversion system to convert Objects to
@@ -30,6 +32,8 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class PropertyEditorTypeConverter implements TypeConverter {
+
+    private static final Log LOG = LogFactory.getLog(PropertyEditorTypeConverter.class);
 
     public <T> T convertTo(Class<T> type, Object value) {
         // We can't convert null values since we can't figure out a property
@@ -44,13 +48,21 @@ public class PropertyEditorTypeConverter implements TypeConverter {
                 return ObjectHelper.cast(type, value);
             }
 
+            // TODO: findEditor is synchronized so we want to avoid calling it
+            // we should have a local hit cache
             PropertyEditor editor = PropertyEditorManager.findEditor(type);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Finding property editor for type: " + type + " -> " + editor);
+            }
             if (editor != null) {
                 editor.setAsText(value.toString());
                 return ObjectHelper.cast(type, editor.getValue());
             }
         } else if (type == String.class) {
             PropertyEditor editor = PropertyEditorManager.findEditor(value.getClass());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Finding property editor for type: " + type + " -> " + editor);
+            }
             if (editor != null) {
                 editor.setValue(value);
                 return ObjectHelper.cast(type, editor.getAsText());

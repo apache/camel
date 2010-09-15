@@ -67,12 +67,12 @@ public class DefaultTypeConverter extends ServiceSupport implements TypeConverte
         // always convert something to a string so we want it only as the last resort
         // ToStringTypeConverter should NOT allow to be promoted
         addFallbackTypeConverter(new ToStringTypeConverter(), false);
+        // do not assume property editor as it has a String converter
+        addFallbackTypeConverter(new PropertyEditorTypeConverter(), false);
         // enum is okay to be promoted
         addFallbackTypeConverter(new EnumTypeConverter(), true);
         // arrays is okay to be promoted
         addFallbackTypeConverter(new ArrayTypeConverter(), true);
-        // do not assume property editor as it has a String converter
-        addFallbackTypeConverter(new PropertyEditorTypeConverter(), false);
         // and future should also not allowed to be promoted
         addFallbackTypeConverter(new FutureTypeConverter(this), false);
         // add sync processor to async processor converter is to be promoted
