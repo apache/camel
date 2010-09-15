@@ -57,13 +57,15 @@ public class PropertyEditorTypeConverter implements TypeConverter, Service {
                 return ObjectHelper.cast(type, value);
             }
 
-            PropertyEditor editor = lookupEditor(type, value);
+            Class key = type;
+            PropertyEditor editor = lookupEditor(key);
             if (editor != null) {
                 editor.setAsText(value.toString());
                 return ObjectHelper.cast(type, editor.getValue());
             }
         } else if (type == String.class) {
-            PropertyEditor editor = lookupEditor(type, value);
+            Class key = value.getClass();
+            PropertyEditor editor = lookupEditor(key);
             if (editor != null) {
                 editor.setValue(value);
                 return ObjectHelper.cast(type, editor.getAsText());
@@ -73,7 +75,7 @@ public class PropertyEditorTypeConverter implements TypeConverter, Service {
         return null;
     }
 
-    private <T> PropertyEditor lookupEditor(Class<T> type, Object value) {
+    private PropertyEditor lookupEditor(Class type) {
         // check misses first
         if (misses.containsKey(type)) {
             if (LOG.isTraceEnabled()) {
