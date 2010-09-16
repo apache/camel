@@ -94,7 +94,8 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
     }
 
     private void assertEntityInDB() throws Exception {
-        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+        // must type cast with Spring 2.x
+        jpaTemplate = (JpaTemplate) applicationContext.getBean("jpaTemplate");
 
         List list = jpaTemplate.find(SELECT_ALL_STRING);
         assertEquals(1, list.size());
@@ -103,7 +104,8 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
     }
 
     protected void cleanupRepository() {
-        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+        // must type cast with Spring 2.x
+        jpaTemplate = (JpaTemplate) applicationContext.getBean("jpaTemplate");
 
         TransactionTemplate transactionTemplate = new TransactionTemplate();
         transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));
