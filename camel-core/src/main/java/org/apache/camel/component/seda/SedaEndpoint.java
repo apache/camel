@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.Component;
@@ -32,6 +33,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
 
 /**
@@ -45,11 +47,13 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private volatile BlockingQueue<Exchange> queue;
     private int size;
     private int concurrentConsumers = 1;
+    private volatile ExecutorService multicastExecutor;
     private boolean multipleConsumers;
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     private long timeout = 30000;
     private volatile Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
     private volatile Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();
+    private volatile MulticastProcessor conumserMulticastProcessor;
 
     public SedaEndpoint() {
     }
@@ -94,6 +98,30 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
         return queue;
     }
+    
+    protected synchronized MulticastProcessor getConumserMulticastProcessor() {
+        return conumserMulticastProcessor;
+    }
+    
+    protected synchronized void updateMulticastProcessor() {
+        int size = getConsumers().size();
+        if (size == 0) {
+            // stop the multicastExecutor
+            multicastExecutor.shutdown();
+            multicastExecutor = null;
+        }
+        if (size == 1 && multicastExecutor == null) {
+            multicastExecutor = getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, getEndpointUri() + "(multicast)");
+        }
+        List<Processor> processors = new ArrayList<Processor>(size);
+        for (SedaConsumer consumer : getConsumers()) {
+            processors.add(consumer.getProcessor());
+        }
+        conumserMulticastProcessor = new MulticastProcessor(getCamelContext(), processors, null, true, multicastExecutor, false, false, 0);
+   
+    }
+    
+    
     
     public void setQueue(BlockingQueue<Exchange> queue) {
         this.queue = queue;
@@ -179,10 +207,12 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     void onStarted(SedaConsumer consumer) {
         consumers.add(consumer);
+        updateMulticastProcessor();
     }
 
     void onStopped(SedaConsumer consumer) {
         consumers.remove(consumer);
+        updateMulticastProcessor();
     }
 
 }

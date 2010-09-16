@@ -51,7 +51,6 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     private SedaEndpoint endpoint;
     private AsyncProcessor processor;
     private ExecutorService executor;
-    private MulticastProcessor multicast;
     private ExceptionHandler exceptionHandler;
 
     public SedaConsumer(SedaEndpoint endpoint, Processor processor) {
@@ -155,9 +154,9 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Multicasting to " + endpoint.getConsumers().size() + " consumers for Exchange: " + exchange);
             }
-
+           
             // use a multicast processor to process it
-            MulticastProcessor mp = getMulticastProcessor();
+            MulticastProcessor mp = endpoint.getConumserMulticastProcessor();
 
             // and use the asynchronous routing engine to support it
             AsyncProcessorHelper.process(mp, exchange, new AsyncCallback() {
@@ -175,22 +174,6 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         }
     }
 
-    protected synchronized MulticastProcessor getMulticastProcessor() {
-        if (multicast == null) {
-            int size = endpoint.getConsumers().size();
-
-            List<Processor> processors = new ArrayList<Processor>(size);
-            for (SedaConsumer consumer : endpoint.getConsumers()) {
-                processors.add(consumer.getProcessor());
-            }
-
-            ExecutorService multicastExecutor = endpoint.getCamelContext().getExecutorServiceStrategy()
-                                                    .newFixedThreadPool(this, endpoint.getEndpointUri() + "(multicast)", size);
-            multicast = new MulticastProcessor(endpoint.getCamelContext(), processors, null, true, multicastExecutor, false, false, 0);
-        }
-        return multicast;
-    }
-
     protected void doStart() throws Exception {
         int poolSize = endpoint.getConcurrentConsumers();
         executor = endpoint.getCamelContext().getExecutorServiceStrategy()
@@ -206,11 +189,6 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         // must shutdown executor on stop to avoid overhead of having them running
         endpoint.getCamelContext().getExecutorServiceStrategy().shutdown(executor);
         executor = null;
-
-        if (multicast != null) {
-            ServiceHelper.stopService(multicast);
-            multicast = null;
-        }
     }
 
 }

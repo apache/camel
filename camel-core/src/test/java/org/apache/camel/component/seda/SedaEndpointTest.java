@@ -35,8 +35,9 @@ public class SedaEndpointTest extends ContextTestSupport {
 
     public void testSedaEndpointUnboundedQueue() throws Exception {
         BlockingQueue<Exchange> unbounded = new LinkedBlockingQueue<Exchange>();
-        SedaEndpoint seda = new SedaEndpoint("seda://foo", unbounded);
+        SedaEndpoint seda = new SedaEndpoint("seda://foo", unbounded);        
         assertNotNull(seda);
+        seda.setCamelContext(context);
 
         assertEquals(Integer.MAX_VALUE, seda.getSize());
         assertSame(unbounded, seda.getQueue());
@@ -60,6 +61,7 @@ public class SedaEndpointTest extends ContextTestSupport {
     public void testSedaEndpoint() throws Exception {
         SedaEndpoint seda = new SedaEndpoint("seda://foo", queue);
         assertNotNull(seda);
+        seda.setCamelContext(context);
 
         assertEquals(1000, seda.getSize());
         assertSame(queue, seda.getQueue());
@@ -83,6 +85,7 @@ public class SedaEndpointTest extends ContextTestSupport {
     public void testSedaEndpointTwo() throws Exception {
         SedaEndpoint seda = new SedaEndpoint("seda://foo", queue, 2);
         assertNotNull(seda);
+        seda.setCamelContext(context);
 
         assertEquals(1000, seda.getSize());
         assertSame(queue, seda.getQueue());
@@ -106,6 +109,8 @@ public class SedaEndpointTest extends ContextTestSupport {
     public void testSedaEndpointSetQueue() throws Exception {
         SedaEndpoint seda = new SedaEndpoint();
         assertNotNull(seda);
+        seda.setCamelContext(context);
+        seda.setEndpointUriIfNotSpecified("seda://bar");
         assertNotNull(seda.getQueue());
         // overwrite with a new queue
         seda.setQueue(new ArrayBlockingQueue<Exchange>(1000));

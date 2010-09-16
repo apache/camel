@@ -18,6 +18,7 @@ package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
@@ -31,6 +32,50 @@ public class SedaMultipleConsumersTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello World");
         template.sendBody("seda:bar", "Bye World");
 
+        assertMockEndpointsSatisfied();
+    }
+    
+    public void testSedaMultipleConsumersNewAdded() throws Exception {
+        getMockEndpoint("mock:a").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
+        getMockEndpoint("mock:b").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
+        getMockEndpoint("mock:c").expectedMessageCount(0);
+        
+        template.sendBody("seda:foo", "Hello World");
+        template.sendBody("seda:bar", "Bye World");
+        
+        assertMockEndpointsSatisfied();
+        
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:foo?multipleConsumers=true").id("testRoute").to("mock:c");
+                
+            }
+            
+        });
+        resetMocks();
+        
+        getMockEndpoint("mock:a").expectedMessageCount(20);
+        getMockEndpoint("mock:b").expectedMessageCount(20);
+        getMockEndpoint("mock:c").expectedMessageCount(20);
+       
+
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("seda:foo", "Hello World");
+            template.sendBody("seda:bar", "Bye World");
+        }
+        assertMockEndpointsSatisfied();
+        resetMocks();
+        
+        context.suspendRoute("testRoute");
+        getMockEndpoint("mock:a").expectedMessageCount(20);
+        getMockEndpoint("mock:b").expectedMessageCount(20);        
+        getMockEndpoint("mock:c").expectedMessageCount(0);
+        
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("seda:foo", "Hello World");
+            template.sendBody("seda:bar", "Bye World");
+        }
         assertMockEndpointsSatisfied();
     }
 
