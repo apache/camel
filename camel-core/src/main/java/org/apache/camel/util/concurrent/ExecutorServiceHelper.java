@@ -69,6 +69,11 @@ public final class ExecutorServiceHelper {
             pattern = DEFAULT_PATTERN;
         }
 
+        // the name could potential have a $ sign we want to keep
+        if (name.indexOf("$") > -1) {
+            name = name.replaceAll("\\$", "CAMEL_REPLACE_ME");
+        }
+
         // we support ${longName} and ${name} as name placeholders
         String longName = name;
         String shortName = name.contains("?") ? ObjectHelper.before(name, "?") : name;
@@ -78,6 +83,10 @@ public final class ExecutorServiceHelper {
         answer = answer.replaceFirst("\\$\\{name\\}", shortName);
         if (answer.indexOf("$") > -1 || answer.indexOf("${") > -1 || answer.indexOf("}") > -1) {
             throw new IllegalArgumentException("Pattern is invalid: " + pattern);
+        }
+
+        if (answer.indexOf("CAMEL_REPLACE_ME") > -1) {
+            answer = answer.replaceAll("CAMEL_REPLACE_ME", "\\$");
         }
 
         return answer;

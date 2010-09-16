@@ -51,6 +51,13 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
         assertTrue(bar.endsWith(" - bar"));
     }
 
+    public void testGetThreadNameCustomPatternWithDollar() throws Exception {
+        context.getExecutorServiceStrategy().setThreadNamePattern("Hello - ${name}");
+        String foo = context.getExecutorServiceStrategy().getThreadName("foo$bar");
+
+        assertEquals("Hello - foo$bar", foo);
+    }
+
     public void testGetThreadNameCustomPatternLongName() throws Exception {
         context.getExecutorServiceStrategy().setThreadNamePattern("#${counter} - ${longName}");
         String foo = context.getExecutorServiceStrategy().getThreadName("foo?beer=Carlsberg");
