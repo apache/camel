@@ -105,9 +105,9 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     
     protected synchronized void updateMulticastProcessor() {
         int size = getConsumers().size();
-        if (size == 0) {
+        if (size == 0 && multicastExecutor != null) {
             // stop the multicastExecutor
-            multicastExecutor.shutdown();
+            getCamelContext().getExecutorServiceStrategy().shutdown(multicastExecutor);
             multicastExecutor = null;
         }
         if (size == 1 && multicastExecutor == null) {
