@@ -184,8 +184,16 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     protected void doStart() throws Exception {
         super.doStart();
         if (isUseFixedDelay()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Scheduling poll (fixed delay) with initialDelay: " + getInitialDelay() + ", delay: " + getDelay()
+                        + " (" + getTimeUnit().name().toLowerCase() + ") for: " + getEndpoint());
+            }
             future = executor.scheduleWithFixedDelay(this, getInitialDelay(), getDelay(), getTimeUnit());
         } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Scheduling poll (fixed rate) with initialDelay: " + getInitialDelay() + ", delay: " + getDelay()
+                        + " (" + getTimeUnit().name().toLowerCase() + ") for: " + getEndpoint());
+            }
             future = executor.scheduleAtFixedRate(this, getInitialDelay(), getDelay(), getTimeUnit());
         }
     }
