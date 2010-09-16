@@ -97,7 +97,7 @@ public abstract class CamelTestSupport extends TestSupport {
         assertValidContext(context);
 
         // reduce default shutdown timeout to avoid waiting for 300 seconds
-        context.getShutdownStrategy().setTimeout(10);
+        context.getShutdownStrategy().setTimeout(getShutdownTimeout());
 
         template = context.createProducerTemplate();
         template.start();
@@ -132,6 +132,17 @@ public abstract class CamelTestSupport extends TestSupport {
             template.stop();
         }
         stopCamelContext();
+    }
+
+    /**
+     * Returns the timeout to use when shutting down (unit in seconds).
+     * <p/>
+     * Will default use 10 seconds.
+     *
+     * @return the timeout to use
+     */
+    protected int getShutdownTimeout() {
+        return 10;
     }
 
     /**
