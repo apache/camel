@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi;
+package org.apache.camel.itest.osgi.mail;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.jvnet.mock_javamail.Mailbox;
@@ -93,7 +94,7 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
                 found = true;
             }
         }
-        assertTrue("Should have found the recpient to in the mail: " + name, found);
+        assertTrue("Should have found the recipient to in the mail: " + name, found);
     }
 
     @Override
@@ -140,6 +141,7 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
             
             workingDirectory("target/paxrunner/"),
 
+            // does not work in felix
             equinox());
         
         return options;

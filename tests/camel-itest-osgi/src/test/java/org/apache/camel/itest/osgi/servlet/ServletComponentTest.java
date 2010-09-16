@@ -24,6 +24,7 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
+import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
@@ -61,7 +62,7 @@ public class ServletComponentTest extends OSGiIntegrationSpringTestSupport {
                 
             workingDirectory("target/paxrunner/"),
 
-            felix());
+            felix(), equinox());
         
         return options;
     }

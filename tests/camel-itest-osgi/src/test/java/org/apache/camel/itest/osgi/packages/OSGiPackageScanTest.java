@@ -25,6 +25,7 @@ import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 @RunWith(JUnit4TestRunner.class)
 public class OSGiPackageScanTest extends OSGiIntegrationSpringTestSupport {
+
     @Test
     public void testSendMessage() throws Exception {
         MockEndpoint mock =  getMandatoryEndpoint("mock:result", MockEndpoint.class);

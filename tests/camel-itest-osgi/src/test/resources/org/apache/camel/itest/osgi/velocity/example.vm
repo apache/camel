@@ -14,5 +14,5 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-#parse("org/apache/camel/itest/osgi/header.vm")
+#parse("org/apache/camel/itest/osgi/velocity/header.vm")
 <hello>${headers.cheese}</hello>

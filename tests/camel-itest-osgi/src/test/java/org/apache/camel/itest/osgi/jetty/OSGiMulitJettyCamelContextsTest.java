@@ -14,20 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.itest.osgi.jetty;
 
-import java.net.URL;
-import java.util.Set;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.apache.camel.management.DefaultManagementNamingStrategy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;

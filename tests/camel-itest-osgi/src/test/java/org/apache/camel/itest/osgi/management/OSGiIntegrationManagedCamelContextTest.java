@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.itest.osgi.management;
 
 import java.net.URL;
@@ -45,6 +44,7 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
 public class OSGiIntegrationManagedCamelContextTest extends OSGiIntegrationTestSupport {
+
     protected boolean useJmx() {
         return true;
     }
@@ -56,8 +56,7 @@ public class OSGiIntegrationManagedCamelContextTest extends OSGiIntegrationTestS
         
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
         LOG.info("The MBeanServer is " + mbeanServer);
-        
-        
+
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=context,*"), null);
         assertEquals("There should have 2 camelcontext registed", 2, set.size());
         
@@ -67,7 +66,6 @@ public class OSGiIntegrationManagedCamelContextTest extends OSGiIntegrationTestS
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals(camelContextName, name);
-        
     }
     
     private static URL getCamelContextInputStream() {

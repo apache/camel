@@ -25,6 +25,7 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
+import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
@@ -69,7 +70,7 @@ public class JaxbFallbackConverterSpringTest extends OSGiIntegrationSpringTestSu
             
             workingDirectory("target/paxrunner/"),
 
-            felix().version("2.0.1"));
+            felix(), equinox());
         
         return options;
     }

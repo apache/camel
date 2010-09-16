@@ -35,6 +35,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
+import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
@@ -103,7 +104,7 @@ public class ShiroAuthenticationTest extends OSGiIntegrationTestSupport {
                          
             workingDirectory("target/paxrunner/"),
 
-            felix());
+            felix(), equinox());
         
         return options;
     }

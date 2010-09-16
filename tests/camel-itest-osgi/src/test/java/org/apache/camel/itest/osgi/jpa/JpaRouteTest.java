@@ -39,6 +39,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
+import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
@@ -153,7 +154,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
 
             workingDirectory("target/paxrunner/"),
 
-            equinox());
+            felix(), equinox());
         
         return options;
     }

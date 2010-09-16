@@ -14,30 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi;
+package org.apache.camel.itest.osgi.core;
 
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.apache.camel.spi.FactoryFinder;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 @RunWith(JUnit4TestRunner.class)
-public class OSGiIntegrationSpringTest extends OSGiIntegrationSpringTestSupport {
+public class OsgiFactoryFinderTest extends OSGiIntegrationTestSupport {
     
     @Test
-    public void testSendMessage() throws Exception {
-        MockEndpoint mock =  getMandatoryEndpoint("mock:result", MockEndpoint.class);
-        assertNotNull("The mock endpoint should not be null", mock);
-        
-        mock.expectedBodiesReceived("Hello World");
-        template.sendBody("direct:start", "Hello World");
-        assertMockEndpointsSatisfied();        
+    public void testFileProducer() throws Exception {        
+        FactoryFinder finder = context.getFactoryFinder("META-INF/services/org/apache/camel/component/");
+        Class<?> factory = finder.findClass("file", "strategy.factory.");
+        assertNotNull("We should find the factory here.", factory);
+    }
+  
+    @Before
+    public void setUp() throws Exception {
+        setUseRouteBuilder(false);
+        super.setUp();        
     }
     
-    @Override
-    protected OsgiBundleXmlApplicationContext createApplicationContext() {
-        return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/CamelContext.xml"});
-    }
-
 }

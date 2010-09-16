@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi;
+package org.apache.camel.itest.osgi.seda;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
@@ -27,7 +28,7 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
  * @version $Revision$
  */
 @RunWith(JUnit4TestRunner.class)
-public class OSGiIntegrationTest extends OSGiIntegrationTestSupport {
+public class SedaTest extends OSGiIntegrationTestSupport {
     
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

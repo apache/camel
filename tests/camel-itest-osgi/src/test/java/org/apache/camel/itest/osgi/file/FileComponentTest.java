@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi;
+package org.apache.camel.itest.osgi.file;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
@@ -42,6 +43,5 @@ public class FileComponentTest extends OSGiIntegrationTestSupport {
             }
         };
     }
-    
-    
+
 }
