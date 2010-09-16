@@ -77,7 +77,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             return null;
         }
 
-        if (parameters != null) {
+        if (parameters != null && !parameters.isEmpty()) {
             endpoint.configureProperties(parameters);
             if (useIntrospectionOnEndpoint()) {
                 setProperties(endpoint, parameters);

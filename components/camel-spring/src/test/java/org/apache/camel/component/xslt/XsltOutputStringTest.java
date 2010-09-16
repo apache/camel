@@ -39,8 +39,6 @@ public class XsltOutputStringTest extends ContextTestSupport {
         template.sendBody("direct:start", "<hello>world!</hello>");
 
         assertMockEndpointsSatisfied();
-
-
     }
 
 }
