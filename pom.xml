@@ -36,7 +36,7 @@
   <inceptionYear>2007</inceptionYear>
 
   <prerequisites>
-    <maven>2.0.9</maven>
+    <maven>2.2.1</maven>
   </prerequisites>
 
   <properties>
@@ -277,8 +277,8 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-	  <version>2.3</version>
-	  <configuration>
+	      <version>2.3</version>
+	      <configuration>
              <encoding>UTF-8</encoding>
           </configuration>
         </plugin>
@@ -356,7 +356,7 @@
           <artifactId>maven-source-plugin</artifactId>
           <version>2.1.1</version>
           <configuration>
-	   <archive>
+	         <archive>
                <manifestEntries>
                  <Bundle-SymbolicName>${project.groupId}.${project.artifactId}.source</Bundle-SymbolicName>
                  <Bundle-Version>${camel.osgi.version.clean}</Bundle-Version>
