@@ -48,7 +48,6 @@ public class JAXRSClientServerTest extends CamelSpringTestSupport {
     
     @Test
     public void testJAXRSClient() throws BookNotFoundFault {
-
         // JAXRSClient invocation
         JAXRSClient jaxrsClient = new JAXRSClient();
         BookStore bookStore =  jaxrsClient.getBookStore();

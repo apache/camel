@@ -78,6 +78,4 @@ public class CamelTransportClientServerTest extends Assert {
 
     }
 
-    
-
 }

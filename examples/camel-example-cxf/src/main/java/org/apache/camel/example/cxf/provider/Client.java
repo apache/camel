@@ -98,11 +98,10 @@ public final class Client {
         SOAPElement bodyElement = (SOAPElement)body.getChildElements(responseName).next();
 
         String responseMessageText = bodyElement.getTextContent();
-        
+
         System.out.println("Get the response: " + responseMessageText);
         
         return responseMessageText;
-
     }
 
     public static void main(String[] args) throws Exception {

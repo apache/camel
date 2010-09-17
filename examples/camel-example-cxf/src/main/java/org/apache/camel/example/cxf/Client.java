@@ -63,7 +63,6 @@ public final class Client {
     }
 
     public void invoke() throws Exception {
-
         System.out.println("Acquiring router port ...");
         Greeter port = getProxy();
         String resp;
@@ -92,7 +91,6 @@ public final class Client {
             System.out.println("FaultDetail major:" + detail.getMajor());
             System.out.println("FaultDetail minor:" + detail.getMinor());
         }
-
     }
 
 }

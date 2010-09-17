@@ -26,7 +26,6 @@ public class Server {
         Object implementor = new GreeterImpl();
         String address = "http://cxf.apache.org/transports/jms";
         endpoint = Endpoint.publish(address, implementor);
-
     }
 
     public void stop() {
@@ -34,7 +33,6 @@ public class Server {
             endpoint.stop();
         }
     }
-
 
     public static void main(String args[]) throws Exception {
         Server server = new Server();
@@ -45,4 +43,5 @@ public class Server {
         server.stop();
         System.exit(0);
     }
+
 }

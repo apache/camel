@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.example.jms;
 
 import java.io.File;
@@ -26,6 +25,7 @@ public final class JmsBroker {
     JMSEmbeddedBroker jmsBrokerThread;
     String jmsBrokerUrl = "vm://localhost";
     String activeMQStorageDir;
+
     public JmsBroker() {
     }
 
@@ -53,8 +53,7 @@ public final class JmsBroker {
         boolean shutdownBroker;
         final String brokerUrl;
         Exception exception;
-        
-        
+
         public JMSEmbeddedBroker(String url) {
             brokerUrl = url;
         }
@@ -75,7 +74,6 @@ public final class JmsBroker {
         
         public void run() {
             try {  
-                //ContainerWapper container;
                 BrokerService broker = new BrokerService();
                 synchronized (this) {                                     
                     broker.setPersistenceAdapter(new MemoryPersistenceAdapter());                    
@@ -97,8 +95,7 @@ public final class JmsBroker {
                 e.printStackTrace();
             }
         }
-        
-       
     }
+
 }
 

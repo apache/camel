@@ -31,9 +31,6 @@ public class GreeterImpl implements Greeter {
     private static final Logger LOG = 
         Logger.getLogger(GreeterImpl.class.getPackage().getName());
     
-    /* (non-Javadoc)
-     * @see org.apache.hello_world_soap_http.Greeter#greetMe(java.lang.String)
-     */
     public String greetMe(String me) {
         LOG.info("Executing operation greetMe");
         System.out.println("Executing operation greetMe");
@@ -41,18 +38,12 @@ public class GreeterImpl implements Greeter {
         return "Hello " + me;
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.hello_world_soap_http.Greeter#greetMeOneWay(java.lang.String)
-     */
     public void greetMeOneWay(String me) {
         LOG.info("Executing operation greetMeOneWay");
         System.out.println("Executing operation greetMeOneWay\n");
         System.out.println("Hello there " + me);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.hello_world_soap_http.Greeter#sayHi()
-     */
     public String sayHi() {
         LOG.info("Executing operation sayHi");
         System.out.println("Executing operation sayHi\n");
@@ -69,5 +60,4 @@ public class GreeterImpl implements Greeter {
         throw new PingMeFault("PingMeFault raised by server", faultDetail);
     }
 
-    
 }

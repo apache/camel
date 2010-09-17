@@ -25,7 +25,6 @@ import org.apache.camel.impl.DefaultCamelContext;
  * An example for demonstrating how Camel works as a Router.
  * This example shows how Camel can route a SOAP client's HTTP request
  * to a SOAP over JMS Service.
- *
  */
 public final class CamelCxfExample {
     private static final String ROUTER_ADDRESS = "http://localhost:9001/SoapContext/SoapPort";

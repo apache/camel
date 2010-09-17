@@ -37,9 +37,6 @@ public class CamelRouterBuilder extends RouteBuilder {
     
     /**
      * Allow this route to be run as an application
-     *
-     * @param args
-     * @throws Exception 
      */
     public static void main(String[] args) throws Exception {
         CamelContext context = new DefaultCamelContext();
@@ -73,7 +70,7 @@ public class CamelRouterBuilder extends RouteBuilder {
             book = bookStore.getBook(126L);
             System.out.println("Get the book with id 126. " + book); 
         } catch (Exception exception) {
-            System.out.println("Get the exception " + exception.getCause());
+            System.out.println("Get the exception " + exception);
         }
         
         Thread.sleep(1000);
@@ -91,8 +88,6 @@ public class CamelRouterBuilder extends RouteBuilder {
 
         from(REST_ENDPOINT_URI)
              .process(new MappingProcessor(new BookStoreImpl(true)));
-             
-      
     }
     
     // Mapping the request to object's invocation
@@ -134,4 +129,5 @@ public class CamelRouterBuilder extends RouteBuilder {
             return answer;
         }
     }
+
 }

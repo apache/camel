@@ -25,7 +25,6 @@ public class Server {
     public void start() throws Exception {
         // Setup the Camel context using Spring
         applicationContext = new ClassPathXmlApplicationContext("/META-INF/spring/CamelCXFProviderRouteConfig.xml");
-                 
     }
     
     public void stop() {
@@ -34,7 +33,6 @@ public class Server {
         }    
     }
     
-
     public static void main(String args[]) throws Exception {
         Server server = new Server();
         System.out.println("Server ready...");
@@ -44,4 +42,5 @@ public class Server {
         server.stop();
         System.exit(0);
     }
+
 }

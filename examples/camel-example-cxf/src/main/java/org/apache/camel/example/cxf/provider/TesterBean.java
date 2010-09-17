@@ -32,7 +32,6 @@ import org.apache.camel.Exchange;
 
 /**
  * A simple bean demonstrating the processing of a SOAPMessage routed by Camel
- *
  */
 //START SNIPPET: e1
 public class TesterBean {
@@ -65,8 +64,7 @@ public class TesterBean {
             SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
             SOAPBody body = soapMessage.getSOAPPart().getEnvelope().getBody();
 
-            QName payloadName = new QName("http://apache.org/hello_world_soap_http/types", "greetMeResponse",
-                                          "ns1");
+            QName payloadName = new QName("http://apache.org/hello_world_soap_http/types", "greetMeResponse", "ns1");
 
             SOAPBodyElement payload = body.addBodyElement(payloadName);
 
@@ -78,7 +76,6 @@ public class TesterBean {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-
     }
 
 }

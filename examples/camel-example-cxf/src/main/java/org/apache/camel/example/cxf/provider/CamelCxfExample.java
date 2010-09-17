@@ -27,25 +27,21 @@ public final class CamelCxfExample {
     }
 
     public static void main(String args[]) throws Exception {
-
         Server server = new Server();
         try {
-
             // start the endpoints
             server.start();
             // set the client's service access point
             Client client = new Client("http://localhost:9000/GreeterContext/SOAPMessageService");
             // invoke the services
             String response = client.invoke();
-            
             System.out.println(response);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Get the exception " + e);
         } finally {
             server.stop();
             System.exit(0);
         }
-
     }
+
 }

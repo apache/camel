@@ -29,8 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfHttpJmsClientServerTest extends CamelSpringTestSupport {
     private static final String ROUTER_ADDRESS = "http://localhost:9001/SoapContext/SoapPort";
-    
-    
+
     @Test
     //@Ignore("Due to the Spring 3.0.0 doesn't call the JMS listener container's start method by default"
     //        + "This test will be fix in the next released CXF")
@@ -61,7 +60,5 @@ public class CxfHttpJmsClientServerTest extends CamelSpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {        
         return new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/CxfRouteCamelContext.xml"});
     }
-    
-    
 
 }
