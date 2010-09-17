@@ -36,6 +36,8 @@ public interface IdempotentRepository<E> {
 
     /**
      * Returns <tt>true</tt> if this repository contains the specified element.
+     * <p/>
+     * This operation is used if the option <tt>eager</tt> has been enabled.
      *
      * @param key the key of the message
      * @return <tt>true</tt> if this repository contains the specified element
@@ -54,6 +56,8 @@ public interface IdempotentRepository<E> {
 
     /**
      * Confirms the key, after the exchange has been processed successfully.
+     * <p/>
+     * This operation is used if the option <tt>eager</tt> has been enabled.
      *
      * @param key the key of the message for duplicate test
      * @return <tt>true</tt> if the key was confirmed
