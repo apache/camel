@@ -70,7 +70,7 @@
   </bean>
 
   <!-- lets show a simple UI to browse the database, url should be - -url without the space -->
-  <!-- This bean will cause OSGi server exit , so we disable it here -->
+  <!-- This bean will cause OSGi server exit, so we disable it here -->
   <!--
   <bean id="databaseExplorer" class="org.apache.camel.spring.util.MainRunner" lazy-init="false">
     <property name="main" value="org.hsqldb.util.DatabaseManagerSwing"/>

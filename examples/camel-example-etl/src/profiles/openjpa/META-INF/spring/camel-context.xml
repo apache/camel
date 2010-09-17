@@ -65,7 +65,7 @@
 	</bean>
 
 
-    <!-- This bean will cause OSGi server exit , so we disable it here -->
+    <!-- This bean will cause OSGi server exit, so we disable it here -->
 	<!-- lets show a simple UI to browse the database -->
     <!--
 	<bean id="databaseExplorer" class="org.apache.camel.spring.util.MainRunner"

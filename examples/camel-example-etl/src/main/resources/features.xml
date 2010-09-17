@@ -26,7 +26,7 @@
        <bundle>mvn:org.eclipse.persistence/org.eclipse.persistence.jpa/1.2.0</bundle>
     </feature>
     
-    <feature name='hibernate-feauture' version='${pom.version'}>
+    <feature name='hibernate-feauture' version='${pom.version}'>
        <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/1.4.0</bundle>
        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.2.2_5</bundle>
        <bundle>mvn:org.springframework/spring-jdbc/2.5.6.SEC01</bundle>
