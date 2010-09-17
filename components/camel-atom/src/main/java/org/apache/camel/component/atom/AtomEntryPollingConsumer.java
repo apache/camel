@@ -67,7 +67,7 @@ public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
 
     @Override
     protected void resetList() {
-        document = null;    
+        document = null;
     }
     
     @Override

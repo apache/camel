@@ -24,13 +24,13 @@ import org.apache.camel.Processor;
 
 /**
  * Consumer to poll feeds and return each entry from the feed step by step.
- *
  */
 public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
     protected int entryIndex;
     protected EntryFilter entryFilter;
     protected List list;
     protected boolean throttleEntries;
+    protected Object feed;
 
     public FeedEntryPollingConsumer(FeedEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
         super(endpoint, processor);
@@ -41,8 +41,11 @@ public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
     }
 
     public void poll() throws Exception {
-        Object feed = createFeed();
-        populateList(feed);   
+        if (feed == null) {
+            // populate new feed
+            feed = createFeed();
+            populateList(feed);
+        }
 
         while (hasNextEntry()) {
             Object entry = list.get(entryIndex--);
@@ -61,7 +64,8 @@ public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
             }
         }
 
-        // reset list to be able to poll again
+        // reset feed and list to be able to poll again
+        feed = null;
         resetList();
     }
 
