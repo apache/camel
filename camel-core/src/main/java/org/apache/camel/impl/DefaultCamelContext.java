@@ -376,6 +376,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public Endpoint getEndpoint(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
 
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Getting endpoint with uri: " + uri);
+        }
+
         // in case path has property placeholders then try to let property component resolve those
         try {
             uri = resolvePropertyPlaceholders(uri);
@@ -391,7 +395,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Getting endpoint with uri: " + uri);
+            LOG.trace("Getting endpoint with normalized uri: " + uri);
         }
 
         Endpoint answer;
