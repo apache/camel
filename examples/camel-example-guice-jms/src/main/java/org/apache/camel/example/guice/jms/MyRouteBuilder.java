@@ -17,7 +17,6 @@
 package org.apache.camel.example.guice.jms;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.guice.Main;
 
 /**
  * A simple example router from a file system to an ActiveMQ queue and then to a file system
@@ -25,13 +24,6 @@ import org.apache.camel.guice.Main;
  * @version $Revision$
  */
 public class MyRouteBuilder extends RouteBuilder {
-
-    /**
-     * Allow this route to be run as an application
-     */
-    public static void main(String[] args) throws Exception {
-        new Main().run(args);
-    }
 
     public void configure() {
         // populate the message queue with some messages

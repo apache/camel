@@ -41,8 +41,8 @@ To run the example with Ant
     ant camel.dot
 
 You can see the routing rules by looking at the java code in the
-src/main/java directory and the jndi.properties file lives in
-src/main/resources/jndi.properties
+src/main/java directory and the guicejndi.properties file lives in
+src/main/resources/guicejndi.properties
 
 To stop the example hit ctrl + c
 
