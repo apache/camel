@@ -385,6 +385,16 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             changeCurrentDirectory(currentDir);
 
         } catch (IOException e) {
+            if (log.isTraceEnabled()) {
+                log.trace("Error occurred during retrieving file: " + name + " to local directory. Deleting local work file: " + temp);
+            }
+            // failed to retrieve the file so we need to close streams and delete in progress file
+            // must close stream before deleting file
+            IOHelper.close(os, "retrieve: " + name, log);
+            boolean deleted = FileUtil.deleteFile(temp);
+            if (!deleted) {
+                log.warn("Error occurred during retrieving file: " + name + " to local directory. Cannot delete local work file: " + temp);
+            }
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } finally {
             // need to close the stream before rename it

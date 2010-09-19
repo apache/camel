@@ -456,6 +456,16 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             file.setBody(local);
             channel.get(name, os);
         } catch (SftpException e) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Error occurred during retrieving file: " + name + " to local directory. Deleting local work file: " + temp);
+            }
+            // failed to retrieve the file so we need to close streams and delete in progress file
+            // must close stream before deleting file
+            IOHelper.close(os, "retrieve: " + name, LOG);
+            boolean deleted = FileUtil.deleteFile(temp);
+            if (!deleted) {
+                LOG.warn("Error occurred during retrieving file: " + name + " to local directory. Cannot delete local work file: " + temp);
+            }
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
             IOHelper.close(os, "retrieve: " + name, LOG);
