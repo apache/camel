@@ -31,19 +31,17 @@ public class CxfHttpJmsClientServerTest extends CamelSpringTestSupport {
     private static final String ROUTER_ADDRESS = "http://localhost:9001/SoapContext/SoapPort";
 
     @Test
-    //@Ignore("Due to the Spring 3.0.0 doesn't call the JMS listener container's start method by default"
-    //        + "This test will be fix in the next released CXF")
     public void testClientInvocation() throws MalformedURLException {
         Client client = new Client(ROUTER_ADDRESS + "?wsdl");
         Greeter proxy = client.getProxy();
-        
+
         String resp;
         resp = proxy.sayHi();
         assertEquals("Get a wrong response", "Bonjour", resp);
-       
+
         resp = proxy.greetMe("Willem");
         assertEquals("Get a wrong response", "Hello Willem", resp);
-        
+
         proxy.greetMeOneWay(System.getProperty("user.name"));
 
         try {
@@ -57,8 +55,8 @@ public class CxfHttpJmsClientServerTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {        
-        return new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/CxfRouteCamelContext.xml"});
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(new String[] {"/META-INF/spring/CxfRouteCamelContext.xml"});
     }
 
 }
