@@ -27,6 +27,7 @@
             <package>org.apache.camel.spring.issues</package>
             <excludes>**/*MyInjectionRouteBuilder*</excludes>
             <excludes>**/*SampleInitializingRouteBuilder*</excludes>
+            <excludes>**/*MyCoolRoute*</excludes>
             <excludes>*contextscan*</excludes>
         </packageScan>
     </camelContext>
