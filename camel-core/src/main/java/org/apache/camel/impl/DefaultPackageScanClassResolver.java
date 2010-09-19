@@ -270,7 +270,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                         // load resources using http/https
                         // sonic ESB requires to be loaded using a regular URLConnection
                         if (log.isTraceEnabled()) {
-                            log.trace("Loading from jar using http/https: " + urlPath);
+                            log.trace("Loading from jar using url: " + urlPath);
                         }
                         URL urlStream = new URL(urlPath);
                         URLConnection con = urlStream.openConnection();
