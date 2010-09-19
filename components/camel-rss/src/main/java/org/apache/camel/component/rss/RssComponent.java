@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.rss;
 
-import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -48,8 +47,9 @@ public class RssComponent extends FeedComponent {
         // for the http feed
         String feedUri;
         if (!parameters.isEmpty()) {
-            URI remainingUri = URISupport.createRemainingURI(new URI(remaining), CastUtils.cast(parameters));
-            feedUri = remainingUri.toString();
+            Map<Object, Object> options = new LinkedHashMap<Object, Object>(parameters);
+            String query = URISupport.createQueryString(options);
+            feedUri = remaining + "?" + query;
         } else {
             feedUri = remaining;
         }
