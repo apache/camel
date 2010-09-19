@@ -25,6 +25,8 @@ import javax.xml.ws.Holder;
         endpointInterface = "org.apache.camel.wsdl_first.Person")
 public class PersonImplWithWsdl implements Person {
 
+    private String reply = "Bonjour";
+
     public void getPerson(Holder<String> personId, Holder<String> ssn,
             Holder<String> name) throws UnknownPersonFault {
         if (personId.value == null || personId.value.length() == 0) {
@@ -33,8 +35,15 @@ public class PersonImplWithWsdl implements Person {
             fault.setPersonId(personId.value);
             throw new UnknownPersonFault("Get the null value of person name", fault);
         }
-        name.value = "Bonjour";
+        name.value = reply;
         ssn.value = "000-000-0000";
     }
 
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
 }
