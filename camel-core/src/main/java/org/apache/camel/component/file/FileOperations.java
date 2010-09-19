@@ -169,15 +169,14 @@ public class FileOperations implements GenericFileOperations<File> {
 
             // is the body file based
             File source = null;
-            if (exchange.getIn().getBody() instanceof File || exchange.getIn().getBody() instanceof GenericFile) {
-                source = exchange.getIn().getBody(File.class);
-            }
+            // get the File Object from in message
+            source = exchange.getIn().getBody(File.class);            
 
             if (source != null) {
                 // okay we know the body is a file type
 
                 // so try to see if we can optimize by renaming the local work path file instead of doing
-                // a full file to file copy, as the local work copy is to be deleted afterwords anyway
+                // a full file to file copy, as the local work copy is to be deleted afterwards anyway
                 // local work path
                 File local = exchange.getIn().getHeader(Exchange.FILE_LOCAL_WORK_PATH, File.class);
                 if (local != null && local.exists()) {
@@ -287,8 +286,8 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     /**
-     * Creates and prepares the output file channel. Will position itself in correct position if eg. it should append
-     * or override any existing content.
+     * Creates and prepares the output file channel. Will position itself in correct position if the file is writable
+     *  eg. it should append or override any existing content.
      */
     private FileChannel prepareOutputFileChannel(File target, FileChannel out) throws IOException {
         if (endpoint.getFileExist() == GenericFileExist.Append) {
