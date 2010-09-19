@@ -67,7 +67,7 @@
     <geronimo-jsp-spec-version>1.0.1</geronimo-jsp-spec-version>
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
     <geronimo-servlet-spec-version>1.1.1</geronimo-servlet-spec-version>
-    <groovy-version>1.7.4</groovy-version>
+    <groovy-version>1.7.5</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
     <hamcrest-version>1.2-dev1</hamcrest-version>
     <hawtbuf-version>1.2</hawtbuf-version>
