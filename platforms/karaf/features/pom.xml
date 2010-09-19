@@ -68,7 +68,7 @@
       <geronimo-ws-metadata-spec-version>1.1.2</geronimo-ws-metadata-spec-version>
       <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version>
       <hamcrest-bundle-version>1.2-dev1_1</hamcrest-bundle-version>
-      <hibernate-validator-bundle-version>4.0.2.GA_1</hibernate-validator-bundle-version>
+      <hibernate-validator-bundle-version>4.1.0.Final_1</hibernate-validator-bundle-version>
       <ibatis-bundle-version>2.3.4.726_2</ibatis-bundle-version>
       <jackrabbit-version>1.5.3</jackrabbit-version>
       <jaxb-bundle-version>2.1.13_1</jaxb-bundle-version>

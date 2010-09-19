@@ -30,7 +30,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <hibernate-validator.version>4.0.2.GA</hibernate-validator.version>
+        <hibernate-validator.version>4.1.0.Final</hibernate-validator.version>
         <camel.osgi.export.pkg>org.apache.camel.component.bean.validator.*</camel.osgi.export.pkg>
     </properties>
 
