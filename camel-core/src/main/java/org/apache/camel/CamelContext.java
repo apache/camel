@@ -403,7 +403,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param routeId the route id
      * @throws Exception is thrown if the route could not be shutdown for whatever reason
-     * @deprecated use {@link #stopRoute(String)}
+     * @deprecated use {@link #stopRoute(String)} and {@link #removeRoute(String)}
      */
     @Deprecated
     void shutdownRoute(String routeId) throws Exception;
@@ -415,7 +415,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param timeout  timeout
      * @param timeUnit the unit to use
      * @throws Exception is thrown if the route could not be shutdown for whatever reason
-     * @deprecated use {@link #stopRoute(String, long, java.util.concurrent.TimeUnit)}
+     * @deprecated use {@link #stopRoute(String, long, java.util.concurrent.TimeUnit)} and {@link #removeRoute(String)}
      */
     @Deprecated
     void shutdownRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
