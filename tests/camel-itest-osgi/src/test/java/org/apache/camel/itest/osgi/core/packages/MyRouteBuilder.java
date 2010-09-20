@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi.packages;
+package org.apache.camel.itest.osgi.core.packages;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;

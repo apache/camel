@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi.validator;
+package org.apache.camel.itest.osgi.spring.validator;
 
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
@@ -57,7 +57,7 @@ public class ValidatorRouteTest extends OSGiIntegrationTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .doTry()
-                        .to("validator:org/apache/camel/itest/osgi/validator/schema.xsd")
+                        .to("validator:org/apache/camel/itest/osgi/spring/validator/schema.xsd")
                         .to("mock:valid")
                     .doCatch(ValidationException.class)
                         .to("mock:invalid")

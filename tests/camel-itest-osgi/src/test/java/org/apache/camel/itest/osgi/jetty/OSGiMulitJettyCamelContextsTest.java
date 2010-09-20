@@ -53,7 +53,7 @@ public class OSGiMulitJettyCamelContextsTest extends OSGiIntegrationTestSupport 
         
         endpointURI = "http://localhost:9010/context1/";
         try {
-            response = template.requestBody(endpointURI, "Hello World", String.class);
+            template.requestBody(endpointURI, "Hello World", String.class);
             fail("We are expect the exception here");
         } catch (Exception ex) {
             assertTrue("Get the wrong exception.", ex instanceof CamelExecutionException);
@@ -63,8 +63,7 @@ public class OSGiMulitJettyCamelContextsTest extends OSGiIntegrationTestSupport 
         response = template.requestBody(endpointURI, "Hello World", String.class);
         assertEquals("response is " , "camelContext2", response);
     }
-    
-    
+
     @Configuration
     public static Option[] configure() throws Exception {
         

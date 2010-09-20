@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi.seda;
+package org.apache.camel.itest.osgi.core.seda;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;

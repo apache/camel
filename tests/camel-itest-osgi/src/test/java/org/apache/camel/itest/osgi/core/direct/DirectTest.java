@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi.file;
+package org.apache.camel.itest.osgi.core.direct;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,24 +24,25 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-public class FileComponentTest extends OSGiIntegrationTestSupport {
+public class DirectTest extends OSGiIntegrationTestSupport {
     
     @Test
-    public void testFileProducer() throws Exception {
-        deleteDirectory("myfile");
-        MockEndpoint result = getMockEndpoint("mock:test");
-        result.expectedMessageCount(1);        
-        template.sendBody("direct:simple", "Hello");
-        assertMockEndpointsSatisfied();  
-    }
+    public void testSendMessage() throws Exception {
+        MockEndpoint mock =  getMandatoryEndpoint("mock:result", MockEndpoint.class);
+        assertNotNull("The mock endpoint should not be null", mock);
         
-    protected RouteBuilder createRouteBuilder() {
+        mock.expectedBodiesReceived("Hello World");
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();        
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
-                from("direct:simple").to("file:myfile");
-                from("file:myfile").to("mock:test");
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("mock:result");
             }
         };
     }
-
 }

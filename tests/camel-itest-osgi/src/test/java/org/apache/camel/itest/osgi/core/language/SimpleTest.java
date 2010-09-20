@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi.groovy;
+package org.apache.camel.itest.osgi.core.language;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -33,20 +33,21 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
-public class GroovyTest extends OSGiIntegrationTestSupport {
+public class SimpleTest extends OSGiIntegrationTestSupport {
     
     @Test
-    public void testGroovyLanguage() throws Exception {
+    public void testSimpleLanguage() throws Exception {        
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceived("Hello is processed!");
-        template.sendBody("direct:groovy", "Hello");
+        result.expectedBodiesReceived("Hello IS processed!");
+        template.sendBody("direct:simple", "Hello");
         result.assertIsSatisfied();
     }
-        
+    
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:groovy").setBody().groovy("request.body + ' is processed!'").to("mock:result");
+                from("direct:simple").setBody().simple("${body} IS processed!").to("mock:result");
             }
         };
     }
@@ -61,7 +62,7 @@ public class GroovyTest extends OSGiIntegrationTestSupport {
             
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
-                          "camel-core", "camel-test", "camel-groovy"),
+                          "camel-core", "camel-test"),
             
             workingDirectory("target/paxrunner/"),
 

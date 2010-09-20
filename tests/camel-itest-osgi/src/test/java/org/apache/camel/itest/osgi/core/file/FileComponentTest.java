@@ -14,31 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi.packages;
+package org.apache.camel.itest.osgi.core.file;
 
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
+import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 @RunWith(JUnit4TestRunner.class)
-public class OSGiPackageScanTest extends OSGiIntegrationSpringTestSupport {
-
-    @Test
-    public void testSendMessage() throws Exception {
-        MockEndpoint mock =  getMandatoryEndpoint("mock:result", MockEndpoint.class);
-        assertNotNull("The mock endpoint should not be null", mock);
-        
-        mock.expectedBodiesReceived("Hello World");
-        template.sendBody("direct:start", "Hello World");
-        assertMockEndpointsSatisfied();        
-    }
+public class FileComponentTest extends OSGiIntegrationTestSupport {
     
-    @Override
-    protected OsgiBundleXmlApplicationContext createApplicationContext() {
-        return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/packages/CamelContext.xml"});
+    @Test
+    public void testFileProducer() throws Exception {
+        deleteDirectory("myfile");
+        MockEndpoint result = getMockEndpoint("mock:test");
+        result.expectedMessageCount(1);        
+        template.sendBody("direct:simple", "Hello");
+        assertMockEndpointsSatisfied();  
+    }
+        
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:simple").to("file:myfile");
+                from("file:myfile").to("mock:test");
+            }
+        };
     }
 
 }

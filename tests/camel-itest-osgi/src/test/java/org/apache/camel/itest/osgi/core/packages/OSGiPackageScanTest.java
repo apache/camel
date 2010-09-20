@@ -14,40 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi.xslt;
+package org.apache.camel.itest.osgi.core.packages;
 
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 @RunWith(JUnit4TestRunner.class)
-public class XsltRouteTest extends OSGiIntegrationTestSupport {
+public class OSGiPackageScanTest extends OSGiIntegrationSpringTestSupport {
 
     @Test
-    public void testXsltRoute() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
-        mock.message(0).body().isInstanceOf(String.class);
-
-        template.sendBody("direct:start", "<hello>world!</hello>");
-
-        assertMockEndpointsSatisfied();
+    public void testSendMessage() throws Exception {
+        MockEndpoint mock =  getMandatoryEndpoint("mock:result", MockEndpoint.class);
+        assertNotNull("The mock endpoint should not be null", mock);
+        
+        mock.expectedBodiesReceived("Hello World");
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();        
     }
-
+    
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                    .to("xslt:org/apache/camel/itest/osgi/xslt/example.xsl")
-                    .to("log:result")
-                    .to("mock:result");
-            }
-        };
+    protected OsgiBundleXmlApplicationContext createApplicationContext() {
+        return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/core/packages/CamelContext.xml"});
     }
 
 }

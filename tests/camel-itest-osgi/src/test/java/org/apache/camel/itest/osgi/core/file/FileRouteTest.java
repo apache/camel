@@ -14,40 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi.file;
+package org.apache.camel.itest.osgi.core.file;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-public class FileRouteDelayTest extends OSGiIntegrationTestSupport {
+public class FileRouteTest extends OSGiIntegrationTestSupport {
 
     @Test
-    public void testFileRouteDelay() throws Exception {
+    public void testFileRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
+        mock.expectedBodiesReceived("Hello World");
         // should be moved to .camel when done
         mock.expectedFileExists("target/data/.camel/hello.txt");
-        mock.expectedFileExists("target/data/.camel/bye.txt");
-
-        StopWatch watch = new StopWatch();
 
         template.sendBodyAndHeader("file:target/data", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Thread.sleep(3000);
-
-        template.sendBodyAndHeader("file:target/data", "Bye World", Exchange.FILE_NAME, "bye.txt");
-
         assertMockEndpointsSatisfied();
-
-        long delta = watch.stop();
-        assertTrue("Should take 6 sec or longer, was " + delta, delta > 5500);
     }
 
     @Override
@@ -58,7 +47,7 @@ public class FileRouteDelayTest extends OSGiIntegrationTestSupport {
                 // delete the data directory
                 deleteDirectory("target/data");
 
-                from("file:target/data?delay=6000").convertBodyTo(String.class).to("mock:result");
+                from("file:target/data").convertBodyTo(String.class).to("mock:result");
             }
         };
     }
