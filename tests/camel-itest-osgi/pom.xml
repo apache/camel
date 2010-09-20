@@ -36,6 +36,11 @@
       <id>biz.aQute</id>
       <url>http://www.aqute.biz/repo</url>
     </repository>
+    <repository>
+      <id>hapi</id>
+      <name>HAPI Maven Repository</name>
+      <url>http://hl7api.sourceforge.net/m2/</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -107,6 +112,17 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-hawtdb</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-hl7</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ca.uhn.hapi</groupId>
+      <artifactId>hapi-structures-v24</artifactId>
+      <version>1.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
