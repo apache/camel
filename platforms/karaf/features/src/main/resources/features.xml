@@ -318,7 +318,7 @@
     <bundle>mvn:org.apache.camel/camel-jasypt/${pom.version}</bundle>
     <bundle>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle>wrap:mvn:com.ibm.icu/icu4j/${icu4j-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jasypt/${jasypt-bundle-version}</bundle>
   </feature>
   <feature name='camel-jaxb' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
@@ -591,6 +591,7 @@
   <feature name='camel-bean-validator' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr303-api-1.0.0/${servicemix-specs-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hibernate-validator/${hibernate-validator-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-bean-validator/${pom.version}</bundle>
   </feature>
