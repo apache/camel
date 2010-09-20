@@ -18,6 +18,7 @@ package org.apache.camel.osgi;
 
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.Registry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -30,6 +31,7 @@ import org.springframework.osgi.context.BundleContextAware;
 public class CamelContextFactory implements BundleContextAware {
     private static final transient Log LOG = LogFactory.getLog(CamelContextFactory.class);
     private BundleContext bundleContext;
+    private Registry registry;
 
     public BundleContext getBundleContext() {
         return bundleContext;
@@ -41,14 +43,28 @@ public class CamelContextFactory implements BundleContextAware {
         }
         this.bundleContext = bundleContext;
     }
-    
+
+    public Registry getRegistry() {
+        return registry;
+    }
+
+    public void setRegistry(Registry registry) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Using Registry: " + registry);
+        }
+        this.registry = registry;
+    }
+
     protected DefaultCamelContext newCamelContext() {
-        return new OsgiDefaultCamelContext(bundleContext);
+        if (registry != null) {
+            return new OsgiDefaultCamelContext(bundleContext, registry);
+        } else {
+            return new OsgiDefaultCamelContext(bundleContext);
+        }
     }
     
     public DefaultCamelContext createContext() {
-        LOG.debug("Creating DefaultCamelContext");
-        return newCamelContext();        
+        return newCamelContext();
     }
-    
+
 }

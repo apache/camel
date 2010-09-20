@@ -32,7 +32,6 @@ public class MockXpathTest extends ContextTestSupport {
                
         template.sendBody("direct:start", "<foo>bar</foo>");
 
-        
         assertMockEndpointsSatisfied();
     }
 

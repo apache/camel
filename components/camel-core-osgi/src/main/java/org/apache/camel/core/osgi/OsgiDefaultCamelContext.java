@@ -24,16 +24,26 @@ import org.osgi.framework.BundleContext;
 public class OsgiDefaultCamelContext extends DefaultCamelContext {
 
     private final BundleContext bundleContext;
+    private final Registry registry;
 
     public OsgiDefaultCamelContext(BundleContext bundleContext) {
+        this(bundleContext, null);
+    }
+
+    public OsgiDefaultCamelContext(BundleContext bundleContext, Registry registry) {
         super();
         this.bundleContext = bundleContext;
+        this.registry = registry;
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
     }
 
     @Override
     protected Registry createRegistry() {
-        return OsgiCamelContextHelper.wrapRegistry(this, super.createRegistry(), bundleContext);
+        if (registry != null) {
+            return OsgiCamelContextHelper.wrapRegistry(this, registry, bundleContext);
+        } else {
+            return OsgiCamelContextHelper.wrapRegistry(this, super.createRegistry(), bundleContext);
+        }
     }
 
     @Override

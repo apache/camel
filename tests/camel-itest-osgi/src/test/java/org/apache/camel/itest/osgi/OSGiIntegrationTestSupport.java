@@ -52,14 +52,16 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         }
         throw new RuntimeException("Bundle " + symbolicName + " does not exist");
     }
-
         
     protected CamelContext createCamelContext() throws Exception {
-        setThreadContextClassLoader();
-        CamelContextFactory factory = new CamelContextFactory();
-        factory.setBundleContext(bundleContext);
         LOG.info("Get the bundleContext is " + bundleContext);
         LOG.info("Application installed as bundle id: " + bundleContext.getBundle().getBundleId());
+
+        setThreadContextClassLoader();
+
+        CamelContextFactory factory = new CamelContextFactory();
+        factory.setBundleContext(bundleContext);
+        factory.setRegistry(createRegistry());
         return factory.createContext();
     }
     
