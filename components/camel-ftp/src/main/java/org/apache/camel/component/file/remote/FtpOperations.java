@@ -160,7 +160,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 login = client.login(username, configuration.getPassword());
             } else {
                 log.trace("Attempting to login anonymous");
-                login = client.login("anonymous", null);
+                login = client.login("anonymous", "");
             }
             if (log.isTraceEnabled()) {
                 log.trace("User " + (username != null ? username : "anonymous") + " logged in: " + login);
