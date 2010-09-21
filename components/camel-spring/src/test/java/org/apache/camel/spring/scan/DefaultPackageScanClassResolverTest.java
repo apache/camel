@@ -39,6 +39,13 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         annotations.add(org.apache.camel.spring.scan.ScannableOne.class);
         annotations.add(org.apache.camel.spring.scan.ScannableTwo.class);
     }
+    
+    public void testAccepableSchema() {
+        assertTrue("We should not accept the test by default!", resolver.isAcceptableScheme("test://test"));
+        resolver.setAcceptableSchemes("test:;test2:");
+        assertTrue("We should accept the test:!", resolver.isAcceptableScheme("test://test"));
+        assertTrue("We should accept the test2:!", resolver.isAcceptableScheme("test2://test"));
+    }
 
     public void testFindByAnnotationWithoutExtraFilters() {
         Set<Class<?>> scanned = resolver.findAnnotated(org.apache.camel.spring.scan.ScannableOne.class, scanPackage);
