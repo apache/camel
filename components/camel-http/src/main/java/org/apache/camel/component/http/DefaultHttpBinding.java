@@ -216,11 +216,13 @@ public class DefaultHttpBinding implements HttpBinding {
         }
 
         // append headers
-        for (String key : message.getHeaders().keySet()) {
-            String value = message.getHeader(key, String.class);
-            if (headerFilterStrategy != null
+        // must use entrySet to ensure case of keys is preserved
+        for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (value != null && headerFilterStrategy != null
                     && !headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                response.setHeader(key, value);
+                response.setHeader(key, value.toString());
             }
         }
 

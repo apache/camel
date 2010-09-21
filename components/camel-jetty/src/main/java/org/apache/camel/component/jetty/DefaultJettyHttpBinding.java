@@ -83,6 +83,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         answer.setBody(extractResponseBody(exchange, httpExchange));
 
         // propagate HTTP response headers
+        // must use entrySet to ensure case of keys is preserved
         for (Map.Entry<String, String> entry : httpExchange.getHeaders().entrySet()) {
             String name = entry.getKey();
             String value = entry.getValue();
