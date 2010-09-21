@@ -18,11 +18,19 @@ package org.apache.camel.impl;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * {@link org.apache.camel.spi.UuidGenerator} which is a fast implementation based on
+ * how <a href="http://activemq.apache.org/>Apache ActiveMQ</a> generates its UUID.
+ * <p/>
+ * This implementation is not synchronized but it leverages API which may not be accessible
+ * in the cloud (such as Google App Engine).
+ */
 public class ActiveMQUuidGenerator implements UuidGenerator {
 
     private static final transient Log LOG = LogFactory.getLog(ActiveMQUuidGenerator.class); 
@@ -30,7 +38,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
     private static int instanceCount;
     private static String hostName;
     private String seed;
-    private long sequence;
+    private final AtomicLong sequence = new AtomicLong(1);
 
     static {
         String stub = "";
@@ -52,7 +60,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
                 Thread.sleep(100);
                 ss.close();
             } catch (Exception ioe) {
-                LOG.warn("Could not generate unique stub", ioe);
+                LOG.warn("Cannot generate unique stub", ioe);
             }
         } else {
             hostName = "localhost";
@@ -82,7 +90,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
     }
 
     public String generateUuid() {
-        return this.seed + (this.sequence++);
+        return this.seed + sequence.getAndIncrement();
     }
 
     /**

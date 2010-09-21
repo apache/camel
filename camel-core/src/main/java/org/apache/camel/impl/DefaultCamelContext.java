@@ -180,7 +180,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private ExecutorServiceStrategy executorServiceStrategy = new DefaultExecutorServiceStrategy(this);
     private Debugger debugger;
-    private UuidGenerator uuidGenerator = new DefaultUuidGenerator();
+    private UuidGenerator uuidGenerator = new JavaUuidGenerator();
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
 

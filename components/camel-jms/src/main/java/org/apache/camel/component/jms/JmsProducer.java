@@ -30,7 +30,6 @@ import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate;
 import org.apache.camel.component.jms.reply.ReplyManager;
 import org.apache.camel.component.jms.reply.UseMessageIdAsCorrelationIdMessageSentCallback;
 import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.impl.DefaultUuidGenerator;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ValueHolder;
@@ -368,8 +367,8 @@ public class JmsProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         super.doStart();
         if (uuidGenerator == null) {
-            // use the default generator
-            uuidGenerator = new DefaultUuidGenerator();
+            // use the generator configured on the camel context
+            uuidGenerator = getEndpoint().getCamelContext().getUuidGenerator();
         }
     }
 

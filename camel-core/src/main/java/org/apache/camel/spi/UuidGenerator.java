@@ -16,12 +16,15 @@
  */
 package org.apache.camel.spi;
 
+/**
+ * Generator to generate UUID strings.
+ */
 public interface UuidGenerator {
 
     /**
      * Generates a UUID string representation.  
      * 
-     * @return a UUID string.
+     * @return the unique id.
      */
     String generateUuid();
 }

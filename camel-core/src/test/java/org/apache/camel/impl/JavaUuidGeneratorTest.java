@@ -16,13 +16,22 @@
  */
 package org.apache.camel.impl;
 
-import java.util.UUID;
+import junit.framework.TestCase;
 
-import org.apache.camel.spi.UuidGenerator;
-
-public class DefaultUuidGenerator implements UuidGenerator {
+public class JavaUuidGeneratorTest extends TestCase {
     
-    public String generateUuid() {
-        return UUID.randomUUID().toString();
+    private JavaUuidGenerator uuidGenerator;
+
+    public void setUp() throws Exception {
+        uuidGenerator = new JavaUuidGenerator();
+    }
+
+    public void testGenerateUUID() {
+        String firstUUID = uuidGenerator.generateUuid();
+        String secondUUID = uuidGenerator.generateUuid();
+        
+        assertTrue(firstUUID.matches("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$"));
+        assertTrue(secondUUID.matches("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$"));
+        assertFalse(firstUUID.equals(secondUUID));
     }
 }

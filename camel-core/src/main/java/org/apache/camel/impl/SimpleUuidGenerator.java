@@ -20,9 +20,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.spi.UuidGenerator;
 
+/**
+ * This implementation uses a counter which increments by one
+ */
 public class SimpleUuidGenerator implements UuidGenerator {
     
-    private AtomicLong id = new AtomicLong(1);
+    private final AtomicLong id = new AtomicLong(1);
 
     public String generateUuid() {
         return String.valueOf(id.getAndIncrement());

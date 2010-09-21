@@ -16,22 +16,19 @@
  */
 package org.apache.camel.impl;
 
-import junit.framework.TestCase;
+import java.util.UUID;
 
-public class DefaultUuidGeneratorTest extends TestCase {
+import org.apache.camel.spi.UuidGenerator;
+
+/**
+ * This implementation uses the {@link UUID} from Java.
+ * <p/>
+ * The implementation of {@link UUID} is synchronized and therefore
+ * other {@link org.apache.camel.spi.UuidGenerator} may be faster in high concurrent systems.
+ */
+public class JavaUuidGenerator implements UuidGenerator {
     
-    private DefaultUuidGenerator uuidGenerator;
-
-    public void setUp() throws Exception {
-        uuidGenerator = new DefaultUuidGenerator();
-    }
-
-    public void testGenerateUUID() {
-        String firstUUID = uuidGenerator.generateUuid();
-        String secondUUID = uuidGenerator.generateUuid();
-        
-        assertTrue(firstUUID.matches("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$"));
-        assertTrue(secondUUID.matches("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$"));
-        assertFalse(firstUUID.equals(secondUUID));
+    public String generateUuid() {
+        return UUID.randomUUID().toString();
     }
 }

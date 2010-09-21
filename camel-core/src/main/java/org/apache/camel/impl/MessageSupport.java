@@ -194,7 +194,7 @@ public abstract class MessageSupport implements Message {
         }
         // fall back to the default UUID generator
         if (uuid == null) {
-            uuid = new DefaultUuidGenerator().generateUuid();
+            uuid = new JavaUuidGenerator().generateUuid();
         }
         return uuid;
     }
