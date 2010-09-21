@@ -41,7 +41,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
     }
     
     public void testAccepableSchema() {
-        assertTrue("We should not accept the test by default!", resolver.isAcceptableScheme("test://test"));
+        assertFalse("We should not accept the test by default!", resolver.isAcceptableScheme("test://test"));
         resolver.setAcceptableSchemes("test:;test2:");
         assertTrue("We should accept the test:!", resolver.isAcceptableScheme("test://test"));
         assertTrue("We should accept the test2:!", resolver.isAcceptableScheme("test2://test"));

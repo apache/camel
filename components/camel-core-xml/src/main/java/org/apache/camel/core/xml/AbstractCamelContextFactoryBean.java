@@ -453,14 +453,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         } else if (camelJMXAgent != null) {
             LOG.info("JMXAgent enabled: " + camelJMXAgent);
             DefaultManagementAgent agent = new DefaultManagementAgent(getContext());
-            agent.setConnectorPort(parseInteger(camelJMXAgent.getConnectorPort()));
-            agent.setCreateConnector(parseBoolean(camelJMXAgent.getCreateConnector()));
-            agent.setMBeanObjectDomainName(parseText(camelJMXAgent.getMbeanObjectDomainName()));
-            agent.setMBeanServerDefaultDomain(parseText(camelJMXAgent.getMbeanServerDefaultDomain()));
-            agent.setRegistryPort(parseInteger(camelJMXAgent.getRegistryPort()));
-            agent.setServiceUrlPath(parseText(camelJMXAgent.getServiceUrlPath()));
-            agent.setUsePlatformMBeanServer(parseBoolean(camelJMXAgent.getUsePlatformMBeanServer()));
-            agent.setOnlyRegisterProcessorWithCustomId(parseBoolean(camelJMXAgent.getOnlyRegisterProcessorWithCustomId()));
+            agent.setConnectorPort(CamelContextHelper.parseInteger(getContext(), camelJMXAgent.getConnectorPort()));
+            agent.setCreateConnector(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getCreateConnector()));
+            agent.setMBeanObjectDomainName(CamelContextHelper.parseText(getContext(), camelJMXAgent.getMbeanObjectDomainName()));
+            agent.setMBeanServerDefaultDomain(CamelContextHelper.parseText(getContext(), camelJMXAgent.getMbeanServerDefaultDomain()));
+            agent.setRegistryPort(CamelContextHelper.parseInteger(getContext(), camelJMXAgent.getRegistryPort()));
+            agent.setServiceUrlPath(CamelContextHelper.parseText(getContext(), camelJMXAgent.getServiceUrlPath()));
+            agent.setUsePlatformMBeanServer(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getUsePlatformMBeanServer()));
+            agent.setOnlyRegisterProcessorWithCustomId(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getOnlyRegisterProcessorWithCustomId()));
 
             ManagementStrategy managementStrategy = new ManagedManagementStrategy(agent);
             getContext().setManagementStrategy(managementStrategy);
@@ -522,63 +522,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
 
     public void destroy() throws Exception {
         getContext().stop();
-    }
-
-    private String parseText(String text) throws Exception {
-        // ensure we support property placeholders
-        return getContext().resolvePropertyPlaceholders(text);
-    }
-
-    private Integer parseInteger(String text) throws Exception {
-        // ensure we support property placeholders
-        String s = getContext().resolvePropertyPlaceholders(text);
-        if (s != null) {
-            try {
-                return new Integer(s);
-            } catch (NumberFormatException e) {
-                if (s.equals(text)) {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] as an Integer.", e);
-                } else {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as an Integer.", e);
-                }
-            }
-        }
-        return null;
-    }
-
-    private Long parseLong(String text) throws Exception {
-        // ensure we support property placeholders
-        String s = getContext().resolvePropertyPlaceholders(text);
-        if (s != null) {
-            try {
-                return new Long(s);
-            } catch (NumberFormatException e) {
-                if (s.equals(text)) {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] as a Long.", e);
-                } else {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as a Long.", e);
-                }
-            }
-        }
-        return null;
-    }
-
-    private Boolean parseBoolean(String text) throws Exception {
-        // ensure we support property placeholders
-        String s = getContext().resolvePropertyPlaceholders(text);
-        if (s != null) {
-            s = s.trim().toLowerCase();
-            if (s.equals("true") || s.equals("false")) {
-                return new Boolean(s);
-            } else {
-                if (s.equals(text)) {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] as a Boolean.");
-                } else {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as a Boolean.");
-                }
-            }
-        }
-        return null;
     }
 
     // Properties
@@ -654,22 +597,22 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
      */
     protected void initCamelContext(T ctx) throws Exception {
         if (getStreamCache() != null) {
-            ctx.setStreamCaching(parseBoolean(getStreamCache()));
+            ctx.setStreamCaching(CamelContextHelper.parseBoolean(getContext(), getStreamCache()));
         }
         if (getTrace() != null) {
-            ctx.setTracing(parseBoolean(getTrace()));
+            ctx.setTracing(CamelContextHelper.parseBoolean(getContext(), getTrace()));
         }
         if (getDelayer() != null) {
-            ctx.setDelayer(parseLong(getDelayer()));
+            ctx.setDelayer(CamelContextHelper.parseLong(getContext(), getDelayer()));
         }
         if (getHandleFault() != null) {
-            ctx.setHandleFault(parseBoolean(getHandleFault()));
+            ctx.setHandleFault(CamelContextHelper.parseBoolean(getContext(), getHandleFault()));
         }
         if (getErrorHandlerRef() != null) {
             ctx.setErrorHandlerBuilder(new ErrorHandlerBuilderRef(getErrorHandlerRef()));
         }
         if (getAutoStartup() != null) {
-            ctx.setAutoStartup(parseBoolean(getAutoStartup()));
+            ctx.setAutoStartup(CamelContextHelper.parseBoolean(getContext(), getAutoStartup()));
         }
         if (getShutdownRoute() != null) {
             ctx.setShutdownRoute(getShutdownRoute());

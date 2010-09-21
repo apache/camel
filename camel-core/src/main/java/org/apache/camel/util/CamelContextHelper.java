@@ -179,4 +179,93 @@ public final class CamelContextHelper {
         return 1000;
     }
 
+    /**
+     * Parses the given text and handling property placeholders as well
+     *
+     * @param camelContext the camel context
+     * @param text  the text
+     * @return the parsed text, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws Exception is thrown if illegal argument
+     */
+    public static String parseText(CamelContext camelContext, String text) throws Exception {
+        // ensure we support property placeholders
+        return camelContext.resolvePropertyPlaceholders(text);
+    }
+
+    /**
+     * Parses the given text and converts it to an Integer and handling property placeholders as well
+     *
+     * @param camelContext the camel context
+     * @param text  the text
+     * @return the integer vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws Exception is thrown if illegal argument or type conversion not possible
+     */
+    public static Integer parseInteger(CamelContext camelContext, String text) throws Exception {
+        // ensure we support property placeholders
+        String s = camelContext.resolvePropertyPlaceholders(text);
+        if (s != null) {
+            try {
+                return camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, s);
+            } catch (NumberFormatException e) {
+                if (s.equals(text)) {
+                    throw new IllegalArgumentException("Error parsing [" + s + "] as an Integer.", e);
+                } else {
+                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as an Integer.", e);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Parses the given text and converts it to an Long and handling property placeholders as well
+     *
+     * @param camelContext the camel context
+     * @param text  the text
+     * @return the long vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws Exception is thrown if illegal argument or type conversion not possible
+     */
+    public static Long parseLong(CamelContext camelContext, String text) throws Exception {
+        // ensure we support property placeholders
+        String s = camelContext.resolvePropertyPlaceholders(text);
+        if (s != null) {
+            try {
+                return camelContext.getTypeConverter().mandatoryConvertTo(Long.class, s);
+            } catch (NumberFormatException e) {
+                if (s.equals(text)) {
+                    throw new IllegalArgumentException("Error parsing [" + s + "] as a Long.", e);
+                } else {
+                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as a Long.", e);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Parses the given text and converts it to an Boolean and handling property placeholders as well
+     *
+     * @param camelContext the camel context
+     * @param text  the text
+     * @return the boolean vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws Exception is thrown if illegal argument or type conversion not possible
+     */
+    public static Boolean parseBoolean(CamelContext camelContext, String text) throws Exception {
+        // ensure we support property placeholders
+        String s = camelContext.resolvePropertyPlaceholders(text);
+        if (s != null) {
+            s = s.trim().toLowerCase();
+            if (s.equals("true") || s.equals("false")) {
+                return camelContext.getTypeConverter().mandatoryConvertTo(Boolean.class, s);
+            } else {
+                if (s.equals(text)) {
+                    throw new IllegalArgumentException("Error parsing [" + s + "] as a Boolean.");
+                } else {
+                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as a Boolean.");
+                }
+            }
+        }
+        return null;
+    }
+
 }

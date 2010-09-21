@@ -19,9 +19,9 @@ package org.apache.camel.model;
 import java.util.List;
 
 /**
- * Helper for {@link org.apache.camel.model.RouteDefinition}
+ * Helper for {@link RouteDefinition}
  * <p/>
- * Utility methods to help preparing {@link org.apache.camel.model.RouteDefinition} before they are added to
+ * Utility methods to help preparing {@link RouteDefinition} before they are added to
  * {@link org.apache.camel.CamelContext}.
  *
  * @version $Revision$

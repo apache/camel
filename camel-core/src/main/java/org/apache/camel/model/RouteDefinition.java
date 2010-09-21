@@ -62,11 +62,11 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     private String group;
-    private Boolean streamCache;
-    private Boolean trace;
-    private Boolean handleFault;
-    private Long delayer;
-    private Boolean autoStartup = Boolean.TRUE;
+    private String streamCache;
+    private String trace;
+    private String handleFault;
+    private String delayer;
+    private String autoStartup = "true";
     private Integer startupOrder;
     private RoutePolicy routePolicy;
     private String routePolicyRef;
@@ -310,7 +310,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition noStreamCaching() {
-        setStreamCache(Boolean.FALSE);
+        setStreamCache("false");
         StreamCaching.noStreamCaching(getInterceptStrategies());
         return this;
     }
@@ -321,7 +321,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition streamCaching() {
-        setStreamCache(Boolean.TRUE);
+        setStreamCache("true");
         StreamCaching cache = StreamCaching.getStreamCaching(getInterceptStrategies());
         if (cache == null) {
             cache = new StreamCaching();
@@ -337,7 +337,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition noTracing() {
-        setTrace(false);
+        setTrace("false");
         return this;
     }
 
@@ -347,7 +347,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition tracing() {
-        setTrace(true);
+        setTrace("true");
         return this;
     }
 
@@ -357,7 +357,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition noHandleFault() {
-        setHandleFault(false);
+        setHandleFault("false");
         return this;
     }
 
@@ -367,7 +367,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition handleFault() {
-        setHandleFault(true);
+        setHandleFault("true");
         return this;
     }
 
@@ -377,7 +377,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition noDelayer() {
-        setDelayer(0L);
+        setDelayer("0");
         return this;
     }
 
@@ -388,7 +388,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition delayer(long delay) {
-        setDelayer(delay);
+        setDelayer("" + delay);
         return this;
     }
 
@@ -409,7 +409,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition noAutoStartup() {
-        setAutoStartup(Boolean.FALSE);
+        setAutoStartup("false");
         return this;
     }
 
@@ -513,48 +513,53 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         this.group = group;
     }
 
-    public Boolean isStreamCache() {
+    public String getStreamCache() {
         return streamCache;
     }
 
     @XmlAttribute
-    public void setStreamCache(Boolean streamCache) {
+    public void setStreamCache(String streamCache) {
         this.streamCache = streamCache;
     }
 
-    public Boolean isTrace() {
+    public String getTrace() {
         return trace;
     }
 
     @XmlAttribute
-    public void setTrace(Boolean trace) {
+    public void setTrace(String trace) {
         this.trace = trace;
     }
 
-    public Boolean isHandleFault() {
+    public String getHandleFault() {
         return handleFault;
     }
 
     @XmlAttribute
-    public void setHandleFault(Boolean handleFault) {
+    public void setHandleFault(String handleFault) {
         this.handleFault = handleFault;
     }
 
-    public Long getDelayer() {
+    public String getDelayer() {
         return delayer;
     }
 
     @XmlAttribute
-    public void setDelayer(Long delayer) {
+    public void setDelayer(String delayer) {
         this.delayer = delayer;
     }
 
-    public Boolean isAutoStartup() {
+    public String getAutoStartup() {
         return autoStartup;
     }
 
+    public boolean isAutoStartup(CamelContext camelContext) throws Exception {
+        Boolean isAutoStartup = CamelContextHelper.parseBoolean(camelContext, getAutoStartup());
+        return isAutoStartup != null && isAutoStartup;
+    }
+
     @XmlAttribute
-    public void setAutoStartup(Boolean autoStartup) {
+    public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
     }
 
@@ -635,53 +640,62 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
         // configure tracing
         if (trace != null) {
-            routeContext.setTracing(isTrace());
-            if (isTrace()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Tracing is enabled on route: " + this);
+            Boolean isTrace = CamelContextHelper.parseBoolean(camelContext, getTrace());
+            if (isTrace != null) {
+                routeContext.setTracing(isTrace);
+                if (isTrace) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Tracing is enabled on route: " + this);
+                    }
+                    // tracing is added in the DefaultChannel so we can enable it on the fly
                 }
-                // tracing is added in the DefaultChannel so we can enable it on the fly
             }
         }
 
         // configure stream caching
         if (streamCache != null) {
-            routeContext.setStreamCaching(isStreamCache());
-            if (isStreamCache()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("StreamCaching is enabled on route: " + this);
-                }
-                // only add a new stream cache if not already a global configured on camel context
-                if (StreamCaching.getStreamCaching(camelContext) == null) {
-                    addInterceptStrategy(new StreamCaching());
+            Boolean isStreamCache = CamelContextHelper.parseBoolean(camelContext, getStreamCache());
+            if (isStreamCache != null) {
+                routeContext.setStreamCaching(isStreamCache);
+                if (isStreamCache) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("StreamCaching is enabled on route: " + this);
+                    }
+                    // only add a new stream cache if not already a global configured on camel context
+                    if (StreamCaching.getStreamCaching(camelContext) == null) {
+                        addInterceptStrategy(new StreamCaching());
+                    }
                 }
             }
         }
 
         // configure handle fault
         if (handleFault != null) {
-            routeContext.setHandleFault(isHandleFault());
-            if (isHandleFault()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("HandleFault is enabled on route: " + this);
-                }
-                // only add a new handle fault if not already a global configured on camel context
-                if (HandleFault.getHandleFault(camelContext) == null) {
-                    addInterceptStrategy(new HandleFault());
+            Boolean isHandleFault = CamelContextHelper.parseBoolean(camelContext, getHandleFault());
+            if (isHandleFault != null) {
+                routeContext.setHandleFault(isHandleFault);
+                if (isHandleFault) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("HandleFault is enabled on route: " + this);
+                    }
+                    // only add a new handle fault if not already a global configured on camel context
+                    if (HandleFault.getHandleFault(camelContext) == null) {
+                        addInterceptStrategy(new HandleFault());
+                    }
                 }
             }
         }
 
         // configure delayer
         if (delayer != null) {
-            routeContext.setDelayer(getDelayer());
-            if (getDelayer() != null) {
-                long millis = getDelayer();
-                if (millis > 0) {
+            Long delayer = CamelContextHelper.parseLong(camelContext, getDelayer());
+            if (delayer != null) {
+                routeContext.setDelayer(delayer);
+                if (delayer > 0) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Delayer is enabled with: " + millis + " ms. on route: " + this);
+                        log.debug("Delayer is enabled with: " + delayer + " ms. on route: " + this);
                     }
-                    addInterceptStrategy(new Delayer(millis));
+                    addInterceptStrategy(new Delayer(delayer));
                 } else {
                     if (log.isDebugEnabled()) {
                         log.debug("Delayer is disabled on route: " + this);
@@ -705,11 +719,12 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
 
         // configure auto startup
-        if (autoStartup != null) {
+        Boolean isAutoStartup = CamelContextHelper.parseBoolean(camelContext, getAutoStartup());
+        if (isAutoStartup != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Using AutoStartup " + isAutoStartup() + " on route: " + this);
+                log.debug("Using AutoStartup " + isAutoStartup + " on route: " + this);
             }
-            routeContext.setAutoStartup(isAutoStartup());
+            routeContext.setAutoStartup(isAutoStartup);
         }
 
         // configure shutdown

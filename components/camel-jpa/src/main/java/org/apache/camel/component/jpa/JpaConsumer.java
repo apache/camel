@@ -292,9 +292,6 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
                     // Remove package name of the entity to be conform with JPA 1.0 spec
                     return QueryBuilder.query("select x from " + entityType.getSimpleName() + " x");
                 }
-                    
-
-                
             }
         }
     }
