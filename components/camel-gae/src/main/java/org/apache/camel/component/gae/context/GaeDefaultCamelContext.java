@@ -16,13 +16,22 @@
  */
 package org.apache.camel.component.gae.context;
 
+import org.apache.camel.impl.ActiveMQUuidGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.JavaUuidGenerator;
 
 public class GaeDefaultCamelContext extends DefaultCamelContext {
 
     @Override
     protected void doStart() throws Exception {
-        disableJMX(); // JMX not allowed on GAE
+        // JMX not allowed on GAE
+        disableJMX();
+
+        if (getUuidGenerator() instanceof ActiveMQUuidGenerator) {
+            // use java uuid generator as ActiveMQ uses JDK API which is not allowed on GAE
+            setUuidGenerator(new JavaUuidGenerator());
+        }
+
         super.doStart();
     }
 

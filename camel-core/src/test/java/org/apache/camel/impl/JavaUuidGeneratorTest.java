@@ -17,21 +17,36 @@
 package org.apache.camel.impl;
 
 import junit.framework.TestCase;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class JavaUuidGeneratorTest extends TestCase {
-    
-    private JavaUuidGenerator uuidGenerator;
 
-    public void setUp() throws Exception {
-        uuidGenerator = new JavaUuidGenerator();
-    }
+    private static final Log LOG = LogFactory.getLog(JavaUuidGeneratorTest.class);
 
     public void testGenerateUUID() {
+        JavaUuidGenerator uuidGenerator = new JavaUuidGenerator();
+
         String firstUUID = uuidGenerator.generateUuid();
         String secondUUID = uuidGenerator.generateUuid();
         
         assertTrue(firstUUID.matches("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$"));
         assertTrue(secondUUID.matches("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$"));
         assertFalse(firstUUID.equals(secondUUID));
+    }
+
+    public void testPerformance() {
+        JavaUuidGenerator uuidGenerator = new JavaUuidGenerator();
+        StopWatch watch = new StopWatch();
+
+        LOG.info("First id: " + uuidGenerator.generateUuid());
+        for (int i = 0; i < 500000; i++) {
+            uuidGenerator.generateUuid();
+        }
+        LOG.info("Last id:  " + uuidGenerator.generateUuid());
+
+        LOG.info("Took " + TimeUtils.printDuration(watch.stop()));
     }
 }

@@ -17,17 +17,19 @@
 package org.apache.camel.impl;
 
 import junit.framework.TestCase;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class ActiveMQUuidGeneratorTest extends TestCase {
     
+    private static final Log LOG = LogFactory.getLog(ActiveMQUuidGeneratorTest.class);
     private static final String PATTERN = "^ID-.*/\\d{4,5}-\\d{13}/\\d{1}-\\d{1}$";
-    private ActiveMQUuidGenerator uuidGenerator;
-
-    public void setUp() throws Exception {
-        uuidGenerator = new ActiveMQUuidGenerator();
-    }
 
     public void testGenerateUUID() {
+        ActiveMQUuidGenerator uuidGenerator = new ActiveMQUuidGenerator();
+
         String firstUUID = uuidGenerator.generateUuid();
         String secondUUID = uuidGenerator.generateUuid();
 
@@ -35,4 +37,18 @@ public class ActiveMQUuidGeneratorTest extends TestCase {
         assertTrue(secondUUID.matches(PATTERN));
         assertFalse(firstUUID.equals(secondUUID));
     }
+
+    public void testPerformance() {
+        ActiveMQUuidGenerator uuidGenerator = new ActiveMQUuidGenerator();
+        StopWatch watch = new StopWatch();
+
+        LOG.info("First id: " + uuidGenerator.generateUuid());
+        for (int i = 0; i < 500000; i++) {
+            uuidGenerator.generateUuid();
+        }
+        LOG.info("Last id:  " + uuidGenerator.generateUuid());
+
+        LOG.info("Took " + TimeUtils.printDuration(watch.stop()));
+    }
+
 }

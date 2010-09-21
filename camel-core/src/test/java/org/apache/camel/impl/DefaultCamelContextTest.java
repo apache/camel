@@ -61,7 +61,7 @@ public class DefaultCamelContextTest extends TestSupport {
         ctx.disableJMX();
         UuidGenerator uuidGenerator = ctx.getUuidGenerator();
         assertNotNull(uuidGenerator);
-        assertEquals(uuidGenerator.getClass(), JavaUuidGenerator.class);
+        assertEquals(uuidGenerator.getClass(), ActiveMQUuidGenerator.class);
     }
 
     public void testGetComponents() throws Exception {

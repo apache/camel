@@ -44,8 +44,6 @@ import org.eclipse.jetty.io.Buffer;
  */
 public class JettyContentExchange extends ContentExchange {
 
-    // TODO: Use the AsyncCallback API (CAMEL-2723)
-
     private static final transient Log LOG = LogFactory.getLog(JettyContentExchange.class);
 
     private final Map<String, String> headers = new LinkedHashMap<String, String>();

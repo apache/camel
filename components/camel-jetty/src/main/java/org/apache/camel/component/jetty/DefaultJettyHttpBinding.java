@@ -46,7 +46,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         Message in = exchange.getIn();
         if (!isThrowExceptionOnFailure()) {
             // if we do not use failed exception then populate response for all response codes
-            populateResponse(exchange, httpExchange, exchange.getIn(), getHeaderFilterStrategy(), responseCode);
+            populateResponse(exchange, httpExchange, in, getHeaderFilterStrategy(), responseCode);
         } else {
             if (responseCode >= 100 && responseCode < 300) {
                 // only populate response for OK response

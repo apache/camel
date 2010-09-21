@@ -17,17 +17,33 @@
 package org.apache.camel.impl;
 
 import junit.framework.TestCase;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class SimpleUuidGeneratorTest extends TestCase {
     
-    private SimpleUuidGenerator uuidGenerator;
-
-    public void setUp() throws Exception {
-        uuidGenerator = new SimpleUuidGenerator();
-    }
+    private static final Log LOG = LogFactory.getLog(SimpleUuidGeneratorTest.class);
 
     public void testGenerateUUID() {
+        SimpleUuidGenerator uuidGenerator = new SimpleUuidGenerator();
+
         assertEquals("1", uuidGenerator.generateUuid());
         assertEquals("2", uuidGenerator.generateUuid());
     }
+
+    public void testPerformance() {
+        SimpleUuidGenerator uuidGenerator = new SimpleUuidGenerator();
+        StopWatch watch = new StopWatch();
+
+        LOG.info("First id: " + uuidGenerator.generateUuid());
+        for (int i = 0; i < 500000; i++) {
+            uuidGenerator.generateUuid();
+        }
+        LOG.info("Last id:  " + uuidGenerator.generateUuid());
+
+        LOG.info("Took " + TimeUtils.printDuration(watch.stop()));
+    }
+
 }

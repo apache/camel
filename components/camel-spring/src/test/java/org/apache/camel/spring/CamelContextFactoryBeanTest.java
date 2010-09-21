@@ -18,7 +18,7 @@ package org.apache.camel.spring;
 
 import junit.framework.TestCase;
 
-import org.apache.camel.impl.JavaUuidGenerator;
+import org.apache.camel.impl.ActiveMQUuidGenerator;
 import org.apache.camel.impl.SimpleUuidGenerator;
 import org.apache.camel.spi.UuidGenerator;
 import org.springframework.context.support.StaticApplicationContext;
@@ -43,7 +43,7 @@ public class CamelContextFactoryBeanTest extends TestCase {
         
         UuidGenerator uuidGenerator = factory.getContext().getUuidGenerator();
         
-        assertTrue(uuidGenerator instanceof JavaUuidGenerator);
+        assertTrue(uuidGenerator instanceof ActiveMQUuidGenerator);
     }
     
     public void testGetCustomUuidGenerator() throws Exception {

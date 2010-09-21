@@ -39,6 +39,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
     private static String hostName;
     private String seed;
     private final AtomicLong sequence = new AtomicLong(1);
+    private final int length;
 
     static {
         String stub = "";
@@ -72,6 +73,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
     public ActiveMQUuidGenerator(String prefix) {
         synchronized (UNIQUE_STUB) {
             this.seed = prefix + UNIQUE_STUB + (instanceCount++) + "-";
+            this.length = seed.length() + ("" + Long.MAX_VALUE).length();
         }
     }
 
@@ -90,7 +92,10 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
     }
 
     public String generateUuid() {
-        return this.seed + sequence.getAndIncrement();
+        StringBuilder sb = new StringBuilder(length);
+        sb.append(seed);
+        sb.append(sequence.getAndIncrement());
+        return sb.toString();
     }
 
     /**

@@ -192,9 +192,9 @@ public abstract class MessageSupport implements Message {
         if (exchange != null) {
             uuid = exchange.getContext().getUuidGenerator().generateUuid();
         }
-        // fall back to the default UUID generator
+        // fall back to the simple UUID generator
         if (uuid == null) {
-            uuid = new JavaUuidGenerator().generateUuid();
+            uuid = new SimpleUuidGenerator().generateUuid();
         }
         return uuid;
     }
