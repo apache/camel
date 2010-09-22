@@ -35,7 +35,7 @@
   <properties>
     <compiler.fork>false</compiler.fork>
     <!-- Note that activemq dependency is only used for testing! -->
-    <activemq-version>5.4.0</activemq-version>
+    <activemq-version>5.4.1</activemq-version>
     <apacheds-version>1.5.4</apacheds-version>
     <aries-blueprint-version>0.1-incubating</aries-blueprint-version>
     <axiom-version>1.2.8</axiom-version>
