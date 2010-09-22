@@ -151,12 +151,15 @@ public final class FileUtil {
             return null;
         }
         int pos = name.lastIndexOf('/');
-        if (pos == -1) {
+        if (pos > 0) {
+            return name.substring(0, pos);
+        } else if (pos == 0) {
+            // name is actually the root path
+            return name;
+        } else {
             pos = name.lastIndexOf(File.separator);
         }
-        if (pos != -1) {
-            return name.substring(0, pos);
-        }
+
         // no path
         return null;
     }
