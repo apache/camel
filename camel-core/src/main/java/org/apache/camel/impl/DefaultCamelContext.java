@@ -872,9 +872,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             if (typeConverter == null) {
                 getTypeConverter();
             }
-            // type converter is usually the default one that also is the registry
-            if (typeConverter instanceof DefaultTypeConverter) {
-                typeConverterRegistry = (DefaultTypeConverter) typeConverter;
+            if (typeConverter instanceof TypeConverterRegistry) {
+                typeConverterRegistry = (TypeConverterRegistry) typeConverter;
             }
         }
         return typeConverterRegistry;

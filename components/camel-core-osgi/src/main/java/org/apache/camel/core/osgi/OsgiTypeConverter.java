@@ -27,6 +27,7 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.TypeConverterLoader;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -34,14 +35,14 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, ServiceTrackerCustomizer {
+public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterRegistry, ServiceTrackerCustomizer {
 
     private static final Log LOG = LogFactory.getLog(OsgiTypeConverter.class);
 
     private final BundleContext bundleContext;
     private final Injector injector;
     private final ServiceTracker tracker;
-    private volatile DefaultTypeConverter registry;
+    private volatile DefaultTypeConverter delegate;
 
     public OsgiTypeConverter(BundleContext bundleContext, Injector injector) {
         this.bundleContext = bundleContext;
@@ -52,7 +53,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     public Object addingService(ServiceReference serviceReference) {
         TypeConverterLoader loader = (TypeConverterLoader) bundleContext.getService(serviceReference);
         try {
-            loader.load(getRegistry());
+            loader.load(getDelegate());
         } catch (Throwable t) {
             LOG.debug("Error while loading type converter", t);
         }
@@ -63,7 +64,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     }
 
     public void removedService(ServiceReference serviceReference, Object o) {
-        this.registry = null;
+        this.delegate = null;
     }
 
     @Override
@@ -74,39 +75,60 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     @Override
     protected void doStop() throws Exception {
         this.tracker.close();
-        this.registry = null;
+        this.delegate = null;
     }
 
     public <T> T convertTo(Class<T> type, Object value) {
-        return getRegistry().convertTo(type, value);
+        return getDelegate().convertTo(type, value);
     }
 
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        return getRegistry().convertTo(type, exchange, value);
+        return getDelegate().convertTo(type, exchange, value);
     }
 
     public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
-        return getRegistry().mandatoryConvertTo(type, value);
+        return getDelegate().mandatoryConvertTo(type, value);
     }
 
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
-        return getRegistry().mandatoryConvertTo(type, exchange, value);
+        return getDelegate().mandatoryConvertTo(type, exchange, value);
     }
 
-    public DefaultTypeConverter getRegistry() {
-        if (registry == null) {
+    public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
+        getDelegate().addTypeConverter(toType, fromType, typeConverter);
+    }
+
+    public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
+        getDelegate().addFallbackTypeConverter(typeConverter, canPromote);
+    }
+
+    public TypeConverter lookup(Class<?> toType, Class<?> fromType) {
+        return getDelegate().lookup(toType, fromType);
+    }
+
+    public void setInjector(Injector injector) {
+        getDelegate().setInjector(injector);
+    }
+
+    public Injector getInjector() {
+        return getDelegate().getInjector();
+    }
+
+    public DefaultTypeConverter getDelegate() {
+        if (delegate == null) {
             synchronized (this) {
-                if (registry != null) {
-                    return registry;
+                if (delegate != null) {
+                    return delegate;
                 } else {
-                    registry = createRegistry();
+                    delegate = createRegistry();
                 }
             }
         }
-        return registry;
+        return delegate;
     }
 
     protected DefaultTypeConverter createRegistry() {
+        // base the osgi type converter on the default type converter
         DefaultTypeConverter reg = new DefaultTypeConverter(new DefaultPackageScanClassResolver() {
             @Override
             public Set<ClassLoader> getClassLoaders() {
@@ -125,6 +147,5 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         }
         return reg;
     }
-
 
 }

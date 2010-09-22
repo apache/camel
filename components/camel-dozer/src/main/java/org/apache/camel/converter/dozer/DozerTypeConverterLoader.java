@@ -16,7 +16,10 @@
  */
 package org.apache.camel.converter.dozer;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -28,13 +31,14 @@ import org.apache.commons.logging.LogFactory;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.dozer.classmap.ClassMap;
-import org.dozer.loader.CustomMappingsLoader;
-import org.dozer.loader.LoadMappingsResult;
+import org.dozer.classmap.MappingFileData;
+import org.dozer.loader.xml.MappingFileReader;
+import org.dozer.loader.xml.XMLParserFactory;
 
 /**
  * <code>DozerTypeConverterLoader</code> provides the mechanism for registering
  * a Dozer {@link Mapper} as {@link TypeConverter} for a {@link CamelContext}.
- * <p>
+ * <p/>
  * While a mapper can be explicitly supplied as a parameter the
  * {@link CamelContext}'s registry will also be searched for {@link Mapper}
  * instances. A {@link DozerTypeConverter} is created to wrap each
@@ -61,7 +65,7 @@ public class DozerTypeConverterLoader implements CamelContextAware {
      * register as a {@link TypeConverter} with the context
      *
      * @param camelContext the context to register the
-     *            {@link DozerTypeConverter} in
+     *                     {@link DozerTypeConverter} in
      */
     public DozerTypeConverterLoader(CamelContext camelContext) {
         init(camelContext, null);
@@ -73,8 +77,8 @@ public class DozerTypeConverterLoader implements CamelContextAware {
      * with the given context. It will also search the context for
      *
      * @param camelContext the context to register the
-     *            {@link DozerTypeConverter} in
-     * @param mapper the DozerMapperBean to be wrapped as a type converter.
+     *                     {@link DozerTypeConverter} in
+     * @param mapper       the DozerMapperBean to be wrapped as a type converter.
      */
     public DozerTypeConverterLoader(CamelContext camelContext, DozerBeanMapper mapper) {
         init(camelContext, mapper);
@@ -85,8 +89,8 @@ public class DozerTypeConverterLoader implements CamelContextAware {
      * with the {@link CamelContext}.
      *
      * @param camelContext the context to register the
-     *            {@link DozerTypeConverter} in
-     * @param mapper the DozerMapperBean to be wrapped as a type converter.
+     *                     {@link DozerTypeConverter} in
+     * @param mapper       the DozerMapperBean to be wrapped as a type converter.
      */
     public void init(CamelContext camelContext, DozerBeanMapper mapper) {
         this.camelContext = camelContext;
@@ -94,29 +98,39 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         if (mapper != null) {
             mappers.put("parameter", mapper);
         }
-        if (mappers.size() > 0) {
-            log.warn("Loaded %d dozer mappers from Camel's registry. Dozer is most efficient when there is a single mapper instance. Consider amalgamating instances.");
+        if (mappers.size() > 1) {
+            log.warn("Loaded " + mappers.size() + " Dozer mappers from Camel registry."
+                    + " Dozer is most efficient when there is a single mapper instance. Consider amalgamating instances.");
+        } else if (mappers.size() == 0) {
+            log.warn("No Dozer mappers found in Camel registry. You should add Dozer mappers as beans to the registry of the type: " + DozerBeanMapper.class.getName());
         }
 
         TypeConverterRegistry registry = camelContext.getTypeConverterRegistry();
         for (DozerBeanMapper dozer : mappers.values()) {
-            Map<String, ClassMap> all = loadMappings(dozer);
+            List<ClassMap> all = loadMappings(camelContext, dozer);
             DozerTypeConverter converter = new DozerTypeConverter(dozer);
-            for (ClassMap map : all.values()) {
+            for (ClassMap map : all) {
+                if (log.isInfoEnabled()) {
+                    log.info("Added " + map.getSrcClassName() + " -> " + map.getDestClassName() + " as type converter to: " + registry);
+                }
                 registry.addTypeConverter(map.getSrcClassToMap(), map.getDestClassToMap(), converter);
                 registry.addTypeConverter(map.getDestClassToMap(), map.getSrcClassToMap(), converter);
             }
         }
     }
 
-    private Map<String, ClassMap> loadMappings(DozerBeanMapper mapper) {
-        // TODO: This is a little wasteful as dozer has already parsed this
-        // information, if does not expose it though so it must be done again.
-        // Create a patch for Dozer to expose this.
-        CustomMappingsLoader customMappingsLoader = new CustomMappingsLoader();
-        LoadMappingsResult loadMappingsResult = customMappingsLoader.load(mapper.getMappingFiles());
-        Map<String, ClassMap> all = loadMappingsResult.getCustomMappings().getAll();
-        return all;
+    private List<ClassMap> loadMappings(CamelContext camelContext, DozerBeanMapper mapper) {
+        List<ClassMap> answer = new ArrayList<ClassMap>();
+
+        // load the class map using the class resolver so we can load from classpath in OSGi
+        MappingFileReader reader = new MappingFileReader(XMLParserFactory.getInstance());
+        for (String name : mapper.getMappingFiles()) {
+            URL url = camelContext.getClassResolver().loadResourceAsURL(name);
+            MappingFileData data = reader.read(url);
+            answer.addAll(data.getClassMaps());
+        }
+
+        return answer;
     }
 
     public CamelContext getCamelContext() {

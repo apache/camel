@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter.dozer;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.dozer.service.Customer;
@@ -33,14 +31,12 @@ public class DozerTypeConverterTest extends CamelTestSupport {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
         new DozerTypeConverterLoader(context, createMapper());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-
             @Override
             public void configure() throws Exception {
                 from("direct:service-in").bean(new CustomerProcessor()).to("mock:verify-model");
@@ -52,20 +48,19 @@ public class DozerTypeConverterTest extends CamelTestSupport {
     public void verifyCamelConversionViaDozer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:verify-model");
         mock.expectedMessageCount(1);
+
         template.sendBody("direct:service-in", createServiceCustomer());
-        mock.await(5, TimeUnit.SECONDS);
-        mock.assertIsSatisfied();
+
+        assertMockEndpointsSatisfied();
     }
 
     @Test
     public void verifyCustomerMapping() throws Exception {
-
         Mapper mapper = DozerTestArtifactsFactory.createMapper();
         Customer service = createServiceCustomer();
         org.apache.camel.converter.dozer.model.Customer model = mapper.map(service, org.apache.camel.converter.dozer.model.Customer.class);
         Customer roundTrip = mapper.map(model, Customer.class);
         assertEquals(service, roundTrip);
     }
-
 
 }

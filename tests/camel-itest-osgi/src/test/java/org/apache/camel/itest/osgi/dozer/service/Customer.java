@@ -14,26 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.dozer.model;
+package org.apache.camel.itest.osgi.dozer.service;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
+/**
+ * @version $Revision$
+ */
 public class Customer {
 
     private String firstName;
     private String lastName;
-    private Address address;
-
-    public Customer() {
-    }
-
-    public Customer(String firstName, String lastName, Address address) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-    }
+    private String street;
+    private String zip;
 
     public String getFirstName() {
         return firstName;
@@ -51,27 +42,20 @@ public class Customer {
         this.lastName = lastName;
     }
 
-    public Address getAddress() {
-        return address;
+    public String getStreet() {
+        return street;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setStreet(String street) {
+        this.street = street;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
+    public String getZip() {
+        return zip;
     }
 
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+    public void setZip(String zip) {
+        this.zip = zip;
     }
 
 }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter.dozer;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
@@ -37,8 +35,9 @@ public class SpringDozerTypeConverterTest extends CamelSpringTestSupport {
     public void verifyCamelConversionViaDozer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:verify-model");
         mock.expectedMessageCount(1);
+
         template.sendBody("direct:service-in", createServiceCustomer());
-        mock.await(5, TimeUnit.SECONDS);
-        mock.assertIsSatisfied();
+
+        assertMockEndpointsSatisfied();
     }
 }
