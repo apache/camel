@@ -524,10 +524,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         // check whether a file already exists
         String directory = FileUtil.onlyPath(name);
         if (directory == null) {
-            return false;
+            // assume current dir if no path could be extracted
+            directory = "";
         }
-
         String onlyName = FileUtil.stripPath(name);
+
         try {
             Vector files = channel.ls(directory);
             // can return either null or an empty list depending on FTP servers

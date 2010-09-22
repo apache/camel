@@ -458,15 +458,17 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         if (log.isTraceEnabled()) {
             log.trace("existsFile(" + name + ")");
         }
+
         // check whether a file already exists
         String directory = FileUtil.onlyPath(name);
-        if (directory == null) {
-            return false;
-        }
-
         String onlyName = FileUtil.stripPath(name);
         try {
-            String[] names = client.listNames(directory);
+            String[] names;
+            if (directory != null) {
+                names = client.listNames(directory);
+            } else {
+                names = client.listNames();
+            }
             // can return either null or an empty list depending on FTP servers
             if (names == null) {
                 return false;

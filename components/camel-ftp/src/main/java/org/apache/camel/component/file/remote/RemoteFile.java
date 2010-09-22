@@ -49,8 +49,7 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
         this.hostname = hostname;
     }
     
-    @Override
-    public char getFileSeparator() {
+    public static char getFileSeparator() {
         // always use / as separator for FTP
         return '/';
     }
