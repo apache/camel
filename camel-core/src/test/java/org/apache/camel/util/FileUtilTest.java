@@ -67,6 +67,8 @@ public class FileUtilTest extends TestCase {
 
     public void testStripPath() {
         assertEquals(null, FileUtil.stripPath(null));
+        assertEquals("", FileUtil.stripPath("/"));
+        assertEquals("foo.xml", FileUtil.stripPath("/foo.xml"));
         assertEquals("foo", FileUtil.stripPath("foo"));
         assertEquals("bar", FileUtil.stripPath("foo/bar"));
         assertEquals("bar", FileUtil.stripPath("/foo/bar"));
@@ -86,6 +88,8 @@ public class FileUtilTest extends TestCase {
         assertEquals("foo", FileUtil.onlyPath("foo/bar.xml"));
         assertEquals("/foo", FileUtil.onlyPath("/foo/bar.xml"));
         assertEquals("/foo/bar", FileUtil.onlyPath("/foo/bar/baz.xml"));
+        assertEquals("/", FileUtil.onlyPath("/foo.xml"));
+        assertEquals("/bar", FileUtil.onlyPath("/bar/foo.xml"));
     }
 
     public void testCompactPath() {
