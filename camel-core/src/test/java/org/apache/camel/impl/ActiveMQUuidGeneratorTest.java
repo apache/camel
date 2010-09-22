@@ -25,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 public class ActiveMQUuidGeneratorTest extends TestCase {
     
     private static final Log LOG = LogFactory.getLog(ActiveMQUuidGeneratorTest.class);
-    private static final String PATTERN = "^ID-.*/\\d{4,5}-\\d{13}/\\d{1}-\\d{1,10}$";
 
     public void testGenerateUUID() {
         ActiveMQUuidGenerator uuidGenerator = new ActiveMQUuidGenerator();
@@ -33,9 +32,7 @@ public class ActiveMQUuidGeneratorTest extends TestCase {
         String firstUUID = uuidGenerator.generateUuid();
         String secondUUID = uuidGenerator.generateUuid();
 
-        assertTrue(firstUUID.matches(PATTERN));
-        assertTrue(secondUUID.matches(PATTERN));
-        assertFalse(firstUUID.equals(secondUUID));
+        assertNotSame(firstUUID, secondUUID);
     }
 
     public void testPerformance() {
