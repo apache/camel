@@ -43,7 +43,7 @@ public class GenericFile<T>  {
     private GenericFileBinding<T> binding;
     private boolean absolute;
 
-    public static char getFileSeparator() {
+    public char getFileSeparator() {
         return File.separatorChar;
     }
 
