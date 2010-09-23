@@ -112,7 +112,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     }
 
     @Override
-    protected RemoteFileOperations<FTPFile> createRemoteFileOperations() throws Exception {
+    public RemoteFileOperations<FTPFile> createRemoteFileOperations() throws Exception {
         // configure ftp client
         FTPSClient client = getFtpsClient();
 

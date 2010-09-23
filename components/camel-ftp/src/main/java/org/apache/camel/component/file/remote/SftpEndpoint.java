@@ -42,7 +42,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
         return new RemoteFileProducer<ChannelSftp.LsEntry>(this, createRemoteFileOperations());
     }
 
-    protected RemoteFileOperations<ChannelSftp.LsEntry> createRemoteFileOperations() {
+    public RemoteFileOperations<ChannelSftp.LsEntry> createRemoteFileOperations() {
         SftpOperations operations = new SftpOperations();
         operations.setEndpoint(this);
         return operations;

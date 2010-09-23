@@ -70,7 +70,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         }
     }
     
-    protected RemoteFileOperations<FTPFile> createRemoteFileOperations() throws Exception {
+    public RemoteFileOperations<FTPFile> createRemoteFileOperations() throws Exception {
         // configure ftp client
         FTPClient client = ftpClient;
         

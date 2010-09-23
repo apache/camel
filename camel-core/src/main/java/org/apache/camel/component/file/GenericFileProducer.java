@@ -44,11 +44,11 @@ public class GenericFileProducer<T> extends DefaultProducer {
         this.operations = operations;
     }
     
-    protected String getFileSeparator() {
+    public String getFileSeparator() {
         return File.separator;
     }
 
-    protected String normalizePath(String name) {        
+    public String normalizePath(String name) {
         return FileUtil.normalizePath(name);
     }
 
@@ -177,25 +177,25 @@ public class GenericFileProducer<T> extends DefaultProducer {
      * If we fail writing out a file, we will call this method. This hook is
      * provided to disconnect from servers or clean up files we created (if needed).
      */
-    protected void handleFailedWrite(Exchange exchange, Exception exception) throws Exception {
+    public void handleFailedWrite(Exchange exchange, Exception exception) throws Exception {
         throw exception;
     }
 
     /**
      * Perform any actions that need to occur before we write such as connecting to an FTP server etc.
      */
-    protected void preWriteCheck() throws Exception {
+    public void preWriteCheck() throws Exception {
         // nothing needed to check
     }
 
     /**
      * Perform any actions that need to occur after we are done such as disconnecting.
      */
-    protected void postWriteCheck() {
+    public void postWriteCheck() {
         // nothing needed to check
     }
 
-    protected void writeFile(Exchange exchange, String fileName) throws GenericFileOperationFailedException {
+    public void writeFile(Exchange exchange, String fileName) throws GenericFileOperationFailedException {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         try {
             // build directory if auto create is enabled
@@ -232,7 +232,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
     }
 
-    protected String createFileName(Exchange exchange) {
+    public String createFileName(Exchange exchange) {
         String answer;
 
         String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
@@ -289,7 +289,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         return answer;
     }
 
-    protected String createTempFileName(Exchange exchange, String fileName) {
+    public String createTempFileName(Exchange exchange, String fileName) {
         // must normalize path to cater for Windows and other OS
         fileName = normalizePath(fileName);
 

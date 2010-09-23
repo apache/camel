@@ -35,12 +35,12 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     }
     
     @Override
-    protected String getFileSeparator() {
+    public String getFileSeparator() {
         return "/";
     }
     
     @Override
-    protected String normalizePath(String name) {        
+    public String normalizePath(String name) {
         return name;
     }
 
@@ -63,7 +63,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     /**
      * The file could not be written. We need to disconnect from the remote server.
      */
-    protected void handleFailedWrite(Exchange exchange, Exception exception) throws Exception {
+    public void handleFailedWrite(Exchange exchange, Exception exception) throws Exception {
         loggedIn = false;
         if (isStopping() || isStopped()) {
             // if we are stopping then ignore any exception during a poll
@@ -92,7 +92,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     }
 
     @Override
-    protected void preWriteCheck() throws Exception {
+    public void preWriteCheck() throws Exception {
         // before writing send a noop to see if the connection is alive and works
         boolean noop = false;
         if (loggedIn) {
@@ -127,7 +127,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     }
 
     @Override
-    protected void postWriteCheck() {
+    public void postWriteCheck() {
         try {
             if (getEndpoint().isDisconnect()) {
                 if (log.isTraceEnabled()) {
