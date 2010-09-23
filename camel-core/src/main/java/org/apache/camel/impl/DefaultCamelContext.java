@@ -180,7 +180,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private ExecutorServiceStrategy executorServiceStrategy = new DefaultExecutorServiceStrategy(this);
     private Debugger debugger;
-    private UuidGenerator uuidGenerator = new ActiveMQUuidGenerator();
+    private UuidGenerator uuidGenerator = createDefaultUuidGenerator();
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
 
@@ -2160,5 +2160,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      */
     public static void setContextCounter(int value) {
         DefaultCamelContextNameStrategy.setCounter(value);
+    }
+
+    private static UuidGenerator createDefaultUuidGenerator() {
+        if (System.getProperty("com.google.appengine.runtime.environment") != null) {
+            // either "Production" or "Development"
+            return new JavaUuidGenerator();
+        } else {
+            return new ActiveMQUuidGenerator();
+        }
     }
 }
