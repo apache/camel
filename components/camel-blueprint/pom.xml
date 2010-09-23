@@ -179,6 +179,28 @@
                 </executions>
             </plugin>
 
+            <!-- add the sources from camel-core-osgi and camel-core-xml as source code in the camel-blueprint-sources.jar -->
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>build-helper-maven-plugin</artifactId>
+              <version>1.5</version>
+              <executions>
+                <execution>
+                  <id>add-source</id>
+                  <phase>generate-sources</phase>
+                  <goals>
+                    <goal>add-source</goal>
+                  </goals>
+                  <configuration>
+                    <sources>
+                      <source>${basedir}/../camel-core-osgi/src/main/java</source>
+                      <source>${basedir}/../camel-core-xml/src/main/java</source>
+                    </sources>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+
             <!-- generate the attached tests jar -->
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
