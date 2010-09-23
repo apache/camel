@@ -17,20 +17,24 @@
 package org.apache.camel.loanbroker.queue.version;
 
 import org.apache.camel.CamelContext;
-import org.junit.Assert;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class LoanBrokerServerTest extends Assert {
+public class LoanBrokerServerTest extends TestSupport {
     
     @Test
     public void startLoanBroker() throws Exception {
-        AbstractApplicationContext applicationContext = 
+        deleteDirectory("activemq-data");
+
+        AbstractApplicationContext applicationContext =
             new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/queueCamelContext.xml"});
+
         CamelContext camelContext = (CamelContext)applicationContext.getBean("myCamel");
         assertNotNull("The camel context should not be null", camelContext);
-        Thread.sleep(2000);        
+
+        Thread.sleep(2000);
         camelContext.stop();
         applicationContext.stop();        
     }

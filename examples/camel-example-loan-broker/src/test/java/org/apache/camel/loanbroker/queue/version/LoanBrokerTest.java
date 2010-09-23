@@ -17,7 +17,6 @@
 package org.apache.camel.loanbroker.queue.version;
 
 import java.util.List;
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -30,19 +29,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class LoanBrokerTest extends Assert {
-    CamelContext camelContext;
-    JmsBroker broker;
-    ProducerTemplate template;
+public class LoanBrokerTest extends TestSupport {
+    private CamelContext camelContext;
+    private JmsBroker broker;
+    private ProducerTemplate template;
  
     @Before
     public void startServices() throws Exception {
+        deleteDirectory("activemq-data");
+
         camelContext = new DefaultCamelContext();
         broker = new JmsBroker("vm://localhost");
         broker.start();
@@ -67,7 +67,6 @@ public class LoanBrokerTest extends Assert {
     
     @After
     public void stopServices() throws Exception {
-        
         if (camelContext != null) {
             camelContext.stop();
         }
@@ -76,7 +75,6 @@ public class LoanBrokerTest extends Assert {
         if (broker != null) {
             broker.stop();
         }
-        
     }
     
     @Test
@@ -91,6 +89,7 @@ public class LoanBrokerTest extends Assert {
             Thread.sleep(100);
         }
         endpoint.assertIsSatisfied();
+
         // check the response from the mock endpoint
         List<Exchange> exchanges = endpoint.getExchanges();
         int index = 0;
@@ -111,15 +110,14 @@ public class LoanBrokerTest extends Assert {
             }
         });
         
-        String bank = (String)exchange.getOut().getHeader(Constants.PROPERTY_BANK);
-        Double rate = (Double)exchange.getOut().getHeader(Constants.PROPERTY_RATE);
-        String ssn = (String)exchange.getOut().getHeader(Constants.PROPERTY_SSN);
+        String bank = exchange.getOut().getHeader(Constants.PROPERTY_BANK, String.class);
+        Double rate = exchange.getOut().getHeader(Constants.PROPERTY_RATE, Double.class);
+        String ssn = exchange.getOut().getHeader(Constants.PROPERTY_SSN, String.class);
         
         assertNotNull("The ssn should not be null.", ssn);
         assertEquals("Get a wrong ssn", "Client-B",  ssn);
         assertNotNull("The bank should not be null", bank);
         assertNotNull("The rate should not be null", rate);
-        
     }
 
 }
