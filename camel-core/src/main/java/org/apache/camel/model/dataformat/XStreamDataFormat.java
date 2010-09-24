@@ -57,6 +57,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
     @XmlElement(name = "aliases")
     private Map<String, String> aliases;
 
+    @XmlJavaTypeAdapter(OmitFieldsAdapter.class)
+    @XmlElement(name = "omitFields")
+    private Map<String, String[]> omitFields;
+
     @XmlJavaTypeAdapter(ImplicitCollectionsAdapter.class)
     @XmlElement(name = "implicitCollections")
     private Map<String, String[]> implicitCollections;
@@ -103,6 +107,14 @@ public class XStreamDataFormat extends DataFormatDefinition {
         this.aliases = aliases;
     }
 
+    public Map<String, String[]> getOmitFields() {
+        return omitFields;
+    }
+
+    public void setOmitFields(Map<String, String[]> omitFields) {
+        this.omitFields = omitFields;
+    }
+
     public Map<String, String[]> getImplicitCollections() {
         return implicitCollections;
     }
@@ -124,15 +136,15 @@ public class XStreamDataFormat extends DataFormatDefinition {
         if (encoding != null) {
             setProperty(dataFormat, "encoding", encoding);
         }
-
         if (this.converters != null) {
             setProperty(dataFormat, "converters", this.converters);
         }
-
         if (this.aliases != null) {
             setProperty(dataFormat, "aliases", this.aliases);
         }
-
+        if (this.omitFields != null) {
+            setProperty(dataFormat, "omitFields", this.omitFields);
+        }
         if (this.implicitCollections != null) {
             setProperty(dataFormat, "implicitCollections", this.implicitCollections);
         }
@@ -202,8 +214,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
         public ImplicitCollectionList marshal(Map<String, String[]> v) throws Exception {
             List<ImplicitCollectionEntry> list = new ArrayList<ImplicitCollectionEntry>();
             for (String clsName : v.keySet()) {
-                ImplicitCollectionEntry entry = new ImplicitCollectionEntry(
-                        clsName, v.get(clsName));
+                ImplicitCollectionEntry entry = new ImplicitCollectionEntry(clsName, v.get(clsName));
                 list.add(entry);
             }
 
@@ -271,7 +282,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
         @Override
         public String toString() {
-            return "Alias [ImplicitCollection=" + clsName + ", fields=" + Arrays.asList(this.fields) + "]";
+            return "Alias[ImplicitCollection=" + clsName + ", fields=" + Arrays.asList(this.fields) + "]";
         }
     }
 
@@ -290,7 +301,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
             }
             AliasList jaxbMap = new AliasList();
             jaxbMap.setList(ret);
-            return jaxbMap; // ret.toArray( new JaxbMapEntry[ret.size()] );
+            return jaxbMap;
         }
 
         @Override
@@ -353,7 +364,88 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
         @Override
         public String toString() {
-            return "Alias [name=" + name + ", class=" + clsName + "]";
+            return "Alias[name=" + name + ", class=" + clsName + "]";
+        }
+    }
+
+    @XmlTransient
+    public static class OmitFieldsAdapter
+            extends XmlAdapter<OmitFieldList, Map<String, String[]>> {
+
+        @Override
+        public OmitFieldList marshal(Map<String, String[]> v) throws Exception {
+            List<OmitFieldEntry> list = new ArrayList<OmitFieldEntry>();
+            for (String clsName : v.keySet()) {
+                OmitFieldEntry entry = new OmitFieldEntry(clsName, v.get(clsName));
+                list.add(entry);
+            }
+
+            OmitFieldList collectionList = new OmitFieldList();
+            collectionList.setList(list);
+
+            return collectionList;
+        }
+
+        @Override
+        public Map<String, String[]> unmarshal(OmitFieldList v) throws Exception {
+            Map<String, String[]> map = new HashMap<String, String[]>();
+            for (OmitFieldEntry entry : v.getList()) {
+                map.put(entry.getClsName(), entry.getFields());
+            }
+            return map;
+        }
+    }
+
+    @XmlAccessorType(XmlAccessType.NONE)
+    public static class OmitFieldList {
+        @XmlElement(name = "omitField")
+        private List<OmitFieldEntry> list = new ArrayList<OmitFieldEntry>();
+
+        public List<OmitFieldEntry> getList() {
+            return list;
+        }
+
+        public void setList(List<OmitFieldEntry> list) {
+            this.list = list;
+        }
+    }
+
+    @XmlAccessorType(XmlAccessType.NONE)
+    public static class OmitFieldEntry {
+
+        @XmlAttribute(name = "class")
+        private String clsName;
+
+        @XmlElement(name = "field")
+        private String[] fields;
+
+        public OmitFieldEntry() {
+        }
+
+        public OmitFieldEntry(String clsName, String[] fields) {
+            this.clsName = clsName;
+            this.fields = fields;
+        }
+
+        public String getClsName() {
+            return clsName;
+        }
+
+        public void setClsName(String clsName) {
+            this.clsName = clsName;
+        }
+
+        public String[] getFields() {
+            return fields;
+        }
+
+        public void setFields(String[] fields) {
+            this.fields = fields;
+        }
+
+        @Override
+        public String toString() {
+            return "OmitField[" + clsName + ", fields=" + Arrays.asList(this.fields) + "]";
         }
     }
 }

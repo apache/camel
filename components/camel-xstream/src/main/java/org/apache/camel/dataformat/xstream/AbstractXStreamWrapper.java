@@ -49,6 +49,7 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     private StaxConverter staxConverter;
     private List<String> converters;
     private Map<String, String> aliases;
+    private Map<String, String[]> omitFields;
     private Map<String, String[]> implicitCollections;
 
     public AbstractXStreamWrapper() {
@@ -84,6 +85,14 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
             if (this.aliases != null) {
                 for (Entry<String, String> entry : this.aliases.entrySet()) {
                     xstream.alias(entry.getKey(), resolver.resolveMandatoryClass(entry.getValue()));
+                }
+            }
+
+            if (this.omitFields != null) {
+                for (Entry<String, String[]> entry : this.omitFields.entrySet()) {
+                    for (String name : entry.getValue()) {
+                        xstream.omitField(resolver.resolveMandatoryClass(entry.getKey()), name);
+                    }
                 }
             }
 
@@ -155,6 +164,14 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
     public void setImplicitCollections(Map<String, String[]> implicitCollections) {
         this.implicitCollections = implicitCollections;
+    }
+
+    public Map<String, String[]> getOmitFields() {
+        return omitFields;
+    }
+
+    public void setOmitFields(Map<String, String[]> omitFields) {
+        this.omitFields = omitFields;
     }
 
     public XStream getXstream() {
