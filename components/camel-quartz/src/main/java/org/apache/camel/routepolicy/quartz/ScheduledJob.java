@@ -52,5 +52,4 @@ public class ScheduledJob implements Job, Serializable, ScheduledRoutePolicyCons
         }
     }
 
-
 }
