@@ -136,7 +136,6 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
             consumerSuspended = true;
         }        
         assertTrue(consumerSuspended);
-        
     }    
     
     @Test
@@ -172,7 +171,6 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         template.sendBody("direct:start", "Ready or not, Here, I come");
         
         success.assertIsSatisfied();
-        
     } 
     
 }

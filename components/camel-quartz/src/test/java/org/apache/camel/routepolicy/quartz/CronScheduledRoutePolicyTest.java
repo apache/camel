@@ -129,7 +129,6 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
             consumerSuspended = true;
         }        
         assertTrue(consumerSuspended);
-        
     }    
     
     @Test
@@ -162,6 +161,6 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         template.sendBody("direct:start", "Ready or not, Here, I come");
         
         success.assertIsSatisfied();
-        
     }  
+
 }
