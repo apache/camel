@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
@@ -71,6 +73,10 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
         route.getRouteContext().getCamelContext().stopRoute(route.getId());
     }
 
+    protected void stopRoute(Route route, long timeout, TimeUnit timeUnit) throws Exception {
+        route.getRouteContext().getCamelContext().stopRoute(route.getId(), timeout, timeUnit);
+    }
+    
     /**
      * Handles the given exception using the {@link #getExceptionHandler()}
      *
