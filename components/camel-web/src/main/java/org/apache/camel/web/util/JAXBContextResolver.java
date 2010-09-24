@@ -19,6 +19,7 @@ package org.apache.camel.web.util;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 
 /**
  * A resolver of the JAXB context primed for the Camel XML languages
@@ -27,12 +28,16 @@ import javax.xml.bind.JAXBContext;
  * @version $Revision$
  */
 @Provider
-public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
+public  class JAXBContextResolver implements ContextResolver<JAXBContext> {
     private final JAXBContext context;
     private String packages;
 
     public JAXBContextResolver() throws Exception {
-        this.packages = org.apache.camel.web.resources.Constants.JAXB_PACKAGES;
+        this(org.apache.camel.web.resources.Constants.JAXB_PACKAGES);
+    }
+
+    public JAXBContextResolver(String packages) throws JAXBException {
+        this.packages = packages;
         this.context = JAXBContext.newInstance(packages);
     }
 
