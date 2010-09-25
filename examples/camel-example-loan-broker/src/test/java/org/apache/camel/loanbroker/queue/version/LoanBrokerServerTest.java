@@ -17,7 +17,7 @@
 package org.apache.camel.loanbroker.queue.version;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit4.TestSupport;
+import org.apache.camel.TestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
