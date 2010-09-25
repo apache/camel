@@ -73,7 +73,7 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     }
 
     protected XStream createXStream(ClassResolver resolver) {
-        if(xstreamDriver != null) {
+        if (xstreamDriver != null) {
             xstream = new XStream(xstreamDriver);
         } else {
             xstream = new XStream();

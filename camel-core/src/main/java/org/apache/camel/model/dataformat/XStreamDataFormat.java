@@ -34,6 +34,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the XStream XML {@link org.apache.camel.spi.DataFormat}
@@ -139,7 +141,12 @@ public class XStreamDataFormat extends DataFormatDefinition {
         if ("json".equals(this.driver)) {
             setProperty(this, "dataFormatName", "json-xstream");
         }
-        return super.createDataFormat(routeContext);
+        DataFormat answer = super.createDataFormat(routeContext);
+        // need to lookup the reference for the xstreamDriver
+        if (ObjectHelper.isNotEmpty(driverRef)) {
+            setProperty(answer, "xstreamDriver", CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), driverRef));
+        }
+        return answer;
     }
 
     @Override
@@ -158,9 +165,6 @@ public class XStreamDataFormat extends DataFormatDefinition {
         }
         if (this.implicitCollections != null) {
             setProperty(dataFormat, "implicitCollections", this.implicitCollections);
-        }
-        if (this.driverRef != null) {
-            setProperty(dataFormat, "xstreamDriver", this.driverRef);
         }
     }
 

@@ -23,8 +23,8 @@
     ">
     
     <bean id="xs1" class="org.apache.camel.dataformat.xstream.XStreamDataFormat" />
-
-    <!-- START SNIPPET: e1 -->
+    <bean id="myDriver" class="com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver"/>
+    
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         
         <!-- we define the json xstream data formats to be used (xstream is default) -->
@@ -55,7 +55,9 @@
                       <field>history</field>
                    </class>
                 </implicitCollections>
-            </xstream>            
+            </xstream>
+            
+            <xstream id="xstream-driver" driverRef="myDriver"/>            
         </dataFormats>
 
         <route>
@@ -63,7 +65,6 @@
             <marshal ref="xstream-1" />
             <to uri="mock:result"/>
         </route>
-
         <route>
             <from uri="direct:unmarshal"/>
             <unmarshal ref="xstream-1"/>
@@ -81,6 +82,13 @@
             <unmarshal ref="xstream-json"/>
             <to uri="mock:result"/>
         </route>
+        
+        <route>
+            <from uri="direct:myDriver"/>
+            <marshal ref="xstream-driver"/>
+            <to uri="mock:result"/>
+        </route>
+        
 
     </camelContext>
 
