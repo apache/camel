@@ -32,7 +32,7 @@ public class RestletProducerGet2Test extends CamelTestSupport {
 
     @Test
     public void testRestletProducerGet2() throws Exception {
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("id", 123);
         headers.put("beverage.beer", "Carlsberg");
 
