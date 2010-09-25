@@ -23,10 +23,40 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
- * The base message exchange interface providing access to the request, response
- * and fault {@link Message} instances. Different providers such as JMS, JBI,
- * CXF and HTTP can provide their own derived API to expose the underlying
- * transport semantics to avoid the leaky abstractions of generic APIs.
+ * Exchange is the message container holding the information during the entire routing.
+ * <p/><br/>
+ * Most noticeable the {@link Exchange} provides access to the request, response and
+ * fault {@link Message} messages.
+ * <p/><br/>
+ * It also provides information about what is known as the
+ * {@link ExchangePattern Message Exchange Pattern} (or MEP for short). Its a status
+ * which represents if the message is a <i>one-way</i> or <i>request-reply</i> exchange pattern.
+ * A <i>one-way</i> pattern is defined as the {@link org.apache.camel.ExchangePattern#InOnly}
+ * adn the <i>request-reply</i> is the {@link org.apache.camel.ExchangePattern#InOut}.
+ * Those two patterns are the most commonly used. The other patterns is hardly used at all.
+ * <p/><br/>
+ * The {@link Exchange} also holds meta-data during the entire lifecycle of the exchange which
+ * are stored as properties, accessible using the various {@link #getProperty(String)} method
+ * and the {@link #setProperty(String, Object)} is used to store a property. For example you
+ * can use this to store security related information. Also Camel itself stores information
+ * as properties, like some of the <a href="http://camel.apache.org/enterprise-integration-patterns.html">
+ * Enterprise Integration Patterns</a> does.
+ * <p/><br/>
+ * If an {@link Exchange} failed during routing the caused {@link Exception} is stored and accessible
+ * using the {@link #getException()} method.
+ * <p/><br/>
+ * <b>Important:</b>
+ * As a Camel end user and you want to update the current {@link Message} on the {@link Exchange} then
+ * you should pay attention. There are two methods two retrieve the message named as {@link #getIn()}
+ * and {@link #getOut()}. This API has been there since Camel 1.0. You most often should only use
+ * the {@link #getIn()} method and change the current message by updating it directly. By doing this
+ * you ensure all the information is kept for further processing. On the other hand if you use the
+ * {@link #getOut()} method to update the {@link Message} then a <b>new</b> message is created which
+ * means any headers, attachments or the likes from the {@link #getIn()} {@link Message} is lost.
+ * The {@link #getOut()} method is often only used in special cases or internally by Camel or specific
+ * Camel components.
+ * <br/>
+ * See also this <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a> for more details.
  *
  * @version $Revision$
  */
@@ -249,6 +279,8 @@ public interface Exchange {
      * this method.
      * <p/>
      * <br/>If you want to test whether an OUT message have been set or not, use the {@link #hasOut()} method.
+     * <p/>
+     * See also the class java doc for this {@link Exchange} for more details.
      *
      * @return the response
      * @see #getIn()
@@ -261,6 +293,8 @@ public interface Exchange {
      * <br/><b>Important:</b> If you want to change the current message, then use {@link #getIn(Class)} instead as it will
      * ensure headers etc. is kept and propagated when routing continues. Bottom line end users should rarely use
      * this method.
+     * <p/>
+     * See also the class java doc for this {@link Exchange} for more details.
      *
      * @param type the given type
      * @return the message as the given type or <tt>null</tt> if not possible to covert to given type
