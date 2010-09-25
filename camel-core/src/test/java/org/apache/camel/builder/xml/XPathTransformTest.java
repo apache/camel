@@ -16,9 +16,11 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.apache.camel.ContextTestSupport;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+
+import org.apache.camel.ContextTestSupport;
+
 
 /**
  * @version $Revision$
