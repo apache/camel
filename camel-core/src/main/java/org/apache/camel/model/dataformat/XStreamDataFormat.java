@@ -49,6 +49,9 @@ public class XStreamDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String driver = "xml";
 
+    @XmlAttribute
+    private String driverRef;
+
     @XmlJavaTypeAdapter(ConvertersAdapter.class)
     @XmlElement(name = "converters")
     private List<String> converters;
@@ -89,6 +92,14 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
     public void setDriver(String driver) {
         this.driver = driver;
+    }
+
+    public String getDriverRef() {
+        return driverRef;
+    }
+
+    public void setDriverRef(String driverRef) {
+        this.driverRef = driverRef;
     }
 
     public List<String> getConverters() {
@@ -148,8 +159,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
         if (this.implicitCollections != null) {
             setProperty(dataFormat, "implicitCollections", this.implicitCollections);
         }
+        if (this.driverRef != null) {
+            setProperty(dataFormat, "xstreamDriver", this.driverRef);
+        }
     }
-
 
     @XmlTransient
     public static class ConvertersAdapter extends XmlAdapter<ConverterList, List<String>> {
