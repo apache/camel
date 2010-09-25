@@ -49,11 +49,7 @@
             <artifactId>jasypt</artifactId>
             <version>${jasypt-version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.ibm.icu</groupId>
-            <artifactId>icu4j</artifactId>
-            <version>${icu4j-version}</version>
-        </dependency>
+        
         <dependency>                               
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
