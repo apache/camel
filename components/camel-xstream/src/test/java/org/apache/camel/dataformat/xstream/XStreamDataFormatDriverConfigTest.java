@@ -37,5 +37,8 @@ public class XStreamDataFormatDriverConfigTest extends CamelTestSupport {
 
         assertEquals("{", marshalledOrder.substring(0, 1));
     }
+    
+    
+    
 
 }

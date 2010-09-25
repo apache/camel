@@ -20,6 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -30,20 +34,41 @@ import org.junit.Test;
 public class XStreamDataFormatOmitFieldsTest extends CamelTestSupport {
 
     @Test
-    public void testOmitPrice() {
+    public void testOmitPrice() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setName("foo");
-        purchaseOrder.setPrice(1);
+        purchaseOrder.setPrice(49);
+        purchaseOrder.setAmount(3);
 
-        XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
-        Map<String, String[]> omitFields = new HashMap<String, String[]>();
-        omitFields.put(PurchaseOrder.class.getName(), new String[]{"price"});
-        xStreamDataFormat.setOmitFields(omitFields);
+        template.sendBody("direct:start", purchaseOrder);
 
-        XStream xStream = xStreamDataFormat.createXStream(new DefaultClassResolver());
-        String marshalledOrder = xStream.toXML(purchaseOrder);
+        assertMockEndpointsSatisfied();
 
-        assertTrue(!marshalledOrder.contains("<price>"));
+        String body = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);        
+        assertTrue("Should contain name field", body.contains("<name>"));
+        assertFalse("Should not contain price field", body.contains("price"));
+        assertTrue("Should contain amount field", body.contains("<amount>"));
     }
+    
+
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
+                Map<String, String[]> omitFields = new HashMap<String, String[]>();
+                omitFields.put(PurchaseOrder.class.getName(), new String[]{"price"});
+                xStreamDataFormat.setOmitFields(omitFields);
+                
+                from("direct:start").
+                        marshal(xStreamDataFormat).
+                        convertBodyTo(String.class).                       
+                        to("mock:result");
+            }
+        };
+    }
+    
 
 }

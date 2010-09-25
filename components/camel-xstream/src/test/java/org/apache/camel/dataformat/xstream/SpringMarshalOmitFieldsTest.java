@@ -16,7 +16,10 @@
  */
 package org.apache.camel.dataformat.xstream;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -25,31 +28,25 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version $Revision$
  */
-public class SpringMarshalOmitFieldsTest extends CamelSpringTestSupport {
+public class SpringMarshalOmitFieldsTest extends XStreamDataFormatOmitFieldsTest {
 
-    @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/xstream/SpringMarshalOmitFieldsTest.xml");
+    protected CamelContext createCamelContext() throws Exception {
+        setUseRouteBuilder(false);
+
+        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+            "org/apache/camel/dataformat/xstream/SpringMarshalOmitFieldsTest.xml");
+
+        setCamelContextService(new Service() {
+            public void start() throws Exception {
+                applicationContext.start();
+            }
+
+            public void stop() throws Exception {
+                applicationContext.stop();
+            }
+        });
+
+        return SpringCamelContext.springCamelContext(applicationContext);
     }
-
-    @Test
-    public void testOmitPrice() throws InterruptedException {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-
-        PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setName("foo");
-        purchaseOrder.setPrice(49);
-        purchaseOrder.setAmount(3);
-
-        template.sendBody("direct:start", purchaseOrder);
-
-        assertMockEndpointsSatisfied();
-
-        String body = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        assertTrue("Should contain name field", body.contains("<name>"));
-        assertFalse("Should not contain price field", body.contains("price"));
-        assertTrue("Should contain amount field", body.contains("<amount>"));
-    }
-
+   
 }
