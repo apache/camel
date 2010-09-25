@@ -55,7 +55,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         assertTrue(methodInjected);
     }
 
-    //@Test
+    @Test
     public void testCustomMarshalDomainObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -64,10 +64,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         order.setName("Tiger");
         order.setAmount(1);
         order.setPrice(99.95);
-        List<Double> list = new ArrayList<Double>();
-        list.add(11.5);
-        list.add(97.5);
-
+        
         String ordereString = "<?xml version='1.0' encoding='UTF-8'?>" + "<purchase-order name=\"Tiger\" price=\"99.95\" amount=\"1.0\"/>";
         mock.expectedBodiesReceived(new Object[] {ordereString, order});
 
@@ -77,7 +74,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
-    //@Test
+    @Test
     public void testCustomMarshalDomainObjectWithImplicit() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -98,7 +95,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
-    //@Test
+    @Test
     public void testCustomMarshalDomainObjectJson() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -107,10 +104,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         order.setName("Tiger");
         order.setAmount(1);
         order.setPrice(99.95);
-        List<Double> list = new ArrayList<Double>();
-        list.add(11.5);
-        list.add(97.5);
-
+        
         String ordereString = "{\"purchase-order\":{\"@name\":\"Tiger\",\"@price\":\"99.95\",\"@amount\":\"1.0\"}}";
         mock.expectedBodiesReceived(new Object[] {ordereString, order});
 
