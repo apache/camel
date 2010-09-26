@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<!-- START SNIPPET: e1 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
+
+    <!-- needed cxf imports -->
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
+
+    <!-- use a bean to start and stop the real web service (is not Camel specific) -->
+    <!-- in a real use-case the real web service would be located on another server
+         but we simulate this in the same JVM -->
+    <bean id="realWebService" class="org.apache.camel.example.cxf.proxy.RealWebServiceBean"
+          init-method="start" destroy-method="stop">
+        <!-- this is the url of the real web service we have proxied -->
+        <property name="url" value="http://localhost:9081/real-webservice"/>
+    </bean>
+
+    <!-- a bean to enrich the input -->
+    <bean id="enrichBean" class="org.apache.camel.example.cxf.proxy.EnrichBean"/>
+
+    <!-- this is the CXF webservice we use as front end -->
+    <cxf:cxfEndpoint id="reportIncident"
+                     address="http://localhost:9080/camel-example-cxf-proxy/webservices/incident"
+                     serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"
+                     wsdlURL="etc/report_incident.wsdl"/>
+
+    <!-- this is the camel route which proxy the web service and forward it to the real web service -->
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+        <route>
+            <!-- cxf consumer using MESSAGE format -->
+            <from uri="cxf:bean:reportIncident?dataFormat=MESSAGE"/>
+            <!-- log input received -->
+            <to uri="log:input"/>
+            <!-- enrich the input by ensure the incidentId parameter is set -->
+            <to uri="bean:enrichBean"/>
+            <!-- send proxied request to real web service -->
+            <to uri="http://localhost:9081/real-webservice?throwExceptionOnFailure=false"/>
+            <!-- log answer from real web service -->
+            <to uri="log:output"/>
+        </route>
+
+    </camelContext>
+
+</beans>
+<!-- END SNIPPET: e1 -->
