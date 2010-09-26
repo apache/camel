@@ -22,6 +22,7 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
@@ -242,7 +243,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         if (name != null) {
             // the header name can be an expression too, that should override
             // whatever configured on the endpoint
-            if (name.indexOf("${") > -1) {
+            if (SimpleLanguage.hasStartToken(name)) {
                 if (log.isDebugEnabled()) {
                     log.debug(Exchange.FILE_NAME + " contains a Simple expression: " + name);
                 }

@@ -48,6 +48,11 @@ public class SimpleTest extends LanguageTestSupport {
         assertNotNull(exp);
     }
 
+    public void testBodyExpressionUsingAlternativeStartToken() throws Exception {
+        Expression exp = SimpleLanguage.simple("$simple{body}");
+        assertNotNull(exp);
+    }
+
     public void testBodyExpressionNotStringType() throws Exception {
         exchange.getIn().setBody(123);
         Expression exp = SimpleLanguage.simple("${body}");
@@ -139,6 +144,16 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.header.foo}${in.header.foo}", "abcabc");
         assertExpression("${in.header.foo}", "abc");
         assertExpression("${in.header.foo}!", "abc!");
+    }
+
+    public void testComplexExpressionsUsingAlternativeStartToken() throws Exception {
+        assertExpression("hey $simple{in.header.foo}", "hey abc");
+        assertExpression("hey $simple{in.header.foo}!", "hey abc!");
+        assertExpression("hey $simple{in.header.foo}-$simple{in.header.foo}!", "hey abc-abc!");
+        assertExpression("hey $simple{in.header.foo}$simple{in.header.foo}", "hey abcabc");
+        assertExpression("$simple{in.header.foo}$simple{in.header.foo}", "abcabc");
+        assertExpression("$simple{in.header.foo}", "abc");
+        assertExpression("$simple{in.header.foo}!", "abc!");
     }
 
     public void testInvalidComplexExpression() throws Exception {

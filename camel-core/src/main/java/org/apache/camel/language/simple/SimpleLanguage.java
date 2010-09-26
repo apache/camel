@@ -32,7 +32,9 @@ import org.apache.camel.util.StringHelper;
  * <li>id to access the inbound message id</li>
  * <li>in.body or body to access the inbound body</li>
  * <li>in.body.OGNL or body.OGNL to access the inbound body using an OGNL expression</li>
- * <li>bodyAs(&lt;classname&gt;) to convert the in body to the given type</li>
+ * <li>mandatoryBodyAs(&lt;classname&gt;) to convert the in body to the given type, will throw exception if not possible to convert</li>
+ * <li>bodyAs(&lt;classname&gt;) to convert the in body to the given type, will return null if not possible to convert</li>
+ * <li>headerAs(&lt;key&gt;, &lt;classname&gt;) to convert the in header to the given type, will return null if not possible to convert</li>
  * <li>out.body to access the inbound body</li>
  * <li>in.header.foo or header.foo to access an inbound header called 'foo'</li>
  * <li>in.header.foo[bar] or header.foo[bar] to access an inbound header called 'foo' as a Map and lookup the map with 'bar' as key</li>
@@ -89,6 +91,20 @@ import org.apache.camel.util.StringHelper;
 public class SimpleLanguage extends SimpleLanguageSupport {
 
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
+
+    /**
+     * Does the expression have the simple language start token?
+     *
+     * @param expression the expression
+     * @return <tt>true</tt> if the expression contains the start token, <tt>false</tt> otherwise
+     */
+    public static boolean hasStartToken(String expression) {
+        if (expression == null) {
+            return false;
+        }
+
+        return expression.indexOf("${") >= 0 || expression.indexOf("$simple{") >= 0;
+    }
 
     public static Expression simple(String expression) {
         return SIMPLE.createExpression(expression);

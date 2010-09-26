@@ -31,6 +31,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
@@ -534,7 +535,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      */
     protected String configureMoveOrPreMoveExpression(String expression) {
         // if the expression already have ${ } placeholders then pass it unmodified
-        if (expression.indexOf("${") != -1) {
+        if (SimpleLanguage.hasStartToken(expression)) {
             return expression;
         }
 

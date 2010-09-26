@@ -78,6 +78,25 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertEquals(new Date(file.lastModified()), modified);
     }
 
+    public void testFileUsingAlternativeStartToken() throws Exception {
+        assertExpression("$simple{file:ext}", "txt");
+        assertExpression("$simple{file:name.ext}", "txt");
+        assertExpression("$simple{file:name}", "test" + File.separator + file.getName());
+        assertExpression("$simple{file:name.noext}", "test" + File.separator + "hello");
+        assertExpression("$simple{file:onlyname}", file.getName());
+        assertExpression("$simple{file:onlyname.noext}", "hello");
+        assertExpression("$simple{file:parent}", file.getParent());
+        assertExpression("$simple{file:path}", file.getPath());
+        assertExpression("$simple{file:absolute}", FileUtil.isAbsolute(file));
+        assertExpression("$simple{file:absolute.path}", file.getAbsolutePath());
+        assertExpression("$simple{file:length}", file.length());
+        assertExpression("$simple{file:size}", file.length());
+
+        // modified is a Date object
+        Date modified = SimpleLanguage.simple("file:modified").evaluate(exchange, Date.class);
+        assertEquals(new Date(file.lastModified()), modified);
+    }
+
     public void testDate() throws Exception {
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertExpression("backup-${date:now:yyyyMMdd}", "backup-" + now);
@@ -90,6 +109,24 @@ public class FileLanguageTest extends LanguageTestSupport {
 
         try {
             this.assertExpression("nodate-${date:header.xxx:yyyyMMdd}", null);
+            fail("Should have thrown IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    public void testDateUsingAlternativeStartToken() throws Exception {
+        String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        assertExpression("backup-$simple{date:now:yyyyMMdd}", "backup-" + now);
+
+        String expected = new SimpleDateFormat("yyyyMMdd").format(new Date(file.lastModified()));
+        assertExpression("backup-$simple{date:file:yyyyMMdd}", "backup-" + expected);
+
+        assertExpression("backup-$simple{date:header.birthday:yyyyMMdd}", "backup-19740420");
+        assertExpression("hello-$simple{date:out.header.special:yyyyMMdd}", "hello-20080808");
+
+        try {
+            this.assertExpression("nodate-$simple{date:header.xxx:yyyyMMdd}", null);
             fail("Should have thrown IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // expected

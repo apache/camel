@@ -85,7 +85,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                 log.debug("Expression is evaluated as simple (with operator) expression: " + expression);
             }
             return createOperatorExpression(matcher, startMatcher, expression);
-        } else if (expression.indexOf("${") >= 0) {
+        } else if (SimpleLanguage.hasStartToken(expression)) {
             if (log.isDebugEnabled()) {
                 log.debug("Expression is evaluated as simple (strict) expression: " + expression);
             }
@@ -294,7 +294,13 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
         int pivot = 0;
         int size = expression.length();
         while (pivot < size) {
+            // look for start tokens
+            int delta = 2;
             int idx = expression.indexOf("${", pivot);
+            if (idx < 0) {
+                idx = expression.indexOf("$simple{", pivot);
+                delta = 8;
+            }
             if (idx < 0) {
                 results.add(createConstantExpression(expression, pivot, size));
                 break;
@@ -302,7 +308,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                 if (pivot < idx) {
                     results.add(createConstantExpression(expression, pivot, idx));
                 }
-                pivot = idx + 2;
+                pivot = idx + delta;
                 int endIdx = expression.indexOf('}', pivot);
                 if (endIdx < 0) {
                     throw new IllegalArgumentException("Expecting } but found end of string for simple expression: " + expression);
@@ -328,6 +334,9 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
     protected Expression createSimpleOrConstantExpression(String text) {
         if (text != null) {
             String simple = ObjectHelper.between(text, "${", "}");
+            if (simple == null) {
+                simple = ObjectHelper.between(text, "$simple{", "}");
+            }
             if (simple != null) {
                 return createSimpleExpression(simple, true);
             }

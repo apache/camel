@@ -19,6 +19,8 @@ package org.apache.camel.component.file;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.camel.language.simple.SimpleLanguage;
+
 /**
  * File component.
  */
@@ -36,7 +38,7 @@ public class FileComponent extends GenericFileComponent<File> {
 
     protected GenericFileEndpoint<File> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // the starting directory must be a static (not containing dynamic expressions)
-        if (remaining.indexOf("${") != -1) {
+        if (SimpleLanguage.hasStartToken(remaining)) {
             throw new IllegalArgumentException("Invalid directory: " + remaining
                     + ". Dynamic expressions with ${ } placeholders is not allowed."
                     + " Use the fileName option to set the dynamic expression.");
