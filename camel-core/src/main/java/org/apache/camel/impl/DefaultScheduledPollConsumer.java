@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * A default implementation of an event driven {@link org.apache.camel.Consumer} which uses the
@@ -62,14 +63,13 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
     @Override
     protected void doStart() throws Exception {
         pollingConsumer = getEndpoint().createPollingConsumer();
+        ServiceHelper.startService(pollingConsumer);
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
+        ServiceHelper.stopService(pollingConsumer);
         super.doStop();
-        if (pollingConsumer != null) {
-            pollingConsumer.stop();
-        }
     }
 }
