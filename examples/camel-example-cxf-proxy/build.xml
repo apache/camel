@@ -17,7 +17,7 @@
   limitations under the License.
 -->
 
-<project name="camel-example-reportincident" default="run" basedir=".">
+<project name="camel-example-cxf-proxy" default="run" basedir=".">
 
 	<import file="../common_build.xml"/>
 
