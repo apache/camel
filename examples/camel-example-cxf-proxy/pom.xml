@@ -49,11 +49,6 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-soap</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-cxf</artifactId>
         </dependency>
 
@@ -63,12 +58,12 @@
             <artifactId>cxf-rt-core</artifactId>
             <version>${cxf-version}</version>
         </dependency>
+        <!-- used by the real web service -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
             <version>${cxf-version}</version>
         </dependency>
-
         <!-- regular http transport -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
@@ -143,14 +138,6 @@
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty-version}</version>
-                <configuration>
-                    <connectors>
-                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                            <port>9080</port>
-                            <maxIdleTime>60000</maxIdleTime>
-                        </connector>
-                    </connectors>
-                </configuration>
             </plugin>
 
         </plugins>
