@@ -90,6 +90,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private Boolean ignoreInvalidCorrelationKeys;
     @XmlAttribute
     private Integer closeCorrelationKeyOnCompletion;
+    @XmlAttribute
+    private Boolean discardOnCompletionTimeout;
 
     public AggregateDefinition() {
     }
@@ -202,6 +204,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         }
         if (getCloseCorrelationKeyOnCompletion() != null) {
             answer.setCloseCorrelationKeyOnCompletion(getCloseCorrelationKeyOnCompletion());
+        }
+        if (isDiscardOnCompletionTimeout() != null) {
+            answer.setDiscardOnCompletionTimeout(isDiscardOnCompletionTimeout());
         }
 
         return answer;
@@ -390,6 +395,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.aggregationRepositoryRef = aggregationRepositoryRef;
     }
 
+    public Boolean isDiscardOnCompletionTimeout() {
+        return discardOnCompletionTimeout;
+    }
+
+    public void setDiscardOnCompletionTimeout(Boolean discardOnCompletionTimeout) {
+        this.discardOnCompletionTimeout = discardOnCompletionTimeout;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
 
@@ -426,6 +439,18 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition closeCorrelationKeyOnCompletion(int capacity) {
         setCloseCorrelationKeyOnCompletion(capacity);
+        return this;
+    }
+
+    /**
+     * Discards the aggregated message on completion timeout.
+     * <p/>
+     * This means on timeout the aggregated message is dropped and not sent out of the aggregator.
+     *
+     * @return builder
+     */
+    public AggregateDefinition discardOnCompletionTimeout() {
+        setDiscardOnCompletionTimeout(true);
         return this;
     }
 
@@ -641,4 +666,5 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     public void setOutputs(List<ProcessorDefinition> outputs) {
         this.outputs = outputs;
     }
+
 }

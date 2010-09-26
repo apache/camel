@@ -118,6 +118,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private Expression completionSizeExpression;
     private boolean completionFromBatchConsumer;
     private AtomicInteger batchConsumerCounter = new AtomicInteger();
+    private boolean discardOnCompletionTimeout;
 
     public AggregateProcessor(CamelContext camelContext, Processor processor,
                               Expression correlationExpression, AggregationStrategy aggregationStrategy,
@@ -359,6 +360,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             closedCorrelationKeys.put(key, key);
         }
 
+        if (fromTimeout && isDiscardOnCompletionTimeout()) {
+            // discard due timeout
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Aggregation for correlation key " + key + " discarding aggregated exchange: " + exchange);
+            }
+            return;
+        }
+
         onSubmitCompletion(key, exchange);
     }
 
@@ -501,6 +510,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     public void setAggregationRepository(AggregationRepository aggregationRepository) {
         this.aggregationRepository = aggregationRepository;
+    }
+
+    public boolean isDiscardOnCompletionTimeout() {
+        return discardOnCompletionTimeout;
+    }
+
+    public void setDiscardOnCompletionTimeout(boolean discardOnCompletionTimeout) {
+        this.discardOnCompletionTimeout = discardOnCompletionTimeout;
     }
 
     /**
