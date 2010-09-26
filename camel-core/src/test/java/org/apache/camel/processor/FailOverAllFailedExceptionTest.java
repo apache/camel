@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.io.IOException;
 import java.net.SocketException;
 
 import org.apache.camel.CamelExecutionException;
@@ -26,7 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
+public class FailOverAllFailedExceptionTest extends ContextTestSupport {
 
     protected MockEndpoint x;
     protected MockEndpoint y;
@@ -44,15 +43,9 @@ public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: e1
                 from("direct:start")
-                    // here we will load balance if IOException was thrown
-                    // any other kind of exception will result in the Exchange as failed
-                    // to failover over any kind of exception we can just omit the exception
-                    // in the failOver DSL
-                    .loadBalance().failover(IOException.class)
+                    .loadBalance().failover(2, false, true)
                         .to("direct:x", "direct:y", "direct:z");
-                // END SNIPPET: e1
 
                 from("direct:x").to("mock:x").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -66,25 +59,26 @@ public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
                     }
                 });
 
-                from("direct:z").to("mock:z");
+                from("direct:z").to("mock:z").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        throw new SocketException("Not Again");
+                    }
+                });
             }
         };
     }
 
-    public void testExceptionNotCatched() throws Exception {
+    public void testAllFailed() throws Exception {
         x.expectedMessageCount(1);
         y.expectedMessageCount(1);
-        z.expectedMessageCount(0);
-
-        // to test that if a processor throw an exception that the failover loadbalancer
-        // do not catch then the exception is propagated back
+        z.expectedMessageCount(1);
 
         try {
             template.sendBody("direct:start", "Hello World");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            assertEquals("Illegal", e.getCause().getMessage());
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Not Again", e.getCause().getMessage());
+            assertIsInstanceOf(SocketException.class, e.getCause());
         }
 
         assertMockEndpointsSatisfied();
