@@ -48,7 +48,8 @@ public class CxfClientCallback extends ClientCallback {
     
     public void handleResponse(Map<String, Object> ctx, Object[] res) {
         try {
-            super.handleResponse(ctx, res);
+            super.handleResponse(ctx, res);            
+        } finally {
             // bind the CXF response to Camel exchange
             if (!boi.getOperationInfo().isOneWay()) {
                 // copy the InMessage header to OutMessage header
@@ -56,7 +57,6 @@ public class CxfClientCallback extends ClientCallback {
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
                         ctx);
             }
-        } finally {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(Thread.currentThread().getName() + "calling handleResponse");
             }
@@ -69,6 +69,13 @@ public class CxfClientCallback extends ClientCallback {
             super.handleException(ctx, ex);
             camelExchange.setException(ex);
         } finally {
+            // copy the context information
+            if (!boi.getOperationInfo().isOneWay()) {
+                // copy the InMessage header to OutMessage header
+                camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
+                endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
+                        ctx);
+            }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(Thread.currentThread().getName() + "calling handleException");
             }

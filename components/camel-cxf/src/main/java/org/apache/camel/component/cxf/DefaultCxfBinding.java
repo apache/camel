@@ -119,6 +119,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             Map<String, Object> responseContext) {
       
         Message cxfMessage = cxfExchange.getInMessage();
+        // Need to check if the inMessage is set
+        if (cxfMessage == null) {
+            return;
+        }
         
         if (LOG.isTraceEnabled()) {
             LOG.trace("Populate exchange from CXF response message: " + cxfMessage);
@@ -577,6 +581,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     protected static List<Element> getPayloadBodyElements(Message message) {
         MessageContentsList inObjects = MessageContentsList.getContentsList(message);
+        if (inObjects == null) {
+            return null;
+        }
         org.apache.cxf.message.Exchange exchange = message.getExchange();
         BindingOperationInfo boi = exchange.getBindingOperationInfo();
 
