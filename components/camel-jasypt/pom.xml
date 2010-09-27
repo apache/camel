@@ -88,6 +88,23 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+      <profile>
+        <id>jdk1.5-maven-2.0.x</id>
+        <activation>
+          <!-- for maven 2.0.x syntax -->
+          <jdk>1.5</jdk>
+        </activation>
+        <dependencies>
+          <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+            <version>${icu4j-version}</version>
+          </dependency>
+        </dependencies>
+      </profile>
+    </profiles>
+
     <build>
         <plugins>
 
