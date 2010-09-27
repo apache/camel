@@ -57,6 +57,12 @@ import org.apache.camel.spi.UnitOfWork;
  * Camel components.
  * <br/>
  * See also this <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a> for more details.
+ * <p/><br/>
+ * The {@link ExchangePattern Message Exchange Pattern} and the {@link #getIn()} and {@link #getOut()} methods
+ * are <b>not</b> strictly mapped. For example if the MEP is {@link org.apache.camel.ExchangePattern#InOnly} then
+ * you can still invoke the {@link #getOut()} method. The {@link ExchangePattern Message Exchange Pattern} is
+ * essentially just a flag to indicate the message pattern. That means you can still set an out message using
+ * the {@link #getOut()} method despite the pattern is {@link org.apache.camel.ExchangePattern#InOnly}.
  *
  * @version $Revision$
  */
