@@ -77,7 +77,7 @@ public class QuickfixjComponentTest {
     }
     
     private String getEndpointUri(final String configFilename, SessionID sid) {
-        String uri = "quickfixj:" + configFilename;
+        String uri = "quickfix:" + configFilename;
         if (sid != null) {
             uri += "?sessionID=" + sid;
         }

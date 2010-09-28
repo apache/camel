@@ -59,19 +59,19 @@ public class SimpleMessagingExample {
             public void configure() throws Exception {
                 // Release latch when session logon events are received
                 // We expect two events, one for the trader session and one for the market session
-                from("quickfixj:examples/inprocess.cfg").
+                from("quickfix:examples/inprocess.cfg").
                     filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.SessionLogon)).
                     bean(new CountDownLatchDecrementer("logon", logonLatch));
 
                 // For all received messages, print the JSON-formatted message to stdout
-                from("quickfixj:examples/inprocess.cfg").
+                from("quickfix:examples/inprocess.cfg").
                     filter(PredicateBuilder.or(
                             header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AdminMessageReceived),
                             header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived))).
                     bean(new QuickfixjMessageJsonPrinter());
 
                 // If the market session receives an email then release the latch
-                from("quickfixj:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER").
+                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER").
                     filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.EMAIL)).
                     bean(new CountDownLatchDecrementer("message", receivedMessageLatch));
             }
@@ -86,7 +86,7 @@ public class SimpleMessagingExample {
             throw new IllegalStateException("Logon did not succeed");
         }
         
-        String marketUri = "quickfixj:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET";
+        String marketUri = "quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET";
         Producer producer = context.getEndpoint(marketUri).createProducer();
         
         Email email = TestSupport.createEmailMessage("Example");

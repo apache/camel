@@ -57,24 +57,24 @@ public class DynamicRoutingExample {
             public void configure() throws Exception {
                 // Release latch when session logon events are received
                 // We expect four logon events (four sessions)
-                from("quickfixj:examples/gateway.cfg").
+                from("quickfix:examples/gateway.cfg").
                     filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.SessionLogon)).
                     bean(new CountDownLatchDecrementer("logon", logonLatch));
 
                 // Dynamic router -- Uses FIX DeliverTo tags
-                from("quickfixj:examples/gateway.cfg").
+                from("quickfix:examples/gateway.cfg").
                     filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived)).
-                    recipientList(bean(new FixMessageRouter("quickfixj:examples/gateway.cfg")));
+                    recipientList(bean(new FixMessageRouter("quickfix:examples/gateway.cfg")));
 
                 // Log app messages as JSON
-                from("quickfixj:examples/gateway.cfg").
+                from("quickfix:examples/gateway.cfg").
                     filter(PredicateBuilder.or(
                             header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived),
                             header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageSent))).
                     bean(new QuickfixjMessageJsonPrinter());
                 
                 // If the trader@2 session receives an email then release the latch
-                from("quickfixj:examples/gateway.cfg?sessionID=FIX.4.2:TRADER@2->GATEWAY").
+                from("quickfix:examples/gateway.cfg?sessionID=FIX.4.2:TRADER@2->GATEWAY").
                     filter(PredicateBuilder.and(
                             header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived),
                             header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.EMAIL))).
@@ -93,7 +93,7 @@ public class DynamicRoutingExample {
             throw new IllegalStateException("Logon did not complete");
         }
         
-        String gatewayUri = "quickfixj:examples/gateway.cfg?sessionID=FIX.4.2:TRADER@1->GATEWAY";
+        String gatewayUri = "quickfix:examples/gateway.cfg?sessionID=FIX.4.2:TRADER@1->GATEWAY";
         Endpoint gatewayEndpoint = context.getEndpoint(gatewayUri);
         Producer producer = gatewayEndpoint.createProducer();
         
