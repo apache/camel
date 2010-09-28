@@ -31,7 +31,7 @@ import org.junit.Test;
  */
 public class FromFtpDeleteFileTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/deletefile?password=admin&binary=false&delete=true";
     }
 

@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 
 import org.apache.camel.component.file.GenericFileConfiguration;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Configuration of the FTP server
@@ -54,7 +55,22 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         super.configure(uri);
         setProtocol(uri.getScheme());
         setDefaultPort();
-        setUsername(uri.getUserInfo());
+
+        // UserInfo can contain both username and password as: pwd:user@ftpserver
+        // see: http://en.wikipedia.org/wiki/URI_scheme
+        String username = uri.getUserInfo();
+        String pw = null;
+        if (username != null && username.contains(":")) {
+            pw = ObjectHelper.before(username, ":");
+            username = ObjectHelper.after(username, ":");
+        }
+        if (username != null) {
+            setUsername(username);
+        }
+        if (pw != null) {
+            setPassword(pw);
+        }
+
         setHost(uri.getHost());
         setPort(uri.getPort());
     }
