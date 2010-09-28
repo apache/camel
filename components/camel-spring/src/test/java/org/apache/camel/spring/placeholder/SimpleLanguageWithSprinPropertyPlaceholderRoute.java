@@ -25,7 +25,7 @@ public class SimpleLanguageWithSprinPropertyPlaceholderRoute extends RouteBuilde
 
     public void configure() throws Exception {
         from(fromEndpoint)
-        .to(toEndpoint);
+            .to(toEndpoint);
     }
 
     public void setFromEndpoint(String fromEndpoint) {
