@@ -56,13 +56,13 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         setProtocol(uri.getScheme());
         setDefaultPort();
 
-        // UserInfo can contain both username and password as: pwd:user@ftpserver
+        // UserInfo can contain both username and password as: user:pwd@ftpserver
         // see: http://en.wikipedia.org/wiki/URI_scheme
         String username = uri.getUserInfo();
         String pw = null;
         if (username != null && username.contains(":")) {
-            pw = ObjectHelper.before(username, ":");
-            username = ObjectHelper.after(username, ":");
+            pw = ObjectHelper.after(username, ":");
+            username = ObjectHelper.before(username, ":");
         }
         if (username != null) {
             setUsername(username);

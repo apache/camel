@@ -23,7 +23,7 @@ public class FromFtpDeleteFileScottTigerTest extends FromFtpDeleteFileTest {
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://tiger:scott@localhost:" + getPort() + "/deletefile?binary=false&delete=true";
+        return "ftp://scott:tiger@localhost:" + getPort() + "/deletefile?binary=false&delete=true";
     }
 
 }

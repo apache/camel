@@ -198,6 +198,20 @@ public class UriConfigurationTest extends CamelTestSupport {
     }
 
     @Test
+    public void testPasswordInContextPathConfiguration() {
+        Endpoint endpoint = context.getEndpoint("ftp://user:secret@hostname:1021/some/file");
+        assertIsInstanceOf(FtpEndpoint.class, endpoint);
+        FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
+        RemoteFileConfiguration config = (RemoteFileConfiguration) ftpEndpoint.getConfiguration();
+        
+        assertEquals("ftp", config.getProtocol());
+        assertEquals("hostname", config.getHost());
+        assertEquals(1021, config.getPort());
+        assertEquals("user", config.getUsername());
+        assertEquals("secret", config.getPassword());
+    }
+    
+    @Test
     public void testStartingDirectoryWithDot() throws Exception {
         Endpoint endpoint = context.getEndpoint("ftp://user@hostname?password=secret");
         FtpEndpoint ftpEndpoint = assertIsInstanceOf(FtpEndpoint.class, endpoint);
