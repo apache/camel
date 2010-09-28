@@ -369,10 +369,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             aggregationRepository.confirm(exchange.getContext(), exchange.getExchangeId());
             // and remove redelivery state as well
             redeliveryState.remove(exchange.getExchangeId());
-            return;
+        } else {
+            // the aggregated exchange should be published (sent out)
+            onSubmitCompletion(key, exchange);
         }
-
-        onSubmitCompletion(key, exchange);
     }
 
     private void onSubmitCompletion(final Object key, final Exchange exchange) {
