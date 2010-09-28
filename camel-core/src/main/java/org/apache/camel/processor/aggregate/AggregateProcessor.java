@@ -365,6 +365,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Aggregation for correlation key " + key + " discarding aggregated exchange: " + exchange);
             }
+            // must confirm the discarded exchange
+            aggregationRepository.confirm(exchange.getContext(), exchange.getExchangeId());
+            // and remove redelivery state as well
+            redeliveryState.remove(exchange.getExchangeId());
             return;
         }
 
