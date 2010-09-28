@@ -16,9 +16,10 @@
  */
 package org.apache.camel.routepolicy.quartz;
 
-import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
+import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.CronTrigger;
@@ -31,20 +32,19 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
     private String routeSuspendTime;
     private String routeResumeTime;
     
-    public CronScheduledRoutePolicy() {
-        super();
-    }
-
-    public CronScheduledRoutePolicy(String propertiesFile) {
-        super(propertiesFile);
-    }
-    
-    public CronScheduledRoutePolicy(Properties properties) {
-        super(properties);
-    }
-    
     public void onInit(Route route) {   
         try {       
+            QuartzComponent quartz = route.getRouteContext().getCamelContext().getComponent("quartz", QuartzComponent.class);
+            setScheduler(quartz.getScheduler());
+            
+            if (getRouteStopGracePeriod() == 0) {
+                setRouteStopGracePeriod(10000);
+            }
+            
+            if (getTimeUnit() == null) {
+                setTimeUnit(TimeUnit.MILLISECONDS);
+            }
+
             if ((getRouteStartTime() == null) && (getRouteStopTime() == null) && (getRouteSuspendTime() == null) && (getRouteResumeTime() == null)) {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("Scheduled Route Policy for route " + route.getId() + " is not set since the no start, stop and/or suspend times are specified");

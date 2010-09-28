@@ -22,6 +22,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -42,6 +43,14 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         super.setUp();
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.camel.test.junit4.CamelTestSupport#isUseRouteBuilder()
+     */
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     @Test
     public void testScheduledStartRoutePolicy() throws Exception {
 
@@ -49,9 +58,11 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         
         success.expectedMessageCount(1);
         
+        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class).start();
         context.addRoutes(new RouteBuilder() {
             public void configure() {    
-                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy("org/apache/camel/routepolicy/quartz/myquartz.properties");
+                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
                 policy.setRouteStartTime("*/3 * * * * ?");
                 
                 from("direct:start")
@@ -67,6 +78,7 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);
         template.sendBody("direct:start", "Ready or not, Here, I come");
 
+        context.getComponent("quartz", QuartzComponent.class).stop();
         success.assertIsSatisfied();
     }
 
@@ -76,9 +88,11 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
   
         MockEndpoint unreachable = (MockEndpoint) context.getEndpoint("mock:unreachable");        
         
+        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class).start();
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy("org/apache/camel/routepolicy/quartz/myquartz.properties");
+                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
                 policy.setRouteStopTime("*/3 * * * * ?");
                 policy.setRouteStopGracePeriod(0);
                 policy.setTimeUnit(TimeUnit.MILLISECONDS);
@@ -101,6 +115,7 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
             consumerStopped = true;
         }    
         assertTrue(consumerStopped);
+        context.getComponent("quartz", QuartzComponent.class).stop();
     } 
     
     @Test
@@ -109,9 +124,11 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
   
         MockEndpoint unreachable = (MockEndpoint) context.getEndpoint("mock:unreachable");        
         
+        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class).start();
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy("org/apache/camel/routepolicy/quartz/myquartz.properties");
+                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
                 policy.setRouteSuspendTime("*/3 * * * * ?");
                 
                 from("direct:start")
@@ -129,6 +146,7 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
             consumerSuspended = true;
         }        
         assertTrue(consumerSuspended);
+        context.getComponent("quartz", QuartzComponent.class).stop();
     }    
     
     @Test
@@ -138,9 +156,11 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         
         success.expectedMessageCount(1);
         
+        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class).start();
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy("org/apache/camel/routepolicy/quartz/myquartz.properties");
+                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
                 policy.setRouteResumeTime("*/3 * * * * ?");
                 
                 from("direct:start")
@@ -157,9 +177,10 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
             LOG.debug("Consumer successfully suspended");
         } 
         
-        Thread.currentThread().sleep(5000);
+        Thread.currentThread().sleep(4000);
         template.sendBody("direct:start", "Ready or not, Here, I come");
         
+        context.getComponent("quartz", QuartzComponent.class).stop();
         success.assertIsSatisfied();
     }  
 

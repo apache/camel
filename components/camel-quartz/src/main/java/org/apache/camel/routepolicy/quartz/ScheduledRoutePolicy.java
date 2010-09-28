@@ -16,61 +16,24 @@
  */
 package org.apache.camel.routepolicy.quartz;
 
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.RoutePolicySupport;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
-import org.quartz.impl.StdSchedulerFactory;
 
 public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements ScheduledRoutePolicyConstants {
     private static final transient Log LOG = LogFactory.getLog(ScheduledRoutePolicy.class);
     protected ScheduledRouteDetails scheduledRouteDetails;
-    private Properties properties;
-    private StdSchedulerFactory schedulerFactory;
     private Scheduler scheduler;
     private int routeStopGracePeriod;
     private TimeUnit timeUnit; 
-    
-    public ScheduledRoutePolicy() {
-        this(new Properties());
-    }
-
-    public ScheduledRoutePolicy(String propertiesFile) {
-        try {
-            properties = new Properties();
-            properties.load(ObjectHelper.loadResourceAsStream(propertiesFile));
-            schedulerFactory = new StdSchedulerFactory(properties);
-            setScheduler(schedulerFactory.getScheduler());
-        } catch (Exception e) {
-            handleException(e);
-        }
-        setRouteStopGracePeriod(10000);
-        setTimeUnit(TimeUnit.MILLISECONDS);
-    }
-    
-    public ScheduledRoutePolicy(Properties properties) {
-        try {
-            if (properties.isEmpty()) {
-                schedulerFactory = new StdSchedulerFactory();
-            } else {
-                schedulerFactory = new StdSchedulerFactory(properties);
-            }
-            setScheduler(schedulerFactory.getScheduler());
-        } catch (Exception e) {
-            handleException(e);
-        }
-        setRouteStopGracePeriod(10000);
-        setTimeUnit(TimeUnit.MILLISECONDS);
-    }
 
     protected abstract Trigger createTrigger(Action action, Route route) throws Exception;
 
@@ -149,7 +112,9 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         String jobDetailName = retrieveJobDetailName(action);
         String jobDetailGroup = retrieveJobDetailGroup(action);
         
-        getScheduler().deleteJob(jobDetailName, jobDetailGroup);
+        if (!getScheduler().isShutdown()) {
+            getScheduler().deleteJob(jobDetailName, jobDetailGroup);
+        }
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Scheduled Job: " + jobDetailGroup + "." + jobDetailName + " has been deleted");

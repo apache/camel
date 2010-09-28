@@ -17,9 +17,10 @@
 package org.apache.camel.routepolicy.quartz;
 
 import java.util.Date;
-import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
+import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.SimpleTrigger;
@@ -39,21 +40,20 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
     private Date routeResumeDate; 
     private int routeResumeRepeatCount;
     private long routeResumeRepeatInterval;    
-
-    public SimpleScheduledRoutePolicy() {
-        super();
-    }
-
-    public SimpleScheduledRoutePolicy(String propertiesFile) {
-        super(propertiesFile);
-    }
-    
-    public SimpleScheduledRoutePolicy(Properties properties) {
-        super(properties);
-    }
     
     public void onInit(Route route) {   
         try {       
+            QuartzComponent quartz = route.getRouteContext().getCamelContext().getComponent("quartz", QuartzComponent.class);
+            setScheduler(quartz.getScheduler());
+            
+            if (getRouteStopGracePeriod() == 0) {
+                setRouteStopGracePeriod(10000);
+            }
+         
+            if (getTimeUnit() == null) {
+                setTimeUnit(TimeUnit.MILLISECONDS);
+            }
+            
             if ((getRouteStartDate() == null) && (getRouteStopDate() == null) && (getRouteSuspendDate() == null) && (getRouteResumeDate() == null)) {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("Scheduled Route Policy for route " + route.getId() + " is not set since the no start, stop and/or suspend times are specified");
