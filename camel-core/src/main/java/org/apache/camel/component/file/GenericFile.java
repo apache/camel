@@ -163,7 +163,11 @@ public class GenericFile<T>  {
             // for relative then we should avoid having the endpoint path duplicated so clip it
             if (ObjectHelper.isNotEmpty(endpointPath) && newFileName.startsWith(endpointPath)) {
                 // clip starting endpoint in case it was added
-                newFileName = ObjectHelper.after(newFileName, endpointPath + getFileSeparator());
+                if (endpointPath.endsWith("" + getFileSeparator())) {
+                    newFileName = ObjectHelper.after(newFileName, endpointPath);
+                } else {
+                    newFileName = ObjectHelper.after(newFileName, endpointPath + getFileSeparator());
+                }
 
                 // reconstruct file with clipped name
                 file = new File(newFileName);

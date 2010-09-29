@@ -343,13 +343,33 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
+        if (ObjectHelper.isEmpty(path)) {
+            return;
+        }
+
+        // split into multiple dirs
+        final String[] dirs = path.split("/|\\\\");
+
+        if (dirs == null || dirs.length == 0) {
+            // this is the root path
+            doChangeDirectory(path);
+            return;
+        }
+
+        // there are multiple dirs so do this in chunks
+        for (String dir : dirs) {
+            doChangeDirectory(dir);
+        }
+    }
+
+    private void doChangeDirectory(String path) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Changing current directory to: " + path);
+            LOG.trace("Changing directory: " + path);
         }
         try {
             channel.cd(path);
         } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot change current directory to: " + path, e);
+            throw new GenericFileOperationFailedException("Cannot change directory to: " + path, e);
         }
     }
 

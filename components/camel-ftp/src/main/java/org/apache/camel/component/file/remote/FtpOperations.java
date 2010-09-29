@@ -496,13 +496,38 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
-        if (log.isTraceEnabled()) {
-            log.trace("changeWorkingDirectory(" + path + ")");
+        if (ObjectHelper.isEmpty(path)) {
+            return;
         }
+
+        // split into multiple dirs
+        final String[] dirs = path.split("/|\\\\");
+
+        if (dirs == null || dirs.length == 0) {
+            // this is the root path
+            doChangeDirectory(path);
+            return;
+        }
+
+        // there are multiple dirs so do this in chunks
+        for (String dir : dirs) {
+            doChangeDirectory(dir);
+        }
+    }
+
+    private void doChangeDirectory(String path) {
+        if (log.isTraceEnabled()) {
+            log.trace("Changing directory: " + path);
+        }
+
+        boolean success;
         try {
-            client.changeWorkingDirectory(path);
+            success = client.changeWorkingDirectory(path);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        }
+        if (!success) {
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), "Cannot change directory to: " + path);
         }
     }
 
@@ -587,6 +612,27 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 }
 
                 success = client.makeDirectory(directory);
+            }
+        }
+
+        return success;
+    }
+
+    private boolean changeDirectoryChunks(String dirName) throws GenericFileOperationFailedException {
+        final String[] dirs = dirName.split("/|\\\\");
+
+        boolean success = false;
+        for (String dir : dirs) {
+            if (log.isTraceEnabled()) {
+                log.trace("Changing to directory: " + dir);
+            }
+            try {
+                success = client.changeWorkingDirectory(dir);
+            } catch (IOException e) {
+                throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            }
+            if (!success) {
+                return false;
             }
         }
 
