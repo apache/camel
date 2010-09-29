@@ -58,17 +58,14 @@ public final class QuickfixjConverters {
     }
 
     private static DataDictionary getDataDictionary(Exchange exchange) throws ConfigError {
-        DataDictionary dataDictionary = null;
-        
         Object dictionaryValue = exchange.getProperties().get(QuickfixjEndpoint.DATA_DICTIONARY_KEY);
         
+        DataDictionary dataDictionary;
         if (dictionaryValue instanceof DataDictionary) {
             dataDictionary = (DataDictionary)dictionaryValue;
-        }
-        else if (dictionaryValue instanceof String) {
+        } else if (dictionaryValue instanceof String) {
             dataDictionary = new DataDictionary((String) dictionaryValue);
-        }      
-        else {
+        } else {
             SessionID sessionID = (SessionID) exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY);
             Session session = Session.lookupSession(sessionID);
             dataDictionary = session != null ? session.getDataDictionary() : null;
@@ -91,9 +88,9 @@ public final class QuickfixjConverters {
                 LOG.error("Message type field not found in QFJ message, continuing...");
             }
         }
-        
-        camelMessage.setBody(message); 
+        camelMessage.setBody(message);
         
         return exchange;
     }
+
 }

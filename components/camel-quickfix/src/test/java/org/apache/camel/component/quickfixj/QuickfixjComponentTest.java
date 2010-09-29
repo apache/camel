@@ -16,12 +16,6 @@
  */
 package org.apache.camel.component.quickfixj;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -61,6 +55,11 @@ import quickfix.field.Subject;
 import quickfix.field.TargetCompID;
 import quickfix.fix44.Email;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class QuickfixjComponentTest {
     private File settingsFile;
@@ -83,6 +82,7 @@ public class QuickfixjComponentTest {
         }
         return uri;
     }
+
     @Before
     public void setUp() throws Exception {
         settingsFile = File.createTempFile("quickfixj_test_", ".cfg");
@@ -108,7 +108,6 @@ public class QuickfixjComponentTest {
 
         Method converterMethod = QuickfixjConverters.class.getMethod("toSessionID", new Class<?>[] {String.class});
         camelContext.getTypeConverterRegistry().addTypeConverter(SessionID.class, String.class,  new StaticMethodTypeConverter(converterMethod));
-        
     }
 
     @After

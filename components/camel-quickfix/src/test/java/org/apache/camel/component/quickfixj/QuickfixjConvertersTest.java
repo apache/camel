@@ -16,12 +16,6 @@
  */
 package org.apache.camel.component.quickfixj;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -52,6 +46,11 @@ import quickfix.field.HopCompID;
 import quickfix.field.MsgType;
 import quickfix.fix44.Message.Header.NoHops;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class QuickfixjConvertersTest {
     private static DefaultCamelContext camelContext;

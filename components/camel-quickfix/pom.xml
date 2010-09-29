@@ -29,18 +29,13 @@
         </camel.osgi.export.pkg>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>open.iona.m2-all</id>
-			<name>Fuse Source Maven Repo</name>
-			<url>http://repo.fusesource.com/maven2-all</url>
-		</repository>
-		<repository>
-			<id>apache.snapshots</id>
-			<name>Apache Snapshots</name>
-			<url>https://repository.apache.org/content/repositories/snapshots/</url>
-		</repository>
-	</repositories>
+    <repositories>
+        <repository>
+            <id>open.iona.m2-all</id>
+            <name>Fusesource Dependency Repository</name>
+            <url>http://repo.fusesource.com/maven2-all</url>
+        </repository>
+    </repositories>
 
 	<dependencies>
 		<dependency>
@@ -50,6 +45,7 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.quickfixj</groupId>
@@ -67,6 +63,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -78,11 +75,11 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 </project>
