@@ -397,7 +397,23 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                     (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             target.setBody(os);
-            channel.get(name, os);
+
+            // remember current directory
+            String currentDir = getCurrentDirectory();
+
+            // change directory to path where the file is to be retrieved
+            // (must do this as some FTP servers cannot retrieve using absolute path)
+            String path = FileUtil.onlyPath(name);
+            if (path != null) {
+                changeCurrentDirectory(path);
+            }
+            String onlyName = FileUtil.stripPath(name);
+
+            channel.get(onlyName, os);
+
+            // change back to current directory
+            changeCurrentDirectory(currentDir);
+
             return true;
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
@@ -450,11 +466,26 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
         }
 
-
         try {
             // store the java.io.File handle as the body
             file.setBody(local);
-            channel.get(name, os);
+
+            // remember current directory
+            String currentDir = getCurrentDirectory();
+
+            // change directory to path where the file is to be retrieved
+            // (must do this as some FTP servers cannot retrieve using absolute path)
+            String path = FileUtil.onlyPath(name);
+            if (path != null) {
+                changeCurrentDirectory(path);
+            }
+            String onlyName = FileUtil.stripPath(name);
+
+            channel.get(onlyName, os);
+
+            // change back to current directory
+            changeCurrentDirectory(currentDir);
+
         } catch (SftpException e) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Error occurred during retrieving file: " + name + " to local directory. Deleting local work file: " + temp);
