@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 	<cxf:cxfEndpoint id="routerEndpoint"
-		address="http://localhost:8092/PersonService/" serviceClass="org.apache.camel.wsdl_first.Person"
+		serviceClass="org.apache.camel.wsdl_first.Person"
 		endpointName="person:soap" serviceName="person:PersonService" wsdlURL="person.wsdl"
 		xmlns:person="http://camel.apache.org/wsdl-first">
 		<cxf:properties>

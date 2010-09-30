@@ -27,7 +27,6 @@
 
 
 	<cxf:cxfEndpoint id="routerEndpoint"
-		address="http://localhost:8092/PersonService/"
 		serviceClass="org.apache.camel.wsdl_first.Person"
 		endpointName="person:soap"
 		wsdlURL="person.wsdl"
