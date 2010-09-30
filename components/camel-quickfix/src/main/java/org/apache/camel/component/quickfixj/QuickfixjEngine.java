@@ -336,44 +336,92 @@ public class QuickfixjEngine {
 
     private class Dispatcher implements Application {
         public void fromAdmin(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
-            dispatch(QuickfixjEventCategory.AdminMessageReceived, sessionID, message);
+            try {
+                dispatch(QuickfixjEventCategory.AdminMessageReceived, sessionID, message);
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                rethrowIfType(e, FieldNotFound.class);
+                rethrowIfType(e, IncorrectDataFormat.class);
+                rethrowIfType(e, IncorrectTagValue.class);
+                rethrowIfType(e, RejectLogon.class);               
+                throw new DispatcherException(e);
+            }
         }
-
+        
         public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
-            dispatch(QuickfixjEventCategory.AppMessageReceived, sessionID, message);
+            try {
+                dispatch(QuickfixjEventCategory.AppMessageReceived, sessionID, message);
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                rethrowIfType(e, FieldNotFound.class);
+                rethrowIfType(e, IncorrectDataFormat.class);
+                rethrowIfType(e, IncorrectTagValue.class);
+                rethrowIfType(e, UnsupportedMessageType.class);
+                throw new DispatcherException(e);
+            }
         }
 
         public void onCreate(SessionID sessionID) {
-            dispatch(QuickfixjEventCategory.SessionCreated, sessionID, null);
+            try {
+                dispatch(QuickfixjEventCategory.SessionCreated, sessionID, null);
+            } catch (Exception e) {
+                throw new DispatcherException(e);
+            }
         }
 
         public void onLogon(SessionID sessionID) {
-            dispatch(QuickfixjEventCategory.SessionLogon, sessionID, null);
+            try {
+                dispatch(QuickfixjEventCategory.SessionLogon, sessionID, null);
+            } catch (Exception e) {
+                throw new DispatcherException(e);
+            }
         }
 
         public void onLogout(SessionID sessionID) {
-            dispatch(QuickfixjEventCategory.SessionLogoff, sessionID, null);
+            try {
+                dispatch(QuickfixjEventCategory.SessionLogoff, sessionID, null);
+            } catch (Exception e) {
+                throw new DispatcherException(e);
+            }
         }
 
         public void toAdmin(Message message, SessionID sessionID) {
-            dispatch(QuickfixjEventCategory.AdminMessageSent, sessionID, message);
+            try {
+                dispatch(QuickfixjEventCategory.AdminMessageSent, sessionID, message);
+            } catch (Exception e) {
+                throw new DispatcherException(e);
+            }
         }
 
         public void toApp(Message message, SessionID sessionID) throws DoNotSend {
-            dispatch(QuickfixjEventCategory.AppMessageSent, sessionID, message);
+            try {
+                dispatch(QuickfixjEventCategory.AppMessageSent, sessionID, message);
+            } catch (Exception e) {
+                throw new DispatcherException(e);
+            }
         }
         
-        private void dispatch(QuickfixjEventCategory quickfixjEventCategory, SessionID sessionID, Message message) {
-            // TODO Find a way to propagate exception to the QFJ engine (RejectLogon, DoNotSend, etc.)
+        @SuppressWarnings("unchecked")
+        private <T extends Exception> void rethrowIfType(Exception e, Class<T> exceptionClass) throws T {
+            throw (T) e;
+        }
+
+        private void dispatch(QuickfixjEventCategory quickfixjEventCategory, SessionID sessionID, Message message) throws Exception {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("FIX event dispatched: " + quickfixjEventCategory + " " + (message != null ? message : ""));
             }
             for (QuickfixjEventListener listener : eventListeners) {
-                try {
-                    listener.onEvent(quickfixjEventCategory, sessionID, message);
-                } catch (Exception e) {
-                    LOG.error("Error during event dispatching", e);
-                }
+                // Exceptions propagate back to the FIX engine so sequence numbers can be adjusted
+                listener.onEvent(quickfixjEventCategory, sessionID, message);
+            }
+        }
+        
+        @SuppressWarnings("serial")
+        private class DispatcherException extends RuntimeException {
+            public DispatcherException(Throwable cause) {
+                super(cause);
             }
         }
     }

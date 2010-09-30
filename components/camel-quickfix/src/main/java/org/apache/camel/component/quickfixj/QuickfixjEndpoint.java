@@ -21,9 +21,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +59,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     public Consumer createConsumer(Processor processor) throws Exception {
         LOG.info("Creating QuickFIX/J consumer: " + (sessionID != null ? sessionID : "No Session"));
         QuickfixjConsumer consumer = new QuickfixjConsumer(this, processor);
-        // TODO It's not clear how the consumer lifecycle is managed
+        // TODO The lifecycle mgmt requirements aren't clear to me
         consumer.start();
         consumers.add(consumer);
         return consumer;
@@ -73,10 +75,14 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
         return true;
     }
 
-    public void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
+    public void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) throws Exception {
         if (this.sessionID == null || this.sessionID.equals(sessionID)) {
             for (QuickfixjConsumer consumer : consumers) {
-                consumer.onEvent(eventCategory, sessionID, message);
+                Exchange exchange = QuickfixjConverters.toExchange(this, sessionID, message, eventCategory);
+                consumer.onExchange(exchange);
+                if (exchange.getException() != null) {
+                    throw exchange.getException();
+                }
             }
         }
     }

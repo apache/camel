@@ -19,11 +19,7 @@ package org.apache.camel.component.quickfixj;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
 import org.apache.camel.impl.DefaultConsumer;
-
-import quickfix.Message;
-import quickfix.SessionID;
 
 public class QuickfixjConsumer extends DefaultConsumer {
 
@@ -31,9 +27,8 @@ public class QuickfixjConsumer extends DefaultConsumer {
         super(endpoint, processor);
     }
 
-    public void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
+    public void onExchange(Exchange exchange) throws Exception {
         if (isStarted()) {
-            Exchange exchange = QuickfixjConverters.toExchange(getEndpoint(), sessionID, message, eventCategory);
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {

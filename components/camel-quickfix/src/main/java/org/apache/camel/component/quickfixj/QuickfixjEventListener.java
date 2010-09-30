@@ -25,6 +25,6 @@ import quickfix.SessionID;
  */
 public interface QuickfixjEventListener {
     
-    void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message);
+    void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) throws Exception;
     
 }

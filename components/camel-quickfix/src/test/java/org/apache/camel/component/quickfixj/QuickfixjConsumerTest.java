@@ -24,13 +24,10 @@ import org.apache.camel.impl.ServiceSupport;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-
-import quickfix.FixVersions;
-import quickfix.Message;
-import quickfix.SessionID;
 
 public class QuickfixjConsumerTest {
     private Exchange mockExchange;
@@ -56,9 +53,7 @@ public class QuickfixjConsumerTest {
         Assert.assertThat("Consumer should not be automatically started", 
             ((ServiceSupport)consumer).isStarted(), CoreMatchers.is(false));
         
-        // Simulate a message from the FIX engine
-        SessionID sessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "SENDER", "TARGET");       
-        consumer.onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID, new Message());
+        consumer.onExchange(mockExchange);
         
         // No expected interaction with processor since component is not started
         Mockito.verifyZeroInteractions(mockProcessor);
@@ -66,8 +61,7 @@ public class QuickfixjConsumerTest {
         consumer.start();
         Assert.assertThat(((ServiceSupport)consumer).isStarted(), CoreMatchers.is(true));
         
-        // Simulate a message from the FIX engine
-        consumer.onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID, new Message());
+        consumer.onExchange(mockExchange);
         
         // Second message should be processed
         Mockito.verify(mockProcessor).process(Matchers.isA(Exchange.class));
@@ -83,9 +77,26 @@ public class QuickfixjConsumerTest {
         Mockito.doThrow(exception).when(mockProcessor).process(mockExchange);
         
         // Simulate a message from the FIX engine
-        SessionID sessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "SENDER", "TARGET");       
-        consumer.onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID, new Message());
+        consumer.onExchange(mockExchange);
         
         Mockito.verify(mockExchange).setException(exception);
     }
+    
+    @Test
+    @Ignore("Modified behavior")
+    public void propagateException() throws Exception {
+        QuickfixjConsumer consumer = new QuickfixjConsumer(mockEndpoint, mockProcessor);
+        consumer.start();
+        
+        Throwable exception = new Exception("Throwable for test");
+        Mockito.doThrow(exception).when(mockProcessor).process(mockExchange);
+        
+        try {
+            consumer.onExchange(mockExchange);
+            Assert.fail("Exception was not thrown");
+        } catch (Exception e) {
+            Assert.assertThat(e.getMessage(), CoreMatchers.is("Throwable for test"));
+        }
+    }
+    
 }
