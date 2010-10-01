@@ -17,11 +17,12 @@
 package org.apache.camel.spring.placeholder;
 
 import java.io.File;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.util.FileUtil;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -39,8 +40,8 @@ public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends Abstrac
 
     @Before
     public void setUp() throws Exception {
-        FileUtil.deleteFile(new File("target/outBox"));
-        FileUtil.deleteFile(new File("target/outBoxSimple"));
+        ContextTestSupport.deleteDirectory("target/outBox");
+        ContextTestSupport.deleteDirectory("target/outBoxSimple");
     }
 
     @Test
@@ -65,12 +66,10 @@ public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends Abstrac
     }
 
     private void assertFileExists(String directory) {
-        Calendar today = Calendar.getInstance();
-        String day = String.valueOf(today.get(Calendar.DAY_OF_MONTH));
-        String month = String.valueOf(today.get(Calendar.MONTH) + 1);
-        month = month.length() == 1 ? "0" + month : month;
-        String year = String.valueOf(today.get(Calendar.YEAR));
-
-        assertTrue(new File(directory + "test-" + year + month + day + ".txt").exists());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String s = sdf.format(new Date());
+        String name = directory + "test-" + s + ".txt";
+        File file = new File(name).getAbsoluteFile();
+        assertTrue("File should exist: " + name, file.exists());
     }
 }

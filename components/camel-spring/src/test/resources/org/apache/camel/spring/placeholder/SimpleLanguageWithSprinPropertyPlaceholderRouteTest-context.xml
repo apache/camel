@@ -25,14 +25,15 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         ">
         
-	<ctx:property-placeholder ignore-unresolvable="true" location="classpath:org/apache/camel/spring/placeholder/bundle-context.cfg" />
+	<ctx:property-placeholder ignore-unresolvable="true"
+                              location="classpath:org/apache/camel/spring/placeholder/bundle-context.properties"/>
 	
-	<bean id="testRoute1" class="org.apache.camel.spring.placeholder.SimpleLanguageWithSprinPropertyPlaceholderRoute">
+	<bean id="testRoute1" class="org.apache.camel.spring.placeholder.SimpleLanguageWithSpringPropertyPlaceholderRoute">
 		<property name="fromEndpoint" value="${fromEndpoint}" />
 		<property name="toEndpoint" value="${toEndpoint}" />
 	</bean>
  
-    <bean id="testRoute2" class="org.apache.camel.spring.placeholder.SimpleLanguageWithSprinPropertyPlaceholderRoute">
+    <bean id="testRoute2" class="org.apache.camel.spring.placeholder.SimpleLanguageWithSpringPropertyPlaceholderRoute">
         <property name="fromEndpoint" value="${fromEndpointSimple}" />
         <property name="toEndpoint" value="${toEndpointSimple}" />
     </bean>
@@ -41,4 +42,5 @@
 		<camel:routeBuilder ref="testRoute1"/>
         <camel:routeBuilder ref="testRoute2"/>
 	</camelContext>
+
 </beans>

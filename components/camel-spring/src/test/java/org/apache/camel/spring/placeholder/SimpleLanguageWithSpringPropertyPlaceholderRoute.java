@@ -18,14 +18,13 @@ package org.apache.camel.spring.placeholder;
 
 import org.apache.camel.builder.RouteBuilder;
 
-public class SimpleLanguageWithSprinPropertyPlaceholderRoute extends RouteBuilder {
+public class SimpleLanguageWithSpringPropertyPlaceholderRoute extends RouteBuilder {
 
     private String fromEndpoint;
     private String toEndpoint;
 
     public void configure() throws Exception {
-        from(fromEndpoint)
-            .to(toEndpoint);
+        from(fromEndpoint).to(toEndpoint);
     }
 
     public void setFromEndpoint(String fromEndpoint) {

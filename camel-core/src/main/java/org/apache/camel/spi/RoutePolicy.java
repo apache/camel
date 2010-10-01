@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 
