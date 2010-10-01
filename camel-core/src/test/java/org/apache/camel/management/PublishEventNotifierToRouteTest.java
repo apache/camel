@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 /**
  * @version $Revision$
  */
-public class PublishEventNotifierTest extends ContextTestSupport {
+public class PublishEventNotifierToRouteTest extends ContextTestSupport {
 
     @Override
     protected boolean useJmx() {
@@ -37,7 +37,7 @@ public class PublishEventNotifierTest extends ContextTestSupport {
 
         PublishEventNotifier notifier = new PublishEventNotifier();
         notifier.setCamelContext(context);
-        notifier.setEndpointUri("mock:event");
+        notifier.setEndpointUri("seda:event");
 
         context.getManagementStrategy().addEventNotifier(notifier);
 
@@ -46,7 +46,7 @@ public class PublishEventNotifierTest extends ContextTestSupport {
 
     public void testExchangeDone() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:event").expectedMessageCount(6);
+        getMockEndpoint("mock:event").expectedMinimumMessageCount(6);
 
         template.sendBody("direct:start", "Hello World");
 
@@ -75,6 +75,8 @@ public class PublishEventNotifierTest extends ContextTestSupport {
                 from("direct:start").to("log:foo").to("mock:result");
 
                 from("direct:fail").throwException(new IllegalArgumentException("Damn"));
+
+                from("seda:event").log("Event ${body}").to("mock:event");
             }
         };
     }

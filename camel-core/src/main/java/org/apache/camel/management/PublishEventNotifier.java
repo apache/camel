@@ -29,6 +29,10 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * A {@link org.apache.camel.spi.EventNotifier} which publishes the {@link EventObject} to some
  * {@link org.apache.camel.Endpoint}.
+ * <p/>
+ * This notifier is only enabled when {@link CamelContext} is started. This avoids problems when
+ * sending notifications during start/shutdown of {@link CamelContext} which causes problems by
+ * sending those events to Camel routes by this notifier.
  *
  * @version $Revision$
  */
@@ -40,10 +44,35 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
     private Producer producer;
 
     public void notify(EventObject event) throws Exception {
+        // only notify when we are started
+        if (!isStarted()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Cannot publish event as notifier is not started: " + event);
+            }
+            return;
+        }
+
+        // only notify when camel context is running
+        if (!camelContext.getStatus().isStarted()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Cannot publish event as CamelContext is not started: " + event);
+            }
+            return;
+        }
+
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody(event);
 
-        producer.process(exchange);
+        // make sure we don't send out events for this as well
+        // mark exchange as being published to event, to prevent creating new events
+        // for this as well (causing a endless flood of events)
+        exchange.setProperty(Exchange.NOTIFY_EVENT, Boolean.TRUE);
+        try {
+            producer.process(exchange);
+        } finally {
+            // and remove it when its done
+            exchange.removeProperty(Exchange.NOTIFY_EVENT);
+        }
     }
 
     public boolean isEnabled(EventObject event) {

@@ -135,6 +135,8 @@ public interface Exchange {
     String MULTICAST_INDEX         = "CamelMulticastIndex";
     String MULTICAST_COMPLETE      = "CamelMulticastComplete";
 
+    String NOTIFY_EVENT = "CamelNotifyEvent";
+
     String ON_COMPLETION = "CamelOnCompletion";
 
     String REDELIVERED          = "CamelRedelivered";

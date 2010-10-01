@@ -273,6 +273,11 @@ public final class EventHelper {
     }
 
     public static void notifyExchangeCreated(CamelContext context, Exchange exchange) {
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
+            return;
+        }
+
         List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
@@ -296,6 +301,11 @@ public final class EventHelper {
     }
 
     public static void notifyExchangeDone(CamelContext context, Exchange exchange) {
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
+            return;
+        }
+
         List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
@@ -319,6 +329,11 @@ public final class EventHelper {
     }
 
     public static void notifyExchangeFailed(CamelContext context, Exchange exchange) {
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
+            return;
+        }
+
         List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
@@ -343,6 +358,11 @@ public final class EventHelper {
 
     public static void notifyExchangeFailureHandled(CamelContext context, Exchange exchange, Processor failureHandler,
                                                     boolean deadLetterChannel) {
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
+            return;
+        }
+
         List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
@@ -366,6 +386,11 @@ public final class EventHelper {
     }
 
     public static void notifyExchangeRedelivery(CamelContext context, Exchange exchange, int attempt) {
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
+            return;
+        }
+
         List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
@@ -389,6 +414,11 @@ public final class EventHelper {
     }
 
     public static void notifyExchangeSent(CamelContext context, Exchange exchange, Endpoint endpoint, long timeTaken) {
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
+            return;
+        }
+
         List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
