@@ -461,6 +461,23 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     /**
+     * Sets an expectation that the given predicates matches the received messages by this endpoint
+     */
+    public void expectedMessagesMatches(Predicate... predicates) {
+        for (int i = 0; i < predicates.length; i++) {
+            final int messageIndex = i;
+            final Predicate predicate = predicates[i];
+            final AssertionClause clause = new AssertionClause() {
+                public void run() {
+                    addPredicate(predicate);
+                    applyAssertionOn(MockEndpoint.this, messageIndex, assertExchangeReceived(messageIndex));
+                }
+            };
+            expects(clause);
+        }
+    }
+
+    /**
      * Sets an expectation that the given body values are received by this endpoint
      */
     public void expectedBodiesReceived(Object... bodies) {

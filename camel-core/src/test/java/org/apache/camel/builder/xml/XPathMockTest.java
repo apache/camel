@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.apache.camel.builder.PredicateBuilder.not;
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
@@ -32,6 +33,53 @@ public class XPathMockTest extends ContextTestSupport {
         mock.message(0).body().matches(xpath("/foo/text() = 'Hello World'").booleanResult());
 
         template.sendBody("direct:start", "<foo>Hello World</foo>");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testXPathMock2() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.message(0).body().matches().xpath("/foo/text() = 'Hello World'");
+
+        template.sendBody("direct:start", "<foo>Hello World</foo>");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testXPathMock3() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.message(0).predicate().xpath("/foo/text() = 'Hello World'");
+
+        template.sendBody("direct:start", "<foo>Hello World</foo>");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testXPathMockMatches() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessagesMatches(xpath("/foo/text() = 'Hello World'"));
+
+        template.sendBody("direct:start", "<foo>Hello World</foo>");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testXPathMockMatchesTwo() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessagesMatches(xpath("/foo/text() = 'Hello World'"), xpath("/foo/text() = 'Bye World'"));
+
+        template.sendBody("direct:start", "<foo>Hello World</foo>");
+        template.sendBody("direct:start", "<foo>Bye World</foo>");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testNonXPathMockMatches() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessagesMatches(not(body().contains("Bye")), body().contains("World"));
+
+        template.sendBody("direct:start", "<foo>Hello World</foo>");
+        template.sendBody("direct:start", "<foo>Bye World</foo>");
 
         assertMockEndpointsSatisfied();
     }

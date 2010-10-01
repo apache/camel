@@ -47,8 +47,12 @@ public final class PredicateBuilder {
     public static Predicate toPredicate(final Expression expression) {
         return new Predicate() {
             public boolean matches(Exchange exchange) {
-                Object value = expression.evaluate(exchange, Object.class);
-                return ObjectHelper.evaluateValuePredicate(value);
+                if (expression instanceof Predicate) {
+                    return ((Predicate) expression).matches(exchange);
+                } else {
+                    Object value = expression.evaluate(exchange, Object.class);
+                    return ObjectHelper.evaluateValuePredicate(value);
+                }
             }
 
             @Override
