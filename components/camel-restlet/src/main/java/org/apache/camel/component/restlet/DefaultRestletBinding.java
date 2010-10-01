@@ -222,8 +222,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         response.setEntity(text, mediaType);
 
         if (exchange.getProperty(Exchange.CHARSET_NAME) != null) {
-            response.getEntity().setCharacterSet(CharacterSet.valueOf(exchange.getProperty(Exchange.CHARSET_NAME,
-                    String.class)));
+            CharacterSet cs = CharacterSet.valueOf(exchange.getProperty(Exchange.CHARSET_NAME, String.class));
+            response.getEntity().setCharacterSet(cs);
         }
     }
 
@@ -238,16 +238,21 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
         }
 
+        // set response code
+        int responseCode = response.getStatus().getCode();
+        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+
+        // get content type
+        MediaType mediaType = response.getEntity().getMediaType();
+        if (mediaType != null) {
+            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, mediaType.toString());
+        }
+
         String text = response.getEntity().getText();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Populate exchange from Restlet response: " + text);
         }
-
-        if (exchange.getPattern().isOutCapable()) {
-            exchange.getOut().setBody(text);
-        } else {
-            throw new RuntimeCamelException("Exchange is incapable of receiving response: " + exchange + " with pattern: " + exchange.getPattern());
-        }
+        exchange.getOut().setBody(text);
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
