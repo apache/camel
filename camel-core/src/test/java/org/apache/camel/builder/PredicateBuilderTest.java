@@ -40,6 +40,9 @@ public class PredicateBuilderTest extends TestSupport {
     public void testPredicates() throws Exception {
         assertMatches(header("name").isEqualTo(constant("James")));
         assertMatches(not(header("name").isEqualTo(constant("Claus"))));
+
+        assertMatches(header("size").isEqualTo(10));
+        assertMatches(header("size").isEqualTo("10"));
     }
 
     public void testFailingPredicates() throws Exception {

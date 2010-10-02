@@ -29,6 +29,8 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Implements a Choice structure where one or more predicates are used which if
@@ -38,6 +40,7 @@ import org.apache.camel.util.ServiceHelper;
  * @version $Revision$
  */
 public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
+    private static final transient Log LOG = LogFactory.getLog(ChoiceProcessor.class);
     private final List<FilterProcessor> filters;
     private final AsyncProcessor otherwise;
 
@@ -51,8 +54,9 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        for (FilterProcessor filterProcessor : filters) {
-            Predicate predicate = filterProcessor.getPredicate();
+        for (int i = 0; i < filters.size(); i++) {
+            FilterProcessor filter = filters.get(i);
+            Predicate predicate = filter.getPredicate();
 
             boolean matches = false;
             try {
@@ -66,10 +70,14 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
                 return true;
             }
 
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("#" + i + " - " + predicate + " matches: " + matches + " for: " + exchange);
+            }
+
             if (matches) {
                 // process next will also take care (has not null test) if next was a stop().
                 // stop() has no processor to execute, and thus we will end in a NPE
-                return filterProcessor.processNext(exchange, callback);
+                return filter.processNext(exchange, callback);
             }
         }
         if (otherwise != null) {

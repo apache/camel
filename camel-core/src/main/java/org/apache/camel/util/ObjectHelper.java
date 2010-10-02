@@ -19,7 +19,6 @@ package org.apache.camel.util;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -68,18 +67,26 @@ public final class ObjectHelper {
     /**
      * A helper method for comparing objects for equality in which it uses type coerce to coerce
      * types between the left and right values. This allows you to equal test eg String and Integer as
-     * Camel will be able to coerce the types
+     * Camel will be able to coerce the types.
      */
     public static boolean typeCoerceEquals(TypeConverter converter, Object leftValue, Object rightValue) {
+        // sanity check
+        if (leftValue == null && rightValue == null) {
+            // they are equal
+            return true;
+        } else if (leftValue == null || rightValue == null) {
+            // only one of them is null so they are not equal
+            return false;
+        }
+
         // try without type coerce
         boolean answer = equal(leftValue, rightValue);
         if (answer) {
             return true;
         }
 
-        if (leftValue == null || rightValue == null) {
-            // no reason to continue as the first equal did not match and now one of the values is null
-            // so it wont help to type coerce to a null type
+        // are they same type, if so return false as the equals returned false
+        if (leftValue.getClass().isInstance(rightValue)) {
             return false;
         }
 
