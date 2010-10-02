@@ -163,8 +163,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
 
         String replyToSelectorName = endpoint.getReplyToDestinationSelectorName();
         if (replyToSelectorName != null) {
-            // 24 max char is what IBM WebSphereMQ supports in CorrelationIDs
-            // use a fixed selector name so we can select the replies which is intended for us
+            // create a random selector value we will use for the persistent reply queue
             replyToSelectorValue = "ID:" + new BigInteger(24 * 8, new Random()).toString(16);
             String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + "'";
             answer = new PersistentQueueMessageListenerContainer(fixedMessageSelector);
