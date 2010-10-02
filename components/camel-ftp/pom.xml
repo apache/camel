@@ -102,11 +102,25 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- ftpserver using mina 2.0.0-RC1 -->
+      <!-- for testing sftp -->
+      <dependency>
+          <groupId>org.apache.sshd</groupId>
+          <artifactId>sshd-core</artifactId>
+          <version>0.4.0</version>
+          <scope>test</scope>
+      </dependency>
+      <!-- needed for sftp server -->
+      <dependency>
+          <groupId>bouncycastle</groupId>
+          <artifactId>bcprov-jdk15</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+      <!-- ftpserver using mina 2.0.0 -->
     <dependency>
       <groupId>org.apache.mina</groupId>
       <artifactId>mina-core</artifactId>
-      <version>2.0.0-RC1</version>
+      <version>2.0.0</version>
       <scope>test</scope>
     </dependency>
 

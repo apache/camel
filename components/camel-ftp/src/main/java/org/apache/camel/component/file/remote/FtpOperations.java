@@ -516,10 +516,13 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     private void doChangeDirectory(String path) {
+        if (path == null || ".".equals(path)) {
+            return;
+        }
+
         if (log.isTraceEnabled()) {
             log.trace("Changing directory: " + path);
         }
-
         boolean success;
         try {
             success = client.changeWorkingDirectory(path);

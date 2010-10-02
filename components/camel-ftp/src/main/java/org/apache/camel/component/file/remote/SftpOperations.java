@@ -363,6 +363,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     private void doChangeDirectory(String path) {
+        if (path == null || ".".equals(path)) {
+            return;
+        }
+
         if (LOG.isTraceEnabled()) {
             LOG.trace("Changing directory: " + path);
         }
@@ -429,12 +433,16 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             }
             String onlyName = FileUtil.stripPath(name);
 
-            channel.get(onlyName, os);
+            // use input stream which works with Apache SSHD used for testing
+            InputStream is = channel.get(onlyName);
+            IOHelper.copyAndCloseInput(is, os);
 
             // change back to current directory
             changeCurrentDirectory(currentDir);
 
             return true;
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {

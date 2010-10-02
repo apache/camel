@@ -17,13 +17,9 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ftpserver.ConnectionConfigFactory;
 import org.apache.ftpserver.FtpServer;
@@ -34,48 +30,20 @@ import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 
 /**
  * Base class for unit testing using a FTPServer
  */
-public abstract class FtpServerTestSupport extends CamelTestSupport {
+public abstract class FtpServerTestSupport extends BaseServerTestSupport {
 
     protected static final String FTP_ROOT_DIR = "./res/home/";
     protected static final File USERS_FILE = new File("./src/test/resources/users.properties");
     protected static final String DEFAULT_LISTENER = "default";
-    protected static int port;
-    
+
     protected FtpServer ftpServer;
     protected boolean canTest;
 
-    @BeforeClass
-    public static void initPort() throws Exception {
-        File file = new File("./target/ftpport.txt");
-        file = file.getAbsoluteFile();
-
-        if (!file.exists()) {
-            // start from somewhere in the 21xxx range
-            port = 21000 + new Random().nextInt(900);
-        } else {
-            // read port number from file
-            String s = IOConverter.toString(file, null);
-            port = Integer.parseInt(s);
-            // use next number
-            port++;
-        }
-
-        // save to file, do not append
-        FileOutputStream fos = new FileOutputStream(file, false);
-        try {
-            fos.write(String.valueOf(port).getBytes());
-        } finally {
-            fos.close();
-        }
-    }
-    
     @Override
     @Before
     public void setUp() throws Exception {
@@ -124,11 +92,6 @@ public abstract class FtpServerTestSupport extends CamelTestSupport {
             }
         }
     }
-    
-    @AfterClass
-    public static void resetPort() throws Exception {
-        port = 0;
-    }
 
     protected boolean canTest() {
         return canTest;
@@ -136,7 +99,7 @@ public abstract class FtpServerTestSupport extends CamelTestSupport {
 
     protected FtpServerFactory createFtpServerFactory() throws Exception {
         assertTrue(USERS_FILE.exists());
-        assertTrue("Port number is not initialized in an expected range: " + port, port >= 21000);
+        assertTrue("Port number is not initialized in an expected range: " + BaseServerTestSupport.port, BaseServerTestSupport.port >= 21000);
 
         NativeFileSystemFactory fsf = new NativeFileSystemFactory();
         fsf.setCreateHome(true);
@@ -148,7 +111,7 @@ public abstract class FtpServerTestSupport extends CamelTestSupport {
         UserManager userMgr = pumf.createUserManager();
         
         ListenerFactory factory = new ListenerFactory();
-        factory.setPort(port);
+        factory.setPort(BaseServerTestSupport.port);
         
         FtpServerFactory serverFactory = new FtpServerFactory();
         serverFactory.setUserManager(userMgr);
@@ -163,7 +126,4 @@ public abstract class FtpServerTestSupport extends CamelTestSupport {
         template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, fileName);
     }
     
-    protected int getPort() {
-        return port;
-    }
 }
