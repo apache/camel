@@ -58,7 +58,7 @@
                   %a{:href => "http://www.apache.org/", :style => "float:right; width:210px;display:block;text-indent:-5000px;text-decoration:none;line-height:60px; margin-top:15px; margin-right:10px;", :title => "The Apache Software Foundation"} ASF
               .top_red_bar
                 #site-breadcrumbs
-                  - if (requestURI.startsWith("/index"))
+                  - if (requestUri.startsWith("/index"))
                     %span Home
                   - else
                     %a{:href => {uri("/index")}, title => "Home"} Home
