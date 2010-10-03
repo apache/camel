@@ -105,6 +105,13 @@ public interface GenericFileOperations<T> {
     void changeCurrentDirectory(String path) throws GenericFileOperationFailedException;
 
     /**
+     * Change the current remote directory to the parent
+     *
+     * @throws GenericFileOperationFailedException can be thrown
+     */
+    void changeToParentDirectory() throws GenericFileOperationFailedException;
+
+    /**
      * List the files in the current directory
      *
      * @return a list of backing objects representing the files

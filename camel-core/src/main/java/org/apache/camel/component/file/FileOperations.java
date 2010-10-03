@@ -133,6 +133,10 @@ public class FileOperations implements GenericFileOperations<File> {
         // noop
     }
 
+    public void changeToParentDirectory() throws GenericFileOperationFailedException {
+        // noop
+    }
+
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
         // noop
         return null;

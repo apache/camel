@@ -82,6 +82,9 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         }
 
+        public void changeToParentDirectory() throws GenericFileOperationFailedException {
+        }
+
         public List<Object> listFiles() throws GenericFileOperationFailedException {
             return null;
         }

@@ -37,18 +37,22 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     protected boolean pollDirectory(String fileName, List<GenericFile<FTPFile>> fileList) {
-        // strip trailing slash
-        fileName = FileUtil.stripTrailingSeparator(fileName);
-        return pollDirectory(fileName, null, fileList);
-    }
-
-    protected boolean pollDirectory(String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList) {
         // must remember current dir so we stay in that directory after the poll
         String currentDir = operations.getCurrentDirectory();
 
-        boolean answer = doPollDirectory(absolutePath, dirName, fileList);
+        // strip trailing slash
+        fileName = FileUtil.stripTrailingSeparator(fileName);
 
+        boolean answer = doPollDirectory(fileName, null, fileList);
         operations.changeCurrentDirectory(currentDir);
+
+        return answer;
+    }
+
+    protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList) {
+        boolean answer = doPollDirectory(absolutePath, dirName, fileList);
+        // change back to parent directory when finished polling sub directory
+        operations.changeToParentDirectory();
         return answer;
     }
 
@@ -94,7 +98,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getName();
                     String path = absolutePath + "/" + subDirectory;
-                    boolean canPollMore = pollDirectory(path, subDirectory, fileList);
+                    boolean canPollMore = pollSubDirectory(path, subDirectory, fileList);
                     if (!canPollMore) {
                         return false;
                     }

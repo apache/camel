@@ -37,31 +37,51 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
     }
 
     protected boolean pollDirectory(String fileName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
-        if (log.isTraceEnabled()) {
-            log.trace("pollDirectory from fileName: " + fileName);
-        }
+        // must remember current dir so we stay in that directory after the poll
+        String currentDir = operations.getCurrentDirectory();
 
-        if (fileName == null) {
-            return true;
+        // strip trailing slash
+        fileName = FileUtil.stripTrailingSeparator(fileName);
+
+        boolean answer = doPollDirectory(fileName, null, fileList);
+
+        operations.changeCurrentDirectory(currentDir);
+        return answer;
+    }
+
+    protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
+        boolean answer = doPollDirectory(absolutePath, dirName, fileList);
+        // change back to parent directory when finished polling sub directory
+        operations.changeToParentDirectory();
+        return answer;
+    }
+
+    protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
+        if (log.isTraceEnabled()) {
+            log.trace("doPollDirectory from absolutePath: " + absolutePath + ", dirName: " + dirName);
         }
 
         // remove trailing /
-        fileName = FileUtil.stripTrailingSeparator(fileName);
+        dirName = FileUtil.stripTrailingSeparator(dirName);
+        String dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
+
+        // change into directory (to ensure most FTP servers can list files)
+        operations.changeCurrentDirectory(dir);
 
         if (log.isTraceEnabled()) {
-            log.trace("Polling directory: " + fileName);
+            log.trace("Polling directory: " + dir);
         }
-        List<ChannelSftp.LsEntry> files = operations.listFiles(fileName);
+        List<ChannelSftp.LsEntry> files = operations.listFiles();
         if (files == null || files.isEmpty()) {
             // no files in this directory to poll
             if (log.isTraceEnabled()) {
-                log.trace("No files found in directory: " + fileName);
+                log.trace("No files found in directory: " + dir);
             }
             return true;
         } else {
             // we found some files
             if (log.isTraceEnabled()) {
-                log.trace("Found " + files.size() + " in directory: " + fileName);
+                log.trace("Found " + files.size() + " in directory: " + dir);
             }
         }
 
@@ -73,11 +93,12 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
             }
 
             if (file.getAttrs().isDir()) {
-                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(fileName, file);
+                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file);
                 if (endpoint.isRecursive() && isValidFile(remote, true)) {
                     // recursive scan and add the sub files and folders
-                    String subDirectory = fileName + "/" + file.getFilename();
-                    boolean canPollMore = pollDirectory(subDirectory, fileList);
+                    String subDirectory = file.getFilename();
+                    String path = absolutePath + "/" + subDirectory;
+                    boolean canPollMore = pollSubDirectory(path, subDirectory, fileList);
                     if (!canPollMore) {
                         return false;
                     }
@@ -85,7 +106,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
                 // we cannot use file.getAttrs().isLink on Windows, so we dont invoke the method
                 // just assuming its a file we should poll
             } else {
-                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(fileName, file);
+                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file);
                 if (isValidFile(remote, false)) {
                     if (isInProgress(remote)) {
                         if (log.isTraceEnabled()) {
@@ -102,7 +123,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         return true;
     }
 
-    private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String directory, ChannelSftp.LsEntry file) {
+    private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String absolutePath, ChannelSftp.LsEntry file) {
         RemoteFile<ChannelSftp.LsEntry> answer = new RemoteFile<ChannelSftp.LsEntry>();
 
         answer.setEndpointPath(endpointPath);
@@ -116,7 +137,8 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         answer.setAbsolute(false);
 
         // create a pseudo absolute name
-        String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getFilename();
+        String dir = FileUtil.stripTrailingSeparator(absolutePath);
+        String absoluteFileName = dir + "/" + file.getFilename();
         answer.setAbsoluteFilePath(absoluteFileName);
 
         // the relative filename, skip the leading endpoint configured path

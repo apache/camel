@@ -500,11 +500,18 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             return;
         }
 
+        // if it starts with the root path then a little special handling for that
+        if (path.startsWith("/") || path.startsWith("\\")) {
+            // change to root path
+            doChangeDirectory(path.substring(0, 1));
+            path = path.substring(1);
+        }
+
         // split into multiple dirs
         final String[] dirs = path.split("/|\\\\");
 
         if (dirs == null || dirs.length == 0) {
-            // this is the root path
+            // path was just a relative single path
             doChangeDirectory(path);
             return;
         }
@@ -516,7 +523,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     private void doChangeDirectory(String path) {
-        if (path == null || ".".equals(path)) {
+        if (path == null || ".".equals(path) || ObjectHelper.isEmpty(path)) {
             return;
         }
 
@@ -531,6 +538,14 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
         if (!success) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), "Cannot change directory to: " + path);
+        }
+    }
+
+    public void changeToParentDirectory() throws GenericFileOperationFailedException {
+        try {
+            client.changeToParentDirectory();
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 
