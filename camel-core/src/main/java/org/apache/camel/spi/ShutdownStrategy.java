@@ -85,6 +85,8 @@ public interface ShutdownStrategy extends Service {
      * <p/>
      * Setting a value of 0 or negative will disable timeout and wait until complete
      * (potential blocking forever)
+     * <p/>
+     * The default timeout unit is <tt>SECONDS</tt>
      *
      * @param timeout timeout
      */
@@ -94,6 +96,8 @@ public interface ShutdownStrategy extends Service {
      * Gets the timeout.
      * <p/>
      * Use 0 or a negative value to disable timeout
+     * <p/>
+     * The default timeout unit is <tt>SECONDS</tt>
      *
      * @return the timeout
      */
