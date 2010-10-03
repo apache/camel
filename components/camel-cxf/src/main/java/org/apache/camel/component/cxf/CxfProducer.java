@@ -30,6 +30,7 @@ import javax.xml.ws.handler.MessageContext.Scope;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -213,7 +214,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         if (boi == null) {
             throw new RuntimeCamelException("Can't find the binding operation information from camel exchange");
         }
-        if (!endpoint.isWrapped() && boi != null) {
+        if (!endpoint.isWrapped()) {
             if (boi.isUnwrappedCapable()) {
                 boi = boi.getUnwrappedOperation();
             }
@@ -253,7 +254,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     /**
      * Get the parameters for the web service operation
      */
-    private Object[] getParams(CxfEndpoint endpoint, Exchange exchange) {
+    private Object[] getParams(CxfEndpoint endpoint, Exchange exchange) throws InvalidPayloadException {
       
         Object[] params = null;
         if (endpoint.getDataFormat() == DataFormat.POJO) {
@@ -276,25 +277,22 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                     params[0] = exchange.getIn().getBody();
                 }
             }
+            // make sure we have the right number of parameters
             checkParameterSize(endpoint, exchange, params);
-            
+
         } else if (endpoint.getDataFormat() == DataFormat.PAYLOAD) {
             params = new Object[1];
-            // TODO: maybe it should be mandatory body?
-            params[0] = exchange.getIn().getBody(CxfPayload.class);
+            params[0] = exchange.getIn().getMandatoryBody(CxfPayload.class);
         } else if (endpoint.getDataFormat() == DataFormat.MESSAGE) {
             params = new Object[1];
-            // TODO: maybe it should be mandatory body?
-            params[0] = exchange.getIn().getBody(InputStream.class);
+            params[0] = exchange.getIn().getMandatoryBody(InputStream.class);
         }
 
         if (LOG.isTraceEnabled()) {
-            if (params instanceof Object[]) {
+            if (params != null) {
                 for (int i = 0; i < params.length; i++) {
                     LOG.trace("params[" + i + "] = " + params[i]);
                 }
-            } else {
-                LOG.trace("params = " + params);
             }
         }
         
