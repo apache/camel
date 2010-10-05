@@ -27,7 +27,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
-import org.springframework.jms.listener.SimpleMessageListenerContainer;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.destination.DestinationResolver;
 
 /**
@@ -82,7 +82,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     @Override
     protected AbstractMessageListenerContainer createListenerContainer() throws Exception {
-        SimpleMessageListenerContainer answer = new SimpleMessageListenerContainer();
+        // Use DefaultMessageListenerContainer as it supports reconnects (see CAMEL-3193)
+        DefaultMessageListenerContainer answer = new DefaultMessageListenerContainer();
 
         answer.setDestinationName("temporary");
         answer.setDestinationResolver(new DestinationResolver() {
