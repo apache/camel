@@ -295,7 +295,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
-          <version>2.2</version>
+          <version>2.3.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-remote-resources-plugin</artifactId>
@@ -304,12 +304,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.2</version>
+          <version>2.3.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.0</version>
+          <version>2.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -402,20 +402,20 @@
 	    <version>${felix-version}</version>
 	    <extensions>true</extensions>
 	    <configuration>
-              <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
+          <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
 	      <instructions>
 	        <Bundle-Name>${project.artifactId}</Bundle-Name>
 	        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
-                <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
+            <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
 	        <Export-Package>${camel.osgi.export}</Export-Package>
 	        <Import-Package>${camel.osgi.import}</Import-Package>
 	        <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
 	        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
 	        <Implementation-Title>Apache Camel</Implementation-Title>
 	        <Implementation-Version>${project.version}</Implementation-Version>
-                <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
-                <_failok>${camel.osgi.failok}</_failok>
-            </instructions>
+            <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
+            <_failok>${camel.osgi.failok}</_failok>
+          </instructions>
 	    </configuration>
       </plugin>
 
@@ -475,7 +475,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <version>2.7</version>
         <configuration>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
