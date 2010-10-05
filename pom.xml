@@ -298,8 +298,9 @@
           <version>2.3.1</version>
         </plugin>
         <plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-remote-resources-plugin</artifactId>
-          <version>1.0</version>
+          <version>1.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
