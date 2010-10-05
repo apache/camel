@@ -214,6 +214,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>openjpa-maven-plugin</artifactId>
+						<version>1.0</version>
 						<executions>
 							<execution>
 								<id>JPA Enhance</id>
