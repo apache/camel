@@ -57,7 +57,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
             try {
                 hostName = InetAddress.getLocalHost().getHostName();
                 ServerSocket ss = new ServerSocket(0);
-                stub = "/" + ss.getLocalPort() + "-" + System.currentTimeMillis() + "/";
+                stub = "-" + ss.getLocalPort() + "-" + System.currentTimeMillis() + "-";
                 Thread.sleep(100);
                 ss.close();
             } catch (Exception ioe) {
