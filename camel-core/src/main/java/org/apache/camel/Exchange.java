@@ -53,15 +53,13 @@ import org.apache.camel.spi.UnitOfWork;
  * you ensure all the information is kept for further processing. On the other hand if you use the
  * {@link #getOut()} method to update the {@link Message} then a <b>new</b> message is created which
  * means any headers, attachments or the likes from the {@link #getIn()} {@link Message} is lost.
- * The {@link #getOut()} method is often only used in special cases or internally by Camel or specific
- * Camel components.
  * <br/>
- * See also this <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a> for more details.
+ * See this <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a> for more details.
  * <p/><br/>
  * The {@link ExchangePattern Message Exchange Pattern} and the {@link #getIn()} and {@link #getOut()} methods
  * are <b>not</b> strictly mapped. For example if the MEP is {@link org.apache.camel.ExchangePattern#InOnly} then
  * you can still invoke the {@link #getOut()} method. The {@link ExchangePattern Message Exchange Pattern} is
- * essentially just a flag to indicate the message pattern. That means you can still set an out message using
+ * essentially just a flag to indicate the message pattern. That means you can still set an OUT message using
  * the {@link #getOut()} method despite the pattern is {@link org.apache.camel.ExchangePattern#InOnly}.
  *
  * @version $Revision$
@@ -288,7 +286,8 @@ public interface Exchange {
      * <p/>
      * <br/>If you want to test whether an OUT message have been set or not, use the {@link #hasOut()} method.
      * <p/>
-     * See also the class java doc for this {@link Exchange} for more details.
+     * See also the class java doc for this {@link Exchange} for more details and this
+     * <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a>.
      *
      * @return the response
      * @see #getIn()
@@ -298,11 +297,14 @@ public interface Exchange {
     /**
      * Returns the outbound request message as the given type
      * <p/>
-     * <br/><b>Important:</b> If you want to change the current message, then use {@link #getIn(Class)} instead as it will
+     * <br/><b>Important:</b> If you want to change the current message, then use {@link #getIn()} instead as it will
      * ensure headers etc. is kept and propagated when routing continues. Bottom line end users should rarely use
      * this method.
      * <p/>
-     * See also the class java doc for this {@link Exchange} for more details.
+     * <br/>If you want to test whether an OUT message have been set or not, use the {@link #hasOut()} method.
+     * <p/>
+     * See also the class java doc for this {@link Exchange} for more details and this
+     * <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a>.
      *
      * @param type the given type
      * @return the message as the given type or <tt>null</tt> if not possible to covert to given type

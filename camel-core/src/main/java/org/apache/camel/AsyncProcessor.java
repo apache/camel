@@ -44,7 +44,7 @@ public interface AsyncProcessor extends Processor {
      *                 If the exchange is completed synchronously, then the callback is also invoked synchronously.
      *                 The callback should therefore be careful of starting recursive loop.
      * @return (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
-     * @see {@link org.apache.camel.util.AsyncProcessorHelper#process(AsyncProcessor, Exchange, AsyncCallback)}
+     * @see org.apache.camel.util.AsyncProcessorHelper#process(AsyncProcessor, Exchange, AsyncCallback)
      */
     boolean process(Exchange exchange, AsyncCallback callback);
 }

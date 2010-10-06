@@ -1630,7 +1630,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     /**
-     * @see #safelyStartRouteServices(boolean,boolean,boolean,boolean,java.util.Collection
+     * @see #safelyStartRouteServices(boolean,boolean,boolean,boolean,java.util.Collection)
      */
     protected synchronized void safelyStartRouteServices(boolean forceAutoStart, boolean checkClash, boolean startConsumer,
                                                          boolean resumeConsumer, boolean addingRoutes, RouteService... routeServices) throws Exception {

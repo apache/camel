@@ -391,8 +391,6 @@ public final class IOConverter {
 
     /**
      * This method will take off the quotes and double quotes of the charset
-     * @param charset
-     * @return
      */
     public static String normalizeCharset(String charset) {
         if (charset != null) {

@@ -64,7 +64,7 @@ public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
 
                 // will use original exchange
                 onException(IllegalArgumentException.class)
-                    .maximumRedeliveries(2).useOriginalBody().handled(true)
+                    .maximumRedeliveries(2).useOriginalMessage().handled(true)
                     .to("mock:a");
 
                 from("direct:a")
