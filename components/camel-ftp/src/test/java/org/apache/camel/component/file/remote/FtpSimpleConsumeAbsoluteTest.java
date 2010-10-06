@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote.sftp;
+package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,11 +25,11 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-@Ignore("Absolute do not work with Apache SSHD")
-public class SftpSimpleConsumeAbsoluteTest extends SftpServerTestSupport {
+@Ignore("Absolute do not work with Apache FTP Server")
+public class FtpSimpleConsumeAbsoluteTest extends FtpServerTestSupport {
 
     @Test
-    public void testSftpSimpleConsumeAbsolute() throws Exception {
+    public void testFtpSimpleConsumeAbsolute() throws Exception {
         if (!canTest()) {
             return;
         }
@@ -53,7 +53,7 @@ public class SftpSimpleConsumeAbsoluteTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "//tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true")
+                from("ftp://localhost:" + getPort() + "//tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }
