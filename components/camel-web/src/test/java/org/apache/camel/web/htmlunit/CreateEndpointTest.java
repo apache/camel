@@ -32,6 +32,7 @@ import static org.openqa.selenium.By.xpath;
 import static org.openqa.selenium.lift.Finders.links;
 import static org.openqa.selenium.lift.Matchers.atLeast;
 import static org.openqa.selenium.lift.Matchers.text;
+
 /**
  * @version $Revision$
  */
