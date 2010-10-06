@@ -238,7 +238,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
         if (log.isTraceEnabled()) {
-            log.trace("makeDirectory(" + directory + ")");
+            log.trace("buildDirectory(" + directory + ")");
         }
         try {
             String originalDirectory = client.printWorkingDirectory();
@@ -486,7 +486,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
         if (log.isTraceEnabled()) {
-            log.trace("printWorkingDirectory()");
+            log.trace("getCurrentDirectory()");
         }
         try {
             return client.printWorkingDirectory();
@@ -630,27 +630,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 }
 
                 success = client.makeDirectory(directory);
-            }
-        }
-
-        return success;
-    }
-
-    private boolean changeDirectoryChunks(String dirName) throws GenericFileOperationFailedException {
-        final String[] dirs = dirName.split("/|\\\\");
-
-        boolean success = false;
-        for (String dir : dirs) {
-            if (log.isTraceEnabled()) {
-                log.trace("Changing to directory: " + dir);
-            }
-            try {
-                success = client.changeWorkingDirectory(dir);
-            } catch (IOException e) {
-                throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
-            }
-            if (!success) {
-                return false;
             }
         }
 

@@ -267,6 +267,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("buildDirectory(" + directory + "," + absolute + ")");
+        }
         // ignore absolute as all dirs are relative with FTP
         boolean success = false;
 
@@ -335,6 +338,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getCurrentDirectory()");
+        }
         try {
             return channel.pwd();
         } catch (SftpException e) {
@@ -343,6 +349,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("changeCurrentDirectory(" + path + ")");
+        }
         if (ObjectHelper.isEmpty(path)) {
             return;
         }
@@ -385,6 +394,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public void changeToParentDirectory() throws GenericFileOperationFailedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("changeToParentDirectory()");
+        }
         String current = getCurrentDirectory();
 
         String parent = FileUtil.compactPath(current + "/..");
@@ -401,6 +413,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public List<ChannelSftp.LsEntry> listFiles(String path) throws GenericFileOperationFailedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("listFiles(" + path + ")");
+        }
         if (ObjectHelper.isEmpty(path)) {
             // list current directory if file path is not given
             path = ".";
@@ -422,6 +437,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("retrieveFile(" + name + ")");
+        }
         if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
             // local work directory is configured so we should store file content as files in this local directory
             return retrieveFileToFileInLocalWorkDirectory(name, exchange);
@@ -565,6 +583,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("storeFile(" + name + ")");
+        }
+
         // if an existing file already exists what should we do?
         if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail) {
             boolean existFile = existsFile(name);
@@ -599,6 +621,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("existsFile(" + name + ")");
+        }
+
         // check whether a file already exists
         String directory = FileUtil.onlyPath(name);
         if (directory == null) {
