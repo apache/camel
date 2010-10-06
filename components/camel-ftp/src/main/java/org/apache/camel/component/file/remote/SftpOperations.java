@@ -357,7 +357,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
 
         // if it starts with the root path then a little special handling for that
-        if (path.startsWith("/") || path.startsWith("\\")) {
+        if (FileUtil.hasLeadingSeparator(path)) {
             // change to root path
             doChangeDirectory(path.substring(0, 1));
             path = path.substring(1);

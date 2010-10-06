@@ -133,12 +133,17 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         answer.setLastModified(file.getAttrs().getMTime() * 1000L);
         answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
 
-        // all ftp files is considered as relative
-        answer.setAbsolute(false);
+        // absolute or relative path
+        boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);
+        answer.setAbsolute(absolute);
 
         // create a pseudo absolute name
         String dir = FileUtil.stripTrailingSeparator(absolutePath);
-        String absoluteFileName = dir + "/" + file.getFilename();
+        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + file.getFilename());
+        // if absolute start with a leading separator otherwise let it be relative
+        if (absolute) {
+            absoluteFileName = "/" + absoluteFileName;
+        }
         answer.setAbsoluteFilePath(absoluteFileName);
 
         // the relative filename, skip the leading endpoint configured path

@@ -43,6 +43,16 @@ public class FileUtilTest extends TestCase {
         assertEquals("foo/bar", FileUtil.stripLeadingSeparator("///foo/bar"));
     }
 
+    public void testHasLeadingSeparator() {
+        assertEquals(false, FileUtil.hasLeadingSeparator(null));
+        assertEquals(false, FileUtil.hasLeadingSeparator("foo"));
+        assertEquals(false, FileUtil.hasLeadingSeparator("foo/bar"));
+        assertEquals(false, FileUtil.hasLeadingSeparator("foo/"));
+        assertEquals(true, FileUtil.hasLeadingSeparator("/foo/bar"));
+        assertEquals(true, FileUtil.hasLeadingSeparator("//foo/bar"));
+        assertEquals(true, FileUtil.hasLeadingSeparator("///foo/bar"));
+    }
+
     public void testStripFirstLeadingSeparator() {
         assertEquals(null, FileUtil.stripFirstLeadingSeparator(null));
         assertEquals("foo", FileUtil.stripFirstLeadingSeparator("foo"));

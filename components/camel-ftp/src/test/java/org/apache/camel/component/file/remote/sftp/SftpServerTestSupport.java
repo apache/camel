@@ -35,7 +35,7 @@ import org.junit.Before;
  */
 public class SftpServerTestSupport extends BaseServerTestSupport {
 
-    protected static final String FTP_ROOT_DIR = "res/home/";
+    protected static final String FTP_ROOT_DIR = "res/home";
     protected SshServer sshd;
     protected boolean canTest;
 

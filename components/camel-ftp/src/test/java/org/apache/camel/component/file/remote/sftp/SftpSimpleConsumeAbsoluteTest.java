@@ -19,13 +19,11 @@ package org.apache.camel.component.file.remote.sftp;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-@Ignore("Absolute do not work with Apache SSHD")
 public class SftpSimpleConsumeAbsoluteTest extends SftpServerTestSupport {
 
     @Test
@@ -36,8 +34,9 @@ public class SftpSimpleConsumeAbsoluteTest extends SftpServerTestSupport {
 
         String expected = "Hello World";
 
-        // create file using regular file
-        template.sendBodyAndHeader("file:///tmp/mytemp", expected, Exchange.FILE_NAME, "hello.txt");
+        // FTP Server does not support absolute path, so lets simulate it
+        String path = FTP_ROOT_DIR + "/tmp/mytemp";
+        template.sendBodyAndHeader("file:" + path, expected, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -53,7 +52,9 @@ public class SftpSimpleConsumeAbsoluteTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "//tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true")
+                // notice we use an absolute starting path: /res/home/tmp/mytemp
+                // - we must remember to use // slash because of the url separator
+                from("sftp://localhost:" + getPort() + "//" + FTP_ROOT_DIR + "/tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }

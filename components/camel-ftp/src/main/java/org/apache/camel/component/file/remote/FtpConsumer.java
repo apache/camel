@@ -135,12 +135,17 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         }
         answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
 
-        // all ftp files is considered as relative
-        answer.setAbsolute(false);
+        // absolute or relative path
+        boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);
+        answer.setAbsolute(absolute);
 
         // create a pseudo absolute name
         String dir = FileUtil.stripTrailingSeparator(absolutePath);
-        String absoluteFileName = dir + "/" + file.getName();
+        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + file.getName());
+        // if absolute start with a leading separator otherwise let it be relative
+        if (absolute) {
+            absoluteFileName = "/" + absoluteFileName;
+        }
         answer.setAbsoluteFilePath(absoluteFileName);
 
         // the relative filename, skip the leading endpoint configured path

@@ -90,6 +90,19 @@ public final class FileUtil {
     }
 
     /**
+     * Does the name start with a leading separator
+     */
+    public static boolean hasLeadingSeparator(String name) {
+        if (name == null) {
+            return false;
+        }
+        if (name.startsWith("/") || name.startsWith(File.separator)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Strip first leading separator
      */
     public static String stripFirstLeadingSeparator(String name) {

@@ -18,7 +18,6 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
-import org.apache.camel.util.FileUtil;
 
 /**
  * Represents a remote file of some sort of backing object
@@ -73,9 +72,4 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
         remoteResult.setHostname(remoteSource.getHostname());
     }
 
-    protected String normalizePathToProtocol(String path) {
-        path = super.normalizePathToProtocol(path);        
-        // strip leading / for FTP protocol to avoid files with absolute paths
-        return FileUtil.stripLeadingSeparator(path);
-    }
 }
