@@ -117,7 +117,8 @@ public class MinaCustomCodecTest extends ContextTestSupport {
             return new CumulativeProtocolDecoder() {
                 protected boolean doDecode(IoSession session, ByteBuffer in, ProtocolDecoderOutput out) throws Exception {
                     if (in.remaining() > 0) {
-                        byte[] buf = MinaConverter.toByteArray(in);
+                        byte[] buf = new byte[in.remaining()];
+                        in.get(buf);
                         out.write(new String(buf, "US-ASCII"));
                         return true;
                     } else {
