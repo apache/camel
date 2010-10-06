@@ -554,7 +554,8 @@ public class MailBinding {
         throws MessagingException {
 
         // we support that multi recipient can be given as a string separated by comma or semicolon
-        String[] lines = recipient.split("[,;]");
+        // regex ignores comma and semicolon inside of double quotes
+        String[] lines = recipient.split("[,;]++(?=(?:(?:[^\\\"]*+\\\"){2})*+[^\\\"]*+$)");
         for (String line : lines) {
             line = line.trim();
             mimeMessage.addRecipients(asRecipientType(type), line);

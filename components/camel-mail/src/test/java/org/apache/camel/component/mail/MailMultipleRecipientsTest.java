@@ -37,12 +37,13 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         // START SNIPPET: e1
         Map<String, Object> headers = new HashMap<String, Object>();
         // test with both comma and semi colon as Camel supports both kind of separators
-        headers.put("to", "claus@localhost, willem@localhost ; hadrian@localhost");
+        headers.put("to", "claus@localhost, willem@localhost ; hadrian@localhost, \"Snell, Tracy\" <tracy@localhost>");
         headers.put("cc", "james@localhost");
 
         assertMailbox("claus");
         assertMailbox("willem");
         assertMailbox("hadrian");
+        assertMailbox("tracy");
 
         template.sendBodyAndHeaders("smtp://localhost", "Hello World", headers);
         // END SNIPPET: e1
@@ -81,6 +82,8 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
                 from("pop3://willem@localhost?consumer.delay=1000").to("mock:willem");
 
                 from("pop3://hadrian@localhost?consumer.delay=1000").to("mock:hadrian");
+
+                from("pop3://tracy@localhost?consumer.delay=1000").to("mock:tracy");
             }
         };
     }
