@@ -260,7 +260,6 @@
 							org.springframework.mail.javamail,
 						    *
 					    </Import-Package>
-					    <_include>src/main/resources/etc</_include>
 					</instructions>
 				</configuration>
 			</plugin>
