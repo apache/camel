@@ -126,7 +126,7 @@ public class CxfConsumer extends DefaultConsumer {
             private Continuation getContinuation(Exchange cxfExchange) {
                 ContinuationProvider provider = 
                     (ContinuationProvider)cxfExchange.getInMessage().get(ContinuationProvider.class.getName());
-                return provider.getContinuation();
+                return provider == null ? null : provider.getContinuation();
             }
             
             private Object syncInvoke(Exchange cxfExchange) {
