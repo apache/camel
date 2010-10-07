@@ -259,7 +259,7 @@
                   <include>**/*Test.*</include>
               </includes>
               <excludes>
-                  <exclude>**/JpaRouteTest.*</exclude>
+                  <exclude>**/FIXMETest.*</exclude>
               </excludes>
               <systemPropertyVariables>
                   <springVersion>${spring-version}</springVersion>
