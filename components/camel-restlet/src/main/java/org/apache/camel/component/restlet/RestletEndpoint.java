@@ -35,7 +35,6 @@ import org.restlet.data.Method;
  * @version $Revision$
  */
 public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
-    //private static final Log LOG = LogFactory.getLog(RestletEndpoint.class);
 
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_PROTOCOL = "http";

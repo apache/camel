@@ -104,7 +104,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     
     public void connect(RestletConsumer consumer) throws Exception {
         RestletEndpoint endpoint = (RestletEndpoint)consumer.getEndpoint();
-        addServerIfNeccessary(endpoint);
+        addServerIfNecessary(endpoint);
         
         if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
             attachUriPatternToRestlet(endpoint.getUriPattern(), endpoint, consumer.getRestlet());
@@ -163,7 +163,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         }    
     }
     
-    private void addServerIfNeccessary(RestletEndpoint endpoint) throws Exception {
+    private void addServerIfNecessary(RestletEndpoint endpoint) throws Exception {
         String key = buildKey(endpoint);
         Server server;
         synchronized (servers) {
