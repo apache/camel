@@ -224,6 +224,11 @@ public class DefaultCamelContextTest extends TestSupport {
     public void testGetRouteById() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.disableJMX();
+
+        // should not throw NPE (CAMEL-3198)
+        Route route = ctx.getRoute("coolRoute");
+        assertNull(route);
+
         ctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -232,7 +237,7 @@ public class DefaultCamelContextTest extends TestSupport {
         });
         ctx.start();
 
-        Route route = ctx.getRoute("coolRoute");
+        route = ctx.getRoute("coolRoute");
         assertNotNull(route);
         assertEquals("coolRoute", route.getId());
         assertEquals("direct://start", route.getConsumer().getEndpoint().getEndpointUri());

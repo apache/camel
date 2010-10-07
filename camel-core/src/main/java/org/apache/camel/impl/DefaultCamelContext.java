@@ -512,7 +512,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public Route getRoute(String id) {
-        for (Route route : routes) {
+        for (Route route : getRoutes()) {
             if (route.getId().equals(id)) {
                 return route;
             }
