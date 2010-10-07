@@ -41,7 +41,7 @@ public class ReportIncidentRoutes extends RouteBuilder {
 
         // endpoint to our CXF webservice  
         // We should use the related path to publish the service, when using the ServletTransport
-        // so we need to configure set the bus which is configured to use the ServletTranspot
+        // so we need to configure set the bus which is configured to use the ServletTransport
         String cxfEndpointAddress = "cxf:/incident?bus=#cxf&";
         // Using the full http address for stand alone running
         if (!usingServletTransport) {

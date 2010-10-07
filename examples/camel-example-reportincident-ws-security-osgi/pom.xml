@@ -156,13 +156,6 @@
 
     <build>
     
-		<resources>
-			<resource>
-				<directory>src/main/resources/etc</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>    
-    
         <plugins>
 
             <!-- to compile with 1.5 -->
