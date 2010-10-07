@@ -186,9 +186,14 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         }
     }
 
-    public void addJob(JobDetail job, Trigger trigger) {
-        // add job to internal list because we will defer adding to the scheduler when camel context has been fully started
-        jobsToAdd.add(new JobToAdd(job, trigger));
+    public void addJob(JobDetail job, Trigger trigger) throws SchedulerException {
+        if (scheduler == null) {
+            // add job to internal list because we will defer adding to the scheduler when camel context has been fully started
+            jobsToAdd.add(new JobToAdd(job, trigger));
+        } else {
+            // add job directly to scheduler
+            doAddJob(job, trigger);
+        }
     }
 
     private void doAddJob(JobDetail job, Trigger trigger) throws SchedulerException {
