@@ -50,8 +50,7 @@ public class ManagedErrorHandlerOptionsTest extends ContextTestSupport {
         naming.setDomainName("org.apache.camel");
         return context;
     }
-
-    @SuppressWarnings("unchecked")
+    
     public void testManagedErrorHandlerOptions() throws Exception {
         counter = 0;
 

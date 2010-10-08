@@ -45,7 +45,6 @@ public class ManagedScheduledPollConsumerTest extends ContextTestSupport {
         return context;
     }
 
-    @SuppressWarnings("unchecked")
     public void testScheduledPollConsumer() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

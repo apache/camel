@@ -75,7 +75,6 @@ public class ManagedRouteShutdownAndStartTest extends ContextTestSupport {
         
     }
 
-    @SuppressWarnings("unchecked")
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());

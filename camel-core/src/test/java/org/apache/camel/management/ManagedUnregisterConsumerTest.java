@@ -43,8 +43,7 @@ public class ManagedUnregisterConsumerTest extends ContextTestSupport {
         naming.setDomainName("org.apache.camel");
         return context;
     }
-
-    @SuppressWarnings("unchecked")
+    
     public void testUnregisterConsumer() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

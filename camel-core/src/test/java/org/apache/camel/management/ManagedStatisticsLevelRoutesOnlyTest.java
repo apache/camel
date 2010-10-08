@@ -47,7 +47,6 @@ public class ManagedStatisticsLevelRoutesOnlyTest extends ContextTestSupport {
         return context;
     }
 
-    @SuppressWarnings("unchecked")
     public void testManageStatisticsRoutesOnly() throws Exception {
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");

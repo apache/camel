@@ -60,7 +60,6 @@ public class RemoveRouteDefinitionTest extends ContextTestSupport {
         
     }
     
-    @SuppressWarnings("unchecked")
     public void testStopRoute() throws Exception {
         
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();

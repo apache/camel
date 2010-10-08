@@ -43,7 +43,6 @@ public class ManagedStatisticsTest extends ContextTestSupport {
         return context;
     }
 
-    @SuppressWarnings("unchecked")
     public void testManageStatistics() throws Exception {
         // get the stats for the route
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();

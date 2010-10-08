@@ -48,7 +48,6 @@ public class ManagedStatisticsLevelOffTest extends ContextTestSupport {
         return context;
     }
 
-    @SuppressWarnings("unchecked")
     public void testManageStatisticsLevelDisabled() throws Exception {
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");

@@ -44,8 +44,7 @@ public class ManagedProducerCacheTest extends ContextTestSupport {
         naming.setDomainName("org.apache.camel");
         return context;
     }
-
-    @SuppressWarnings("unchecked")
+    
     public void testManageProducerCache() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

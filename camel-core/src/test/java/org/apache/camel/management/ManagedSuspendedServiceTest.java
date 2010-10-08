@@ -37,8 +37,7 @@ public class ManagedSuspendedServiceTest extends ContextTestSupport {
     protected boolean useJmx() {
         return true;
     }
-
-    @SuppressWarnings("unchecked")
+   
     public void testConsumeSuspendAndResumeFile() throws Exception {
         deleteDirectory("target/suspended");
 

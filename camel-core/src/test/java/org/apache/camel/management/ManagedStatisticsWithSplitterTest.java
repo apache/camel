@@ -43,9 +43,8 @@ public class ManagedStatisticsWithSplitterTest extends ContextTestSupport {
         return context;
     }
 
-    @SuppressWarnings("unchecked")
     public void testManageStatistics() throws Exception {
-        // get the stats for the route
+        // get the status for the route
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route-a\"");
