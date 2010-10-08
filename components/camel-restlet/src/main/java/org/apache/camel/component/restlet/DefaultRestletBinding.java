@@ -242,17 +242,20 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         int responseCode = response.getStatus().getCode();
         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
 
-        // get content type
-        MediaType mediaType = response.getEntity().getMediaType();
-        if (mediaType != null) {
-            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, mediaType.toString());
-        }
+        if (response.getEntity() != null) {
+            // get content type
+            MediaType mediaType = response.getEntity().getMediaType();
+            if (mediaType != null) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, mediaType.toString());
+            }
 
-        String text = response.getEntity().getText();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Populate exchange from Restlet response: " + text);
+            // get content text
+            String text = response.getEntity().getText();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Populate exchange from Restlet response: " + text);
+            }
+            exchange.getOut().setBody(text);
         }
-        exchange.getOut().setBody(text);
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
