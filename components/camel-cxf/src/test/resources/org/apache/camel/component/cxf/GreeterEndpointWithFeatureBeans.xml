@@ -46,7 +46,7 @@
 
    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route errorHandlerRef="noErrorHandler">
-      <from uri="cxf:bean:routerEndpoint?dataFormat=PAYLOAD" />
+      <from uri="cxf:bean:routerEndpoint?dataFormat=PAYLOAD&amp;publishedEndpointUrl=http://www.simple.com/services/test" />
       <to uri="cxf:bean:serviceEndpoint?dataFormat=PAYLOAD" />
     </route>
    </camelContext>

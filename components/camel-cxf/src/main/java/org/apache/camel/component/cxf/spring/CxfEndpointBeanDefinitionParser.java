@@ -61,7 +61,6 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
                 map.putAll(props);
             }
             bean.addPropertyValue("properties", map);
-            
         } else if ("binding".equals(name)) {
             setFirstChildAsProperty(el, ctx, bean, "bindingConfig");
         } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name)

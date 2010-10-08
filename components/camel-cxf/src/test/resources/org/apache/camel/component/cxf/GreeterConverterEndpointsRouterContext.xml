@@ -34,7 +34,12 @@
     		serviceClass="org.apache.hello_world_soap_http.Greeter" 
     		endpointName="s:SoapPort"
     		serviceName="s:SOAPService"
-    	    xmlns:s="http://apache.org/hello_world_soap_http"/>
+    	    xmlns:s="http://apache.org/hello_world_soap_http">
+    	    <cxf:properties>
+    	       <entry key="publishedEndpointUrl" value="http://www.simple.com/services/test" />
+    	    </cxf:properties>
+    	    
+   </cxf:cxfEndpoint>
 
    <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/SoapContext/SoapPort"
     		wsdlURL="testutils/hello_world.wsdl"

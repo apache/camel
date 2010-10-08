@@ -120,6 +120,12 @@ public class CXFGreeterRouterTest extends CamelTestSupport {
         }
     }
     
+    @Test
+    public void testPublishEndpointUrl() throws Exception {
+        String response = template.requestBody("http://localhost:9003/CamelContext/RouterPort?wsdl", null, String.class);
+        assertTrue("Can't find the right service location.", response.indexOf("http://www.simple.com/services/test") > 0);
+    }
+    
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext);

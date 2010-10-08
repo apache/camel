@@ -28,7 +28,8 @@ public class CxfGreeterPayLoadRouterTest  extends CXFGreeterRouterTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD").to("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD");
+                from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD&publishedEndpointUrl=http://www.simple.com/services/test")
+                    .to("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD");
             }
         };
     }
