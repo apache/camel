@@ -22,9 +22,7 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 public abstract class OSGiIntegrationSpringTestSupport extends OSGiIntegrationTestSupport {
-    
     protected OsgiBundleXmlApplicationContext applicationContext;
-
     protected abstract OsgiBundleXmlApplicationContext createApplicationContext();
     
     @Override
@@ -37,7 +35,7 @@ public abstract class OSGiIntegrationSpringTestSupport extends OSGiIntegrationTe
         if (names.length == 1) {
             return (SpringCamelContext)applicationContext.getBean(names[0], SpringCamelContext.class);
         } else {
-            throw new RuntimeCamelException("can't create a right camel context from the application context"); 
+            throw new IllegalStateException("Exactly 1 bean of type SpringCamelContext expected but found " + names.length + " beans.");
         }
     }
 
