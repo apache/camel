@@ -171,12 +171,11 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         request = camelMessage.getBody();
         if (request instanceof List) {
             request = ((List<?>)request).get(0);
-        } else if (request.getClass().isArray()) {
+        } else if (request != null && request.getClass().isArray()) {
             request = ((Object[])request)[0];
         }
 
         return request;
-
     }
 
     /**

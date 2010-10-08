@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.core.Response;
 import javax.xml.soap.SOAPMessage;
 
@@ -174,7 +173,8 @@ public final class CxfConverter {
     @FallbackConverter
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, 
             TypeConverterRegistry registry) {
-        
+
+        // CXF-WS MessageContentsList class
         if (MessageContentsList.class.isAssignableFrom(value.getClass())) {
             MessageContentsList list = (MessageContentsList)value;
 
@@ -190,6 +190,20 @@ public final class CxfConverter {
                     }
                 }
             }
+            // return void to indicate its not possible to convert at this time
+            return (T) Void.TYPE;
+        }
+
+        // CXF-RS Response class
+        if (Response.class.isAssignableFrom(value.getClass())) {
+            Response response = (Response) value;
+            Object entity = response.getEntity();
+
+            TypeConverter tc = registry.lookup(type, entity.getClass());
+            if (tc != null) {
+                return tc.convertTo(type, exchange, entity);
+            }
+
             // return void to indicate its not possible to convert at this time
             return (T) Void.TYPE;
         }
