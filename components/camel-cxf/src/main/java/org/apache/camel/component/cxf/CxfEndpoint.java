@@ -88,6 +88,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean isWrapped;
     // This is for marshal or unmarshal message with the document-literal wrapped or unwrapped style
     private Boolean wrappedStyle;
+    private String publishedEndpointUrl;
     private boolean inOut = true;
     private Bus bus;
     private CxfBinding cxfBinding;
@@ -112,7 +113,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     protected void updateEndpointUri(String endpointUri) {
         super.setEndpointUri(endpointUri);
     }
-
+    
     public Producer createProducer() throws Exception {
         Producer answer = new CxfProducer(this);
         if (isSynchronous()) {
@@ -406,6 +407,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setDataFormat(DataFormat format) {
         dataFormat = format;
+    }
+    
+    public String getPublishedEndpointUrl() {
+        return publishedEndpointUrl;
+    }
+    
+    public void setPublishedEndpointUrl(String url) {
+        publishedEndpointUrl = url;
     }
 
     public String getWsdlURL() {

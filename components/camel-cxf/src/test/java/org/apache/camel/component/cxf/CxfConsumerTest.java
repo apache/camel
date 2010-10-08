@@ -36,7 +36,9 @@ import org.junit.Test;
 public class CxfConsumerTest extends CamelTestSupport {
     protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:28080/test";
     protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
-        + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+        + "?serviceClass=org.apache.camel.component.cxf.HelloService"
+        + "&publishedEndpointUrl=http://www.simple.com/services/test";
+    
     private static final String ECHO_REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
         + "<soap:Body><ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
         + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">Hello World!</arg0></ns1:echo></soap:Body></soap:Envelope>";
@@ -103,6 +105,12 @@ public class CxfConsumerTest extends CamelTestSupport {
     public void testXmlDeclaration() throws Exception {
         String response = template.requestBody(SIMPLE_ENDPOINT_ADDRESS, ECHO_REQUEST, String.class);
         assertTrue("Can't find the xml declaration.", response.startsWith("<?xml version='1.0' encoding="));
+    }
+    
+    @Test
+    public void testPublishEndpointUrl() throws Exception {
+        String response = template.requestBody(SIMPLE_ENDPOINT_ADDRESS + "?wsdl", null, String.class);
+        assertTrue("Can't find the right service location.", response.indexOf("http://www.simple.com/services/test") > 0);
     }
 
 

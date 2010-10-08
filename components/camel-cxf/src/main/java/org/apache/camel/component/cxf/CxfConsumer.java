@@ -26,6 +26,7 @@ import org.w3c.dom.Element;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.continuations.Continuation;
@@ -252,6 +253,9 @@ public class CxfConsumer extends DefaultConsumer {
 
         });
         server = svrBean.create();
+        if (ObjectHelper.isNotEmpty(endpoint.getPublishedEndpointUrl())) {
+            server.getEndpoint().getEndpointInfo().setProperty("publishedEndpointUrl", endpoint.getPublishedEndpointUrl());
+        }
     }
     
     @Override
