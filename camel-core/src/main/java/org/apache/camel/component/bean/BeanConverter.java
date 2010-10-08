@@ -33,7 +33,6 @@ public final class BeanConverter {
     }
 
     @FallbackConverter
-    @SuppressWarnings("unchecked")
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // use a fallback type converter so we can convert the embedded body if the value is BeanInvocation
         if (BeanInvocation.class.isAssignableFrom(value.getClass())) {

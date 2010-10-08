@@ -148,8 +148,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             }
         }
     }
-
-    @SuppressWarnings("unchecked")
+   
     public void done(Exchange exchange) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("UnitOfWork done for ExchangeId: " + exchange.getExchangeId() + " with " + exchange);

@@ -365,8 +365,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             LOG.warn("Could not create and start JMX connector.", ioe);
         }
     }
-
-    @SuppressWarnings("unchecked")
+    
     protected MBeanServer findOrCreateMBeanServer() {
 
         // return platform mbean server if the option is specified.
