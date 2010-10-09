@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.idempotent.jpa;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -30,11 +31,10 @@ import javax.persistence.UniqueConstraint;
     name = "CAMEL_MESSAGEPROCESSED",
     uniqueConstraints = @UniqueConstraint(columnNames = {"processorName", "messageId"})
 )
-public class MessageProcessed {
+public class MessageProcessed implements Serializable {
     private Long id;
     private String messageId;
     private String processorName;
-
 
     @Override
     public String toString() {

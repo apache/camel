@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.interceptor.jpa;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,7 +35,7 @@ import org.apache.camel.processor.interceptor.TraceEventMessage;
 @Table(
     name = "CAMEL_MESSAGETRACED"
 )
-public class JpaTraceEventMessage implements TraceEventMessage {
+public class JpaTraceEventMessage implements TraceEventMessage, Serializable {
 
     protected Long id;
     protected Date timestamp;
