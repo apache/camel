@@ -82,7 +82,7 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
         } catch (FailedToCreateRouteException e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("PropertiesComponent with name properties must be defined in CamelContext to support property placeholders in endpoint URIs", iae.getMessage());
+            assertEquals("PropertiesComponent with name properties must be defined in CamelContext to support property placeholders.", iae.getMessage());
         }
     }
 

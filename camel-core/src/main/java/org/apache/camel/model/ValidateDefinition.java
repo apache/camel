@@ -47,7 +47,6 @@ public class ValidateDefinition extends NoOutputExpressionNode {
         return "validate";
     }
 
-
     @Override
     public PredicateValidatingProcessor createProcessor(RouteContext routeContext) throws Exception {
         Predicate pred = getExpression().createPredicate(routeContext);

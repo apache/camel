@@ -21,9 +21,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -63,6 +65,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -377,6 +380,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     protected Processor makeProcessor(RouteContext routeContext) throws Exception {
         Processor processor = null;
+
+        // resolve properties before we create the processor
+        resolvePropertyPlaceholders(routeContext);
+
         // at first use custom factory
         if (routeContext.getCamelContext().getProcessorFactory() != null) {
             processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, this);
@@ -391,6 +398,52 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             return null;
         }
         return wrapProcessor(routeContext, processor);
+    }
+
+    /**
+     * Inspects this processor definition and resolves any property placeholders from its properties.
+     * <p/>
+     * This implementation will check all the getter/setter pairs on this instance and for all the values
+     * (which is a String type) will be property placeholder resolved.
+     *
+     * @param routeContext the route context
+     * @throws Exception is thrown if property placeholders was used and there was an error resolving them
+     * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
+     * @see org.apache.camel.component.properties.PropertiesComponent
+     */
+    protected void resolvePropertyPlaceholders(RouteContext routeContext) throws Exception {
+        if (log.isTraceEnabled()) {
+            log.trace("Resolving property placeholders for: " + this);
+        }
+
+        // find all String getter/setter
+        Map<Object, Object> properties = new HashMap<Object, Object>();
+        IntrospectionSupport.getProperties(this, properties, null);
+
+        if (!properties.isEmpty()) {
+            if (log.isTraceEnabled()) {
+                log.trace("There are " + properties.size() + " properties on: " + this);
+            }
+
+            // lookup and resolve properties for String based properties
+            for (Map.Entry entry : properties.entrySet()) {
+                // the name is always a String
+                String name = (String) entry.getKey();
+                Object value = entry.getValue();
+                if (value instanceof String) {
+                    // we can only resolve String typed values
+                    String text = (String) value;
+                    text = routeContext.getCamelContext().resolvePropertyPlaceholders(text);
+                    if (text != value) {
+                        // invoke setter as the text has changed
+                        IntrospectionSupport.setProperty(this, name, text);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Changed property [" + name + "] from: " + value + " to: " + text);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     protected ErrorHandlerBuilder createErrorHandlerBuilder() {

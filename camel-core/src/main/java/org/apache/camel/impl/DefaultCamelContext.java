@@ -818,9 +818,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return answer;
     }
 
-    public String resolvePropertyPlaceholders(String uri) throws Exception {
+    public String resolvePropertyPlaceholders(String text) throws Exception {
         // do not parse uris that are designated for the properties component as it will handle that itself
-        if (uri != null && !uri.startsWith("properties:") && uri.contains(PropertiesComponent.PREFIX_TOKEN)) {
+        if (text != null && !text.startsWith("properties:") && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
             // the uri contains property placeholders so lookup mandatory properties component and let it parse it
             Component component = hasComponent("properties");
             if (component == null) {
@@ -829,18 +829,20 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
             if (component == null) {
                 throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
-                        + " in CamelContext to support property placeholders in endpoint URIs");
+                        + " in CamelContext to support property placeholders.");
             }
             // force component to be created and registered as a component
             PropertiesComponent pc = getComponent("properties", PropertiesComponent.class);
             // the parser will throw exception if property key was not found
-            String answer = pc.parseUri(uri);
+            String answer = pc.parseUri(text);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Resolved uri: " + uri + " --> " + answer);
+                LOG.debug("Resolved text: " + text + " -> " + answer);
             }
             return answer;
         }
-        return uri;
+
+        // return original text as is
+        return text;
     }
 
     // Properties

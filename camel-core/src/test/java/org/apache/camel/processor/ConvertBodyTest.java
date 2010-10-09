@@ -26,7 +26,6 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.ObjectHelper;
 
 public class ConvertBodyTest extends ContextTestSupport {
     
@@ -38,11 +37,10 @@ public class ConvertBodyTest extends ContextTestSupport {
                     from("direct:invalid").convertBodyTo(String.class, "ASSI").to("mock:endpoint");
                 }
             });
-            fail("Except an exception here ");
-        } catch (Exception ex) {
-            assertTrue("Get a wrong exception", ex instanceof UnsupportedCharsetException);
+            fail("Should have thrown an exception");
+        } catch (Exception e) {
+            assertIsInstanceOf(UnsupportedCharsetException.class, e.getCause());
         }
-        
     }
 
     public void testConvertToInteger() throws Exception {

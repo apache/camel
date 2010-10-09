@@ -81,6 +81,11 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ConvertBodyDefini
             }
         }
 
+        // validate charset
+        if (charset != null) {
+            IOConverter.validateCharset(charset);
+        }
+
         return new ConvertBodyProcessor(getTypeClass(), getCharset());
     }
 
@@ -111,7 +116,6 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ConvertBodyDefini
     }
 
     public void setCharset(String charset) {
-        IOConverter.validateCharset(charset);
         this.charset = charset;
     }
 }
