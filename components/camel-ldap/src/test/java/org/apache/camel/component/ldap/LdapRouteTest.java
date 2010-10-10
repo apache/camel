@@ -17,21 +17,55 @@
 package org.apache.camel.component.ldap;
 
 import java.util.Collection;
-
 import javax.naming.directory.SearchResult;
+import javax.naming.ldap.LdapContext;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
+import org.apache.directory.server.annotations.CreateLdapServer;
+import org.apache.directory.server.annotations.CreateTransport;
+import org.apache.directory.server.core.annotations.ApplyLdifFiles;
+import org.apache.directory.server.core.integ.AbstractLdapTestUnit;
+import org.apache.directory.server.core.integ.FrameworkRunner;
+import org.apache.directory.server.ldap.LdapServer;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import static org.apache.directory.server.integ.ServerIntegrationUtils.getWiredContext;
 
-public class LdapRouteTest extends LdapTestSupport {
+@RunWith(FrameworkRunner.class)
+@CreateLdapServer(transports = {@CreateTransport(protocol = "LDAP")})
+public class LdapRouteTest extends AbstractLdapTestUnit {
 
-    @SuppressWarnings("unchecked")
+    private CamelContext camel;
+    private ProducerTemplate template;
+    private int port;
+    public static LdapServer ldapServer;
+
+    @ApplyLdifFiles("org/apache/camel/component/ldap/LdapRouteTest.ldif")
+    @Test
     public void testLdapRoute() throws Exception {
+        // you can assign port number in the @CreateTransport annotation
+        port = ldapServer.getPort();
+
+        LdapContext ctx = getWiredContext(ldapServer);
+
+        SimpleRegistry reg = new SimpleRegistry();
+        reg.put("localhost:" + port, ctx);
+        camel = new DefaultCamelContext(reg);
+
+        template = camel.createProducerTemplate();
+        camel.addRoutes(createRouteBuilder());
+        camel.start();
+
         // START SNIPPET: invoke
-        Endpoint endpoint = context.getEndpoint("direct:start");
+        Endpoint endpoint = camel.getEndpoint("direct:start");
         Exchange exchange = endpoint.createExchange();
         // then we set the LDAP filter on the in body
         exchange.getIn().setBody("(!(ou=test1))");
@@ -40,28 +74,30 @@ public class LdapRouteTest extends LdapTestSupport {
         Exchange out = template.send(endpoint, exchange);
 
         // assertions of the response
-        assertNotNull(out);
-        assertNotNull(out.getOut());
+        Assert.assertNotNull(out);
+        Assert.assertNotNull(out.getOut());
         Collection<SearchResult> data = out.getOut().getBody(Collection.class);
-        assertNotNull("out body could not be converted to a Collection - was: " + out.getOut().getBody(), data);
+        Assert.assertNotNull("out body could not be converted to a Collection - was: " + out.getOut().getBody(), data);
 
-        assertFalse(contains("uid=test1,ou=test,ou=system", data));
-        assertTrue(contains("uid=test2,ou=test,ou=system", data));
-        assertTrue(contains("uid=testNoOU,ou=test,ou=system", data));
-        assertTrue(contains("uid=tcruise,ou=actors,ou=system", data));
+        Assert.assertFalse(contains("uid=test1,ou=test,ou=system", data));
+        Assert.assertTrue(contains("uid=test2,ou=test,ou=system", data));
+        Assert.assertTrue(contains("uid=testNoOU,ou=test,ou=system", data));
+        Assert.assertTrue(contains("uid=tcruise,ou=actors,ou=system", data));
         // START SNIPPET: invoke
+
+        camel.stop();
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        // START SNIPPET: register
-        JndiRegistry reg = super.createRegistry();
-        reg.bind("localhost:" + port, getWiredContext());
-        return reg;
-        // END SNIPPET: register
+    protected boolean contains(String dn, Collection<SearchResult> results) {
+        for (SearchResult result : results) {
+            if (result.getNameInNamespace().equals(dn)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             // START SNIPPET: route
