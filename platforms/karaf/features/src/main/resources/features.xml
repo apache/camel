@@ -206,6 +206,13 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-bam/${pom.version}</bundle>
   </feature>
+  <feature name='camel-bean-validator' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr303-api-1.0.0/${servicemix-specs-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hibernate-validator/${hibernate-validator-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-bean-validator/${pom.version}</bundle>
+  </feature>
   <feature name='camel-bindy' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-bindy/${pom.version}</bundle>
@@ -587,12 +594,5 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/${dom4j-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xstream/${pom.version}</bundle>
-  </feature>
-  <feature name='camel-bean-validator' version='${pom.version}'>
-    <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr303-api-1.0.0/${servicemix-specs-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hibernate-validator/${hibernate-validator-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-bean-validator/${pom.version}</bundle>
   </feature>
 </features>
