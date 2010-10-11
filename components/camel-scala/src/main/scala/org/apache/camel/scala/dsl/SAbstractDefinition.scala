@@ -123,6 +123,9 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   
   def policy(policy: Policy) = wrap(target.policy(policy))
 
+  def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = 0) = 
+    wrap(target.pollEnrich(uri, timeout, strategy))
+
   def recipients(expression: Exchange => Any) = wrap(target.recipientList(expression))
   
   def resequence(expression: Exchange => Any) = SResequenceDefinition(target.resequence(expression))

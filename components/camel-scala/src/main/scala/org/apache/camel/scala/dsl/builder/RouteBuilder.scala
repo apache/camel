@@ -117,7 +117,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages {
   def onCompletion(predicate: Exchange => Boolean) = stack.top.onCompletion(predicate)
   def onCompletion(config: Config[SOnCompletionDefinition]) = stack.top.onCompletion(config)
   def pipeline = stack.top.pipeline
-  
+  def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = 0) = stack.top.pollEnrich(uri, strategy, timeout)
   def policy(policy: Policy) = stack.top.policy(policy)
   def process(function: Exchange => Unit) = stack.top.process(function)
   def process(processor: Processor) = stack.top.process(processor)

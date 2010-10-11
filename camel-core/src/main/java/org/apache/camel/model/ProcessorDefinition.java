@@ -2515,7 +2515,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      * <p/>
      * The difference between this and {@link #enrich(String)} is that this uses a consumer
-     * to obatin the additional data, where as enrich uses a producer.
+     * to obtain the additional data, where as enrich uses a producer.
      * <p/>
      * This method will block until data is avialable, use the method with timeout if you do not
      * want to risk waiting a long time before data is available from the resourceUri.
@@ -2536,7 +2536,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      * <p/>
      * The difference between this and {@link #enrich(String)} is that this uses a consumer
-     * to obatin the additional data, where as enrich uses a producer.
+     * to obtain the additional data, where as enrich uses a producer.
      * <p/>
      * This method will block until data is avialable, use the method with timeout if you do not
      * want to risk waiting a long time before data is available from the resourceUri.
@@ -2558,7 +2558,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      * <p/>
      * The difference between this and {@link #enrich(String)} is that this uses a consumer
-     * to obatin the additional data, where as enrich uses a producer.
+     * to obtain the additional data, where as enrich uses a producer.
      * <p/>
      * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}.
      * If timeout is negative, we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>

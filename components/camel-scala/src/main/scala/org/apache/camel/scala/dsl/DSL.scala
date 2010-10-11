@@ -56,6 +56,9 @@ trait DSL {
   def onCompletion(config: Config[SOnCompletionDefinition]) : SOnCompletionDefinition
   def pipeline : SPipelineDefinition
   def policy(policy: Policy) : DSL
+
+  def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = 0) : DSL
+
   def process(function: Exchange => Unit) : DSL
   def process(processor: Processor) : DSL
   def recipients(expression: Exchange => Any) : DSL
