@@ -92,6 +92,9 @@ trait DSL {
   def transform(expression: Exchange => Any) : DSL
 
   def unmarshal(format: DataFormatDefinition) : DSL
+
+  def validate(expression: Exchange => Any) : DSL
+
   def when(filter: Exchange => Any) : DSL with Block
   
   def wiretap(uri: String) : DSL

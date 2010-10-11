@@ -156,7 +156,9 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def transform(expression: Exchange => Any) = wrap(target.transform(expression))
   
   def unmarshal(format: DataFormatDefinition) = wrap(target.unmarshal(format))
-  
+
+  def validate(expression: Exchange => Any) = wrap(target.validate(predicateBuilder(expression)))
+
   def wiretap(uri: String) = wrap(target.wireTap(uri))
   def wiretap(uri: String, expression: Exchange => Any) = wrap(target.wireTap(uri, expression))
   

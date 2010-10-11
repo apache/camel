@@ -28,8 +28,8 @@ import org.apache.camel.processor.validation.PredicateValidationException;
  */
 public class ValidateSimpleTest extends ContextTestSupport {
 
-    private Endpoint startEndpoint;
-    private MockEndpoint resultEndpoint;
+    protected Endpoint startEndpoint;
+    protected MockEndpoint resultEndpoint;
 
     @Override
     protected void setUp() throws Exception {
