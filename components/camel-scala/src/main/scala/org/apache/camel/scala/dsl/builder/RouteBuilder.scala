@@ -32,11 +32,12 @@ import org.apache.camel.scala.dsl._
 
 import org.apache.camel.scala.dsl.languages.Languages
 import java.lang.String
+import java.util.Comparator
 
 /**
  * Scala RouteBuilder implementation
  */
-class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages {
+class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages with Functions {
 
   val builder = new org.apache.camel.builder.RouteBuilder {
     override def configure() =  {
@@ -130,6 +131,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages {
   def setbody(expression : Exchange => Any) = stack.top.setbody(expression)
   def setfaultbody(expression: Exchange => Any) = stack.top.setfaultbody(expression)
   def setheader(name: String, expression: Exchange => Any) = stack.top.setheader(name, expression)
+  def sort[T](expression: (Exchange) => Any, comparator: Comparator[T] = null) = stack.top.sort(expression, comparator)
   def stop = stack.top.stop
   def threads = stack.top.threads
   def throwException(exception: Exception) = stack.top.throwException(exception)

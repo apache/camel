@@ -31,6 +31,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 import reflect.Manifest
 import java.lang.String
+import java.util.Comparator
 
 abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with Wrapper[P] with Block {
 
@@ -135,7 +136,9 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def routingSlip(header: String) = wrap(target.routingSlip(header))
   def routingSlip(header: String, separator: String) = wrap(target.routingSlip(header, separator))
   def routingSlip(expression: Exchange => Any) = wrap(target.routingSlip(expression))
-  
+
+  def sort[T](expression: (Exchange) => Any, comparator: Comparator[T] = null) = wrap(target.sort(expression, comparator))
+
   def dynamicRouter(expression: Exchange => Any) = wrap(target.dynamicRouter(expression))
 
   def setbody(expression: Exchange => Any) = wrap(target.setBody(expression))

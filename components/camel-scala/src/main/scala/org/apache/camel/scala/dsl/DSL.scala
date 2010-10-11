@@ -19,7 +19,8 @@ package scala
 package dsl 
 
 import org.apache.camel.model.DataFormatDefinition
-import reflect.Manifest;
+import reflect.Manifest
+import java.util.Comparator;
 import org.apache.camel.processor.aggregate.AggregationStrategy
 
 import org.apache.camel.spi.Policy
@@ -75,6 +76,7 @@ trait DSL {
   def setfaultbody(expression: Exchange => Any) : DSL
   def setheader(header: String, expression: Exchange => Any) : DSL
 
+  def sort[T](expression: Exchange => Any, comparator: Comparator[T] = null) : DSL
   def split(expression: Exchange => Any) : SSplitDefinition
 
   def stop : DSL
