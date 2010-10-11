@@ -31,6 +31,7 @@ import _root_.scala.reflect.Manifest
 import org.apache.camel.scala.dsl._
 
 import org.apache.camel.scala.dsl.languages.Languages
+import java.lang.String
 
 /**
  * Scala RouteBuilder implementation
@@ -92,6 +93,10 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages {
   def idempotentconsumer(expression: Exchange => Any) = stack.top.idempotentconsumer(expression)
   def inOnly = stack.top.inOnly
   def inOut = stack.top.inOut
+
+  def log(message: String) = stack.top.log(message)
+  def log(level: LoggingLevel, message: String) = stack.top.log(level, message)
+  def log(level: LoggingLevel, logName: String, message: String) = stack.top.log(level, logName, message)
 
   def loop(expression: Exchange => Any) = stack.top.loop(expression)
   def split(expression: Exchange => Any) = stack.top.split(expression)

@@ -30,6 +30,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy
 
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 import reflect.Manifest
+import java.lang.String
 
 abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with Wrapper[P] with Block {
 
@@ -85,7 +86,11 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   
   def inOnly = wrap(target.inOnly)
   def inOut = wrap(target.inOut)
-  
+
+  def log(message: String) = wrap(target.log(message))
+  def log(level: LoggingLevel, message: String) = wrap(target.log(level, message))
+  def log(level: LoggingLevel, logName: String, message: String) = wrap(target.log(level, logName, message))
+
   def loop(expression: Exchange => Any) = SLoopDefinition(target.loop(expression))
   
   def marshal(format: DataFormatDefinition) = wrap(target.marshal(format))

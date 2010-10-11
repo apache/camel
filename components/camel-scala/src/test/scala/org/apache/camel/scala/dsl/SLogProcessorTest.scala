@@ -14,18 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
-import org.apache.camel.model.RouteDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+import builder.{RouteBuilder, RouteBuilderSupport}
+import org.apache.camel.processor.LogProcessorTest
+import org.apache.camel.LoggingLevel
 
-case class SRouteDefinition(override val target: RouteDefinition, val builder: RouteBuilder) extends SAbstractDefinition[RouteDefinition] {
- 
-  def ==> (block: => Unit) : SRouteDefinition = this.apply(block).asInstanceOf[SRouteDefinition]
+/**
+ * Scala DSL equivalent for the org.apache.camel.processor.LogProcessorTest
+ */
+class SLogProcessorTest extends LogProcessorTest with RouteBuilderSupport {
 
-  def ::(id: String) : SRouteDefinition = {
-    target.setId(id)
-    this
+  override def createRouteBuilder = new RouteBuilder {
+    "foo" :: "direct:foo" log("Got ${body}") to("mock:foo")
+
+    "bar" :: "direct:bar" log(LoggingLevel.WARN, "Also got ${body}") to("mock:bar")
+
+    "baz" :: "direct:baz" ==> {
+      log(LoggingLevel.FATAL, "cool", "Me got ${body}")
+      to("mock:baz")
+    }
   }
-
 }

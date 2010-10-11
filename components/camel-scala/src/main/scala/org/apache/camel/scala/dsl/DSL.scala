@@ -42,6 +42,11 @@ trait DSL {
   def inOnly(): DSL with Block
   def inOut(): DSL with Block
   def loadbalance : SLoadBalanceDefinition
+
+  def log(message: String) : DSL
+  def log(level: LoggingLevel, message: String) : DSL
+  def log(level: LoggingLevel, logName: String, message: String) : DSL
+
   def loop(expression: Exchange => Any) : SLoopDefinition
   def marshal(format : DataFormatDefinition) : DSL
   def multicast : SMulticastDefinition
