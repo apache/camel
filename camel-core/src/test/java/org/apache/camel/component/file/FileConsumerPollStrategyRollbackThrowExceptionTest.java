@@ -53,13 +53,13 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        // let it run for a little while since we rethrow the exception the consumer
-        // will stop scheduling and not poll anymore
+        // let it run for a little, but it fails all the time
         Thread.sleep(2000);
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("rollback", event);
+        // and we should rollback X number of times
+        assertTrue(event.startsWith("rollback"));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

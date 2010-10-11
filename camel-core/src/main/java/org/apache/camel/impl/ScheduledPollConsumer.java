@@ -112,15 +112,23 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                     if (retry) {
                         done = false;
                     }
-                } catch (Exception re) {
-                    throw ObjectHelper.wrapRuntimeCamelException(re);
+                } catch (Throwable t) {
+                    // catch throwable to not let the thread die
+                    // log the fatal error as the JDK itself may not log it for us
+                    log.fatal("Consumer " + this +  " could not poll endpoint: " + getEndpoint().getEndpointUri() + " caused by: " + t.getMessage(), t);
+                    // we are done due this fatal error
+                    done = true;
                 }
-            } catch (Error e) {
+            } catch (Throwable t) {
+                // catch throwable to not let the thread die
                 // log the fatal error as the JDK itself may not log it for us
-                log.fatal("Consumer " + this +  " could not poll endpoint: " + getEndpoint().getEndpointUri() + " caused by: " + e.getMessage(), e);
-                throw e;
+                log.fatal("Consumer " + this +  " could not poll endpoint: " + getEndpoint().getEndpointUri() + " caused by: " + t.getMessage(), t);
+                // we are done due this fatal error
+                done = true;
             }
         }
+
+        // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
     }
 
     // Properties
