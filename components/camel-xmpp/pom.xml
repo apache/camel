@@ -35,12 +35,6 @@
   </properties>
 
   <repositories>
-  	<!-- ServiceMix repo -->
-  	<repository>
-  		<id>servicemix</id>
-  		<name>Apache ServiceMix Repository</name>
-  		<url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-	</repository>
 	<!-- Smack repo to grab new smack releases. We currently get smack from Central.
 	<repository>
 		<id>m2-repository-smack</id>
