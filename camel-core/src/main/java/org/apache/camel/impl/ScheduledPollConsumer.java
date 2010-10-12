@@ -114,15 +114,15 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                     }
                 } catch (Throwable t) {
                     // catch throwable to not let the thread die
-                    // log the fatal error as the JDK itself may not log it for us
-                    log.fatal("Consumer " + this +  " could not poll endpoint: " + getEndpoint().getEndpointUri() + " caused by: " + t.getMessage(), t);
+                    getExceptionHandler().handleException("Consumer " + this +  " failed polling endpoint: " + getEndpoint().getEndpointUri()
+                            + ". Will try again at next poll", t);
                     // we are done due this fatal error
                     done = true;
                 }
             } catch (Throwable t) {
                 // catch throwable to not let the thread die
-                // log the fatal error as the JDK itself may not log it for us
-                log.fatal("Consumer " + this +  " could not poll endpoint: " + getEndpoint().getEndpointUri() + " caused by: " + t.getMessage(), t);
+                getExceptionHandler().handleException("Consumer " + this +  " failed polling endpoint: " + getEndpoint().getEndpointUri()
+                        + ". Will try again at next poll", t);
                 // we are done due this fatal error
                 done = true;
             }
