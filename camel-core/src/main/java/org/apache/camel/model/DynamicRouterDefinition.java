@@ -36,8 +36,9 @@ import org.apache.camel.spi.RouteContext;
 public class DynamicRouterDefinition<Type extends ProcessorDefinition> extends NoOutputExpressionNode {
 
     public static final String DEFAULT_DELIMITER = ",";
+
     @XmlAttribute
-    private String uriDelimiter = DEFAULT_DELIMITER;
+    private String uriDelimiter;
     @XmlAttribute
     private Boolean ignoreInvalidEndpoints;
 
@@ -66,8 +67,9 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition> extends N
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Expression expression = getExpression().createExpression(routeContext);
+        String delimiter = getUriDelimiter() != null ? getUriDelimiter() : DEFAULT_DELIMITER;
 
-        DynamicRouter dynamicRouter = new DynamicRouter(routeContext.getCamelContext(), expression, getUriDelimiter());
+        DynamicRouter dynamicRouter = new DynamicRouter(routeContext.getCamelContext(), expression, delimiter);
         if (getIgnoreInvalidEndpoint() != null) {
             dynamicRouter.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoint());
         }

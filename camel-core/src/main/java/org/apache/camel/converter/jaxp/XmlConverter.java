@@ -679,7 +679,7 @@ public class XmlConverter {
                 // else, create a new doc and copy the element inside it
             } else {
                 Document doc = createDocument();
-                // import node must no occur concurrent on the same node (must be its owner)
+                // import node must not occur concurrent on the same node (must be its owner)
                 // so we need to synchronize on it
                 synchronized (node.getOwnerDocument()) {
                     doc.appendChild(doc.importNode(node, true));

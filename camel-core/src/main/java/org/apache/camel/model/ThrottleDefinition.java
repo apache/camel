@@ -39,16 +39,16 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 public class ThrottleDefinition extends OutputDefinition<ThrottleDefinition> implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
     @XmlTransient
     private ExecutorService executorService;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
     private Long maximumRequestsPerPeriod;
     @XmlAttribute
-    private long timePeriodMillis = 1000;
+    private Long timePeriodMillis;
     @XmlAttribute
     private Boolean asyncDelayed;
     @XmlAttribute
-    private Boolean callerRunsWhenRejected = Boolean.TRUE;
+    private Boolean callerRunsWhenRejected;
 
     public ThrottleDefinition() {
     }
@@ -85,11 +85,16 @@ public class ThrottleDefinition extends OutputDefinition<ThrottleDefinition> imp
             }
         }
 
-        Throttler answer = new Throttler(childProcessor, maximumRequestsPerPeriod, timePeriodMillis, scheduled);
+        // should be default 1000 millis
+        long period = getTimePeriodMillis() != null ? getTimePeriodMillis() : 1000L;
+        Throttler answer = new Throttler(childProcessor, getMaximumRequestsPerPeriod(), period, scheduled);
         if (getAsyncDelayed() != null) {
             answer.setAsyncDelayed(getAsyncDelayed());
         }
-        if (getCallerRunsWhenRejected() != null) {
+        if (getCallerRunsWhenRejected() == null) {
+            // should be true by default
+            answer.setCallerRunsWhenRejected(true);
+        } else {
             answer.setCallerRunsWhenRejected(getCallerRunsWhenRejected());
         }
         return answer;
@@ -164,11 +169,11 @@ public class ThrottleDefinition extends OutputDefinition<ThrottleDefinition> imp
         this.maximumRequestsPerPeriod = maximumRequestsPerPeriod;
     }
 
-    public long getTimePeriodMillis() {
+    public Long getTimePeriodMillis() {
         return timePeriodMillis;
     }
 
-    public void setTimePeriodMillis(long timePeriodMillis) {
+    public void setTimePeriodMillis(Long timePeriodMillis) {
         this.timePeriodMillis = timePeriodMillis;
     }
 

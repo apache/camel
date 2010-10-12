@@ -40,11 +40,11 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
     // use Long to let it be optional in JAXB so when using XML the default is 1 second
     
     @XmlAttribute()
-    private Long samplePeriod = 1L;
+    private Long samplePeriod;
 
     @XmlAttribute()
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
-    private TimeUnit units = TimeUnit.SECONDS;
+    private TimeUnit units;
 
     public SamplingDefinition() {
     }
@@ -56,7 +56,7 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
 
     @Override
     public String toString() {
-        return "Sample[1 Exchange per " + samplePeriod + " " + units.toString().toLowerCase() + " -> " + getOutputs() + "]";
+        return "Sample[1 Exchange per " + getSamplePeriod() + " " + getUnits().toString().toLowerCase() + " -> " + getOutputs() + "]";
     }
 
     @Override
@@ -66,13 +66,17 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
 
     @Override
     public String getLabel() {
-        return "sample[1 Exchange per " + samplePeriod + " " + units.toString().toLowerCase() + "]";
+        return "sample[1 Exchange per " + getSamplePeriod() + " " + getUnits().toString().toLowerCase() + "]";
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, true);
-        return new SamplingThrottler(childProcessor, samplePeriod, units);
+        // should default be 1 sample period
+        long time = getSamplePeriod() != null ? getSamplePeriod() : 1L;
+        // should default be in seconds
+        TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
+        return new SamplingThrottler(childProcessor, time, tu);
     }
 
     // Fluent API
@@ -103,11 +107,11 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
     // Properties
     // -------------------------------------------------------------------------
 
-    public long getSamplePeriod() {
+    public Long getSamplePeriod() {
         return samplePeriod;
     }
 
-    public void setSamplePeriod(long samplePeriod) {
+    public void setSamplePeriod(Long samplePeriod) {
         this.samplePeriod = samplePeriod;
     }
 
@@ -119,4 +123,7 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
         this.units = units;
     }
 
+    public TimeUnit getUnits() {
+        return units;
+    }
 }

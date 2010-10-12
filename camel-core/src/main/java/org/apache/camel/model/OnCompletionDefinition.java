@@ -58,7 +58,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     @XmlAttribute(required = false)
     private String executorServiceRef;
     @XmlAttribute(name = "useOriginalMessage", required = false)
-    private Boolean useOriginalMessagePolicy = Boolean.FALSE;
+    private Boolean useOriginalMessagePolicy;
 
     public OnCompletionDefinition() {
     }
@@ -103,8 +103,10 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         if (executorService == null) {
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "OnCompletion");
         }
+        // should be false by default
+        boolean original = getUseOriginalMessagePolicy() != null ? getUseOriginalMessagePolicy() : false;
         OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), childProcessor,
-                executorService, onCompleteOnly, onFailureOnly, when, useOriginalMessagePolicy);
+                executorService, onCompleteOnly, onFailureOnly, when, original);
         return answer;
     }
 
@@ -258,7 +260,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     }
 
     public Boolean getUseOriginalMessagePolicy() {
-        return useOriginalMessagePolicy;
+        return useOriginalMessagePolicy != null;
     }
 
     public void setUseOriginalMessagePolicy(Boolean useOriginalMessagePolicy) {

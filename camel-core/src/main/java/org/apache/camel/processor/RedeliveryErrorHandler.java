@@ -513,7 +513,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             data.handledPredicate = exceptionPolicy.getHandledPolicy();
             data.continuedPredicate = exceptionPolicy.getContinuedPolicy();
             data.retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
-            data.useOriginalInMessage = exceptionPolicy.getUseOriginalMessagePolicy();
+            data.useOriginalInMessage = exceptionPolicy.isUseOriginalMessage();
             data.asyncDelayedRedelivery = exceptionPolicy.isAsyncDelayedRedelivery();
 
             // route specific failure handler?

@@ -66,7 +66,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
     @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy;
     @XmlAttribute
-    private Boolean callerRunsWhenRejected = Boolean.TRUE;
+    private Boolean callerRunsWhenRejected;
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
@@ -95,7 +95,10 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
         }
 
         ThreadsProcessor thread = new ThreadsProcessor(routeContext.getCamelContext(), executorService);
-        if (getCallerRunsWhenRejected() != null) {
+        if (getCallerRunsWhenRejected() == null) {
+            // should be true by default
+            thread.setCallerRunsWhenRejected(true);
+        } else {
             thread.setCallerRunsWhenRejected(getCallerRunsWhenRejected());
         }
 

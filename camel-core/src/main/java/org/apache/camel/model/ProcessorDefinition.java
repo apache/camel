@@ -81,7 +81,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     protected final transient Log log = LogFactory.getLog(getClass());
     protected ErrorHandlerBuilder errorHandlerBuilder;
     protected String errorHandlerRef;
-    protected Boolean inheritErrorHandler = Boolean.TRUE;
+    protected Boolean inheritErrorHandler;
     private NodeFactory nodeFactory;
     private final LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorDefinition<?> parent;
@@ -242,7 +242,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         } else if (defn instanceof MulticastDefinition || defn instanceof RecipientListDefinition) {
             // do not use error handler for multicast or recipient list based as it offers fine grained error handlers for its outputs
         } else {
-            if (inheritErrorHandler) {
+            // use error handler by default or if configured to do so
+            if (isInheritErrorHandler() == null || isInheritErrorHandler()) {
                 if (log.isTraceEnabled()) {
                     log.trace(defn + " is configured to inheritErrorHandler");
                 }

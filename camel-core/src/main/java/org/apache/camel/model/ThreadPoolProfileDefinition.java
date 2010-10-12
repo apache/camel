@@ -38,7 +38,7 @@ import org.apache.camel.spi.ThreadPoolProfile;
 public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition implements ThreadPoolProfile {
 
     @XmlAttribute()
-    private Boolean defaultProfile = false;
+    private Boolean defaultProfile;
     @XmlAttribute()
     private Integer poolSize;
     @XmlAttribute()

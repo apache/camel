@@ -49,7 +49,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     @XmlAttribute
     private Boolean asyncDelayed;
     @XmlAttribute
-    private Boolean callerRunsWhenRejected = Boolean.TRUE;
+    private Boolean callerRunsWhenRejected;
 
     public DelayDefinition() {
     }
@@ -90,7 +90,10 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
         if (getAsyncDelayed() != null) {
             answer.setAsyncDelayed(getAsyncDelayed());
         }
-        if (getCallerRunsWhenRejected() != null) {
+        if (getCallerRunsWhenRejected() == null) {
+            // should be default true
+            answer.setCallerRunsWhenRejected(true);
+        } else {
             answer.setCallerRunsWhenRejected(getCallerRunsWhenRejected());
         }
         return answer;

@@ -40,7 +40,7 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     @XmlAttribute
     private String messageIdRepositoryRef;
     @XmlAttribute
-    private Boolean eager = Boolean.TRUE;
+    private Boolean eager;
     @XmlTransient
     private IdempotentRepository<?> idempotentRepository;
 
@@ -140,7 +140,9 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
             (IdempotentRepository<String>) resolveMessageIdRepository(routeContext);
 
         Expression expression = getExpression().createExpression(routeContext);
-        return new IdempotentConsumer(expression, idempotentRepository, eager, childProcessor);
+        // should be eager by default
+        boolean isEager = isEager() != null ? isEager() : true;
+        return new IdempotentConsumer(expression, idempotentRepository, isEager, childProcessor);
     }
 
     /**

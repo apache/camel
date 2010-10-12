@@ -43,7 +43,7 @@ public class LogDefinition extends ProcessorDefinition {
     @XmlAttribute
     private String message;
     @XmlAttribute
-    private LoggingLevel loggingLevel = LoggingLevel.INFO;
+    private LoggingLevel loggingLevel;
     @XmlAttribute
     private String logName;
 
@@ -81,7 +81,9 @@ public class LogDefinition extends ProcessorDefinition {
         if (name == null) {
             name = routeContext.getRoute().getId();
         }
-        Logger logger = new Logger(name, getLoggingLevel());
+        // should be INFO by default
+        LoggingLevel level = getLoggingLevel() != null ? getLoggingLevel() : LoggingLevel.INFO;
+        Logger logger = new Logger(name, level);
 
         return new LogProcessor(exp, logger);
     }

@@ -66,7 +66,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private String trace;
     private String handleFault;
     private String delayer;
-    private String autoStartup = "true";
+    private String autoStartup;
     private Integer startupOrder;
     private RoutePolicy routePolicy;
     private String routePolicyRef;
@@ -554,6 +554,10 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     public boolean isAutoStartup(CamelContext camelContext) throws Exception {
+        if (getAutoStartup() == null) {
+            // should auto startup by default
+            return true;
+        }
         Boolean isAutoStartup = CamelContextHelper.parseBoolean(camelContext, getAutoStartup());
         return isAutoStartup != null && isAutoStartup;
     }

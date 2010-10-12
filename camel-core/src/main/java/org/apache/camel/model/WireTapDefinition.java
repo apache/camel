@@ -52,7 +52,7 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
-    private Boolean copy = Boolean.TRUE;
+    private Boolean copy;
 
     public WireTapDefinition() {
     }
@@ -74,7 +74,12 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "WireTap");
         }
         WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern(), executorService);
-        answer.setCopy(isCopy());
+        if (isCopy() == null) {
+            // should default be true
+            answer.setCopy(true);
+        } else {
+            answer.setCopy(isCopy());
+        }
 
         if (newExchangeProcessorRef != null) {
             newExchangeProcessor = routeContext.lookup(newExchangeProcessorRef, Processor.class);
@@ -158,7 +163,7 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
     }
 
     public Boolean isCopy() {
-        return copy != null && copy;
+        return copy;
     }
 
     public void setCopy(Boolean copy) {

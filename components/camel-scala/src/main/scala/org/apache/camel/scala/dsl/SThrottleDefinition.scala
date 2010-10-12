@@ -27,7 +27,7 @@ case class SThrottleDefinition(override val target: ThrottleDefinition)(implicit
   /**
    * Time period in milliseconds
    */
-  def per(period: Int) = {
+  def per(period: Long) = {
     target.setTimePeriodMillis(period)
     this
   }
@@ -36,13 +36,13 @@ case class SThrottleDefinition(override val target: ThrottleDefinition)(implicit
   def milliseconds = ms
     
   def sec = {
-    valueInMs *= 1000
+    valueInMs = valueInMs.longValue * 1000
     this
   }
   def seconds = sec
   
   def min = {
-    valueInMs *= (60 * 1000)
+    valueInMs = valueInMs.longValue * (60 * 1000)
     this
   }
   def minutes = min

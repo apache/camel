@@ -50,7 +50,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     @XmlAttribute(required = true)
     private String uri;
     @XmlAttribute(required = false)
-    private Boolean skipSendToOriginalEndpoint = Boolean.FALSE;
+    private Boolean skipSendToOriginalEndpoint;
 
     public InterceptSendToEndpointDefinition() {
     }
@@ -93,7 +93,8 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
                     return endpoint;
                 } else if (getUri() == null || EndpointHelper.matchEndpoint(uri, getUri())) {
                     // only proxy if the uri is matched decorate endpoint with our proxy
-                    boolean skip = skipSendToOriginalEndpoint != null ? skipSendToOriginalEndpoint : false;
+                    // should be false by default
+                    boolean skip = getSkipSendToOriginalEndpoint() != null ? getSkipSendToOriginalEndpoint() : false;
                     InterceptSendToEndpoint proxy = new InterceptSendToEndpoint(endpoint, skip);
                     proxy.setDetour(detour);
                     return proxy;

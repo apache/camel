@@ -37,6 +37,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutingSlipDefinition<Type extends ProcessorDefinition> extends NoOutputExpressionNode {
     public static final String DEFAULT_DELIMITER = ",";
+
     @XmlAttribute
     private String uriDelimiter;
     @XmlAttribute
@@ -77,7 +78,9 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition> extends NoO
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Expression expression = getExpression().createExpression(routeContext);
-        RoutingSlip routingSlip = new RoutingSlip(routeContext.getCamelContext(), expression, getUriDelimiter());
+        String delimiter = getUriDelimiter() != null ? getUriDelimiter() : DEFAULT_DELIMITER;
+
+        RoutingSlip routingSlip = new RoutingSlip(routeContext.getCamelContext(), expression, delimiter);
         if (getIgnoreInvalidEndpoint() != null) {
             routingSlip.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoint());
         }
