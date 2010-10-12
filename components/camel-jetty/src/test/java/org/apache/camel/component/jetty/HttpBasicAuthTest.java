@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,11 +59,11 @@ public class HttpBasicAuthTest extends CamelTestSupport {
 
         ConstraintSecurityHandler sh = new ConstraintSecurityHandler();
         sh.setAuthenticator(new BasicAuthenticator());
-        sh.setConstraintMappings(new ConstraintMapping[] {cm});
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
         
         HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
         sh.setLoginService(loginService);
-        sh.setConstraintMappings(new ConstraintMapping[]{cm});
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[]{cm}));
 
         return sh;
     }

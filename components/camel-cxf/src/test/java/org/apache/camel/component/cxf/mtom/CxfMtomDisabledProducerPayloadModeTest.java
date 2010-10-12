@@ -120,9 +120,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
         @Resource
         WebServiceContext ctx;
         
-        @SuppressWarnings({
-            "rawtypes", "unchecked"
-        })
+        @SuppressWarnings("unchecked")
         @Override
         public void detail(Holder<byte[]> photo, Holder<Image> image) {
             

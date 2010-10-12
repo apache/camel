@@ -338,7 +338,7 @@ public class HttpProducer extends DefaultProducer {
                     // fallback as input stream
                     if (answer == null) {
                         // force the body as an input stream since this is the fallback
-                        InputStream is = in.getMandatoryBody(InputStream.class);
+                        in.getMandatoryBody(InputStream.class);
                         answer = new InputStreamEntity(in.getBody(InputStream.class), -1);
                         if (contentType != null) {
                             ((InputStreamEntity)answer).setContentType(contentType);
