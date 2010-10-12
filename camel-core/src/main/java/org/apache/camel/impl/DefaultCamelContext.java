@@ -522,7 +522,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     @Deprecated
     public void setRoutes(List<Route> routes) {
-        throw new UnsupportedOperationException("Overriding existing routes is not supported yet, use addRoutes instead");
+        throw new UnsupportedOperationException("Overriding existing routes is not supported yet, use addRouteCollection instead");
     }
 
     synchronized void removeRouteCollection(Collection<Route> routes) {

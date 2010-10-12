@@ -31,8 +31,7 @@ public class FileInputStreamCacheTest extends ContextTestSupport {
     private static final String TEST_FILE = "src/test/resources/org/apache/camel/converter/stream/test.xml";
 
     public void testFileInputStreamCache() throws Exception {
-        Exchange exchange = new DefaultExchange(context);
-
+       
         File file = new File(TEST_FILE).getAbsoluteFile();
         FileInputStreamCache cache = new FileInputStreamCache(file);
 
