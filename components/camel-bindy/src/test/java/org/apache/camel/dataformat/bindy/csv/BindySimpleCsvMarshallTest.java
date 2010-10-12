@@ -107,7 +107,7 @@ public class BindySimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests
             getContext().addInterceptStrategy(tracer);
 
             // default should errors go to mock:error
-            errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliverDelay(0));
+            errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliveryDelay(0));
 
             onException(Exception.class).maximumRedeliveries(0).handled(true);
 

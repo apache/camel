@@ -30,6 +30,7 @@ import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
 import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -145,7 +146,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
 
         } finally {
             scanner.close();
-            ObjectHelper.close(in, "in", LOG);
+            IOHelper.close(in, "in", LOG);
         }
     }
 

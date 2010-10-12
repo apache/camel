@@ -32,6 +32,7 @@ import org.apache.camel.dataformat.bindy.BindyCsvFactory;
 import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -119,7 +120,7 @@ public class BindyCsvDataFormat implements DataFormat {
 
         // Retrieve the separator defined to split the record
         String separator = factory.getSeparator();
-        ObjectHelper.notEmpty(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
+        ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
 
         int count = 0;
 
@@ -204,7 +205,7 @@ public class BindyCsvDataFormat implements DataFormat {
 
         } finally {
             scanner.close();
-            ObjectHelper.close(in, "in", LOG);
+            IOHelper.close(in, "in", LOG);
         }
 
     }

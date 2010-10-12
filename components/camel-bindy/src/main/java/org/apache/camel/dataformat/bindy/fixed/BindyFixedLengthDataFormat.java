@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -28,11 +27,11 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.dataformat.bindy.BindyCsvFactory;
 import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
 import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -162,7 +161,7 @@ public class BindyFixedLengthDataFormat implements DataFormat {
 
         } finally {
             scanner.close();
-            ObjectHelper.close(in, "in", LOG);
+            IOHelper.close(in, "in", LOG);
         }
 
     }
