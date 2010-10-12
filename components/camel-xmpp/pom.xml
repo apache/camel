@@ -41,12 +41,12 @@
   		<name>Apache ServiceMix Repository</name>
   		<url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
 	</repository>
-	<!-- smack repo -->
+	<!-- Smack repo to grab new smack releases. We currently get smack from Central.
 	<repository>
 		<id>m2-repository-smack</id>
 		<name>Smakc Maven2 Repository</name>
 		<url>http://maven.reucon.com/public</url>
-	</repository>
+	</repository> -->
   </repositories>
 
   <dependencies>
