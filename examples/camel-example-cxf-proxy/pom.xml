@@ -133,13 +133,15 @@
                 </executions>
             </plugin>
 
-            <!-- so we can run mvn jetty:run -->
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty-version}</version>
-            </plugin>
-
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-maven-plugin</artifactId>
+				<version>${project.version}</version>
+				<configuration>
+				   <applicationContextUri>camel-config.xml</applicationContextUri>
+				</configuration>
+			</plugin>
+			
         </plugins>
     </build>
 </project>

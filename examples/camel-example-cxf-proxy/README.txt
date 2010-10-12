@@ -10,7 +10,7 @@ You will need to compile this example first:
   mvn compile
 
 To run the example type
-  mvn jetty:run
+  mvn camel:run
 
 The proxied webservice is located at
   http://localhost:9080/camel-example-cxf-proxy/webservices/incident
