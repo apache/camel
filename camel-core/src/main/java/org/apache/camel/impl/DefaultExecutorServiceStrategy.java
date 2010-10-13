@@ -269,7 +269,13 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
 
         // the thread name must not be null
         ObjectHelper.notNull(name, "ThreadName");
-
+        
+        // If we set the corePoolSize to be 0, the whole camel application will hang in JDK5
+        // just add a check here to set the corePoolSize to be 1 
+        if (corePoolSize == 0) {
+            corePoolSize = 1;
+        }
+        
         ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize, keepAliveTime,
                                                                      timeUnit, maxQueueSize, rejectedExecutionHandler, daemon);
         onThreadPoolCreated(answer);
