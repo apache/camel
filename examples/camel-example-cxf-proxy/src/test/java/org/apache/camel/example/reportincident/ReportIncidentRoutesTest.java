@@ -34,7 +34,7 @@ public class ReportIncidentRoutesTest {
 
     protected void startCamel() throws Exception {
         main = new Main();
-        main.setApplicationContextUri("camel-config.xml");
+        main.setApplicationContextUri("META-INF/spring/camel-config.xml");
         main.start();
     }
     

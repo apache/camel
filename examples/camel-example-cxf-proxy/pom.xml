@@ -29,7 +29,23 @@
     <artifactId>camel-example-cxf-proxy</artifactId>
     <name>Camel :: Example :: CXF Proxy</name>
     <description>An example which uses Camel to proxy a web service</description>
-    <packaging>war</packaging>
+    <packaging>bundle</packaging>
+    
+    <properties>
+		<camel.osgi.export.pkg>
+			org.apache.camel.example.*
+     </camel.osgi.export.pkg>
+		<camel.osgi.import.additional>
+			META-INF.cxf
+     </camel.osgi.import.additional>
+	 <camel.osgi.private.pkg>
+			org.apache.camel.example.reportincident
+     </camel.osgi.private.pkg>
+		<!-- to avoid us import bunch of cxf package -->
+		<camel.osgi.dynamic>
+			*
+     </camel.osgi.dynamic>
+	</properties>
 
     <dependencies>
         <dependency>
@@ -137,9 +153,6 @@
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-maven-plugin</artifactId>
 				<version>${project.version}</version>
-				<configuration>
-				   <applicationContextUri>camel-config.xml</applicationContextUri>
-				</configuration>
 			</plugin>
 			
         </plugins>
