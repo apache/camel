@@ -85,7 +85,7 @@
     <dependency>
       <groupId>org.apache.camel.karaf</groupId>
       <artifactId>apache-camel</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
       <scope>test</scope>
     </dependency>
@@ -241,6 +241,7 @@
       <plugin>
         <groupId>org.apache.servicemix.tooling</groupId>
         <artifactId>depends-maven-plugin</artifactId>
+        <version>1.2</version>
         <executions>
           <execution>
             <id>generate-depends-file</id>
@@ -314,11 +315,6 @@
                             on this information to PAX mvn url
                         -->
                         <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
                         <includes>
                             <include>**/*Test.*</include>
                         </includes>
