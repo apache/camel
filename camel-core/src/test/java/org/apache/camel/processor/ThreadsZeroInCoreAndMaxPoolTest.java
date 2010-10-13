@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -24,14 +25,34 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
 
-    public void testThreadsCoreAndMaxPool() throws Exception {
+    // ignore the test
+    public void xtestThreadsCoreAndMaxPool() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
+    
+    public void testThreadsCoreBeZero() throws Exception {
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start")
+                    // will use a a custom thread pool with 0 in core and 2 max
+                        .threads(0, 2).to("mock:result");
+                }
+            });
+            // expect to get the IllegalArgumentException
+            fail("Except the exception here");
+        } catch (FailedToCreateRouteException ex) {
+            assertTrue(ex.getCause() instanceof IllegalArgumentException);
 
+        }
+    }
+
+     
     public void testThreadsCoreAndMaxPoolBuilder() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -45,11 +66,7 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    // will use a a custom thread pool with 0 in core and 2 max
-                    .threads(0, 2)
-                    .to("mock:result");
-
+                
                 from("direct:foo")
                     // only change thread name and max, but rely on default settings
                     .threads().maxPoolSize(20).threadName("myPool")
