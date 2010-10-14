@@ -171,6 +171,11 @@
                                 <echo>Deleting unwanted resources from the test-jar</echo>
                                 <delete file="${project.build.directory}/test-classes/log4j.properties" verbose="true" />
                                 <delete file="${project.build.directory}/test-classes/META-INF/spring/*" verbose="true" />
+
+                                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
+                                  <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*"/>
+                                  <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*"/>
+                                </jar>
                             </tasks>
                         </configuration>
                         <goals>
@@ -185,19 +190,6 @@
               <groupId>org.codehaus.mojo</groupId>
               <artifactId>build-helper-maven-plugin</artifactId>
               <executions>
-                <execution>
-                  <id>add-source</id>
-                  <phase>generate-sources</phase>
-                  <goals>
-                    <goal>add-source</goal>
-                  </goals>
-                  <configuration>
-                    <sources>
-                      <source>${basedir}/../camel-core-osgi/src/main/java</source>
-                      <source>${basedir}/../camel-core-xml/src/main/java</source>
-                    </sources>
-                  </configuration>
-                </execution>
                 <execution>
                   <id>attach-artifacts</id>
                   <phase>package</phase>
