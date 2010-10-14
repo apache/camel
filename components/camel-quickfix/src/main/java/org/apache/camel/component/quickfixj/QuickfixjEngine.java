@@ -86,6 +86,7 @@ public class QuickfixjEngine {
 
     private final Acceptor acceptor;
     private final Initiator initiator;
+    private final JmxExporter jmxExporter;
     private final boolean forcedShutdown;
     private final MessageStoreFactory messageStoreFactory;
     private final LogFactory sessionLogFactory;
@@ -133,10 +134,11 @@ public class QuickfixjEngine {
             threadModel = ThreadModel.valueOf(settings.getString(SETTING_THREAD_MODEL));
         }
 
-        JmxExporter jmxExporter = null;
         if (settings.isSetting(SETTING_USE_JMX) && settings.getBool(SETTING_USE_JMX)) {
             LOG.info("Enabling JMX for QuickFIX/J");
             jmxExporter = new JmxExporter();
+        } else {
+            jmxExporter = null;
         }
         
         // From original component implementation...
@@ -146,24 +148,17 @@ public class QuickfixjEngine {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            if (isConnectorRole(settings, SessionFactory.ACCEPTOR_CONNECTION_TYPE)) {
-                acceptor = createAcceptor(new Dispatcher(), settings, 
-                    messageStoreFactory, sessionLogFactory, messageFactory, threadModel);
 
-                if (jmxExporter != null) {
-                    jmxExporter.export(acceptor);
-                }
+            if (isConnectorRole(settings, SessionFactory.ACCEPTOR_CONNECTION_TYPE)) {
+                acceptor = createAcceptor(new Dispatcher(), settings,
+                    messageStoreFactory, sessionLogFactory, messageFactory, threadModel);
             } else {
                 acceptor = null;
             }
     
             if (isConnectorRole(settings, SessionFactory.INITIATOR_CONNECTION_TYPE)) {
                 initiator = createInitiator(new Dispatcher(), settings, 
-                    messageStoreFactory, sessionLogFactory, messageFactory, threadModel);
-                
-                if (jmxExporter != null) {
-                    jmxExporter.export(initiator);
-                }
+                    messageStoreFactory, sessionLogFactory, messageFactory, threadModel);               
             } else {
                 initiator = null;
             }
@@ -179,9 +174,15 @@ public class QuickfixjEngine {
     public void start() throws Exception {
         if (acceptor != null) {
             acceptor.start();
+            if (jmxExporter != null) {
+                jmxExporter.export(acceptor);
+            }
         }
         if (initiator != null) {
             initiator.start();
+            if (jmxExporter != null) {
+                jmxExporter.export(initiator);
+            }
         }
         started = true;
     }

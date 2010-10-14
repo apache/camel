@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -35,7 +34,6 @@ import org.apache.mina.common.TransportType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import quickfix.Acceptor;
 import quickfix.ConfigError;
 import quickfix.DefaultMessageFactory;
@@ -81,17 +79,17 @@ public class QuickfixjEngineTest {
     private SessionID sessionID;
     private File tempdir;
     private QuickfixjEngine quickfixjEngine;
-    
+
     @Before
     public void setUp() throws Exception {
         settingsFile = File.createTempFile("quickfixj_test_", ".cfg");
         tempdir = settingsFile.getParentFile();
-        URL[] urls = new URL[] {tempdir.toURI().toURL()};
-       
+        URL[] urls = new URL[]{tempdir.toURI().toURL()};
+
         contextClassLoader = Thread.currentThread().getContextClassLoader();
         ClassLoader testClassLoader = new URLClassLoader(urls, contextClassLoader);
         Thread.currentThread().setContextClassLoader(testClassLoader);
-        
+
         sessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "FOO", "BAR");
 
         settings = new SessionSettings();
@@ -100,54 +98,54 @@ public class QuickfixjEngineTest {
         settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
         TestSupport.setSessionID(settings, sessionID);
     }
-    
+
     @After
     public void tearDown() throws Exception {
-        Thread.currentThread().setContextClassLoader(contextClassLoader);    
+        Thread.currentThread().setContextClassLoader(contextClassLoader);
         if (quickfixjEngine != null) {
             quickfixjEngine.stop();
         }
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void missingSettingsResource() throws Exception {
         new QuickfixjEngine("bogus.cfg", false);
     }
-    
+
     @Test
-    public void defaultInitiator() throws Exception {           
+    public void defaultInitiator() throws Exception {
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
 
         writeSettings();
-        
+
         quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
-        
+
         assertThat(quickfixjEngine.getInitiator(), instanceOf(SocketInitiator.class));
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
         assertDefaultConfiguration(quickfixjEngine);
     }
 
     @Test
-    public void threadPerSessionInitiator() throws Exception {       
+    public void threadPerSessionInitiator() throws Exception {
         settings.setString(QuickfixjEngine.SETTING_THREAD_MODEL, QuickfixjEngine.ThreadModel.ThreadPerSession.toString());
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
 
         writeSettings();
-        
+
         quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
-        
+
         assertThat(quickfixjEngine.getInitiator(), instanceOf(ThreadedSocketInitiator.class));
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
         assertDefaultConfiguration(quickfixjEngine);
     }
 
     @Test
-    public void defaultAcceptor() throws Exception {   
+    public void defaultAcceptor() throws Exception {
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
         settings.setLong(sessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 1234);
 
         writeSettings();
-        
+
         quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), nullValue());
@@ -156,22 +154,22 @@ public class QuickfixjEngineTest {
     }
 
     @Test
-    public void threadPerSessionAcceptor() throws Exception {       
+    public void threadPerSessionAcceptor() throws Exception {
         settings.setString(QuickfixjEngine.SETTING_THREAD_MODEL, QuickfixjEngine.ThreadModel.ThreadPerSession.toString());
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
         settings.setLong(sessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 1234);
 
         writeSettings();
-        
+
         quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
-        
+
         assertThat(quickfixjEngine.getInitiator(), nullValue());
         assertThat(quickfixjEngine.getAcceptor(), instanceOf(ThreadedSocketAcceptor.class));
         assertDefaultConfiguration(quickfixjEngine);
     }
 
     @Test
-    public void minimalInitiatorAndAcceptor() throws Exception {   
+    public void minimalInitiatorAndAcceptor() throws Exception {
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
         settings.setLong(sessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 1234);
 
@@ -180,7 +178,7 @@ public class QuickfixjEngineTest {
         TestSupport.setSessionID(settings, initiatorSessionID);
 
         writeSettings();
-        
+
         quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
@@ -189,14 +187,14 @@ public class QuickfixjEngineTest {
     }
 
     @Test
-    public void inferFileStore() throws Exception {           
+    public void inferFileStore() throws Exception {
         settings.setString(FileStoreFactory.SETTING_FILE_STORE_PATH, tempdir.toString());
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
-        
+
         writeSettings();
-        
+
         quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
-        
+
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
         assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
@@ -207,16 +205,16 @@ public class QuickfixjEngineTest {
 
     // NOTE This is a little strange. If the JDBC driver is set and no log settings are found,
     // then we use JDBC for both the message store and the log.
-    
+
     @Test
-    public void inferJdbcStoreAndLog() throws Exception {           
+    public void inferJdbcStoreAndLog() throws Exception {
         settings.setString(JdbcSetting.SETTING_JDBC_DRIVER, "driver");
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
-        
+
         writeSettings();
-        
+
         quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
-        
+
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
         assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
@@ -230,22 +228,22 @@ public class QuickfixjEngineTest {
         settings.setString(FileStoreFactory.SETTING_FILE_STORE_PATH, tempdir.toString());
         settings.setString(JdbcSetting.SETTING_JDBC_DRIVER, "driver");
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
-        
+
         writeSettings();
-        
+
         doAmbiguityTest("Ambiguous message store");
     }
-    
+
     @Test
-    public void inferJdbcStoreWithInferredLog() throws Exception {           
+    public void inferJdbcStoreWithInferredLog() throws Exception {
         settings.setString(JdbcSetting.SETTING_JDBC_DRIVER, "driver");
         settings.setBool(ScreenLogFactory.SETTING_LOG_EVENTS, true);
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
-        
+
         writeSettings();
-        
+
         quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
-        
+
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
         assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
@@ -253,16 +251,16 @@ public class QuickfixjEngineTest {
         assertThat(quickfixjEngine.getLogFactory(), instanceOf(ScreenLogFactory.class));
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
     }
-    
+
     @Test
-    public void inferSleepycatStore() throws Exception {           
+    public void inferSleepycatStore() throws Exception {
         settings.setString(SleepycatStoreFactory.SETTING_SLEEPYCAT_DATABASE_DIR, tempdir.toString());
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
-        
+
         writeSettings();
-        
+
         quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
-        
+
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
         assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
@@ -272,14 +270,14 @@ public class QuickfixjEngineTest {
     }
 
     @Test
-    public void inferFileLog() throws Exception {           
+    public void inferFileLog() throws Exception {
         settings.setString(FileLogFactory.SETTING_FILE_LOG_PATH, tempdir.toString());
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
-        
+
         writeSettings();
-        
+
         quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
-        
+
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
         assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
@@ -293,15 +291,15 @@ public class QuickfixjEngineTest {
         settings.setString(FileLogFactory.SETTING_FILE_LOG_PATH, tempdir.toString());
         settings.setBool(ScreenLogFactory.SETTING_LOG_EVENTS, true);
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
-        
+
         writeSettings();
-        
+
         doAmbiguityTest("Ambiguous log");
     }
 
     private void doAmbiguityTest(String exceptionText) throws FieldConvertError, IOException, JMException {
         try {
-            quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);     
+            quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
             fail("Expected exception, but none raised");
         } catch (ConfigError e) {
             assertTrue(e.getMessage().contains(exceptionText));
@@ -312,16 +310,18 @@ public class QuickfixjEngineTest {
     public void enableJmxForInitiator() throws Exception {
         settings.setBool(QuickfixjEngine.SETTING_USE_JMX, true);
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
+        settings.setLong(sessionID, Initiator.SETTING_SOCKET_CONNECT_PORT, 1234);
 
         writeSettings();
-        
+
         quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
-        
+        quickfixjEngine.start();
+
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> n = mbeanServer.queryNames(new ObjectName("org.quickfixj:type=Connector,role=Initiator,*"), null);
         assertFalse("QFJ mbean not registered", n.isEmpty());
     }
-    
+
     @Test
     public void enableJmxForAcceptor() throws Exception {
         settings.setBool(QuickfixjEngine.SETTING_USE_JMX, true);
@@ -329,119 +329,119 @@ public class QuickfixjEngineTest {
         settings.setLong(sessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 1234);
 
         writeSettings();
-        
+
         quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
-        
+        quickfixjEngine.start();
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> n = mbeanServer.queryNames(new ObjectName("org.quickfixj:type=Connector,role=Acceptor,*"), null);
         assertFalse("QFJ mbean not registered", n.isEmpty());
     }
-    
+
     @Test
-    public void sessionEvents() throws Exception {          
-        SessionID acceptorSessionID =  new SessionID(FixVersions.BEGINSTRING_FIX42, "MARKET", "TRADER");
+    public void sessionEvents() throws Exception {
+        SessionID acceptorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX42, "MARKET", "TRADER");
         SessionID initiatorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX42, "TRADER", "MARKET");
-                
+
         quickfixjEngine = new QuickfixjEngine("examples/inprocess.cfg", false);
-        
+
         doLogonEventsTest(acceptorSessionID, initiatorSessionID, quickfixjEngine);
 
         doApplicationMessageEventsTest(acceptorSessionID, initiatorSessionID, quickfixjEngine);
-        
+
         doLogoffEventsTest(acceptorSessionID, initiatorSessionID, quickfixjEngine);
     }
 
     private void doLogonEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, final QuickfixjEngine quickfixjEngine)
-        throws Exception, InterruptedException {
+        throws Exception {
 
         final List<EventRecord> events = new ArrayList<EventRecord>();
         final CountDownLatch logonLatch = new CountDownLatch(2);
-        
+
         QuickfixjEventListener logonListener = new QuickfixjEventListener() {
             public void onEvent(QuickfixjEventCategory eventCategory,
-                    SessionID sessionID, Message message) {
+                                SessionID sessionID, Message message) {
                 events.add(new EventRecord(eventCategory, sessionID, message));
                 if (eventCategory == QuickfixjEventCategory.SessionLogon) {
-                    logonLatch.countDown();                    
+                    logonLatch.countDown();
                 }
             }
         };
-        
+
         quickfixjEngine.addEventListener(logonListener);
-        
+
         quickfixjEngine.start();
-        
+
         assertTrue("Logons not completed", logonLatch.await(5000, TimeUnit.MILLISECONDS));
         quickfixjEngine.removeEventListener(logonListener);
-        
+
         assertThat(events.size(), is(7));
-        
+
         int n = 0;
-        
+
         assertThat(events.get(n).getEventCategory(), is(QuickfixjEventCategory.SessionCreated));
         assertThat(events.get(n).getSessionID(), is(initiatorSessionID));
         assertThat(events.get(n).getMessage(), is(nullValue()));
         n++;
-    
+
         assertThat(events.get(n).getEventCategory(), is(QuickfixjEventCategory.AdminMessageSent));
         assertThat(events.get(n).getSessionID(), is(initiatorSessionID));
         assertThat(events.get(n).getMessage(), is(notNullValue()));
         n++;
-    
+
         assertThat(events.get(n).getEventCategory(), is(QuickfixjEventCategory.AdminMessageReceived));
         assertThat(events.get(n).getSessionID(), is(acceptorSessionID));
         assertThat(events.get(n).getMessage(), is(notNullValue()));
         n++;
-    
+
         assertThat(events.get(n).getEventCategory(), is(QuickfixjEventCategory.AdminMessageSent));
         assertThat(events.get(n).getSessionID(), is(acceptorSessionID));
         assertThat(events.get(n).getMessage(), is(notNullValue()));
         n++;
-    
+
         assertThat(events.get(n).getEventCategory(), is(QuickfixjEventCategory.SessionLogon));
         assertThat(events.get(n).getSessionID(), is(acceptorSessionID));
         assertThat(events.get(n).getMessage(), is(nullValue()));
         n++;
-    
+
         assertThat(events.get(n).getEventCategory(), is(QuickfixjEventCategory.AdminMessageReceived));
         assertThat(events.get(n).getSessionID(), is(initiatorSessionID));
         assertThat(events.get(n).getMessage(), is(notNullValue()));
         n++;
-    
+
         assertThat(events.get(n).getEventCategory(), is(QuickfixjEventCategory.SessionLogon));
         assertThat(events.get(n).getSessionID(), is(initiatorSessionID));
         assertThat(events.get(n).getMessage(), is(nullValue()));
         n++;
     }
 
-    private void doApplicationMessageEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, final QuickfixjEngine quickfixjEngine) 
+    private void doApplicationMessageEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, final QuickfixjEngine quickfixjEngine)
         throws SessionNotFound, InterruptedException, FieldNotFound {
 
         final List<EventRecord> events = new ArrayList<EventRecord>();
         final CountDownLatch messageLatch = new CountDownLatch(1);
-        
+
         QuickfixjEventListener messageListener = new QuickfixjEventListener() {
             public void onEvent(QuickfixjEventCategory eventCategory,
-                    SessionID sessionID, Message message) {
+                                SessionID sessionID, Message message) {
                 EventRecord event = new EventRecord(eventCategory, sessionID, message);
                 events.add(event);
                 if (eventCategory == QuickfixjEventCategory.AppMessageReceived) {
-                    messageLatch.countDown();                    
+                    messageLatch.countDown();
                 }
             }
         };
-        
+
         quickfixjEngine.addEventListener(messageListener);
         Email email = TestSupport.createEmailMessage("Test");
         Session.sendToTarget(email, initiatorSessionID);
-        
+
         assertTrue("Application message not received", messageLatch.await(5000, TimeUnit.MILLISECONDS));
         quickfixjEngine.removeEventListener(messageListener);
-        
+
         assertThat(events.size(), is(2));
-        
+
         int n = 0;
-        
+
         assertThat(events.get(n).getEventCategory(), is(QuickfixjEventCategory.AppMessageSent));
         assertThat(events.get(n).getSessionID(), is(initiatorSessionID));
         assertThat(events.get(n).getMessage().getHeader().getString(MsgType.FIELD), is(MsgType.EMAIL));
@@ -454,31 +454,31 @@ public class QuickfixjEngineTest {
     }
 
     private void doLogoffEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, final QuickfixjEngine quickfixjEngine)
-        throws Exception, InterruptedException {
+        throws Exception {
 
         final List<EventRecord> events = new ArrayList<EventRecord>();
         final CountDownLatch logoffLatch = new CountDownLatch(2);
-        
+
         QuickfixjEventListener logoffListener = new QuickfixjEventListener() {
             public void onEvent(QuickfixjEventCategory eventCategory,
-                    SessionID sessionID, Message message) {
+                                SessionID sessionID, Message message) {
                 EventRecord event = new EventRecord(eventCategory, sessionID, message);
                 events.add(event);
                 if (eventCategory == QuickfixjEventCategory.SessionLogoff) {
-                    logoffLatch.countDown();                    
+                    logoffLatch.countDown();
                 }
             }
         };
-        
+
         quickfixjEngine.addEventListener(logoffListener);
-    
-        quickfixjEngine.stop();   
-    
+
+        quickfixjEngine.stop();
+
         assertTrue("Logoffs not received", logoffLatch.await(5000, TimeUnit.MILLISECONDS));
         quickfixjEngine.removeEventListener(logoffListener);
 
         int n = 0;
-        
+
         assertThat(events.get(n).getEventCategory(), is(QuickfixjEventCategory.SessionLogoff));
         assertThat(events.get(n).getSessionID(), is(acceptorSessionID));
         assertThat(events.get(n).getMessage(), is(nullValue()));
@@ -494,23 +494,23 @@ public class QuickfixjEngineTest {
         private final QuickfixjEventCategory eventCategory;
         private final SessionID sessionID;
         private final Message message;
-        
+
         public EventRecord(QuickfixjEventCategory eventCategory,
-                SessionID sessionID, Message message) {
+                           SessionID sessionID, Message message) {
             super();
             this.eventCategory = eventCategory;
             this.sessionID = sessionID;
             this.message = message;
         }
-        
+
         public QuickfixjEventCategory getEventCategory() {
             return eventCategory;
         }
-        
+
         public SessionID getSessionID() {
             return sessionID;
         }
-        
+
         public Message getMessage() {
             return message;
         }
@@ -521,7 +521,7 @@ public class QuickfixjEngineTest {
                     + ", sessionID=" + sessionID + ", message=" + message + "]";
         }
     }
-    
+
     private void assertDefaultConfiguration(QuickfixjEngine quickfixjEngine) throws Exception {
         assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
         assertThat(quickfixjEngine.getMessageStoreFactory(), instanceOf(MemoryStoreFactory.class));
@@ -535,5 +535,5 @@ public class QuickfixjEngineTest {
     private void writeSettings() throws IOException {
         TestSupport.writeSettings(settings, settingsFile);
     }
-        
+
 }
