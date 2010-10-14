@@ -23,9 +23,7 @@ import java.util.concurrent.TimeUnit;
  * A helper class for working with times in various units
  * 
  * @version $Revision$
- * @deprecated will be removed in Camel 2.5
  */
-@Deprecated
 public class Time {
     private long number;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
