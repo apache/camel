@@ -197,40 +197,33 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     public void writeFile(Exchange exchange, String fileName) throws GenericFileOperationFailedException {
-        InputStream payload = exchange.getIn().getBody(InputStream.class);
-        try {
-            // build directory if auto create is enabled
-            if (endpoint.isAutoCreate()) {
-                // use java.io.File to compute the file path
-                File file = new File(fileName);
-                String directory = file.getParent();
-                boolean absolute = FileUtil.isAbsolute(file);
-                if (directory != null) {
-                    if (!operations.buildDirectory(directory, absolute)) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Cannot build directory [" + directory + "] (could be because of denied permissions)");
-                        }
+        // build directory if auto create is enabled
+        if (endpoint.isAutoCreate()) {
+            // use java.io.File to compute the file path
+            File file = new File(fileName);
+            String directory = file.getParent();
+            boolean absolute = FileUtil.isAbsolute(file);
+            if (directory != null) {
+                if (!operations.buildDirectory(directory, absolute)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Cannot build directory [" + directory + "] (could be because of denied permissions)");
                     }
                 }
             }
-
-            // upload
-            if (log.isTraceEnabled()) {
-                log.trace("About to write [" + fileName + "] to [" + getEndpoint() + "] from exchange [" + exchange + "]");
-            }
-
-            boolean success = operations.storeFile(fileName, exchange);
-            if (!success) {
-                throw new GenericFileOperationFailedException("Error writing file [" + fileName + "]");
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("Wrote [" + fileName + "] to [" + getEndpoint() + "]");
-            }
-
-        } finally {
-            IOHelper.close(payload, "Closing payload", log);
         }
 
+        // upload
+        if (log.isTraceEnabled()) {
+            log.trace("About to write [" + fileName + "] to [" + getEndpoint() + "] from exchange [" + exchange + "]");
+        }
+
+        boolean success = operations.storeFile(fileName, exchange);
+        if (!success) {
+            throw new GenericFileOperationFailedException("Error writing file [" + fileName + "]");
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Wrote [" + fileName + "] to [" + getEndpoint() + "]");
+        }
     }
 
     public String createFileName(Exchange exchange) {
