@@ -25,21 +25,21 @@ import org.apache.commons.logging.LogFactory;
 
 public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
     private static final transient Log LOG = LogFactory.getLog(WeightedLoadBalancer.class);
-    private ArrayList<Integer> distributionRatioList = new ArrayList<Integer>();
+    private List<Integer> distributionRatioList = new ArrayList<Integer>();
     private ArrayList<DistributionRatio> runtimeRatios = new ArrayList<DistributionRatio>();
     
-    public WeightedLoadBalancer(ArrayList<Integer> distributionRatios) {
+    public WeightedLoadBalancer(List<Integer> distributionRatios) {
         deepCloneDistributionRatios(distributionRatios);
         loadRuntimeRatios(distributionRatios);
     }
     
-    protected void deepCloneDistributionRatios(ArrayList<Integer> distributionRatios) {
+    protected void deepCloneDistributionRatios(List<Integer> distributionRatios) {
         for (Integer value : distributionRatios) {
             this.distributionRatioList.add(value);
         }
     }
     
-    protected void loadRuntimeRatios(ArrayList<Integer> distributionRatios) {
+    protected void loadRuntimeRatios(List<Integer> distributionRatios) {
         int position = 0;
         
         for (Integer value : distributionRatios) {
@@ -82,11 +82,11 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
         }
     }
 
-    public ArrayList<Integer> getDistributionRatioList() {
+    public List<Integer> getDistributionRatioList() {
         return distributionRatioList;
     }
 
-    public void setDistributionRatioList(ArrayList<Integer> distributionRatioList) {
+    public void setDistributionRatioList(List<Integer> distributionRatioList) {
         this.distributionRatioList = distributionRatioList;
     }
 
