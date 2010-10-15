@@ -34,7 +34,7 @@ import org.apache.camel.processor.loadbalancer.WeightedRoundRobinLoadBalancer;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;sticky/&gt; element
+ * Represents an XML &lt;weighted/&gt; element
  */
 @XmlRootElement(name = "weighted")
 @XmlAccessorType(XmlAccessType.FIELD)
