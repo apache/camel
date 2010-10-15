@@ -1574,6 +1574,28 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+         <id>setup.eclipse</id>
+         <build>
+             <defaultGoal>process-test-sources</defaultGoal>
+             <plugins>
+                 <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+                     <artifactId>maven-eclipse-plugin</artifactId>
+                     <inherited>true</inherited>
+                     <executions>
+                         <execution>
+                             <id>setup.eclipse.project</id>
+                             <phase>process-test-sources</phase>
+                             <goals>
+                                 <goal>eclipse</goal>
+                             </goals>
+                         </execution>
+                     </executions>
+                 </plugin>
+             </plugins>
+         </build>
+     </profile>
 
   </profiles>
 

@@ -46,6 +46,8 @@
     <jetty-version>7.0.1.v20091125</jetty-version>
     <jaxb-version>2.1.12</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
+
+    <jdk.version>1.6</jdk.version>
   </properties>
 
   <mailingLists>
@@ -506,6 +508,18 @@
 
   <profiles>
     <profile>
+      <!-- really just used for the eclispe setup as eclipse will stick JSE-15 as the compliance
+      level if we don't reconfigure the compiler plugin with 1.6.  When it does that, things 
+      like JAXB and other built in JDK things won't be found -->
+      <id>jdk15</id>
+      <activation>
+        <jdk>1.5</jdk>
+      </activation>
+      <properties>
+        <jdk.version>1.5</jdk.version>
+      </properties>
+    </profile>
+    <profile>
       <id>setup.eclipse</id>
       <!--
         set up the eclipse workspace and generate the .classpath and .project files for modules
@@ -515,6 +529,18 @@
       </properties>
       <build>
         <defaultGoal>process-test-sources</defaultGoal>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                <source>${jdk.version}</source>
+                <target>${jdk.version}</target>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
