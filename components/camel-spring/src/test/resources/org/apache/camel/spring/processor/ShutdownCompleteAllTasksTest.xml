@@ -23,14 +23,14 @@
     ">
 
     <bean id="shutdown" class="org.apache.camel.impl.DefaultShutdownStrategy">
-        <!-- give it 20 sec to shutdown -->
-        <property name="timeout" value="20"/>
+        <!-- give it 30 sec to shutdown -->
+        <property name="timeout" value="30"/>
     </bean>
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <!-- let this route complete all its pending messages when asked to shutdown -->
-        <route startupOrder="1" shutdownRunningTask="CompleteAllTasks">
+        <route id="foo" autoStartup="false" startupOrder="1" shutdownRunningTask="CompleteAllTasks">
             <from uri="file:target/pending"/>
             <delay><constant>1000</constant></delay>
             <to uri="seda:foo"/>
