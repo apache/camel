@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
@@ -27,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 
-    private static String url = "file:target/pending?initialDelay=3000";
+    private static String url = "file:target/pending";
 
     @Override
     protected void setUp() throws Exception {
@@ -42,13 +44,17 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
     }
 
     public void testShutdownCompleteAllTasks() throws Exception {
-        // give it 20 seconds to shutdown
-        context.getShutdownStrategy().setTimeout(20);
+        // give it 30 seconds to shutdown
+        context.getShutdownStrategy().setTimeout(30);
+
+        // start route
+        context.startRoute("foo");
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        // wait 20 seconds to give more time for slowe servers
+        bar.await(20, TimeUnit.SECONDS);
 
         int batch = bar.getReceivedExchanges().get(0).getProperty(Exchange.BATCH_SIZE, int.class);
 
@@ -65,7 +71,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
             @Override
             // START SNIPPET: e1
             public void configure() throws Exception {
-                from(url)
+                from(url).routeId("foo").noAutoStartup()
                     // let it complete all tasks during shutdown
                     .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
                     .delay(1000).to("seda:foo");
