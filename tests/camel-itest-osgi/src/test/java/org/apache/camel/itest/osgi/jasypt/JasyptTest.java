@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jasypt.JasyptPropertiesParser;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -34,6 +35,7 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
+@Ignore("Does not work on JDK 1.5")
 public class JasyptTest extends OSGiIntegrationTestSupport {
     
     @Test
