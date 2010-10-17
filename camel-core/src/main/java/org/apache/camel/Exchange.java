@@ -23,46 +23,50 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
- * Exchange is the message container holding the information during the entire routing.
- * <p/><br/>
- * Most noticeable the {@link Exchange} provides access to the request, response and
- * fault {@link Message} messages.
- * <p/><br/>
- * It also provides information about what is known as the
- * {@link ExchangePattern Message Exchange Pattern} (or MEP for short). Its a status
- * which represents if the message is a <i>one-way</i> or <i>request-reply</i> exchange pattern.
- * A <i>one-way</i> pattern is defined as the {@link org.apache.camel.ExchangePattern#InOnly}
- * adn the <i>request-reply</i> is the {@link org.apache.camel.ExchangePattern#InOut}.
- * Those two patterns are the most commonly used. The other patterns is hardly used at all.
- * <p/><br/>
- * The {@link Exchange} also holds meta-data during the entire lifecycle of the exchange which
- * are stored as properties, accessible using the various {@link #getProperty(String)} method
- * and the {@link #setProperty(String, Object)} is used to store a property. For example you
- * can use this to store security related information. Also Camel itself stores information
- * as properties, like some of the <a href="http://camel.apache.org/enterprise-integration-patterns.html">
- * Enterprise Integration Patterns</a> does.
- * <p/><br/>
- * If an {@link Exchange} failed during routing the caused {@link Exception} is stored and accessible
- * using the {@link #getException()} method.
- * <p/><br/>
- * <b>Important:</b>
- * As a Camel end user and you want to update the current {@link Message} on the {@link Exchange} then
- * you should pay attention. There are two methods two retrieve the message named as {@link #getIn()}
- * and {@link #getOut()}. This API has been there since Camel 1.0. You most often should only use
- * the {@link #getIn()} method and change the current message by updating it directly. By doing this
- * you ensure all the information is kept for further processing. On the other hand if you use the
- * {@link #getOut()} method to update the {@link Message} then a <b>new</b> message is created which
- * means any headers, attachments or the likes from the {@link #getIn()} {@link Message} is lost.
- * <br/>
- * See this <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a> for more details.
- * <p/><br/>
- * The {@link ExchangePattern Message Exchange Pattern} and the {@link #getIn()} and {@link #getOut()} methods
- * are <b>not</b> strictly mapped. For example if the MEP is {@link org.apache.camel.ExchangePattern#InOnly} then
- * you can still invoke the {@link #getOut()} method. The {@link ExchangePattern Message Exchange Pattern} is
- * essentially just a flag to indicate the message pattern. That means you can still set an OUT message using
- * the {@link #getOut()} method despite the pattern is {@link org.apache.camel.ExchangePattern#InOnly}.
- *
- * @version $Revision$
+ * An Exchange is the message container holding the information during the entire routing of
+ * a {@link  Message} received by a {@link Consumer}. 
+ * <p/>
+ * During processing down the {@link Processor} chain, the {@link Exchange} provides access to the 
+ * current (not the original) request and response {@link Message} messages. The {@link Exchange} 
+ * also holds meta-data during its entire lifetime stored as properties accessible using the 
+ * various {@link #getProperty(String)} methods. The {@link #setProperty(String, Object)} is 
+ * used to store a property. For example you can use this to store security, SLA related 
+ * data or any other information deemed useful throughout processing. If an {@link Exchange} 
+ * failed during routing the {@link Exception} that caused the failure is stored and accessible 
+ * via the {@link #getException()} method.
+ * <p/>
+ * An Exchange is created when a {@link Consumer} receives a request. A new {@link Message} is
+ * created, the request is set as the body of the {@link Message} and depending on the {@link Consumer}
+ * other {@link Endpoint} and protocol related information is added as headers on the {@link Message}.
+ * Then an Exchange is created and the newly created {@link Message} is set as the in on the Exchange.
+ * Therefore an Exchange starts its life in a {@link Consumer}. The Exchange is then sent down the
+ * {@link Route} for processing along a {@link Processor} chain. The {@link Processor} as the name
+ * suggests is what processes the {@link Message} in the Exchange and Camel, in addition to 
+ * providing out-of-the-box a large number of useful processors, it also allows you to create your own. 
+ * The rule Camel uses is to take the out {@link Message} produced by the previous {@link Processor} 
+ * and set it as the in for the next {@link Processor}. If the previous {@link Processor} did not
+ * produce an out, then the in of the previous {@link Processor} is sent as the next in. At the
+ * end of the processing chain, depending on the {@link ExchangePattern Message Exchange Pattern} (or MEP)
+ * the last out (or in of no out available) is sent by the {@link Consumer} back to the original caller.
+ * <p/>
+ * Camel, in addition to providing out-of-the-box a large number of useful processors, it also allows 
+ * you to implement and use your own. When the Exchange is passed to a {@link Processor}, it always 
+ * contains an in {@link Message} and no out {@link Message}. The {@link Processor} <b>may</b> produce 
+ * an out, depending on the nature of the {@link Processor}. The in {@link Message} can be accessed 
+ * using the {@link #getIn()} method. Since the out message is null when entering the {@link Processor}, 
+ * the {@link #getOut()} method is actually a convenient factory method that will lazily instantiate a 
+ * {@link org.apache.camel.impl.DefaultMessage} which you could populate. As an alternative you could 
+ * also instantiate your specialized  {@link Message} and set it on the exchange using the 
+ * {@link #setOut(org.apache.camel.Message)} method. Please note that a {@link Message} contains not only 
+ * the body but also headers and attachments. If you are creating a new {@link Message} the headers and 
+ * attachments of the in {@link Message} are not automatically copied to the out by Camel and you'll have 
+ * to set the headers and attachments you need yourself. If your {@link Processor} is not producing a 
+ * different {@link Message} but only needs to slightly  modify the in, you can simply update the in 
+ * {@link Message} returned by {@link #getIn()}. 
+ * <p/>
+ * See this <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a> 
+ * for more details.
+ * 
  */
 public interface Exchange {
 
