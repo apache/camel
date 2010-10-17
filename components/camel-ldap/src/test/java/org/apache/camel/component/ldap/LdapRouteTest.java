@@ -43,10 +43,11 @@ import static org.apache.directory.server.integ.ServerIntegrationUtils.getWiredC
 @CreateLdapServer(transports = {@CreateTransport(protocol = "LDAP")})
 public class LdapRouteTest extends AbstractLdapTestUnit {
 
+    public static LdapServer ldapServer;
+
     private CamelContext camel;
     private ProducerTemplate template;
     private int port;
-    public static LdapServer ldapServer;
 
     @ApplyLdifFiles("org/apache/camel/component/ldap/LdapRouteTest.ldif")
     @Test
