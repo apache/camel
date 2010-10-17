@@ -47,9 +47,9 @@
     <cxf:cxfEndpoint id="reportIncident"
                      address="http://localhost:9080/camel-example-cxf-proxy/webservices/incident"
                      endpointName="s:ReportIncidentEndpoint"
-    		         serviceName="s:ReportIncidentEndpointService"
+                     serviceName="s:ReportIncidentEndpointService"
                      wsdlURL="etc/report_incident.wsdl"
-    	             xmlns:s="http://reportincident.example.camel.apache.org"/>
+                     xmlns:s="http://reportincident.example.camel.apache.org"/>
 
     <!-- this is the camel route which proxy the web service and forward it to the real web service -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
