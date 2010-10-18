@@ -115,16 +115,21 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         assertEquals(expectedNotDroppedCount, notDropped);
     }
 
-
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:sample").sample().to("mock:result");
+                from("direct:sample")
+                    .sample()
+                    .to("mock:result");
 
-                from("direct:sample-configured").sample(1, TimeUnit.SECONDS).to("mock:result");
+                from("direct:sample-configured")
+                    .sample(1, TimeUnit.SECONDS)
+                    .to("mock:result");
 
-                from("direct:sample-configured-via-dsl").sample().samplePeriod(1).timeUnits(TimeUnit.SECONDS).to("mock:result");
+                from("direct:sample-configured-via-dsl")
+                    .sample().samplePeriod(1).timeUnits(TimeUnit.SECONDS)
+                    .to("mock:result");
                 // END SNIPPET: e1
             }
         };
