@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.jms.bind;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.component.jms.JmsBinding;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
@@ -32,8 +34,13 @@ public class JmsMessageBindTest extends CamelSpringTestSupport {
     public void testSendAMessageToBean() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Completed");
+        
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("foo", "bar");
+        // this header should not be sent as its value cannot be serialized 
+        headers.put("binding", new JmsBinding());
 
-        template.sendBodyAndHeader("activemq:Test.BindingQueue", "SomeBody", "foo", "bar");
+        template.sendBodyAndHeaders("activemq:Test.BindingQueue", "SomeBody", headers);
 
         // lets wait for the method to be invoked
         assertMockEndpointsSatisfied();
@@ -42,9 +49,11 @@ public class JmsMessageBindTest extends CamelSpringTestSupport {
         MyBean bean = getMandatoryBean(MyBean.class, "myBean");
         assertEquals("body", "SomeBody", bean.getBody());
 
-        Map headers = bean.getHeaders();
-        assertNotNull("No headers!", headers);
-        assertEquals("foo header", "bar", headers.get("foo"));
+        Map beanHeaders = bean.getHeaders();
+        assertNotNull("No headers!", beanHeaders);
+        
+        assertEquals("foo header", "bar", beanHeaders.get("foo"));
+        assertNull("Should get a null value", beanHeaders.get("binding"));
     }
 
     @Override

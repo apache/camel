@@ -83,6 +83,7 @@ public class CXFGreeterRouterTest extends CamelTestSupport {
 
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
+        Thread.sleep(330000);
         Service service = Service.create(serviceName);
         service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/",
                         "http://localhost:9003/CamelContext/RouterPort");
