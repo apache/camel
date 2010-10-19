@@ -56,8 +56,10 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
             return false;
         }
         return !attributeName.equals("xmlns") && !attributeName.startsWith("xmlns:")
-                && !attributeName.equals("type") && !attributeName.equals("onRedeliveryRef")
-                && !attributeName.equals("transactionTemplateRef") 
+                && !attributeName.equals("type")
+                && !attributeName.equals("onRedeliveryRef")
+                && !attributeName.equals("onRetryWhileRef")
+                && !attributeName.equals("transactionTemplateRef")
                 && !attributeName.equals("transactionManagerRef");
     }
 
@@ -89,7 +91,6 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
                     }
                 }
             }
-            // deal with onRedeliveryRef
             parserRefAttribute(element, "onRedeliveryRef", "onRedelivery", builder);
         }
         if (type.equals(ErrorHandlerType.TransactionErrorHandler)) {

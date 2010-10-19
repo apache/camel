@@ -16,17 +16,21 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.processor.DefaultErrorHandler;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.builder.PredicateBuilder.toPredicate;
@@ -43,6 +47,8 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     protected RedeliveryPolicy redeliveryPolicy;
     protected Processor onRedelivery;
     protected Predicate handledPolicy;
+    protected Predicate retryWhile;
+    protected String retryWhileRef;
     protected Processor failureProcessor;
     protected Endpoint deadLetter;
     protected String deadLetterUri;
@@ -54,7 +60,8 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         DefaultErrorHandler answer = new DefaultErrorHandler(routeContext.getCamelContext(), processor, getLogger(),
-                getOnRedelivery(), getRedeliveryPolicy(), getHandledPolicy(), getExceptionPolicyStrategy());
+                getOnRedelivery(), getRedeliveryPolicy(), getHandledPolicy(), getExceptionPolicyStrategy(),
+                getRetryWhilePolicy(routeContext.getCamelContext()));
         // configure error handler before we can use it
         configure(answer);
         return answer;
@@ -259,14 +266,28 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Sets a processor that should be processed <b>before</b> a redelivey attempt.
+     * Sets a processor that should be processed <b>before</b> a redelivery attempt.
      * <p/>
      * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
      *
+     * @param processor the processor
      * @return the builder
      */
     public DefaultErrorHandlerBuilder onRedelivery(Processor processor) {
         setOnRedelivery(processor);
+        return this;
+    }
+
+    /**
+     * Sets the retry while expression.
+     * <p/>
+     * Will continue retrying until expression evaluates to <tt>false</tt>.
+     *
+     * @param retryWhile expression that determines when to stop retrying
+     * @return the builder
+     */
+    public DefaultErrorHandlerBuilder retryWhile(Expression retryWhile) {
+        setRetryWhile(toPredicate(retryWhile));
         return this;
     }
 
@@ -348,6 +369,34 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setOnRedelivery(Processor onRedelivery) {
         this.onRedelivery = onRedelivery;
+    }
+
+    public Predicate getRetryWhilePolicy(CamelContext context) {
+        Predicate answer = getRetryWhile();
+
+        if (getRetryWhileRef() != null) {
+            // its a bean expression
+            Language bean = context.resolveLanguage("bean");
+            answer = bean.createPredicate(getRetryWhileRef());
+        }
+
+        return answer;
+    }
+
+    public Predicate getRetryWhile() {
+        return retryWhile;
+    }
+
+    public void setRetryWhile(Predicate retryWhile) {
+        this.retryWhile = retryWhile;
+    }
+
+    public String getRetryWhileRef() {
+        return retryWhileRef;
+    }
+
+    public void setRetryWhileRef(String retryWhileRef) {
+        this.retryWhileRef = retryWhileRef;
     }
 
     @Deprecated
