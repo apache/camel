@@ -88,4 +88,10 @@ public class LazyLoadingTypeConverter extends BaseTypeConverterRegistry {
         }
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // reset loaded flag
+        loaded.set(false);
+    }
 }
