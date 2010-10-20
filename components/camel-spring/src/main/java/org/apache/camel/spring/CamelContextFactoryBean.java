@@ -100,6 +100,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private ShutdownRoute shutdownRoute;
     @XmlAttribute(required = false)
     private ShutdownRunningTask shutdownRunningTask;
+    @XmlAttribute(required = false)
+    private Boolean lazyLoadTypeConverters = Boolean.FALSE;
     @XmlElement(name = "properties", required = false)
     private PropertiesDefinition properties;
     @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class, required = false)
@@ -440,6 +442,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
+    }
+
+    public Boolean getLazyLoadTypeConverters() {
+        return lazyLoadTypeConverters;
+    }
+
+    public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
+        this.lazyLoadTypeConverters = lazyLoadTypeConverters;
     }
 
     public CamelJMXAgentDefinition getCamelJMXAgent() {
