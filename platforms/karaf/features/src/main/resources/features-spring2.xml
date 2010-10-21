@@ -129,6 +129,13 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-dozer/${pom.version}</bundle>
   </feature>
+  <feature name='camel-exec' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.commons/commons-exec/${commons-exec-version}</bundle>
+    <!-- Force the commons-io version as it's specific to camel-exec -->
+    <bundle>mvn:commons-io/commons-io/1.4</bundle>
+    <bundle>mvn:org.apache.camel/camel-exec/${pom.version}</bundle>
+  </feature>
   <feature name='camel-http' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>

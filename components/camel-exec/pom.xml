@@ -28,13 +28,6 @@
   <description>Camel support for system command execution</description>
 
   <properties>
-    <!--
-      TODO: move the versions to section dependencyManagement of the parent pom,
-      and then remove the versions underneath
-    -->
-    <commons-exec-version>1.0.1</commons-exec-version>
-    <commons-io-version>1.4</commons-io-version>
-    <commons-lang-version>2.5</commons-lang-version>
     <camel.osgi.export.pkg>org.apache.camel.component.exec.*</camel.osgi.export.pkg>
   </properties>
 
@@ -51,7 +44,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>${commons-io-version}</version>
+      <version>1.4</version>
     </dependency>
      <dependency>
       <groupId>commons-lang</groupId>
