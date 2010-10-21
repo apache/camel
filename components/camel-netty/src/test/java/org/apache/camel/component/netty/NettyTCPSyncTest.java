@@ -22,13 +22,10 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 public class NettyTCPSyncTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(NettyTCPSyncTest.class);
-
+    
     @Produce(uri = "direct:start")
     protected ProducerTemplate producerTemplate;
 
