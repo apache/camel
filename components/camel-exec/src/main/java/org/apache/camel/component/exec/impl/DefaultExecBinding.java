@@ -42,17 +42,25 @@ public class DefaultExecBinding implements ExecBinding {
         ObjectHelper.notNull(exchange, "exchange");
         ObjectHelper.notNull(endpoint, "endpoint");
 
+        // do not convert args as we do that manually later
+        Object args = exchange.getIn().removeHeader(EXEC_COMMAND_ARGS);
         String cmd = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_EXECUTABLE, endpoint.getExecutable(), String.class);
-        List<String> argsList = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_ARGS, null, List.class);
         String dir = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_WORKING_DIR, endpoint.getWorkingDir(), String.class);
         long timeout = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_TIMEOUT, endpoint.getTimeout(), Long.class);
         String outFilePath = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_OUT_FILE, endpoint.getOutFile(), String.class);
         boolean useStderrOnEmptyStdout = getAndRemoveHeader(exchange.getIn(), EXEC_USE_STDERR_ON_EMPTY_STDOUT, endpoint.isUseStderrOnEmptyStdout(), Boolean.class);
         InputStream input = exchange.getIn().getBody(InputStream.class);
 
+        // try to convert args to list at fist
+        List<String> argsList = exchange.getContext().getTypeConverter().convertTo(List.class, exchange, args);
         if (argsList == null) {
-            // do the URI parsing, only if the arguments are not set
-            argsList = splitToWhiteSpaceSeparatedTokens(endpoint.getArgs());
+            // no we could not do that, then parse it as a string to a list
+            String s = endpoint.getArgs();
+            if (args != null) {
+                // use args from header instead from endpoint
+                s = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, args);
+            }
+            argsList = splitToWhiteSpaceSeparatedTokens(s);
         }
 
         File outFile = outFilePath == null ? null : new File(outFilePath);
