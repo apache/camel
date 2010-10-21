@@ -80,12 +80,6 @@ public class GuiceCamelContext extends DefaultCamelContext {
 
     @Override
     @Inject(optional = true)
-    public void setRoutes(List<Route> routes) {
-        super.setRoutes(routes);
-    }
-
-    @Override
-    @Inject(optional = true)
     public void setRegistry(Registry registry) {
         super.setRegistry(registry);
     }
