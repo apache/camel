@@ -22,13 +22,11 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtdb.api.SortedIndex;
 import org.fusesource.hawtdb.api.Transaction;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-@Ignore("See CAMEL-3249")
 public class HawtDBGrowIssueTest extends CamelTestSupport {
 
     private HawtDBCamelCodec codec = new HawtDBCamelCodec();
@@ -70,7 +68,7 @@ public class HawtDBGrowIssueTest extends CamelTestSupport {
         for (int i = 0; i < size; i++) {
             final Buffer data = codec.marshallKey(i + "-" + sb.toString());
 
-            System.out.println("Updating " + i);
+            log.debug("Updating " + i);
 
             hawtDBFile.execute(new Work<Object>() {
                 public Object execute(Transaction tx) {
@@ -89,7 +87,9 @@ public class HawtDBGrowIssueTest extends CamelTestSupport {
         });
 
         String data = codec.unmarshallKey(out);
-        System.out.println(data);
+        log.info(data);
+        assertTrue("Should be 1023", data.startsWith("1023"));
+        assertEquals(1029, data.length());
     }
 
 }
