@@ -39,6 +39,7 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     protected SshServer sshd;
     protected boolean canTest;
 
+    @SuppressWarnings("unchecked")
     @Override
     @Before
     public void setUp() throws Exception {
