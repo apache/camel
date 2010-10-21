@@ -77,7 +77,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         context.start();
         context.stopRoute("test", 0, TimeUnit.MILLISECONDS);
         
-        Thread.currentThread().sleep(5000);
+        Thread.sleep(5000);
         assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);
         template.sendBody("direct:start", "Ready or not, Here, I come");
 
@@ -89,8 +89,6 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
     public void testScheduledStopRoutePolicy() throws Exception {
         boolean consumerStopped = false;
   
-        MockEndpoint unreachable = (MockEndpoint) context.getEndpoint("mock:unreachable");
-        
         context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.getComponent("quartz", QuartzComponent.class).start();
         context.addRoutes(new RouteBuilder() {
@@ -109,7 +107,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         });
         context.start();
         
-        Thread.currentThread().sleep(4000);
+        Thread.sleep(4000);
 
         assertTrue(context.getRouteStatus("test") == ServiceStatus.Stopped);
         
@@ -125,9 +123,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
     @Test
     public void testScheduledSuspendRoutePolicy() throws Exception {
         boolean consumerSuspended = false;
-  
-        MockEndpoint unreachable = (MockEndpoint) context.getEndpoint("mock:unreachable");        
-        
+       
         context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.getComponent("quartz", QuartzComponent.class).start();
         context.addRoutes(new RouteBuilder() {
@@ -146,7 +142,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         });
         context.start();
         
-        Thread.currentThread().sleep(4000);
+        Thread.sleep(4000);
         try {
             template.sendBody("direct:start", "Ready or not, Here, I come");
         } catch (CamelExecutionException e) {
@@ -187,7 +183,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
             LOG.debug("Consumer successfully suspended");
         } 
         
-        Thread.currentThread().sleep(4000);
+        Thread.sleep(4000);
         template.sendBody("direct:start", "Ready or not, Here, I come");
         
         context.getComponent("quartz", QuartzComponent.class).stop();
