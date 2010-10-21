@@ -112,4 +112,8 @@ public class SipSubscriber extends DefaultConsumer {
         this.provider = provider;
     }
 
+    public Dialog getSubscriberDialog() {
+        return subscriberDialog;
+    }
+
 }
