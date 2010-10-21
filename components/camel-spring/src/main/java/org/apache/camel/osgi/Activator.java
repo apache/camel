@@ -28,6 +28,10 @@ public class Activator implements BundleActivator {
     public static Bundle getBundle() {
         return bundle;
     }
+    
+    public static BundleContext getBundleContext() {
+        return context;
+    }
 
     public void start(BundleContext context) throws Exception {
         Activator.context = context;

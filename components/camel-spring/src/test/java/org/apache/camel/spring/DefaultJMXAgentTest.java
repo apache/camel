@@ -51,8 +51,7 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
         mbsc = null;
         super.tearDown();
     }
-
-    @SuppressWarnings("unchecked")
+    
     protected void releaseMBeanServers() {
         List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
 

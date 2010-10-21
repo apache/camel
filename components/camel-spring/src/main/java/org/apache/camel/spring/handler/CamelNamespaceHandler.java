@@ -115,7 +115,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         boolean osgi = false;
         Class cl = CamelContextFactoryBean.class;
         try {
-            Class c = Class.forName("org.apache.camel.osgi.Activator");
+            Class<?> c = Class.forName("org.apache.camel.osgi.Activator");
             Method mth = c.getDeclaredMethod("getBundle");
             Object bundle = mth.invoke(null);
             if (bundle != null) {

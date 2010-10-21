@@ -38,7 +38,7 @@ import static org.apache.camel.util.ObjectHelper.name;
 public class MainRunner implements InitializingBean, Runnable {
     private static final Log LOG = LogFactory.getLog(MainRunner.class);
 
-    private Class main;
+    private Class<?> main;
     private String[] args = {};
     private boolean asyncRun = true;
     private long delay;
