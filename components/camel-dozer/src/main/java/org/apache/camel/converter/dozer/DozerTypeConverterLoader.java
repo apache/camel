@@ -18,6 +18,7 @@ package org.apache.camel.converter.dozer;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.dozer.classmap.ClassMap;
 import org.dozer.classmap.MappingFileData;
+import org.dozer.loader.api.BeanMappingBuilder;
 import org.dozer.loader.xml.MappingFileReader;
 import org.dozer.loader.xml.XMLParserFactory;
 
@@ -50,6 +52,7 @@ public class DozerTypeConverterLoader implements CamelContextAware {
 
     private final Log log = LogFactory.getLog(getClass());
     private CamelContext camelContext;
+    private DozerBeanMapper mapper;
 
     /**
      * Creates a <code>DozerTypeConverter</code> performing no
@@ -94,6 +97,8 @@ public class DozerTypeConverterLoader implements CamelContextAware {
      */
     public void init(CamelContext camelContext, DozerBeanMapper mapper) {
         this.camelContext = camelContext;
+        this.mapper = mapper;
+
         Map<String, DozerBeanMapper> mappers = new HashMap<String, DozerBeanMapper>(camelContext.getRegistry().lookupByType(DozerBeanMapper.class));
         if (mapper != null) {
             mappers.put("parameter", mapper);
@@ -102,20 +107,25 @@ public class DozerTypeConverterLoader implements CamelContextAware {
             log.warn("Loaded " + mappers.size() + " Dozer mappers from Camel registry."
                     + " Dozer is most efficient when there is a single mapper instance. Consider amalgamating instances.");
         } else if (mappers.size() == 0) {
-            log.warn("No Dozer mappers found in Camel registry. You should add Dozer mappers as beans to the registry of the type: " + DozerBeanMapper.class.getName());
+            log.warn("No Dozer mappers found in Camel registry. You should add Dozer mappers as beans to the registry of the type: "
+                    + DozerBeanMapper.class.getName());
         }
 
         TypeConverterRegistry registry = camelContext.getTypeConverterRegistry();
         for (DozerBeanMapper dozer : mappers.values()) {
             List<ClassMap> all = loadMappings(camelContext, dozer);
-            DozerTypeConverter converter = new DozerTypeConverter(dozer);
-            for (ClassMap map : all) {
-                if (log.isInfoEnabled()) {
-                    log.info("Added " + map.getSrcClassName() + " -> " + map.getDestClassName() + " as type converter to: " + registry);
-                }
-                registry.addTypeConverter(map.getSrcClassToMap(), map.getDestClassToMap(), converter);
-                registry.addTypeConverter(map.getDestClassToMap(), map.getSrcClassToMap(), converter);
+            registerClassMaps(registry, dozer, all);
+        }
+    }
+
+    private void registerClassMaps(TypeConverterRegistry registry, DozerBeanMapper dozer, List<ClassMap> all) {
+        DozerTypeConverter converter = new DozerTypeConverter(dozer);
+        for (ClassMap map : all) {
+            if (log.isInfoEnabled()) {
+                log.info("Added " + map.getSrcClassName() + " -> " + map.getDestClassName() + " as type converter to: " + registry);
             }
+            registry.addTypeConverter(map.getSrcClassToMap(), map.getDestClassToMap(), converter);
+            registry.addTypeConverter(map.getDestClassToMap(), map.getSrcClassToMap(), converter);
         }
     }
 
@@ -124,13 +134,40 @@ public class DozerTypeConverterLoader implements CamelContextAware {
 
         // load the class map using the class resolver so we can load from classpath in OSGi
         MappingFileReader reader = new MappingFileReader(XMLParserFactory.getInstance());
-        for (String name : mapper.getMappingFiles()) {
+        List<String> mappingFiles = mapper.getMappingFiles();
+        if (mappingFiles == null) {
+            return Collections.emptyList();
+        }
+
+        for (String name : mappingFiles) {
             URL url = camelContext.getClassResolver().loadResourceAsURL(name);
             MappingFileData data = reader.read(url);
             answer.addAll(data.getClassMaps());
         }
 
         return answer;
+    }
+
+    /**
+     * Registers Dozer <code>BeanMappingBuilder</code> in current mapper instance.
+     * This method should be called instead of direct <code>mapper.addMapping()</code> invocation for Camel
+     * being able to register given type conversion.
+     *
+     * @param beanMappingBuilder api-based mapping builder
+     */
+    public void addMapping(BeanMappingBuilder beanMappingBuilder) {
+        if (mapper == null) {
+            log.warn("No mapper instance provided to " + this.getClass().getSimpleName()
+                    + ". Mapping has not been registered!");
+            return;
+        }
+
+        mapper.addMapping(beanMappingBuilder);
+        MappingFileData mappingFileData = beanMappingBuilder.build();
+        TypeConverterRegistry registry = camelContext.getTypeConverterRegistry();
+        ArrayList<ClassMap> classMaps = new ArrayList<ClassMap>();
+        classMaps.addAll(mappingFileData.getClassMaps());
+        registerClassMaps(registry, mapper, classMaps);
     }
 
     public CamelContext getCamelContext() {

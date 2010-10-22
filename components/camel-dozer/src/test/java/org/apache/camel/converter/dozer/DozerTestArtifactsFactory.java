@@ -18,6 +18,8 @@ package org.apache.camel.converter.dozer;
 
 import java.util.Arrays;
 
+import org.apache.camel.converter.dozer.dto.AddressDTO;
+import org.apache.camel.converter.dozer.dto.CustomerDTO;
 import org.apache.camel.converter.dozer.model.Address;
 import org.apache.camel.converter.dozer.service.Customer;
 import org.dozer.DozerBeanMapper;
@@ -35,8 +37,17 @@ public final class DozerTestArtifactsFactory {
         return new org.apache.camel.converter.dozer.model.Customer("Bob", "Roberts", new Address("12345", "1 main st"));
     }
 
+    public static CustomerDTO createDtoCustomer() {
+        return new CustomerDTO("Bob", "Roberts", new AddressDTO("12345", "1 main st"));
+    }
+
     public static DozerBeanMapper createMapper() {
         return new DozerBeanMapper(Arrays.asList(new String[]{"mapping.xml"}));
     }
+
+    public static DozerBeanMapper createCleanMapper() {
+        return new DozerBeanMapper();
+    }
+
 
 }
