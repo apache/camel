@@ -27,7 +27,7 @@ public class RecipientListParallelTest extends ContextTestSupport {
 
     public void testRecipientListParallel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("c", "b", "a");
+        mock.expectedBodiesReceivedInAnyOrder("c", "b", "a");
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c");
 
