@@ -32,6 +32,11 @@ public class JettyHttpProducerSuspendResumeTest extends CamelTestSupport {
 
     @Test
     public void testJettySuspendResume() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         context.getShutdownStrategy().setTimeout(50);
 
         String reply = template.requestBody(serverUri, "World", String.class);
