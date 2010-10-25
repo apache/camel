@@ -1,0 +1,6 @@
+target
+*.i??
+.classpath
+.project
+.settings
+.checkstyle

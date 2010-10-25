@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+	
+    <endpoint id="Timer" uri="timer:messages?delay=3000&amp;period=1s"/>
+    <endpoint id="Direct" uri="direct:messages"/>
+
+    <endpoint id="GenerateStringMessages" uri="bean:messages?method=generateString"/>
+    <endpoint id="SplitString" uri="bean:messages?method=splitString"/>
+    
+    <endpoint id="GenerateObjectMessages" uri="bean:messages?method=generateObject"/>
+    <endpoint id="SplitObject" uri="bean:messages?method=splitObject"/>
+        
+    <endpoint id="JmsQueueProducer" uri="jmsProducer:topic:highVolume"/>
+    <endpoint id="JmsQueueConsumer" uri="jmsConsumer:queue:VirtualQueueConsumer.highVolume?concurrentConsumers=500"/>
+    <endpoint id="Mock" uri="mock:virtualConsumer"/>
+    <endpoint id="Log" uri="log:org.apache.camel.example?level=WARN"/>
+	        
+	  <route id="ProduceMessages" trace="false">
+			<from ref="Timer"/>
+			<to ref="GenerateObjectMessages"/>
+		</route>
+
+		<route id="SplitandProduceMessagesOnActiveMq" trace="false">
+			<from ref="Direct"/>
+				<doTry>
+    				<to ref="SplitObject"/>
+					<doCatch>
+						<exception>javax.jms.ResourceAllocationException</exception>
+						<log message=">>>>>> PRODUCER SHOULD BE STOPPED"/>
+					</doCatch>
+				</doTry>
+		</route>
+	    
+  	  <route id="ConsumeMessages" trace="false">
+	    <from ref="JmsQueueConsumer"/>
+ 	    <to uri="seda:log?concurrentConsumers=20"/>
+	  </route>
+		  
+	  <route id="SendToLog" trace="false">
+	    <from uri="seda:log?concurrentConsumers=20"/>
+			<to ref="Log"/>
+	  </route>
+
+	</camelContext>
+	
+    <!-- ******************************************************************************************* -->
+	
+	<!-- THIS TEXT MUST BE COMMENTED WHEN WE DEPLOY THIS BUNDLE ON SMX/KARAF -->
+	<!-- Create an embedded broker -->
+	<bean id="broker" class="org.apache.activemq.xbean.BrokerFactoryBean">
+	    <property name="config" value="classpath:META-INF/activemq.xml" />
+	    <property name="start" value="true" />
+	</bean>
+    	
+	
+    <!-- ******************************************************************************************* -->
+
+	<!-- Config used when we produce the messages 
+	     protocol vm:// is used
+	     and connection pool 
+	     -->
+	
+	<!-- Connection for the client PRODUCING -->	
+    <bean id="jmsConnectionFactoryProducer" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="vm://localhost:61615" />
+		<property name="objectMessageSerializationDefered" value="true" />
+		<property name="optimizeAcknowledge" value="true" />
+		<!-- <property name="useAsyncSend" value="true" /> --> 		
+	</bean>
+
+	<bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+		<property name="maxConnections" value="10" />
+		<property name="maximumActive" value="500" />
+		<property name="connectionFactory" ref="jmsConnectionFactoryProducer" />
+	</bean>
+
+	<!-- Use pooled connection factory to produce messages -->
+    <bean id="jmsConfigProducer" class="org.apache.camel.component.jms.JmsConfiguration">
+        <property name="connectionFactory" ref="pooledConnectionFactory"/>
+        <property name="transacted" value="false"/>
+    </bean>
+    
+    <bean id="jmsProducer" class="org.apache.camel.component.jms.JmsComponent">
+        <property name="configuration" ref="jmsConfigProducer"/>
+    </bean>
+    
+    <!-- ******************************************************************************************* -->
+    <!-- Config used to consume the messages 
+         Transport layer is different tcp:// instead of vm://   jms.prefetchPolicy.queuePrefetch=1
+         
+         and not connection pool is used -->
+         
+    <!-- Connection for the client CONSUMING -->	
+    <bean id="jmsConnectionFactoryConsumer" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="vm://localhost:61615" />
+	    <property name="optimizeAcknowledge" value="true" />
+	    <!-- <property name="objectMessageSerializationDefered" value="true" />
+        <property name="optimizedMessageDispatch" value="true"/>
+        <property name="dispatchAsync" value="true"/> -->
+	</bean>
+    
+    <!-- Use simple connection factory to consume messages -->
+    <bean id="jmsConfigConsumer" class="org.apache.camel.component.jms.JmsConfiguration">
+        <property name="connectionFactory" ref="jmsConnectionFactoryConsumer"/>
+        <property name="transacted" value="false"/>
+        <!--  <property name="acknowledgementModeName" value="DUPS_OK_ACKNOWLEDGE" /> 
+        <property name="concurrentConsumers" value="10" /> -->
+    </bean>
+    
+    <!-- org.apache.activemq.camel.component.ActiveMQComponent  -->
+    <bean id="jmsConsumer" class="org.apache.camel.component.jms.JmsComponent">
+        <property name="configuration" ref="jmsConfigConsumer"/>
+      
+    </bean>
+
+    <!-- ******************************************************************************************* -->
+	
+	<bean name="messages" class="org.apache.camel.itest.highvolume.Messages" />
+
+</beans>

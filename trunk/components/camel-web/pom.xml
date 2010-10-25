@@ -1,0 +1,923 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+        Licensed to the Apache Software Foundation (ASF) under one or more
+        contributor license agreements. See the NOTICE file distributed with
+        this work for additional information regarding copyright ownership.
+        The ASF licenses this file to You under the Apache License, Version
+        2.0 (the "License"); you may not use this file except in compliance
+        with the License. You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+        applicable law or agreed to in writing, software distributed under the
+        License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+        CONDITIONS OF ANY KIND, either express or implied. See the License for
+        the specific language governing permissions and limitations under the
+        License.
+    -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <artifactId>components</artifactId>
+        <groupId>org.apache.camel</groupId>
+        <version>2.5.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>camel-web</artifactId>
+
+    <name>Camel :: Web</name>
+    <description>Camel Web Application with REST support</description>
+    <packaging>war</packaging>
+
+    <properties>
+        <camel.osgi.export.pkg>org.apache.camel.web.*</camel.osgi.export.pkg>
+        <scalate-version>1.3</scalate-version>
+        <jersey-version>1.4</jersey-version>
+        <logback-version>0.9.24</logback-version>
+        <jetty-port>8080</jetty-port>
+        <webdriver-version>0.9.7376</webdriver-version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>glassfish-repo-archive</id>
+            <name>Nexus repository collection for Glassfish</name>
+            <url>http://maven.glassfish.org/content/groups/glassfish</url>
+            <snapshots>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>java.net.m2</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/2/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>release.openqa.org</id>
+            <name>OpenQA Releases</name>
+            <url>http://archiva.openqa.org/repository/releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <!-- scalate SNAPSHOT repo -->
+<!--        <repository>
+            <id>fusesource.snapshots</id>
+            <name>FuseSource Snapshot Repository</name>
+            <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository> -->
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>java.net.m2</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/2/</url>
+            <layout>default</layout>
+        </pluginRepository>
+        <pluginRepository>
+            <id>glassfish-repo-archive</id>
+            <name>Nexus repository collection for Glassfish</name>
+            <url>http://maven.glassfish.org/content/groups/glassfish</url>
+            <snapshots>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-spring</artifactId>
+            <version>${jersey-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>${jersey-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-atom</artifactId>
+            <version>${jersey-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>rome</groupId>
+                    <artifactId>rome</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>jsr250-api</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.fusesource.scalate</groupId>
+            <artifactId>scalate-core</artifactId>
+            <version>${scalate-version}</version>
+        </dependency>
+        <!--
+            <dependency>
+              <groupId>ch.qos.logback</groupId>
+              <artifactId>logback-classic</artifactId>
+              <version>${logback-version}</version>
+            </dependency>
+        -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+
+        <!-- log4j needed by mvn jetty:run -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+
+
+        <!-- testing web framework -->
+        <!--
+              <dependency> <groupId>com.google</groupId>
+              <artifactId>jetty</artifactId>
+              <version>${webdriver-version}</version> <scope>test</scope>
+              </dependency>
+          -->
+        <!--
+              <dependency> <groupId>net.sourceforge.htmlunit</groupId>
+              <artifactId>htmlunit</artifactId> <version>2.4</version>
+              </dependency> <dependency>
+              <groupId>net.sourceforge.htmlunit</groupId>
+              <artifactId>htmlunit-core-js</artifactId> <version>2.4</version>
+              </dependency>
+          -->
+        <dependency>
+            <!--
+                        <groupId>org.openqa.selenium.webdriver</groupId>
+            -->
+            <groupId>org.seleniumhq.webdriver</groupId>
+            <artifactId>webdriver-htmlunit</artifactId>
+            <version>${webdriver-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!--
+                        <groupId>org.openqa.selenium.webdriver</groupId>
+            -->
+            <groupId>org.seleniumhq.webdriver</groupId>
+            <artifactId>webdriver-support</artifactId>
+            <version>${webdriver-version}</version>
+            <scope>test</scope>
+            <!--
+                  <exclusions>
+                    <exclusion>
+                      <groupId>org.hamcrest</groupId>
+                      <artifactId>hamcrest-all</artifactId>
+                    </exclusion>
+                  </exclusions>
+            -->
+        </dependency>
+
+        <!-- testing web container -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>${jetty-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>${jersey-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <!--
+                             these settings are mandatory to avoid SureFire giving a bogus
+                             system property to the web container
+                         -->
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <attachClasses>true</attachClasses>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty-version}</version>
+                <configuration>
+                    <!--
+                             <connectors> <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                             <port>${jetty.port}</port> <maxIdleTime>60000</maxIdleTime>
+                             </connector> </connectors>
+                         -->
+
+                    <webAppConfig>
+                        <contextPath>/</contextPath>
+                    </webAppConfig>
+
+                    <systemProperties>
+                        <!-- enable easy JMX connection to JConsole -->
+                        <systemProperty>
+                            <name>com.sun.management.jmxremote</name>
+                            <value />
+                        </systemProperty>
+                    </systemProperties>
+                    <!--
+                                        <scanIntervalSeconds>10</scanIntervalSeconds>
+                    -->
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>tomcat-maven-plugin</artifactId>
+                <version>1.0</version>
+                <configuration>
+                    <path>/</path>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <classpathScope>test</classpathScope>
+                    <mainClass>org.apache.camel.web.Main</mainClass>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <!--
+                                    <phase>compile</phase>
+                        -->
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <verbose>false</verbose>
+                    <show>public</show>
+                    <subpackages>org.apache.camel.web.resources</subpackages>
+                    <!-- see http://jira.codehaus.org/browse/MJAVADOC-229 -->
+                    <useStandardDocletOptions>false</useStandardDocletOptions>
+                    <doclet>com.sun.jersey.wadl.resourcedoc.ResourceDoclet</doclet>
+                    <docletArtifacts>
+                        <docletArtifact>
+                            <groupId>com.sun.jersey.contribs</groupId>
+                            <artifactId>maven-wadl-plugin</artifactId>
+                            <version>${jersey-version}</version>
+                        </docletArtifact>
+                        <docletArtifact>
+                            <groupId>com.sun.jersey.contribs</groupId>
+                            <artifactId>wadl-resourcedoc-doclet</artifactId>
+                            <version>${jersey-version}</version>
+                        </docletArtifact>
+                        <!--
+                                  Also specify jersey and xerces as doclet artifacts as the
+                                  ResourceDoclet uses classes provided by them to generate the
+                                  resourcedoc.
+                              -->
+                        <docletArtifact>
+                            <groupId>com.sun.jersey</groupId>
+                            <artifactId>jersey-server</artifactId>
+                            <version>${jersey-version}</version>
+                        </docletArtifact>
+                        <docletArtifact>
+                            <groupId>xerces</groupId>
+                            <artifactId>xercesImpl</artifactId>
+                            <version>2.8.1</version>
+                        </docletArtifact>
+                        <docletArtifact>
+                            <groupId>javax.xml.bind</groupId>
+                            <artifactId>jaxb-api</artifactId>
+                            <version>${jaxb-api-version}</version>
+                        </docletArtifact>
+                        <docletArtifact>
+                            <groupId>com.sun.xml.bind</groupId>
+                            <artifactId>jaxb-impl</artifactId>
+                            <version>${jaxb-version}</version>
+                        </docletArtifact>
+                        <docletArtifact>
+                            <groupId>stax</groupId>
+                            <artifactId>stax-api</artifactId>
+                            <version>${stax-api-version}</version>
+                        </docletArtifact>
+                    </docletArtifacts>
+                    <additionalparam>-output
+                        ${project.build.outputDirectory}/resourcedoc.xml
+                    </additionalparam>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>com.sun.jersey.contribs</groupId>
+                <artifactId>maven-wadl-plugin</artifactId>
+                <version>${jersey-version}</version>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <!--
+                                    TODO - for some reason using a compile phase with maven 2.2.1 and jetty:run causes an odd classloader bug
+
+                                    <phase>compile</phase>
+                        -->
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <wadlFile>${project.build.outputDirectory}/application.wadl</wadlFile>
+                    <formatWadlFile>true</formatWadlFile>
+                    <baseUri>http://www.example.com/api</baseUri>
+                    <packagesResourceConfig>
+                        <param>org.apache.camel.web.resources</param>
+                    </packagesResourceConfig>
+                    <wadlGenerators>
+                        <wadlGeneratorDescription>
+                            <className>com.sun.jersey.server.wadl.generators.WadlGeneratorApplicationDoc</className>
+                            <properties>
+                                <property>
+                                    <name>applicationDocsFile</name>
+                                    <value>${basedir}/src/main/resources/application-doc.xml</value>
+                                </property>
+                            </properties>
+                        </wadlGeneratorDescription>
+                        <wadlGeneratorDescription>
+                            <className>com.sun.jersey.server.wadl.generators.WadlGeneratorGrammarsSupport</className>
+                            <properties>
+                                <property>
+                                    <name>grammarsFile</name>
+                                    <value>${basedir}/src/main/resources/application-grammars.xml</value>
+                                </property>
+                            </properties>
+                        </wadlGeneratorDescription>
+                        <wadlGeneratorDescription>
+                            <className>
+                                com.sun.jersey.server.wadl.generators.resourcedoc.WadlGeneratorResourceDocSupport
+                            </className>
+                            <properties>
+                                <property>
+                                    <name>resourceDocFile</name>
+                                    <value>${project.build.outputDirectory}/resourcedoc.xml</value>
+                                </property>
+                            </properties>
+                        </wadlGeneratorDescription>
+                    </wadlGenerators>
+                </configuration>
+
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifact</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/schema/camel-web.xsd</file>
+                                    <type>xsd</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.sun.tools.jxc.maven2</groupId>
+                    <artifactId>maven-jaxb-schemagen-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <phase>process-sources</phase>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                            <configuration>
+                                <destdir>${project.build.directory}/schema</destdir>
+                                <srcdir>src/main/java/org/apache/camel/web/model</srcdir>
+                                <schemas>
+                                    <schema>
+                                        <namespace>http://camel.apache.org/schema/web</namespace>
+                                        <file>camel-web.xsd</file>
+                                    </schema>
+                                </schemas>
+                                <!--<verbose>false</verbose>-->
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <configuration>
+                        <artifactItems>
+                            <artifactItem>
+                                <groupId>org.apache.camel</groupId>
+                                <artifactId>camel-web</artifactId>
+                                <version>${project.version}</version>
+                                <type>xsd</type>
+                                <overWrite>false</overWrite>
+                                <outputDirectory>${project.build.directory}/schema</outputDirectory>
+                                <destFileName>camel-web.xsd</destFileName>
+                            </artifactItem>
+                        </artifactItems>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <!--
+              The next three profiles are used to bypass the schemagen plugin on HP
+              and IBM JDKs. TODO: Whenever Maven supports profile activations based
+              on multiple properties, we should combine the on-ibmjdk and on-hpjdk
+              profiles as they do exactly the same thing.
+          -->
+        <profile>
+            <id>enable-schemagen</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.sun.tools.jxc.maven2</groupId>
+                        <artifactId>maven-jaxb-schemagen-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>on-ibmjdk</id>
+            <activation>
+                <property>
+                    <name>java.vendor</name>
+                    <value>IBM Corporation</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+        <profile>
+            <id>on-hpjdk</id>
+            <activation>
+                <property>
+                    <name>java.vendor</name>
+                    <value>Hewlett-Packard Co.</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+        <profile>
+            <id>osgi</id>
+            <properties>
+                <osgi.export.pkg>
+                    org.apache.camel.web.resources
+                </osgi.export.pkg>
+                <osgi.import.pkg>
+                    com.sun.jersey.api.view;resolution:=optional,
+                    com.sun.jersey.api.core;resolution:=optional,
+                    com.sun.jersey.server.impl.container;resolution:=optional,
+                    com.sun.jersey.server.impl.container.config;resolution:=optional,
+                    com.sun.jersey.spi.container;resolution:=optional,
+                    com.sun.jersey.spi.inject;resolution:=optional,
+                    com.sun.jersey.spi.resource;resolution:=optional,
+                    com.sun.jersey.spi.spring.container.servlet;resolution:=optional,
+                    com.sun.org.apache.xerces.internal.jaxp;resolution:=optional,
+                    com.sun.research.ws.wadl;resolution:=optional,
+                    com.sun.xml.bind.v2.ContextFactory;resolution:=optional,
+                    javax.annotation;resolution:=optional,
+                    javax.el;resolution:=optional,
+                    javax.naming;resolution:=optional,
+                    javax.servlet;resolution:=optional,
+                    javax.servlet.http;resolution:=optional,
+                    javax.servlet.jsp;resolution:=optional,
+                    javax.servlet.jsp.el;resolution:=optional,
+                    javax.servlet.jsp.tagext;resolution:=optional,
+                    javax.servlet.jsp.jstl.core;resolution:=optional,
+                    javax.servlet.resources;resolution:=optional,
+                    javax.ws.rs;resolution:=optional,
+                    javax.ws.rs.core;resolution:=optional,
+                    javax.ws.rs.ext;resolution:=optional,
+                    javax.xml;resolution:=optional,
+                    javax.xml.bind;resolution:=optional,
+                    javax.xml.bind.annotation;resolution:=optional,
+                    javax.xml.bind.annotation.adapters;resolution:=optional,
+                    javax.xml.bind.attachment;resolution:=optional,
+                    javax.xml.bind.helpers;resolution:=optional,
+                    javax.xml.bind.util;resolution:=optional,
+                    javax.xml.namespace;resolution:=optional,
+                    javax.xml.parsers;resolution:=optional,
+                    org.apache.camel;version="[2.5, 3.0)",
+                    org.apache.camel.builder;version="[2.5, 3.0)",
+                    org.apache.camel.impl;version="[2.5, 3.0)",
+                    org.apache.camel.impl.converter;version="[2.5, 3.0)",
+                    org.apache.camel.model;version="[2.5, 3.0)",
+                    org.apache.camel.spi;version="[2.5, 3.0)",
+                    org.apache.camel.spring;version="[2.5, 3.0)",
+                    org.apache.camel.osgi;version="[2.5, 3.0)",
+                    org.apache.camel.util;version="[2.5, 3.0)",
+                    org.apache.camel.web.resources;resolution:=optional,
+                    org.apache.commons.logging;resolution:=optional,
+                    org.osgi.service.http;version="[1.0.0,2.0.0)",
+                    org.ops4j.pax.web.service;resolution:=optional,
+                    org.w3c.dom;resolution:=optional,
+                    org.xml.sax;resolution:=optional,
+                    org.xml.sax.helpers;resolution:=optional,
+                    org.springframework.aop.support;version="[2.5.6, 4.0.0)",
+                    org.springframework.context;version="[2.5.6, 4.0.0)",
+                    org.springframework.util;version="[2.5.6, 4.0.0)",
+                    org.springframework.beans.factory;version="[2.5.6, 4.0.0)",
+                    org.springframework.beans.factory.config;version="[2.5.6, 4.0.0)",
+                    org.springframework.beans.factory.xml;version="[2.5.6, 4.0.0)",
+                    org.springframework.jmx.export.metadata;version="[2.5.6, 4.0.0)",
+                    org.springframework.web.context;version="[2.5.6, 4.0.0)",
+                    org.springframework.web.context.support;version="[2.5.6, 4.0.0)",
+                    org.springframework.osgi.web.context.support;version="[1.0, 2.0)"
+                </osgi.import.pkg>
+                <osgi.classpath>
+                    .,
+                    WEB-INF/classes,
+                    WEB-INF/lib/jline-0.9.94.jar,
+                    WEB-INF/lib/jersey-core-${jersey-version}.jar,
+                    WEB-INF/lib/jersey-server-${jersey-version}.jar,
+                    WEB-INF/lib/jersey-spring-${jersey-version}.jar,
+                    WEB-INF/lib/jersey-json-${jersey-version}.jar,
+                </osgi.classpath>
+                <osgi.private.pkg />
+                <osgi.dynamic>*</osgi.dynamic>
+                <webApplicationContext>camelweb</webApplicationContext>
+            </properties>
+
+            <!-- Add scope provided to avoid that jar is copied to WEB-INF/lib -->
+            <dependencies>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-core</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-spring</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.sun.jersey.contribs</groupId>
+                    <artifactId>jersey-spring</artifactId>
+                    <version>${jersey-version}</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-core</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-beans</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-context</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-web</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.specs</groupId>
+                            <artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.specs</groupId>
+                            <artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.specs</groupId>
+                            <artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.bundles</groupId>
+                            <artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-core</artifactId>
+                    <version>${jersey-version}</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.specs</groupId>
+                            <artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.specs</groupId>
+                            <artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.specs</groupId>
+                            <artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.bundles</groupId>
+                            <artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-server</artifactId>
+                    <version>${jersey-version}</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.specs</groupId>
+                            <artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.specs</groupId>
+                            <artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.specs</groupId>
+                            <artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.bundles</groupId>
+                            <artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-json</artifactId>
+                    <version>${jersey-version}</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.specs</groupId>
+                            <artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.specs</groupId>
+                            <artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.specs</groupId>
+                            <artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.servicemix.bundles</groupId>
+                            <artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-atom</artifactId>
+                    <version>${jersey-version}</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>javax.annotation</groupId>
+                    <artifactId>jsr250-api</artifactId>
+                    <optional>true</optional>
+                    <scope>provided</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>jline</groupId>
+                    <artifactId>jline</artifactId>
+                    <version>0.9.94</version>
+                </dependency>
+
+            </dependencies>
+
+            <build>
+                <plugins>
+
+                    <!-- to generate the MANIFEST-FILE required by the bundle -->
+                    <plugin>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>maven-bundle-plugin</artifactId>
+                        <version>2.0.1</version>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>bundle-manifest</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>manifest</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <manifestLocation>META-INF</manifestLocation>
+                            <supportedProjectTypes>
+                                <supportedProjectType>bundle</supportedProjectType>
+                                <supportedProjectType>war</supportedProjectType>
+                            </supportedProjectTypes>
+                            <instructions>
+                                <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                                <Bundle-ClassPath>${osgi.classpath}</Bundle-ClassPath>
+                                <Import-Package>${osgi.import.pkg}</Import-Package>
+                                <Export-Package>${osgi.export.pkg}</Export-Package>
+                                <Webapp-Context>${webApplicationContext}</Webapp-Context>
+                                <DynamicImport-Package>${osgi.dynamic}</DynamicImport-Package>
+                                <_failok>true</_failok>
+                            </instructions>
+                        </configuration>
+
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.1</version>
+                        <configuration>
+                            <attachClasses>true</attachClasses>
+                            <!-- <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes> -->
+                            <archive>
+                                <!-- add the generated manifest to the war -->
+                                <manifestFile>META-INF/MANIFEST.MF</manifestFile>
+                            </archive>
+                            <webResources>
+                                <resource>
+                                    <directory>${basedir}/src/main/webapp</directory>
+                                    <excludes>
+                                        <exclude>**/web.xml</exclude>
+                                        <exclude>**/applicationContext.xml</exclude>
+                                    </excludes>
+                                </resource>
+                                <!-- web.xml file modified for OSGI -->
+                                <resource>
+                                    <directory>${basedir}/src/profiles/osgi/webapp</directory>
+                                </resource>
+                                <resource>
+                                    <directory>${basedir}/src/main/resources</directory>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

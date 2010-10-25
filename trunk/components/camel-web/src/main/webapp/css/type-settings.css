@@ -1,0 +1,181 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+body, p, ul, ol {
+    font-family: verdana,arial,helvetica,sans-serif;
+    font-size: 14px;
+    font-size-adjust: none;
+    font-style: normal;
+    font-font-variant: normal;
+    font-weight: normal;
+    line-height: 140%;
+    color: #000000;
+}
+
+div.body-content {
+    padding-left: 25px;
+}
+
+td, table, tr {
+    font-family: verdana,arial,helvetica,sans-serif;
+    font-size: 10px;
+    font-size-adjust: none;
+    font-style: normal;
+    font-font-variant: normal;
+    font-weight: normal;
+    line-height: normal; 
+    color: #000000;
+}
+
+a:link, a:visited, a:active, a:hover {
+   color: #880055;
+   text-decoration: none;
+}
+
+a:active, a:hover {
+   text-decoration: underline;
+   color: #202020;
+}
+
+ul, ol {
+    margin-left: 15px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 0px;
+    font-size: 12px;
+}
+
+ul li {
+    list-style-image: url("../images/small-bullet-red.png");
+}
+ul li ul li{
+    list-style-image: url("../images/small-bullet-gray.png");
+}
+
+pre {
+    padding: 0px;
+    margin-top: 5px;
+    margin-left: 15px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    text-align: left;
+}
+
+hr {
+    color: #3c78b5;
+    height: 1;
+}
+
+input {
+    font-family: verdana, geneva, arial, sans-serif;
+    font-size: 11px;
+    color: #000000;
+}
+
+textarea {
+    font-family: verdana, geneva, arial, sans-serif;
+    font-size: 11px;
+    color: #333333;
+}
+
+h1, h2, h3, h4, h5, h6  {
+  font-family: Georgia,'Times New Roman',serif;
+  line-height: normal;
+  font-weight: bold;
+}
+
+h1 {
+  border-bottom: 1px solid #808080;
+  padding: 2px;
+  margin: 36px 0px 4px -25px;
+  font-size: 20px;
+}
+h1 a:link, h1 a:visited, h1 a:active {
+    text-decoration: none;
+}
+
+h1 a:hover {
+    border-bottom: 1px dotted #660033;
+}
+
+h2 {
+  border-bottom: 1px solid #a0a0a0;
+  padding: 2px;
+  margin: 27px 0px 4px -20px;
+  font-size: 18px;
+}
+
+h3 {
+  border-bottom: 1px solid #c0c0c0;
+  padding: 2px;
+  margin: 21px 0px 4px -15px;
+  font-size: 16px;
+}
+
+h4 {
+  border-bottom: 1px solid #c0c0c0;
+  padding: 2px;
+  margin: 18px 0px 4px -10px;
+  font-size: 15px;
+}
+
+h5 {
+  padding: 2px;
+  margin: 14px 0px 4px -5px;
+  font-size: 14px;
+}
+
+h6 {
+  padding: 2px;
+  margin: 14px 0px 4px -5px;
+  font-size: 13px;
+}
+
+blockquote {
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 5px;
+    margin-right: 0px;
+    border-left: 1px solid #3c78b5;
+}
+
+.tooltip {  position: relative;
+    text-decoration: none;
+}
+
+.tooltip span {
+    display: none;
+}
+
+.tooltip:hover span {
+    position: absolute;
+    top: 10px;
+    left: 25px;
+    display: block;
+    background: #ccc;
+    color: #880055;
+    border: 1px solid #880055;
+}
+
+div.message {
+    width: 500px;
+    height: 100px;
+    overflow : auto;
+}
+
+.error {
+  color: crimson;
+}

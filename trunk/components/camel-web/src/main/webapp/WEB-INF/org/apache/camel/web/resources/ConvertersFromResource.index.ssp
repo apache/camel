@@ -1,0 +1,22 @@
+<%@ import val it: ConvertersFromResource %>
+
+#{ attributes("title") = "Type Converters from: " + it.getType.getCanonicalName}#
+
+
+<h1>Type Converters from: ${it.getType.getCanonicalName}</h1>
+
+<table>
+  <tr>
+    <th>To Type</th>
+    <th>Converter</th>
+  </tr>
+  #for(entry <- it.getConverters)
+    <tr>
+      <td>${entry.getKey}</td>
+      <td>${entry.getValue}</td>
+    </tr>
+  #end
+</table>
+
+
+

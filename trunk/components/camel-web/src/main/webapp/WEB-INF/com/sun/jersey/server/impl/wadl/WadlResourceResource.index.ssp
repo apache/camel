@@ -1,0 +1,9 @@
+<%@ import val it: WadlResourceResource %>
+
+#{ attributes("title") = "Camel Resource ${it.getFullPath}"}#
+
+
+<api:resource resource="it"/>
+
+
+

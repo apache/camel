@@ -1,0 +1,106 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.impl;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.util.ServiceHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+/**
+ * A default implementation of the {@link org.apache.camel.PollingConsumer} which uses the normal
+ * asynchronous consumer mechanism along with a {@link BlockingQueue} to allow
+ * the caller to pull messages on demand.
+ *
+ * @version $Revision$
+ */
+public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor {
+    private static final transient Log LOG = LogFactory.getLog(EventDrivenPollingConsumer.class);
+    private final BlockingQueue<Exchange> queue;
+    private ExceptionHandler interruptedExceptionHandler = new LoggingExceptionHandler(EventDrivenPollingConsumer.class);
+    private Consumer consumer;
+
+    public EventDrivenPollingConsumer(Endpoint endpoint) {
+        this(endpoint, new ArrayBlockingQueue<Exchange>(1000));
+    }
+
+    public EventDrivenPollingConsumer(Endpoint endpoint, BlockingQueue<Exchange> queue) {
+        super(endpoint);
+        this.queue = queue;
+    }
+
+    public Exchange receiveNoWait() {
+        return receive(0);
+    }
+
+    public Exchange receive() {
+        while (isRunAllowed()) {
+            try {
+                return queue.take();
+            } catch (InterruptedException e) {
+                handleInterruptedException(e);
+            }
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Consumer is not running, so returning null");
+        }
+        return null;
+    }
+
+    public Exchange receive(long timeout) {
+        try {
+            return queue.poll(timeout, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            handleInterruptedException(e);
+            return null;
+        }
+    }
+
+    public void process(Exchange exchange) throws Exception {
+        queue.offer(exchange);
+    }
+
+    public ExceptionHandler getInterruptedExceptionHandler() {
+        return interruptedExceptionHandler;
+    }
+
+    public void setInterruptedExceptionHandler(ExceptionHandler interruptedExceptionHandler) {
+        this.interruptedExceptionHandler = interruptedExceptionHandler;
+    }
+
+    protected void handleInterruptedException(InterruptedException e) {
+        getInterruptedExceptionHandler().handleException(e);
+    }
+
+    protected void doStart() throws Exception {
+        // lets add ourselves as a consumer
+        consumer = getEndpoint().createConsumer(this);
+        ServiceHelper.startService(consumer);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(consumer);
+    }
+}

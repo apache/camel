@@ -1,0 +1,222 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+body {
+    padding: 20px;
+}
+
+/* ====================================================== */
+/*  Rounded Box Styles */
+/* ====================================================== */
+div.white_box div.header   {background: transparent url("../images/white-header-top.png") repeat-x 0pt;}
+div.white_box div.header_l {background: transparent url("../images/white-header-left.png") no-repeat 0pt;}
+div.white_box div.header_r {background: transparent url("../images/white-header-right.png") no-repeat 100% 0pt;}
+div.white_box div.header_r {height: 18px;}
+
+div.white_box div.content   {background: #ffffff; } 
+div.white_box div.content_l {background: transparent url("../images/content-left.png") repeat-y 0pt;}
+div.white_box div.content_r {background: transparent url("../images/content-right.png") repeat-y 100% 0pt;}
+div.white_box div.content_r {padding-left: 6px; padding-right: 9px;}
+
+div.white_box div.footer {background: transparent url("../images/white-footer-bottom.png") repeat-x 0pt;}
+div.white_box div.footer_l {background: transparent url("../images/white-footer-left.png") no-repeat 0pt;}
+div.white_box div.footer_r {background: transparent url("../images/white-footer-right.png") no-repeat 100% 0pt;}
+div.white_box div.footer_r {color: #ffffff; height:37px; padding:0px;}
+div.white_box div.footer_r {padding-left: 6px;padding-right: 9px;}
+
+div.black_box div.footer {background: transparent url("../images/black-footer-bottom.png") repeat-x 0pt;}
+div.black_box div.footer_l {background: transparent url("../images/black-footer-left.png") no-repeat 0pt;}
+div.black_box div.footer_r {background: transparent url("../images/black-footer-right.png") no-repeat right bottom;}
+div.black_box div.footer_r {color: #ffffff; height:37; padding:0px;}
+div.black_box div.footer_r {padding-left: 6px;padding-right: 9px;}
+
+/* ====================================================== */
+/*  Logo Positioning */
+/* ====================================================== */
+div#activemq_logo{background: transparent url("../images/camel-logo.png") no-repeat left top; height: 100px; }
+div#activemq_logo{margin-left: 20px; overflow: hidden;}
+div#asf_logo {background: transparent url("../images/asf-logo.png") no-repeat right center; height: 100px; }
+
+/* ====================================================== */
+/*  Top and Bottom Bar Styling */
+/* ====================================================== */
+div.top_red_bar {
+  background: transparent url("../images/top-red-bar.png") repeat 0pt; 
+  overflow: hidden;
+}
+div.bottom_red_bar {
+  background: transparent url("../images/bottom-red-bar.png") repeat 0pt; height: 11px;
+  overflow: hidden;
+}
+
+div#site-breadcrumbs {
+  margin: 0px;
+  padding: 0px;
+  float:left;
+  padding: 2px;
+  padding-left: 20px;
+}
+div#site-quicklinks {
+  margin: 0px;
+  padding: 2px;
+  padding-right: 20px;
+}
+div#site-quicklinks p {
+  text-align: right;
+  padding: 0px; 
+  margin: 0px;
+}
+
+div#site-quicklinks, div#site-breadcrumbs, div#site-quicklinks p, div#site-breadcrumbs p,
+div#site-quicklinks a:link, div#site-quicklinks a:visited,
+div#site-breadcrumbs a:link, div#site-breadcrumbs a:visited {
+  font-family: Verdana, arial, sans-serif;
+  font-size: 11px;
+  font-weight: bold;	
+  line-height: 16px;
+  color: #ffffff;
+  text-decoration: none;
+}
+div#site-quicklinks a:active, div#site-quicklinks a:hover,
+div#site-breadcrumbs a:active, div#site-breadcrumbs a:hover {
+  font-family: Verdana, arial, sans-serif;
+  font-size: 11px;
+  font-weight: bold;	
+  line-height: 13px;
+  color: #c0c0c0;
+  text-decoration: underline;
+}
+div#site-quicklinks sup img {
+  height: 0px;
+  width: 0px;
+}
+
+/* ====================================================== */
+/*  Navigation Styling */
+/* ====================================================== */
+div.navigation {background: #ffffff url("../images/right-box-left.png") repeat-y left 0pt; width:200px;}
+div.navigation_top {background: transparent url("../images/right-box-top.png") no-repeat left top;} 
+div.navigation_bottom {background: transparent url("../images/right-box-bottom.png") no-repeat left bottom;}
+div.navigation_bottom {padding-left: 5px;padding-right:11px; padding-top:17px; padding-bottom:17px;}
+
+/* div.navigation {float:right;} */
+div.navigation_bottom ol, 
+div.navigation_bottom ul, 
+div.navigation_bottom {
+  font-family: Verdana, arial, sans-serif;
+  font-size: 11px;
+  font-weight: bold;	
+  line-height: 13px;
+  text-align: left;
+  padding-left: 11px;
+}
+
+div.navigation {
+  text-align: left;
+  clear: left;
+}
+
+
+div.navigation h3, 
+div.navigation h3 a:link, div.navigation h3 a:visited, div.navigation h3 a:active, div.navigation h3 a:hover { 
+  font-family: Verdana, arial, sans-serif;
+  font-size: 11px;
+  font-weight: bold;	
+  line-height: 120%;
+
+  border: none;
+  font-size: 15px; 
+  text-decoration: none;
+  color: #660033;
+  margin:5px;
+}
+
+div.navigation h3 {
+  background: url("../images/big-bullet.png") no-repeat 0pt;
+  background-position:left center;
+  margin-left:15px;
+  padding-left: 20px;
+}
+
+div.navigation a:link, div.navigation a:visited, div.navigation a:active, div.navigation a:hover {
+  text-decoration: none;
+  color: #000000;
+}
+div.navigation a:active, div.navigation a:hover {
+  text-decoration: underline;
+  color: #880055;
+}
+
+div.navigation ul {
+  padding-left: 25px;
+  list-style: none; 
+  padding-bottom: 10px;
+  border-bottom:1px solid #CACACA;
+  margin: 0px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+
+div.navigation_bottom div { 
+  margin-left:10px;
+  padding-left:25px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom:1px solid #CACACA;
+}
+
+div.navigation img {
+  margin-left:15px;
+  padding-left: 20px;
+}
+
+div.navigation sup img { height: 0px; width: 0px; }
+
+/* ====================================================== */
+/*  Footer Styling */
+/* ====================================================== */
+div.black_box div.footer_r div {
+  font-family: Verdana, arial, sans-serif;
+  font-size: 10px;
+  font-weight: normal;	
+  line-height: normal;
+  padding:5px;
+  padding-left:20px;
+}
+
+div.design_attribution, div.design_attribution a {
+  font-family: Verdana, arial, sans-serif;
+  font-size: 10px;
+  text-align:center;
+  color: #a0a0a0;
+}
+
+.Starting {
+  color: yellow;
+}
+
+.Started {
+  color: green;
+}
+
+.Stopped {
+  color: red;
+}
+
+.Stopping {
+  color: brown;
+}
