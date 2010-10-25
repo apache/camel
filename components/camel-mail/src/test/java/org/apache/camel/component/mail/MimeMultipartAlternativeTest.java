@@ -29,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.jvnet.mock_javamail.Mailbox;
 
 
 public class MimeMultipartAlternativeTest extends ContextTestSupport {
@@ -36,6 +37,8 @@ public class MimeMultipartAlternativeTest extends ContextTestSupport {
     private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:0001\"></body></html>";
 
     private void sendMultipartEmail(boolean useInlineattachments) throws Exception {
+        Mailbox.clearAll();
+
         // create an exchange with a normal body and attachment to be produced as email
         MailEndpoint endpoint = context.getEndpoint("smtp://ryan@mymailserver.com?password=secret", MailEndpoint.class);
         endpoint.getConfiguration().setUseInlineAttachments(useInlineattachments);
@@ -63,12 +66,9 @@ public class MimeMultipartAlternativeTest extends ContextTestSupport {
         Thread.sleep(1000);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        // this header should be removed
-        mock.message(0).header(MailConfiguration.DEFAULT_ALTERNATE_BODY_HEADER).isNull();
-        Exchange out = mock.assertExchangeReceived(0);
         mock.assertIsSatisfied();
 
+        Exchange out = mock.assertExchangeReceived(0);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage)out.getIn()).getMessage().getSize());
         ((MailMessage)out.getIn()).getMessage().writeTo(baos);
         String dumpedMessage = baos.toString();
