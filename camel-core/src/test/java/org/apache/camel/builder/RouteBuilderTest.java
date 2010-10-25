@@ -92,7 +92,9 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").filter(header("foo").isEqualTo("bar")).to("seda:b");
+                from("seda:a")
+                    .filter(header("foo").isEqualTo("bar"))
+                        .to("seda:b");
             }
         };
         // END SNIPPET: e2
@@ -124,8 +126,14 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").choice().when(header("foo").isEqualTo("bar")).to("seda:b")
-                    .when(header("foo").isEqualTo("cheese")).to("seda:c").otherwise().to("seda:d");
+                from("seda:a")
+                    .choice()
+                        .when(header("foo").isEqualTo("bar"))
+                            .to("seda:b")
+                        .when(header("foo").isEqualTo("cheese"))
+                            .to("seda:c")
+                        .otherwise()
+                            .to("seda:d");
             }
         };
         // END SNIPPET: e3
@@ -171,7 +179,8 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").process(myProcessor);
+                from("seda:a")
+                    .process(myProcessor);
             }
         };
         // END SNIPPET: e4
@@ -198,7 +207,9 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").filter(header("foo").isEqualTo("bar")).process(myProcessor);
+                from("seda:a")
+                    .filter(header("foo").isEqualTo("bar"))
+                        .process(myProcessor);
             }
         };
         // END SNIPPET: e5
@@ -229,7 +240,8 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").multicast().to("seda:tap", "seda:b");
+                from("seda:a")
+                    .multicast().to("seda:tap", "seda:b");
             }
         };
         // END SNIPPET: e6
@@ -268,7 +280,10 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").process(interceptor1).process(interceptor2).to("seda:d");
+                from("seda:a")
+                    .process(interceptor1)
+                    .process(interceptor2)
+                    .to("seda:d");
             }
         };
         return getRouteList(builder);
@@ -303,7 +318,9 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").filter(header("foo").isEqualTo(123)).to("seda:b");
+                from("seda:a")
+                    .filter(header("foo").isEqualTo(123))
+                        .to("seda:b");
             }
         };
         // END SNIPPET: e7
@@ -324,7 +341,8 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").multicast().to("seda:b", "seda:c", "seda:d");
+                from("seda:a")
+                    .multicast().to("seda:b", "seda:c", "seda:d");
             }
         };
         // END SNIPPET: multicast
@@ -337,7 +355,8 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").recipientList(header("foo"));
+                from("seda:a")
+                    .recipientList(header("foo"));
             }
         };
         // END SNIPPET: e9
@@ -368,7 +387,9 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").split(body(String.class).tokenize("\n")).to("seda:b");
+                from("seda:a")
+                    .split(body(String.class).tokenize("\n"))
+                        .to("seda:b");
             }
         };
         // END SNIPPET: splitter
@@ -398,7 +419,9 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").idempotentConsumer(header("myMessageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                from("seda:a")
+                    .idempotentConsumer(header("myMessageId"),
+                            MemoryIdempotentRepository.memoryIdempotentRepository(200))
                     .to("seda:b");
             }
         };

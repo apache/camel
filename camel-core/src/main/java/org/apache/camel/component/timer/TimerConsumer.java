@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 public class TimerConsumer extends DefaultConsumer {
     private static final transient Log LOG = LogFactory.getLog(TimerConsumer.class);
     private final TimerEndpoint endpoint;
-    private TimerTask task;
+    private volatile TimerTask task;
 
     public TimerConsumer(TimerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -56,7 +56,9 @@ public class TimerConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        task.cancel();
+        if (task != null) {
+            task.cancel();
+        }
         task = null;
     }
 

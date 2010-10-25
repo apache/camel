@@ -58,6 +58,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final Processor redeliveryProcessor;
     protected final RedeliveryPolicy redeliveryPolicy;
     protected final Predicate handledPolicy;
+    protected final Predicate retryWhilePolicy;
     protected final Logger logger;
     protected final boolean useOriginalMessagePolicy;
 
@@ -68,7 +69,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         boolean sync = true;
         int redeliveryCounter;
         long redeliveryDelay;
-        Predicate retryWhilePredicate;
+        Predicate retryWhilePredicate = retryWhilePolicy;
         boolean redeliverFromSync;
 
         // default behavior which can be overloaded on a per exception basis
@@ -174,7 +175,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     public RedeliveryErrorHandler(CamelContext camelContext, Processor output, Logger logger, Processor redeliveryProcessor,
                                   RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy, Processor deadLetter,
-                                  String deadLetterUri, boolean useOriginalMessagePolicy) {
+                                  String deadLetterUri, boolean useOriginalMessagePolicy, Predicate retryWhile) {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
 
@@ -188,6 +189,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.deadLetterUri = deadLetterUri;
         this.handledPolicy = handledPolicy;
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
+        this.retryWhilePolicy = retryWhile;
     }
 
     public boolean supportTransacted() {

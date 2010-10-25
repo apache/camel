@@ -1,9 +1,0 @@
-<?xml version='1.0'?>
-<!DOCTYPE PZMAP SYSTEM
-	"flatpack.dtd" >
-<PZMAP>
-	<COLUMN name="ITEM_DESC" />
-	<COLUMN name="IN_STOCK" />
-	<COLUMN name="PRICE" />
-	<COLUMN name="LAST_RECV_DT" />
-</PZMAP> 

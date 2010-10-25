@@ -22,6 +22,8 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <bean id="myProcessor" class="org.apache.camel.processor.ShutdownCompleteAllTasksTest$MyProcessor"/>
+
     <bean id="shutdown" class="org.apache.camel.impl.DefaultShutdownStrategy">
         <!-- give it 30 sec to shutdown -->
         <property name="timeout" value="30"/>
@@ -30,16 +32,13 @@
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <!-- let this route complete all its pending messages when asked to shutdown -->
-        <route id="foo" autoStartup="false" startupOrder="1" shutdownRunningTask="CompleteAllTasks">
+        <route id="foo" autoStartup="false" shutdownRunningTask="CompleteAllTasks">
             <from uri="file:target/pending"/>
             <delay><constant>1000</constant></delay>
-            <to uri="seda:foo"/>
-        </route>
-
-        <route startupOrder="2">
-            <from uri="seda:foo"/>
+            <process ref="myProcessor"/>
             <to uri="mock:bar"/>
         </route>
+
     </camelContext>
     <!-- END SNIPPET: e1 -->
 

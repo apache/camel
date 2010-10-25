@@ -226,6 +226,10 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     private static void doneUoW(Exchange exchange) {
         try {
+            // The receiveBody method will get a null exchange
+            if (exchange == null) {
+                return;
+            }
             if (exchange.getUnitOfWork() == null) {
                 // handover completions and done them manually to ensure they are being executed
                 List<Synchronization> synchronizations = exchange.handoverCompletions();

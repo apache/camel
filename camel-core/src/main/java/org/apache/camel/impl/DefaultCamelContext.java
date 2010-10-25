@@ -61,7 +61,9 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.impl.converter.LazyLoadingTypeConverter;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
@@ -153,6 +155,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private Boolean streamCache = Boolean.FALSE;
     private Boolean handleFault = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
+    private Boolean lazyLoadTypeConverters = Boolean.FALSE;
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
@@ -1814,7 +1817,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Lazily create a default implementation
      */
     protected TypeConverter createTypeConverter() {
-        DefaultTypeConverter answer = new DefaultTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder());
+        BaseTypeConverterRegistry answer;
+        if (isLazyLoadTypeConverters()) {
+            answer = new LazyLoadingTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder());
+        } else {
+            answer = new DefaultTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder());
+        }
         setTypeConverterRegistry(answer);
         return answer;
     }
@@ -2017,6 +2025,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public Boolean isAutoStartup() {
         return autoStartup != null && autoStartup;
+    }
+    
+    public Boolean isLazyLoadTypeConverters() {
+        return lazyLoadTypeConverters != null && lazyLoadTypeConverters;
+    }
+    
+    public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
+        this.lazyLoadTypeConverters = lazyLoadTypeConverters;
     }
 
     public ClassLoader getApplicationContextClassLoader() {

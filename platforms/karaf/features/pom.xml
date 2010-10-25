@@ -41,9 +41,8 @@
       <aopalliance-bundle-version>1.0_3</aopalliance-bundle-version>
       <asm-bundle-version>2.2.3_3</asm-bundle-version>
       <bcel-bundle-version>5.2_2</bcel-bundle-version>
-      <dom4j-bundle-version>1.6.1_2</dom4j-bundle-version>
-      <dozer-bundle-version>5.2.2</dozer-bundle-version>
       <cglib-version>2.1_3_4</cglib-version>
+      <cometd-java-server-bundle-version>1.0.1_1</cometd-java-server-bundle-version>
       <commons-beanutils-bundle-version>1.7.0_3</commons-beanutils-bundle-version>
       <commons-csv-version>1.0-r706899_3</commons-csv-version>
       <commons-codec-version>1.4</commons-codec-version>
@@ -55,6 +54,8 @@
       <commons-net-version>2.0</commons-net-version>
       <commons-management-version>1.0</commons-management-version>
       <commons-pool-bundle-version>1.5.4_1</commons-pool-bundle-version>
+      <dom4j-bundle-version>1.6.1_2</dom4j-bundle-version>
+      <dozer-bundle-version>5.3.0</dozer-bundle-version>
       <el-api-1.0-version>1.0.1</el-api-1.0-version>
       <fastinfoset-version>1.2.7_2</fastinfoset-version>
       <features.file>features.xml</features.file>
@@ -68,22 +69,21 @@
       <geronimo-ws-metadata-spec-version>1.1.2</geronimo-ws-metadata-spec-version>
       <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version>
       <hamcrest-bundle-version>1.2-dev1_1</hamcrest-bundle-version>
+      <hapi-bundle-version>0.5.1_3</hapi-bundle-version>
       <hibernate-validator-bundle-version>4.1.0.Final_1</hibernate-validator-bundle-version>
+      <httpcore-bundle-version>4.0-alpha6_1</httpcore-bundle-version>
       <ibatis-bundle-version>2.3.4.726_2</ibatis-bundle-version>
+      <irclib-bundle-version>1.10_2</irclib-bundle-version>
+      <isorelax-bundle-version>20050913_1</isorelax-bundle-version>
       <jackrabbit-version>1.5.3</jackrabbit-version>
       <jaxb-bundle-version>2.1.13_1</jaxb-bundle-version>
       <jasypt-bundle-version>1.6_1</jasypt-bundle-version>
       <jetty6-bundle-version>6.1.22_1</jetty6-bundle-version>
       <jexcelapi-bundle-version>2.4.2_2</jexcelapi-bundle-version>
-      <hapi-bundle-version>0.5.1_3</hapi-bundle-version>
-      <httpcore-bundle-version>4.0-alpha6_1</httpcore-bundle-version>
-      <irclib-bundle-version>1.10_2</irclib-bundle-version>
-      <isorelax-bundle-version>20050913_1</isorelax-bundle-version>
       <javax.el-bundle-version>2.1.0</javax.el-bundle-version>
       <jcr-bundle-version>1.0_2</jcr-bundle-version>
       <jdom-bundle-version>1.1_2</jdom-bundle-version>
       <jettison-bundle-version>1.2</jettison-bundle-version>
-      <cometd-java-server-bundle-version>1.0.1_1</cometd-java-server-bundle-version>
       <jing-bundle-version>20030619_1</jing-bundle-version>
       <jodatime-bundle-version>1.5.2_2</jodatime-bundle-version>
       <josql-bundle-version>1.5_3</josql-bundle-version>

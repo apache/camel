@@ -47,7 +47,7 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
         
         context.stopRoute("testRoute", 0, TimeUnit.MILLISECONDS);
         
-        Thread.currentThread().sleep(4000);
+        Thread.sleep(4000);
         assertTrue(context.getRouteStatus("testRoute") == ServiceStatus.Started);
         context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
 
@@ -61,7 +61,7 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
         
         CamelContext context = startRouteWithPolicy("stopPolicy");
         
-        Thread.currentThread().sleep(4000);
+        Thread.sleep(4000);
         assertTrue(context.getRouteStatus("testRoute") == ServiceStatus.Stopped);
         try {
             context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
@@ -78,7 +78,7 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
 
         CamelContext context = startRouteWithPolicy("suspendPolicy");
         
-        Thread.currentThread().sleep(4000);
+        Thread.sleep(4000);
         try {
             context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
         } catch (CamelExecutionException e) {
@@ -97,13 +97,14 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
 
         ServiceHelper.suspendService(context.getRoute("testRoute").getConsumer());
         
-        Thread.currentThread().sleep(4000);
+        Thread.sleep(4000);
         context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
         
         context.stop();
         mock.assertIsSatisfied();
     }
     
+    @SuppressWarnings("unchecked")
     private CamelContext startRouteWithPolicy(String policyBeanName) throws Exception {
         CamelContext context = new DefaultCamelContext();
         ArrayList<RouteDefinition> routes = (ArrayList<RouteDefinition>) applicationContext.getBean("testRouteContext");

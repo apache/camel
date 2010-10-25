@@ -38,8 +38,8 @@ public class JettyHttpProducerSuspendWhileInProgressTest extends CamelTestSuppor
 
     @Test
     public void testJettySuspendWhileInProgress() throws Exception {
-        // these tests does not run well on AIX
-        if (isPlatform("aix")) {
+        // these tests does not run well on AIX or Windows
+        if (isPlatform("aix") || isPlatform("windows")) {
             return;
         }
 

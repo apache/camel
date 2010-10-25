@@ -17,9 +17,11 @@
 package org.apache.camel.processor;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,11 +32,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 
     private static String url = "file:target/pending";
+    private static AtomicInteger counter = new AtomicInteger();
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/pending");
+        super.setUp();
 
         template.sendBodyAndHeader(url, "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(url, "B", Exchange.FILE_NAME, "b.txt");
@@ -53,7 +56,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
 
-        // wait 20 seconds to give more time for slowe servers
+        // wait 20 seconds to give more time for slow servers
         bar.await(20, TimeUnit.SECONDS);
 
         int batch = bar.getReceivedExchanges().get(0).getProperty(Exchange.BATCH_SIZE, int.class);
@@ -61,8 +64,8 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
         // shutdown during processing
         context.stop();
 
-        // should route all 5
-        assertEquals("Should complete all messages", batch, bar.getReceivedCounter());
+        // should route all
+        assertEquals("Should complete all messages", batch, counter.get());
     }
 
     @Override
@@ -74,12 +77,19 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
                 from(url).routeId("foo").noAutoStartup()
                     // let it complete all tasks during shutdown
                     .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
-                    .delay(1000).to("seda:foo");
-
-                from("seda:foo").to("mock:bar");
+                    .delay(1000)
+                    .process(new MyProcessor())
+                    .to("mock:bar");
             }
             // END SNIPPET: e1
         };
+    }
+
+    public static class MyProcessor implements Processor {
+
+        public void process(Exchange exchange) throws Exception {
+            counter.incrementAndGet();
+        }
     }
 
 }

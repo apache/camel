@@ -131,7 +131,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             getContext().setProperties(getProperties().asMap());
         }
 
-        // set the resolvers first
+        // set the type converter mode first
+        if (getLazyLoadTypeConverters() != null) {
+            getContext().setLazyLoadTypeConverters(getLazyLoadTypeConverters());
+        }
+
         PackageScanClassResolver packageResolver = getBeanForType(PackageScanClassResolver.class);
         if (packageResolver != null) {
             LOG.info("Using custom PackageScanClassResolver: " + packageResolver);
@@ -563,6 +567,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
     public abstract String getHandleFault();
 
     public abstract String getAutoStartup();
+
+    public abstract Boolean getLazyLoadTypeConverters();
 
     public abstract CamelJMXAgentDefinition getCamelJMXAgent();
 

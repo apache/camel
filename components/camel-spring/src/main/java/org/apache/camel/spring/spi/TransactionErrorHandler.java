@@ -52,11 +52,12 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param handledPolicy           policy for handling failed exception that are moved to the dead letter queue
      * @param exceptionPolicyStrategy strategy for onException handling
      * @param transactionTemplate     the transaction template
+     * @param retryWhile              retry while
      */
     public TransactionErrorHandler(CamelContext camelContext, Processor output, Logger logger, Processor redeliveryProcessor,
-                                   RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy,
-                                   ExceptionPolicyStrategy exceptionPolicyStrategy, TransactionTemplate transactionTemplate) {
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false);
+                                   RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy,
+                                   TransactionTemplate transactionTemplate, Predicate retryWhile) {
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false, retryWhile);
         setExceptionPolicy(exceptionPolicyStrategy);
         this.transactionTemplate = transactionTemplate;
     }

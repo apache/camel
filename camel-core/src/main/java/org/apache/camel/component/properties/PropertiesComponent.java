@@ -42,6 +42,13 @@ public class PropertiesComponent extends DefaultComponent {
     private PropertiesParser propertiesParser = new DefaultPropertiesParser();
     private String[] locations;
     private boolean cache = true;
+    
+    public PropertiesComponent() {
+    }
+    
+    public PropertiesComponent(String... locations) {
+        this.locations = locations;
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

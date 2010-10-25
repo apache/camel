@@ -27,9 +27,9 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
-
 import org.junit.Test;
 
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
@@ -220,7 +220,40 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         output.assertIsSatisfied();
         assertEquals(ExecutableJavaProgram.LINES_TO_PRINT_FROM_EACH_THREAD, outs.length);
         assertEquals(ExecutableJavaProgram.LINES_TO_PRINT_FROM_EACH_THREAD, errs.length);
+    }
 
+    /**
+     * Test print in stdout using string as args
+     *
+     * @see ExecutableJavaProgram#THREADS
+     * @throws Exception
+     */
+    @Test
+    public void testExecJavaArgsAsString() throws Exception {
+        output.setExpectedMessageCount(1);
+
+        Exchange exchange = producerTemplate.send("direct:input", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                final String javaAbsolutePath = buildJavaExecutablePath();
+
+                // use string for args
+                String classpath = System.getProperty("java.class.path");
+                String args = "-cp \"" + classpath + "\" " + EXECUTABLE_PROGRAM_ARG + " " + PRINT_IN_STDOUT;
+
+                exchange.getIn().setBody("hello");
+                exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, javaAbsolutePath);
+                exchange.getIn().setHeader(EXEC_COMMAND_ARGS, args);
+                exchange.getIn().setHeader(EXEC_USE_STDERR_ON_EMPTY_STDOUT, true);
+            }
+        });
+
+        output.assertIsSatisfied();
+
+        ExecResult result = exchange.getIn().getBody(ExecResult.class);
+        assertNotNull(result);
+
+        String out = IOConverter.toString(result.getStdout(), exchange);
+        assertEquals(PRINT_IN_STDOUT, out);
     }
 
     /**
@@ -261,7 +294,6 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         Exchange e = sendExchange(READ_INPUT_LINES_AND_PRINT_THEM, 20000, whiteSpaceSeparatedLines, false);
         ExecResult inBody = e.getIn().getBody(ExecResult.class);
         assertEquals(expected, IOUtils.toString(inBody.getStdout()));
-
     }
 
     protected Exchange sendExchange(final Object commandArgument, final long timeout) {

@@ -61,7 +61,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
     private TimeUnit timeUnit;
     @XmlAttribute
     private Integer maxQueueSize;
-    @XmlTransient()
+    @XmlAttribute
     private String threadName;
     @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy;

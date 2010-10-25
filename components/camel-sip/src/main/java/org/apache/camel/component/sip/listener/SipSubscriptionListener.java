@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.sip.listener;
 
-import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.DialogTerminatedEvent;
 import javax.sip.IOExceptionEvent;
@@ -44,7 +43,6 @@ public class SipSubscriptionListener implements SipListener {
     private SipSubscriber sipSubscriber;
     private Dialog subscriberDialog;
     private Dialog forkedDialog;
-    private ClientTransaction subscriberTransactionId;
 
     public SipSubscriptionListener(SipSubscriber sipSubscriber) {
         this.setSipSubscriber(sipSubscriber);
@@ -173,5 +171,9 @@ public class SipSubscriptionListener implements SipListener {
 
     public SipSubscriber getSipSubscriber() {
         return sipSubscriber;
+    }
+
+    public Dialog getForkedDialog() {
+        return forkedDialog;
     }
 }

@@ -102,7 +102,8 @@ public class SetExchangePatternTest extends ContextTestSupport {
                 from("direct:testToWithRobustInOnlyParam").to(ExchangePattern.RobustInOnly, "mock:result");
 
                 // Set the exchange pattern to InOut, then send it on
-                from("direct:testSetExchangePatternInOnly").setExchangePattern(ExchangePattern.InOnly).to("mock:result");
+                from("direct:testSetExchangePatternInOnly")
+                    .setExchangePattern(ExchangePattern.InOnly).to("mock:result");
              // END SNIPPET: example
             }
         };

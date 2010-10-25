@@ -39,10 +39,12 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
      * @param redeliveryPolicy          policy for redelivery
      * @param handledPolicy             policy for handling failed exception that are moved to the dead letter queue
      * @param exceptionPolicyStrategy   strategy for onException handling
+     * @param retryWhile                retry while
      */
     public DefaultErrorHandler(CamelContext camelContext, Processor output, Logger logger, Processor redeliveryProcessor,
-                               RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false);
+                               RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy,
+                               ExceptionPolicyStrategy exceptionPolicyStrategy, Predicate retryWhile) {
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false, retryWhile);
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 

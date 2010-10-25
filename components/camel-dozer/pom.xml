@@ -42,20 +42,9 @@
         <dependency>
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.dozer</groupId>
-            <artifactId>dozer-osgi</artifactId>
-            <version>5.2.2</version>
+            <version>${dozer-version}</version>
         </dependency>
 
-        <!-- xmlbeans is marked as optional in dozer by we need it for testing -->
-        <dependency>
-            <groupId>org.apache.xmlbeans</groupId>
-            <artifactId>xmlbeans</artifactId>
-            <version>2.4.0</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
@@ -76,6 +65,7 @@
             <artifactId>log4j</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
 </project>

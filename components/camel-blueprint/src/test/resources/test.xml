@@ -21,8 +21,8 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
         <route>
-            <from uri="timer:test" />
-            <to uri="log:test" />
+            <from uri="timer:test"/>
+            <to uri="log:test"/>
         </route>
     </camelContext>
 

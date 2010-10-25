@@ -151,7 +151,6 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
         assertNotNull(endpoint.getCommandExecutor());
 
         assertEquals(dir, endpoint.getWorkingDir());
-
     }
 
     @Test
@@ -204,6 +203,5 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
     private ExecEndpoint createExecEndpoint(String uri) throws Exception {
         logger.debug("Using Exec endpoint URI " + uri);
         return (ExecEndpoint)component.createEndpoint(uri);
-
     }
 }

@@ -1,2 +1,0 @@
-This component has been tested with both Gigaspaces and Blitz JavaSpace implementations.
-For running the tests just run Blitz or Gigaspaces and type: mvn install -Dintegration-test
