@@ -19,6 +19,7 @@ package org.apache.camel.processor.loadbalancer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,30 +40,25 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
         }
     }
     
+    
+    /* (non-Javadoc)
+     * @see org.apache.camel.processor.loadbalancer.LoadBalancerSupport#doStart()
+     */
+    @Override
+    protected void doStart() throws Exception {
+        
+        super.doStart();
+        if (getProcessors().size() != getDistributionRatioList().size()) {
+            throw new CamelException("Listed Load Balance Processors do not match Distribution Ratio.");
+        }
+    }
+
     protected void loadRuntimeRatios(List<Integer> distributionRatios) {
         int position = 0;
         
         for (Integer value : distributionRatios) {
             runtimeRatios.add(new DistributionRatio(position++, value.intValue()));
         }
-    }
-
-    protected void normalizeDistributionListAgainstProcessors(List<Processor> processors) {
-        if (processors.size() > getDistributionRatioList().size()) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Listed Load Balance Processors do not match distributionRatio. Best Effort distribution will be attempted");
-                LOG.warn("Number of Processors: " + processors.size() + ". Number of DistibutionRatioList elements: " + getDistributionRatioList().size());
-            }
-        } else if (processors.size() < getDistributionRatioList().size()) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Listed Load Balance Processors do not match distributionRatio. Best Effort distribution will be attempted");
-                LOG.warn("Number of Processors: " + processors.size() + ". Number of DistibutionRatioList elements: " + getDistributionRatioList().size());
-            }
-            for (int i = processors.size(); i < getDistributionRatioList().size(); i++) {
-                getDistributionRatioList().set(i, 0);
-                getRuntimeRatios().remove(i);
-            }
-        }        
     }
     
     protected boolean isRuntimeRatiosZeroed() {

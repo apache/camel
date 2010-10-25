@@ -36,8 +36,6 @@ public class WeightedRandomLoadBalancer extends WeightedLoadBalancer {
     protected Processor chooseProcessor(List<Processor> processors,
             Exchange exchange) {
         
-        normalizeDistributionListAgainstProcessors(processors);
-        
         boolean found = false;
         
         while (!found) {

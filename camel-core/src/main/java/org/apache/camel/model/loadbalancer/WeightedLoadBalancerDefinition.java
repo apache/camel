@@ -44,13 +44,26 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     private Boolean roundRobin = Boolean.FALSE;
     
     @XmlAttribute(name = "distributionRatio", required = true)
-    private List<Integer> distributionRatioList = new ArrayList<Integer>();
+    private String distributionRatio;
+    
+    @XmlAttribute(name = "distributionRatioDelimiter", required = false)
+    private String distributionRatioDelimiter;
     
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         WeightedLoadBalancer loadBalancer = null;
+        List<Integer> distributionRatioList = new ArrayList<Integer>();
         
         try {
+            if (distributionRatioDelimiter == null) {
+                distributionRatioDelimiter = ":";
+            }
+            
+            String[] ratios = distributionRatio.split(distributionRatioDelimiter);
+            for (String ratio : ratios) {
+                distributionRatioList.add(new Integer(ratio.trim()));
+            }
+            
             if (!roundRobin) {
                 loadBalancer = new WeightedRandomLoadBalancer(distributionRatioList);
             } else {
@@ -70,20 +83,20 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         this.roundRobin = roundRobin;
     }
 
-    public List<Integer> getDistributionRatioList() {
-        return distributionRatioList;
+    public String getDistributionRatio() {
+        return distributionRatio;
     }
 
-    public void setDistributionRatioList(List<Integer> distributionRatioList) {
-        this.distributionRatioList = distributionRatioList;
+    public void setDistributionRatioList(String distributionRatio) {
+        this.distributionRatio = distributionRatio;
     }
 
     @Override
     public String toString() {
         if (!roundRobin) { 
-            return "WeightedRandomLoadBalancer[" + distributionRatioList + "]";
+            return "WeightedRandomLoadBalancer[" + distributionRatio + "]";
         } else {
-            return "WeightedRoundRobinLoadBalancer[" + distributionRatioList + "]";
+            return "WeightedRoundRobinLoadBalancer[" + distributionRatio + "]";
         }
     }
 }

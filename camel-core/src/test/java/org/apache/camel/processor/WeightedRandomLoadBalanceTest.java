@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -54,14 +55,10 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                ArrayList<Integer> distributionRatio = new ArrayList<Integer>();
-                distributionRatio.add(4);
-                distributionRatio.add(2);
-                distributionRatio.add(1);
                 
                 // START SNIPPET: example
                 from("direct:start").loadBalance().
-                weighted(false, distributionRatio).to("mock:x", "mock:y", "mock:z");
+                weighted(false, "4:2:1").to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
@@ -80,14 +77,10 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                ArrayList<Integer> distributionRatio = new ArrayList<Integer>();
-                distributionRatio.add(2);
-                distributionRatio.add(1);
-                distributionRatio.add(3);
                 
                 // START SNIPPET: example
                 from("direct:start").loadBalance().
-                weighted(false, distributionRatio).to("mock:x", "mock:y", "mock:z");
+                weighted(false, "2, 1, 3", ",").to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
@@ -106,14 +99,10 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                ArrayList<Integer> distributionRatio = new ArrayList<Integer>();
-                distributionRatio.add(2);
-                distributionRatio.add(3);
-                distributionRatio.add(5);
                 
                 // START SNIPPET: example
                 from("direct:start").loadBalance().
-                weighted(false, distributionRatio).to("mock:x", "mock:y", "mock:z");
+                weighted(false, "2-3-5", "-").to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
@@ -122,6 +111,28 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
         sendBulkMessages(50);
         
         assertMockEndpointsSatisfied();
+    }
+    
+    public void testUnmatchedRatiosToProcessors() throws Exception {
+        boolean error = false;
+        
+        try {
+            context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                    
+                    // START SNIPPET: example
+                    from("direct:start").loadBalance().
+                    weighted(false, "2:3").to("mock:x", "mock:y", "mock:z");
+                    // END SNIPPET: example
+                }
+            });
+            context.start();
+        } catch (CamelException e) {
+            assertEquals("Listed Load Balance Processors do not match Distribution Ratio.", e.getMessage());
+            error = true;
+        }
+
+        assertTrue(error);
     }
     
     protected void sendBulkMessages(int number) {

@@ -190,12 +190,45 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     /**
      * Uses weighted load balancer
      *
-     * @param roundRobin               used to set the processor selection algorithm.
-     * @param distributionRatioList    ArrayList<Long> of weighted ratios for distribution of messages.
+     * @param roundRobin                   used to set the processor selection algorithm.
+     * @param distributionRatio            String of weighted ratios for distribution of messages.
      * @return the builder
      */
-    public LoadBalanceDefinition weighted(boolean roundRobin, ArrayList<Integer> distributionRatioList) {
+    public LoadBalanceDefinition weighted(boolean roundRobin, String distributionRatio) {
         WeightedLoadBalancer weighted;
+        List<Integer> distributionRatioList = new ArrayList<Integer>();
+        
+        String[] ratios = distributionRatio.split(":");
+        for (String ratio : ratios) {
+            distributionRatioList.add(new Integer(ratio));
+        }
+        
+        if (!roundRobin) {
+            weighted = new WeightedRandomLoadBalancer(distributionRatioList);
+        } else {
+            weighted = new WeightedRoundRobinLoadBalancer(distributionRatioList);
+        }
+        loadBalancerType = new LoadBalancerDefinition(weighted);
+        return this;
+    }
+    
+    /**
+     * Uses weighted load balancer
+     *
+     * @param roundRobin                   used to set the processor selection algorithm.
+     * @param distributionRatio            String of weighted ratios for distribution of messages.
+     * @param distributionRatioDelimiter   String containing delimiter to be used for ratios
+     * @return the builder
+     */
+    public LoadBalanceDefinition weighted(boolean roundRobin, String distributionRatio, String distributionRatioDelimiter) {
+        WeightedLoadBalancer weighted;
+        List<Integer> distributionRatioList = new ArrayList<Integer>();
+        
+        String[] ratios = distributionRatio.split(distributionRatioDelimiter);
+        for (String ratio : ratios) {
+            distributionRatioList.add(new Integer(ratio.trim()));
+        }
+        
         if (!roundRobin) {
             weighted = new WeightedRandomLoadBalancer(distributionRatioList);
         } else {
