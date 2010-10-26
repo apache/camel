@@ -17,56 +17,62 @@
 package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HttpGZipEncodingTest extends CamelTestSupport {
+public class HttpGZipEncodingTest extends BaseJettyTest {
     
+    private int port1;
+    private int port2;
+
     @Test
     public void testHttpProducerWithGzip() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:9081/gzip", new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip", String.class);
+        String response = template.requestBodyAndHeader("http://localhost:" + port1 + "/gzip",
+                new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip", String.class);
         assertEquals("The response is wrong", "<b>Hello World</b>", response);
     }
     
     @Test
     public void testGzipProxy() throws Exception {
         String response = 
-            template.requestBodyAndHeader("http://localhost:9084/route", new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip", String.class);
+            template.requestBodyAndHeader("http://localhost:" + port2 + "/route",
+                    new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip", String.class);
         assertEquals("The response is wrong", "<b>Hello World</b>", response);
     }
     
     @Test
     public void testGzipProducerWithGzipData() throws Exception {
-        String response = template.requestBodyAndHeader("direct:gzip", new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip", String.class);
+        String response = template.requestBodyAndHeader("direct:gzip",
+                new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip", String.class);
         assertEquals("The response is wrong", "<b>Hello World</b>", response);
     }
     
     @Test
     public void testGzipGet() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:9081/gzip", null, "Accept-Encoding", "gzip", String.class);
+        String response = template.requestBodyAndHeader("http://localhost:" + port1 + "/gzip",
+                null, "Accept-Encoding", "gzip", String.class);
         assertEquals("The response is wrong", "<b>Hello World for gzip</b>", response);
     }
     
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                port1 = getPort();
+                port2 = getNextPort();
+
                 errorHandler(noErrorHandler());
                 
                 from("direct:gzip")
                     .marshal().gzip()
                         .setProperty(Exchange.SKIP_GZIP_ENCODING, ExpressionBuilder.constantExpression(Boolean.TRUE))
-                        .to("http://localhost:9081/gzip").unmarshal().gzip();
+                        .to("http://localhost:" + port1 + "/gzip").unmarshal().gzip();
                 
-                from("jetty:http://localhost:9081/gzip").process(new Processor() {
-
+                from("jetty:http://localhost:" + port1 + "/gzip").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // check the request method
                         HttpServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, HttpServletRequest.class);
@@ -82,15 +88,11 @@ public class HttpGZipEncodingTest extends CamelTestSupport {
                         } else {                            
                             exchange.getOut().setBody("<b>Hello World</b>");
                         }
-                        
-                        
                     }
-                    
                 });
                 
-                from("jetty:http://localhost:9084/route?bridgeEndpoint=true").to("http://localhost:9081/gzip?bridgeEndpoint=true");
-                
-                
+                from("jetty:http://localhost:" + port2 + "/route?bridgeEndpoint=true")
+                    .to("http://localhost:" + port1 + "/gzip?bridgeEndpoint=true");
             }
         };
     }

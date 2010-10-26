@@ -19,17 +19,17 @@ package org.apache.camel.component.jetty.jettyproducer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerSynchronousTest extends CamelTestSupport {
+public class JettyHttpProducerSynchronousTest extends BaseJettyTest {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    private String url = "jetty://http://0.0.0.0:9123/sync?synchronous=true";
+    private String url = "jetty://http://0.0.0.0:" + getPort() + "/sync?synchronous=true";
 
     @Test
     public void testSynchronous() throws Exception {

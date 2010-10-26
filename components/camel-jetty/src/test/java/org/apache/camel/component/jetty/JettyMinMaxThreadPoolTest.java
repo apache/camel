@@ -26,10 +26,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.SynchronizationAdapter;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JettyMinMaxThreadPoolTest extends CamelTestSupport {
+public class JettyMinMaxThreadPoolTest extends BaseJettyTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -50,7 +49,7 @@ public class JettyMinMaxThreadPoolTest extends CamelTestSupport {
 
         log.info("Sending 10 messages");
         for (int i = 0; i < 10; i++) {
-            template.asyncCallbackRequestBody("http://localhost:9080/myapp/myservice", "" + i, new SynchronizationAdapter() {
+            template.asyncCallbackRequestBody("http://localhost:{{port}}/myapp/myservice", "" + i, new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
                     String body = exchange.getOut().getBody(String.class);
@@ -76,7 +75,7 @@ public class JettyMinMaxThreadPoolTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice")
+                from("jetty:http://localhost:{{port}}/myapp/myservice")
                         .to("log:input")
                         .delay(1000)
                         .transform(body().prepend("Bye "))

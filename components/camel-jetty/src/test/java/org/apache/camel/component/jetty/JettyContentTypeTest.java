@@ -20,7 +20,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.junit.Test;
@@ -28,10 +27,10 @@ import org.junit.Test;
 /**
  * Unit test for content-type
  */
-public class JettyContentTypeTest extends CamelTestSupport {
+public class JettyContentTypeTest extends BaseJettyTest {
 
     protected void sendMessageWithContentType(boolean usingGZip) {
-        Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
+        Endpoint endpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("<order>123</order>");
         exchange.getIn().setHeader("User", "Claus");
@@ -59,7 +58,7 @@ public class JettyContentTypeTest extends CamelTestSupport {
 
     @Test
     public void testMixedContentType() throws Exception {
-        Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
+        Endpoint endpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("<order>123</order>");
         exchange.getIn().setHeader("Content-Type", "text/xml");
@@ -74,7 +73,7 @@ public class JettyContentTypeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice").process(new MyBookService());
+                from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
             }
         };
     }

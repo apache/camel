@@ -28,7 +28,7 @@ import org.junit.Test;
 public class JettyHttpProducerGoogleAsynchronousTest extends CamelTestSupport {
 
     @Test
-    @Ignore("ignore online tests, will be improved in Camel 2.3")
+    @Ignore("ignore online tests")
     public void testGoogleFrontPageAsync() throws Exception {
         // these tests does not run well on Windows
         if (isPlatform("windows")) {

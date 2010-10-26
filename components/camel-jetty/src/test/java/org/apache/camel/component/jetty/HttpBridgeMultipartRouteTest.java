@@ -16,17 +16,14 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
@@ -35,7 +32,10 @@ import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
 import org.junit.Test;
 
-public class HttpBridgeMultipartRouteTest extends CamelTestSupport {
+public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
+
+    private int port1;
+    private int port2;
 
     private class MultipartHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         public MultipartHeaderFilterStrategy() {
@@ -54,7 +54,7 @@ public class HttpBridgeMultipartRouteTest extends CamelTestSupport {
         String body = "TEST";
         Part[] parts = new Part[] {new StringPart("body", body), new FilePart(jpg.getName(), jpg)};
         
-        PostMethod method = new PostMethod("http://localhost:9090/test/hello");
+        PostMethod method = new PostMethod("http://localhost:" + port2 + "/test/hello");
         MultipartRequestEntity requestEntity = new MultipartRequestEntity(parts, method.getParams());
         method.setRequestEntity(requestEntity);
         
@@ -71,6 +71,9 @@ public class HttpBridgeMultipartRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                port1 = getPort();
+                port2 = getNextPort();
+
                 errorHandler(noErrorHandler());
 
                 Processor serviceProc = new Processor() {
@@ -82,13 +85,13 @@ public class HttpBridgeMultipartRouteTest extends CamelTestSupport {
                     }
                 };
                 
-                HttpEndpoint epOut = (HttpEndpoint) getContext().getEndpoint("http://localhost:9080?bridgeEndpoint=true&throwExceptionOnFailure=false");
+                HttpEndpoint epOut = (HttpEndpoint) getContext().getEndpoint("http://localhost:" + port1 + "?bridgeEndpoint=true&throwExceptionOnFailure=false");
                 epOut.setHeaderFilterStrategy(new MultipartHeaderFilterStrategy());
                 
-                from("jetty:http://localhost:9090/test/hello?enableMultipartFilter=false")
+                from("jetty:http://localhost:" + port2 + "/test/hello?enableMultipartFilter=false")
                     .to(epOut);
                 
-                from("jetty://http://localhost:9080?matchOnUriPrefix=true").process(serviceProc);
+                from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true").process(serviceProc);
             }
         };
     }    

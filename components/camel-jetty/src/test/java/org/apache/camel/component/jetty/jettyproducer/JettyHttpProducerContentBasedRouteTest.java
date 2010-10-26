@@ -17,17 +17,16 @@
 package org.apache.camel.component.jetty.jettyproducer;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Unit test with a simple route test.
  */
-public class JettyHttpProducerContentBasedRouteTest extends CamelTestSupport {
+public class JettyHttpProducerContentBasedRouteTest extends BaseJettyTest {
 
-    private String serverUri = "jetty://http://localhost:9087/myservice";
+    private String serverUri = "jetty://http://localhost:" + getPort() + "/myservice";
 
     @Test
     public void testSendOne() throws Exception {

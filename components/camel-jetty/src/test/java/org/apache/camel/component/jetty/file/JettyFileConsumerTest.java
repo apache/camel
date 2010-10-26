@@ -21,11 +21,11 @@ import java.io.FileInputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Before;
 import org.junit.Test;
 
-public class JettyFileConsumerTest extends CamelTestSupport {
+public class JettyFileConsumerTest extends BaseJettyTest {
 
     @Override
     @Before
@@ -38,7 +38,7 @@ public class JettyFileConsumerTest extends CamelTestSupport {
     private void testingSendingFile(File src) throws Exception {
         deleteDirectory("target/test");
         FileInputStream fis = new FileInputStream(src);
-        String response = template.requestBody("http://localhost:9080/myapp/myservice", fis, String.class);
+        String response = template.requestBody("http://localhost:{{port}}/myapp/myservice", fis, String.class);
         assertEquals("Response should be OK ", "OK", response);
         File des = new File("target/test/temp.xml");
         assertTrue("The uploaded file should exists", des.exists());
@@ -61,7 +61,7 @@ public class JettyFileConsumerTest extends CamelTestSupport {
     public void testSendBinaryFile() throws Exception {
         deleteDirectory("target/test");
         File jpg = new File("src/test/resources/java.jpg");
-        String response = template.requestBody("http://localhost:9080/myapp/myservice2", jpg, String.class);
+        String response = template.requestBody("http://localhost:{{port}}/myapp/myservice2", jpg, String.class);
         assertEquals("Response should be OK ", "OK", response);
         File des = new File("target/test/java.jpg");
         assertTrue("The uploaded file should exists", des.exists());
@@ -87,17 +87,17 @@ public class JettyFileConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice")
+                from("jetty:http://localhost:{{port}}/myapp/myservice")
                     .to("file://target/test?fileName=temp.xml")
                     .setBody(constant("OK"));
                 
-                from("jetty:http://localhost:9080/myapp/myservice2")
+                from("jetty:http://localhost:{{port}}/myapp/myservice2")
                     .to("log:foo?showAll=true")
                     .to("file://target/test?fileName=java.jpg")
                     .setBody(constant("OK"));
 
                 from("file://target/binary?noop=true")
-                    .to("http://localhost:9080/myapp/myservice2")
+                    .to("http://localhost:{{port}}/myapp/myservice2")
                     .to("mock:result");
             }
         };

@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -29,7 +28,7 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-public class HttpProducerJMXBeansIssueTest extends CamelTestSupport {
+public class HttpProducerJMXBeansIssueTest extends BaseJettyTest {
 
     private static final Log LOG = LogFactory.getLog(HttpProducerJMXBeansIssueTest.class);
 
@@ -46,7 +45,7 @@ public class HttpProducerJMXBeansIssueTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/leak").transform(constant("Bye World"));
+                from("jetty:http://localhost:{{port}}/leak").transform(constant("Bye World"));
 
                 from("direct:leak").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -71,7 +70,7 @@ public class HttpProducerJMXBeansIssueTest extends CamelTestSupport {
 
         for (int i = 0; i < 10000; i++) {
             Exchange ex = ep.createExchange();
-            ex.getIn().setHeader("url", "http://localhost:9080/leak?id=" + i);
+            ex.getIn().setHeader("url", "http://localhost:{{port}}/leak?id=" + i);
             p.process(ex);
         }
 

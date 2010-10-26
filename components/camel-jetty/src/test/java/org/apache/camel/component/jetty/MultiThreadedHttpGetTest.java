@@ -24,13 +24,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class MultiThreadedHttpGetTest extends CamelTestSupport {
+public class MultiThreadedHttpGetTest extends BaseJettyTest {
 
     @Test
     public void testHttpGetWithConversion() throws Exception {
@@ -99,13 +98,13 @@ public class MultiThreadedHttpGetTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:withConversion?concurrentConsumers=5").to("http://localhost:5430/search")
+                from("seda:withConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search")
                         .convertBodyTo(String.class).to("mock:results");
 
-                from("seda:withoutConversion?concurrentConsumers=5").to("http://localhost:5430/search")
+                from("seda:withoutConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search")
                         .to("mock:results");
 
-                from("jetty:http://localhost:5430/search").process(new Processor() {
+                from("jetty:http://localhost:{{port}}/search").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody("<html>Bye World</html>");
                     }

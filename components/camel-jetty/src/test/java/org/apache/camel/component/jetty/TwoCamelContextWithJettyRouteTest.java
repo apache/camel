@@ -21,13 +21,14 @@ import java.net.ConnectException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class TwoCamelContextWithJettyRouteTest extends CamelTestSupport {
+public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
+
+    private int port1;
+    private int port2;
 
     @Test
     public void testTwoServerPorts() throws Exception {
@@ -36,15 +37,13 @@ public class TwoCamelContextWithJettyRouteTest extends CamelTestSupport {
         contextB.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:9888/myotherapp").process(new Processor() {
+                from("jetty://http://localhost:" + port2 + "/myotherapp").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String in = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Hi " + in);
                     }
                 });
-                
             }
-            
         });
         contextB.start();
         
@@ -74,11 +73,14 @@ public class TwoCamelContextWithJettyRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").to("http://localhost:9777/myapp");
+                port1 = getPort();
+                port2 = getNextPort();
 
-                from("direct:b").to("http://localhost:9888/myotherapp");
+                from("direct:a").to("http://localhost:" + port1 + "/myapp");
 
-                from("jetty://http://localhost:9777/myapp").process(new Processor() {
+                from("direct:b").to("http://localhost:" + port2 + "/myotherapp");
+
+                from("jetty://http://localhost:" + port1 + "/myapp").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String in = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + in);

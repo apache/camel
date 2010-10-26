@@ -17,18 +17,17 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpProducerByteTest extends CamelTestSupport {
+public class HttpProducerByteTest extends BaseJettyTest {
 
     @Test
     public void testHttpProducerByteTest() throws Exception {
         byte[] data = "Hello World".getBytes();
-        String out = template.requestBody("http://localhost:9080/test", data, String.class);
+        String out = template.requestBody("http://localhost:{{port}}/test", data, String.class);
         assertEquals("Bye World", out);
     }
 
@@ -37,7 +36,7 @@ public class HttpProducerByteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:9080/test").transform(constant("Bye World"));
+                from("jetty://http://localhost:{{port}}/test").transform(constant("Bye World"));
             }
         };
     }

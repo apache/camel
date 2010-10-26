@@ -16,20 +16,16 @@
  */
 package org.apache.camel.component.jetty;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jetty.JettyRouteTest.MyBookService;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HttpCharacterEncodingTest extends CamelTestSupport {
+public class HttpCharacterEncodingTest extends BaseJettyTest {
     
     @Test
     public void testSendToJetty() throws Exception {
-        Exchange exchange = template.send("http://localhost:9080/myapp/myservice", new Processor() {
+        Exchange exchange = template.send("http://localhost:{{port}}/myapp/myservice", new Processor() {
 
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World Thai Elephant \u0E08");
@@ -46,12 +42,11 @@ public class HttpCharacterEncodingTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice").process(new MyBookService());
+                from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
             }
         };
     }
 
-    
     public class MyBookService implements Processor {
         public void process(Exchange exchange) throws Exception {
             // just get the body as a string

@@ -27,7 +27,7 @@ import org.junit.Ignore;
 public class JettyProducerHandle404Test extends JettyHandle404Test {
 
     public String getProducerUrl() {
-        return "jetty://http://localhost:8123/myserver?user=Camel";
+        return "jetty://http://localhost:{{port}}/myserver?user=Camel";
     }
 
 }

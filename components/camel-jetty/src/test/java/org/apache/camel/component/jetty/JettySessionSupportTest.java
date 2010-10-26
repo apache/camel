@@ -17,15 +17,12 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
  * @version $Revision$
  */
-public class JettySessionSupportTest extends CamelTestSupport {
+public class JettySessionSupportTest extends BaseJettyTest {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -37,16 +34,16 @@ public class JettySessionSupportTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:9282/hello").to("mock:foo");
+                from("jetty:http://localhost:{{port}}/hello").to("mock:foo");
 
-                from("jetty:http://localhost:9282/bye?sessionSupport=true").to("mock:bar");
+                from("jetty:http://localhost:{{port}}/bye?sessionSupport=true").to("mock:bar");
             }
         });
         try {
             context.start();
             fail("Should have thrown an exception");
         } catch (IllegalStateException e) {
-            assertEquals("Server has already been started. Cannot enabled sessionSupport on http:localhost:9282", e.getMessage());
+            assertEquals("Server has already been started. Cannot enabled sessionSupport on http:localhost:" + getPort(), e.getMessage());
         }
     }
 
@@ -55,16 +52,16 @@ public class JettySessionSupportTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:9283/hello?sessionSupport=true").transform(simple("Bye ${body}"));
+                from("jetty:http://localhost:{{port}}/hello?sessionSupport=true").transform(simple("Bye ${body}"));
             }
         });
         context.start();
 
         try {
-            String reply = template.requestBody("http://localhost:9283/hello", "World", String.class);
+            String reply = template.requestBody("http://localhost:{{port}}/hello", "World", String.class);
             assertEquals("Bye World", reply);
 
-            reply = template.requestBody("http://localhost:9283/hello", "Moon", String.class);
+            reply = template.requestBody("http://localhost:{{port}}/hello", "Moon", String.class);
             assertEquals("Bye Moon", reply);
         } finally {
             context.stop();

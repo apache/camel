@@ -17,15 +17,14 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test to verify that the Jetty HTTP connector is correctly disconnected on shutdown
  */
-public class JettyHttpEndpointDisconnectTest extends CamelTestSupport {
+public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
 
-    private String serverUri = "http://localhost:9080/myservice";
+    private String serverUri = "http://localhost:" + getPort() + "/myservice";
 
     @Test
     public void testContextShutdownRemovesHttpConnector() throws Exception {

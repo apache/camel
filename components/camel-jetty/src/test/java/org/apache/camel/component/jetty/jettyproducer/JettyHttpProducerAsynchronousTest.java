@@ -21,20 +21,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerAsynchronousTest extends CamelTestSupport {
+public class JettyHttpProducerAsynchronousTest extends BaseJettyTest {
 
     private static String thread1;
     private static String thread2;
 
-    private String url = "jetty://http://0.0.0.0:9123/foo";
+    private String url = "jetty://http://0.0.0.0:" + getPort() + "/foo";
 
     @Test
     public void testAsynchronous() throws Exception {

@@ -30,8 +30,7 @@ import org.junit.Test;
 public class InterfacesTest extends CamelTestSupport {
     private static boolean isMacOS = System.getProperty("os.name").startsWith("Mac");
     private String remoteInterfaceAddress;
-   
-    
+
     public InterfacesTest() throws IOException {
         // Retrieve an address of some remote network interface
         Enumeration<NetworkInterface> interfaces =  NetworkInterface.getNetworkInterfaces();

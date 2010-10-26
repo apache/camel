@@ -17,19 +17,19 @@
 package org.apache.camel.component.jetty.async;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyAsyncCBRTest extends CamelTestSupport {
+public class JettyAsyncCBRTest extends BaseJettyTest {
 
     @Test
     public void testJettyAsync() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        String reply = template.requestBody("http://localhost:8876/myservice", "Hello Camel", String.class);
+        String reply = template.requestBody("http://localhost:{{port}}/myservice", "Hello Camel", String.class);
         assertEquals("Bye World", reply);
 
         assertMockEndpointsSatisfied();
@@ -42,7 +42,7 @@ public class JettyAsyncCBRTest extends CamelTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("jetty:http://localhost:8876/myservice")
+                from("jetty:http://localhost:{{port}}/myservice")
                     .convertBodyTo(String.class)
                     .choice()
                         .when(body().contains("Camel"))

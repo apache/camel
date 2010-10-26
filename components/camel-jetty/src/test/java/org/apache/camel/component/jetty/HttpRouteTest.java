@@ -18,25 +18,20 @@ package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -47,10 +42,15 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-public class HttpRouteTest extends CamelTestSupport {
+public class HttpRouteTest extends BaseJettyTest {
     protected static final String POST_MESSAGE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> "
         + "<test>Hello World</test>";
     protected String expectedBody = "<hello>world!</hello>";
+
+    private int port1;
+    private int port2;
+    private int port3;
+    private int port4;
 
     @Test
     public void testEndpoint() throws Exception {
@@ -77,7 +77,7 @@ public class HttpRouteTest extends CamelTestSupport {
     @Test
     public void testHelloEndpoint() throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        InputStream is = new URL("http://localhost:9281/hello").openStream();
+        InputStream is = new URL("http://localhost:" + port2 + "/hello").openStream();
         int c;
         while ((c = is.read()) >= 0) {
             os.write(c);
@@ -89,7 +89,7 @@ public class HttpRouteTest extends CamelTestSupport {
 
     @Test
     public void testEchoEndpoint() throws Exception {
-        String out = template.requestBody("http://localhost:9280/echo", "HelloWorld", String.class);
+        String out = template.requestBody("http://localhost:" + port1 + "/echo", "HelloWorld", String.class);
         assertEquals("Get a wrong output " , "HelloWorld", out);
     }
 
@@ -98,7 +98,7 @@ public class HttpRouteTest extends CamelTestSupport {
         NameValuePair[] data = {new NameValuePair("request", "PostParameter"),
                                 new NameValuePair("others", "bloggs")};
         HttpClient client = new HttpClient();
-        PostMethod post = new PostMethod("http://localhost:9280/parameter");
+        PostMethod post = new PostMethod("http://localhost:" + port1 + "/parameter");
         post.setRequestBody(data);
         client.executeMethod(post);
         InputStream response = post.getResponseBodyAsStream();
@@ -109,7 +109,7 @@ public class HttpRouteTest extends CamelTestSupport {
     @Test
     public void testPostXMLMessage() throws Exception {
         HttpClient client = new HttpClient();
-        PostMethod post = new PostMethod("http://localhost:9280/postxml");
+        PostMethod post = new PostMethod("http://localhost:" + port1 + "/postxml");
         StringRequestEntity entity = new StringRequestEntity(POST_MESSAGE, "application/xml", "UTF-8");
         post.setRequestEntity(entity);
         client.executeMethod(post);
@@ -121,7 +121,7 @@ public class HttpRouteTest extends CamelTestSupport {
     @Test
     public void testPostParameterInURI() throws Exception {
         HttpClient client = new HttpClient();
-        PostMethod post = new PostMethod("http://localhost:9280/parameter?request=PostParameter&others=bloggs");
+        PostMethod post = new PostMethod("http://localhost:" + port1 + "/parameter?request=PostParameter&others=bloggs");
         StringRequestEntity entity = new StringRequestEntity(POST_MESSAGE, "application/xml", "UTF-8");
         post.setRequestEntity(entity);
         client.executeMethod(post);
@@ -133,7 +133,7 @@ public class HttpRouteTest extends CamelTestSupport {
     @Test
     public void testPutParameterInURI() throws Exception {
         HttpClient client = new HttpClient();
-        PutMethod put = new PutMethod("http://localhost:9280/parameter?request=PutParameter&others=bloggs");
+        PutMethod put = new PutMethod("http://localhost:" + port1 + "/parameter?request=PutParameter&others=bloggs");
         StringRequestEntity entity = new StringRequestEntity(POST_MESSAGE, "application/xml", "UTF-8");
         put.setRequestEntity(entity);
         client.executeMethod(put);
@@ -145,7 +145,7 @@ public class HttpRouteTest extends CamelTestSupport {
     @Test
     public void testDisableStreamCache() throws Exception {
         String response = 
-            template.requestBodyAndHeader("http://localhost:9083/noStreamCache", 
+            template.requestBodyAndHeader("http://localhost:" + port3 + "/noStreamCache",
                                           new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
         
         assertEquals("Get a wrong output ", "OK", response);
@@ -156,24 +156,30 @@ public class HttpRouteTest extends CamelTestSupport {
         InputStream in = this.getClass().getResourceAsStream("/META-INF/LICENSE.txt");
         int fileSize = in.available();
         String response = 
-            template.requestBodyAndHeader("http://localhost:9084/requestBufferSize", 
+            template.requestBodyAndHeader("http://localhost:" + port4 + "/requestBufferSize",
                                           in, Exchange.CONTENT_TYPE, "application/txt", String.class);
         assertEquals("Got a wrong response.", fileSize, response.length());        
     }
 
 
     protected void invokeHttpEndpoint() throws IOException {
-        template.requestBodyAndHeader("http://localhost:9280/test", expectedBody, "Content-Type", "application/xml");
+        template.requestBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                port1 = getPort();
+                port2 = getNextPort();
+                port3 = getNextPort();
+                port4 = getNextPort();
+
+
                 // enable stream cache
                 context.setStreamCaching(true);
 
-                from("jetty:http://localhost:9280/test").to("mock:a");
+                from("jetty:http://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -199,9 +205,9 @@ public class HttpRouteTest extends CamelTestSupport {
                         cache.reset();
                     }
                 };
-                from("jetty:http://localhost:9281/hello?sessionSupport=true").process(proc);
+                from("jetty:http://localhost:" + port2 + "/hello?sessionSupport=true").process(proc);
 
-                from("jetty:http://localhost:9280/echo").process(printProcessor).process(printProcessor);
+                from("jetty:http://localhost:" + port1 + "/echo").process(printProcessor).process(printProcessor);
 
                 Processor procParameters = new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -217,20 +223,17 @@ public class HttpRouteTest extends CamelTestSupport {
                     }
                 };
 
-                from("jetty:http://localhost:9280/parameter").process(procParameters);
+                from("jetty:http://localhost:" + port1 + "/parameter").process(procParameters);
 
-                from("jetty:http://localhost:9280/postxml").process(new Processor() {
-
+                from("jetty:http://localhost:" + port1 + "/postxml").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String value = exchange.getIn().getBody(String.class);
                         assertEquals("The response message is wrong", value, POST_MESSAGE);
                         exchange.getOut().setBody("OK");
                     }
-
                 });
                 
-                from("jetty:http://localhost:9083/noStreamCache?disableStreamCache=true").noStreamCaching().process(new Processor() {
-
+                from("jetty:http://localhost:" + port3 + "/noStreamCache?disableStreamCache=true").noStreamCaching().process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         InputStream is = (InputStream)exchange.getIn().getBody();                        
                         assertTrue("It should be a raw inputstream", is instanceof org.eclipse.jetty.server.HttpInput);
@@ -238,19 +241,14 @@ public class HttpRouteTest extends CamelTestSupport {
                         assertEquals("Got a wrong request", "This is a test", request);
                         exchange.getOut().setBody("OK");
                     }
-                    
                 });
                 
-                
-                from("jetty:http://localhost:9084/requestBufferSize").process(new Processor() {
-
+                from("jetty:http://localhost:" + port4 + "/requestBufferSize").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String string = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody(string);
                     }
-                    
                 });
-
             }
         };
     }

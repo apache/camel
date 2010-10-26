@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayInputStream;
@@ -27,10 +26,12 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HttpClientRouteTest extends CamelTestSupport {
+public class HttpClientRouteTest extends BaseJettyTest {
+
+    private int port1;
+    private int port2;
 
     @Test
     public void testHttpRouteWithMessageHeader() throws Exception {
@@ -75,7 +76,6 @@ public class HttpClientRouteTest extends CamelTestSupport {
         
         template.sendBody("direct:start3", null);
         mockEndpoint.assertIsSatisfied();        
-        
     }
     
     @Test
@@ -85,12 +85,14 @@ public class HttpClientRouteTest extends CamelTestSupport {
         
         template.sendBody("direct:start4", "test");
         mockEndpoint.assertIsSatisfied();        
-        
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                port1 = getPort();
+                port2 = getNextPort();
+
                 errorHandler(noErrorHandler());
 
                 Processor clientProc = new Processor() {
@@ -99,10 +101,10 @@ public class HttpClientRouteTest extends CamelTestSupport {
                     }
                 };
                 
-                from("direct:start").to("http://localhost:9080/hello").process(clientProc).convertBodyTo(String.class).to("mock:a");
-                from("direct:start2").to("http://localhost:9081/hello").to("mock:a");
-                from("direct:start3").to("http://localhost:9081/Query%20/test?myQuery=%40%20query").to("mock:a");
-                from("direct:start4").setHeader(Exchange.HTTP_QUERY, simple("id=${body}")).to("http://localhost:9081/querystring").to("mock:a");
+                from("direct:start").to("http://localhost:" + port1 + "/hello").process(clientProc).convertBodyTo(String.class).to("mock:a");
+                from("direct:start2").to("http://localhost:" + port2 + "/hello").to("mock:a");
+                from("direct:start3").to("http://localhost:" + port2 + "/Query%20/test?myQuery=%40%20query").to("mock:a");
+                from("direct:start4").setHeader(Exchange.HTTP_QUERY, simple("id=${body}")).to("http://localhost:" + port2 + "/querystring").to("mock:a");
                 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -110,33 +112,27 @@ public class HttpClientRouteTest extends CamelTestSupport {
                         exchange.getOut().setBody(bis);
                     }
                 };
-                from("jetty:http://localhost:9080/hello").process(proc).setHeader(Exchange.HTTP_CHUNKED).constant(false);
+                from("jetty:http://localhost:" + port1 + "/hello").process(proc).setHeader(Exchange.HTTP_CHUNKED).constant(false);
                 
-                from("jetty:http://localhost:9081/hello?chunked=false").process(proc);
+                from("jetty:http://localhost:" + port2 + "/hello?chunked=false").process(proc);
                 
-                from("jetty:http://localhost:9081/Query%20/test").process(new Processor() {
-
+                from("jetty:http://localhost:" + port2 + "/Query%20/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody(exchange.getIn().getHeader("myQuery", String.class));                        
                     }
-                    
                 });
                 
-                from("jetty:http://localhost:9081/querystring").process(new Processor() {
-
+                from("jetty:http://localhost:" + port2 + "/querystring").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        
                         String result = exchange.getIn().getHeader("id", String.class);
                         if (result == null) {
                             result = "No id header";
                         }
                         exchange.getOut().setBody(result);
                     }
-                    
                 });
             }
         };
     }    
-  
 
 }

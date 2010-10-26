@@ -19,14 +19,13 @@ package org.apache.camel.component.jetty.jettyproducer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyHttpProderReturnFaultTest extends CamelTestSupport {
+public class JettyHttpProderReturnFaultTest extends BaseJettyTest {
 
     @Test
     public void testHttpFault() throws Exception {
@@ -38,7 +37,7 @@ public class JettyHttpProderReturnFaultTest extends CamelTestSupport {
         // give Jetty time to startup properly
         Thread.sleep(1000);
 
-        String out = template.requestBody("jetty://http://localhost:9082/test", "Hello World", String.class);
+        String out = template.requestBody("jetty://http://localhost:{{port}}/test", "Hello World", String.class);
         assertEquals("This is a fault", out);
     }
 
@@ -47,7 +46,7 @@ public class JettyHttpProderReturnFaultTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:9082/test")
+                from("jetty://http://localhost:{{port}}/test")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().setFault(true);

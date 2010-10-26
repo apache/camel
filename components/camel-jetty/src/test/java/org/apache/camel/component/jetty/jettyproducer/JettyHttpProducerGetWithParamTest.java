@@ -21,17 +21,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMessage;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Unit test to verify that we can have URI options for external system (endpoint is lenient)
  */
-public class JettyHttpProducerGetWithParamTest extends CamelTestSupport {
+public class JettyHttpProducerGetWithParamTest extends BaseJettyTest {
 
-    private String serverUri = "jetty://http://localhost:9086/myservice";
+    private String serverUri = "jetty://http://localhost:" + getPort() + "/myservice";
     private MyParamsProcessor processor = new MyParamsProcessor();
 
     @Test

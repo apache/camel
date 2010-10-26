@@ -24,14 +24,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpStreamCacheFileTest extends CamelTestSupport {
+public class HttpStreamCacheFileTest extends BaseJettyTest {
 
     private String body = "12345678901234567890123456789012345678901234567890";
 
@@ -88,9 +87,9 @@ public class HttpStreamCacheFileTest extends CamelTestSupport {
                 context.setStreamCaching(true);
 
                 // use a route so we got an unit of work
-                from("direct:start").to("http://localhost:8123/myserver");
+                from("direct:start").to("http://localhost:{{port}}/myserver");
 
-                from("jetty://http://localhost:8123/myserver")
+                from("jetty://http://localhost:{{port}}/myserver")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 if (exchange.getIn().getBody() == null) {

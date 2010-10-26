@@ -19,7 +19,6 @@ package org.apache.camel.component.jetty;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Set;
-
 import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerFactory;
@@ -27,20 +26,14 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
-public class JettyEnableJmxTest extends CamelTestSupport {
+public class JettyEnableJmxTest extends BaseJettyTest {
     
-    private String serverUri0 = 
-        "http://localhost:9080/myservice?enableJmx=true";
-    private String serverUri1 = 
-        "http://localhost:9081/myservice?enableJmx=true";
-    private String serverUri2 = 
-        "http://localhost:9082/myservice?enableJmx=false";
-    private String serverUri3 = 
-        "http://localhost:9083/myservice?enableJmx=false";
+    private String serverUri0;
+    private String serverUri1;
+    private String serverUri2;
+    private String serverUri3;
     private MBeanServerConnection mbsc;
 
     @Override
@@ -119,6 +112,11 @@ public class JettyEnableJmxTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                serverUri0 = "http://localhost:" + getPort() + "/myservice?enableJmx=true";
+                serverUri1 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=true";
+                serverUri2 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=false";
+                serverUri3 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=false";
+
                 from("jetty:" + serverUri0)
                     .routeId("route0")
                     .setBody().simple("<html><body>${in.header.x}</body></html>")

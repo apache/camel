@@ -37,12 +37,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
-public class HttpsRouteTest extends CamelTestSupport {
+public class HttpsRouteTest extends BaseJettyTest {
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
     protected String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";
     protected Properties originalValues = new Properties();
+    protected int port1;
+    protected int port2;
 
     public String getHttpProducerScheme() {
         return "https://";
@@ -120,7 +121,7 @@ public class HttpsRouteTest extends CamelTestSupport {
 
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         try {
-            template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
+            template.sendBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
             fail("expect exception on access to https endpoint via http");
         } catch (RuntimeCamelException expected) {
         }
@@ -135,7 +136,7 @@ public class HttpsRouteTest extends CamelTestSupport {
         }
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        InputStream is = new URL("https://localhost:9080/hello").openStream();
+        InputStream is = new URL("https://localhost:" + port1 + "/hello").openStream();
         int c;
         while ((c = is.read()) >= 0) {
             os.write(c);
@@ -153,21 +154,23 @@ public class HttpsRouteTest extends CamelTestSupport {
         }
 
         try {
-            new URL("http://localhost:9080/hello").openStream();
+            new URL("http://localhost:" + port1 + "/hello").openStream();
             fail("expected SocketException on use ot http");
         } catch (SocketException expected) {
         }
     }
     
     protected void invokeHttpEndpoint() throws IOException {
-        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:9080/test", expectedBody, "Content-Type", "application/xml");
-        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:9090/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type", "application/xml");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
+                port1 = getPort();
+                port2 = getNextPort();
                 
                 JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
                 componentJetty.setSslPassword(pwd);
@@ -175,16 +178,16 @@ public class HttpsRouteTest extends CamelTestSupport {
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
                 componentJetty.setKeystore(keyStoreUrl.toURI().getPath());
                 
-                from("jetty:https://localhost:9080/test").to("mock:a");
+                from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody("<b>Hello World</b>");
                     }
                 };
-                from("jetty:https://localhost:9080/hello").process(proc);
+                from("jetty:https://localhost:" + port1 + "/hello").process(proc);
                 
-                from("jetty:https://localhost:9090/test").to("mock:b");
+                from("jetty:https://localhost:" + port2 + "/test").to("mock:b");
             }
         };
     }

@@ -23,18 +23,17 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.junit.Test;
 
 /**
  * Unit test for wiki demonstration.
  */
-public class ExplicitJettyRouteTest extends CamelTestSupport {
+public class ExplicitJettyRouteTest extends BaseJettyTest {
 
     @Test
     public void testSendToJetty() throws Exception {
-        Object response = template.requestBody("http://localhost:9080/myapp/myservice", "bookid=123");
+        Object response = template.requestBody("http://localhost:{{port}}/myapp/myservice", "bookid=123");
         // convert the response to a String
         String body = context.getTypeConverter().convertTo(String.class, response);
         assertEquals("<html><body>Book 123 is Camel in Action</body></html>", body);
@@ -55,7 +54,7 @@ public class ExplicitJettyRouteTest extends CamelTestSupport {
                 // START SNIPPET: e1
                 // create socket connectors for port 9080
                 Map<Integer, SelectChannelConnector> connectors = new HashMap<Integer, SelectChannelConnector>();
-                connectors.put(9080, createSocketConnector());
+                connectors.put(getPort(), createSocketConnector());
 
                 // create jetty component
                 JettyHttpComponent jetty = new JettyHttpComponent();
@@ -65,7 +64,7 @@ public class ExplicitJettyRouteTest extends CamelTestSupport {
                 context.addComponent("jetty", jetty);
                 // END SNIPPET: e1
 
-                from("jetty:http://localhost:9080/myapp/myservice").process(new MyBookService());
+                from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
             }
         };
     }

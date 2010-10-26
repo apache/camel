@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -27,10 +25,9 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HttpClientRouteEnableChunkedTest extends CamelTestSupport {
+public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
 
     @Test
     public void testHttpRouteWithOption() throws Exception {
@@ -70,7 +67,7 @@ public class HttpClientRouteEnableChunkedTest extends CamelTestSupport {
             public void configure() {
                 errorHandler(noErrorHandler());
                 
-                from("direct:start2").to("http://localhost:9081/hello").to("mock:a");
+                from("direct:start2").to("http://localhost:{{port}}/hello").to("mock:a");
                 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -79,10 +76,9 @@ public class HttpClientRouteEnableChunkedTest extends CamelTestSupport {
                     }
                 };
                 
-                from("jetty:http://localhost:9081/hello").process(proc);
+                from("jetty:http://localhost:{{port}}/hello").process(proc);
             }
         };
     }    
-  
 
 }

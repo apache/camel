@@ -18,27 +18,19 @@ package org.apache.camel.component.jetty;
 
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jetty.JettyContentTypeTest.MyBookService;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.MessageHelper;
 import org.junit.Test;
 
-public class HttpHeaderTest extends CamelTestSupport {
+public class HttpHeaderTest extends BaseJettyTest {
 
     @Test
     public void testHttpHeaders() throws Exception {
         String result = template.requestBody("direct:start", "hello", String.class);
         assertEquals("Should send a right http header to the server.", "Find the key!", result);
-       
     }
 
     @Override
@@ -48,10 +40,9 @@ public class HttpHeaderTest extends CamelTestSupport {
                 from("direct:start").setHeader("SOAPAction", constant("http://xxx.com/interfaces/ticket"))
                     .setHeader("Content-Type", constant("text/xml; charset=utf-8"))
                     .setHeader(Exchange.HTTP_PROTOCOL_VERSION, constant("HTTP/1.0"))
-                    .to("http://localhost:9080/myapp/mytest");
+                    .to("http://localhost:{{port}}/myapp/mytest");
 
-                from("jetty:http://localhost:9080/myapp/mytest").process(new Processor() {
-
+                from("jetty:http://localhost:{{port}}/myapp/mytest").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Map<String, Object> headers = exchange.getIn().getHeaders();
                         ServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, ServletRequest.class);
@@ -65,7 +56,6 @@ public class HttpHeaderTest extends CamelTestSupport {
                         }
                         exchange.getOut().setBody("Cannot find the key!");
                     }
-
                 });
 
             }

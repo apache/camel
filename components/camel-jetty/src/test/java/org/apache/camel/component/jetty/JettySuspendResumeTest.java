@@ -16,20 +16,17 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.net.ConnectException;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpOperationFailedException;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettySuspendResumeTest extends CamelTestSupport {
+public class JettySuspendResumeTest extends BaseJettyTest {
 
-    private String serverUri = "http://localhost:9186/cool";
+    private String serverUri = "http://localhost:" + getPort() + "/cool";
 
     @Test
     public void testJettySuspendResume() throws Exception {

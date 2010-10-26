@@ -29,6 +29,9 @@ public class HttpsRouteAddSslConnectorPropertiesTest extends HttpsRouteTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
+                port1 = getPort();
+                port2 = getNextPort();
+
                 // START SNIPPET: e1
                 // keystore path
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
@@ -47,16 +50,16 @@ public class HttpsRouteAddSslConnectorPropertiesTest extends HttpsRouteTest {
                 context.addComponent("jetty", jetty);
                 // END SNIPPET: e1
 
-                from("jetty:https://localhost:9080/test").to("mock:a");
+                from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody("<b>Hello World</b>");
                     }
                 };
-                from("jetty:https://localhost:9080/hello").process(proc);
+                from("jetty:https://localhost:" + port1 + "/hello").process(proc);
 
-                from("jetty:https://localhost:9090/test").to("mock:b");
+                from("jetty:https://localhost:" + port2 + "/test").to("mock:b");
             }
         };
     }

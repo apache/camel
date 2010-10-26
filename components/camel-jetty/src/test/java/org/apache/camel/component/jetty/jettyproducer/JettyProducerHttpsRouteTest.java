@@ -19,7 +19,6 @@ package org.apache.camel.component.jetty.jettyproducer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jetty.HttpsRouteTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class JettyProducerHttpsRouteTest extends HttpsRouteTest {
@@ -40,7 +39,7 @@ public class JettyProducerHttpsRouteTest extends HttpsRouteTest {
 
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         try {
-            template.sendBodyAndHeader("jetty://http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
+            template.sendBodyAndHeader("jetty://http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
             fail("expect exception on access to https endpoint via http");
         } catch (RuntimeCamelException expected) {
         }

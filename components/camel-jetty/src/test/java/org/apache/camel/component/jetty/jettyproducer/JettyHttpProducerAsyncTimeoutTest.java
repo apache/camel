@@ -18,16 +18,15 @@ package org.apache.camel.component.jetty.jettyproducer;
 
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerAsyncTimeoutTest extends CamelTestSupport {
+public class JettyHttpProducerAsyncTimeoutTest extends BaseJettyTest {
 
-    private String url = "jetty://http://0.0.0.0:9123/timeout?httpClient.timeout=2000";
+    private String url = "jetty://http://0.0.0.0:" + getPort() + "/timeout?httpClient.timeout=2000";
 
     @Test
     public void testTimeout() throws Exception {

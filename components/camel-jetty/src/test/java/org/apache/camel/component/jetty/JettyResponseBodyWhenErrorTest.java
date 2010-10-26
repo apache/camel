@@ -21,18 +21,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test for HttpOperationFailedException should contain response body
  */
-public class JettyResponseBodyWhenErrorTest extends CamelTestSupport {
+public class JettyResponseBodyWhenErrorTest extends BaseJettyTest {
 
     @Test
     public void testResponseBodyWhenError() throws Exception {
         try {
-            template.requestBody("http://localhost:9080/myapp/myservice", "bookid=123");
+            template.requestBody("http://localhost:{{port}}/myapp/myservice", "bookid=123");
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();
@@ -51,7 +50,7 @@ public class JettyResponseBodyWhenErrorTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
-                from("jetty:http://localhost:9080/myapp/myservice").process(new MyBookService());
+                from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
             }
         };
     }

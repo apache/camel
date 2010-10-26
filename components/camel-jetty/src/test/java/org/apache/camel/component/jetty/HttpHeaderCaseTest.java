@@ -22,18 +22,17 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.junit.Test;
 
-public class HttpHeaderCaseTest extends CamelTestSupport {
+public class HttpHeaderCaseTest extends BaseJettyTest {
 
     @Test
     public void testHttpHeaderCase() throws Exception {
         HttpClient client = new HttpClient();
-        HttpMethod method = new PostMethod("http://localhost:9080/myapp/mytest");
+        HttpMethod method = new PostMethod("http://localhost:" + getPort() + "/myapp/mytest");
 
         method.setRequestHeader("clientHeader", "fooBAR");
         method.setRequestHeader("OTHER", "123");
@@ -50,7 +49,7 @@ public class HttpHeaderCaseTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/mytest").process(new Processor() {
+                from("jetty:http://localhost:{{port}}/myapp/mytest").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
 
                         // headers received should be in case as well
@@ -67,7 +66,6 @@ public class HttpHeaderCaseTest extends CamelTestSupport {
                         exchange.getOut().setHeader("otherCaseHeader", "456DEf");
                     }
                 });
-
             }
         };
     }

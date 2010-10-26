@@ -18,17 +18,16 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyOnExceptionHandledTest extends CamelTestSupport {
+public class JettyOnExceptionHandledTest extends BaseJettyTest {
 
     @Test
     public void testJettyOnException() throws Exception {
-        Exchange reply = template.request("http://localhost:8234/myserver?throwExceptionOnFailure=false", null);
+        Exchange reply = template.request("http://localhost:{{port}}/myserver?throwExceptionOnFailure=false", null);
 
         assertNotNull(reply);
         assertEquals("Dude something went wrong", reply.getOut().getBody(String.class));
@@ -41,7 +40,7 @@ public class JettyOnExceptionHandledTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("jetty://http://localhost:8234/myserver")
+                from("jetty://http://localhost:{{port}}/myserver")
                     // use onException to catch all exceptions and return a custom reply message
                     .onException(Exception.class)
                         .handled(true)

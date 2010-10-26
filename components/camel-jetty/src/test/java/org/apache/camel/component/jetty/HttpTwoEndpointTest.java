@@ -19,13 +19,12 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpTwoEndpointTest extends CamelTestSupport {
+public class HttpTwoEndpointTest extends BaseJettyTest {
 
     @Test
     public void testTwoEndpoints() throws Exception {
@@ -49,11 +48,11 @@ public class HttpTwoEndpointTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").to("http://localhost:9888/myapp?foo=123&bar=cheese");
+                from("direct:a").to("http://localhost:{{port}}/myapp?foo=123&bar=cheese");
 
-                from("direct:b").to("http://localhost:9888/myapp?foo=456&bar=cake");
+                from("direct:b").to("http://localhost:{{port}}/myapp?foo=456&bar=cake");
 
-                from("jetty://http://localhost:9888/myapp").process(new Processor() {
+                from("jetty://http://localhost:{{port}}/myapp").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         int foo = exchange.getIn().getHeader("foo", Integer.class);
                         String bar = exchange.getIn().getHeader("bar", String.class);

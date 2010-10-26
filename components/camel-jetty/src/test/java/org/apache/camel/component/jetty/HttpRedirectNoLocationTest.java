@@ -21,18 +21,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpRedirectNoLocationTest extends CamelTestSupport {
+public class HttpRedirectNoLocationTest extends BaseJettyTest {
 
     @Test
     public void testHttpRedirectNoLocation() throws Exception {
         try {
-            template.requestBody("http://localhost:9080/test", "Hello World", String.class);
+            template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
@@ -48,7 +47,7 @@ public class HttpRedirectNoLocationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:9080/test")
+                from("jetty://http://localhost:{{port}}/test")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);

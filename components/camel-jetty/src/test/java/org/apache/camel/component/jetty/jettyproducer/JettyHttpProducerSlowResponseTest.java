@@ -21,17 +21,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerSlowResponseTest extends CamelTestSupport {
+public class JettyHttpProducerSlowResponseTest extends BaseJettyTest {
 
-    private String url = "jetty://http://0.0.0.0:9321/foo";
+    private String url = "jetty://http://0.0.0.0:" + getPort() + "/foo";
 
     @Test
     public void testSlowReply() throws Exception {

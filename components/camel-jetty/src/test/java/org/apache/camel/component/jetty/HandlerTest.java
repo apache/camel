@@ -24,16 +24,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.junit.Test;
 
-public class HandlerTest extends CamelTestSupport {
+public class HandlerTest extends BaseJettyTest {
     private StatisticsHandler statisticsHandler1 = new StatisticsHandler();
     private StatisticsHandler statisticsHandler2 = new StatisticsHandler();
     private StatisticsHandler statisticsHandler3 = new StatisticsHandler();
 
     private String htmlResponse = "<html><body>Book 123 is Camel in Action</body></html>";
+    private int port1;
+    private int port2;
 
     @Test
     public void testWithOneHandler() throws Exception {
@@ -42,7 +43,7 @@ public class HandlerTest extends CamelTestSupport {
         assertEquals(0, statisticsHandler2.getRequests());
         assertEquals(0, statisticsHandler3.getRequests());
         
-        InputStream html = (InputStream) template.requestBody("http://localhost:9080/", "");
+        InputStream html = (InputStream) template.requestBody("http://localhost:" + port1, "");
         BufferedReader br = new BufferedReader(new InputStreamReader(html));
         
         assertEquals(htmlResponse, br.readLine());
@@ -58,7 +59,7 @@ public class HandlerTest extends CamelTestSupport {
         assertEquals(0, statisticsHandler2.getRequests());
         assertEquals(0, statisticsHandler3.getRequests());
 
-        InputStream html = (InputStream) template.requestBody("http://localhost:9081/", "");
+        InputStream html = (InputStream) template.requestBody("http://localhost:" + port2, "");
         BufferedReader br = new BufferedReader(new InputStreamReader(html));
         
         assertEquals(htmlResponse, br.readLine());
@@ -80,14 +81,17 @@ public class HandlerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/?handlers=#statisticsHandler1")
+                port1 = getPort();
+                port2 = getNextPort();
+
+                from("jetty:http://localhost:" + port1 + "/?handlers=#statisticsHandler1")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody(htmlResponse);
                             }
                         });
 
-                from("jetty:http://localhost:9081/?handlers=#statisticsHandler2,#statisticsHandler3")
+                from("jetty:http://localhost:" + port2 + "/?handlers=#statisticsHandler2,#statisticsHandler3")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody(htmlResponse);

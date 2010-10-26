@@ -20,13 +20,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettySimulateInOnlyTest extends CamelTestSupport {
+public class JettySimulateInOnlyTest extends BaseJettyTest {
 
     private static String route = "";
 
@@ -41,7 +40,7 @@ public class JettySimulateInOnlyTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("jetty://http://localhost:8333/myserver")
+                from("jetty://http://localhost:{{port}}/myserver")
                     // turn the route to in only as we do not want jetty to wait for the response
                     // we can do this using the wiretap EIP pattern
                     .wireTap("direct:continue")
@@ -67,7 +66,7 @@ public class JettySimulateInOnlyTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("foo", "bar");
 
-        String reply = template.requestBody("http://localhost:8333/myserver?foo=bar", null, String.class);
+        String reply = template.requestBody("http://localhost:{{port}}/myserver?foo=bar", null, String.class);
         route += "A";
         assertEquals("OK", reply);
 
@@ -81,7 +80,7 @@ public class JettySimulateInOnlyTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:8333/myserver")
+                from("jetty://http://localhost:{{port}}/myserver")
                     // turn the route to in only as we do not want jetty to wait for the response
                     // we can do this by changing the MEP and sending to a seda endpoint to spin off
                     // a new thread continue doing the routing
@@ -107,7 +106,7 @@ public class JettySimulateInOnlyTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("foo", "bar");
 
-        String reply = template.requestBody("http://localhost:8333/myserver?foo=bar", null, String.class);
+        String reply = template.requestBody("http://localhost:{{port}}/myserver?foo=bar", null, String.class);
         route += "A";
         assertEquals("OK", reply);
 

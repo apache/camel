@@ -22,17 +22,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpFilterCamelHeadersTest extends CamelTestSupport {
+public class HttpFilterCamelHeadersTest extends BaseJettyTest {
 
     @Test
     public void testFilterCamelHeaders() throws Exception {
-        Exchange out = template.send("http://localhost:9090/test/filter", new Processor() {
+        Exchange out = template.send("http://localhost:{{port}}/test/filter", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Claus");
                 exchange.getIn().setHeader("bar", 123);
@@ -66,7 +65,7 @@ public class HttpFilterCamelHeadersTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:9090/test/filter").beanRef("foo");
+                from("jetty:http://localhost:{{port}}/test/filter").beanRef("foo");
             }
         };
     }

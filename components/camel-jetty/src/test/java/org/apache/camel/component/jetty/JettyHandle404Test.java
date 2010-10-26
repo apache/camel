@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
@@ -30,10 +29,10 @@ import org.junit.Test;
  *
  * @version $Revision$
  */
-public class JettyHandle404Test extends CamelTestSupport {
+public class JettyHandle404Test extends BaseJettyTest {
 
     public String getProducerUrl() {
-        return "http://localhost:8123/myserver?user=Camel";
+        return "http://localhost:{{port}}/myserver?user=Camel";
     }
 
     @Test
@@ -83,7 +82,7 @@ public class JettyHandle404Test extends CamelTestSupport {
 
 
                 // this is our jetty server where we simulate the 404
-                from("jetty://http://localhost:8123/myserver")
+                from("jetty://http://localhost:{{port}}/myserver")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody("Page not found");

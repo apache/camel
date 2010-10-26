@@ -22,6 +22,7 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
@@ -30,7 +31,7 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerSendFileTest extends CamelTestSupport {
+public class JettyHttpProducerSendFileTest extends BaseJettyTest {
 
     @Test
     public void testSendImage() throws Exception {
@@ -47,7 +48,7 @@ public class JettyHttpProducerSendFileTest extends CamelTestSupport {
         mock.message(0).body().isInstanceOf(InputStream.class);
         mock.message(0).header("Content-Type").isEqualTo("image/jpeg");
 
-        Exchange out = template.send("jetty://http://localhost:9080/myapp/myservice", new Processor() {
+        Exchange out = template.send("jetty://http://localhost:{{port}}/myapp/myservice", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(new File("src/test/data/logo.jpeg"));
                 exchange.getIn().setHeader("Content-Type", "image/jpeg");
@@ -64,7 +65,7 @@ public class JettyHttpProducerSendFileTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice")
+                from("jetty:http://localhost:{{port}}/myapp/myservice")
                     .to("mock:result")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

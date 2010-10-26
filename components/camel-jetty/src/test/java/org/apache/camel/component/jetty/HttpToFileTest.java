@@ -22,21 +22,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit testing demonstrating how to store incoming requests as files and serving a reponse back.
+ * Unit testing demonstrating how to store incoming requests as files and serving a response back.
  */
-public class HttpToFileTest extends CamelTestSupport {
+public class HttpToFileTest extends BaseJettyTest {
 
     @Test
     public void testToJettyAndSaveToFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        Object out = template.requestBody("http://localhost:9080/myworld", "Hello World");
+        Object out = template.requestBody("http://localhost:{{port}}/myworld", "Hello World");
 
         String response = context.getTypeConverter().convertTo(String.class, out);
         assertEquals("Response from Jetty", "We got the file", response);
@@ -65,7 +64,10 @@ public class HttpToFileTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // put the incoming data on the seda queue and return a fixed response that we got the file
-                from("jetty:http://localhost:9080/myworld").convertBodyTo(String.class).to("seda:in").setBody(constant("We got the file"));
+                from("jetty:http://localhost:{{port}}/myworld")
+                    .convertBodyTo(String.class)
+                    .to("seda:in")
+                    .setBody(constant("We got the file"));
 
                 // store the content from the queue as a file
                 from("seda:in")

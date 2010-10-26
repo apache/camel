@@ -20,14 +20,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HttpBindingPreservePostFormUrlEncodedBodyTest extends CamelTestSupport {
+public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest {
     
     @Test
     public void testSendToJetty() throws Exception {
-        Exchange exchange = template.send("http://localhost:9080/myapp/myservice?query1=a&query2=b", new Processor() {
+        Exchange exchange = template.send("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", new Processor() {
 
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("b1=x&b2=y");
@@ -45,7 +44,7 @@ public class HttpBindingPreservePostFormUrlEncodedBodyTest extends CamelTestSupp
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice").process(new Processor() {
+                from("jetty:http://localhost:{{port}}/myapp/myservice").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         

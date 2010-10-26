@@ -18,13 +18,12 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
-public class JettyWithXPathChoiceTest extends CamelTestSupport {
+public class JettyWithXPathChoiceTest extends BaseJettyTest {
     protected MockEndpoint x;
     protected MockEndpoint y;
     protected MockEndpoint z;
@@ -51,7 +50,7 @@ public class JettyWithXPathChoiceTest extends CamelTestSupport {
     }
 
     private void sendBody(String body) {
-        template.sendBody("http://localhost:9080/myworld", body);
+        template.sendBody("http://localhost:{{port}}/myworld", body);
     }
 
     @Override
@@ -67,7 +66,7 @@ public class JettyWithXPathChoiceTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:9080/myworld")
+                from("jetty:http://localhost:{{port}}/myworld")
                     // use stream caching
                     .streamCaching()
                     .choice()

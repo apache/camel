@@ -22,21 +22,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HttpBridgeRouteTest extends CamelTestSupport {
+public class HttpBridgeRouteTest extends BaseJettyTest {
+
+    private int port1;
+    private int port2;
 
     @Test
     public void testHttpClient() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:9090/test/hello", new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
+        String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/test/hello",
+                new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
         assertEquals("Get a wrong response", "/", response);
         
-        response = template.requestBody("http://localhost:9080/hello/world", "hello", String.class);
+        response = template.requestBody("http://localhost:" + port1 + "/hello/world", "hello", String.class);
         assertEquals("Get a wrong response", "/hello/world", response);
         
         try {
-            template.requestBody("http://localhost:9090/hello/world", "hello", String.class);
+            template.requestBody("http://localhost:" + port2 + "/hello/world", "hello", String.class);
             fail("Expect exception here!");
         } catch (Exception ex) {
             assertTrue("We should get a RuntimeCamelException", ex instanceof RuntimeCamelException);
@@ -46,6 +49,9 @@ public class HttpBridgeRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                port1 = getPort();
+                port2 = getNextPort();
+
                 errorHandler(noErrorHandler());
 
                 Processor serviceProc = new Processor() {
@@ -55,10 +61,10 @@ public class HttpBridgeRouteTest extends CamelTestSupport {
                         exchange.getOut().setBody(uri);
                     }
                 };
-                from("jetty:http://localhost:9090/test/hello")
-                    .to("http://localhost:9080?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                from("jetty:http://localhost:" + port2 + "/test/hello")
+                    .to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
                 
-                from("jetty://http://localhost:9080?matchOnUriPrefix=true").process(serviceProc);
+                from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true").process(serviceProc);
             }
         };
     }    

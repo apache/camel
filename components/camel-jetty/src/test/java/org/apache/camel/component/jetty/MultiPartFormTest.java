@@ -23,17 +23,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
-import org.junit.Ignore;
 import org.junit.Test;
 
-public class MultiPartFormTest extends CamelTestSupport {
+public class MultiPartFormTest extends BaseJettyTest {
 
     @Test
     public void testSendMultiPartForm() throws Exception {
@@ -41,7 +39,7 @@ public class MultiPartFormTest extends CamelTestSupport {
 
         File file = new File("src/main/resources/META-INF/NOTICE.txt");
 
-        PostMethod httppost = new PostMethod("http://localhost:9080/test");
+        PostMethod httppost = new PostMethod("http://localhost:" + getPort() + "/test");
         Part[] parts = {
             new StringPart("comment", "A binary file of some kind"),
             new FilePart(file.getName(), file)
@@ -68,7 +66,7 @@ public class MultiPartFormTest extends CamelTestSupport {
                 // The option works rightly from Camel 2.4.0
                 getContext().getProperties().put("CamelJettyTempDir", "target");
                 
-                from("jetty://http://localhost:9080/test").process(new Processor() {
+                from("jetty://http://localhost:{{port}}/test").process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();

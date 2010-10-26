@@ -26,7 +26,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
@@ -34,7 +33,7 @@ import org.junit.Test;
  *
  * @version $Revision$
  */
-public class HttpProducerConcurrentTest extends CamelTestSupport {
+public class HttpProducerConcurrentTest extends BaseJettyTest {
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
@@ -56,7 +55,7 @@ public class HttpProducerConcurrentTest extends CamelTestSupport {
             final int index = i;
             Future out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    return template.requestBody("http://localhost:9080/echo", "" + index, String.class);
+                    return template.requestBody("http://localhost:{{port}}/echo", "" + index, String.class);
                 }
             });
             responses.put(index, out);
@@ -81,7 +80,7 @@ public class HttpProducerConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // expose a echo service
-                from("jetty:http://localhost:9080/echo")
+                from("jetty:http://localhost:{{port}}/echo")
                     .transform(body().append(body())).to("mock:result");
             }
         };

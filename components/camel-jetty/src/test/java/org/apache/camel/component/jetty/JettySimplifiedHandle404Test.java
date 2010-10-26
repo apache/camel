@@ -21,7 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
@@ -29,7 +28,7 @@ import org.junit.Test;
  *
  * @version $Revision$
  */
-public class JettySimplifiedHandle404Test extends CamelTestSupport {
+public class JettySimplifiedHandle404Test extends BaseJettyTest {
 
     @Test
     public void testSimulate404() throws Exception {
@@ -55,7 +54,7 @@ public class JettySimplifiedHandle404Test extends CamelTestSupport {
                 // HttpOperationFailedException in case of failures.
                 // This allows us to handle all responses in the aggregation strategy where we can check the HTTP response code
                 // and decide what to do. As this is based on an unit test we assert the code is 404
-                from("direct:start").enrich("http://localhost:8222/myserver?throwExceptionOnFailure=false&user=Camel", new AggregationStrategy() {
+                from("direct:start").enrich("http://localhost:{{port}}/myserver?throwExceptionOnFailure=false&user=Camel", new AggregationStrategy() {
                     public Exchange aggregate(Exchange original, Exchange resource) {
                         // get the response code
                         Integer code = resource.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
@@ -65,7 +64,7 @@ public class JettySimplifiedHandle404Test extends CamelTestSupport {
                 }).to("mock:result");
 
                 // this is our jetty server where we simulate the 404
-                from("jetty://http://localhost:8222/myserver")
+                from("jetty://http://localhost:{{port}}/myserver")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody("Page not found");

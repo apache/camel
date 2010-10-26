@@ -17,19 +17,19 @@
 package org.apache.camel.component.jetty.jettyproducer;
 
 import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerQueryParamTest extends CamelTestSupport {
+public class JettyHttpProducerQueryParamTest extends BaseJettyTest {
 
-    private String url = "jetty://http://0.0.0.0:9123/cheese";
+    private String url = "jetty://http://0.0.0.0:" + getPort() + "/cheese";
 
     @Test
     public void testQueryParameters() throws Exception {

@@ -20,16 +20,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerSimulate404ErrorTest extends CamelTestSupport {
+public class JettyHttpProducerSimulate404ErrorTest extends BaseJettyTest {
 
-    private String url = "jetty://http://0.0.0.0:9123/bar";
+    private String url = "jetty://http://0.0.0.0:" + getPort() + "/bar";
 
     @Test
     public void test404() throws Exception {
@@ -46,7 +45,7 @@ public class JettyHttpProducerSimulate404ErrorTest extends CamelTestSupport {
         } catch (Exception e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(404, cause.getStatusCode());
-            assertEquals("http//0.0.0.0:9123/bar", cause.getUri());
+            assertEquals("http//0.0.0.0:" + getPort() + "/bar", cause.getUri());
             assertEquals("Page not found", cause.getResponseBody());
             assertNotNull(cause.getResponseHeaders());
         }

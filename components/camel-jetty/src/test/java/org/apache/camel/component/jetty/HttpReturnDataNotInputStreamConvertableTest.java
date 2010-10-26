@@ -19,17 +19,16 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpReturnDataNotInputStreamConvertableTest extends CamelTestSupport {
+public class HttpReturnDataNotInputStreamConvertableTest extends BaseJettyTest {
 
     @Test
     public void testHttpReturnDataNotInputStreamConvertableTest() throws Exception {
-        String out = template.requestBody("http://localhost:9080/test", "Hello World", String.class);
+        String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
         assertEquals("This is the response", out);
     }
 
@@ -38,7 +37,7 @@ public class HttpReturnDataNotInputStreamConvertableTest extends CamelTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:9080/test")
+                from("jetty://http://localhost:{{port}}/test")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().setBody(new MyResponseBean());

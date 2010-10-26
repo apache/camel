@@ -22,18 +22,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpConverter;
 import org.apache.camel.component.http.HttpMessage;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpConverterTest extends CamelTestSupport {
+public class HttpConverterTest extends BaseJettyTest {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -45,7 +43,7 @@ public class HttpConverterTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:9080/test")
+                from("jetty://http://localhost:{{port}}/test")
                         // add this node to make sure the convert can work within DefaultMessageImpl
                         .convertBodyTo(String.class)             
                         .process(new Processor() {
@@ -62,7 +60,7 @@ public class HttpConverterTest extends CamelTestSupport {
         });
         context.start();
 
-        String out = template.requestBody("http://localhost:9080/test", "Hello World", String.class);
+        String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
         assertEquals("Bye World", out);
     }
 
@@ -71,7 +69,7 @@ public class HttpConverterTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:9080/test").
+                from("jetty://http://localhost:{{port}}/test").
                         process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 HttpMessage msg = exchange.getIn(HttpMessage.class);
@@ -89,7 +87,7 @@ public class HttpConverterTest extends CamelTestSupport {
         });
         context.start();
 
-        String out = template.requestBody("http://localhost:9080/test", "Hello World", String.class);
+        String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
         assertEquals("Bye World", out);
     }
 
@@ -98,7 +96,7 @@ public class HttpConverterTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:9080/test").
+                from("jetty://http://localhost:{{port}}/test").
                         process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 HttpMessage msg = exchange.getIn(HttpMessage.class);
@@ -114,7 +112,7 @@ public class HttpConverterTest extends CamelTestSupport {
         });
         context.start();
 
-        String out = template.requestBody("http://localhost:9080/test", "Hello World", String.class);
+        String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
         assertEquals("Bye World", out);
     }
 

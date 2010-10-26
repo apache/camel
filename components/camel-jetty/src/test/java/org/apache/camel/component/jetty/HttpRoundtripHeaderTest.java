@@ -29,11 +29,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HttpRoundtripHeaderTest extends CamelTestSupport {
-    protected final String uri = "http://localhost:8088/WhichWillGetCloseException";
+public class HttpRoundtripHeaderTest extends BaseJettyTest {
+    protected final String uri = "http://localhost:" + getPort() + "/WhichWillGetCloseException";
     protected final String jettyUri = "jetty:" + uri;
     protected final String outputText = ":output";
     protected String inputText = "input";

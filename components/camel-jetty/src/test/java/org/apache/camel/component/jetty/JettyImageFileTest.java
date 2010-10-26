@@ -22,17 +22,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.MessageHelper;
 import org.junit.Test;
 
 /**
  * Unit test for exposing a http server that returns images
  */
-public class JettyImageFileTest extends CamelTestSupport {
+public class JettyImageFileTest extends BaseJettyTest {
     
     private void sendImageContent(boolean usingGZip) throws Exception {
-        Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
+        Endpoint endpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice");
         Exchange exchange = endpoint.createExchange();        
         if (usingGZip) {
             exchange.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
@@ -57,7 +56,7 @@ public class JettyImageFileTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice").process(new MyImageService());
+                from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyImageService());
             }
         };
     }

@@ -24,23 +24,22 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.DefaultHttpBinding;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test for http binding ref option.
  */
-public class JettyHttpBindingRefTest extends CamelTestSupport {
+public class JettyHttpBindingRefTest extends BaseJettyTest {
 
     @Test
     public void testDefaultHttpBinding() throws Exception {
-        Object out = template.requestBody("http://localhost:9080/myapp/myservice", "Hello World");
+        Object out = template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, out));
     }
 
     @Test
     public void testCustomHttpBinding() throws Exception {
-        Object out = template.requestBody("http://localhost:9081/myapp/myotherservice", "Hello World");
+        Object out = template.requestBody("http://localhost:{{port}}/myapp/myotherservice", "Hello World");
         assertEquals("Something went wrong but we dont care", context.getTypeConverter().convertTo(String.class, out));
     }
 
@@ -59,9 +58,9 @@ public class JettyHttpBindingRefTest extends CamelTestSupport {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
 
-                from("jetty:http://localhost:9080/myapp/myservice?httpBindingRef=default").transform().constant("Bye World");
+                from("jetty:http://localhost:{{port}}/myapp/myservice?httpBindingRef=default").transform().constant("Bye World");
 
-                from("jetty:http://localhost:9081/myapp/myotherservice?httpBindingRef=myownbinder").process(new Processor() {
+                from("jetty:http://localhost:{{port}}/myapp/myotherservice?httpBindingRef=myownbinder").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new IllegalStateException("Not implemented");
                     }

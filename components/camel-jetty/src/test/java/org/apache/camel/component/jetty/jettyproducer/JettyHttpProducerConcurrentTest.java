@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,7 +36,7 @@ import org.junit.Test;
  *
  * @version $Revision$
  */
-public class JettyHttpProducerConcurrentTest extends CamelTestSupport {
+public class JettyHttpProducerConcurrentTest extends BaseJettyTest {
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
@@ -73,7 +74,7 @@ public class JettyHttpProducerConcurrentTest extends CamelTestSupport {
             final int index = i;
             Future out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    return template.requestBody("jetty://http://localhost:9080/echo", "" + index, String.class);
+                    return template.requestBody("jetty://http://localhost:{{port}}/echo", "" + index, String.class);
                 }
             });
             responses.put(index, out);
@@ -97,7 +98,7 @@ public class JettyHttpProducerConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // expose a echo service
-                from("jetty:http://localhost:9080/echo")
+                from("jetty:http://localhost:{{port}}/echo")
                         .convertBodyTo(String.class)
                         .to("log:input")
                         .transform(body().append(body())).to("mock:result");

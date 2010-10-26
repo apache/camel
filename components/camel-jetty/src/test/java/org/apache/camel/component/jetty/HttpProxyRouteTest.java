@@ -17,12 +17,11 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.junit.Test;
 
-public class HttpProxyRouteTest extends CamelTestSupport {
+public class HttpProxyRouteTest extends BaseJettyTest {
 
     private int size = 500;
 
@@ -32,7 +31,7 @@ public class HttpProxyRouteTest extends CamelTestSupport {
 
         StopWatch watch = new StopWatch();
         for (int i = 0; i < size; i++) {
-            String out = template.requestBody("http://localhost:9080/hello?foo=" + i, null, String.class);
+            String out = template.requestBody("http://localhost:{{port}}/hello?foo=" + i, null, String.class);
             assertEquals("Bye " + i, out);
         }
 
@@ -42,10 +41,10 @@ public class HttpProxyRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty://http://localhost:9080/hello")
-                    .to("http://localhost:9080/bye?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                from("jetty://http://localhost:{{port}}/hello")
+                    .to("http://localhost:{{port}}/bye?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
-                from("jetty://http://localhost:9080/bye").transform(header("foo").prepend("Bye "));
+                from("jetty://http://localhost:{{port}}/bye").transform(header("foo").prepend("Bye "));
             }
         };
     }    

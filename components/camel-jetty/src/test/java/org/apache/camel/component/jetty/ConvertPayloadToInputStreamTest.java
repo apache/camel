@@ -18,17 +18,17 @@ package org.apache.camel.component.jetty;
 
 import java.io.InputStream;
 import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class ConvertPayloadToInputStreamTest extends CamelTestSupport {
+public class ConvertPayloadToInputStreamTest extends BaseJettyTest {
     protected String expectedBody = "<hello>world!</hello>";
 
     @Test
@@ -36,7 +36,7 @@ public class ConvertPayloadToInputStreamTest extends CamelTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
 
-        template.requestBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
+        template.requestBodyAndHeader("http://localhost:{{port}}/test", expectedBody, "Content-Type", "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
@@ -55,7 +55,7 @@ public class ConvertPayloadToInputStreamTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:9080/test").
+                from("jetty:http://localhost:{{port}}/test").
                         convertBodyTo(InputStream.class).
                         to("mock:result");
             }

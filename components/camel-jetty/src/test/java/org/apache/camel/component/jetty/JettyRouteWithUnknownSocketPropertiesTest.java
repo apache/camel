@@ -20,10 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JettyRouteWithUnknownSocketPropertiesTest extends CamelTestSupport {
+public class JettyRouteWithUnknownSocketPropertiesTest extends BaseJettyTest {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -49,7 +48,7 @@ public class JettyRouteWithUnknownSocketPropertiesTest extends CamelTestSupport 
                 // add jetty to camel context
                 context.addComponent("jetty", jetty);
 
-                from("jetty:http://localhost:9080/myapp/myservice").to("log:foo");
+                from("jetty:http://localhost:{{port}}/myapp/myservice").to("log:foo");
             }
         });
         try {

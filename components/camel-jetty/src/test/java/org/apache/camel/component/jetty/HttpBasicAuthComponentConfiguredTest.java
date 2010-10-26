@@ -19,7 +19,6 @@ package org.apache.camel.component.jetty;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
@@ -29,7 +28,6 @@ import org.apache.camel.component.http.AuthMethod;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConfiguration;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.http.security.Constraint;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
@@ -41,7 +39,7 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-public class HttpBasicAuthComponentConfiguredTest extends CamelTestSupport {
+public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -71,7 +69,7 @@ public class HttpBasicAuthComponentConfiguredTest extends CamelTestSupport {
 
     @Test
     public void testHttpBasicAuth() throws Exception {
-        String out = template.requestBody("http://localhost:9080/test", "Hello World", String.class);
+        String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
         assertEquals("Bye World", out);
     }
 
@@ -88,7 +86,7 @@ public class HttpBasicAuthComponentConfiguredTest extends CamelTestSupport {
                 HttpComponent http = context.getComponent("http", HttpComponent.class);
                 http.setHttpConfiguration(config);
 
-                from("jetty://http://localhost:9080/test?handlers=myAuthHandler")
+                from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);

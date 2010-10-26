@@ -18,15 +18,14 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test based on Steve request for CAMEL-877.
  */
-public class JettySteveIssueTest extends CamelTestSupport {
+public class JettySteveIssueTest extends BaseJettyTest {
 
-    private String serverUri = "http://localhost:9080/myservice";
+    private String serverUri = "http://localhost:" + getPort() + "/myservice";
 
     @Test
     public void testSendX() throws Exception {

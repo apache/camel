@@ -24,13 +24,12 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpPollingGetTest extends CamelTestSupport {
+public class HttpPollingGetTest extends BaseJettyTest {
 
     protected String expectedText = "<html";
 
@@ -63,9 +62,9 @@ public class HttpPollingGetTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("http://localhost:5431/myservice?delay=5000").to("mock:results");
+                from("http://localhost:{{port}}/myservice?delay=5000").to("mock:results");
 
-                from("jetty:http://localhost:5431/myservice").process(new Processor() {
+                from("jetty:http://localhost:{{port}}/myservice").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody("<html>Bye World</html>");
                     }

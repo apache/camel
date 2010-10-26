@@ -21,25 +21,24 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpRedirectTest extends CamelTestSupport {
+public class HttpRedirectTest extends BaseJettyTest {
 
     @Test
     public void testHttpRedirect() throws Exception {
         try {
-            template.requestBody("http://localhost:9080/test", "Hello World", String.class);
+            template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(301, cause.getStatusCode());
             assertEquals(true, cause.isRedirectError());
             assertEquals(true, cause.hasRedirectLocation());
-            assertEquals("http://localhost:9080/newtest", cause.getRedirectLocation());
+            assertEquals("http://localhost:" + getPort() + "/newtest", cause.getRedirectLocation());
         }
     }
 
@@ -48,11 +47,11 @@ public class HttpRedirectTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:9080/test")
+                from("jetty://http://localhost:{{port}}/test")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);
-                            exchange.getOut().setHeader("location", "http://localhost:9080/newtest");
+                            exchange.getOut().setHeader("location", "http://localhost:" + getPort() + "/newtest");
                         }
                     });
             }

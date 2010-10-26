@@ -20,10 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JettyRouteWithUnknownSslSocketPropertiesTest extends CamelTestSupport {
+public class JettyRouteWithUnknownSslSocketPropertiesTest extends BaseJettyTest {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -49,7 +48,7 @@ public class JettyRouteWithUnknownSslSocketPropertiesTest extends CamelTestSuppo
                 // add jetty to camel context
                 context.addComponent("jetty", jetty);
 
-                from("jetty:https://localhost:9080/myapp/myservice").to("log:foo");
+                from("jetty:https://localhost:{{port}}/myapp/myservice").to("log:foo");
             }
         });
         try {

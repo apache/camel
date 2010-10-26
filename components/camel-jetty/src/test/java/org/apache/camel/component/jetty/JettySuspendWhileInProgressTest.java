@@ -23,17 +23,14 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
  * @version $Revision$
  */
-public class JettySuspendWhileInProgressTest extends CamelTestSupport {
+public class JettySuspendWhileInProgressTest extends BaseJettyTest {
 
-    private String serverUri = "http://localhost:9185/cool";
+    private String serverUri = "http://localhost:" + getPort() + "/cool";
 
     @Test
     public void testJettySuspendWhileInProgress() throws Exception {

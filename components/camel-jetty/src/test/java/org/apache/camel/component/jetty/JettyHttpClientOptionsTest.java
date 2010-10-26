@@ -19,24 +19,23 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpProducer;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test for http client options.
  */
-public class JettyHttpClientOptionsTest extends CamelTestSupport {
+public class JettyHttpClientOptionsTest extends BaseJettyTest {
 
     @Test
     public void testCustomHttpBinding() throws Exception {
         // assert jetty was configured with our timeout
-        HttpEndpoint jettyEndpoint = context.getEndpoint("http://localhost:8080/myapp/myservice?httpClient.soTimeout=5555", HttpEndpoint.class);
+        HttpEndpoint jettyEndpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice?httpClient.soTimeout=5555", HttpEndpoint.class);
         assertNotNull("Jetty endpoint should not be null ", jettyEndpoint);
         HttpProducer producer = (HttpProducer)jettyEndpoint.createProducer();
         assertEquals("Get the wrong http client parameter", 5555, producer.getHttpClient().getParams().getSoTimeout());
 
         // send and receive
-        Object out = template.requestBody("http://localhost:9080/myapp/myservice", "Hello World");
+        Object out = template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, out));
     }
 
@@ -45,7 +44,7 @@ public class JettyHttpClientOptionsTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice?httpClient.soTimeout=5555").transform().constant("Bye World");
+                from("jetty:http://localhost:{{port}}/myapp/myservice?httpClient.soTimeout=5555").transform().constant("Bye World");
             }
         };
     }

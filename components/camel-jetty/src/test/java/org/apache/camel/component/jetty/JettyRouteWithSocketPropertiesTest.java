@@ -23,17 +23,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test for wiki demonstration.
  */
-public class JettyRouteWithSocketPropertiesTest extends CamelTestSupport {
+public class JettyRouteWithSocketPropertiesTest extends BaseJettyTest {
 
     @Test
     public void testSendToJetty() throws Exception {
-        Object response = template.requestBody("http://localhost:9080/myapp/myservice", "bookid=123");
+        Object response = template.requestBody("http://localhost:{{port}}/myapp/myservice", "bookid=123");
         // convert the response to a String
         String body = context.getTypeConverter().convertTo(String.class, response);
         assertEquals("<html><body>Book 123 is Camel in Action</body></html>", body);
@@ -58,7 +57,7 @@ public class JettyRouteWithSocketPropertiesTest extends CamelTestSupport {
                 context.addComponent("jetty", jetty);
                 // END SNIPPET: e1
 
-                from("jetty:http://localhost:9080/myapp/myservice").process(new MyBookService());
+                from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
             }
         };
     }

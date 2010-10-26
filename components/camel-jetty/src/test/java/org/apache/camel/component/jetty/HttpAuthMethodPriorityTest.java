@@ -19,10 +19,8 @@ package org.apache.camel.component.jetty;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
@@ -30,7 +28,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.http.security.Constraint;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
@@ -42,7 +39,7 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-public class HttpAuthMethodPriorityTest extends CamelTestSupport {
+public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -72,20 +69,20 @@ public class HttpAuthMethodPriorityTest extends CamelTestSupport {
 
     @Test
     public void testAuthMethodPriorityBasicDigest() throws Exception {
-        String out = template.requestBody("http://localhost:9080/test?authMethod=Basic&authMethodPriority=Basic,Digest&authUsername=donald&authPassword=duck", "Hello World", String.class);
+        String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,Digest&authUsername=donald&authPassword=duck", "Hello World", String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
     public void testAuthMethodPriorityNTLMBasic() throws Exception {
-        String out = template.requestBody("http://localhost:9080/test?authMethod=Basic&authMethodPriority=NTLM,Basic&authUsername=donald&authPassword=duck", "Hello World", String.class);
+        String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM,Basic&authUsername=donald&authPassword=duck", "Hello World", String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
     public void testAuthMethodPriorityInvalid() throws Exception {
         try {
-            template.requestBody("http://localhost:9080/test?authMethod=Basic&authMethodPriority=Basic,foo&authUsername=donald&authPassword=duck", "Hello World", String.class);
+            template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,foo&authUsername=donald&authPassword=duck", "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (FailedToCreateProducerException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
@@ -96,7 +93,7 @@ public class HttpAuthMethodPriorityTest extends CamelTestSupport {
     @Test
     public void testAuthMethodPriorityNTLM() throws Exception {
         try {
-            template.requestBody("http://localhost:9080/test?authMethod=Basic&authMethodPriority=NTLM&authUsername=donald&authPassword=duck", "Hello World", String.class);
+            template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM&authUsername=donald&authPassword=duck", "Hello World", String.class);
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(401, cause.getStatusCode());
@@ -108,7 +105,7 @@ public class HttpAuthMethodPriorityTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:9080/test?handlers=myAuthHandler")
+                from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
