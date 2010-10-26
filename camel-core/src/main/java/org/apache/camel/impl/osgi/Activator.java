@@ -21,7 +21,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
@@ -266,7 +278,9 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             super(bundle, TypeConverter.class);
         }
 
-        public void load(TypeConverterRegistry registry) throws Exception {
+        public synchronized void load(TypeConverterRegistry registry) throws Exception {
+            // must be synchronized to ensure we don't load type converters concurrently
+            // which cause Camel apps to fails in OSGi thereafter
             loader.load(registry);
         }
 
