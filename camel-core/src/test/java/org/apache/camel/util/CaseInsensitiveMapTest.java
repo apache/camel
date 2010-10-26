@@ -25,6 +25,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 
@@ -433,6 +437,43 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(true, other.containsKey("bar"));
         assertEquals(false, other.containsKey("BAR"));
         assertEquals(2, other.size());
+    }
+
+    public void testConcurrent() throws Exception {
+        ExecutorService service = Executors.newFixedThreadPool(5);
+
+        final CountDownLatch latch = new CountDownLatch(1000);
+        final Map<String, Object> map = new CaseInsensitiveMap();
+
+        // do some stuff concurrently
+        for (int i = 0; i < 1000; i++) {
+            final int count = i;
+            service.submit(new Runnable() {
+                public void run() {
+                    Map<String, Object> foo = new CaseInsensitiveMap();
+                    foo.put("counter" + count, count);
+                    foo.put("foo", 123);
+                    foo.put("bar", 456);
+                    foo.put("cake", "cheese");
+
+                    // copy foo to map as map is a shared resource
+                    map.putAll(foo);
+
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await(10, TimeUnit.SECONDS);
+
+        assertEquals(1003, map.size());
+        assertEquals(true, map.containsKey("counter0"));
+        assertEquals(true, map.containsKey("counter500"));
+        assertEquals(true, map.containsKey("counter999"));
+
+        assertEquals(123, map.get("FOO"));
+        assertEquals(456, map.get("Bar"));
+        assertEquals("cheese", map.get("cAKe"));
     }
 
 }
