@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.security.Key;
 import java.util.Collections;
 import java.util.Map;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
@@ -67,14 +66,14 @@ public class CryptoDataFormatTest extends ContextTestSupport {
 
         MockEndpoint mock = setupExpectations(context, 1, "mock:unencrypted");
         Exchange encrypted = getMandatoryEndpoint("direct:key-in-header-decrypt").createExchange();
-        encrypted.getIn().copyFrom(unecrypted.getOut());
+        encrypted.getIn().copyFrom(unecrypted.getIn());
         encrypted.getIn().setHeader(CryptoDataFormat.KEY, key);
         template.send("direct:key-in-header-decrypt", encrypted);
-        awaitAndAssert(mock);
+
+        assertMockEndpointsSatisfied();
 
         Exchange received = mock.getReceivedExchanges().get(0);
         validateHeaderIsCleared(received);
-
     }
 
     private void validateHeaderIsCleared(Exchange ex) {
@@ -88,13 +87,14 @@ public class CryptoDataFormatTest extends ContextTestSupport {
     }
 
     private void doRoundTripEncryptionTests(String endpoint, Map<String, Object> headers) throws Exception, InterruptedException, InvalidPayloadException {
-
         MockEndpoint encrypted = setupExpectations(context, 3, "mock:encrypted");
         MockEndpoint unencrypted = setupExpectations(context, 3, "mock:unencrypted");
+
         String payload = "Hi Alice, Be careful Eve is listening, signed Bob";
         template.sendBodyAndHeaders(endpoint, payload, headers);
         template.sendBodyAndHeaders(endpoint, payload.getBytes(), headers);
         template.sendBodyAndHeaders(endpoint, new ByteArrayInputStream(payload.getBytes()), headers);
+
         assertMocksSatisfied(encrypted, unencrypted, payload);
     }
 
@@ -112,63 +112,87 @@ public class CryptoDataFormatTest extends ContextTestSupport {
 
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         return new RouteBuilder[] {new RouteBuilder() {
-            @Override
             public void configure() throws Exception {
                 // START SNIPPET: basic
                 KeyGenerator generator = KeyGenerator.getInstance("DES");
+
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", generator.generateKey());
-                from("direct:basic-encryption").marshal(cryptoFormat).to("mock:encrypted").unmarshal(cryptoFormat).to("mock:unencrypted");
+
+                from("direct:basic-encryption")
+                    .marshal(cryptoFormat)
+                    .to("mock:encrypted")
+                    .unmarshal(cryptoFormat)
+                    .to("mock:unencrypted");
                 // END SNIPPET: basic
             }
         }, new RouteBuilder() {
-            @Override
             public void configure() throws Exception {
                 // START SNIPPET: init-vector
                 KeyGenerator generator = KeyGenerator.getInstance("DES");
                 byte[] initializationVector = new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES/CBC/PKCS5Padding", generator.generateKey());
                 cryptoFormat.setInitializationVector(initializationVector);
-                from("direct:init-vector").marshal(cryptoFormat).to("mock:encrypted").unmarshal(cryptoFormat).to("mock:unencrypted");
+
+                from("direct:init-vector")
+                    .marshal(cryptoFormat)
+                    .to("mock:encrypted")
+                    .unmarshal(cryptoFormat)
+                    .to("mock:unencrypted");
                 // END SNIPPET: init-vector
             }
         }, new RouteBuilder() {
-
             public void configure() throws Exception {
                 // START SNIPPET: inline-init-vector
                 KeyGenerator generator = KeyGenerator.getInstance("DES");
                 byte[] initializationVector = new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
                 SecretKey key = generator.generateKey();
+
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES/CBC/PKCS5Padding", key);
                 cryptoFormat.setInitializationVector(initializationVector);
                 cryptoFormat.setShouldInlineInitializationVector(true);
                 CryptoDataFormat decryptFormat = new CryptoDataFormat("DES/CBC/PKCS5Padding", key);
                 decryptFormat.setShouldInlineInitializationVector(true);
-                from("direct:inline").marshal(cryptoFormat).to("mock:encrypted").unmarshal(decryptFormat).to("mock:unencrypted");
+
+                from("direct:inline")
+                    .marshal(cryptoFormat)
+                    .to("mock:encrypted")
+                    .unmarshal(decryptFormat)
+                    .to("mock:unencrypted");
                 // END SNIPPET: inline-init-vector
             }
         }, new RouteBuilder() {
-
             public void configure() throws Exception {
                 // START SNIPPET: hmac
                 KeyGenerator generator = KeyGenerator.getInstance("DES");
+
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", generator.generateKey());
                 cryptoFormat.setShouldAppendHMAC(true);
-                from("direct:hmac").marshal(cryptoFormat).to("mock:encrypted").unmarshal(cryptoFormat).to("mock:unencrypted");
+
+                from("direct:hmac")
+                    .marshal(cryptoFormat)
+                    .to("mock:encrypted")
+                    .unmarshal(cryptoFormat)
+                    .to("mock:unencrypted");
                 // END SNIPPET: hmac
             }
         }, new RouteBuilder() {
-
             public void configure() throws Exception {
                 // START SNIPPET: hmac-algorithm
                 KeyGenerator generator = KeyGenerator.getInstance("DES");
+
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", generator.generateKey());
                 cryptoFormat.setShouldAppendHMAC(true);
                 cryptoFormat.setMacAlgorithm("HmacMD5");
-                from("direct:hmac-algorithm").marshal(cryptoFormat).to("mock:encrypted").unmarshal(cryptoFormat).to("mock:unencrypted");
+
+                from("direct:hmac-algorithm")
+                    .marshal(cryptoFormat)
+                    .to("mock:encrypted")
+                    .unmarshal(cryptoFormat)
+                    .to("mock:unencrypted");
                 // END SNIPPET: hmac-algorithm
             }
         }, new RouteBuilder() {
-
             public void configure() throws Exception {
                 // START SNIPPET: key-in-header
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", null);
@@ -179,11 +203,12 @@ public class CryptoDataFormatTest extends ContextTestSupport {
                  * arguably better as the key is left in the header when you use
                  * the DSL leaks the fact that camel encryption was used.
                  */
-                from("direct:key-in-header-encrypt").marshal(cryptoFormat).setHeader(CryptoDataFormat.KEY, constant(null)).setOutHeader(CryptoDataFormat.KEY, constant(null))
+                from("direct:key-in-header-encrypt")
+                    .marshal(cryptoFormat)
+                    .removeHeader(CryptoDataFormat.KEY)
                     .to("mock:encrypted");
 
                 from("direct:key-in-header-decrypt").unmarshal(cryptoFormat).process(new Processor() {
-
                     public void process(Exchange exchange) throws Exception {
                         exchange.getIn().getHeaders().remove(CryptoDataFormat.KEY);
                         exchange.getOut().copyFrom(exchange.getIn());
@@ -195,7 +220,6 @@ public class CryptoDataFormatTest extends ContextTestSupport {
     }
 
     private void awaitAndAssert(MockEndpoint mock) throws InterruptedException {
-        mock.await();
         mock.assertIsSatisfied();
     }
 
@@ -204,4 +228,5 @@ public class CryptoDataFormatTest extends ContextTestSupport {
         mockEp.expectedMessageCount(expected);
         return mockEp;
     }
+
 }

@@ -33,6 +33,7 @@ import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 /**
  * @version $Revision$
  */
+@Ignore("AMQP testing is a bit unstable")
 public class AMQPRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
     
@@ -54,7 +55,6 @@ public class AMQPRouteTest extends CamelTestSupport {
     
 
     @Test
-    @Ignore("AMQP testing is a bit unstable")
     public void testJmsRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
 
@@ -80,7 +80,6 @@ public class AMQPRouteTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore("AMQP testing is a bit unstable")
     public void testJmsRouteWithObjectMessage() throws Exception {
         PurchaseOrder expectedBody = new PurchaseOrder("Beer", 10);
 
@@ -93,7 +92,6 @@ public class AMQPRouteTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore("AMQP testing is a bit unstable")
     public void testJmsRouteWithByteArrayMessage() throws Exception {
         PurchaseOrder aPO = new PurchaseOrder("Beer", 10);
         byte[] expectedBody = SerializationUtils.serialize(aPO);

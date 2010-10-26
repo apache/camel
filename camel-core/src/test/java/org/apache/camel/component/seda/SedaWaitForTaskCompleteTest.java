@@ -47,7 +47,7 @@ public class SedaWaitForTaskCompleteTest extends ContextTestSupport {
                 exchange.setPattern(ExchangePattern.InOnly);
             }
         });
-        assertEquals("Bye World", out.getOut().getBody());
+        assertEquals("Bye World", out.getIn().getBody());
 
         assertMockEndpointsSatisfied();
     }

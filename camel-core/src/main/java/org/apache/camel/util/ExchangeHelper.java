@@ -208,11 +208,15 @@ public final class ExchangeHelper {
                 // have created any OUT; such as a mock:endpoint
                 // so lets assume the last IN is the OUT
                 if (result.getPattern().isOutCapable()) {
-                    // only set OUT if its OUT capable
+                    // only set OUT if its OUT capable or already has OUT
                     result.getOut().copyFrom(source.getIn());
                 } else {
                     // if not replace IN instead to keep the MEP
                     result.getIn().copyFrom(source.getIn());
+                    // clear any existing OUT as the result is on the IN
+                    if (result.hasOut()) {
+                        result.setOut(null);
+                    }
                 }
             }
 

@@ -58,7 +58,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Exchange result = future.get();
 
         long delta = System.currentTimeMillis() - start;
-        assertEquals("Hello World", result.getOut().getBody());
+        assertEquals("Hello World", result.getIn().getBody());
         assertTrue("Should take longer than: " + delta, delta > 250);
 
         assertMockEndpointsSatisfied();
@@ -79,7 +79,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Exchange result = future.get();
 
         long delta = System.currentTimeMillis() - start;
-        assertEquals("Hello World", result.getOut().getBody());
+        assertEquals("Hello World", result.getIn().getBody());
         assertTrue("Should take longer than: " + delta, delta > 250);
     }
 

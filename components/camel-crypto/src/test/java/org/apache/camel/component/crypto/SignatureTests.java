@@ -27,7 +27,6 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -37,9 +36,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 
 import static org.apache.camel.component.crypto.DigitalSignatureConstants.KEYSTORE_ALIAS;
 import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY;
@@ -52,7 +48,6 @@ public class SignatureTests extends ContextTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%c - %m%n")));
         JndiRegistry registry = super.createRegistry();
         KeyStore keystore = loadKeystore();
         Certificate cert = keystore.getCertificate("bob");
@@ -144,25 +139,25 @@ public class SignatureTests extends ContextTestSupport {
     public void testBasicSignatureRoute() throws Exception {
         MockEndpoint mock = setupMock();
         sendBody("direct:keypair", payload);
-        verify(mock);
+        assertMockEndpointsSatisfied();
     }
 
     public void testSetAlgorithmInRouteDefinition() throws Exception {
         MockEndpoint mock = setupMock();
         sendBody("direct:algorithm", payload);
-        verify(mock);
+        assertMockEndpointsSatisfied();
     }
 
     public void testSetBufferInRouteDefinition() throws Exception {
         MockEndpoint mock = setupMock();
         sendBody("direct:buffersize", payload);
-        verify(mock);
+        assertMockEndpointsSatisfied();
     }
 
     public void testSetRandomInRouteDefinition() throws Exception {
         MockEndpoint mock = setupMock();
         sendBody("direct:random", payload);
-        verify(mock);
+        assertMockEndpointsSatisfied();
     }
 
     public void testSetProviderInRouteDefinition() throws Exception {
@@ -172,19 +167,19 @@ public class SignatureTests extends ContextTestSupport {
         // can only be run on SUN JDK
         MockEndpoint mock = setupMock();
         sendBody("direct:provider", payload);
-        verify(mock);
+        assertMockEndpointsSatisfied();
     }
 
     public void testSetCertificateInRouteDefinition() throws Exception {
         MockEndpoint mock = setupMock();
         sendBody("direct:certificate", payload);
-        verify(mock);
+        assertMockEndpointsSatisfied();
     }
 
     public void testSetKeystoreInRouteDefinition() throws Exception {
         MockEndpoint mock = setupMock();
         sendBody("direct:keystore", payload);
-        verify(mock);
+        assertMockEndpointsSatisfied();
     }
 
     public void testSignatureHeaderInRouteDefinition() throws Exception {
@@ -192,12 +187,14 @@ public class SignatureTests extends ContextTestSupport {
         Exchange signed = getMandatoryEndpoint("direct:signature-header").createExchange();
         signed.getIn().setBody(payload);
         template.send("direct:signature-header", signed);
-        assertNotNull(signed.getOut().getHeader("AnotherDigitalSignature"));
-        verify(mock);
+        assertNotNull(signed.getIn().getHeader("AnotherDigitalSignature"));
+
+        assertMockEndpointsSatisfied();
     }
 
     public void testProvideAliasInHeader() throws Exception {
         MockEndpoint mock = setupMock();
+
         // START SNIPPET: alias-send
         Exchange unsigned = getMandatoryEndpoint("direct:alias-sign").createExchange();
         unsigned.getIn().setBody(payload);
@@ -211,8 +208,7 @@ public class SignatureTests extends ContextTestSupport {
         template.send("direct:alias-verify", signed);
         // START SNIPPET: alias-send
 
-        verify(mock);
-
+        assertMockEndpointsSatisfied();
     }
 
     public void testProvideKeysInHeader() throws Exception {
@@ -232,7 +228,8 @@ public class SignatureTests extends ContextTestSupport {
         signed.getIn().copyFrom(unsigned.getOut());
         signed.getIn().setHeader(SIGNATURE_PUBLIC_KEY_OR_CERT, pair.getPublic());
         template.send("direct:headerkey-verify", signed);
-        verify(mock);
+
+        assertMockEndpointsSatisfied();
     }
 
     public void testProvideCertificateInHeader() throws Exception {
@@ -254,11 +251,8 @@ public class SignatureTests extends ContextTestSupport {
         signed.getIn().copyFrom(unsigned.getOut());
         signed.getIn().setHeader(SIGNATURE_PUBLIC_KEY_OR_CERT, certificate);
         template.send("direct:headerkey-verify", signed);
-        verify(mock);
-    }
 
-    private void verify(MockEndpoint mock) throws InterruptedException {
-        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock);
+        assertMockEndpointsSatisfied();
     }
 
     private MockEndpoint setupMock() {
@@ -287,7 +281,7 @@ public class SignatureTests extends ContextTestSupport {
             } else {
                 template.sendBodyAndHeaders("direct:in", payload, headers);
             }
-            verify(mock);
+            assertMockEndpointsSatisfied();
             return mock.getReceivedExchanges().get(0);
         } finally {
             context.stop();

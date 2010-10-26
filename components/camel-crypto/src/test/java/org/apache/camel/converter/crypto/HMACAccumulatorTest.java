@@ -135,7 +135,6 @@ public class HMACAccumulatorTest {
 
     private void assertMacs(byte[] expected, byte[] actual) {
         assertEquals(HexUtils.byteArrayToHexString(expected), HexUtils.byteArrayToHexString(actual));
-
     }
 
     @Test
