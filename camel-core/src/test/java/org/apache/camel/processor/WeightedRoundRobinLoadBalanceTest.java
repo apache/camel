@@ -16,14 +16,10 @@
  */
 package org.apache.camel.processor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint x;
@@ -38,18 +34,13 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
         y = getMockEndpoint("mock:y");
         z = getMockEndpoint("mock:z");
     }
-
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.ContextTestSupport#isUseRouteBuilder()
-     */
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
     public void testRoundRobin() throws Exception {
-
         x.expectedMessageCount(5);
         y.expectedMessageCount(2);
         z.expectedMessageCount(1);
@@ -57,8 +48,9 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").loadBalance().
-                weighted(true, "4:2:1").to("mock:x", "mock:y", "mock:z");
+                from("direct:start")
+                    .loadBalance().weighted(true, "4:2:1")
+                        .to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
@@ -73,7 +65,6 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
     }
 
     public void testRoundRobin2() throws Exception {
-
         x.expectedMessageCount(3);
         y.expectedMessageCount(1);
         z.expectedMessageCount(3);
@@ -82,8 +73,9 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
             public void configure() {
                 
                 // START SNIPPET: example
-                from("direct:start").loadBalance().
-                weighted(true, "2, 1, 3", ",").to("mock:x", "mock:y", "mock:z");
+                from("direct:start")
+                    .loadBalance().weighted(true, "2, 1, 3", ",")
+                        .to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
@@ -106,8 +98,9 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").loadBalance().
-                weighted(true, "2-3-5", "-").to("mock:x", "mock:y", "mock:z");
+                from("direct:start")
+                    .loadBalance().weighted(true, "2-3-5", "-")
+                        .to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
@@ -124,16 +117,16 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
         try {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
-                    
                     // START SNIPPET: example
-                    from("direct:start").loadBalance().
-                    weighted(true, "2:3").to("mock:x", "mock:y", "mock:z");
+                    from("direct:start")
+                        .loadBalance().weighted(true, "2:3")
+                            .to("mock:x", "mock:y", "mock:z");
                     // END SNIPPET: example
                 }
             });
             context.start();
-        } catch (CamelException e) {
-            assertEquals("Listed Load Balance Processors do not match Distribution Ratio.", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            assertEquals("Loadbalacing with 3 should match number of distributions 2", e.getMessage());
             error = true;
         }
 
@@ -156,12 +149,4 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
         return "<message>" + counter + "</message>";
     }
 
-    protected Object[] listOfMessages(int... counters) {
-        List<String> list = new ArrayList<String>(counters.length);
-        for (int counter : counters) {
-            list.add(createTestMessage(counter));
-        }
-        return list.toArray();
-    }
-    
 }

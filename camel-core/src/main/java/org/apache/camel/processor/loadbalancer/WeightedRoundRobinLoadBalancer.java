@@ -28,20 +28,14 @@ public class WeightedRoundRobinLoadBalancer extends WeightedLoadBalancer {
         super(distributionRatios);
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.processor.loadbalancer.QueueLoadBalancer#chooseProcessor(java.util.List, org.apache.camel.Exchange)
-     */
     @Override
-    protected Processor chooseProcessor(List<Processor> processors,
-            Exchange exchange) {
-            
+    protected Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
         if (isRuntimeRatiosZeroed())  {
             resetRuntimeRatios();
             counter = 0;
         }
         
         boolean found = false;
-        
         while (!found) {
             if (counter >= getRuntimeRatios().size()) {
                 counter = 0;
@@ -50,7 +44,6 @@ public class WeightedRoundRobinLoadBalancer extends WeightedLoadBalancer {
             if (getRuntimeRatios().get(counter).getRuntimeWeight() > 0) {
                 getRuntimeRatios().get(counter).setRuntimeWeight((getRuntimeRatios().get(counter).getRuntimeWeight()) - 1);
                 found = true;
-                break;
             } else {
                 counter++;
             }

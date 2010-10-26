@@ -19,13 +19,7 @@ package org.apache.camel.processor.loadbalancer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.CamelException;
-import org.apache.camel.Processor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
-    private static final transient Log LOG = LogFactory.getLog(WeightedLoadBalancer.class);
     private List<Integer> distributionRatioList = new ArrayList<Integer>();
     private ArrayList<DistributionRatio> runtimeRatios = new ArrayList<DistributionRatio>();
     
@@ -41,15 +35,12 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
     }
     
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.processor.loadbalancer.LoadBalancerSupport#doStart()
-     */
     @Override
     protected void doStart() throws Exception {
-        
         super.doStart();
         if (getProcessors().size() != getDistributionRatioList().size()) {
-            throw new CamelException("Listed Load Balance Processors do not match Distribution Ratio.");
+            throw new IllegalArgumentException("Loadbalacing with " + getProcessors().size()
+                + " should match number of distributions " + getDistributionRatioList().size());
         }
     }
 
