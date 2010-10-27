@@ -49,7 +49,7 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:start")
-                    .loadBalance().weighted(true, "4:2:1")
+                    .loadBalance().weighted(true, "4,2,1")
                         .to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
@@ -119,7 +119,7 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
                 public void configure() {
                     // START SNIPPET: example
                     from("direct:start")
-                        .loadBalance().weighted(true, "2:3")
+                        .loadBalance().weighted(true, "2,3")
                             .to("mock:x", "mock:y", "mock:z");
                     // END SNIPPET: example
                 }

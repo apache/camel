@@ -56,7 +56,7 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         
         try {
             if (distributionRatioDelimiter == null) {
-                distributionRatioDelimiter = ":";
+                distributionRatioDelimiter = ",";
             }
             
             String[] ratios = distributionRatio.split(distributionRatioDelimiter);

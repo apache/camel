@@ -195,21 +195,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @return the builder
      */
     public LoadBalanceDefinition weighted(boolean roundRobin, String distributionRatio) {
-        WeightedLoadBalancer weighted;
-        List<Integer> distributionRatioList = new ArrayList<Integer>();
-        
-        String[] ratios = distributionRatio.split(":");
-        for (String ratio : ratios) {
-            distributionRatioList.add(new Integer(ratio));
-        }
-        
-        if (!roundRobin) {
-            weighted = new WeightedRandomLoadBalancer(distributionRatioList);
-        } else {
-            weighted = new WeightedRoundRobinLoadBalancer(distributionRatioList);
-        }
-        loadBalancerType = new LoadBalancerDefinition(weighted);
-        return this;
+        return weighted(roundRobin, distributionRatio, ",");
     }
     
     /**

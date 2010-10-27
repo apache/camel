@@ -50,7 +50,7 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
                 
                 // START SNIPPET: example
                 from("direct:start")
-                    .loadBalance().weighted(false, "4:2:1")
+                    .loadBalance().weighted(false, "4,2,1")
                         .to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
@@ -113,7 +113,7 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
                 public void configure() {
                     // START SNIPPET: example
                     from("direct:start")
-                        .loadBalance().weighted(false, "2:3")
+                        .loadBalance().weighted(false, "2,3")
                             .to("mock:x", "mock:y", "mock:z");
                     // END SNIPPET: example
                 }

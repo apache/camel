@@ -29,7 +29,7 @@
     <route>
       <from uri="direct:start"/>
       <loadBalance>
-        <weighted roundRobin="true" distributionRatio="4:2:1"/>
+        <weighted roundRobin="true" distributionRatio="4,2,1"/>
           <to uri="mock:x"/>
           <to uri="mock:y"/>
           <to uri="mock:z"/>
