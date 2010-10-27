@@ -32,24 +32,22 @@ public class MinaTcpWithIoOutProcessorExceptionTest extends ContextTestSupport {
     // use parameter sync=true to force InOut pattern of the MinaExchange
     protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
 
-
     public void testExceptionThrownInProcessor() {
         String body = "Hello World";
         Object result = template.requestBody(uri, body);
         // The exception should be passed to the client
         assertNotNull("the result should not be null", result);
         assertEquals("result is IllegalArgumentException", result, "java.lang.IllegalArgumentException: Forced exception");
-
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // use no delay for fast unit testing
+                errorHandler(defaultErrorHandler().maximumRedeliveries(2));
+
                 from(uri).process(new Processor() {
                     public void process(Exchange e) {
-                        // use no delay for fast unit testing
-                        errorHandler(defaultErrorHandler().maximumRedeliveries(2));
-
                         assertEquals("Hello World", e.getIn().getBody(String.class));
                         // simulate a problem processing the input to see if we can handle it properly
                         throw new IllegalArgumentException("Forced exception");
