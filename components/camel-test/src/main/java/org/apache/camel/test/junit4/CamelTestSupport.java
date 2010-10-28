@@ -21,7 +21,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -37,9 +36,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.junit.After;
@@ -58,6 +60,7 @@ public abstract class CamelTestSupport extends TestSupport {
     protected volatile ConsumerTemplate consumer;
     private boolean useRouteBuilder = true;
     private Service camelContextService;
+    private final DebugBreakpoint breakpoint = new DebugBreakpoint();
 
     public boolean isUseRouteBuilder() {
         return useRouteBuilder;
@@ -98,6 +101,11 @@ public abstract class CamelTestSupport extends TestSupport {
 
         // reduce default shutdown timeout to avoid waiting for 300 seconds
         context.getShutdownStrategy().setTimeout(getShutdownTimeout());
+
+        // set debugger
+        context.setDebugger(new DefaultDebugger());
+        context.getDebugger().addBreakpoint(breakpoint);
+        // note: when stopping CamelContext it will automatic remove the breakpoint
 
         template = context.createProducerTemplate();
         template.start();
@@ -402,4 +410,35 @@ public abstract class CamelTestSupport extends TestSupport {
     protected void enableJMX() {
         System.setProperty(JmxSystemPropertyKeys.DISABLED, "false");
     }
+
+    /**
+     * Single step debugs and Camel invokes this method before entering the given processor
+     */
+    protected void debugBefore(Exchange exchange, Processor processor, ProcessorDefinition definition,
+                               String id, String label) {
+    }
+
+    /**
+     * Single step debugs and Camel invokes this method after processing the given processor
+     */
+    protected void debugAfter(Exchange exchange, Processor processor, ProcessorDefinition definition,
+                              String id, String label, long timeTaken) {
+    }
+
+    /**
+     * To easily debug by overriding the <tt>debugBefore</tt> and <tt>debugAfter</tt> methods.
+     */
+    private class DebugBreakpoint extends BreakpointSupport {
+
+        @Override
+        public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+            CamelTestSupport.this.debugBefore(exchange, processor, definition, definition.getId(), definition.getLabel());
+        }
+
+        @Override
+        public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken) {
+            CamelTestSupport.this.debugAfter(exchange, processor, definition, definition.getId(), definition.getLabel(), timeTaken);
+        }
+    }
+
 }

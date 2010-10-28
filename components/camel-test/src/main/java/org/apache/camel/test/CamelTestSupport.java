@@ -21,7 +21,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -37,9 +36,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 
@@ -49,13 +51,14 @@ import org.apache.camel.spring.CamelBeanPostProcessor;
  *
  * @version $Revision$
  */
-public abstract class CamelTestSupport extends TestSupport {    
+public abstract class CamelTestSupport extends TestSupport {
     
     protected volatile CamelContext context;
     protected volatile ProducerTemplate template;
     protected volatile ConsumerTemplate consumer;
     private boolean useRouteBuilder = true;
     private Service camelContextService;
+    private final DebugBreakpoint breakpoint = new DebugBreakpoint();
 
     public boolean isUseRouteBuilder() {
         return useRouteBuilder;
@@ -96,6 +99,11 @@ public abstract class CamelTestSupport extends TestSupport {
 
         // reduce default shutdown timeout to avoid waiting for 300 seconds
         context.getShutdownStrategy().setTimeout(getShutdownTimeout());
+
+        // set debugger
+        context.setDebugger(new DefaultDebugger());
+        context.getDebugger().addBreakpoint(breakpoint);
+        // note: when stopping CamelContext it will automatic remove the breakpoint
 
         template = context.createProducerTemplate();
         template.start();
@@ -402,4 +410,46 @@ public abstract class CamelTestSupport extends TestSupport {
         System.setProperty(JmxSystemPropertyKeys.DISABLED, "false");
     }
 
+    /**
+     * Single step debugs and Camel invokes this method before entering the given processor
+     *
+     * @param exchange     the exchange
+     * @param processor    the processor about to be invoked
+     * @param definition   the definition for the processor
+     * @param id           the id of the definition
+     * @param shortName    the short name of the definition
+     */
+    protected void debugBefore(Exchange exchange, Processor processor, ProcessorDefinition definition,
+                               String id, String shortName) {
+    }
+
+    /**
+     * Single step debugs and Camel invokes this method after processing the given processor
+     *
+     * @param exchange     the exchange
+     * @param processor    the processor that was invoked
+     * @param definition   the definition for the processor
+     * @param id           the id of the definition
+     * @param shortName    the short name of the definition
+     * @param timeTaken    time taken to process the processor in millis
+     */
+    protected void debugAfter(Exchange exchange, Processor processor, ProcessorDefinition definition,
+                              String id, String shortName, long timeTaken) {
+    }
+
+    /**
+     * To easily debug by overriding the <tt>debugBefore</tt> and <tt>debugAfter</tt> methods.
+     */
+    private class DebugBreakpoint extends BreakpointSupport {
+
+        @Override
+        public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+            CamelTestSupport.this.debugBefore(exchange, processor, definition, definition.getId(), definition.getShortName());
+        }
+
+        @Override
+        public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken) {
+            CamelTestSupport.this.debugAfter(exchange, processor, definition, definition.getId(), definition.getShortName(), timeTaken);
+        }
+    }
 }

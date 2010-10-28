@@ -1337,6 +1337,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
         // the stop order is important
 
+        // shutdown debugger
+        ServiceHelper.stopAndShutdownService(getDebugger());
+
         shutdownServices(endpoints.values());
         endpoints.clear();
 
