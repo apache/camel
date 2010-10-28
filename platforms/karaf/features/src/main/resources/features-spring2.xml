@@ -33,17 +33,6 @@
     <bundle>mvn:org.springframework.osgi/spring-osgi-extender/${spring-osgi-version}</bundle>
     <bundle>mvn:org.springframework.osgi/spring-osgi-annotation/${spring-osgi-version}</bundle>
   </feature>	    
-  <feature name='http' version='${pom.version}'>
-    <config name='org.ops4j.pax.web'>
-      org.osgi.service.http.port=8181
-    </config>
-    <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty-bundle/${jetty6-bundle-version}</bundle>
-    <bundle>mvn:org.ops4j.pax.web/pax-web-api/${pax.web.version}</bundle>
-    <bundle>mvn:org.ops4j.pax.web/pax-web-spi/${pax.web.version}</bundle>
-    <bundle>mvn:org.ops4j.pax.web/pax-web-runtime/${pax.web.version}</bundle>
-    <bundle>mvn:org.ops4j.pax.web/pax-web-jetty/${pax.web.version}</bundle>
-  </feature>
   <feature name='camel' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <feature version='${pom.version}'>camel-spring</feature>
@@ -116,7 +105,6 @@
     <bundle>mvn:org.apache.cxf/cxf-bundle/${cxf-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-io/${commons-io-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-spring</feature>
-    <feature version='${pom.version}'>http</feature>
     <bundle>mvn:org.apache.camel/camel-cxf/${pom.version}</bundle>
   </feature>
   <feature name='camel-cache' version='${pom.version}'>
@@ -137,7 +125,6 @@
   </feature>
   <feature name='camel-dozer' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
-    <feature version='${pom.version}'>http</feature>
     <bundle>mvn:org.ops4j.pax.web/pax-web-jsp/${pax.web.version}</bundle>
     <bundle>mvn:net.sf.dozer/dozer-osgi/${dozer-bundle-version}</bundle>
     <bundle>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
@@ -221,7 +208,6 @@
     <bundle>mvn:org.apache.camel/camel-atom/${pom.version}</bundle>
   </feature>
   <feature name='camel-bam' version='${pom.version}'>
-    <feature version='${pom.version}'>http</feature>
     <bundle>mvn:org.springframework/spring-tx/${spring-version}</bundle>
     <bundle>mvn:org.springframework/spring-web/${spring-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
@@ -394,7 +380,6 @@
   </feature>
   <feature name='camel-juel' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
-    <feature version='${pom.version}'>http</feature>
     <bundle>mvn:org.ops4j.pax.web/pax-web-jsp/${pax.web.version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.juel/${juel-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-juel/${pom.version}</bundle>

@@ -42,11 +42,7 @@ public class CamelMailTest extends AbstractFeatureTest {
 
     @Configuration
     public static Option[] configure() {
-        return configure(COMPONENT, getFramework());
-    }
-    
-    public static FrameworkOption getFramework() {
-        return equinox();
+        return configure(COMPONENT, false, true);
     }
 
 }

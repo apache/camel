@@ -26,11 +26,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.osgi.framework.BundleContext;
 
 import static org.junit.Assert.assertNotNull;
+import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
@@ -142,15 +142,17 @@ public abstract class AbstractFeatureTest {
             artifactId("apache-camel").versionAsInProject().type(type);
     }
     
-    public static FrameworkOption getFramework() {
-        return felix();
-    }
-    
-    public static Option[] configure(String feature) {
-        return configure(feature, getFramework());
+    public static UrlReference getKarafFeatureUrl() {
+        String type = "xml/features";
+        return mavenBundle().groupId("org.apache.karaf").
+            artifactId("apache-karaf").version("2.1.0").type(type);
     }
 
-    public static Option[] configure(String feature, FrameworkOption framework) {
+    public static Option[] configure(String feature) {
+        return configure(feature, true, true);
+    }
+
+    public static Option[] configure(String feature, boolean useFelix, boolean useEquinox) {
         Option[] options = options(
             profile("log").version("1.4"),
             // this is how you set the default log level when using pax logging (logProfile)
@@ -158,15 +160,16 @@ public abstract class AbstractFeatureTest {
 
             //need to install some karaf features
             mavenBundle("org.apache.felix", "org.apache.felix.configadmin").versionAsInProject(),
-            
             mavenBundle("org.apache.servicemix.bundles", "org.apache.servicemix.bundles.jaxp-ri").version("1.4.2_4"),
-            
+            scanFeatures(getKarafFeatureUrl(), "http"),
+
+            // and the camel feature to be tested
             scanFeatures(getCamelKarafFeatureUrl(),
                           "camel-spring", "camel-" + feature),
             workingDirectory("target/paxrunner/"),            
 
-            framework);
-            
+            useFelix ? felix() : null,
+            useEquinox ? equinox() : null);
 
         return options;
     }

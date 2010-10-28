@@ -130,14 +130,6 @@
               <excludes>
                   <!-- CXF test will hang with the Spring3, need to check Cxf feature with karaf later -->
                   <exclude>**/*Cxf*.*</exclude>
-                  <!--
-                  <exclude>**/*Amqp*.*</exclude>
-                  <exclude>**/*Bindy*.*</exclude>
-                  <exclude>**/*Freemarker*.*</exclude>
-                  <exclude>**/*Http*.*</exclude>
-                  <exclude>**/*Tagsoup*.*</exclude>
-                  <exclude>**/*Jaxb*.*</exclude>
-                  -->
               </excludes>
               <systemPropertyVariables>
                   <springVersion>${spring-version}</springVersion>

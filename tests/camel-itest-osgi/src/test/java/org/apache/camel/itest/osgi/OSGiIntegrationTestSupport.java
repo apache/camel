@@ -81,6 +81,12 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             artifactId("apache-camel").versionAsInProject().type(type);
     }
     
+    public static UrlReference getKarafFeatureUrl() {
+        String type = "xml/features";
+        return mavenBundle().groupId("org.apache.karaf").
+            artifactId("apache-karaf").version("2.1.0").type(type);
+    }
+
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = options(
@@ -88,7 +94,10 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             profile("spring.dm").version("1.2.0"),    
             // this is how you set the default log level when using pax logging (logProfile)
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
-            
+
+            // need to install some karaf features
+            scanFeatures(getKarafFeatureUrl(), "http"),
+
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
                           "camel-core", "camel-spring", "camel-test"),
