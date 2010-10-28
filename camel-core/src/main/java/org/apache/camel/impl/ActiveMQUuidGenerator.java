@@ -16,11 +16,11 @@
  */
 package org.apache.camel.impl;
 
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.util.InetAddressUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -55,7 +55,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
 
         if (canAccessSystemProps) {
             try {
-                hostName = InetAddress.getLocalHost().getHostName();
+                hostName = InetAddressUtil.getLocalHostName();
                 ServerSocket ss = new ServerSocket(0);
                 stub = "-" + ss.getLocalPort() + "-" + System.currentTimeMillis() + "-";
                 Thread.sleep(100);
