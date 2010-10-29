@@ -188,6 +188,14 @@ public final class Builder {
     }
     
     /**
+     * Returns a predicate and value builder for the exception stacktrace on an exchange
+     */
+    public static ValueBuilder exceptionStackTrace() {
+        Expression expression = ExpressionBuilder.exchangeExceptionStackTraceExpression();
+        return new ValueBuilder(expression);
+    }
+
+    /**
      * Returns an expression that replaces all occurrences of the regular 
      * expression with the given replacement
      */

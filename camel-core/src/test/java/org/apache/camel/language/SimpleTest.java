@@ -177,6 +177,24 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("Hello ${exception.message} World", "Hello Just testing World");
     }
 
+    public void testExceptionStacktrace() throws Exception {
+        exchange.setException(new IllegalArgumentException("Just testing"));
+
+        String out = SimpleLanguage.simple("exception.stacktrace").evaluate(exchange, String.class);
+        assertNotNull(out);
+        assertTrue(out.startsWith("java.lang.IllegalArgumentException: Just testing"));
+        assertTrue(out.contains("at org.apache.camel.language."));
+    }
+
+    public void testException() throws Exception {
+        exchange.setException(new IllegalArgumentException("Just testing"));
+
+        Exception out = SimpleLanguage.simple("exception").evaluate(exchange, Exception.class);
+        assertNotNull(out);
+        assertIsInstanceOf(IllegalArgumentException.class, out);
+        assertEquals("Just testing", out.getMessage());
+    }
+
     public void testBodyAs() throws Exception {
         assertExpression("${bodyAs(String)}", "<hello id='m123'>world!</hello>");
         assertExpression("${bodyAs('String')}", "<hello id='m123'>world!</hello>");

@@ -124,6 +124,8 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             return ExpressionBuilder.exchangeExceptionExpression();
         } else if (ObjectHelper.equal(expression, "exception.message")) {
             return ExpressionBuilder.exchangeExceptionMessageExpression();
+        } else if (ObjectHelper.equal(expression, "exception.stacktrace")) {
+            return ExpressionBuilder.exchangeExceptionStackTraceExpression();
         } else if (ObjectHelper.equal(expression, "threadName")) {
             return ExpressionBuilder.threadNameExpression();
         }

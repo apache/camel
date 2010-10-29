@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,6 +43,7 @@ import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 
@@ -416,6 +419,37 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "exchangeExceptionMessage";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for an exception stacktrace set on the exchange
+     *
+     * @return an expression object which will return the exception stacktrace set on the exchange
+     */
+    public static Expression exchangeExceptionStackTraceExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Exception exception = exchange.getException();
+                if (exception == null) {
+                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                }
+                if (exception != null) {
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    exception.printStackTrace(pw);
+                    IOHelper.close(pw);
+                    IOHelper.close(sw);
+                    return sw.toString();
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeExceptionStackTrace";
             }
         };
     }
