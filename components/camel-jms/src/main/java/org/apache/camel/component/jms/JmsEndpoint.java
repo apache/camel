@@ -513,6 +513,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getTaskExecutor();
     }
 
+    public Object getTaskExecutorSpring2() {
+        return getConfiguration().getTaskExecutorSpring2();
+    }
+
     public ConnectionFactory getTemplateConnectionFactory() {
         return getConfiguration().getTemplateConnectionFactory();
     }
@@ -809,6 +813,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setTaskExecutor(TaskExecutor taskExecutor) {
         getConfiguration().setTaskExecutor(taskExecutor);
+    }
+
+    public void setTaskExecutorSpring2(Object taskExecutor) {
+        getConfiguration().setTaskExecutorSpring2(taskExecutor);
     }
 
     public void setTemplateConnectionFactory(ConnectionFactory templateConnectionFactory) {

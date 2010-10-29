@@ -25,6 +25,7 @@ import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -204,6 +205,10 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         }
         if (endpoint.getTaskExecutor() != null) {
             answer.setTaskExecutor(endpoint.getTaskExecutor());
+        }
+        if (endpoint.getTaskExecutorSpring2() != null) {
+            // use reflection to invoke to support spring 2 when JAR is compiled with Spring 3.0
+            IntrospectionSupport.setProperty(answer, "taskExecutor", endpoint.getTaskExecutorSpring2());
         }
 
         return answer;

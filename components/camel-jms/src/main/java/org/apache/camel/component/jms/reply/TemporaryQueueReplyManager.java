@@ -25,6 +25,7 @@ import javax.jms.TemporaryQueue;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
@@ -117,6 +118,10 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         TaskExecutor taskExecutor = endpoint.getTaskExecutor();
         if (taskExecutor != null) {
             answer.setTaskExecutor(taskExecutor);
+        }
+        if (endpoint.getTaskExecutorSpring2() != null) {
+            // use reflection to invoke to support spring 2 when JAR is compiled with Spring 3.0
+            IntrospectionSupport.setProperty(answer, "taskExecutor", endpoint.getTaskExecutorSpring2());
         }
         ExceptionListener exceptionListener = endpoint.getExceptionListener();
         if (exceptionListener != null) {

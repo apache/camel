@@ -75,6 +75,8 @@ public class JmsConfiguration implements Cloneable {
     private boolean subscriptionDurable;
     private boolean exposeListenerSession = true;
     private TaskExecutor taskExecutor;
+    // TODO: remove in Camel 3.0 when Spring 3.0+ is required
+    private Object taskExecutorSpring2;
     private boolean pubSubNoLocal;
     private int concurrentConsumers = 1;
     private int maxMessagesPerTask = -1;
@@ -488,6 +490,14 @@ public class JmsConfiguration implements Cloneable {
 
     public void setTaskExecutor(TaskExecutor taskExecutor) {
         this.taskExecutor = taskExecutor;
+    }
+
+    public Object getTaskExecutorSpring2() {
+        return taskExecutorSpring2;
+    }
+
+    public void setTaskExecutorSpring2(Object taskExecutorSpring2) {
+        this.taskExecutorSpring2 = taskExecutorSpring2;
     }
 
     public boolean isPubSubNoLocal() {

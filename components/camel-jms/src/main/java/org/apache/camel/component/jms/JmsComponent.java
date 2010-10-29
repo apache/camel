@@ -284,6 +284,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setTaskExecutor(taskExecutor);
     }
 
+    public void setTaskExecutorSpring2(Object taskExecutor) {
+        getConfiguration().setTaskExecutorSpring2(taskExecutor);
+    }
+
     public void setTimeToLive(long timeToLive) {
         getConfiguration().setTimeToLive(timeToLive);
     }
