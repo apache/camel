@@ -361,6 +361,26 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
+    public void testBodyOGNLAsMap() throws Exception {
+        Map map = new HashMap();
+        map.put("foo", "Camel");
+        map.put("bar", 6);
+        exchange.getIn().setBody(map);
+
+        assertExpression("${in.body[foo]}", "Camel");
+        assertExpression("${in.body[bar]}", 6);
+    }
+    
+    public void testBodyOGNLAsMapShorthand() throws Exception {
+        Map map = new HashMap();
+        map.put("foo", "Camel");
+        map.put("bar", 6);
+        exchange.getIn().setBody(map);
+
+        assertExpression("${body[foo]}", "Camel");
+        assertExpression("${body[bar]}", 6);
+    }
+
     public void testBodyOGNLSimple() throws Exception {
         Animal camel = new Animal("Camel", 6);
         exchange.getIn().setBody(camel);
@@ -368,7 +388,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.body.getName}", "Camel");
         assertExpression("${in.body.getAge}", 6);
     }
-    
+
     public void testExceptionOGNLSimple() throws Exception {
         exchange.getIn().setHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, "myPolicy");
         exchange.setProperty(Exchange.EXCEPTION_CAUGHT, new CamelAuthorizationException("The camel authorization exception", exchange));
