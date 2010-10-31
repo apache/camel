@@ -115,7 +115,7 @@
       <serp-bundle-version>1.13.1_2</serp-bundle-version>
       <smack-bundle-version>3.1.0_1</smack-bundle-version>      
       <spring-version>2.5.6.SEC01</spring-version>
-      <spring3-version>3.0.4.RELEASE</spring3-version>
+      <spring3-version>3.0.5.RELEASE</spring3-version>
       <spring-osgi-version>1.2.0</spring-osgi-version>
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
       <stringtemplate-bundle-version>3.2_3</stringtemplate-bundle-version>
