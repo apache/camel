@@ -39,7 +39,7 @@ public final class CxfMessageHelper {
         org.apache.cxf.message.Exchange cxfExchange = exchange
             .getProperty(CxfConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
         org.apache.camel.Message message;
-        if (isClient) {
+        if (isClient && exchange.hasOut()) {
             message = exchange.getOut();
         } else {
             message = exchange.getIn();
