@@ -88,8 +88,6 @@
     <jasypt-version>1.6</jasypt-version>
     <javassist-version>3.9.0.GA</javassist-version>
     <javax-mail-version>1.4.3</javax-mail-version>
-    <jaxb-version>2.1.13</jaxb-version>
-    <jaxb-api-version>2.1</jaxb-api-version>
     <jaxen-version>1.1.1</jaxen-version>
     <jdom-version>1.1</jdom-version>
     <jetty-version>7.1.6.v20100715</jetty-version>
