@@ -24,11 +24,13 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
+@Ignore
 public class JettyHttpProducerSuspendWhileInProgressTest extends BaseJettyTest {
 
     private String serverUri = "jetty://http://localhost:" + getPort() + "/cool";
