@@ -67,7 +67,7 @@ public final class CxfMessageHelper {
         return answer;
     }
 
-    // TODO: This method is not used
+    //This method is not used, and will be removed in Camel 3.0
     @Deprecated
     public static org.apache.cxf.message.Message getCxfOutMessage(HeaderFilterStrategy headerFilterStrategy,
                                                                   org.apache.camel.Exchange exchange,
@@ -83,7 +83,7 @@ public final class CxfMessageHelper {
         cxfExchange.setOutMessage(outMessage);
 
         org.apache.camel.Message message;
-        if (isClient) {
+        if (isClient && exchange.hasOut()) {
             message = exchange.getIn();
         } else {
             message = exchange.getOut();
