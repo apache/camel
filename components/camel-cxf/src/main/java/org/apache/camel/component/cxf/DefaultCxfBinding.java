@@ -148,14 +148,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         propagateHeadersFromCxfToCamel(cxfMessage, camelExchange.getOut(), camelExchange);
         
         if (cxfMessage.getAttachments() != null) {
-            // TODO: workaround for CXF-2503
-            try {
-                cxfMessage.getAttachments().size();
-            } catch (java.util.ConcurrentModificationException e) {
-                // ignore
-            }
-            // end of workaround
-
+            cxfMessage.getAttachments().size();
+           
             // propagate attachments
             for (Attachment attachment : cxfMessage.getAttachments()) {
                 camelExchange.getOut().addAttachment(attachment.getId(), attachment.getDataHandler());
