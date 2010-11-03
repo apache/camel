@@ -30,7 +30,7 @@
 
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
    <import resource="classpath:META-INF/cxf/cxf-extension-jbi-binding.xml"/>
-   <import resource="classpath:META-INF/cxf/cxf-extension-camel.xml"/>
+   <import resource="classpath:META-INF/cxf/camel/cxf-extension-camel.xml"/>
    
 
    <camelContext id="conduit_context" xmlns="http://camel.apache.org/schema/spring">

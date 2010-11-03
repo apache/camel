@@ -22,6 +22,13 @@
        xmlns:foo="http://cxf.apache.org/configuration/foo"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-     <!-- This file will be removed in Camel 3.0, please use the file META-INF/cxf/camel/cxf-extension-camel.xml -->
-     <import resource="classpath:META-INF/cxf/camel/cxf-extension-camel.xml"/>
+
+    <bean class="org.apache.camel.component.cxf.transport.CamelTransportFactory" lazy-init="true">
+        <property name="bus" ref="cxf"/>
+        <property name="transportIds">
+            <list>
+              <value>http://cxf.apache.org/transports/camel</value>
+            </list>
+        </property>
+    </bean>
 </beans>

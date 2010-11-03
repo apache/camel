@@ -25,7 +25,7 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
        http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
     ">
-    <import resource="classpath:META-INF/cxf/cxf-extension-camel.xml" />
+    <import resource="classpath:META-INF/cxf/camel/cxf-extension-camel.xml" />
 	
 	<!-- START SNIPPET: beanDefinition -->
 	<util:list id="customerServiceBean">
