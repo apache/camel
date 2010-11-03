@@ -21,6 +21,8 @@ import java.util.Set;
 
 import org.apache.camel.Converter;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.core.osgi.other.MyOtherRouteBuilder;
+import org.apache.camel.core.osgi.other.MyOtherTypeConverter;
 import org.apache.camel.core.osgi.test.MyRouteBuilder;
 import org.apache.camel.core.osgi.test.MyTypeConverter;
 import org.junit.Test;
@@ -49,6 +51,29 @@ public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
         Set<Class<?>> classes = resolver.findImplementations(RoutesBuilder.class, packageNames);
         assertEquals("There should find a class", classes.size(), 1);
         assertTrue("Find a wrong class", classes.contains(MyRouteBuilder.class));
+    }
+    
+    @Test
+    public void testOsgiResolverFindAnnotatedWithFallbackClassLoaderTest() throws IOException {
+        BundleContext context = getBundleContext();
+        assertNotNull("The BundleContext should not be null", context);
+        OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
+             
+        String[] packageNames = {"org.apache.camel.core.osgi.other"};
+        Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packageNames);
+        assertEquals("There should find a class", classes.size(), 1);
+        assertTrue("Find a wrong class", classes.contains(MyOtherTypeConverter.class));
+    }
+    
+    @Test
+    public void testOsgiResolverFindImplementationWithFallbackClassLoaderTest() {
+        BundleContext context = getBundleContext();
+        assertNotNull("The BundleContext should not be null", context);
+        OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
+        String[] packageNames = {"org.apache.camel.core.osgi.other"};
+        Set<Class<?>> classes = resolver.findImplementations(RoutesBuilder.class, packageNames);
+        assertEquals("There should find a class", classes.size(), 1);
+        assertTrue("Find a wrong class", classes.contains(MyOtherRouteBuilder.class));
     }
 
 }

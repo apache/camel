@@ -16,6 +16,7 @@
  */
 package org.apache.camel.core.osgi;
 
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -40,13 +41,42 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
     }
 
     public Set<ClassLoader> getClassLoaders() {
-        // now we just use bundle classloader to load the class
-        return Collections.<ClassLoader>singleton(new BundleDelegatingClassLoader(bundle));
+        // Added the BundleDelegatingClassLoader to load the class
+        Set<ClassLoader> classLoaders = super.getClassLoaders();
+        ClassLoader osgiLoader = new BundleDelegatingClassLoader(bundle);
+        classLoaders.add(osgiLoader);
+        return classLoaders;
     }
     
     public void find(PackageScanFilter test, String packageName, Set<Class<?>> classes) {
         packageName = packageName.replace('.', '/');
+        int classesSize = classes.size(); 
         loadImplementationsInBundle(test, packageName, classes);
+        if (classes.size() == classesSize) {
+            // Using the non-OSGi classloaders as a fallback
+            // this is necessary when use JBI packaging for servicemix-camel SU
+            // so that we get chance to use SU classloader to scan packages in the SU
+            if (log.isTraceEnabled()) {
+                log.trace("Using only regular classloaders");
+            }
+            for (ClassLoader classLoader : super.getClassLoaders()) {
+                if (!isOsgiClassloader(classLoader)) {
+                    find(test, packageName, classLoader, classes);
+                }
+            }  
+        }
+    }
+    
+    private static boolean isOsgiClassloader(ClassLoader loader) {
+        try {
+            Method mth = loader.getClass().getMethod("getBundle", new Class[] {});
+            if (mth != null) {
+                return true;
+            }
+        } catch (NoSuchMethodException e) {
+            // ignore its not an osgi loader
+        }
+        return false;
     }
     
     private void loadImplementationsInBundle(PackageScanFilter test, String packageName, Set<Class<?>> classes) {       

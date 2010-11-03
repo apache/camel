@@ -55,7 +55,7 @@ public class CamelMockBundle extends MockBundle {
         }
         
     }
-
+    
     public CamelMockBundle() {
         setClassLoader(getClass().getClassLoader());
     }
@@ -96,6 +96,24 @@ public class CamelMockBundle extends MockBundle {
             return new ListEnumeration(urls);
         } else {
             return super.findEntries(path, filePattern, recurse);
+        }
+    }
+    
+    
+    
+    public Class loadClass(String name) throws ClassNotFoundException {
+        if (isLoadableClass(name)) {
+            return super.loadClass(name);
+        } else {
+            throw new ClassNotFoundException(name);
+        }
+    }
+
+    protected boolean isLoadableClass(String name) {
+        if (name.startsWith("org.apache.camel.core.osgi.other")) {
+            return false;
+        } else {
+            return true;
         }
     }
 
