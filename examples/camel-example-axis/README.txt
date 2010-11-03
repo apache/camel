@@ -15,7 +15,7 @@ To run the example type
 
 You stop Jetty using ctrl + c
 
-Then you can hit the url: http://localhost:8080/camel-example-axis/services in a browser
+Then you can hit the url: http://localhost:8080/services in a browser
 to see the exposed webservice by Apache Axis.
 
 The wsdl can be reached by clicking on the wsdl link. You can use a webservie tools to try
