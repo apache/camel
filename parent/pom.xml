@@ -94,7 +94,7 @@
     <jettison-version>1.2</jettison-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
     <jruby-version>1.5.2</jruby-version>
-    <jsch-version>0.1.43</jsch-version>
+    <jsch-version>0.1.44</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
     <log4j-version>1.2.16</log4j-version>
