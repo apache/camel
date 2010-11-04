@@ -92,17 +92,17 @@ public class ConsumerMarshallingRouteTest extends CamelTestSupport {
                 // request webservice
                 from("direct:webservice-marshall")
                         .marshal(jaxb)
-                        .to("springws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuote&webServiceTemplate=#webServiceTemplate")
+                        .to("spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuote&webServiceTemplate=#webServiceTemplate")
                         .convertBodyTo(String.class);
 
                 // request webservice
                 from("direct:webservice-marshall-unmarshall")
                         .marshal(jaxb)
-                        .to("springws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuote&webServiceTemplate=#webServiceTemplate")
+                        .to("spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuote&webServiceTemplate=#webServiceTemplate")
                         .unmarshal(jaxb);
 
                 // provide web service
-                from("springws:soapaction:http://www.stockquotes.edu/GetQuote?endpointMapping=#endpointMapping").process(
+                from("spring-ws:soapaction:http://www.stockquotes.edu/GetQuote?endpointMapping=#endpointMapping").process(
                         new StockQuoteResponseProcessor());
             }
         };

@@ -26,23 +26,23 @@
     <!-- ============================== -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="springws:rootqname:{http://www.stockquotes.edu/}SomeElement?endpointMapping=#endpointMapping"/>
+            <from uri="spring-ws:rootqname:{http://www.stockquotes.edu/}SomeElement?endpointMapping=#endpointMapping"/>
             <to uri="mock:testRootQNameDummy"/>
         </route>
         <route>
-            <from uri="springws:rootqname:{http://www.stockquotes.edu/}GetQuote?endpointMapping=#endpointMapping"/>
+            <from uri="spring-ws:rootqname:{http://www.stockquotes.edu/}GetQuote?endpointMapping=#endpointMapping"/>
             <to uri="mock:testRootQName"/>
         </route>
         <route>
-            <from uri="springws:soapaction:http://www.stockquotes.edu/GetQuote?endpointMapping=#endpointMapping"/>
+            <from uri="spring-ws:soapaction:http://www.stockquotes.edu/GetQuote?endpointMapping=#endpointMapping"/>
             <to uri="mock:testSoapAction"/>
         </route>
         <route>
-            <from uri="springws:uri:http://localhost/stockquote2?endpointMapping=#endpointMapping"/>
+            <from uri="spring-ws:uri:http://localhost/stockquote2?endpointMapping=#endpointMapping"/>
             <to uri="mock:testUri"/>
         </route>
         <route>
-            <from uri="springws:xpathresult:GRABME?expression=//GetQuote&amp;endpointMapping=#endpointMapping"/>
+            <from uri="spring-ws:xpathresult:GRABME?expression=//GetQuote&amp;endpointMapping=#endpointMapping"/>
             <to uri="mock:testXPath"/>
         </route>
     </camelContext>

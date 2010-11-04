@@ -26,7 +26,7 @@
     <!-- ============================== -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="springws:beanname:QuoteEndpointDispatcher"/>
+            <from uri="spring-ws:beanname:QuoteEndpointDispatcher"/>
             <to uri="responseProcessor"/>
         </route>
     </camelContext>

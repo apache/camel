@@ -30,24 +30,24 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:stockQuoteWebservice"/>
-            <to uri="springws:http://www.webservicex.net/stockquote.asmx?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.webserviceX.NET/GetQuote"/>
+            <to uri="spring-ws:http://www.webservicex.net/stockquote.asmx?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.webserviceX.NET/GetQuote"/>
         </route>
         <route>
             <from uri="direct:stockQuoteWebserviceAsString"/>
-            <to uri="springws:http://www.webservicex.net/stockquote.asmx?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.webserviceX.NET/GetQuote"/>
+            <to uri="spring-ws:http://www.webservicex.net/stockquote.asmx?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.webserviceX.NET/GetQuote"/>
             <convertBodyTo type="java.lang.String"/>
         </route>
         <route>
             <from uri="direct:stockQuoteWebserviceWithDefaultTemplate"/>
-            <to uri="springws:http://www.webservicex.net/stockquote.asmx?soapAction=http://www.webserviceX.NET/GetQuote"/>
+            <to uri="spring-ws:http://www.webservicex.net/stockquote.asmx?soapAction=http://www.webserviceX.NET/GetQuote"/>
         </route>
         <route>
             <from uri="direct:stockQuoteWebserviceWithNonDefaultMessageFactory"/>
-            <to uri="springws:http://www.webservicex.net/stockquote.asmx?messageFactory=#messageFactory&amp;soapAction=http://www.webserviceX.NET/GetQuote"/>
+            <to uri="spring-ws:http://www.webservicex.net/stockquote.asmx?messageFactory=#messageFactory&amp;soapAction=http://www.webserviceX.NET/GetQuote"/>
         </route>
         <route>
             <from uri="direct:stockQuoteWebserviceWithoutDefaultUri"/>
-            <to uri="springws:http://dummy?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.webserviceX.NET/GetQuote"/>
+            <to uri="spring-ws:http://dummy?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.webserviceX.NET/GetQuote"/>
             <convertBodyTo type="java.lang.String"/>
         </route>
     </camelContext>

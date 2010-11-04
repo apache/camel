@@ -133,7 +133,7 @@ public class SpringWebserviceComponent extends DefaultComponent {
         CamelEndpointMapping endpointMapping = resolveAndRemoveReferenceParameter(parameters, "endpointMapping", CamelEndpointMapping.class, null);
         if (endpointMapping == null && configuration.getEndpointDispatcher() == null) {
             throw new IllegalArgumentException("No CamelEndpointMapping found in Spring ApplicationContext."
-                    + " This bean is required for Spring-WS consumer support (unless the 'springws:beanname:' URI scheme is used)");
+                    + " This bean is required for Spring-WS consumer support (unless the 'spring-ws:beanname:' URI scheme is used)");
         }
         configuration.setEndpointMapping(endpointMapping);
     }

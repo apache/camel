@@ -55,16 +55,16 @@ import org.springframework.xml.xpath.XPathExpression;
  * consuming messages using any of the following URI schemes:
  * <p/>
  * <ul>
- * <li><tt>springws:rootqname:</tt><br/>
+ * <li><tt>spring-ws:rootqname:</tt><br/>
  * Equivalent to endpoint mappings specified through {@link org.springframework.ws.server.endpoint.mapping.PayloadRootQNameEndpointMapping}
  * <p/>
- * <li><tt>springws:soapaction:</tt><br/>
+ * <li><tt>spring-ws:soapaction:</tt><br/>
  * Equivalent to endpoint mappings specified through {@link org.springframework.ws.soap.server.endpoint.mapping.SoapActionEndpointMapping}
  * <p/>
- * <li><tt>springws:uri:</tt><br/>
+ * <li><tt>spring-ws:uri:</tt><br/>
  * Equivalent to endpoint mappings specified through {@link org.springframework.ws.server.endpoint.mapping.UriEndpointMapping}
  * <p/>
- * <li><tt>springws:xpathresult:</tt><br/>
+ * <li><tt>spring-ws:xpathresult:</tt><br/>
  * Equivalent to endpoint mappings specified through {@link org.springframework.ws.server.endpoint.mapping.XPathPayloadEndpointMapping}
  * </ul>
  *

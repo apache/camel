@@ -26,19 +26,19 @@
     <!-- ============================== -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="springws:rootqname:{http://www.webserviceX.NET/}GetQuote?endpointMapping=#endpointMapping"/>
+            <from uri="spring-ws:rootqname:{http://www.webserviceX.NET/}GetQuote?endpointMapping=#endpointMapping"/>
             <to uri="responseProcessor"/>
         </route>
         <route>
-            <from uri="springws:soapaction:http://www.webserviceX.NET/GetQuote?endpointMapping=#endpointMapping"/>
+            <from uri="spring-ws:soapaction:http://www.webserviceX.NET/GetQuote?endpointMapping=#endpointMapping"/>
             <to uri="responseProcessor"/>
         </route>
         <route>
-            <from uri="springws:uri:http://localhost/stockquote2?endpointMapping=#endpointMapping"/>
+            <from uri="spring-ws:uri:http://localhost/stockquote2?endpointMapping=#endpointMapping"/>
             <to uri="responseProcessor"/>
         </route>
         <route>
-            <from uri="springws:xpathresult:GRABME?expression=//GetQuote&amp;endpointMapping=#endpointMapping"/>
+            <from uri="spring-ws:xpathresult:GRABME?expression=//GetQuote&amp;endpointMapping=#endpointMapping"/>
             <to uri="responseProcessor"/>
         </route>
     </camelContext>
