@@ -39,7 +39,7 @@
         org.springframework.*;version="[3,4)",
         *
     </camel.osgi.import>
-    <spring-version>3.0.3.RELEASE</spring-version>
+    <spring-version>3.0.5.RELEASE</spring-version>
     <junit-version>4.8.1</junit-version>
   </properties>
   
