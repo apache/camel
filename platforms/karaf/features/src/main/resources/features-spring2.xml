@@ -532,6 +532,15 @@
     <feature version='${pom.version}'>camel-spring</feature>
     <bundle>mvn:org.apache.camel/camel-spring-javaconfig/${pom.version}</bundle>
   </feature-->
+  <feature name='camel-spring-ws' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-spring</feature>
+    <bundle>mvn:org.springframework/spring-web/${spring-version}</bundle>
+    <bundle>mvn:org.springframework.ws/spring-xml/${spring-ws-version}</bundle>
+    <bundle>mvn:org.springframework.ws/spring-oxm/${spring-ws-version}</bundle>
+    <bundle>mvn:org.springframework.ws/spring-ws-core/${spring-ws-version}</bundle>
+    <bundle>mvn:org.springframework.ws/spring-ws-support/${spring-ws-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-spring-ws/${pom.version}</bundle>
+  </feature>
   <feature name='camel-sql' version='${pom.version}'>
     <bundle>mvn:org.springframework/spring-tx/${spring-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>

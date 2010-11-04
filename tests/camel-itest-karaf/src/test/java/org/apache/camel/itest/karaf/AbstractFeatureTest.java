@@ -57,7 +57,7 @@ public abstract class AbstractFeatureTest {
         long max = System.currentTimeMillis() + 10000;
         while (true) {
             try {
-                assertNotNull(createCamelContext().getComponent(component));
+                assertNotNull("Cannot get component with name: " + component, createCamelContext().getComponent(component));
                 return;
             } catch (Exception t) {
                 if (System.currentTimeMillis() < max) {
