@@ -342,10 +342,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-ws</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-sql</artifactId>
     </dependency>
     <dependency>
