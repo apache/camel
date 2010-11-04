@@ -469,22 +469,25 @@ public class BeanInfo {
             // lets try converting
             Object newBody = null;
             MethodInfo matched = null;
+            int matchCounter = 0;
             for (MethodInfo methodInfo : operationList) {
+                if (methodInfo.getBodyParameterType().isInstance(body)) {
+                    return methodInfo;
+                }
+                
                 Object value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
                 if (value != null) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Converted body from: " + body.getClass().getCanonicalName()
                                 + "to: " + methodInfo.getBodyParameterType().getCanonicalName());
                     }
-                    if (newBody != null) {
-                        // we already have found one new body that could be converted so now we have 2 methods
-                        // and then its ambiguous
-                        throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, methodInfo));
-                    } else {
-                        newBody = value;
-                        matched = methodInfo;
-                    }
+                    matchCounter++;
+                    newBody = value;
+                    matched = methodInfo;
                 }
+            }
+            if (matchCounter > 1) {
+                throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, matched));
             }
             if (matched != null) {
                 if (LOG.isTraceEnabled()) {

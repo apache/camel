@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.bean;
 
+import java.io.InputStream;
+import java.io.Reader;
+
 import org.apache.camel.Handler;
 
 /**
@@ -34,5 +37,17 @@ public class MyDummyBean {
     @Handler
     public String bye(String s) {
         return "Bye " + s;
+    }
+    
+    public String bar(String s) {
+        return "String";
+    }
+    
+    public String bar(Reader s) {
+        return "Reader";
+    }
+    
+    public String bar(InputStream s) {
+        return "InputStream";
     }
 }
