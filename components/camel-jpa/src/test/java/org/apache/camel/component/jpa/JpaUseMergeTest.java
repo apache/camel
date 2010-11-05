@@ -37,7 +37,6 @@ public class JpaUseMergeTest extends AbstractJpaMethodTest {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void produceExistingEntity() throws Exception {
         setUp("jpa://" + Customer.class.getName() + "?usePersist=false");

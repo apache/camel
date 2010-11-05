@@ -32,6 +32,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.Service;
+import org.apache.camel.core.xml.AbstractCamelBeanPostProcessor;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -65,19 +66,13 @@ import org.springframework.context.ApplicationContextAware;
  */
 @XmlRootElement(name = "beanPostProcessor")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
+public class CamelBeanPostProcessor extends AbstractCamelBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
     private static final transient Log LOG = LogFactory.getLog(CamelBeanPostProcessor.class);
     @XmlTransient
     Set<String> prototypeBeans = new LinkedHashSet<String>();
     @XmlTransient
-    private CamelContext camelContext;
-    @XmlTransient
     private ApplicationContext applicationContext;
-    @XmlTransient
-    private CamelPostProcessorHelper postProcessor;
-    @XmlTransient
-    private String camelId;
-
+    
     public CamelBeanPostProcessor() {
     }
 
@@ -91,8 +86,8 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             return bean;
         }
 
-        if (camelContext == null && applicationContext.containsBean(camelId)) {
-            setCamelContext((CamelContext) applicationContext.getBean(camelId));
+        if (getCamelContext() == null && applicationContext.containsBean(getCamelId())) {
+            setCamelContext((CamelContext) applicationContext.getBean(getCamelId()));
         }
 
         injectFields(bean, beanName);
@@ -100,10 +95,10 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
 
         if (bean instanceof CamelContextAware && canSetCamelContext(bean, beanName)) {
             CamelContextAware contextAware = (CamelContextAware)bean;
-            if (camelContext == null) {
+            if (getCamelContext() == null) {
                 LOG.warn("No CamelContext defined yet so cannot inject into: " + bean);
             } else {
-                contextAware.setCamelContext(camelContext);
+                contextAware.setCamelContext(getCamelContext());
             }
         }
 
@@ -134,14 +129,74 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
+   
+    // Implementation methods
+    // -------------------------------------------------------------------------
 
-    public CamelContext getCamelContext() {
-        return camelContext;
+   
+    /**
+     * A strategy method to allow implementations to perform some custom JBI
+     * based injection of the POJO
+     *
+     * @param bean the bean to be injected
+     */
+    protected void injectFields(final Object bean, final String beanName) {
+        ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
+            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+                EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+                if (endpointInject != null && getPostProcessor().matchContext(endpointInject.context())) {
+                    injectField(field, endpointInject.uri(), endpointInject.ref(), bean, beanName);
+                }
+
+                Produce produce = field.getAnnotation(Produce.class);
+                if (produce != null && getPostProcessor().matchContext(produce.context())) {
+                    injectField(field, produce.uri(), produce.ref(), bean, beanName);
+                }
+            }
+        });
     }
 
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-        postProcessor = new CamelPostProcessorHelper(camelContext) {
+    protected void injectField(Field field, String endpointUri, String endpointRef, Object bean, String beanName) {
+        ReflectionUtils.setField(field, bean, getPostProcessor().getInjectionValue(field.getType(), endpointUri, endpointRef, field.getName(), bean, beanName));
+    }
+
+    protected void injectMethods(final Object bean, final String beanName) {
+        ReflectionUtils.doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {           
+            public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+                setterInjection(method, bean, beanName);
+                getPostProcessor().consumerInjection(method, bean, beanName);
+            }
+        });
+    }
+
+    protected void setterInjection(Method method, Object bean, String beanName) {
+        EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
+        if (endpointInject != null && getPostProcessor().matchContext(endpointInject.context())) {
+            setterInjection(method, bean, beanName, endpointInject.uri(), endpointInject.ref());
+        }
+
+        Produce produce = method.getAnnotation(Produce.class);
+        if (produce != null && getPostProcessor().matchContext(produce.context())) {
+            setterInjection(method, bean, beanName, produce.uri(), produce.ref());
+        }
+    }
+
+    protected void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointRef) {
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        if (parameterTypes != null) {
+            if (parameterTypes.length != 1) {
+                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+            } else {
+                String propertyName = ObjectHelper.getPropertyName(method);
+                Object value = getPostProcessor().getInjectionValue(parameterTypes[0], endpointUri, endpointRef, propertyName, bean, beanName);
+                ObjectHelper.invokeMethod(method, bean, value);
+            }
+        }
+    }
+
+    @Override
+    public CamelPostProcessorHelper createCamelPostProcessorHelper(CamelContext camelContext) {        
+        return new CamelPostProcessorHelper(camelContext) {
             @Override
             protected RuntimeException createProxyInstantiationRuntimeException(Class<?> type, Endpoint endpoint, Exception e) {
                 return new BeanInstantiationException(type, "Could not instantiate proxy of type " + type.getName() + " on endpoint " + endpoint, e);
@@ -172,117 +227,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             }
         };
     }
-
-    public String getCamelId() {
-        return camelId;
-    }
-
-    public void setCamelId(String camelId) {
-        this.camelId = camelId;
-    }
-
-    // Implementation methods
-    // -------------------------------------------------------------------------
-
-    /**
-     * Can we post process the given bean?
-     *
-     * @param bean the bean
-     * @param beanName the bean name
-     * @return true to process it
-     */
-    protected boolean canPostProcessBean(Object bean, String beanName) {
-        // the JMXAgent is a bit strange and causes Spring issues if we let it being
-        // post processed by this one. It does not need it anyway so we are good to go.
-        if (bean instanceof CamelJMXAgentDefinition) {
-            return false;
-        }
-
-        // all other beans can of course be processed
-        return true;
-    }
     
     
-    protected boolean canSetCamelContext(Object bean, String beanName) {
-        boolean answer = true;
-        if (bean instanceof CamelContextAware) {
-            CamelContextAware camelContextAware = (CamelContextAware) bean;
-            CamelContext context = camelContextAware.getCamelContext();
-            if (context != null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("The camel context of " + beanName + " is set, so we skip inject the camel context of it.");
-                }
-                answer = false;
-            }
-        } else {
-            answer = false;
-        }
-        return answer;
-    }
-
-    /**
-     * A strategy method to allow implementations to perform some custom JBI
-     * based injection of the POJO
-     *
-     * @param bean the bean to be injected
-     */
-    protected void injectFields(final Object bean, final String beanName) {
-        ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
-                if (endpointInject != null && postProcessor.matchContext(endpointInject.context())) {
-                    injectField(field, endpointInject.uri(), endpointInject.ref(), bean, beanName);
-                }
-
-                Produce produce = field.getAnnotation(Produce.class);
-                if (produce != null && postProcessor.matchContext(produce.context())) {
-                    injectField(field, produce.uri(), produce.ref(), bean, beanName);
-                }
-            }
-        });
-    }
-
-    protected void injectField(Field field, String endpointUri, String endpointRef, Object bean, String beanName) {
-        ReflectionUtils.setField(field, bean, getPostProcessor().getInjectionValue(field.getType(), endpointUri, endpointRef, field.getName(), bean, beanName));
-    }
-
-    protected void injectMethods(final Object bean, final String beanName) {
-        ReflectionUtils.doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {           
-            public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-                setterInjection(method, bean, beanName);
-                getPostProcessor().consumerInjection(method, bean, beanName);
-            }
-        });
-    }
-
-    protected void setterInjection(Method method, Object bean, String beanName) {
-        EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
-        if (endpointInject != null && postProcessor.matchContext(endpointInject.context())) {
-            setterInjection(method, bean, beanName, endpointInject.uri(), endpointInject.ref());
-        }
-
-        Produce produce = method.getAnnotation(Produce.class);
-        if (produce != null && postProcessor.matchContext(produce.context())) {
-            setterInjection(method, bean, beanName, produce.uri(), produce.ref());
-        }
-    }
-
-    protected void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointRef) {
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes != null) {
-            if (parameterTypes.length != 1) {
-                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
-            } else {
-                String propertyName = ObjectHelper.getPropertyName(method);
-                Object value = getPostProcessor().getInjectionValue(parameterTypes[0], endpointUri, endpointRef, propertyName, bean, beanName);
-                ObjectHelper.invokeMethod(method, bean, value);
-            }
-        }
-    }
-
-    public CamelPostProcessorHelper getPostProcessor() {
-        ObjectHelper.notNull(postProcessor, "postProcessor");
-        return postProcessor;
-    }
 
 }

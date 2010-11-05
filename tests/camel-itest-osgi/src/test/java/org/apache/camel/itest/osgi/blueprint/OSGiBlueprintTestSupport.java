@@ -125,7 +125,7 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
             // install the spring dm profile
             profile("spring.dm").version("1.2.0"),
             // this is how you set the default log level when using pax logging (logProfile)
-            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("TRACE"),
+            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
 
             // install blueprint requirements
             mavenBundle("org.apache.felix", "org.apache.felix.configadmin"),

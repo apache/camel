@@ -36,7 +36,6 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore
 public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
 
     protected static ReportIncidentEndpoint createCXFClient() {
@@ -72,9 +71,6 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
     protected OsgiBundleXmlApplicationContext createApplicationContext() {
         return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/cxf/camel-config.xml"});
     }
-
-    // TODO: CxfConsumer should use OSGi http service (no embedded Jetty)
-    // TODO: Make this test work with OSGi
 
     @Configuration
     public static Option[] configure() {

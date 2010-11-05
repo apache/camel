@@ -98,7 +98,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class, required = false)
     private CamelJMXAgentDefinition camelJMXAgent;
     @XmlElements({
-//        @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
+        @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
         @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
@@ -178,6 +178,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     }
 
     @Override
+    // TODO this method is need for looking up the customer configure component
     protected <S> S getBeanForType(Class<S> clazz) {
         return null;
     }

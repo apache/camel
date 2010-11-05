@@ -62,7 +62,6 @@ public abstract class AbstractJpaMethodTest extends Assert {
         stopServices(consumer, template, camelContext);
     }
     
-    @SuppressWarnings("unchecked")
     @Test
     public void produceNewEntity() throws Exception {
         setUp("jpa://" + Customer.class.getName() + "?usePersist=" + (usePersist() ? "true" : "false"));
@@ -89,7 +88,6 @@ public abstract class AbstractJpaMethodTest extends Assert {
         assertEquals(receivedCustomer.getAddress().getId(), persistedCustomer.getAddress().getId());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void produceNewEntitiesFromList() throws Exception {
         setUp("jpa://" + List.class.getName() + "?usePersist=" + (usePersist() ? "true" : "false"));
@@ -160,7 +158,6 @@ public abstract class AbstractJpaMethodTest extends Assert {
         assertEntitiesInDatabase(0, Address.class.getName());
     }
     
-    @SuppressWarnings("unchecked")
     protected void setUp(String endpointUri) throws Exception {
         template = camelContext.createProducerTemplate();
         startServices(template, camelContext);
@@ -181,7 +178,6 @@ public abstract class AbstractJpaMethodTest extends Assert {
         assertEntitiesInDatabase(0, Address.class.getName());
     }
     
-    @SuppressWarnings("unchecked")
     protected void save(final Customer customer) {
         transactionStrategy.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
@@ -195,7 +191,6 @@ public abstract class AbstractJpaMethodTest extends Assert {
         assertEntitiesInDatabase(1, Address.class.getName());
     }
     
-    @SuppressWarnings("unchecked")
     protected void assertEntitiesInDatabase(int count, String entity) {
         List results = jpaTemplate.find("select o from " + entity + " o");
         assertEquals(count, results.size());
