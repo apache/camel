@@ -49,7 +49,6 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
     private ProducerTemplate template;
     private int port;
 
-    @SuppressWarnings("unchecked")
     @ApplyLdifFiles("org/apache/camel/component/ldap/LdapRouteTest.ldif")
     @Test
     public void testLdapRoute() throws Exception {

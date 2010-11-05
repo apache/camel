@@ -40,7 +40,6 @@ import org.apache.aries.blueprint.mutable.MutableBeanMetadata;
 import org.apache.aries.blueprint.mutable.MutablePassThroughMetadata;
 import org.apache.aries.blueprint.mutable.MutableReferenceMetadata;
 import org.apache.camel.blueprint.BlueprintCamelContext;
-import org.apache.camel.blueprint.CamelBeanPostProcessor;
 import org.apache.camel.blueprint.CamelContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
@@ -142,8 +141,6 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 ptm = (PassThroughMetadata) context.getComponentDefinitionRegistry().getComponentDefinition("blueprintBundleContext");
                 ccfb.setBundleContext((BundleContext) ptm.getObject());
                 ccfb.setImplicitId(implicitId);
-                // setup the BeanPostProcessor
-                createBeansReference(context, contextId, ccfb.getBeans());
                 ccfb.afterPropertiesSet();
             } catch (Exception e) {
                 throw new ComponentDefinitionException("Unable to initialize camel context factory", e);
@@ -265,16 +262,6 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             return ctx;
         }
         return null;
-    }
-
-    private void createBeansReference(ParserContext context, String contextId, List beans) {
-        // need to check the beanPostProcessor first
-        MutableBeanMetadata metadata = context.createMetadata(MutableBeanMetadata.class);
-        metadata.setProcessor(true);
-        metadata.setId(contextId + ".beanPostProcessor");
-        metadata.setRuntimeClass(CamelBeanPostProcessor.class);
-        LOG.info("**** create the beanPostProcessor");
-        context.getComponentDefinitionRegistry().registerComponentDefinition(metadata);
     }
 
     private void findInputComponents(List<FromDefinition> defs, Set<String> components, Set<String> languages, Set<String> dataformats) {

@@ -17,6 +17,7 @@
 package org.apache.camel.component.hawtdb;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,7 +27,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class HawtDBAggregateDiscardOnTimeoutTest extends CamelTestSupport {
-   
+
+    private static AtomicInteger counter = new AtomicInteger(0);
     private HawtDBAggregationRepository repo;
 
     @Override
