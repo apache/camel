@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.io.FileNotFoundException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -23,29 +25,27 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
-/**
- * Unit test for CAMEL-457
- */
-public class InvalidXsltFileTest extends TestSupport {
+public class XsltFileNotFoundTest extends TestSupport {
 
-    public void testInvalidStylesheet() throws Exception {
+    public void testNoXsltFile() throws Exception {
         try {
             RouteBuilder builder = createRouteBuilder();
             CamelContext context = new DefaultCamelContext();
             context.addRoutes(builder);
             context.start();
 
-            fail("Should have thrown an exception due XSL compilation error");
+            fail("Should have thrown an exception due XSLT file not found");
         } catch (FailedToCreateRouteException e) {
             // expected
             assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+            assertIsInstanceOf(FileNotFoundException.class, e.getCause().getCause());
         }
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("seda:a").to("xslt:org/apache/camel/component/xslt/invalid.xsl");
+                from("seda:a").to("xslt:org/apache/camel/component/xslt/notfound.xsl");
             }
         };
     }
