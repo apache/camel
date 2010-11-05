@@ -35,11 +35,11 @@
         <camel.osgi.export.pkg>org.apache.camel.component.jmx.*</camel.osgi.export.pkg>
     </properties>
 
-    <!-- TODO: move net.java.dev.jaxb2-commons to fusesource repo --> 
     <repositories>
         <repository>
-            <id>camel-jmx</id>
-            <url>http://camel-jmx.googlecode.com/svn/trunk/repository/</url>
+            <id>fusesource.m2</id>
+            <name>Fusesource Dependency Repository</name>
+            <url>http://repo.fusesource.com/maven2-all</url>
         </repository>
     </repositories>
 
