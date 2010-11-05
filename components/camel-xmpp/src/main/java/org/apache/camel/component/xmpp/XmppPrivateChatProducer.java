@@ -51,10 +51,6 @@ public class XmppPrivateChatProducer extends DefaultProducer {
 
     public void process(Exchange exchange) {
         try {
-            if (connection == null) {
-                connection = endpoint.createConnection();
-            }
-
             // make sure we are connected
             if (!connection.isConnected()) {
                 if (LOG.isDebugEnabled()) {
@@ -107,6 +103,22 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             throw new RuntimeExchangeException("Cannot send XMPP message to " + endpoint.getParticipant() + " from " + endpoint.getUser() + " : " + message
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, e);
         }
+    }
+    
+    @Override
+    protected void doStart() throws Exception {
+        if (connection == null) {
+            connection = endpoint.createConnection();
+        }
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (connection != null && connection.isConnected()) {
+            connection.disconnect();
+        }
+        super.doStop();
     }
 
     // Properties

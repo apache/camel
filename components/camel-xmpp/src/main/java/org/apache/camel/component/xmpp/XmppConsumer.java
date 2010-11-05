@@ -103,7 +103,9 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             muc.leave();
             muc = null;
         }
-        //the endpoint will clean up the connection
+        if (connection != null && connection.isConnected()) {
+            connection.disconnect();
+        }
     }
 
     public void chatCreated(Chat chat, boolean createdLocally) {
