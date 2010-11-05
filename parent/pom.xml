@@ -130,6 +130,7 @@
     <spring-version>3.0.5.RELEASE</spring-version>
     <spring-osgi-version>1.2.0</spring-osgi-version>
     <spring-security-version>3.0.3.RELEASE</spring-security-version>
+    <spring-ws-version>1.5.9</spring-ws-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stringtemplate-version>3.0</stringtemplate-version>
     <tagsoup-version>1.2</tagsoup-version>
@@ -591,6 +592,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-security</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-ws</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
