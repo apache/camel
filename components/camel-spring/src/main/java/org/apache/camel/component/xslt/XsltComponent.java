@@ -17,10 +17,12 @@
 package org.apache.camel.component.xslt;
 
 import java.util.Map;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.xml.ResultHandlerFactory;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.builder.xml.XsltUriResolver;
@@ -117,7 +119,13 @@ public class XsltComponent extends ResourceBasedComponent {
         String output = getAndRemoveParameter(parameters, "output", String.class);
         configureOutput(xslt, output);
 
-        xslt.setTransformerInputStream(resource.getInputStream());
+        try {
+            xslt.setTransformerInputStream(resource.getInputStream());
+        } catch (Exception e) {
+            // include information about the resource in the caused exception, so its easier for
+            // end users to know which resource failed
+            throw new TransformerConfigurationException(e.getMessage() + " " + resource.toString(), e);
+        }
         configureXslt(xslt, uri, remaining, parameters);
         return new ProcessorEndpoint(uri, this, xslt);
     }
