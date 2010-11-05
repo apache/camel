@@ -193,6 +193,10 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jms/${pom.version}</bundle>
   </feature>
+  <feature name='camel-jmx' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-jmx/${pom.version}</bundle>
+  </feature>
   <feature name='camel-amqp' version='${pom.version}'>
     <bundle>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
