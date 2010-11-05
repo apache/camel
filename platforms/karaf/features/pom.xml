@@ -93,7 +93,7 @@
       <junit-bundle-version>4.7_1</junit-bundle-version>
       <jsmpp-bundle-version>2.1.0_1</jsmpp-bundle-version>
       <lucene-bundle-version>3.0.1_1</lucene-bundle-version>
-      <mvel-bundle-version>2.0.8_3</mvel-bundle-version>
+      <mvel-bundle-version>2.0.8_4</mvel-bundle-version>
       <mina-bundle-version>1.1.7_3</mina-bundle-version>
       <neethi-bundle-version>2.0.4_2</neethi-bundle-version>
       <oro-bundle-version>2.0.8_3</oro-bundle-version>
