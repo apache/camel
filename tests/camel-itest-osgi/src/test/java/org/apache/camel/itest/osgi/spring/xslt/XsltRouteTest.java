@@ -19,13 +19,25 @@ package org.apache.camel.itest.osgi.spring.xslt;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.options.UrlReference;
+
+import static org.ops4j.pax.exam.CoreOptions.equinox;
+import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemPackage;
+
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
+
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("TODO: fix me")
 public class XsltRouteTest extends OSGiIntegrationTestSupport {
 
     @Test
@@ -50,6 +62,34 @@ public class XsltRouteTest extends OSGiIntegrationTestSupport {
                     .to("mock:result");
             }
         };
+    }
+    
+    @Configuration
+    public static Option[] configure() throws Exception {
+        Option[] options = options(
+            // install the spring dm profile            
+            profile("spring.dm").version("1.2.0"),
+            // setup the boot delegation of sun's package
+            //bootDelegationPackage("com.sun.org.apache.xml.internal.*"),
+            systemPackage("com.sun.org.apache.xalan.internal.xsltc"),
+            systemPackage("com.sun.org.apache.xml.internal.dtm"),
+            
+            // this is how you set the default log level when using pax logging (logProfile)
+            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
+
+            // need to install some karaf features
+            scanFeatures(getKarafFeatureUrl(), "http"),
+
+            // using the features to install the camel components             
+            scanFeatures(getCamelKarafFeatureUrl(),                         
+                          "camel-core", "camel-spring", "camel-test"),
+            
+            workingDirectory("target/paxrunner/"),
+            
+            equinox(),
+            felix());
+        
+        return options;
     }
 
 }
