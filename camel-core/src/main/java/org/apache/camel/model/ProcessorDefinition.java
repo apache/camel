@@ -345,6 +345,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition> outputs) throws Exception {
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorDefinition<?> output : outputs) {
+
+            // resolve properties before we create the processor
+            resolvePropertyPlaceholders(routeContext, output);
+
             Processor processor = null;
             // at first use custom factory
             if (routeContext.getCamelContext().getProcessorFactory() != null) {
@@ -383,7 +387,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         Processor processor = null;
 
         // resolve properties before we create the processor
-        resolvePropertyPlaceholders(routeContext);
+        resolvePropertyPlaceholders(routeContext, this);
 
         // at first use custom factory
         if (routeContext.getCamelContext().getProcessorFactory() != null) {
@@ -402,28 +406,29 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Inspects this processor definition and resolves any property placeholders from its properties.
+     * Inspects the given processor definition and resolves any property placeholders from its properties.
      * <p/>
      * This implementation will check all the getter/setter pairs on this instance and for all the values
      * (which is a String type) will be property placeholder resolved.
      *
      * @param routeContext the route context
+     * @param definition   the processor definition
      * @throws Exception is thrown if property placeholders was used and there was an error resolving them
      * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
      * @see org.apache.camel.component.properties.PropertiesComponent
      */
-    protected void resolvePropertyPlaceholders(RouteContext routeContext) throws Exception {
+    protected void resolvePropertyPlaceholders(RouteContext routeContext, ProcessorDefinition definition) throws Exception {
         if (log.isTraceEnabled()) {
-            log.trace("Resolving property placeholders for: " + this);
+            log.trace("Resolving property placeholders for: " + definition);
         }
 
         // find all String getter/setter
         Map<Object, Object> properties = new HashMap<Object, Object>();
-        IntrospectionSupport.getProperties(this, properties, null);
+        IntrospectionSupport.getProperties(definition, properties, null);
 
         if (!properties.isEmpty()) {
             if (log.isTraceEnabled()) {
-                log.trace("There are " + properties.size() + " properties on: " + this);
+                log.trace("There are " + properties.size() + " properties on: " + definition);
             }
 
             // lookup and resolve properties for String based properties
@@ -437,7 +442,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                     text = routeContext.getCamelContext().resolvePropertyPlaceholders(text);
                     if (text != value) {
                         // invoke setter as the text has changed
-                        IntrospectionSupport.setProperty(this, name, text);
+                        IntrospectionSupport.setProperty(definition, name, text);
                         if (log.isDebugEnabled()) {
                             log.debug("Changed property [" + name + "] from: " + value + " to: " + text);
                         }
