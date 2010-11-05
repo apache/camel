@@ -1553,6 +1553,13 @@
       </properties>
     </profile>
     <profile>
+      <id>cxf-2.2.x</id>
+      <properties>
+         <!-- NOTE you can't compile camel-cxf with cxf 2.2.x since camel 2.6.0, but the compiled jar can be used with cxf 2.2.x --> 
+         <cxf-version>2.2.11</cxf-version>
+      </properties>
+    </profile>
+    <profile>
       <id>on-sunjdk</id>
       <activation>
         <property>
