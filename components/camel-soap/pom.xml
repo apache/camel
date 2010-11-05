@@ -140,8 +140,8 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-common-xsd</artifactId>
-                <version>${cxf-version}</version>
+                <artifactId>cxf-xjc-plugin</artifactId>
+                <version>${cxf-xjc-utils-version}</version>
                 <executions>
                     <execution>
                         <id>generate-sources</id>
@@ -160,14 +160,9 @@
                 </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>org.apache.cxf</groupId>
+                        <groupId>org.apache.cxf.xjcplugins</groupId>
                         <artifactId>cxf-xjc-dv</artifactId>
-                        <version>${cxf-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.apache.cxf</groupId>
-                        <artifactId>cxf-common-utilities</artifactId>
-                        <version>${cxf-version}</version>
+                        <version>${cxf-xjc-utils-version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -200,9 +195,9 @@
                 </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>org.apache.cxf</groupId>
+                        <groupId>org.apache.cxf.xjcplugins</groupId>
                         <artifactId>cxf-xjc-ts</artifactId>
-                        <version>${cxf-version}</version>
+                        <version>${cxf-xjc-utils-version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
