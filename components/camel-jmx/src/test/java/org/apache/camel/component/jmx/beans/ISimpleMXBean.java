@@ -16,23 +16,6 @@
  */
 package org.apache.camel.component.jmx.beans;
 
-public interface ISimpleMXBean {
-
-    String getStringValue();
-
-    void setStringValue(String aValue);
-
-    void touch();
-
-    void userData(String aUserData);
-
-    void triggerConnectionNotification();
-
-    void triggerMBeanServerNotification() throws Exception;
-
-    void triggerRelationNotification() throws Exception;
-
-    void triggerTimerNotification();
-
-    int getMonitorNumber();
+public interface ISimpleMXBean extends SimpleBeanMBean {
+    // moved the implementation to SimpleBeanMBean to better support JDK 1.5
 }

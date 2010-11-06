@@ -19,8 +19,6 @@
     <source>TestDomain:name=source</source>
     <message>relation message</message>
     <sequence>0</sequence>
-    <timestamp>1262878215000</timestamp>
-    <dateTime>2010-01-07T10:30:15.000-05:00</dateTime>
     <type>jmx.relation.creation.basic</type>
     <objectName>TestDomain:name=foo</objectName>
     <relationId>relation-id</relationId>

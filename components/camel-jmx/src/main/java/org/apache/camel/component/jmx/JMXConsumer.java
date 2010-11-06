@@ -19,6 +19,7 @@ package org.apache.camel.component.jmx;
 import java.lang.management.ManagementFactory;
 import java.util.Collections;
 import java.util.Map;
+
 import javax.management.MBeanServerConnection;
 import javax.management.Notification;
 import javax.management.NotificationFilter;
@@ -33,15 +34,12 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Consumer will add itself as a NotificationListener on the object
  * specified by the objectName param.
  */
 public class JMXConsumer extends DefaultConsumer implements NotificationListener {
-    private static final Log LOG = LogFactory.getLog(JMXConsumer.class);
 
     /**
      * connection to the mbean server (local or remote)

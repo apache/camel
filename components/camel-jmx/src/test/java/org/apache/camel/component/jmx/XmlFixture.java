@@ -20,8 +20,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
@@ -75,11 +79,19 @@ public final class XmlFixture {
         try {
             XMLAssert.assertXMLEqual(diff, true);
         } catch (Throwable t) {
-            XMLUnit.getTransformerFactory().newTransformer().transform(new DOMSource(aActual), new StreamResult(System.out));
+            dump(aActual);
             StringWriter sw = new StringWriter();
             t.printStackTrace(new PrintWriter(sw));
             fail(sw.toString());
         }
+    }
+
+    public static void dump(Document aActual) throws TransformerConfigurationException,
+            TransformerException {
+        TransformerFactory tf = XMLUnit.getTransformerFactory();
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.transform(new DOMSource(aActual), new StreamResult(System.out));
     }
 
     public static Document stripTimestamp(Document aDocument) throws Exception {

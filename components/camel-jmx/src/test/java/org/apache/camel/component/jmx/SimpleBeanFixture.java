@@ -16,19 +16,27 @@
  */
 package org.apache.camel.component.jmx;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.management.InstanceNotFoundException;
-import javax.management.JMX;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
+import javax.management.MBeanServerInvocationHandler;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -40,9 +48,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.junit.After;
 import org.junit.Before;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.w3c.dom.Document;
 
 /**
  * MBean that is registered for the unit tests. The fixture will register a bean
@@ -128,8 +134,14 @@ public class SimpleBeanFixture {
      * Gets the mxbean for our remote object using the specified name
      */
     protected ISimpleMXBean getMXBean(ObjectName aObjectName) {
-        ISimpleMXBean simpleBean = JMX.newMXBeanProxy(server, aObjectName, ISimpleMXBean.class);
-        return simpleBean;
+        return (ISimpleMXBean) MBeanServerInvocationHandler.newProxyInstance(
+                server,
+                aObjectName,
+                ISimpleMXBean.class,
+                false);
+        // revert the above change to the below when we move to JDK 1.6
+//        ISimpleMXBean simpleBean = JMX.newMXBeanProxy(server, aObjectName, ISimpleMXBean.class);
+//        return simpleBean;
     }
 
     /**
@@ -252,9 +264,29 @@ public class SimpleBeanFixture {
      * Assert that we've received the message and resets the mock endpoint
      */
     protected void assertMessageReceived(File aExpectedFile) throws Exception {
+        Document actual = XmlFixture.toDoc(getBody(0, String.class));
+        Document noTime = XmlFixture.stripTimestamp(actual);
         XmlFixture.assertXMLIgnorePrefix("failed to match",
                 XmlFixture.toDoc(aExpectedFile),
-                XmlFixture.toDoc(getBody(0, String.class)));
+                noTime);
+        // assert that we have a timestamp and datetime
+        // can't rely on the datetime being the same due to timezone differences
+        // instead, we'll assert that the values exist.
+        XPathFactory xpf = XPathFactory.newInstance();
+        XPath xp = xpf.newXPath();
+        xp.setNamespaceContext(new NamespaceContext(){
+            public String getNamespaceURI(String aArg0) {
+                return "urn:org.apache.camel.component:jmx";
+            }
+            public String getPrefix(String aArg0) {
+                return "jmx";
+            }
+            public Iterator getPrefixes(String aArg0) {
+                return null;
+            }
+        });
+        assertEquals("1262878215000", xp.evaluate("string(//jmx:timestamp)", actual));
+        assertEquals("1", xp.evaluate("count(//jmx:dateTime)", actual));
         resetMockEndpoint();
     }
 

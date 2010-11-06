@@ -19,8 +19,6 @@
     <source>TestDomain:name=simpleBean</source>
     <message/>
     <sequence>0</sequence>
-    <timestamp>1262878215000</timestamp>
-    <dateTime>2010-01-07T10:30:15.000-05:00</dateTime>
     <type>mbeanserver</type>
     <MBeanName>TestDomain:name=foo</MBeanName>
 </MBeanServerNotification>

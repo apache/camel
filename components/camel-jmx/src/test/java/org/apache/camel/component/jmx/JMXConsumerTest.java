@@ -78,7 +78,7 @@ public class JMXConsumerTest extends SimpleBeanFixture {
         waitAndAssertMessageReceived("src/test/resources/consumer-test/mbeanServerNotification.xml");
     }
 
-    @Test
+    @Ignore
     public void relationNotification() throws Exception {
         simpleBean.triggerRelationNotification();
         waitAndAssertMessageReceived("src/test/resources/consumer-test/relationNotification.xml");
