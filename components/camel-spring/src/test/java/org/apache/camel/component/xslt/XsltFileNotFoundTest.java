@@ -18,6 +18,8 @@ package org.apache.camel.component.xslt;
 
 import java.io.FileNotFoundException;
 
+import javax.xml.transform.TransformerConfigurationException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -38,7 +40,8 @@ public class XsltFileNotFoundTest extends TestSupport {
         } catch (FailedToCreateRouteException e) {
             // expected
             assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            assertIsInstanceOf(FileNotFoundException.class, e.getCause().getCause());
+            assertIsInstanceOf(TransformerConfigurationException.class, e.getCause().getCause());
+            assertIsInstanceOf(FileNotFoundException.class, e.getCause().getCause().getCause());
         }
     }
 
