@@ -37,9 +37,9 @@
 
     <repositories>
         <repository>
-          <id>spring.maven.release</id>
-          <name>Spring Release Maven Repo</name>
-          <url>http://repository.springsource.com/maven/bundles/release</url>
+            <id>spring.maven.release</id>
+            <name>Spring Release Maven Repo</name>
+            <url>http://repository.springsource.com/maven/bundles/release</url>
         </repository>
     </repositories>
 
@@ -70,6 +70,41 @@
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-ws-support</artifactId>
             <version>${spring-ws-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-servlet_2.5_spec</artifactId>
+            <version>1.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- these is needed by JDK 1.5 -->
+        <dependency>
+            <groupId>javax.xml.soap</groupId>
+            <artifactId>saaj-api</artifactId>
+            <version>1.3</version>
+            <exclusions>
+                <exclusion>
+                    <!-- exclude dependency on javax.activation due to sun binary license
+                        restrictions geronimo-activation dependency directly below provides a workaround -->
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <!-- workaround for saaj dependency on javax.activation -->
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-activation_1.1_spec</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.messaging.saaj</groupId>
+            <artifactId>saaj-impl</artifactId>
+            <version>1.3.2</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- testing -->
