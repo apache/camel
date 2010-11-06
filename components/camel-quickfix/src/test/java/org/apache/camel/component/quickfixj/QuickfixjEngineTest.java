@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -34,6 +35,8 @@ import org.apache.mina.common.TransportType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+
 import quickfix.Acceptor;
 import quickfix.ConfigError;
 import quickfix.DefaultMessageFactory;
@@ -46,8 +49,12 @@ import quickfix.Initiator;
 import quickfix.JdbcLogFactory;
 import quickfix.JdbcSetting;
 import quickfix.JdbcStoreFactory;
+import quickfix.LogFactory;
 import quickfix.MemoryStoreFactory;
 import quickfix.Message;
+import quickfix.MessageFactory;
+import quickfix.MessageStoreFactory;
+import quickfix.SLF4JLogFactory;
 import quickfix.ScreenLogFactory;
 import quickfix.Session;
 import quickfix.SessionFactory;
@@ -70,7 +77,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 
 public class QuickfixjEngineTest {
     private File settingsFile;
@@ -287,6 +293,23 @@ public class QuickfixjEngineTest {
     }
 
     @Test
+    public void inferSlf4jLog() throws Exception {
+        settings.setString(SLF4JLogFactory.SETTING_EVENT_CATEGORY, "Events");
+        settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
+
+        writeSettings();
+
+        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+
+        assertThat(quickfixjEngine.getInitiator(), notNullValue());
+        assertThat(quickfixjEngine.getAcceptor(), nullValue());
+        assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
+        assertThat(quickfixjEngine.getMessageStoreFactory(), instanceOf(MemoryStoreFactory.class));
+        assertThat(quickfixjEngine.getLogFactory(), instanceOf(SLF4JLogFactory.class));
+        assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
+    }
+    
+    @Test
     public void ambiguousLog() throws Exception {
         settings.setString(FileLogFactory.SETTING_FILE_LOG_PATH, tempdir.toString());
         settings.setBool(ScreenLogFactory.SETTING_LOG_EVENTS, true);
@@ -304,6 +327,24 @@ public class QuickfixjEngineTest {
         } catch (ConfigError e) {
             assertTrue(e.getMessage().contains(exceptionText));
         }
+    }
+
+    @Test
+    public void useExplicitComponentImplementations() throws Exception {
+        settings.setString(SLF4JLogFactory.SETTING_EVENT_CATEGORY, "Events");
+        settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
+
+        writeSettings();
+
+        MessageStoreFactory messageStoreFactory = Mockito.mock(MessageStoreFactory.class);
+        LogFactory logFactory = Mockito.mock(LogFactory.class);
+        MessageFactory messageFactory = Mockito.mock(MessageFactory.class);
+        
+        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false, messageStoreFactory, logFactory, messageFactory);
+ 
+        assertThat(quickfixjEngine.getMessageStoreFactory(), is(messageStoreFactory));
+        assertThat(quickfixjEngine.getLogFactory(), is(logFactory));
+        assertThat(quickfixjEngine.getMessageFactory(), is(messageFactory));
     }
 
     @Test

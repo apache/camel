@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.concurrent.CountDownLatch;
@@ -42,8 +43,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import quickfix.Acceptor;
+import quickfix.DefaultMessageFactory;
 import quickfix.FixVersions;
 import quickfix.Initiator;
+import quickfix.LogFactory;
+import quickfix.MemoryStoreFactory;
+import quickfix.MessageFactory;
+import quickfix.MessageStoreFactory;
+import quickfix.ScreenLogFactory;
 import quickfix.Session;
 import quickfix.SessionFactory;
 import quickfix.SessionID;
@@ -68,7 +75,10 @@ public class QuickfixjComponentTest {
     private SessionID sessionID;
     private SessionSettings settings;
     private QuickfixjComponent component;
-
+    private MessageFactory engineMessageFactory;
+    private MessageStoreFactory engineMessageStoreFactory;
+    private LogFactory engineLogFactory;
+    
     private void setSessionID(SessionSettings sessionSettings, SessionID sessionID) {
         sessionSettings.setString(sessionID, SessionSettings.BEGINSTRING, sessionID.getBeginString());
         sessionSettings.setString(sessionID, SessionSettings.SENDERCOMPID, sessionID.getSenderCompID());
@@ -88,10 +98,6 @@ public class QuickfixjComponentTest {
         settingsFile = File.createTempFile("quickfixj_test_", ".cfg");
         tempdir = settingsFile.getParentFile();
         URL[] urls = new URL[] {tempdir.toURI().toURL()};
-       
-        contextClassLoader = Thread.currentThread().getContextClassLoader();
-        ClassLoader testClassLoader = new URLClassLoader(urls, contextClassLoader);
-        Thread.currentThread().setContextClassLoader(testClassLoader);
         
         sessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "FOO", "BAR");
 
@@ -101,9 +107,30 @@ public class QuickfixjComponentTest {
         settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
         setSessionID(settings, sessionID);   
 
+        contextClassLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader testClassLoader = new URLClassLoader(urls, contextClassLoader);
+        Thread.currentThread().setContextClassLoader(testClassLoader);
+    }
+
+    private void setUpComponent() throws IOException, MalformedURLException, NoSuchMethodException {
+        setUpComponent(false);
+    }
+    
+    private void setUpComponent(boolean injectQfjPlugins) throws IOException, MalformedURLException, NoSuchMethodException {
         DefaultCamelContext camelContext = new DefaultCamelContext();
         component = new QuickfixjComponent();
         component.setCamelContext(camelContext);
+        
+        if (injectQfjPlugins) {
+            engineMessageFactory = new DefaultMessageFactory();
+            engineMessageStoreFactory = new MemoryStoreFactory();
+            engineLogFactory = new ScreenLogFactory();
+            
+            component.setMessageFactory(engineMessageFactory);
+            component.setMessageStoreFactory(engineMessageStoreFactory);
+            component.setLogFactory(engineLogFactory);
+        }
+        
         assertThat(component.getEngines().size(), is(0));
 
         Method converterMethod = QuickfixjConverters.class.getMethod("toSessionID", new Class<?>[] {String.class});
@@ -113,11 +140,15 @@ public class QuickfixjComponentTest {
     @After
     public void tearDown() throws Exception {
         Thread.currentThread().setContextClassLoader(contextClassLoader);   
-        component.stop();
+        if (component != null) {
+            component.stop();
+        }
     }
 
     @Test
     public void createEndpointBeforeComponentStart() throws Exception {
+        setUpComponent();
+
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
         settings.setLong(sessionID, Initiator.SETTING_SOCKET_CONNECT_PORT, 1234);
 
@@ -147,6 +178,8 @@ public class QuickfixjComponentTest {
     
     @Test
     public void createEndpointAfterComponentStart() throws Exception {
+        setUpComponent();
+
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
         settings.setLong(sessionID, Initiator.SETTING_SOCKET_CONNECT_PORT, 1234);
 
@@ -171,6 +204,8 @@ public class QuickfixjComponentTest {
 
     @Test
     public void componentStop() throws Exception {
+        setUpComponent();
+
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
         settings.setLong(sessionID, Initiator.SETTING_SOCKET_CONNECT_PORT, 1234);
 
@@ -204,6 +239,8 @@ public class QuickfixjComponentTest {
 
     @Test
     public void messagePublication() throws Exception {
+        setUpComponent();
+
         // Create settings file with both acceptor and initiator
         
         SessionSettings settings = new SessionSettings();
@@ -266,6 +303,27 @@ public class QuickfixjComponentTest {
         producer2.process(exchange);
        
         assertTrue("Messages not received", messageLatch.await(5000, TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void userSpecifiedQuickfixjPlugins() throws Exception {
+        setUpComponent(true);
+
+        settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
+        settings.setLong(sessionID, Initiator.SETTING_SOCKET_CONNECT_PORT, 1234);
+
+        writeSettings();
+
+        component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
+
+        component.start();
+
+        assertThat(component.getEngines().size(), is(1));
+        QuickfixjEngine engine = component.getEngines().values().iterator().next();
+        
+        assertThat(engine.getMessageFactory(), is(engineMessageFactory));
+        assertThat(engine.getMessageStoreFactory(), is(engineMessageStoreFactory));
+        assertThat(engine.getLogFactory(), is(engineLogFactory));
     }
 
     private void writeSettings() throws IOException {

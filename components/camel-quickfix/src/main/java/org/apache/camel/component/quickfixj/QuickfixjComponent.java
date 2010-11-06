@@ -25,6 +25,10 @@ import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import quickfix.LogFactory;
+import quickfix.MessageFactory;
+import quickfix.MessageStoreFactory;
+
 public class QuickfixjComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
 
@@ -32,6 +36,10 @@ public class QuickfixjComponent extends DefaultComponent {
     private final Map<String, QuickfixjEngine> engines = new HashMap<String, QuickfixjEngine>();
     private final Map<String, QuickfixjEndpoint> endpoints = new HashMap<String, QuickfixjEndpoint>();
 
+    private MessageStoreFactory messageStoreFactory;
+    private LogFactory logFactory;
+    private MessageFactory messageFactory;
+    
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // Look up the engine instance based on the settings file ("remaining")
@@ -43,7 +51,7 @@ public class QuickfixjComponent extends DefaultComponent {
                 engine = engines.get(remaining);
                 if (engine == null) {
                     LOG.info("Creating QuickFIX/J engine using settings: " + remaining);
-                    engine = new QuickfixjEngine(remaining, false);
+                    engine = new QuickfixjEngine(remaining, false, messageStoreFactory, logFactory, messageFactory);
                     engines.put(remaining, engine);
                     if (isStarted()) {
                         startQuickfixjEngine(engine);
@@ -89,5 +97,17 @@ public class QuickfixjComponent extends DefaultComponent {
     // Test Support
     Map<String, QuickfixjEngine> getEngines() {
         return Collections.unmodifiableMap(engines);
+    }
+    
+    public void setMessageFactory(MessageFactory messageFactory) {
+        this.messageFactory = messageFactory;
+    }
+    
+    public void setLogFactory(LogFactory logFactory) {
+        this.logFactory = logFactory;
+    }
+    
+    public void setMessageStoreFactory(MessageStoreFactory messageStoreFactory) {
+        this.messageStoreFactory = messageStoreFactory;
     }
 }
