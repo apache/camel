@@ -20,13 +20,13 @@ import java.io.File;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Collections;
+
 import javax.management.MBeanServerFactory;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -37,7 +37,6 @@ import org.junit.Test;
  * same as the platform server. May want to refactor the exisiting tests to
  * run the full suite on the local platform and this "remote" setup.
  */
-@Ignore("TODO: Fails with timestamp diff error")
 public class JMXRemoteTest extends SimpleBeanFixture {
 
     JMXServiceURL url;

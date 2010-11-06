@@ -27,7 +27,6 @@ import org.junit.Test;
  * Tests that trigger notification events on our simple bean without
  * requiring any special setup.
  */
-@Ignore("TODO: Fails with timestamp diff error")
 public class JMXConsumerTest extends SimpleBeanFixture {
 
     ISimpleMXBean simpleBean;

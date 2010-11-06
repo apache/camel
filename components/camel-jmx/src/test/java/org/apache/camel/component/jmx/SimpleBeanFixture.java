@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jmx;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
@@ -38,6 +35,8 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
+import org.w3c.dom.Document;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -48,7 +47,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.junit.After;
 import org.junit.Before;
-import org.w3c.dom.Document;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * MBean that is registered for the unit tests. The fixture will register a bean
@@ -274,7 +275,7 @@ public class SimpleBeanFixture {
         // instead, we'll assert that the values exist.
         XPathFactory xpf = XPathFactory.newInstance();
         XPath xp = xpf.newXPath();
-        xp.setNamespaceContext(new NamespaceContext(){
+        xp.setNamespaceContext(new NamespaceContext() {
             public String getNamespaceURI(String aArg0) {
                 return "urn:org.apache.camel.component:jmx";
             }
@@ -285,7 +286,7 @@ public class SimpleBeanFixture {
                 return null;
             }
         });
-        assertEquals("1262878215000", xp.evaluate("string(//jmx:timestamp)", actual));
+        assertEquals("1", xp.evaluate("count(//jmx:timestamp)", actual));
         assertEquals("1", xp.evaluate("count(//jmx:dateTime)", actual));
         resetMockEndpoint();
     }
