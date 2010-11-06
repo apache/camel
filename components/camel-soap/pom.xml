@@ -60,18 +60,16 @@
             <artifactId>jaxb-impl</artifactId>
         </dependency>
 
-		<!-- JAXWS api jars -->
-		<dependency>
+	<!-- JAXWS api jars -->
+	<dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
             <version>1.1.2</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jaxws_2.2_spec</artifactId>
             <version>1.0</version>
-            <scope>test</scope>
         </dependency>
 
         <!-- for testing -->
