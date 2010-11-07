@@ -37,22 +37,29 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
     }
 
     protected boolean pollDirectory(String fileName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
-        // must remember current dir so we stay in that directory after the poll
-        String currentDir = operations.getCurrentDirectory();
+        String currentDir = null;
+        if (isStepwise()) {
+            // must remember current dir so we stay in that directory after the poll
+            currentDir = operations.getCurrentDirectory();
+        }
 
         // strip trailing slash
         fileName = FileUtil.stripTrailingSeparator(fileName);
 
         boolean answer = doPollDirectory(fileName, null, fileList);
+        if (isStepwise()) {
+            operations.changeCurrentDirectory(currentDir);
+        }
 
-        operations.changeCurrentDirectory(currentDir);
         return answer;
     }
 
     protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
         boolean answer = doPollDirectory(absolutePath, dirName, fileList);
         // change back to parent directory when finished polling sub directory
-        operations.changeToParentDirectory();
+        if (isStepwise()) {
+            operations.changeToParentDirectory();
+        }
         return answer;
     }
 
@@ -63,15 +70,24 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
         // remove trailing /
         dirName = FileUtil.stripTrailingSeparator(dirName);
-        String dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
-
-        // change into directory (to ensure most FTP servers can list files)
-        operations.changeCurrentDirectory(dir);
+        // compute dir depending on stepwise is enabled or not
+        String dir;
+        if (isStepwise()) {
+            dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
+            operations.changeCurrentDirectory(dir);
+        } else {
+            dir = absolutePath;
+        }
 
         if (log.isTraceEnabled()) {
             log.trace("Polling directory: " + dir);
         }
-        List<ChannelSftp.LsEntry> files = operations.listFiles();
+        List<ChannelSftp.LsEntry> files;
+        if (isStepwise()) {
+            files = operations.listFiles();
+        } else {
+            files = operations.listFiles(dir);
+        }
         if (files == null || files.isEmpty()) {
             // no files in this directory to poll
             if (log.isTraceEnabled()) {
@@ -156,6 +172,11 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         answer.setFileName(answer.getRelativeFilePath());
 
         return answer;
+    }
+
+    private boolean isStepwise() {
+        RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
+        return config.isStepwise();
     }
 
 }

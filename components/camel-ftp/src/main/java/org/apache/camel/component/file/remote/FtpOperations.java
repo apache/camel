@@ -293,21 +293,28 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             target.setBody(os);
 
-            // remember current directory
-            String currentDir = getCurrentDirectory();
+            String remoteName = name;
+            String currentDir = null;
+            if (endpoint.getConfiguration().isStepwise()) {
+                // remember current directory
+                currentDir = getCurrentDirectory();
 
-            // change directory to path where the file is to be retrieved
-            // (must do this as some FTP servers cannot retrieve using absolute path)
-            String path = FileUtil.onlyPath(name);
-            if (path != null) {
-                changeCurrentDirectory(path);
+                // change directory to path where the file is to be retrieved
+                // (must do this as some FTP servers cannot retrieve using absolute path)
+                String path = FileUtil.onlyPath(name);
+                if (path != null) {
+                    changeCurrentDirectory(path);
+                }
+                // remote name is now only the file name as we just changed directory
+                remoteName = FileUtil.stripPath(name);
             }
-            String onlyName = FileUtil.stripPath(name);
 
-            result = client.retrieveFile(onlyName, os);
+            result = client.retrieveFile(remoteName, os);
 
             // change back to current directory
-            changeCurrentDirectory(currentDir);
+            if (endpoint.getConfiguration().isStepwise()) {
+                changeCurrentDirectory(currentDir);
+            }
 
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
@@ -368,21 +375,28 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             // store the java.io.File handle as the body
             target.setBody(local);
 
-            // remember current directory
-            String currentDir = getCurrentDirectory();
+            String remoteName = name;
+            String currentDir = null;
+            if (endpoint.getConfiguration().isStepwise()) {
+                // remember current directory
+                currentDir = getCurrentDirectory();
 
-            // change directory to path where the file is to be retrieved
-            // (must do this as some FTP servers cannot retrieve using absolute path)
-            String path = FileUtil.onlyPath(name);
-            if (path != null) {
-                changeCurrentDirectory(path);
+                // change directory to path where the file is to be retrieved
+                // (must do this as some FTP servers cannot retrieve using absolute path)
+                String path = FileUtil.onlyPath(name);
+                if (path != null) {
+                    changeCurrentDirectory(path);
+                }
+                // remote name is now only the file name as we just changed directory
+                remoteName = FileUtil.stripPath(name);
             }
-            String onlyName = FileUtil.stripPath(name);
 
-            result = client.retrieveFile(onlyName, os);
+            result = client.retrieveFile(remoteName, os);
             
             // change back to current directory
-            changeCurrentDirectory(currentDir);
+            if (endpoint.getConfiguration().isStepwise()) {
+                changeCurrentDirectory(currentDir);
+            }
 
         } catch (IOException e) {
             if (log.isTraceEnabled()) {

@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class FromFtpPreMoveNoopTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&preMove=work&noop=true";
     }
 

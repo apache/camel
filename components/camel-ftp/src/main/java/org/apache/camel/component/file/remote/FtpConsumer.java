@@ -37,14 +37,19 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     protected boolean pollDirectory(String fileName, List<GenericFile<FTPFile>> fileList) {
-        // must remember current dir so we stay in that directory after the poll
-        String currentDir = operations.getCurrentDirectory();
+        String currentDir = null;
+        if (isStepwise()) {
+            // must remember current dir so we stay in that directory after the poll
+            currentDir = operations.getCurrentDirectory();
+        }
 
         // strip trailing slash
         fileName = FileUtil.stripTrailingSeparator(fileName);
 
         boolean answer = doPollDirectory(fileName, null, fileList);
-        operations.changeCurrentDirectory(currentDir);
+        if (isStepwise()) {
+            operations.changeCurrentDirectory(currentDir);
+        }
 
         return answer;
     }
@@ -52,7 +57,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList) {
         boolean answer = doPollDirectory(absolutePath, dirName, fileList);
         // change back to parent directory when finished polling sub directory
-        operations.changeToParentDirectory();
+        if (isStepwise()) {
+            operations.changeToParentDirectory();
+        }
         return answer;
     }
 
@@ -60,18 +67,28 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         if (log.isTraceEnabled()) {
             log.trace("doPollDirectory from absolutePath: " + absolutePath + ", dirName: " + dirName);
         }
-
         // remove trailing /
         dirName = FileUtil.stripTrailingSeparator(dirName);
-        String dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
 
-        // change into directory (to ensure most FTP servers can list files)
-        operations.changeCurrentDirectory(dir);
+        // compute dir depending on stepwise is enabled or not
+        String dir;
+        if (isStepwise()) {
+            dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
+            operations.changeCurrentDirectory(dir);
+        } else {
+            dir = absolutePath;
+        }
 
         if (log.isTraceEnabled()) {
             log.trace("Polling directory: " + dir);
         }
-        List<FTPFile> files = operations.listFiles();
+        List<FTPFile> files;
+        if (isStepwise()) {
+            files = operations.listFiles();
+        } else {
+            files = operations.listFiles(dir);
+        }
+
         if (files == null || files.isEmpty()) {
             // no files in this directory to poll
             if (log.isTraceEnabled()) {
@@ -158,6 +175,11 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         answer.setFileName(answer.getRelativeFilePath());
 
         return answer;
+    }
+
+    private boolean isStepwise() {
+        RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
+        return config.isStepwise();
     }
 
 }

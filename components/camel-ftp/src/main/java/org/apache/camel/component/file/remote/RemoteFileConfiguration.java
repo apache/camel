@@ -37,6 +37,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int soTimeout;
     private boolean throwExceptionOnConnectFailed;
     private String siteCommand;
+    private boolean stepwise = true;
 
     public RemoteFileConfiguration() {
     }
@@ -215,5 +216,22 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      */
     public void setSiteCommand(String siteCommand) {
         this.siteCommand = siteCommand;
+    }
+
+    public boolean isStepwise() {
+        return stepwise;
+    }
+
+    /**
+     * Sets whether we should stepwise change directories while traversing file structures
+     * when downloading files, or as well when uploading a file to a directory.
+     * <p/>
+     * You can disable this if you for example are in a situation where you cannot change directory
+     * on the FTP server due security reasons.
+     *
+     * @param stepwise whether to use change directory or not
+     */
+    public void setStepwise(boolean stepwise) {
+        this.stepwise = stepwise;
     }
 }

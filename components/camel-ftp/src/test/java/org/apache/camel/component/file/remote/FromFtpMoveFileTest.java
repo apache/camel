@@ -31,7 +31,7 @@ import org.junit.Test;
  */
 public class FromFtpMoveFileTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false"
                 + "&move=done/sub2/${file:name}.old&consumer.delay=5000";
     }

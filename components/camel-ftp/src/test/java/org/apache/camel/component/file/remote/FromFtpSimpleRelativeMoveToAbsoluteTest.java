@@ -27,7 +27,7 @@ import org.junit.Test;
  */
 public class FromFtpSimpleRelativeMoveToAbsoluteTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false"
                 + "&move=/movefile/.done&initialDelay=2500&delay=5000";
     }

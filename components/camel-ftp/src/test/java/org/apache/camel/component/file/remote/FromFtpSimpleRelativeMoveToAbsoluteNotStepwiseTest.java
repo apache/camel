@@ -16,33 +16,14 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
-
 /**
  * @version $Revision$
  */
-public class FromFileToFtpTest extends FtpServerTestSupport {
+public class FromFtpSimpleRelativeMoveToAbsoluteNotStepwiseTest extends FromFtpSimpleRelativeMoveToAbsoluteTest {
 
-    private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=3000";
+    protected String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false"
+                + "&move=/movefile/.done&initialDelay=2500&delay=5000&stepwise=false";
     }
 
-    @Test
-    public void testFromFileToFtp() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(getFtpUrl()).to("mock:result");
-                from("file:src/main/data?noop=true&consumer.delay=3000").to(getFtpUrl());
-            }
-        };
-    }
 }

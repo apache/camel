@@ -26,7 +26,7 @@ import org.junit.Test;
  */
 public class FromFtpRecursiveNoopTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/noop?password=admin&binary=false&initialDelay=3000"
                 + "&recursive=true&noop=true";
     }
@@ -70,6 +70,5 @@ public class FromFtpRecursiveNoopTest extends FtpServerTestSupport {
             }
         };
     }
-
 
 }

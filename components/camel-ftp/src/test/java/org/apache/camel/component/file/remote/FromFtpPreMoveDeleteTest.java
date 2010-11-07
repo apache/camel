@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class FromFtpPreMoveDeleteTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&preMove=work&delete=true";
     }
 

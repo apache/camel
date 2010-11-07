@@ -28,7 +28,7 @@ import org.junit.Test;
  */
 public class FromFtpFilterTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filter?password=admin&binary=false&filter=#myFilter";
     }
 

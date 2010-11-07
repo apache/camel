@@ -30,7 +30,7 @@ import org.junit.Test;
  */
 public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/keep?password=admin&binary=false&noop=true";
     }
 

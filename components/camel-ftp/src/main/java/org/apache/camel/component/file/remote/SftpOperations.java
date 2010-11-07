@@ -459,23 +459,30 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             target.setBody(os);
 
-            // remember current directory
-            String currentDir = getCurrentDirectory();
+            String remoteName = name;
+            String currentDir = null;
+            if (endpoint.getConfiguration().isStepwise()) {
+                // remember current directory
+                currentDir = getCurrentDirectory();
 
-            // change directory to path where the file is to be retrieved
-            // (must do this as some FTP servers cannot retrieve using absolute path)
-            String path = FileUtil.onlyPath(name);
-            if (path != null) {
-                changeCurrentDirectory(path);
+                // change directory to path where the file is to be retrieved
+                // (must do this as some FTP servers cannot retrieve using absolute path)
+                String path = FileUtil.onlyPath(name);
+                if (path != null) {
+                    changeCurrentDirectory(path);
+                }
+                // remote name is now only the file name as we just changed directory
+                remoteName = FileUtil.stripPath(name);
             }
-            String onlyName = FileUtil.stripPath(name);
 
             // use input stream which works with Apache SSHD used for testing
-            InputStream is = channel.get(onlyName);
+            InputStream is = channel.get(remoteName);
             IOHelper.copyAndCloseInput(is, os);
 
             // change back to current directory
-            changeCurrentDirectory(currentDir);
+            if (endpoint.getConfiguration().isStepwise()) {
+                changeCurrentDirectory(currentDir);
+            }
 
             return true;
         } catch (IOException e) {
@@ -535,21 +542,28 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             // store the java.io.File handle as the body
             file.setBody(local);
 
-            // remember current directory
-            String currentDir = getCurrentDirectory();
+            String remoteName = name;
+            String currentDir = null;
+            if (endpoint.getConfiguration().isStepwise()) {
+                // remember current directory
+                currentDir = getCurrentDirectory();
 
-            // change directory to path where the file is to be retrieved
-            // (must do this as some FTP servers cannot retrieve using absolute path)
-            String path = FileUtil.onlyPath(name);
-            if (path != null) {
-                changeCurrentDirectory(path);
+                // change directory to path where the file is to be retrieved
+                // (must do this as some FTP servers cannot retrieve using absolute path)
+                String path = FileUtil.onlyPath(name);
+                if (path != null) {
+                    changeCurrentDirectory(path);
+                }
+                // remote name is now only the file name as we just changed directory
+                remoteName = FileUtil.stripPath(name);
             }
-            String onlyName = FileUtil.stripPath(name);
 
-            channel.get(onlyName, os);
+            channel.get(remoteName, os);
 
             // change back to current directory
-            changeCurrentDirectory(currentDir);
+            if (endpoint.getConfiguration().isStepwise()) {
+                changeCurrentDirectory(currentDir);
+            }
 
         } catch (SftpException e) {
             if (LOG.isTraceEnabled()) {

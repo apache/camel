@@ -16,33 +16,15 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
-
 /**
- * @version $Revision$
+ * Unit test to verify that we can pool a BINARY file in a directory from the
+ * FTP Server and store it on a local file path. Based on CAMEL-834.
  */
-public class FromFileToFtpTest extends FtpServerTestSupport {
+public class FromFtpDirectoryToBinaryFilesNotStepwiseTest extends FromFtpDirectoryToBinaryFilesTest {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=3000";
+        return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin"
+                + "&binary=true&useFixedDelay=false&recursive=false&delay=5000&stepwise=false";
     }
 
-    @Test
-    public void testFromFileToFtp() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(getFtpUrl()).to("mock:result");
-                from("file:src/main/data?noop=true&consumer.delay=3000").to(getFtpUrl());
-            }
-        };
-    }
 }

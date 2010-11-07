@@ -14,34 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote;
+package org.apache.camel.component.file.remote.sftp;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.Ignore;
 
 /**
  * @version $Revision$
  */
-public class FromFileToFtpTest extends FtpServerTestSupport {
+@Ignore("Disabled due CI servers fails on full build running with these tests")
+public class SftpSimpleConsumeNotStepwiseTest extends SftpSimpleConsumeTest {
 
-    private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=3000";
-    }
-
-    @Test
-    public void testFromFileToFtp() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-
-        assertMockEndpointsSatisfied();
-    }
-
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from(getFtpUrl()).to("mock:result");
-                from("file:src/main/data?noop=true&consumer.delay=3000").to(getFtpUrl());
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true&stepwise=false")
+                    .routeId("foo").noAutoStartup()
+                    .to("mock:result");
             }
         };
     }
