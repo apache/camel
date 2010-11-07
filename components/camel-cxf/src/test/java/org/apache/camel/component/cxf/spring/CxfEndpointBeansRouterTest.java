@@ -26,20 +26,36 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.junit.Test;
 
-public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
+public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
 
     protected String[] getApplicationContextFiles() {
-        return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeans.xml"};
+        return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouter.xml"};
     }
 
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
         CxfEndpointBean routerEndpoint = (CxfEndpointBean)ctx.getBean("routerEndpoint");
-        assertEquals("Got the wrong endpoint address", "http://localhost:9000/router", routerEndpoint.getAddress());
-        assertEquals("Got the wrong endpont service class", "org.apache.camel.component.cxf.HelloService", routerEndpoint.getServiceClass().getCanonicalName());
-        assertEquals("Got the wrong handlers size", 1, routerEndpoint.getHandlers().size());
-        assertEquals("Got the wrong schemalocations size", 1, routerEndpoint.getSchemaLocations().size());
-        assertEquals("Got the wrong schemalocation", "classpath:wsdl/Message.xsd", routerEndpoint.getSchemaLocations().get(0));
+        assertEquals("Got the wrong endpoint address", routerEndpoint.getAddress(), "http://localhost:9000/router");
+        assertEquals("Got the wrong endpont service class", routerEndpoint.getServiceClass().getCanonicalName(), "org.apache.camel.component.cxf.HelloService");
+    }
+
+    @Test
+    public void testCxfBusConfiguration() throws Exception {
+        // get the camelContext from application context
+        CamelContext camelContext = (CamelContext) ctx.getBean("camel");
+        ProducerTemplate template = camelContext.createProducerTemplate();
+
+        Exchange reply = template.request("cxf:bean:serviceEndpoint", new Processor() {
+            public void process(final Exchange exchange) {
+                final List<String> params = new ArrayList<String>();
+                params.add("hello");
+                exchange.getIn().setBody(params);
+                exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");
+            }
+        });
+
+        Exception ex = reply.getException();
+        assertTrue("Should get the fault here", ex instanceof org.apache.cxf.interceptor.Fault);
     }
    
 }

@@ -46,5 +46,13 @@ public class CxfEndpointBeanWithBusTest extends CxfEndpointBeanTest {
         assertTrue(endpoint.getBus().getInInterceptors().size() >= 1);
         assertEquals(LoggingInInterceptor.class, endpoint.getBus().getInInterceptors().get(0).getClass());
     }
+    
+    @Test
+    public void testCxfEndpointBeanDefinitionParser() {
+        CxfEndpointBean routerEndpoint = (CxfEndpointBean)ctx.getBean("routerEndpoint");
+        assertEquals("Got the wrong endpoint address", "http://localhost:9000/router", routerEndpoint.getAddress());
+        assertEquals("Got the wrong endpont service class", "org.apache.camel.component.cxf.HelloService", routerEndpoint.getServiceClass().getCanonicalName());
+        
+    }
 
 }

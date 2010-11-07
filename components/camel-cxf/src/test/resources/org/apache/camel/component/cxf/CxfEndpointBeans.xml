@@ -28,10 +28,6 @@
 
   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
     serviceClass="org.apache.camel.component.cxf.HelloService">
-    <cxf:schemaLocations>
-    	<cxf:schemaLocation>classpath:wsdl/Message.xsd</cxf:schemaLocation>
-    </cxf:schemaLocations>
-    <cxf:handlers><ref bean="fromEndpointJaxwsHandler"/></cxf:handlers>
   </cxf:cxfEndpoint>
 
 

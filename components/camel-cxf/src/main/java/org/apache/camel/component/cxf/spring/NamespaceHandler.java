@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.cxf.spring;
 
+import org.apache.cxf.configuration.spring.StringBeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 public class NamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
         registerBeanDefinitionParser("cxfEndpoint", new CxfEndpointBeanDefinitionParser());
+        registerBeanDefinitionParser("schemaLocation", new StringBeanDefinitionParser());
         registerBeanDefinitionParser("rsServer", new CxfRsServerFactoryBeanDefinitionParser());
         registerBeanDefinitionParser("rsClient", new CxfRsClientFactoryBeanDefinitionParser());
     }

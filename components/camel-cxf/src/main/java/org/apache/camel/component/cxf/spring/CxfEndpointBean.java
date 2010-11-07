@@ -18,6 +18,8 @@ package org.apache.camel.component.cxf.spring;
 
 import java.util.List;
 
+import javax.xml.ws.handler.Handler;
+
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.AbstractServiceFactory;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
@@ -31,7 +33,8 @@ import org.springframework.beans.factory.NamedBean;
 public class CxfEndpointBean extends AbstractServiceFactory
     implements DisposableBean, BeanNameAware, NamedBean {
     
-    private List handlers;
+    private List<Handler> handlers;
+    private List<String> schemaLocations;
     private String beanName;
 
     public CxfEndpointBean() {
@@ -42,11 +45,11 @@ public class CxfEndpointBean extends AbstractServiceFactory
         setServiceFactory(factory);
     }
     
-    public List getHandlers() {
+    public List<Handler> getHandlers() {
         return handlers;
     }
     
-    public void setHandlers(List handlers) {
+    public void setHandlers(List<Handler> handlers) {
         this.handlers = handlers;
     }
 
@@ -63,6 +66,14 @@ public class CxfEndpointBean extends AbstractServiceFactory
 
     public String getBeanName() {
         return beanName;
+    }
+
+    public void setSchemaLocations(List<String> schemaLocations) {
+        this.schemaLocations = schemaLocations;
+    }
+
+    public List<String> getSchemaLocations() {
+        return schemaLocations;
     }
 
 }
