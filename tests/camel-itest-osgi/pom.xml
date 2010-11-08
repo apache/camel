@@ -209,7 +209,11 @@
         <artifactId>org.apache.felix.configadmin</artifactId>
         <scope>test</scope>
     </dependency>
-
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-bean-validator</artifactId>
+        <scope>test</scope>
+    </dependency>
       <dependency>
           <groupId>org.apache.camel</groupId>
           <artifactId>camel-cxf</artifactId>
