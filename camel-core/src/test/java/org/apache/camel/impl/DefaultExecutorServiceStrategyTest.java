@@ -28,14 +28,14 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
  */
 public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
 
-    public void testGetThreadName() throws Exception {
+    public void testGetThreadNameDefaultPattern() throws Exception {
         String foo = context.getExecutorServiceStrategy().getThreadName("foo");
         String bar = context.getExecutorServiceStrategy().getThreadName("bar");
 
         assertNotSame(foo, bar);
-        assertTrue(foo.startsWith("Camel Thread "));
+        assertTrue(foo.startsWith("Camel (" + context.getName() + ") thread "));
         assertTrue(foo.endsWith("foo"));
-        assertTrue(bar.startsWith("Camel Thread "));
+        assertTrue(bar.startsWith("Camel (" + context.getName() + ") thread "));
         assertTrue(bar.endsWith("bar"));
     }
 
@@ -48,6 +48,18 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
         assertTrue(foo.startsWith("#"));
         assertTrue(foo.endsWith(" - foo"));
         assertTrue(bar.startsWith("#"));
+        assertTrue(bar.endsWith(" - bar"));
+    }
+
+    public void testGetThreadNameCustomPatternCamelId() throws Exception {
+        context.getExecutorServiceStrategy().setThreadNamePattern("#${camelId} - #${counter} - ${name}");
+        String foo = context.getExecutorServiceStrategy().getThreadName("foo");
+        String bar = context.getExecutorServiceStrategy().getThreadName("bar");
+
+        assertNotSame(foo, bar);
+        assertTrue(foo.startsWith("#" + context.getName() + " - #"));
+        assertTrue(foo.endsWith(" - foo"));
+        assertTrue(bar.startsWith("#" + context.getName() + " - #"));
         assertTrue(bar.endsWith(" - bar"));
     }
 

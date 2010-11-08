@@ -53,7 +53,7 @@ public final class ExecutorServiceHelper {
     private ExecutorServiceHelper() {
     }
 
-    private static synchronized int nextThreadCounter() {
+    private static int nextThreadCounter() {
         return threadCounter.getAndIncrement();
     }
 
@@ -155,7 +155,9 @@ public final class ExecutorServiceHelper {
      * @param name    ${name} in the pattern name
      * @param daemon  whether the threads is daemon or not
      * @return the created pool
+     * @deprecated using cached thread pool is discouraged as they have no upper bound and can overload the JVM
      */
+    @Deprecated
     public static ExecutorService newCachedThreadPool(final String pattern, final String name, final boolean daemon) {
         return Executors.newCachedThreadPool(new ThreadFactory() {
             public Thread newThread(Runnable r) {

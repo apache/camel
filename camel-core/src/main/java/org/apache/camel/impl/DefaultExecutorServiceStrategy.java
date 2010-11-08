@@ -45,7 +45,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     private static final Log LOG = LogFactory.getLog(DefaultExecutorServiceStrategy.class);
     private final List<ExecutorService> executorServices = new ArrayList<ExecutorService>();
     private final CamelContext camelContext;
-    private String threadNamePattern = "Camel Thread ${counter} - ${name}";
+    private String threadNamePattern;
     private String defaultThreadPoolProfileId;
     private final Map<String, ThreadPoolProfile> threadPoolProfiles = new HashMap<String, ThreadPoolProfile>();
 
@@ -132,7 +132,9 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     }
 
     public void setThreadNamePattern(String threadNamePattern) {
-        this.threadNamePattern = threadNamePattern;
+        // must set camel id here in the pattern and let the other placeholders be resolved by ExecutorServiceHelper
+        String name = threadNamePattern.replaceFirst("\\$\\{camelId\\}", camelContext.getName());
+        this.threadNamePattern = name;
     }
 
     public ExecutorService lookup(Object source, String name, String executorServiceRef) {
@@ -350,7 +352,10 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        if (threadNamePattern == null) {
+            // set default name pattern which includes the camel context name
+            threadNamePattern = "Camel (" + camelContext.getName() + ") thread #${counter} - ${name}";
+        }
     }
 
     @Override
