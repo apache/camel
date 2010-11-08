@@ -26,7 +26,7 @@ import org.junit.Test;
  * @version $Revision$
  */
 @Ignore("Disabled due CI servers fails on full build running with these tests")
-public class SftpSimpleProduceTest extends SftpServerTestSupport {
+public class SftpSimpleProduceNotStepwiseTest extends SftpServerTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -39,7 +39,7 @@ public class SftpSimpleProduceTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&stepwise=false", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File(FTP_ROOT_DIR + "/hello.txt").getAbsoluteFile();
         assertTrue("File should exist: " + file, file.exists());
@@ -52,7 +52,7 @@ public class SftpSimpleProduceTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub?username=admin&password=admin", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub?username=admin&password=admin&stepwise=false", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         File file = new File(FTP_ROOT_DIR + "/mysub/bye.txt").getAbsoluteFile();
         assertTrue("File should exist: " + file, file.exists());
@@ -65,7 +65,7 @@ public class SftpSimpleProduceTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub/myother?username=admin&password=admin", "Farewell World", Exchange.FILE_NAME, "farewell.txt");
+        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub/myother?username=admin&password=admin&stepwise=false", "Farewell World", Exchange.FILE_NAME, "farewell.txt");
 
         File file = new File(FTP_ROOT_DIR + "/mysub/myother/farewell.txt").getAbsoluteFile();
         assertTrue("File should exist: " + file, file.exists());
