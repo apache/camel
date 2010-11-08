@@ -31,7 +31,11 @@
   </cxf:rsServer>
     
   <cxf:rsServer id="rsServer2" address="http://localhost:9000/server2"
-    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
+    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService">
+    <cxf:schemaLocations>
+    	 <cxf:schemaLocation>classpath:wsdl/Message.xsd</cxf:schemaLocation>
+    </cxf:schemaLocations>
+  </cxf:rsServer>
     
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
   

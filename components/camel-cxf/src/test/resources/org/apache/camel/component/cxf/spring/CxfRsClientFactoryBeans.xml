@@ -26,7 +26,11 @@
 
   <cxf:rsClient id="rsClient1" address="http://localhost:9000/router"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
-    username="username" password="passwd" />
+    username="username" password="passwd" >
+    <cxf:schemaLocations>
+    	 <cxf:schemaLocation>classpath:wsdl/Message.xsd</cxf:schemaLocation>
+    </cxf:schemaLocations>
+  </cxf:rsClient>
     
   <!-- test the properties of set header and other things
    cxf:rsClient id="rsClient1" address="http://localhost:9000/router"

@@ -113,6 +113,11 @@ public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
         public void setServiceClass(Class clazz) {
             setResourceClasses(clazz);
         }
+        
+        // add this mothod for testing
+        List<String> getSchemaLocations() {
+            return schemaLocations;
+        }
     }
 
    

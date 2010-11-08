@@ -36,6 +36,8 @@ public class CxfRsClientFactoryBeanTest extends AbstractSpringBeanTestSupport {
         assertEquals("Get a wrong user name", cfb.getUsername(), "username");
         CustomerService customerService = cfb.create(CustomerService.class);
         assertNotNull("The customer service should not be null", customerService);
+        assertEquals("Got the wrong schemalocations size", 1, cfb.getSchemaLocations().size());
+        assertEquals("Got the wrong schemalocation", "classpath:wsdl/Message.xsd", cfb.getSchemaLocations().get(0));
     }
 
 }

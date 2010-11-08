@@ -95,5 +95,10 @@ public class CxfRsClientFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
         public void setBeanId(String id) {            
             beanId = id;            
         }
+        
+        // add this mothod for testing
+        List<String> getSchemaLocations() {
+            return schemaLocations;
+        }
     }    
 }

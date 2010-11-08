@@ -42,7 +42,9 @@ public class CxfRsServerFactoryBeanTest extends AbstractSpringBeanTestSupport {
         sfb2.getResourceClasses();
         List<Class<?>> resource2Classes = sfb2.getResourceClasses();
         assertEquals("Get a wrong size of resouceClasses", resource2Classes.size(), 1);
-        assertEquals("Get a wrong resource class", resource2Classes.get(0), CustomerService.class);        
+        assertEquals("Get a wrong resource class", resource2Classes.get(0), CustomerService.class);
+        assertEquals("Got the wrong schemalocations size", 1, sfb2.getSchemaLocations().size());
+        assertEquals("Got the wrong schemalocation", "classpath:wsdl/Message.xsd", sfb2.getSchemaLocations().get(0));
     }
 
 }
