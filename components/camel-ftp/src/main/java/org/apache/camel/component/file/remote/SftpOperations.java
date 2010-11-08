@@ -356,6 +356,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             return;
         }
 
+        // not stepwise should change directory in one operation
+        if (!endpoint.getConfiguration().isStepwise()) {
+            doChangeDirectory(path);
+        }
+
         // if it starts with the root path then a little special handling for that
         if (FileUtil.hasLeadingSeparator(path)) {
             // change to root path

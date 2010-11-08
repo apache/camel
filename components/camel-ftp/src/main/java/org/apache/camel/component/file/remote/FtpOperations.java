@@ -262,7 +262,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             } finally {
                 // change back to original directory
                 if (originalDirectory != null) {
-                    client.changeWorkingDirectory(originalDirectory);
+                    changeCurrentDirectory(originalDirectory);
                 }
             }
         } catch (IOException e) {
@@ -510,8 +510,16 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
+        if (log.isTraceEnabled()) {
+            log.trace("changeCurrentDirectory(" + path + ")");
+        }
         if (ObjectHelper.isEmpty(path)) {
             return;
+        }
+
+        // not stepwise should change directory in one operation
+        if (!endpoint.getConfiguration().isStepwise()) {
+            doChangeDirectory(path);
         }
 
         // if it starts with the root path then a little special handling for that
