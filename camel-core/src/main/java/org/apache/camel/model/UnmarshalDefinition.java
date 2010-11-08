@@ -36,6 +36,7 @@ import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
+import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
@@ -70,6 +71,7 @@ public class UnmarshalDefinition extends OutputDefinition<UnmarshalDefinition> {
     @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
     @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
     @XmlElement(required = false, name = "string", type = StringDataFormat.class),
+    @XmlElement(required = false, name = "syslog", type = SyslogDataFormat.class),
     @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
     @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
     @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
