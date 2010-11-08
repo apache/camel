@@ -17,7 +17,9 @@
 package org.apache.camel.component.smpp;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -26,6 +28,8 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliveryReceipt;
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.OctetString;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.TimeFormatter;
@@ -214,8 +218,19 @@ public class SmppBinding {
             smppMessage.setHeader(SUBMITTED, smscDeliveryReceipt.getSubmitted());
             smppMessage.setHeader(FINAL_STATUS, smscDeliveryReceipt.getFinalStatus());
         } else {
-            smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(),
-                    configuration.getEncoding())));
+            if (deliverSm.getShortMessage() != null) {
+                smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(),
+                        configuration.getEncoding())));
+            } else if (deliverSm.getOptionalParametes() != null && deliverSm.getOptionalParametes().length > 0) {
+                List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParametes());
+
+                for (OptionalParameter optPara : oplist) {
+                    if (OptionalParameter.Tag.MESSAGE_PAYLOAD.code() == optPara.tag && OctetString.class.isInstance(optPara)) {
+                        smppMessage.setBody(((OctetString) optPara).getValueAsString());
+                        break;
+                    }
+                }
+            }
 
             smppMessage.setHeader(SEQUENCE_NUMBER, deliverSm.getSequenceNumber());
             smppMessage.setHeader(COMMAND_ID, deliverSm.getCommandId());

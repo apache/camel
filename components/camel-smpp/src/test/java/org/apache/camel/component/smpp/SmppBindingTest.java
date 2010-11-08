@@ -26,13 +26,19 @@ import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.OctetString;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.util.DeliveryReceiptState;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppBinding</code>
@@ -200,6 +206,30 @@ public class SmppBindingTest {
         deliverSm.setScheduleDeliveryTime("090831230627004+");
         deliverSm.setValidityPeriod("090901230627004+");
         deliverSm.setServiceType("WAP");
+        SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
+        
+        assertEquals("Hello SMPP world!", smppMessage.getBody());
+        assertEquals(7, smppMessage.getHeaders().size());
+        assertEquals(1, smppMessage.getHeader(SmppBinding.SEQUENCE_NUMBER));
+        assertEquals(1, smppMessage.getHeader(SmppBinding.COMMAND_ID));
+        assertEquals("1818", smppMessage.getHeader(SmppBinding.SOURCE_ADDR));
+        assertEquals("1919", smppMessage.getHeader(SmppBinding.DEST_ADDR));
+        assertEquals("090831230627004+", smppMessage.getHeader(SmppBinding.SCHEDULE_DELIVERY_TIME));
+        assertEquals("090901230627004+", smppMessage.getHeader(SmppBinding.VALIDITY_PERIOD));
+        assertEquals("WAP", smppMessage.getHeader(SmppBinding.SERVICE_TYPE));
+    }
+    
+    @Test
+    public void createSmppMessageFromDeliverSmWithPayloadInOptionalParameterShouldReturnASmppMessage() throws Exception {
+        DeliverSm deliverSm = new DeliverSm();
+        deliverSm.setSequenceNumber(1);
+        deliverSm.setCommandId(1);
+        deliverSm.setSourceAddr("1818");
+        deliverSm.setDestAddress("1919");
+        deliverSm.setScheduleDeliveryTime("090831230627004+");
+        deliverSm.setValidityPeriod("090901230627004+");
+        deliverSm.setServiceType("WAP");
+        deliverSm.setOptionalParametes(new OctetString(OptionalParameter.Tag.MESSAGE_PAYLOAD, "Hello SMPP world!"));
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
