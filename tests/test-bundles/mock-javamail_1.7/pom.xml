@@ -55,10 +55,22 @@
     </properties>
 
     <dependencies>
+        <!-- using the new version of java mail -->
         <dependency>
             <groupId>${pkgGroupId}</groupId>
             <artifactId>${pkgArtifactId}</artifactId>
             <version>${pkgVersion}</version>
+            <exclusions>
+                 <exclusion>
+                     <groupId>javax.mail</groupId>
+                     <artifactId>mail</artifactId>
+                 </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+	    <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.1</version>
         </dependency>
     </dependencies>
 
