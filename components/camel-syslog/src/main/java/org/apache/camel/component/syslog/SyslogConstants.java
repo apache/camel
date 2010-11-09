@@ -17,7 +17,7 @@
 
 package org.apache.camel.component.syslog;
 
-public class SyslogConstants {
+public final class SyslogConstants {
 
     /**
      * The socket address of local machine that received the message.

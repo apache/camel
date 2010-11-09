@@ -30,7 +30,7 @@ import org.apache.camel.Converter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class Rfc3164SyslogConverter {
+public final class Rfc3164SyslogConverter {
 
     private static final transient Log LOG = LogFactory.getLog(Rfc3164SyslogConverter.class);
 
@@ -38,7 +38,7 @@ public class Rfc3164SyslogConverter {
         jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
     }
 
-    private final static Map<String, MONTHS> MONTH_VALUE_MAP = new HashMap<String, MONTHS>() {
+    private static Map<String, MONTHS> monthValueMap = new HashMap<String, MONTHS>() {
         {
             put("jan", MONTHS.jan);
             put("feb", MONTHS.feb);
@@ -54,6 +54,10 @@ public class Rfc3164SyslogConverter {
             put("dec", MONTHS.dec);
         }
     };
+
+    private Rfc3164SyslogConverter() {
+        //Utility class
+    }
 
     @Converter
     public static String toString(SyslogMessage message) {
@@ -132,7 +136,7 @@ public class Rfc3164SyslogConverter {
         return parseMessage(body.getBytes());
     }
 
-    public final static SyslogMessage parseMessage(byte[] bytes) {
+    public static SyslogMessage parseMessage(byte[] bytes) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length);
         byteBuffer.put(bytes);
         byteBuffer.rewind();
@@ -249,7 +253,7 @@ public class Rfc3164SyslogConverter {
         }
 
         Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.MONTH, MONTH_VALUE_MAP.get((String.valueOf(month).toLowerCase())).ordinal());
+        calendar.set(Calendar.MONTH, monthValueMap.get(String.valueOf(month).toLowerCase()).ordinal());
         calendar.set(Calendar.DAY_OF_MONTH, day);
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);

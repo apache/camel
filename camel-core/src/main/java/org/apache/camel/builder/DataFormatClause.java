@@ -17,8 +17,6 @@
 package org.apache.camel.builder;
 
 import java.util.zip.Deflater;
-
-import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
@@ -37,6 +35,7 @@ import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
+import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
@@ -68,10 +67,10 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the Bindy data format
      *
-     * @param type the type of bindy data format to use
+     * @param type     the type of bindy data format to use
      * @param packages packages to scan for Bindy annotated POJO classes
      */
-    public T bindy(BindyType type,  String... packages) {
+    public T bindy(BindyType type, String... packages) {
         BindyDataFormat bindy = new BindyDataFormat();
         bindy.setType(type);
         bindy.setPackages(packages);
@@ -107,7 +106,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the Castor data format
      *
      * @param mappingFile name of mapping file to locate in classpath
-     * @param validation whether validation is enabled or not
+     * @param validation  whether validation is enabled or not
      */
     public T castor(String mappingFile, boolean validation) {
         CastorDataFormat castor = new CastorDataFormat();
@@ -146,7 +145,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T jaxb() {
         return dataFormat(new JaxbDataFormat());
     }
-    
+
     /**
      * Uses the JAXB data format with context path
      */
@@ -182,7 +181,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the JSON data format
      *
-     * @param type the json type to use
+     * @param type          the json type to use
      * @param unmarshalType unmarshal type for json jackson type
      */
     public T json(JsonLibrary type, Class<?> unmarshalType) {
@@ -190,20 +189,20 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         json.setUnmarshalType(unmarshalType);
         return dataFormat(json);
     }
-    
+
     /**
      * Uses the protobuf data format
      */
     public T protobuf() {
         return dataFormat(new ProtobufDataFormat());
     }
-    
+
     public T protobuf(Object defaultInstance) {
         ProtobufDataFormat dataFormat = new ProtobufDataFormat();
         dataFormat.setDefaultInstance(defaultInstance);
         return dataFormat(dataFormat);
     }
-    
+
     public T protobuf(String instanceClassName) {
         return dataFormat(new ProtobufDataFormat(instanceClassName));
     }
@@ -213,36 +212,36 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T rss() {
         return dataFormat(new RssDataFormat());
-    }    
-    
+    }
+
     /**
      * Uses the Java Serialization data format
      */
     public T serialization() {
         return dataFormat(new SerializationDataFormat());
     }
-    
+
     /**
      * Uses the Soap JAXB data format
      */
     public T soapjaxb() {
         return dataFormat(new SoapJaxbDataFormat());
     }
-    
+
     /**
      * Uses the Soap JAXB data format
      */
     public T soapjaxb(String contextPath) {
         return dataFormat(new SoapJaxbDataFormat(contextPath));
     }
-    
+
     /**
      * Uses the Soap JAXB data format
      */
     public T soapjaxb(String contextPath, String elementNameStrategyRef) {
         return dataFormat(new SoapJaxbDataFormat(contextPath, elementNameStrategyRef));
     }
-    
+
     /**
      * Uses the Soap JAXB data format
      */
@@ -273,7 +272,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(new SyslogDataFormat());
     }
 
-
     /**
      * Return WellFormed HTML (an XML Document) either
      * {@link java.lang.String} or {@link org.w3c.dom.Node}
@@ -283,8 +281,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Return TidyMarkup in the default format 
-     *  as {@link org.w3c.dom.Node}
+     * Return TidyMarkup in the default format
+     * as {@link org.w3c.dom.Node}
      */
     public T tidyMarkup() {
         return dataFormat(new TidyMarkupDataFormat(Node.class));
@@ -296,14 +294,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T xstream() {
         return dataFormat(new XStreamDataFormat());
     }
-    
+
     /**
      * Uses the xstream by setting the encoding
      */
     public T xstream(String encoding) {
         return dataFormat(new XStreamDataFormat(encoding));
     }
-    
+
     /**
      * Uses the XML Security data format
      */
@@ -358,14 +356,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         ZipDataFormat zdf = new ZipDataFormat(compressionLevel);
         return dataFormat(zdf);
     }
-    
+
     @SuppressWarnings("unchecked")
     private T dataFormat(DataFormatDefinition dataFormatType) {
         switch (operation) {
         case Unmarshal:
-            return (T)processorType.unmarshal(dataFormatType);
+            return (T) processorType.unmarshal(dataFormatType);
         case Marshal:
-            return (T)processorType.marshal(dataFormatType);
+            return (T) processorType.marshal(dataFormatType);
         default:
             throw new IllegalArgumentException("Unknown DataFormat operation: " + operation);
         }

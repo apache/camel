@@ -88,6 +88,7 @@ public class SyslogMessage {
 
     @Override
     public String toString() {
-        return "SyslogMessage{" + "content='" + logMessage + '\'' + ", facility=" + facility + ", severity=" + severity + ", remoteAddress='" + remoteAddress + '\'' + ", localAddress='" + localAddress + '\'' + ", hostname='" + hostname + '\'' + ", messageTime=" + timestamp + '}';
+        return "SyslogMessage{" + "content='" + logMessage + '\'' + ", facility=" + facility + ", severity=" + severity + ", remoteAddress='"
+               + remoteAddress + '\'' + ", localAddress='" + localAddress + '\'' + ", hostname='" + hostname + '\'' + ", messageTime=" + timestamp + '}';
     }
 }

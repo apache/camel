@@ -41,7 +41,6 @@ public enum SyslogFacility {
     LOCAL4,
     LOCAL5,
     LOCAL6,
-    LOCAL7,;
-
+    LOCAL7,
 }
 

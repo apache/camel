@@ -25,32 +25,32 @@ public class SyslogEnumsTest extends TestCase {
     @Test
     public void testFacilityConstants() {
 
-        assertEquals("KERN", SyslogFacility.values()[(0 >> 3)].name());
-        assertEquals("USER", SyslogFacility.values()[((1 >> 3 / 8))].name());
-        assertEquals("MAIL", SyslogFacility.values()[((2 >> 3 / 8))].name());
-        assertEquals("DAEMON", SyslogFacility.values()[((3 >> 3 / 8))].name());
-        assertEquals("AUTH", SyslogFacility.values()[((4 >> 3 / 8))].name());
-        assertEquals("SYSLOG", SyslogFacility.values()[((5 >> 3 / 8))].name());
-        assertEquals("LPR", SyslogFacility.values()[(((6 >> 3 / 8)))].name());
-        assertEquals("NEWS", SyslogFacility.values()[(((7 >> 3 / 8)))].name());
-        assertEquals("UUCP", SyslogFacility.values()[(((8 >> 3 / 8)))].name());
-        assertEquals("CRON", SyslogFacility.values()[(((9 >> 3 / 8)))].name());
-        assertEquals("AUTHPRIV", SyslogFacility.values()[((10 >> 3 / 8))].name());
-        assertEquals("FTP", SyslogFacility.values()[((11 >> 3 / 8))].name());
+        assertEquals("KERN", SyslogFacility.values()[0 >> 3].name());
+        assertEquals("USER", SyslogFacility.values()[1 >> 3 / 8].name());
+        assertEquals("MAIL", SyslogFacility.values()[2 >> 3 / 8].name());
+        assertEquals("DAEMON", SyslogFacility.values()[3 >> 3 / 8].name());
+        assertEquals("AUTH", SyslogFacility.values()[4 >> 3 / 8].name());
+        assertEquals("SYSLOG", SyslogFacility.values()[5 >> 3 / 8].name());
+        assertEquals("LPR", SyslogFacility.values()[6 >> 3 / 8].name());
+        assertEquals("NEWS", SyslogFacility.values()[7 >> 3 / 8].name());
+        assertEquals("UUCP", SyslogFacility.values()[8 >> 3 / 8].name());
+        assertEquals("CRON", SyslogFacility.values()[9 >> 3 / 8].name());
+        assertEquals("AUTHPRIV", SyslogFacility.values()[10 >> 3 / 8].name());
+        assertEquals("FTP", SyslogFacility.values()[11 >> 3 / 8].name());
         /**
          RESERVED_12,
          RESERVED_13,
          RESERVED_14,
          RESERVED_15,
          */
-        assertEquals("LOCAL0", SyslogFacility.values()[((16 >> 3 / 8))].name());
-        assertEquals("LOCAL1", SyslogFacility.values()[((17 >> 3 / 8))].name());
-        assertEquals("LOCAL2", SyslogFacility.values()[((18 >> 3 / 8))].name());
-        assertEquals("LOCAL3", SyslogFacility.values()[((19 >> 3 / 8))].name());
-        assertEquals("LOCAL4", SyslogFacility.values()[((20 >> 3 / 8))].name());
-        assertEquals("LOCAL5", SyslogFacility.values()[((21 >> 3 / 8))].name());
-        assertEquals("LOCAL6", SyslogFacility.values()[((22 >> 3 / 8))].name());
-        assertEquals("LOCAL7", SyslogFacility.values()[((23 >> 3 / 8))].name());
+        assertEquals("LOCAL0", SyslogFacility.values()[16 >> 3 / 8].name());
+        assertEquals("LOCAL1", SyslogFacility.values()[17 >> 3 / 8].name());
+        assertEquals("LOCAL2", SyslogFacility.values()[18 >> 3 / 8].name());
+        assertEquals("LOCAL3", SyslogFacility.values()[19 >> 3 / 8].name());
+        assertEquals("LOCAL4", SyslogFacility.values()[20 >> 3 / 8].name());
+        assertEquals("LOCAL5", SyslogFacility.values()[21 >> 3 / 8].name());
+        assertEquals("LOCAL6", SyslogFacility.values()[22 >> 3 / 8].name());
+        assertEquals("LOCAL7", SyslogFacility.values()[23 >> 3 / 8].name());
     }
 
     @Test

@@ -25,5 +25,5 @@ public enum SyslogSeverity {
     WARNING,
     NOTICE,
     INFO,
-    DEBUG,;
+    DEBUG,
 }
