@@ -40,7 +40,8 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
                 from("jetty:http://localhost:9008/user").process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
-                        assertNull("We should not get the this header", exchange.getOut().getHeader("CamelCxfTest"));
+                        assertNull("We should not get this header", exchange.getIn().getHeader("CamelCxfTest"));
+                        assertNull("We should not get this header", exchange.getIn().getHeader("Transfer-Encoding"));
                        // check the headers
                         exchange.getOut().setHeader("Content-Type", "text/xml");
                         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
@@ -62,6 +63,7 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");
                 // Test the CxfHeaderFilterStrategy
                 exchange.getIn().setHeader("CamelCxfTest", "test");
+                exchange.getIn().setHeader("Transfer-Encoding", "chunked");
             }
         });
         return exchange;

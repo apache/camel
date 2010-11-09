@@ -50,33 +50,47 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     protected void initialize() {
-        getOutFilter().add(CxfConstants.OPERATION_NAME);
-        getOutFilter().add(CxfConstants.OPERATION_NAMESPACE);
+        //filter the operationName and operationName
+        getOutFilter().add(CxfConstants.OPERATION_NAME.toLowerCase());
+        getOutFilter().add(CxfConstants.OPERATION_NAMESPACE.toLowerCase());
         
         // Request and response context Maps will be passed to CXF Client APIs
-        getOutFilter().add(Client.REQUEST_CONTEXT);
-        getOutFilter().add(Client.RESPONSE_CONTEXT);
+        getOutFilter().add(Client.REQUEST_CONTEXT.toLowerCase());
+        getOutFilter().add(Client.RESPONSE_CONTEXT.toLowerCase());
 
         // protocol headers are stored as a Map.  DefaultCxfBinding
         // read the Map and send each entry to the filter.  Therefore,
         // we need to filter the header of this name.
-        getOutFilter().add(Message.PROTOCOL_HEADERS);
-        getInFilter().add(Message.PROTOCOL_HEADERS);
+        getOutFilter().add(Message.PROTOCOL_HEADERS.toLowerCase());
+        getInFilter().add(Message.PROTOCOL_HEADERS.toLowerCase());
+        
+        // Add the filter for the Generic Message header
+        // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.5
+        getOutFilter().add("cache-control");
+        getOutFilter().add("connection");
+        getOutFilter().add("date");
+        getOutFilter().add("pragma");
+        getOutFilter().add("trailer");
+        getOutFilter().add("transfer-encoding");
+        getOutFilter().add("upgrade");
+        getOutFilter().add("via");
+        getOutFilter().add("warning");
         
         // Since CXF can take the content-type from the protocol header
         // we need to filter this header of this name.
-        getOutFilter().add("content-type");
-        getOutFilter().add("Content-Type");
+        getOutFilter().add("Content-Type".toLowerCase());
 
         // Filter out Content-Length since it can fool Jetty (HttpGenerator) to 
         // close response output stream prematurely.  (It occurs when the
         // message size (e.g. with attachment) is large and response content length 
         // is bigger than request content length.)
-        getOutFilter().add("Content-Length");
+        getOutFilter().add("Content-Length".toLowerCase());
         
         // Filter Content-Length as it will cause some trouble when the message 
         // is passed to the other endpoint
-        getInFilter().add("Content-Length");
+        getInFilter().add("content-length".toLowerCase());
+        
+        setLowerCase(true);
 
         // initialize message header filter map with default SOAP filter
         messageHeaderFiltersMap = new HashMap<String, MessageHeaderFilter>();
