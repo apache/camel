@@ -46,7 +46,7 @@
   
   <jaxws:endpoint id="serviceEndpoint"
     		implementor="org.apache.camel.example.cxf.GreeterImpl"
-    		address="jms://JMSAddress"/>
+    		address="jms://"/>
     		
   
 </beans>
