@@ -21,7 +21,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
-import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
@@ -52,15 +51,13 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/foo,type=context,name=\"foo\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
 
-        try {
-            camel2.start();
-            fail("Should throw an exception");
-        } catch (VetoCamelContextStartException e) {
-            assertEquals("foo", e.getContext().getName());
-        }
-        assertFalse("Should not be started", camel2.getStatus().isStarted());
+        // camel will now automatic re assign the JMX name to avoid the clash
+        camel2.start();
+        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=localhost/foo-2,type=context,name=\"foo\"");
+        assertTrue("Should be registered", mbeanServer.isRegistered(on2));
 
         assertTrue("Should still be registered after name clash", mbeanServer.isRegistered(on));
+        assertTrue("Should still be registered after name clash", mbeanServer.isRegistered(on2));
     }
 
     @Override

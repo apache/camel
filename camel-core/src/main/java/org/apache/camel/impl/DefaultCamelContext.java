@@ -125,6 +125,7 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultCamelContext extends ServiceSupport implements CamelContext, SuspendableService {
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
+    private String managementName;
     private ClassLoader applicationContextClassLoader;
     private final Map<String, Endpoint> endpoints = new EndpointRegistry();
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
@@ -239,6 +240,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public void setNameStrategy(CamelContextNameStrategy nameStrategy) {
         this.nameStrategy = nameStrategy;
+    }
+
+    public String getManagementName() {
+        return managementName;
+    }
+
+    public void setManagementName(String managementName) {
+        this.managementName = managementName;
     }
 
     public Component hasComponent(String componentName) {

@@ -27,20 +27,29 @@ import org.apache.camel.spi.CamelContextNameStrategy;
  */
 public class DefaultCamelContextNameStrategy implements CamelContextNameStrategy {
 
-    private static final String NAME_PREFIX = "camel-";
     private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
+    private final String prefix;
     private String name;
 
     public DefaultCamelContextNameStrategy() {
-        name = getNextName();
+        this("camel");
+    }
+
+    public DefaultCamelContextNameStrategy(String prefix) {
+        this.prefix = prefix;
+        this.name = getNextName();
     }
 
     public String getName() {
         return name;
     }
 
-    public static String getNextName() {
-        return NAME_PREFIX + CONTEXT_COUNTER.incrementAndGet();
+    public String getNextName() {
+        return prefix + "-" + getNextCounter();
+    }
+
+    public static int getNextCounter() {
+        return CONTEXT_COUNTER.incrementAndGet();
     }
 
     /**

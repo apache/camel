@@ -51,4 +51,10 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
         return new OsgiTypeConverter(bundleContext, getInjector());
     }
 
+    @Override
+    public void setName(String name) {
+        super.setName(name);
+        // in OSGi append the bundle id to the management name so it will be unique in the JVM
+        super.setManagementName(name + "-" + bundleContext.getBundle().getBundleId());
+    }
 }

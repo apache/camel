@@ -16,21 +16,14 @@
  */
 package org.apache.camel.core.osgi;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.camel.spi.CamelContextNameStrategy;
+import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.osgi.framework.BundleContext;
 
-public class OsgiCamelContextNameStrategy implements CamelContextNameStrategy {
+public class OsgiCamelContextNameStrategy extends DefaultCamelContextNameStrategy {
 
-    private static final AtomicInteger COUNTER = new AtomicInteger(0);
-    private final String name;
-    
     public OsgiCamelContextNameStrategy(BundleContext context) {
-        name = "camel-" + context.getBundle().getBundleId() + "-" + COUNTER.incrementAndGet();
+        // use bundle id in auto assigned names to make it unique
+        super("camel-" + context.getBundle().getBundleId() + "-");
     }
 
-    public String getName() {
-        return name;
-    }
 }

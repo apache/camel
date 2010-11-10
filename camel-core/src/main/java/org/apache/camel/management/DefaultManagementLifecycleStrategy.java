@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.management.JMException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -77,6 +78,7 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAware;
@@ -98,6 +100,7 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Service, CamelContextAware {
 
     private static final Log LOG = LogFactory.getLog(DefaultManagementLifecycleStrategy.class);
+    private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
     private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors =
             new HashMap<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>>();
     private CamelContext camelContext;
@@ -122,6 +125,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         ManagedCamelContext mc = new ManagedCamelContext(context);
         mc.init(context.getManagementStrategy());
 
+        String managementName = context.getManagementName() != null ? context.getManagementName() : context.getName();
+
         try {
             boolean done = false;
             while (!done) {
@@ -130,25 +135,31 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
                 if (!exists) {
                     done = true;
                 } else {
-                    // okay there exists already a CamelContext with this name, we can try to fix it
+                    // okay there exists already a CamelContext with this name, we can try to fix it by finding a free name
                     boolean fixed = false;
-                    if (context.getNameStrategy() instanceof DefaultCamelContextNameStrategy) {
                         // if we use the default name strategy we can find a free name to use
-                        String name = findFreeName(mc);
-                        if (name != null) {
-                            // use this as the fixed name
-                            LOG.warn("Reassigned auto assigned name on CamelContext from: " + context.getName()
-                                    + " to: " + name + " due to clash with existing name already registered in MBeanServer.");
-                            // now set the fixed name we are using onwards
-                            context.setNameStrategy(new ExplicitCamelContextNameStrategy(name));
-                            fixed = true;
-                            done = true;
-                        }
+                    String name = findFreeName(mc, context.getNameStrategy(), managementName);
+                    if (name != null) {
+                        // use this as the fixed name
+                        fixed = true;
+                        done = true;
+                        managementName = name;
                     }
                     // we could not fix it so veto starting camel
                     if (!fixed) {
                         throw new VetoCamelContextStartException("CamelContext (" + context.getName() + ") with ObjectName[" + on + "] is already registered."
                             + " Make sure to use unique names on CamelContext when using multiple CamelContexts in the same MBeanServer.", context);
+                    } else {
+                        if (context.getNameStrategy() instanceof DefaultCamelContextNameStrategy) {
+                            // use this as the fixed name
+                            LOG.warn("Reassigned auto assigned name on CamelContext from: " + context.getName()
+                                    + " to: " + name + " due to clash with existing name already registered in MBeanServer.");
+                            // now set the fixed name we are using onwards
+                            context.setNameStrategy(new ExplicitCamelContextNameStrategy(name));
+                        } else {
+                            LOG.warn("This CamelContext(" + context.getName() + ") will be registered using the name: " + managementName
+                                + " due to clash with an existing name already registered in MBeanServer.");
+                        }
                     }
                 }
             }
@@ -160,6 +171,9 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             // Camel to continue to run
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
+
+        // set the name we are going to use
+        context.setManagementName(managementName);
 
         try {
             getManagementStrategy().manageObject(mc);
@@ -173,12 +187,20 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         initialized = true;
     }
 
-    private String findFreeName(ManagedCamelContext mc) throws MalformedObjectNameException {
+    private String findFreeName(ManagedCamelContext mc, CamelContextNameStrategy strategy, String managementName) throws MalformedObjectNameException {
         boolean done = false;
         String name = null;
+        // start from 2 as the existing name is considered the 1st
+        int counter = 2;
         while (!done) {
-            // try next name
-            name = DefaultCamelContextNameStrategy.getNextName();
+            // compute the next name
+            if (strategy instanceof DefaultCamelContextNameStrategy) {
+                // prefer to use the default naming strategy to compute the next free name
+                name = ((DefaultCamelContextNameStrategy) strategy).getNextName();
+            } else {
+                // if explict name then use a counter prefix
+                name = managementName + "-" + counter++;
+            }
             ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(name);
             done = !getManagementStrategy().isManaged(mc, on);
             if (LOG.isTraceEnabled()) {

@@ -27,15 +27,17 @@ import org.osgi.framework.BundleContext;
 
 public final class OsgiCamelContextHelper {
     private static final transient Log LOG = LogFactory.getLog(OsgiCamelContextHelper.class);
-    
+
     private OsgiCamelContextHelper() {
         // helper class
     }
     
     public static void osgiUpdate(DefaultCamelContext camelContext, BundleContext bundleContext) {
-        LOG.debug("Using the OsgiCamelContextNameStrategy");
+        ObjectHelper.notNull(bundleContext, "BundleContext");
+
+        LOG.debug("Using OsgiCamelContextNameStrategy");
         camelContext.setNameStrategy(new OsgiCamelContextNameStrategy(bundleContext));
-        LOG.debug("Using the OsgiClassResolver");
+        LOG.debug("Using OsgiClassResolver");
         camelContext.setClassResolver(new OsgiClassResolver(bundleContext));
         LOG.debug("Using OsgiFactoryFinderResolver");
         camelContext.setFactoryFinderResolver(new OsgiFactoryFinderResolver(bundleContext));
@@ -51,7 +53,8 @@ public final class OsgiCamelContextHelper {
     
     public static Registry wrapRegistry(CamelContext camelContext, Registry registry, BundleContext bundleContext) {
         ObjectHelper.notNull(bundleContext, "BundleContext");
-        LOG.debug("Setting the OSGi ServiceRegistry");
+
+        LOG.debug("Setting up OSGi ServiceRegistry");
         OsgiServiceRegistry osgiServiceRegistry = new OsgiServiceRegistry(bundleContext);
         // Need to clean up the OSGi service when camel context is closed.
         camelContext.addLifecycleStrategy(osgiServiceRegistry);

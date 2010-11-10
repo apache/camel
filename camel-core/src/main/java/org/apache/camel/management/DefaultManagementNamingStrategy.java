@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.ThreadPoolExecutor;
 import javax.management.MalformedObjectNameException;
@@ -37,6 +36,7 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -72,7 +72,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
             this.domainName = domainName;
         }
         try {
-            hostName = InetAddress.getLocalHost().getHostName();
+            hostName = InetAddressUtil.getLocalHostName();
         } catch (UnknownHostException ex) {
             // ignore, use the default "localhost"
         }
@@ -287,8 +287,12 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     protected String getContextId(CamelContext context) {
-        String name = context != null ? context.getName() : VALUE_UNKNOWN;
-        return getContextId(name);
+        if (context == null) {
+            return getContextId(VALUE_UNKNOWN);
+        } else {
+            String name = context.getManagementName() != null ? context.getManagementName() : context.getName();
+            return getContextId(name);
+        }
     }
 
     protected String getContextId(String name) {

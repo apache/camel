@@ -59,12 +59,14 @@ import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
@@ -117,7 +119,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             // lets avoid folks having to explicitly give an ID to a camel context
             if (ObjectHelper.isEmpty(contextId)) {
                 // if no explicit id was set then use a default auto generated name
-                contextId = DefaultCamelContextNameStrategy.getNextName();
+                CamelContextNameStrategy strategy = new DefaultCamelContextNameStrategy();
+                contextId = strategy.getName();
                 element.setAttribute("id", contextId);
                 implicitId = true;
             }
