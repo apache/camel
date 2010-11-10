@@ -22,8 +22,9 @@ import org.osgi.framework.BundleContext;
 public class OsgiCamelContextNameStrategy extends DefaultCamelContextNameStrategy {
 
     public OsgiCamelContextNameStrategy(BundleContext context) {
-        // use bundle id in auto assigned names to make it unique
-        super("camel-" + context.getBundle().getBundleId() + "-");
+        // use bundle id in auto assigned names to make it unique and have the bundle id as prefix
+        // which makes the ordering of the camel apps in JMX nicely sorted
+        super(context.getBundle().getBundleId()+ "-camel");
     }
 
 }
