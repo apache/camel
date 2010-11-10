@@ -20,7 +20,7 @@
         #for(entry <- it.getProperties)
           <tr>
             <td>${entry.getKey}</td>
-            <td><a class="type" attributes("title") = "${entry.getValue.getClass.getCanonicalName}">${entry.getValue}</a></td>
+            <td><a class="type" title="${entry.getValue.getClass.getCanonicalName}">${entry.getValue}</a></td>
           </tr>
         #end
       </table>
@@ -37,7 +37,7 @@
         #for(entry <- it.getHeaders)
           <tr>
             <td>${entry.getKey}</td>
-            <td><a class="type" attributes("title") = "${entry.getValue.getClass.getCanonicalName}">${entry.getValue}</a></td>
+            <td><a class="type" title="${entry.getValue.getClass.getCanonicalName}">${entry.getValue}</a></td>
           </tr>
         #end
       </table>

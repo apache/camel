@@ -13,7 +13,7 @@
             </tr>
           #for(exchange <- it.getBrowsableEndpoint.getExchanges)
             <tr>
-              <td><a class='message' href='${uri(it.getHref + "/messages/" + exchange.getExchangeId)}' attributes("title") = "View this message">${exchange.getExchangeId}</a></td>
+              <td><a class='message' href='${uri(it.getHref + "/messages/" + exchange.getExchangeId)}' title="View this message">${exchange.getExchangeId}</a></td>
             </tr>
           #end
           </table>
