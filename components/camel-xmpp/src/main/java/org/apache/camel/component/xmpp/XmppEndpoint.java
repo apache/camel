@@ -150,7 +150,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
             }
         });
 
-        if (login && !connection.isAuthenticated()) {
+        if (!connection.isAuthenticated()) {
             if (user != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Logging in to XMPP as user: " + user + " on connection: " + getConnectionMessage(connection));
@@ -163,10 +163,12 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                     AccountManager accountManager = new AccountManager(connection);
                     accountManager.createAccount(user, password);
                 }
-                if (resource != null) {
-                    connection.login(user, password, resource);
-                } else {
-                    connection.login(user, password);
+                if (login) {
+                    if (resource != null) {
+                        connection.login(user, password, resource);
+                    } else {
+                        connection.login(user, password);
+                    }
                 }
             } else {
                 if (LOG.isDebugEnabled()) {
