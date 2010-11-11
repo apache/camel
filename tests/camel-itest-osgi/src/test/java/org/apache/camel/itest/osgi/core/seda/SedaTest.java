@@ -51,12 +51,16 @@ public class SedaTest extends OSGiIntegrationTestSupport {
     @Test
     public void testCamelContextName() throws Exception {
         // should get the context name with osgi bundle id
-        assertTrue("Get the wrong camel context name.", context.getName().indexOf("-1") > 0);
-        assertTrue("Get the wrong camel context name.", context.getName().indexOf("camel-1") < 0);
-        
+        String name1 = context.getName();
+
         CamelContext context2 = createCamelContext();
-        assertTrue("Get the wrong camel context name.", context2.getName().indexOf("-2") > 0);
-        assertTrue("Get the wrong camel context name.", context2.getName().indexOf("camel-2") < 0);
+        String name2 = context2.getName();
+
+        assertNotSame(name1, name2);
+
+        String id = "" + bundleContext.getBundle().getBundleId();
+        assertTrue(name1.startsWith(id));
+        assertTrue(name2.startsWith(id));
     }
    
 }
