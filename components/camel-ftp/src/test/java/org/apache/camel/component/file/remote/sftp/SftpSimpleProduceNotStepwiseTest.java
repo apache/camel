@@ -65,7 +65,8 @@ public class SftpSimpleProduceNotStepwiseTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub/myother?username=admin&password=admin&stepwise=false", "Farewell World", Exchange.FILE_NAME, "farewell.txt");
+        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub/myother?username=admin&password=admin&stepwise=false", 
+            "Farewell World", Exchange.FILE_NAME, "farewell.txt");
 
         File file = new File(FTP_ROOT_DIR + "/mysub/myother/farewell.txt").getAbsoluteFile();
         assertTrue("File should exist: " + file, file.exists());
