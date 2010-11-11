@@ -35,7 +35,22 @@
     <bundle>mvn:org.springframework.osgi/spring-osgi-core/${spring-osgi-version}</bundle>
     <bundle>mvn:org.springframework.osgi/spring-osgi-extender/${spring-osgi-version}</bundle>
     <bundle>mvn:org.springframework.osgi/spring-osgi-annotation/${spring-osgi-version}</bundle>
-  </feature>	    
+  </feature>
+  <feature name='jetty7' version='${pom.version}'>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-util/${jetty-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-io/${jetty-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-http/${jetty-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-client/${jetty-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-continuation/${jetty-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-jmx/${jetty-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-server/${jetty-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-security/${jetty-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-servlet/${jetty-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-servlets/${jetty-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-xml/${jetty-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-webapp/${jetty-version}</bundle>
+  </feature>
   <feature name='camel' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <feature version='${pom.version}'>camel-spring</feature>
@@ -74,7 +89,6 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/${asm-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.fastinfoset/${fastinfoset-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty-bundle/${jetty6-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle>mvn:commons-codec/commons-codec/${commons-codec}</bundle>
     <bundle>mvn:org.codehaus.jettison/jettison/${jettison-bundle-version}</bundle>
@@ -103,11 +117,12 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.wsdl4j/${wsdl4j-bundle-version}</bundle>
     <bundle>mvn:org.apache.ws.security/wss4j/${wss4j-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.opensaml/${opensaml-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.0/${servicemix-specs-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-ws-metadata_2.0_spec/${geronimo-ws-metadata-spec-version}</bundle>
     <bundle>mvn:org.apache.cxf/cxf-bundle/${cxf-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-io/${commons-io-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-spring</feature>
+    <feature version='${pom.version}'>jetty7</feature>
     <bundle>mvn:org.apache.camel/camel-cxf/${pom.version}</bundle>
   </feature>
   <feature name='camel-cache' version='${pom.version}'>
@@ -146,19 +161,7 @@
     <bundle>mvn:org.apache.camel/camel-mina/${pom.version}</bundle>
   </feature>
   <feature name='camel-jetty' version='${pom.version}'>
-    <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-util/${jetty-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-io/${jetty-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-http/${jetty-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-client/${jetty-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-continuation/${jetty-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-jmx/${jetty-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-server/${jetty-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-security/${jetty-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-servlet/${jetty-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-servlets/${jetty-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-xml/${jetty-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-webapp/${jetty-version}</bundle>
+    <feature version='${pom.version}'>jetty7</feature>
     <feature version='${pom.version}'>camel-core</feature>
     <feature version='${pom.version}'>camel-http</feature>
     <bundle>mvn:org.apache.camel/camel-jetty/${pom.version}</bundle>
