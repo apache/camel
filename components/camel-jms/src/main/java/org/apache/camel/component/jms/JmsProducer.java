@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -85,6 +86,16 @@ public class JmsProducer extends DefaultAsyncProducer {
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        // deny processing if we are not started
+        if (!isRunAllowed()) {
+            if (exchange.getException() == null) {
+                exchange.setException(new RejectedExecutionException());
+            }
+            // we cannot process so invoke callback
+            callback.done(true);
+            return true;
+        }
+
         if (!endpoint.isDisableReplyTo() && exchange.getPattern().isOutCapable()) {
             // in out requires a bit more work than in only
             return processInOut(exchange, callback);
