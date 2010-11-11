@@ -40,12 +40,12 @@
     </bean>
 
     <!-- a bean to enrich the input -->
-    <bean id="enrichBean" class="org.apache.camel.example.cxf.proxy.EnrichBean"/>
+    <bean id="enrichBean" class="org.apache.camel.itest.osgi.cxf.EnrichBean"/>
 
     <!-- this is the CXF webservice we use as front end -->
     <cxf:cxfEndpoint id="reportIncident"
                      address="http://localhost:9080/camel-itest-osgi/webservices/incident"
-                     serviceClass="org.apache.camel.itest.osgi.cxf.ReportIncidentEndpoint"
+                     serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"
                      wsdlURL="report_incident.wsdl"/>
 
     <!-- this is the camel route which proxy the web service and forward it to the real web service -->
@@ -53,7 +53,7 @@
 
         <route>
             <!-- cxf consumer using MESSAGE format -->
-            <from uri="cxf:bean:reportIncident?dataFormat=MESSAGE"/>
+            <from uri="cxf:bean:reportIncident?dataFormat=MESSAGE&amp;synchronous=true"/>
             <!-- log input received -->
             <to uri="log:input"/>
             <!-- enrich the input by ensure the incidentId parameter is set -->

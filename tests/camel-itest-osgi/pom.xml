@@ -297,7 +297,7 @@
                         <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
                         <wsdlOptions>
                             <wsdlOption>
-                                <wsdl>${basedir}/src/main/resources/report_incident.wsdl</wsdl>
+                                <wsdl>${basedir}/src/test/resources/report_incident.wsdl</wsdl>
                             </wsdlOption>
                         </wsdlOptions>
                     </configuration>

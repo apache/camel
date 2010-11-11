@@ -29,14 +29,21 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
+import static org.ops4j.pax.exam.CoreOptions.bootClasspathLibrary;
 import static org.ops4j.pax.exam.CoreOptions.equinox;
+import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.provision;
+import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
+import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
+import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
+
 @RunWith(JUnit4TestRunner.class)
-@Ignore
 public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
 
     protected static ReportIncidentEndpoint createCXFClient() {
@@ -72,6 +79,10 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
     protected OsgiBundleXmlApplicationContext createApplicationContext() {
         return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/cxf/camel-config.xml"});
     }
+    
+    protected void setThreadContextClassLoader() {
+        // do nothing here
+    }
 
     // TODO: CxfConsumer should use OSGi http service (no embedded Jetty)
     // TODO: Make this test work with OSGi
@@ -79,21 +90,36 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
     @Configuration
     public static Option[] configure() {
         Option[] options = options(
-            // install the spring dm profile
-            profile("spring.dm").version("1.2.0"),
+            
+            profile("log"),
             profile("compendium"),
-            profile("web"),
-
+            
+            systemPackage("com.sun.xml.bind.marshaller"),
+            systemPackage("com.sun.org.apache.xerces.internal.dom"),
+            systemPackage("com.sun.org.apache.xerces.internal.jaxp"),
+         
             // this is how you set the default log level when using pax logging (logProfile)
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
 
+            // need to install some karaf features
+            scanFeatures(getKarafFeatureUrl(), "http"),
+            
             // using the features to install the camel components
             scanFeatures(getCamelKarafFeatureUrl(),
-                          "camel-core", "camel-spring", "camel-test", "camel-cxf"),
-
+                          "spring", "spring-dm", "camel-core", "camel-spring", "camel-http", "camel-test", "camel-cxf"),
+                                  
+            // need to install the generated src as the pax-exam doesn't wrap this bundles
+            provision(newBundle()
+                      .add(org.apache.camel.example.reportincident.InputReportIncident.class)
+                      .add(org.apache.camel.example.reportincident.OutputReportIncident.class)
+                      .add(org.apache.camel.example.reportincident.ReportIncidentEndpoint.class)
+                      .add(org.apache.camel.example.reportincident.ReportIncidentEndpointService.class)
+                      .add(org.apache.camel.example.reportincident.ObjectFactory.class)
+                      .build(withBnd())),
+                      
             workingDirectory("target/paxrunner/"),
-
-            equinox());
+            
+            felix());
 
         return options;
     }

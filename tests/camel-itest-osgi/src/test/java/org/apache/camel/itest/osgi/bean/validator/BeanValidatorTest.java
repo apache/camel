@@ -77,7 +77,7 @@ public class BeanValidatorTest extends OSGiIntegrationTestSupport {
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(), "camel-core", "camel-test", "camel-bean-validator"),
 
-                //workingDirectory("target/paxrunner/"),
+                workingDirectory("target/paxrunner/"),
                 //provision(newBundle()
                 //        .add("META-INF/validation.xml", BeanValidatorTest.class.getClassLoader().getResource("META-INF/validation.xml"))
                 //        .add("constraints-car.xml", BeanValidatorTest.class.getClassLoader().getResource("constraints-car.xml"))
