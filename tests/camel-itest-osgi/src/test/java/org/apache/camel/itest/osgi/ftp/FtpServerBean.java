@@ -29,15 +29,17 @@ import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 
-public class FtpServerBean {
-
-    private static final transient Log LOG = LogFactory.getLog(FtpServerBean.class);
+public final class FtpServerBean {
 
     public static final String FTP_ROOT_DIR = "./res/home/";
+    private static final transient Log LOG = LogFactory.getLog(FtpServerBean.class);
 
-    protected static FtpServer ftpServer;
-
+    private static FtpServer ftpServer;
     private static int port;
+
+    private FtpServerBean() {
+        // utility class
+    }
 
     public static int getPort() {
         return port;
