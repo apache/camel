@@ -97,6 +97,13 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-rss</artifactId>
             <scope>test</scope>
+            <!-- conflicts with mockmail for unit testing, so we exclude this geronimo spec -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
