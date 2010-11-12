@@ -64,7 +64,7 @@ public class BeanShellScriptRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").choice().
-                        when(script("beanshell", "request.headers['foo'] = 'bar'")).to("mock:result")
+                        when(script("beanshell", "request.getHeaders().get(\"foo\").equals(\"bar\")")).to("mock:result")
                         .otherwise().to("mock:unmatched");
             }
         };

@@ -27,7 +27,7 @@
         <route>
             <from uri="direct:start"/>
             <filter>
-                <beanshell>request.headers['testCase'] == 'testSendMatchingMessage'</beanshell>
+                <language language="beanshell">request.getHeaders().get("testCase").equals("testSendMatchingMessage")</language>
                 <to uri="mock:result"/>
             </filter>
         </route>

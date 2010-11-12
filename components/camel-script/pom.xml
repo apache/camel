@@ -182,11 +182,6 @@
                     <includes>
                         <include>**/*Test.*</include>
                     </includes>
-                    <!-- TODO: beanshell doesnt work on java 5 yet with the bsh-engine we got in pom right now -->
-                    <excludes>
-                        <exclude>**/BeanShellScriptRouteTest.*</exclude>
-                        <exclude>**/BeanShellFilterTest.*</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

@@ -451,7 +451,8 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             engine = createScriptEngine();
         }
         if (compiledScript == null) {
-            if (engine instanceof Compilable) {
+            // BeanShell implements Compilable but throws an exception if you call compile
+            if (engine instanceof Compilable && !isBeanShell()) { 
                 compileScript((Compilable)engine);
             }
         }
@@ -466,8 +467,8 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         try {
             engine = manager.getEngineByName(scriptEngineName);
         } catch (NoClassDefFoundError ex) {
-            LOG.error("Can't load the scriptEngine for " + scriptEngineName + ", the exception is " + ex
-                      + ", please check the scriptEngine needs jars.");
+            LOG.error("Cannot load the scriptEngine for " + scriptEngineName + ", the exception is " + ex
+                      + ", please ensure correct JARs is provided on classpath.");
         }
         if (engine == null) {
             throw new IllegalArgumentException("No script engine could be created for: " + getScriptEngineName());
@@ -567,4 +568,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         return "python".equals(scriptEngineName) || "jython".equals(scriptEngineName);
     }
 
+    protected boolean isBeanShell() {
+        return "beanshell".equals(scriptEngineName) || "bsh".equals(scriptEngineName);
+    }
 }
