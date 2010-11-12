@@ -136,7 +136,6 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
             pendingExchanges = total - index - 1;
 
             if (lockEntity(result, entityManager)) {
-
                 // process the current exchange
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Processing exchange: " + exchange);
@@ -146,7 +145,6 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
                 } catch (Exception e) {
                     throw new PersistenceException(e);
                 }
-
                 getDeleteHandler().deleteObject(entityManager, result);
             }
         }
@@ -282,10 +280,8 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
             if (entityType == null) {
                 return null;
             } else {
-                
                 // Check if we have a property name on the @Entity annotation
                 String name = getEntityName(entityType);
-                
                 if (name != null) {
                     return QueryBuilder.query("select x from " + name + " x");
                 } else {
@@ -297,16 +293,14 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
     }
     
     protected String getEntityName(Class<?> clazz) {
-        
         Entity entity = clazz.getAnnotation(Entity.class);
-        
+
         // Check if the property name has been defined for Entity annotation
-        if (!entity.name().equals("")) {
+        if (entity != null && !entity.name().equals("")) {
             return entity.name();
         } else {
             return null;
         }
- 
     }
 
     protected DeleteHandler<Object> createDeleteHandler() {
