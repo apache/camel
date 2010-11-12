@@ -34,15 +34,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
 /**
  * @version $Revision$
  */
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
-    protected AbstractXmlApplicationContext applicationContext;
-    protected abstract AbstractXmlApplicationContext createApplicationContext();
+    protected AbstractApplicationContext applicationContext;
+    protected abstract AbstractApplicationContext createApplicationContext();
 
     @Override
     @Before
@@ -90,7 +90,6 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
      * This will, in turn, call the template methods <code>excludedRoutes</code>
      * and <code>excludedRoute</code> to determine the classes to be excluded from scanning.
      *
-     * @see org.apache.camel.spring.config.scan.SpringComponentScanTest for an example.
      * @return ApplicationContext a parent {@link ApplicationContext} configured
      *         to exclude certain classes from package scanning
      */

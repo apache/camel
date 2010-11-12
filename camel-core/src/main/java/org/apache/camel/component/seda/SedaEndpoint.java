@@ -120,9 +120,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         conumserMulticastProcessor = new MulticastProcessor(getCamelContext(), processors, null, true, multicastExecutor, false, false, 0);
    
     }
-    
-    
-    
+
     public void setQueue(BlockingQueue<Exchange> queue) {
         this.queue = queue;
         this.size = queue.remainingCapacity();
