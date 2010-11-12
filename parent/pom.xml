@@ -1550,6 +1550,17 @@
       </activation>
     </profile>
     <profile>
+      <id>fastinstall</id>
+      <activation>
+        <property>
+          <name>fastinstall</name>
+        </property>
+      </activation>
+      <properties>
+        <maven.test.skip.exec>true</maven.test.skip.exec>
+      </properties>
+    </profile>
+    <profile>
       <id>sourcecheck</id>
       <build>
         <plugins>
