@@ -35,7 +35,7 @@
 
   <profiles>
     <profile>
-      <id>foo</id>
+      <id>build.manual</id>
       <activation>
         <property>
           <name>!fastinstall</name>
