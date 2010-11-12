@@ -275,7 +275,12 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
      * Is the quartz scheduler clustered?
      */
     public boolean isClustered() throws SchedulerException {
-        return getScheduler().getMetaData().isJobStoreClustered();
+        try {
+            return getScheduler().getMetaData().isJobStoreClustered();
+        } catch (NoSuchMethodError e) {
+            LOG.debug("Job clustering is only supported since Quartz 1.7, isClustered returning false");
+            return false;
+        }
     }
 
     /**
@@ -292,7 +297,13 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         if (!getScheduler().isStarted()) {
             if (getStartDelayedSeconds() > 0) {
                 LOG.info("Starting Quartz scheduler: " + getScheduler().getSchedulerName() + " delayed: " + getStartDelayedSeconds() + " seconds.");
-                getScheduler().startDelayed(getStartDelayedSeconds());
+                try {
+                    getScheduler().startDelayed(getStartDelayedSeconds());
+                } catch (NoSuchMethodError e) {
+                    LOG.warn("Your version of Quartz is too old to support delayed startup! "
+                        + "Starting Quartz scheduler immediately : " + getScheduler().getSchedulerName());
+                    getScheduler().start();
+                }
             } else {
                 LOG.info("Starting Quartz scheduler: " + getScheduler().getSchedulerName());
                 getScheduler().start();
