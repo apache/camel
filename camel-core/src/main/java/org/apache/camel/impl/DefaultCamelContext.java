@@ -296,8 +296,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         if (componentType.isInstance(component)) {
             return componentType.cast(component);
         } else {
-            throw new IllegalArgumentException("The component is not of type: " + componentType + " but is: "
-                    + component);
+            throw new IllegalArgumentException("Found component of type: " 
+                + component.getClass() + " instead of expected: " + componentType);
         }
     }
 
