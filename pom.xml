@@ -507,7 +507,7 @@
 
   <profiles>
     <profile>
-      <!-- really just used for the eclispe setup as eclipse will stick JSE-15 as the compliance
+      <!-- really just used for the eclipse setup as eclipse will stick JSE-15 as the compliance
       level if we don't reconfigure the compiler plugin with 1.6.  When it does that, things 
       like JAXB and other built in JDK things won't be found -->
       <id>jdk15</id>

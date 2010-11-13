@@ -88,7 +88,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         // to ensure it supports async routing
         if (strategy == null) {
             UseOriginalAggregationStrategy original = new UseOriginalAggregationStrategy(exchange, true);
-            exchange.setProperty(Exchange.AGGREGATION_STRATEGY, original);
+            setAggregationStrategyOnExchange(exchange, original);
         }
 
         return super.process(exchange, callback);

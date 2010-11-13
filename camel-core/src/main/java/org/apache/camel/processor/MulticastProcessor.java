@@ -18,17 +18,17 @@ package org.apache.camel.processor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,12 +38,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -51,6 +49,7 @@ import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -542,7 +541,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      */
     protected void doDone(Exchange original, Exchange subExchange, AsyncCallback callback, boolean doneSync) {
         // cleanup any per exchange aggregation strategy
-        original.removeProperty(Exchange.AGGREGATION_STRATEGY);
+        removeAggregationStrategyFromExchange(original);
         if (original.getException() != null) {
             // multicast uses error handling on its output processors and they have tried to redeliver
             // so we shall signal back to the other error handlers that we are exhausted and they should not
@@ -660,13 +659,51 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         // prefer to use per Exchange aggregation strategy over a global strategy
         if (exchange != null) {
-            answer = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, AggregationStrategy.class);
+            Map property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
+            Map<Object, AggregationStrategy> map = CastUtils.cast(property);
+            if (map != null) {
+                answer = map.get(this);
+            }
         }
         if (answer == null) {
             // fallback to global strategy
             answer = getAggregationStrategy();
         }
         return answer;
+    }
+
+    /**
+     * Sets the given {@link org.apache.camel.processor.aggregate.AggregationStrategy} on the {@link Exchange}.
+     *
+     * @param exchange  the exchange
+     * @param aggregationStrategy  the strategy
+     */
+    protected void setAggregationStrategyOnExchange(Exchange exchange, AggregationStrategy aggregationStrategy) {
+        Map property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
+        Map<Object, AggregationStrategy> map = CastUtils.cast(property);
+        if (map == null) {
+            map = new HashMap<Object, AggregationStrategy>();
+        }
+        // store the strategy using this processor as the key
+        // (so we can store multiple strategies on the same exchange)
+        map.put(this, aggregationStrategy);
+        exchange.setProperty(Exchange.AGGREGATION_STRATEGY, map);
+    }
+
+    /**
+     * Removes the associated {@link org.apache.camel.processor.aggregate.AggregationStrategy} from the {@link Exchange}
+     * which must be done after use.
+     *
+     * @param exchange the current exchange
+     */
+    protected void removeAggregationStrategyFromExchange(Exchange exchange) {
+        Map property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
+        Map<Object, AggregationStrategy> map = CastUtils.cast(property);
+        if (map == null) {
+            return;
+        }
+        // remove the strategy using this processor as the key
+        map.remove(this);
     }
 
     /**
