@@ -112,7 +112,9 @@ public final class ExecutorServiceHelper {
     }
 
     /**
-     * Creates a new fixed thread pool
+     * Creates a new fixed thread pool.
+     * <p/>
+     * Beware that the task queue is unbounded
      *
      * @param poolSize the fixed pool size
      * @param pattern  pattern of the thread name
@@ -169,6 +171,20 @@ public final class ExecutorServiceHelper {
     }
 
     /**
+     * Creates a new synchronous thread pool which executes the task in the caller thread (no task queue)
+     * <p/>
+     * Uses a {@link java.util.concurrent.SynchronousQueue} queue as task queue.
+     *
+     * @param pattern      pattern of the thread name
+     * @param name         ${name} in the pattern name
+     * @return the created pool
+     */
+    public static ExecutorService newSynchronousThreadPool(final String pattern, final String name) {
+        return ExecutorServiceHelper.newThreadPool(pattern, name, 0, 0, 60,
+                TimeUnit.SECONDS, 0, new ThreadPoolExecutor.CallerRunsPolicy(), true);
+    }
+
+    /**
      * Creates a new custom thread pool using 60 seconds as keep alive and with an unbounded queue.
      *
      * @param pattern      pattern of the thread name
@@ -180,6 +196,21 @@ public final class ExecutorServiceHelper {
     public static ExecutorService newThreadPool(final String pattern, final String name, int corePoolSize, int maxPoolSize) {
         return ExecutorServiceHelper.newThreadPool(pattern, name, corePoolSize, maxPoolSize, 60,
                 TimeUnit.SECONDS, -1, new ThreadPoolExecutor.CallerRunsPolicy(), true);
+    }
+
+    /**
+     * Creates a new custom thread pool using 60 seconds as keep alive and with bounded queue.
+     *
+     * @param pattern      pattern of the thread name
+     * @param name         ${name} in the pattern name
+     * @param corePoolSize the core size
+     * @param maxPoolSize  the maximum pool size
+     * @param maxQueueSize the maximum number of tasks in the queue, use <tt>Integer.MAX_VALUE</tt> or <tt>-1</tt> to indicate unbounded
+     * @return the created pool
+     */
+    public static ExecutorService newThreadPool(final String pattern, final String name, int corePoolSize, int maxPoolSize, int maxQueueSize) {
+        return ExecutorServiceHelper.newThreadPool(pattern, name, corePoolSize, maxPoolSize, 60,
+                TimeUnit.SECONDS, maxQueueSize, new ThreadPoolExecutor.CallerRunsPolicy(), true);
     }
 
     /**
@@ -209,8 +240,11 @@ public final class ExecutorServiceHelper {
 
         BlockingQueue<Runnable> queue;
         if (corePoolSize == 0 && maxQueueSize <= 0) {
-            // use a synchronous so we can act like the cached thread pool
+            // use a synchronous queue
             queue = new SynchronousQueue<Runnable>();
+            // and force 1 as pool size to be able to create the thread pool by the JDK
+            corePoolSize = 1;
+            maxPoolSize = 1;
         } else if (maxQueueSize <= 0) {
             // unbounded task queue
             queue = new LinkedBlockingQueue<Runnable>();

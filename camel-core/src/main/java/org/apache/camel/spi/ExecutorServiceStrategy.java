@@ -194,6 +194,15 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
     ExecutorService newSingleThreadExecutor(Object source, String name);
 
     /**
+     * Creates a new synchronous thread pool, which executes the task in the caller thread (no task queue).
+     *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
+     * @return the created thread pool
+     */
+    ExecutorService newSynchronousThreadPool(Object source, String name);
+
+    /**
      * Creates a new custom thread pool.
      * <p/>
      * Will by default use 60 seconds for keep alive time for idle threads.
@@ -206,6 +215,21 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
      * @return the created thread pool
      */
     ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize);
+
+    /**
+     * Creates a new custom thread pool.
+     * <p/>
+     * Will by default use 60 seconds for keep alive time for idle threads.
+     * And use {@link java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy CallerRunsPolicy} as rejection handler
+     *
+     * @param source        the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name          name which is appended to the thread name
+     * @param corePoolSize  the core pool size
+     * @param maxPoolSize   the maximum pool size
+     * @param maxQueueSize  the maximum number of tasks in the queue, use <tt>Integer.MAX_INT</tt> or <tt>-1</tt> to indicate unbounded
+     * @return the created thread pool
+     */
+    ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize, int maxQueueSize);
 
     /**
      * Creates a new custom thread pool.

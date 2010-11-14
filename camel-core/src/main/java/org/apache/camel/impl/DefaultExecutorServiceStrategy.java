@@ -254,6 +254,16 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         return answer;
     }
 
+    public ExecutorService newSynchronousThreadPool(Object source, String name) {
+        ExecutorService answer = ExecutorServiceHelper.newSynchronousThreadPool(threadNamePattern, name);
+        onThreadPoolCreated(answer);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created new synchronous thread pool for source: " + source + " with name: " + name + ". -> " + answer);
+        }
+        return answer;
+    }
+
     public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize) {
         ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize);
         onThreadPoolCreated(answer);
@@ -261,6 +271,17 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created new thread pool for source: " + source + " with name: " + name + ". [poolSize=" + corePoolSize
                     + ", maxPoolSize=" + maxPoolSize + "] -> " + answer);
+        }
+        return answer;
+    }
+
+    public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize, int maxQueueSize) {
+        ExecutorService answer = ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize, maxQueueSize);
+        onThreadPoolCreated(answer);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created new thread pool for source: " + source + " with name: " + name + ". [poolSize=" + corePoolSize
+                    + ", maxPoolSize=" + maxPoolSize + ", maxQueueSize=" + maxQueueSize + "] -> " + answer);
         }
         return answer;
     }
