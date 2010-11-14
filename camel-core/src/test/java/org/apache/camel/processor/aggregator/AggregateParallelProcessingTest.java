@@ -37,7 +37,7 @@ public class AggregateParallelProcessingTest extends ContextTestSupport {
                 from("direct:start")
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
                         .eagerCheckCompletion().completionPredicate(body().isEqualTo("END")).parallelProcessing()
-                        .to("mock:result");
+                        .to("log:result", "mock:result");
             }
         });
         context.start();
@@ -62,7 +62,7 @@ public class AggregateParallelProcessingTest extends ContextTestSupport {
                 from("direct:start")
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
                         .eagerCheckCompletion().completionPredicate(body().isEqualTo("END"))
-                        .to("mock:result");
+                        .to("log:result", "mock:result");
             }
         });
         context.start();

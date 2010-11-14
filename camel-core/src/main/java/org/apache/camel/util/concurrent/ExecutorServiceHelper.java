@@ -171,17 +171,14 @@ public final class ExecutorServiceHelper {
     }
 
     /**
-     * Creates a new synchronous thread pool which executes the task in the caller thread (no task queue)
-     * <p/>
-     * Uses a {@link java.util.concurrent.SynchronousQueue} queue as task queue.
+     * Creates a new synchronous executor service which always executes the task in the call thread
+     * (its just a thread pool facade)
      *
-     * @param pattern      pattern of the thread name
-     * @param name         ${name} in the pattern name
      * @return the created pool
+     * @see org.apache.camel.util.concurrent.SynchronousExecutorService
      */
-    public static ExecutorService newSynchronousThreadPool(final String pattern, final String name) {
-        return ExecutorServiceHelper.newThreadPool(pattern, name, 0, 0, 60,
-                TimeUnit.SECONDS, 0, new ThreadPoolExecutor.CallerRunsPolicy(), true);
+    public static ExecutorService newSynchronousThreadPool() {
+        return new SynchronousExecutorService();
     }
 
     /**

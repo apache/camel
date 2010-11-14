@@ -66,7 +66,7 @@ public class ExecutorServiceHelperTest extends TestCase {
     }
 
     public void testNewSynchronousThreadPool() {
-        ExecutorService pool = ExecutorServiceHelper.newSynchronousThreadPool("MyPool ${name}", "foo");
+        ExecutorService pool = ExecutorServiceHelper.newSynchronousThreadPool();
         assertNotNull(pool);
     }
 

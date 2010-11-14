@@ -255,7 +255,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
     }
 
     public ExecutorService newSynchronousThreadPool(Object source, String name) {
-        ExecutorService answer = ExecutorServiceHelper.newSynchronousThreadPool(threadNamePattern, name);
+        ExecutorService answer = ExecutorServiceHelper.newSynchronousThreadPool();
         onThreadPoolCreated(answer);
 
         if (LOG.isDebugEnabled()) {
