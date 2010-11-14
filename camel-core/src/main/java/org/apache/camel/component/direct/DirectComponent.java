@@ -44,7 +44,7 @@ public class DirectComponent extends DefaultComponent {
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(consumers.values());
+        ServiceHelper.stopServices(consumers);
         consumers.clear();
         super.doStop();
     }
