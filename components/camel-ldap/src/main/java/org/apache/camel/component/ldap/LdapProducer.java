@@ -17,11 +17,17 @@
 package org.apache.camel.component.ldap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
+import javax.naming.ldap.Control;
+import javax.naming.ldap.LdapContext;
+import javax.naming.ldap.PagedResultsControl;
+import javax.naming.ldap.PagedResultsResponseControl;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
@@ -31,45 +37,116 @@ import org.apache.camel.impl.DefaultProducer;
  */
 public class LdapProducer extends DefaultProducer {
     private String remaining;
-    private SearchControls controls;
+    private SearchControls searchControls;
     private String searchBase;
+    private Integer pageSize;
 
-    public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope) throws Exception {
+    public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope, Integer pageSize, String returnedAttributes) throws Exception {
         super(endpoint);
 
         this.remaining = remaining;
         this.searchBase = base;
-        this.controls = new SearchControls();
-        this.controls.setSearchScope(scope);
+        this.pageSize = pageSize;
+
+        this.searchControls = new SearchControls();
+        this.searchControls.setSearchScope(scope);
+        if (returnedAttributes != null) {
+            String returnedAtts[] = returnedAttributes.split(",");
+            if (log.isDebugEnabled()) {
+                log.debug("Setting returning Attributes to searchControls: " + Arrays.toString(returnedAtts));
+            }
+            searchControls.setReturningAttributes(returnedAtts);
+        }
     }
+
 
     public void process(Exchange exchange) throws Exception {
         String filter = exchange.getIn().getBody(String.class);
 
-        // Obtain our ldap context. We do this by looking up the context in our registry. 
+        DirContext dirContext = getDirContext();
+
+        try {
+            // could throw NamingException
+            List<SearchResult> data;
+            if (pageSize == null) {
+                data = simpleSearch(dirContext, filter);
+            } else {
+                if (!(dirContext instanceof LdapContext)) {
+                    throw new IllegalArgumentException("When using attribute 'pageSize' for a ldap endpoint, you must provide a LdapContext (subclass of DirContext)");
+                }
+                data = pagedSearch((LdapContext) dirContext, filter);
+            }
+            exchange.getOut().setBody(data);
+        } finally {
+            dirContext.close();
+        }
+    }
+
+    protected DirContext getDirContext() {
+        // Obtain our ldap context. We do this by looking up the context in our registry.
         // Note though that a new context is expected each time. Therefore if spring is
         // being used then use prototype="scope". If you do not then you might experience
         // concurrency issues as InitialContext is not required to support concurrency.
         // On the other hand if you have a DirContext that is able to support concurrency
         // then using the default singleton scope is entirely sufficient. Most DirContext
         // classes will require prototype scope though.
-        DirContext ldapContext = (DirContext)getEndpoint().getCamelContext().getRegistry().lookup(remaining);
-        try {
-            // could throw NamingException
-            List<SearchResult> data = new ArrayList<SearchResult>();
-            NamingEnumeration<SearchResult> namingEnumeration = ldapContext.search(searchBase, filter,
-                                                                                   getControls());
+        DirContext dirContext = (DirContext) getEndpoint().getCamelContext().getRegistry().lookup(remaining);
+        return dirContext;
+    }
 
-            while (namingEnumeration.hasMore()) {
-                data.add(namingEnumeration.next());
+    private List<SearchResult> simpleSearch(DirContext ldapContext, String searchFilter) throws NamingException {
+        List<SearchResult> data = new ArrayList<SearchResult>();
+        NamingEnumeration<SearchResult> namingEnumeration = ldapContext.search(searchBase, searchFilter,
+                searchControls);
+        while (namingEnumeration != null && namingEnumeration.hasMore()) {
+            data.add(namingEnumeration.next());
+        }
+        return data;
+    }
+
+    private List<SearchResult> pagedSearch(LdapContext ldapContext, String searchFilter) throws Exception {
+        List<SearchResult> data = new ArrayList<SearchResult>();
+
+        if (log.isTraceEnabled()) {
+            log.trace("Using paged ldap search, pageSize=" + pageSize);
+        }
+
+        Control[] requestControls = new Control[]{new PagedResultsControl(pageSize, Control.CRITICAL)};
+        ldapContext.setRequestControls(requestControls);
+        do {
+            List<SearchResult> pageResult = simpleSearch(ldapContext, searchFilter);
+            data.addAll(pageResult);
+            if (log.isTraceEnabled()) {
+                log.trace("Page returned " + pageResult.size() + " entries");
             }
-            exchange.getOut().setBody(data);
-        } finally {
-            ldapContext.close();
+        } while (prepareNextPage(ldapContext));
+
+        if (log.isDebugEnabled()) {
+            log.debug("Found a total of " + data.size() + " entries for ldap filter " + searchFilter);
+        }
+
+        return data;
+    }
+
+    private boolean prepareNextPage(LdapContext ldapContext) throws Exception {
+        Control[] responseControls = ldapContext.getResponseControls();
+
+        byte[] cookie = null;
+        if (responseControls != null) {
+            for (int i = 0; i < responseControls.length; i++) {
+                if (responseControls[i] instanceof PagedResultsResponseControl) {
+                    PagedResultsResponseControl prrc = (PagedResultsResponseControl) responseControls[i];
+                    cookie = prrc.getCookie();
+                }
+            }
+        }
+
+        if (cookie == null) {
+            return false;
+        } else {
+            ldapContext.setRequestControls(new Control[]{new PagedResultsControl(pageSize, cookie, Control.CRITICAL)});
+            return true;
         }
     }
 
-    protected SearchControls getControls() {
-        return controls;
-    }
 }

@@ -17,7 +17,6 @@
 package org.apache.camel.component.ldap;
 
 import java.net.URISyntaxException;
-
 import javax.naming.directory.SearchControls;
 
 import org.apache.camel.Consumer;
@@ -28,11 +27,9 @@ import org.apache.camel.impl.DefaultEndpoint;
 
 /**
  * Represents an endpoint that synchronously invokes an LDAP server when a producer sends a message to it.
- *
- * @version
  */
 public class LdapEndpoint extends DefaultEndpoint {
-    public static final String SYSTEM_DN  = "ou=system";
+    public static final String SYSTEM_DN = "ou=system";
     public static final String OBJECT_SCOPE = "object";
     public static final String ONELEVEL_SCOPE = "onelevel";
     public static final String SUBTREE_SCOPE = "subtree";
@@ -40,6 +37,8 @@ public class LdapEndpoint extends DefaultEndpoint {
     private String remaining;
     private String base = SYSTEM_DN;
     private String scope = SUBTREE_SCOPE;
+    private Integer pageSize;
+    private String returnedAttributes;
 
     protected LdapEndpoint(String endpointUri, String remaining, LdapComponent component) throws URISyntaxException {
         super(endpointUri, component);
@@ -56,7 +55,7 @@ public class LdapEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new LdapProducer(this, remaining, base, toSearchControlScope(scope));
+        return new LdapProducer(this, remaining, base, toSearchControlScope(scope), pageSize, returnedAttributes);
     }
 
     public boolean isSingleton() {
@@ -77,6 +76,22 @@ public class LdapEndpoint extends DefaultEndpoint {
 
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public String getReturnedAttributes() {
+        return returnedAttributes;
+    }
+
+    public void setReturnedAttributes(String returnedAttributes) {
+        this.returnedAttributes = returnedAttributes;
     }
 
     private int toSearchControlScope(String scope) {
