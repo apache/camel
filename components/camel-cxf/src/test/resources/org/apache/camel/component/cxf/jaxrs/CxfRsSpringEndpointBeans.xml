@@ -26,13 +26,20 @@
 
 
   <cxf:rsServer id="rsServer" address="http://localhost:9000/router"
-    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
-
+    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService">
+    <cxf:providers>
+       <ref bean="jsonProvider"/>
+    </cxf:providers>
+  </cxf:rsServer>
 
   <cxf:rsClient id="rsClient" address="http://localhost:9002/helloworld"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
 
+  <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider"/>
+
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   </camelContext>
+  
+  
 
 </beans>

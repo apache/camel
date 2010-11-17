@@ -31,6 +31,7 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
     public void testCreateCxfRsServerFactoryBean() {
         CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://rsServer", CxfRsEndpoint.class);
         SpringJAXRSServerFactoryBean sfb = (SpringJAXRSServerFactoryBean)endpoint.createJAXRSServerFactoryBean();
+        assertEquals("Get a wrong provider size", 1, sfb.getProviders().size());
         assertEquals("Get a wrong beanId", sfb.getBeanId(), "rsServer");
         assertEquals("Get a wrong address", sfb.getAddress(), "http://localhost:9000/router");
         assertEquals("Get a wrong size of resource classess", sfb.getResourceClasses().size(), 1);
