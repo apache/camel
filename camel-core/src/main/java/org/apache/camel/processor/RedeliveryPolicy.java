@@ -220,7 +220,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             redeliveryDelayResult += redeliveryDelayResult * variance;
         }
 
-        if (maximumRedeliveryDelay > 0 && redeliveryDelay > maximumRedeliveryDelay) {
+        // ensure the calculated result is not bigger than the max delay (if configured)
+        if (maximumRedeliveryDelay > 0 && redeliveryDelayResult > maximumRedeliveryDelay) {
             redeliveryDelayResult = maximumRedeliveryDelay;
         }
 
