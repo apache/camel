@@ -24,11 +24,12 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camelContext id="camel"  xmlns="http://camel.apache.org/schema/spring">
+    <!-- this is Camel -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
        <routeBuilder ref="myRouteBuilder"/>
     </camelContext>
-    <bean id="myRouteBuilder" class="org.apache.camel.example.jmx.MyRouteBuilder">
 
-    </bean>
+    <!-- this is our route -->
+    <bean id="myRouteBuilder" class="org.apache.camel.example.jmx.MyRouteBuilder"/>
 
 </beans>

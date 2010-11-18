@@ -22,12 +22,12 @@ import javax.management.AttributeChangeNotification;
 import javax.management.NotificationBroadcasterSupport;
 
 /**
+ * Our business logic which also is capable of broadcasting JMX notifications,
+ * such as an attribute being changed.
  */
 public class SimpleBean extends NotificationBroadcasterSupport implements ISimpleMXBean {
     private int sequence;
     private int tick;
-
-    private String mStringValue;
 
     public void tick() throws Exception {
         tick++;
@@ -37,7 +37,7 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
         long timeStamp = date.getTime();
 
         AttributeChangeNotification acn = new AttributeChangeNotification(
-                this, sequence++, timeStamp, "attribute changed", "stringValue", "string", tick-1, tick);
+                this, sequence++, timeStamp, "attribute changed", "stringValue", "string", tick - 1, tick);
         sendNotification(acn);
     }
 

@@ -16,33 +16,19 @@
  */
 package org.apache.camel.example.jmx;
 
-import org.apache.camel.builder.RouteBuilder;
-
+import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
 
-import java.util.Vector;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
  * A simple example router demonstrating the camel-jmx component.
  */
 public class MyRouteBuilder extends RouteBuilder {
 
-    static Vector<String> strings = new Vector<String>();
     private SimpleBean bean;
     private MBeanServer server;
-
-    /**
-     * Allow this route to be run as an application
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-        MyRouteBuilder mrb = new MyRouteBuilder();
-    }
-
 
     public MyRouteBuilder() throws Exception {
         server = ManagementFactory.getPlatformMBeanServer();
@@ -59,7 +45,6 @@ public class MyRouteBuilder extends RouteBuilder {
                 to("log:jmxEvent");
         // END SNIPPET: e1
 
-        from("timer:foo?period=6000").
-                bean(bean, "tick");
+        from("timer:foo?period=6000").bean(bean, "tick");
     }
 }

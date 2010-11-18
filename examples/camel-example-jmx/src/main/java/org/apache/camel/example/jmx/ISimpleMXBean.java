@@ -18,6 +18,11 @@ package org.apache.camel.example.jmx;
 
 import java.io.Serializable;
 
+/**
+ * Interface defining the POJO
+ */
 public interface ISimpleMXBean extends Serializable {
+
     void tick() throws Exception;
+
 }
