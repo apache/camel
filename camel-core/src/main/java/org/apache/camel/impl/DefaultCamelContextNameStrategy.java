@@ -41,6 +41,9 @@ public class DefaultCamelContextNameStrategy implements CamelContextNameStrategy
     }
 
     public String getName() {
+        if (name == null) {
+            name = getNextName();
+        }
         return name;
     }
 
