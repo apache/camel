@@ -79,11 +79,7 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
     protected OsgiBundleXmlApplicationContext createApplicationContext() {
         return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/cxf/camel-config.xml"});
     }
-    
-    protected void setThreadContextClassLoader() {
-        // do nothing here
-    }
-
+   
     // TODO: CxfConsumer should use OSGi http service (no embedded Jetty)
     // TODO: Make this test work with OSGi
 
