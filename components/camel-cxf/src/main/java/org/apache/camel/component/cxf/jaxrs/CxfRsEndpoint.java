@@ -121,7 +121,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     }
     
-    public CxfRsBinding getBinding() {
+    public synchronized CxfRsBinding getBinding() {
         if (binding == null) {
             binding = new DefaultCxfRsBinding();
             if (LOG.isDebugEnabled()) {
