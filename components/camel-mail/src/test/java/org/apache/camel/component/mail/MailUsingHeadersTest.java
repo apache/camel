@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
- * Unit test for Mail using camel headers to set recipeient subject.
+ * Unit test for Mail using camel headers to set recipient subject.
  */
 public class MailUsingHeadersTest extends CamelTestSupport {
 
@@ -49,6 +49,23 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         Message msg = box.get(0);
         assertEquals("davsclaus@apache.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("jstrachan@apache.org", msg.getFrom()[0].toString());
+        assertEquals("Camel rocks", msg.getSubject());
+    }
+
+    @Test
+    public void testMailWithFromInEndpoint() throws Exception {
+        Mailbox.clearAll();
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("Subject", "Camel rocks");
+
+        String body = "Hello Claus.\nYes it does.\n\nRegards James.";
+        template.sendBodyAndHeaders("smtp://davsclaus@apache.org?from=James Strachan <jstrachan@apache.org>&to=davsclaus@apache.org", body, map);
+
+        Mailbox box = Mailbox.get("davsclaus@apache.org");
+        Message msg = box.get(0);
+        assertEquals("davsclaus@apache.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
+        assertEquals("James Strachan <jstrachan@apache.org>", msg.getFrom()[0].toString());
         assertEquals("Camel rocks", msg.getSubject());
     }
 
