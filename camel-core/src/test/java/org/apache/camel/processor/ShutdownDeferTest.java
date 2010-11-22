@@ -50,8 +50,8 @@ public class ShutdownDeferTest extends ContextTestSupport {
 
         context.stop();
 
-        // should route about 4 - 5 (in some rare cases it will only route 4)
-        assertTrue("Should complete all messages, was " + bar.getReceivedCounter(), bar.getReceivedCounter() >= 4);
+        // should route all 5
+        assertEquals(5, bar.getReceivedCounter());
     }
 
     @Override
