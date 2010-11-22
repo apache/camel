@@ -1282,10 +1282,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 LOG.warn("Lifecycle strategy vetoed starting CamelContext (" + getName() + ")", e);
                 throw e;
             } catch (Exception e) {
-                // not all containers allow access to its MBeanServer (such as OC4j)
-                // so here we remove the troublesome strategy to be able to continue
-                LOG.warn("Cannot start lifecycle strategy: " + strategy + ". This strategy will be removed. Cause: " + e.getMessage(), e);
-                it.remove();
+                LOG.warn("Lifecycle strategy " + strategy + " failed starting CamelContext (" + getName() + ")", e);
+                throw e;
             }
         }
 

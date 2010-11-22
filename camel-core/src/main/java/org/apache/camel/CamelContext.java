@@ -75,7 +75,7 @@ import org.apache.camel.spi.UuidGenerator;
 public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
-     * Gets the name of the this context.
+     * Gets the name (id) of the this context.
      *
      * @return the name
      */

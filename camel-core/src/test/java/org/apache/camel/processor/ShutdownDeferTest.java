@@ -48,6 +48,8 @@ public class ShutdownDeferTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        Thread.sleep(500);
+
         context.stop();
 
         // should route all 5
