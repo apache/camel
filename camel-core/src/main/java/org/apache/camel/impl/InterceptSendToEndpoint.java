@@ -30,6 +30,8 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
+
 /**
  * This is an endpoint when sending to it, is intercepted and is routed in a detour
  *
@@ -121,29 +123,9 @@ public class InterceptSendToEndpoint implements Endpoint {
                     exchange.setException(e);
                 }
 
+                // Decide whether to continue or not; similar logic to the Pipeline
                 // check for error if so we should break out
-                boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(exchange);
-                if (exchange.isFailed() || exchange.isRollbackOnly() || exceptionHandled) {
-                    // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
-                    // by the error handler. It's still an exception, the exchange still failed.
-                    if (LOG.isDebugEnabled()) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("Message exchange has failed so skip sending to original intended destination: ").append(getEndpointUri());
-                        sb.append(" for Exchange: ").append(exchange);
-                        if (exchange.isRollbackOnly()) {
-                            sb.append(" Marked as rollback only.");
-                        }
-                        if (exchange.getException() != null) {
-                            sb.append(" Exception: ").append(exchange.getException());
-                        }
-                        if (exchange.hasOut() && exchange.getOut().isFault()) {
-                            sb.append(" Fault: ").append(exchange.getOut());
-                        }
-                        if (exceptionHandled) {
-                            sb.append(" Handled by the error handler.");
-                        }
-                        LOG.debug(sb.toString());
-                    }
+                if (!continueProcessing(exchange, "skip sending to original intended destination: " + getEndpointUri(), LOG)) {
                     return;
                 }
 

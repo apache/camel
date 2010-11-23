@@ -40,6 +40,7 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -212,27 +213,8 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
             }
 
             // Decide whether to continue with the recipients or not; similar logic to the Pipeline
-            boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(current);
-            if (current.isFailed() || current.isRollbackOnly() || exceptionHandled) {
-                // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
-                // by the error handler. It's still an exception, the exchange still failed.
-                if (log.isDebugEnabled()) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Message exchange has failed so breaking out of the routing slip: ").append(current);
-                    if (current.isRollbackOnly()) {
-                        sb.append(" Marked as rollback only.");
-                    }
-                    if (current.getException() != null) {
-                        sb.append(" Exception: ").append(current.getException());
-                    }
-                    if (current.hasOut() && current.getOut().isFault()) {
-                        sb.append(" Fault: ").append(current.getOut());
-                    }
-                    if (exceptionHandled) {
-                        sb.append(" Handled by the error handler.");
-                    }
-                    log.debug(sb.toString());
-                }
+            // check for error if so we should break out
+            if (!continueProcessing(current, "so breaking out of the routing slip", log)) {
                 break;
             }
         }
@@ -315,27 +297,8 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                             }
 
                             // Decide whether to continue with the recipients or not; similar logic to the Pipeline
-                            boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(current);
-                            if (current.isFailed() || current.isRollbackOnly() || exceptionHandled) {
-                                // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
-                                // by the error handler. It's still an exception, the exchange still failed.
-                                if (log.isDebugEnabled()) {
-                                    StringBuilder sb = new StringBuilder();
-                                    sb.append("Message exchange has failed so breaking out of the routing slip: ").append(current);
-                                    if (current.isRollbackOnly()) {
-                                        sb.append(" Marked as rollback only.");
-                                    }
-                                    if (current.getException() != null) {
-                                        sb.append(" Exception: ").append(current.getException());
-                                    }
-                                    if (current.hasOut() && current.getOut().isFault()) {
-                                        sb.append(" Fault: ").append(current.getOut());
-                                    }
-                                    if (exceptionHandled) {
-                                        sb.append(" Handled by the error handler.");
-                                    }
-                                    log.debug(sb.toString());
-                                }
+                            // check for error if so we should break out
+                            if (!continueProcessing(current, "so breaking out of the routing slip", log)) {
                                 break;
                             }
 
