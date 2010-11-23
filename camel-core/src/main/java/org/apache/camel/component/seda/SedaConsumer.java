@@ -50,6 +50,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     // causing any exchanges to be lost due a tiny loophole between the exchange is polled
     // and when its registered as in flight exchange
     private final AtomicInteger tasks = new AtomicInteger();
+    private volatile boolean pendingStop;
     private SedaEndpoint endpoint;
     private AsyncProcessor processor;
     private ExecutorService executor;
@@ -94,6 +95,9 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         // number of pending messages on the queue
         int answer = endpoint.getQueue().size();
         if (answer == 0) {
+            // signal we want to stop
+            pendingStop = true;
+
             // if there are no pending exchanges we at first must ensure that
             // all tasks has been completed and the thread is stopped, to avoid
             // any condition which otherwise would cause an exchange to be lost
@@ -113,14 +117,22 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     }
 
     public void run() {
+        tasks.incrementAndGet();
+
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         while (queue != null && isRunAllowed()) {
+
+            // we are done if there are no pending exchanges and we want to stop
+            if (pendingStop && endpoint.getQueue().size() == 0) {
+                // no more pending exchanges and we want to stop so break out
+                break;
+            }
+
             Exchange exchange = null;
             try {
                 exchange = queue.poll(1000, TimeUnit.MILLISECONDS);
                 if (exchange != null) {
                     try {
-                        tasks.incrementAndGet();
                         sendToConsumers(exchange);
 
                         // log exception if an exception occurred and was not handled
@@ -129,8 +141,6 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                         }
                     } catch (Exception e) {
                         getExceptionHandler().handleException("Error processing exchange", exchange, e);
-                    } finally {
-                        tasks.decrementAndGet();
                     }
                 }
             } catch (InterruptedException e) {
@@ -146,6 +156,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                 }
             }
         }
+
+        tasks.decrementAndGet();
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Ending this polling consumer thread, there are still " + tasks.get() + " threads left.");
@@ -193,6 +205,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     }
 
     protected void doStart() throws Exception {
+        // reset state
+        pendingStop = false;
         tasks.set(0);
 
         int poolSize = endpoint.getConcurrentConsumers();
