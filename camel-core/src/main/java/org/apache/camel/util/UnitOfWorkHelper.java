@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,12 +37,16 @@ public final class UnitOfWorkHelper {
         boolean failed = exchange.isFailed();
 
         if (synchronizations != null && !synchronizations.isEmpty()) {
+            // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
+            List<Synchronization> copy = new ArrayList<Synchronization>(synchronizations);
+
             // reverse so we invoke it FILO style instead of FIFO
-            Collections.reverse(synchronizations);
+            Collections.reverse(copy);
             // and honor if any was ordered by sorting it accordingly
-            Collections.sort(synchronizations, new OrderedComparator());
+            Collections.sort(copy, new OrderedComparator());
+
             // invoke synchronization callbacks
-            for (Synchronization synchronization : synchronizations) {
+            for (Synchronization synchronization : copy) {
                 try {
                     if (failed) {
                         if (log.isTraceEnabled()) {
