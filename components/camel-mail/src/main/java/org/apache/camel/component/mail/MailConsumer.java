@@ -203,6 +203,10 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         }
     }
 
+    public void prepareShutdown() {
+        // noop
+    }
+
     public boolean isBatchAllowed() {
         // stop if we are not running
         boolean answer = isRunAllowed();

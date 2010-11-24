@@ -17,9 +17,9 @@
 package org.apache.camel.component.seda;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -46,11 +46,8 @@ import org.apache.commons.logging.LogFactory;
 public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, ShutdownAware {
     private static final transient Log LOG = LogFactory.getLog(SedaConsumer.class);
 
-    // use a task counter to help ensure we can graceful shutdown the seda consumers without
-    // causing any exchanges to be lost due a tiny loophole between the exchange is polled
-    // and when its registered as in flight exchange
-    private final AtomicInteger tasks = new AtomicInteger();
-    private volatile boolean pendingStop;
+    private CountDownLatch latch;
+    private volatile boolean shutdownPending;
     private SedaEndpoint endpoint;
     private AsyncProcessor processor;
     private ExecutorService executor;
@@ -93,41 +90,29 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
     public int getPendingExchangesSize() {
         // number of pending messages on the queue
-        int answer = endpoint.getQueue().size();
-        if (answer == 0) {
-            // signal we want to stop
-            pendingStop = true;
+        return endpoint.getQueue().size();
+    }
 
-            // if there are no pending exchanges we at first must ensure that
-            // all tasks has been completed and the thread is stopped, to avoid
-            // any condition which otherwise would cause an exchange to be lost
+    public void prepareShutdown() {
+        // signal we want to shutdown
+        shutdownPending = true;
 
-            // we think there are 0 pending exchanges but we are only 100% sure
-            // when all the running tasks has been shutdown, so they do not
-            // somehow have polled an Exchange which we otherwise may loose
-            // due the Exchange takes a little while before its enlisted in the
-            // in flight registry (to let Camel know there is an Exchange in progress)
-            answer = tasks.get();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Preparing to shutdown, waiting for " + latch.getCount() + " consumer threads to complete.");
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Pending exchanges " + answer);
+        // wait for all threads to end
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            // ignore
         }
-        return answer;
     }
 
     public void run() {
-        tasks.incrementAndGet();
-
         BlockingQueue<Exchange> queue = endpoint.getQueue();
-        while (queue != null && isRunAllowed()) {
-
-            // we are done if there are no pending exchanges and we want to stop
-            if (pendingStop && endpoint.getQueue().size() == 0) {
-                // no more pending exchanges and we want to stop so break out
-                break;
-            }
-
+        // loop while we are allowed, or if we are stopping loop until the queue is empty
+        while (queue != null && (isRunAllowed())) {
             Exchange exchange = null;
             try {
                 exchange = queue.poll(1000, TimeUnit.MILLISECONDS);
@@ -142,6 +127,12 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                     } catch (Exception e) {
                         getExceptionHandler().handleException("Error processing exchange", exchange, e);
                     }
+                } else if (shutdownPending && queue.isEmpty()) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
+                    }
+                    // we want to shutdown so break out if there queue is empty
+                    break;
                 }
             } catch (InterruptedException e) {
                 if (LOG.isDebugEnabled()) {
@@ -157,10 +148,9 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             }
         }
 
-        tasks.decrementAndGet();
-
+        latch.countDown();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Ending this polling consumer thread, there are still " + tasks.get() + " threads left.");
+            LOG.debug("Ending this polling consumer thread, there are still " + latch.getCount() + " consumer threads left.");
         }
     }
 
@@ -205,9 +195,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     }
 
     protected void doStart() throws Exception {
-        // reset state
-        pendingStop = false;
-        tasks.set(0);
+        latch = new CountDownLatch(endpoint.getConcurrentConsumers());
+        shutdownPending = false;
 
         int poolSize = endpoint.getConcurrentConsumers();
         executor = endpoint.getCamelContext().getExecutorServiceStrategy()

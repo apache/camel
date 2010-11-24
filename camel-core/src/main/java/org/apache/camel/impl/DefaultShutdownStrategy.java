@@ -432,13 +432,26 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 }
             }
 
+            // prepare for shutdown
+            for (ShutdownDeferredConsumer deferred : deferredConsumers) {
+                Consumer consumer = deferred.getConsumer();
+                if (consumer instanceof ShutdownAware) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Route: " + deferred.getRoute().getId() + " preparing to shutdown.");
+                    }
+                    ((ShutdownAware) consumer).prepareShutdown();
+                    LOG.info("Route: " + deferred.getRoute().getId() + " preparing to shutdown complete.");
+                }
+            }
+
             // now all messages has been completed then stop the deferred consumers
             for (ShutdownDeferredConsumer deferred : deferredConsumers) {
+                Consumer consumer = deferred.getConsumer();
                 if (suspendOnly) {
-                    suspendNow(deferred.getConsumer());
+                    suspendNow(consumer);
                     LOG.info("Route: " + deferred.getRoute().getId() + " suspend complete.");
                 } else {
-                    shutdownNow(deferred.getConsumer());
+                    shutdownNow(consumer);
                     LOG.info("Route: " + deferred.getRoute().getId() + " shutdown complete.");
                 }
             }

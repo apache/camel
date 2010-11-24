@@ -97,6 +97,9 @@ public class SedaProducer extends CollectionProducer {
                 }
             });
 
+            if (log.isTraceEnabled()) {
+                log.trace("Adding Exchange to queue: " + copy);
+            }
             queue.add(copy);
 
             if (timeout > 0) {
@@ -128,6 +131,9 @@ public class SedaProducer extends CollectionProducer {
             }
         } else {
             // no wait, eg its a InOnly then just add to queue and return
+            if (log.isTraceEnabled()) {
+                log.trace("Adding Exchange to queue: " + copy);
+            }
             queue.add(copy);
         }
 

@@ -76,4 +76,8 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
         // of inflight messages. 
         return 0;
     }
+
+    public void prepareShutdown() {
+        // noop
+    }
 }

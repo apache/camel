@@ -52,4 +52,11 @@ public interface ShutdownAware {
      * @return number of pending exchanges
      */
     int getPendingExchangesSize();
+
+    /**
+     * Prepares the consumer for shutdown.
+     * <p/>
+     * For example by graceful stopping any threads or the likes.
+     */
+    void prepareShutdown();
 }

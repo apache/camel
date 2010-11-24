@@ -240,6 +240,10 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
         }
     }
 
+    public void prepareShutdown() {
+        // noop
+    }
+
     public boolean isBatchAllowed() {
         // stop if we are not running
         boolean answer = isRunAllowed();
