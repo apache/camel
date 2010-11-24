@@ -17,14 +17,15 @@
 package org.apache.camel.dataformat.bindy.format;
 
 import java.text.NumberFormat;
+import java.util.Locale;
 
 public class IntegerPatternFormat extends NumberPatternFormat<Integer> {
 
     public IntegerPatternFormat() {
     }
 
-    public IntegerPatternFormat(String pattern) {
-        super(pattern);
+    public IntegerPatternFormat(String pattern, Locale locale) {
+        super(pattern, locale);
     }
 
     @Override

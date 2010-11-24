@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
+import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
 import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.DataFormat;
@@ -39,23 +41,20 @@ import org.apache.commons.logging.LogFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
  * {@link DataFormat}) using Bindy to marshal to and from CSV files
  */
-public class BindyKeyValuePairDataFormat implements DataFormat {
+public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
     private static final transient Log LOG = LogFactory.getLog(BindyKeyValuePairDataFormat.class);
-
-    private String[] packages;
-    private BindyKeyValuePairFactory modelFactory;
 
     public BindyKeyValuePairDataFormat() {
     }
 
     public BindyKeyValuePairDataFormat(String... packages) {
-        this.packages = packages;
+        super(packages);
     }
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
-        BindyKeyValuePairFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyAbstractFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
         List<Map<String, Object>> models = (ArrayList<Map<String, Object>>)body;
         byte[] crlf;
 
@@ -73,7 +72,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        BindyKeyValuePairFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyKeyValuePairFactory factory = (BindyKeyValuePairFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
 
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
@@ -92,9 +91,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
 
         int count = 0;
         try {
-
             while (scanner.hasNextLine()) {
-
                 // Read the line
                 String line = scanner.nextLine().trim();
 
@@ -150,26 +147,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
         }
     }
 
-    /**
-     * Method used to create the singleton of the BindyKeyValuePairFactory
-     */
-    public BindyKeyValuePairFactory getFactory(PackageScanClassResolver resolver) throws Exception {
-        if (modelFactory == null) {
-            modelFactory = new BindyKeyValuePairFactory(resolver, this.packages);
-        }
-        return modelFactory;
+    protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
+        return new BindyKeyValuePairFactory(resolver, getPackages());
     }
-
-    public void setModelFactory(BindyKeyValuePairFactory modelFactory) {
-        this.modelFactory = modelFactory;
-    }
-
-    public String[] getPackages() {
-        return packages;
-    }
-
-    public void setPackages(String... packages) {
-        this.packages = packages;
-    }
-
 }

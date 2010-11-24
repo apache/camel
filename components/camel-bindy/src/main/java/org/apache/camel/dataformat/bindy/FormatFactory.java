@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.bindy;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.camel.dataformat.bindy.format.BigDecimalFormat;
 import org.apache.camel.dataformat.bindy.format.BigIntegerFormat;
@@ -51,28 +52,29 @@ public final class FormatFactory {
      * 
      * @param clazz represents the type of the format (String, Integer, Byte)
      * @param pattern is the pattern to be used during the formating of the data
+     * @param locale optional locale for NumberFormat and DateFormat parsing.
      * @param precision optional scale for BigDecimal parsing.
      * @return Format the formatter
      * @throws IllegalArgumentException if not suitable formatter is found
      */
-    public static Format<?> getFormat(Class<?> clazz, String pattern, int precision) throws Exception {
+    public static Format<?> getFormat(Class<?> clazz, String pattern, String locale, int precision) throws Exception {
         if (clazz == byte.class || clazz == Byte.class) {
-            return pattern != null ? new BytePatternFormat(pattern) : new ByteFormat();
+            return pattern != null ? new BytePatternFormat(pattern, getLocale(locale)) : new ByteFormat();
 
         } else if (clazz == short.class || clazz == Short.class) {
-            return pattern != null ? new ShortPatternFormat(pattern) : new ShortFormat();
+            return pattern != null ? new ShortPatternFormat(pattern, getLocale(locale)) : new ShortFormat();
 
         } else if (clazz == int.class || clazz == Integer.class) {
-            return pattern != null ? new IntegerPatternFormat(pattern) : new IntegerFormat();
+            return pattern != null ? new IntegerPatternFormat(pattern, getLocale(locale)) : new IntegerFormat();
 
         } else if (clazz == long.class || clazz == Long.class) {
-            return pattern != null ? new LongPatternFormat(pattern) : new LongFormat();
+            return pattern != null ? new LongPatternFormat(pattern, getLocale(locale)) : new LongFormat();
 
         } else if (clazz == float.class || clazz == Float.class) {
-            return pattern != null ? new FloatPatternFormat(pattern) : new FloatFormat();
+            return pattern != null ? new FloatPatternFormat(pattern, getLocale(locale)) : new FloatFormat();
 
         } else if (clazz == double.class || clazz == Double.class) {
-            return pattern != null ? new DoublePatternFormat(pattern) : new DoubleFormat();
+            return pattern != null ? new DoublePatternFormat(pattern, getLocale(locale)) : new DoubleFormat();
 
         } else if (clazz == BigDecimal.class) {
             return new BigDecimalFormat(precision);
@@ -84,7 +86,7 @@ public final class FormatFactory {
             return new StringFormat();
 
         } else if (clazz == Date.class) {
-            return new DatePatternFormat(pattern);
+            return new DatePatternFormat(pattern, getLocale(locale));
 
         } else if (clazz == char.class || clazz == Character.class) {
             return new CharacterFormat();
@@ -92,6 +94,16 @@ public final class FormatFactory {
         } else {
             throw new IllegalArgumentException("Can not find a suitable formatter for the type: " + clazz.getCanonicalName());
         }
+    }
+
+    private static Locale getLocale(String locale) {
+        if (locale != null && !locale.isEmpty()) {
+            String[] result = locale.split("-");
+            if (result.length <= 2) {
+                return result.length == 1 ? new Locale(result[0]) : new Locale(result[0], result[1]);
+            }
+        }
+        return null;
     }
 
 }

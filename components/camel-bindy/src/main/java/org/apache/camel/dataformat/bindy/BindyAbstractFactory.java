@@ -42,6 +42,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
     private AnnotationModelLoader modelsLoader;
     private String[] packageNames;
+    private String locale;
 
     public BindyAbstractFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
         this.modelsLoader = new AnnotationModelLoader(resolver);
@@ -217,6 +218,13 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         }
 
         return strValue;
+    }
 
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 }

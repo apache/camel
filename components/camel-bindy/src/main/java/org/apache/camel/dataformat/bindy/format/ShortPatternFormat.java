@@ -16,19 +16,20 @@
  */
 package org.apache.camel.dataformat.bindy.format;
 
+import java.util.Locale;
+
 public class ShortPatternFormat extends NumberPatternFormat<Short> {
 
     public ShortPatternFormat() {
         super();
     }
 
-    public ShortPatternFormat(String pattern) {
-        super(pattern);
+    public ShortPatternFormat(String pattern, Locale locale) {
+        super(pattern, locale);
     }
 
     @Override
     public Short parse(String string) throws Exception {
         return super.getNumberFormat().parse(string).shortValue();
     }
-
 }

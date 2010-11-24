@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.bindy.format;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Locale;
 
 import org.apache.camel.dataformat.bindy.PatternFormat;
 import org.apache.camel.util.ObjectHelper;
@@ -25,13 +26,14 @@ import org.apache.camel.util.ObjectHelper;
 public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
 
     private String pattern;
-    private DecimalFormat df;
+    private Locale locale = Locale.getDefault();
 
     public NumberPatternFormat() {
     }
 
-    public NumberPatternFormat(String pattern) {
+    public NumberPatternFormat(String pattern, Locale locale) {
         this.pattern = pattern;
+        this.locale = locale != null ? locale : Locale.getDefault();
     }
 
     public String format(T object) throws Exception {
@@ -46,7 +48,11 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
     }
 
     protected NumberFormat getNumberFormat() {
-        return new DecimalFormat(pattern);
+        NumberFormat format = NumberFormat.getNumberInstance(locale);
+        if (format instanceof DecimalFormat) {
+            ((DecimalFormat)format).applyLocalizedPattern(pattern);
+        }
+        return format;
     }
 
     public String getPattern() {
@@ -56,5 +62,4 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
-
 }

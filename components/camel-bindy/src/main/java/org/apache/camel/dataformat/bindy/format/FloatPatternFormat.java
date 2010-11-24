@@ -16,13 +16,15 @@
  */
 package org.apache.camel.dataformat.bindy.format;
 
+import java.util.Locale;
+
 public class FloatPatternFormat extends NumberPatternFormat<Float> {
 
     public FloatPatternFormat() {
     }
 
-    public FloatPatternFormat(String pattern) {
-        super(pattern);
+    public FloatPatternFormat(String pattern, Locale locale) {
+        super(pattern, locale);
     }
 
     @Override

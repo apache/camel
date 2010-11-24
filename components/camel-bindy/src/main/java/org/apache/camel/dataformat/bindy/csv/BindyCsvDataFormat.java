@@ -28,7 +28,10 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
+import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
+import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
 import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -41,23 +44,20 @@ import org.apache.commons.logging.LogFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
  * {@link DataFormat}) using Bindy to marshal to and from CSV files
  */
-public class BindyCsvDataFormat implements DataFormat {
+public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     private static final transient Log LOG = LogFactory.getLog(BindyCsvDataFormat.class);
-
-    private String[] packages;
-    private BindyCsvFactory modelFactory;
 
     public BindyCsvDataFormat() {
     }
 
     public BindyCsvDataFormat(String... packages) {
-        this.packages = packages;
+        super(packages);
     }
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
 
-        BindyCsvFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyCsvFactory factory = (BindyCsvFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
         ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
@@ -104,7 +104,7 @@ public class BindyCsvDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        BindyCsvFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyCsvFactory factory = (BindyCsvFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
         ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
@@ -123,13 +123,10 @@ public class BindyCsvDataFormat implements DataFormat {
         ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
 
         int count = 0;
-
         try {
-
             // If the first line of the CSV file contains columns name, then we
             // skip this line
             if (factory.getSkipFirstLine()) {
-
                 // Check if scanner is empty
                 if (scanner.hasNextLine()) {
                     scanner.nextLine();
@@ -210,26 +207,7 @@ public class BindyCsvDataFormat implements DataFormat {
 
     }
 
-    /**
-     * Method used to create the singleton of the BindyCsvFactory
-     */
-    public BindyCsvFactory getFactory(PackageScanClassResolver resolver) throws Exception {
-        if (modelFactory == null) {
-            modelFactory = new BindyCsvFactory(resolver, packages);
-        }
-        return modelFactory;
+    protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
+        return new BindyCsvFactory(resolver, getPackages());
     }
-
-    public void setModelFactory(BindyCsvFactory modelFactory) {
-        this.modelFactory = modelFactory;
-    }
-
-    public String[] getPackages() {
-        return packages;
-    }
-
-    public void setPackages(String[] packages) {
-        this.packages = packages;
-    }
-
 }

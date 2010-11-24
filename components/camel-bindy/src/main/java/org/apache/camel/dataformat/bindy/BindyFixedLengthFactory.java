@@ -214,7 +214,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             pattern = dataField.pattern();
 
             // Create format object to format the field
-            format = FormatFactory.getFormat(field.getType(), pattern, dataField.precision());
+            format = FormatFactory.getFormat(field.getType(), pattern, getLocale(), dataField.precision());
 
             // field object to be set
             Object modelField = model.get(field.getDeclaringClass().getName());
@@ -327,7 +327,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     int precision = datafield.precision();
 
                     // Create format
-                    Format format = FormatFactory.getFormat(type, pattern, precision);
+                    Format format = FormatFactory.getFormat(type, pattern, getLocale(), precision);
 
                     // Get field value
                     Object value = field.get(obj);
