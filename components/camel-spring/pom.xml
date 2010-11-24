@@ -207,17 +207,6 @@
 
   </dependencies>
 
-  <repositories>
-    <!-- for maven jaxb plugin
-    <repository>
-      <id>java.net</id>
-      <name>java.net Maven Repository</name>
-      <url>http://download.java.net/maven/1</url>
-      <layout>legacy</layout>
-    </repository>
-    -->
-  </repositories>
-
   <pluginRepositories>
     <pluginRepository>
       <id>fusesource.m2</id>
