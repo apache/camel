@@ -18,6 +18,8 @@ package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.Exchange;
 
+import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
+
 /**
  * An {@link AggregationStrategy} which just uses the latest exchange which is useful
  * for status messages where old status messages have no real value. Another example is things
@@ -31,18 +33,50 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
         if (newExchange == null) {
             return oldExchange;
         }
-        newExchange.setException(checkException(oldExchange, newExchange));
-        return newExchange;
+        if (oldExchange == null) {
+            return newExchange;
+        }
+
+        Exchange answer = null;
+
+        // propagate exception first
+        propagateException(oldExchange, newExchange);
+        if (newExchange.getException() != null) {
+            answer = newExchange;
+        }
+
+        if (answer == null) {
+            // the propagate failures
+            answer = propagateFailure(oldExchange, newExchange);
+        }
+
+        return answer;
     }
     
-    protected Exception checkException(Exchange oldExchange, Exchange newExchange) {
+    protected void propagateException(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange == null) {
-            return newExchange.getException();
-        } else {
-            return (newExchange != null && newExchange.getException() != null)
-                ? newExchange.getException()
-                : oldExchange.getException();
+            return;
         }
+
+        // propagate exception from old exchange if there isn't already an exception
+        if (newExchange.getException() == null) {
+            newExchange.setException(oldExchange.getException());
+        }
+    }
+
+    protected Exchange propagateFailure(Exchange oldExchange, Exchange newExchange) {
+        if (oldExchange == null) {
+            return newExchange;
+        }
+
+        // propagate exception from old exchange if there isn't already an exception
+        boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(oldExchange);
+        if (oldExchange.isFailed() || oldExchange.isRollbackOnly() || exceptionHandled) {
+            // propagate failure by using old exchange as the answer
+            return oldExchange;
+        }
+
+        return newExchange;
     }
 
     @Override

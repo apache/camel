@@ -236,15 +236,19 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
                     try {
                         doProcessParallel(pair);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         subExchange.setException(e);
                     }
 
-                    // should we stop in case of an exception occurred during processing?
-                    if (stopOnException && subExchange.getException() != null) {
+                    // Decide whether to continue with the multicast or not; similar logic to the Pipeline
+                    boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + total.get(), LOG);
+                    if (stopOnException && !continueProcessing) {
+                        if (subExchange.getException() != null) {
+                            // wrap in exception to explain where it failed
+                            throw new CamelExchangeException("Parallel processing failed for number " + total.get(), subExchange, subExchange.getException());
+                        }
                         // signal to stop running
                         running.set(false);
-                        throw new CamelExchangeException("Parallel processing failed for number " + total.intValue(), subExchange, subExchange.getException());
                     }
 
                     if (LOG.isTraceEnabled()) {
@@ -261,6 +265,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         // its to hard to do parallel async routing so we let the caller thread be synchronously
         // and have it pickup the replies and do the aggregation
         boolean timedOut = false;
+        boolean stoppedOnException = false;
         final StopWatch watch = new StopWatch();
         for (int i = 0; i < total.intValue(); i++) {
             Future<Exchange> future;
@@ -305,16 +310,32 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 }
                 timedOut = true;
             } else {
-                // we got a result so aggregate it
+                // there is a result to aggregate
                 Exchange subExchange = future.get();
+
+                // Decide whether to continue with the multicast or not; similar logic to the Pipeline
+                boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + total.get(), LOG);
+                if (stopOnException && !continueProcessing) {
+                    // we want to stop on exception and an exception or failure occurred
+                    // this is similar to what the pipeline does, so we should do the same to not surprise end users
+                    // so we should set the failed exchange as the result and break out
+                    result.set(subExchange);
+                    stoppedOnException = true;
+                    break;
+                }
+
+                // we got a result so aggregate it
                 AggregationStrategy strategy = getAggregationStrategy(subExchange);
                 doAggregate(strategy, result, subExchange);
             }
         }
 
-        if (timedOut) {
-            if (LOG.isDebugEnabled()) {
+        if (timedOut || stoppedOnException) {
+            if (timedOut && LOG.isDebugEnabled()) {
                 LOG.debug("Cancelling future tasks due timeout after " + timeout + " millis.");
+            }
+            if (stoppedOnException && LOG.isDebugEnabled()) {
+                LOG.debug("Cancelling future tasks due stopOnException.");
             }
             // cancel tasks as we timed out (its safe to cancel done tasks)
             for (Future future : tasks) {
@@ -350,9 +371,20 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 LOG.trace("Processing exchangeId: " + pair.getExchange().getExchangeId() + " is continued being processed synchronously");
             }
 
-            // should we stop in case of an exception occurred during processing?
-            if (stopOnException && subExchange.getException() != null) {
-                throw new CamelExchangeException("Sequential processing failed for number " + total.get(), subExchange, subExchange.getException());
+            // Decide whether to continue with the multicast or not; similar logic to the Pipeline
+            // remember to test for stop on exception and aggregate before copying back results
+            boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), LOG);
+            if (stopOnException && !continueProcessing) {
+                if (subExchange.getException() != null) {
+                    // wrap in exception to explain where it failed
+                    throw new CamelExchangeException("Sequential processing failed for number " + total.get(), subExchange, subExchange.getException());
+                } else {
+                    // we want to stop on exception, and the exception was handled by the error handler
+                    // this is similar to what the pipeline does, so we should do the same to not surprise end users
+                    // so we should set the failed exchange as the result and be done
+                    result.set(subExchange);
+                    return true;
+                }
             }
 
             if (LOG.isTraceEnabled()) {
@@ -409,10 +441,19 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     // continue processing the multicast asynchronously
                     Exchange subExchange = exchange;
 
+                    // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                     // remember to test for stop on exception and aggregate before copying back results
-                    if (stopOnException && subExchange.getException() != null) {
-                        // wrap in exception to explain where it failed
-                        subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException()));
+                    boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), LOG);
+                    if (stopOnException && !continueProcessing) {
+                        if (subExchange.getException() != null) {
+                            // wrap in exception to explain where it failed
+                            subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException()));
+                        } else {
+                            // we want to stop on exception, and the exception was handled by the error handler
+                            // this is similar to what the pipeline does, so we should do the same to not surprise end users
+                            // so we should set the failed exchange as the result and be done
+                            result.set(subExchange);
+                        }
                         // and do the done work
                         doDone(original, subExchange, callback, false);
                         return;
@@ -446,9 +487,19 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                             return;
                         }
 
-                        if (stopOnException && subExchange.getException() != null) {
-                            // wrap in exception to explain where it failed
-                            subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException()));
+                        // Decide whether to continue with the multicast or not; similar logic to the Pipeline
+                        // remember to test for stop on exception and aggregate before copying back results
+                        continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), LOG);
+                        if (stopOnException && !continueProcessing) {
+                            if (subExchange.getException() != null) {
+                                // wrap in exception to explain where it failed
+                                subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException()));
+                            } else {
+                                // we want to stop on exception, and the exception was handled by the error handler
+                                // this is similar to what the pipeline does, so we should do the same to not surprise end users
+                                // so we should set the failed exchange as the result and be done
+                                result.set(subExchange);
+                            }
                             // and do the done work
                             doDone(original, subExchange, callback, false);
                             return;

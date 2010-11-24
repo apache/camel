@@ -167,8 +167,13 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     }
     
     /**
-     * Will now stop further processing if an exception occurred during processing of an
+     * Will now stop further processing if an exception or failure occurred during processing of an
      * {@link org.apache.camel.Exchange} and the caused exception will be thrown.
+     * <p/>
+     * Will also stop if processing the exchange failed (has a fault message) or an exception
+     * was thrown and handled by the error handler (such as using onException). In all situations
+     * the splitter will stop further processing. This is the same behavior as in pipeline, which
+     * is used by the routing engine.
      * <p/>
      * The default behavior is to <b>not</b> stop but continue processing till the end
      *

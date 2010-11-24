@@ -19,6 +19,8 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
 
+import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
+
 /**
  * Helper for processing {@link org.apache.camel.Exchange} in a
  * <a href="http://camel.apache.org/pipes-and-filters.html">pipeline</a>.
@@ -28,10 +30,6 @@ import org.apache.commons.logging.Log;
 public final class PipelineHelper {
 
     private PipelineHelper() {
-    }
-
-    private static boolean hasExceptionBeenHandledByErrorHandler(Exchange nextExchange) {
-        return Boolean.TRUE.equals(nextExchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
     }
 
     /**

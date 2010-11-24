@@ -495,6 +495,16 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Tests whether the exchange has already been handled by the error handler
+     *
+     * @param exchange the exchange
+     * @return <tt>true</tt> if handled already by error handler, <tt>false</tt> otherwise
+     */
+    public static boolean hasExceptionBeenHandledByErrorHandler(Exchange exchange) {
+        return Boolean.TRUE.equals(exchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
+    }
+
+    /**
      * Extracts the body from the given future, that represents a handle to an asynchronous exchange.
      * <p/>
      * Will wait until the future task is complete.
