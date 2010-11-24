@@ -40,6 +40,9 @@ public class BindyDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     private String[] packages;
 
+    @XmlAttribute(required = false)
+    private String locale;
+
     public void setPackages(String[] packages) {
         this.packages = packages;
     }
@@ -61,6 +64,7 @@ public class BindyDataFormat extends DataFormatDefinition {
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         setProperty(dataFormat, "packages", packages);
+        setProperty(dataFormat, "locale", locale);
     }
 
 }
