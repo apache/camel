@@ -51,6 +51,7 @@ public interface CxfConstants {
     String CAMEL_CXF_RS_EXTRACT_ENTITY = "CamelCxfRsExtractEntity";
     String CAMEL_CXF_RS_OPERATION_RESOURCE_INFO_STACK = "CamelCxfRsOperationResourceInfoStack";
     String CAMEL_CXF_ATTACHMENTS = "CamelAttachments";
+    String CAMEL_CXF_RS_THROW_EXCEPTION_ON_FAILURE = "CamelCxfRsThrowExceptionOnFailure";
 }
 
 

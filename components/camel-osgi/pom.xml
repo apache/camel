@@ -94,6 +94,7 @@
   </dependencies>
 
   <repositories>
+   <!--
     <repository>
       <id>java.net</id>
       <name>java.net Maven Repository</name>
@@ -106,6 +107,7 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    -->
     <repository>
       <id>spring.external.bundle.repo</id>
       <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>

@@ -20,15 +20,16 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,18 +39,20 @@ import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
 
 /**
- * CxfRsProducer binds a Camel exchange to a CXF exchange, acts as a CXF 
+ * CxfRsProducer binds a Camel exchange to a CXF exchange, acts as a CXF
  * JAXRS client, it will turn the normal Object invocation to a RESTful request
- * according to resource annotation.  Any response will be bound to Camel exchange. 
+ * according to resource annotation.  Any response will be bound to Camel exchange.
  */
 public class CxfRsProducer extends DefaultProducer {
-    
+
     private static final Log LOG = LogFactory.getLog(CxfRsProducer.class);
 
     JAXRSClientFactoryBean cfb;
+    private boolean throwException;
 
     public CxfRsProducer(CxfRsEndpoint endpoint) {
         super(endpoint);
+        this.throwException = endpoint.isThrowExceptionOnFailure();
         cfb = endpoint.createJAXRSClientFactoryBean();
     }
 
@@ -57,52 +60,52 @@ public class CxfRsProducer extends DefaultProducer {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Process exchange: " + exchange);
         }
-        
+
         Message inMessage = exchange.getIn();
         Boolean httpClientAPI = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.class);
         // set the value with endpoint's option
         if (httpClientAPI == null) {
-            httpClientAPI = ((CxfRsEndpoint)getEndpoint()).isHttpClientAPI();
+            httpClientAPI = ((CxfRsEndpoint) getEndpoint()).isHttpClientAPI();
         }
         if (httpClientAPI.booleanValue()) {
             invokeHttpClient(exchange);
         } else {
-            invokeProxyClient(exchange);            
+            invokeProxyClient(exchange);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     protected void invokeHttpClient(Exchange exchange) throws Exception {
-        Message inMessage = exchange.getIn();       
-        WebClient client = cfb.createWebClient();        
+        Message inMessage = exchange.getIn();
+        WebClient client = cfb.createWebClient();
         String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
         Class responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
         Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);
         String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
-       
+
         if (LOG.isTraceEnabled()) {
             LOG.trace("HTTP method = " + httpMethod);
             LOG.trace("path = " + path);
             LOG.trace("responseClass = " + responseClass);
         }
-        
+
         // set the path
         if (path != null) {
             client.path(path);
         }
-        
-        CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint)getEndpoint();
+
+        CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
         // check if there is a query map in the message header
         Map<String, String> maps = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, Map.class);
-        if (maps == null) {            
+        if (maps == null) {
             maps = cxfRsEndpoint.getParameters();
         }
         if (maps != null) {
             for (Map.Entry<String, String> entry : maps.entrySet()) {
                 client.query(entry.getKey(), entry.getValue());
-            }            
+            }
         }
-        
+
         CxfRsBinding binding = cxfRsEndpoint.getBinding();
 
         // set the body
@@ -114,32 +117,42 @@ public class CxfRsProducer extends DefaultProducer {
                 LOG.trace("Request body = " + body);
             }
         }
-        
+
         // set headers
-        client.headers(binding.bindCamelHeadersToRequestHeaders(inMessage.getHeaders(),
-                                                                exchange));
-        
+        client.headers(binding.bindCamelHeadersToRequestHeaders(inMessage.getHeaders(), exchange));
+
         // invoke the client
         Object response = null;
         if (responseClass == null || Response.class.equals(responseClass)) {
             response = client.invoke(httpMethod, body);
-        } else if (Collection.class.isAssignableFrom(responseClass)) {
-            if (genericType instanceof ParameterizedType) {
-                // Get the collection member type first
-                Type[] actualTypeArguments = ((ParameterizedType) genericType).getActualTypeArguments();
-                response = client.invokeAndGetCollection(httpMethod, body, (Class)actualTypeArguments[0]);
-            } else {
-                throw new CamelException("Can't find the Collection member type");
-            }
         } else {
-            response = client.invoke(httpMethod, body, responseClass);
+            if (Collection.class.isAssignableFrom(responseClass)) {
+                if (genericType instanceof ParameterizedType) {
+                    // Get the collection member type first
+                    Type[] actualTypeArguments = ((ParameterizedType) genericType).getActualTypeArguments();
+                    response = client.invokeAndGetCollection(httpMethod, body, (Class) actualTypeArguments[0]);
+                } else {
+                    throw new CamelException("Can't find the Collection member type");
+                }
+            } else {
+                response = client.invoke(httpMethod, body, responseClass);
+            }
         }
-        
+        //Throw exception on a response > 207
+        //http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+        if (throwException) {
+            if (response instanceof Response) {
+                Integer respCode = ((Response) response).getStatus();
+                if (respCode > 207) {
+                    throw populateCxfRsProducerException(exchange, (Response) response, respCode);
+                }
+            }
+        }
         // set response
-        if (exchange.getPattern().isOutCapable()) {     
+        if (exchange.getPattern().isOutCapable()) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Response body = " + response);
-            }            
+            }
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getOut().setHeaders(binding.bindResponseHeadersToCamelHeaders(response, exchange));
         }
@@ -154,7 +167,7 @@ public class CxfRsProducer extends DefaultProducer {
             target = cfb.create();
         } else {
             target = cfb.createWithValues(varValues);
-        }    
+        }
         // find out the method which we want to invoke
         JAXRSServiceFactoryBean sfb = cfb.getServiceFactory();
         sfb.getResourceClasses();
@@ -164,12 +177,21 @@ public class CxfRsProducer extends DefaultProducer {
         // Will send out the message to
         // Need to deal with the sub resource class
         Object response = method.invoke(target, parameters);
+
+        if (throwException) {
+            if (response instanceof Response) {
+                Integer respCode = ((Response) response).getStatus();
+                if (respCode > 207) {
+                    throw populateCxfRsProducerException(exchange, (Response) response, respCode);
+                }
+            }
+        }
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().setBody(response);
         }
     }
 
-    private Method findRightMethod(List<Class<?>> resourceClasses, String methodName, Class[] parameterTypes) throws NoSuchMethodException {        
+    private Method findRightMethod(List<Class<?>> resourceClasses, String methodName, Class[] parameterTypes) throws NoSuchMethodException {
         Method answer = null;
         for (Class<?> clazz : resourceClasses) {
             try {
@@ -183,11 +205,9 @@ public class CxfRsProducer extends DefaultProducer {
                 return answer;
             }
         }
-        throw new NoSuchMethodException("Can find the method " + methodName 
-            + "withe these parameter " + arrayToString(parameterTypes));
+        throw new NoSuchMethodException("Can find the method " + methodName + "withe these parameter " + arrayToString(parameterTypes));
     }
-    
-    
+
     private Class<?>[] getParameterTypes(Object[] objects) {
         Class<?>[] answer = new Class[objects.length];
         int i = 0;
@@ -197,7 +217,7 @@ public class CxfRsProducer extends DefaultProducer {
         }
         return answer;
     }
-    
+
     private String arrayToString(Object[] array) {
         StringBuilder buffer = new StringBuilder("[");
         for (Object obj : array) {
@@ -210,4 +230,44 @@ public class CxfRsProducer extends DefaultProducer {
         return buffer.toString();
     }
 
+    protected CxfOperationException populateCxfRsProducerException(Exchange exchange, Response response, int responseCode) {
+        CxfOperationException exception;
+        String uri = exchange.getFromEndpoint().getEndpointUri();
+        String statusText = Response.Status.fromStatusCode(responseCode).toString();
+        Map<String, String> headers = parseResponseHeaders(response, exchange);
+        String copy = response.toString();
+        LOG.warn(headers);
+        if (responseCode >= 300 && responseCode < 400) {
+            String redirectLocation;
+            if (response.getMetadata().getFirst("Location") != null) {
+                redirectLocation = response.getMetadata().getFirst("location").toString();
+                exception = new CxfOperationException(uri, responseCode, statusText, redirectLocation, headers, copy);
+            } else {
+                //no redirect location
+                exception = new CxfOperationException(uri, responseCode, statusText, null, headers, copy);
+            }
+        } else {
+            //internal server error(error code 500)
+            exception = new CxfOperationException(uri, responseCode, statusText, null, headers, copy);
+        }
+
+        return exception;
+    }
+
+    protected Map<String, String> parseResponseHeaders(Object response, Exchange camelExchange) {
+
+        Map<String, String> answer = new HashMap<String, String>();
+        if (response instanceof Response) {
+
+            for (Map.Entry<String, List<Object>> entry : ((Response) response).getMetadata().entrySet()) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Parse external header " + entry.getKey() + "=" + entry.getValue());
+                }
+                LOG.info("Parse external header " + entry.getKey() + "=" + entry.getValue());
+                answer.put(entry.getKey(), entry.getValue().get(0).toString());
+            }
+        }
+
+        return answer;
+    }
 }

@@ -80,7 +80,9 @@
     <module>camel-lucene</module>
     <module>camel-mail</module>
     <module>camel-mina</module>
+	<!--
     <module>camel-msv</module>
+	-->
     <module>camel-mvel</module>
     <module>camel-netty</module>
     <module>camel-nagios</module>
@@ -128,7 +130,9 @@
         <jdk>1.6</jdk>
       </activation>
       <modules>
+	<!--
         <module>camel-web</module>
+	-->
         <module>camel-web-standalone</module>
       </modules>
     </profile>
