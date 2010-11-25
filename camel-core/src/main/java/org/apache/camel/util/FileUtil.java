@@ -42,9 +42,12 @@ public final class FileUtil {
      * Normalizes the path to cater for Windows and other platforms
      */
     public static String normalizePath(String path) {
-        // special handling for Windows where we need to convert / to \\
         if (path != null && isWindows() && path.indexOf('/') >= 0) {
+            // special handling for Windows where we need to convert / to \\
             return path.replace('/', '\\');
+        } else if (path != null && path.indexOf('\\') >= 0) {
+            // for other systems make sure we use / as separators
+            return path.replace('\\', '/');
         }
         return path;
     }

@@ -28,8 +28,10 @@ public class FileUtilTest extends TestCase {
     public void testNormalizePath() {
         if (FileUtil.isWindows()) {
             assertEquals("foo\\bar", FileUtil.normalizePath("foo/bar"));
+            assertEquals("foo\\bar\\baz", FileUtil.normalizePath("foo/bar\\baz"));
         } else {
             assertEquals("foo/bar", FileUtil.normalizePath("foo/bar"));
+            assertEquals("foo/bar/baz", FileUtil.normalizePath("foo/bar\\baz"));
         }
     }
 

@@ -433,6 +433,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+        // must normalize name first
+        name = endpoint.getConfiguration().normalizePath(name);
+
         if (log.isTraceEnabled()) {
             log.trace("storeFile(" + name + ")");
         }

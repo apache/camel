@@ -32,7 +32,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("ftp://hostname");
         assertIsInstanceOf(FtpEndpoint.class, endpoint);
         FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
-        RemoteFileConfiguration config = (RemoteFileConfiguration) ftpEndpoint.getConfiguration();
+        RemoteFileConfiguration config = ftpEndpoint.getConfiguration();
 
         assertEquals("ftp", config.getProtocol());
         assertEquals("hostname", config.getHost());
@@ -40,6 +40,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertNull(config.getUsername());
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
+        assertEquals(RemoteFileConfiguration.PathSeparator.Auto, config.getSeparator());
     }
 
     @Test
@@ -47,7 +48,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("sftp://hostname");
         assertIsInstanceOf(SftpEndpoint.class, endpoint);
         SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
-        RemoteFileConfiguration config = (RemoteFileConfiguration) sftpEndpoint.getConfiguration();
+        RemoteFileConfiguration config = sftpEndpoint.getConfiguration();
 
         assertEquals("sftp", config.getProtocol());
         assertEquals("hostname", config.getHost());
@@ -55,6 +56,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertNull(config.getUsername());
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
+        assertEquals(RemoteFileConfiguration.PathSeparator.Auto, config.getSeparator());
     }
     
     @Test
@@ -72,6 +74,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertEquals(false, config.isBinary());
         assertEquals(false, config.isImplicit());
         assertEquals("TLS", config.getSecurityProtocol());
+        assertEquals(RemoteFileConfiguration.PathSeparator.Auto, config.getSeparator());
     }
 
     @Test
@@ -96,7 +99,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("ftp://user@hostname:1021/some/file?password=secret&binary=true");
         assertIsInstanceOf(FtpEndpoint.class, endpoint);
         FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
-        RemoteFileConfiguration config = (RemoteFileConfiguration) ftpEndpoint.getConfiguration();
+        RemoteFileConfiguration config = ftpEndpoint.getConfiguration();
 
         assertEquals("ftp", config.getProtocol());
         assertEquals("hostname", config.getHost());
@@ -111,7 +114,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true");
         assertIsInstanceOf(SftpEndpoint.class, endpoint);
         SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
-        RemoteFileConfiguration config = (RemoteFileConfiguration) sftpEndpoint.getConfiguration();
+        RemoteFileConfiguration config = sftpEndpoint.getConfiguration();
 
         assertEquals("sftp", config.getProtocol());
         assertEquals("hostname", config.getHost());
@@ -202,7 +205,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("ftp://user:secret@hostname:1021/some/file");
         assertIsInstanceOf(FtpEndpoint.class, endpoint);
         FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
-        RemoteFileConfiguration config = (RemoteFileConfiguration) ftpEndpoint.getConfiguration();
+        RemoteFileConfiguration config = ftpEndpoint.getConfiguration();
         
         assertEquals("ftp", config.getProtocol());
         assertEquals("hostname", config.getHost());
@@ -215,7 +218,7 @@ public class UriConfigurationTest extends CamelTestSupport {
     public void testStartingDirectoryWithDot() throws Exception {
         Endpoint endpoint = context.getEndpoint("ftp://user@hostname?password=secret");
         FtpEndpoint ftpEndpoint = assertIsInstanceOf(FtpEndpoint.class, endpoint);
-        FtpConfiguration config = (FtpConfiguration) ftpEndpoint.getConfiguration();
+        FtpConfiguration config = ftpEndpoint.getConfiguration();
         config.setHost("somewhere");
         config.setDirectory("temp.dir");
         ftpEndpoint.createConsumer(new Processor() {
@@ -224,4 +227,53 @@ public class UriConfigurationTest extends CamelTestSupport {
             }
         });
     }
+
+    @Test
+    public void testPathSeparatorAuto() {
+        Endpoint endpoint = context.getEndpoint("ftp://hostname/foo/bar?separator=Auto");
+        assertIsInstanceOf(FtpEndpoint.class, endpoint);
+        FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
+        RemoteFileConfiguration config = ftpEndpoint.getConfiguration();
+
+        assertEquals("ftp", config.getProtocol());
+        assertEquals("hostname", config.getHost());
+        assertEquals("foo/bar", config.getDirectory());
+        assertEquals(RemoteFileConfiguration.PathSeparator.Auto, config.getSeparator());
+
+        assertEquals("foo/bar/hello.txt", config.normalizePath("foo/bar/hello.txt"));
+        assertEquals("foo\\bar\\hello.txt", config.normalizePath("foo\\bar\\hello.txt"));
+    }
+
+    @Test
+    public void testPathSeparatorUnix() {
+        Endpoint endpoint = context.getEndpoint("ftp://hostname/foo/bar?separator=UNIX");
+        assertIsInstanceOf(FtpEndpoint.class, endpoint);
+        FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
+        RemoteFileConfiguration config = ftpEndpoint.getConfiguration();
+
+        assertEquals("ftp", config.getProtocol());
+        assertEquals("hostname", config.getHost());
+        assertEquals("foo/bar", config.getDirectory());
+        assertEquals(RemoteFileConfiguration.PathSeparator.UNIX, config.getSeparator());
+
+        assertEquals("foo/bar/hello.txt", config.normalizePath("foo/bar/hello.txt"));
+        assertEquals("foo/bar/hello.txt", config.normalizePath("foo\\bar\\hello.txt"));
+    }
+
+    @Test
+    public void testPathSeparatorWindows() {
+        Endpoint endpoint = context.getEndpoint("ftp://hostname/foo/bar?separator=Windows");
+        assertIsInstanceOf(FtpEndpoint.class, endpoint);
+        FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
+        RemoteFileConfiguration config = ftpEndpoint.getConfiguration();
+
+        assertEquals("ftp", config.getProtocol());
+        assertEquals("hostname", config.getHost());
+        assertEquals("foo/bar", config.getDirectory());
+        assertEquals(RemoteFileConfiguration.PathSeparator.Windows, config.getSeparator());
+
+        assertEquals("foo\\bar\\hello.txt", config.normalizePath("foo/bar/hello.txt"));
+        assertEquals("foo\\bar\\hello.txt", config.normalizePath("foo\\bar\\hello.txt"));
+    }
+
 }

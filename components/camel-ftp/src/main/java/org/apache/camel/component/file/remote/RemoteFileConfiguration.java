@@ -25,6 +25,16 @@ import org.apache.camel.util.ObjectHelper;
  * Configuration of the FTP server
  */
 public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
+
+    /**
+     * Path separator as either unix or windows style.
+     * <p/>
+     * UNIX = Path separator / is used
+     * Windows = Path separator \ is used
+     * Auto = Use existing path separator in file name
+     */
+    public enum PathSeparator { UNIX, Windows, Auto };
+
     private String protocol;
     private String username;
     private String host;
@@ -38,6 +48,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private boolean throwExceptionOnConnectFailed;
     private String siteCommand;
     private boolean stepwise = true;
+    private PathSeparator separator = PathSeparator.Auto;
 
     public RemoteFileConfiguration() {
     }
@@ -233,5 +244,40 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      */
     public void setStepwise(boolean stepwise) {
         this.stepwise = stepwise;
+    }
+
+    public PathSeparator getSeparator() {
+        return separator;
+    }
+
+    /**
+     * Sets the path separator to be used.
+     * <p/>
+     * UNIX = Path separator / is used
+     * Windows = Path separator \ is used
+     * Auto = (is default) Use existing path separator in file name
+     */
+    public void setSeparator(PathSeparator separator) {
+        this.separator = separator;
+    }
+
+    /**
+     * Normalizes the given path according to the configured path separator.
+     *
+     * @param path  the given path
+     * @return the normalized path
+     */
+    public String normalizePath(String path) {
+        if (ObjectHelper.isEmpty(path) || separator == PathSeparator.Auto) {
+            return path;
+        }
+
+        if (separator == PathSeparator.UNIX) {
+            // unix style
+            return path.replace('\\', '/');
+        } else {
+            // windows style
+            return path.replace('/', '\\');
+        }
     }
 }

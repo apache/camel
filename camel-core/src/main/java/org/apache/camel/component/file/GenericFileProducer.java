@@ -199,8 +199,11 @@ public class GenericFileProducer<T> extends DefaultProducer {
     public void writeFile(Exchange exchange, String fileName) throws GenericFileOperationFailedException {
         // build directory if auto create is enabled
         if (endpoint.isAutoCreate()) {
+            // we must normalize it (to avoid having both \ and / in the name which confuses java.io.File)
+            String name = FileUtil.normalizePath(fileName);
+
             // use java.io.File to compute the file path
-            File file = new File(fileName);
+            File file = new File(name);
             String directory = file.getParent();
             boolean absolute = FileUtil.isAbsolute(file);
             if (directory != null) {
@@ -277,8 +280,10 @@ public class GenericFileProducer<T> extends DefaultProducer {
             answer = baseDir + endpoint.getGeneratedFileName(exchange.getIn());
         }
 
-        // must normalize path to cater for Windows and other OS
-        answer = normalizePath(answer);
+        if (endpoint.getConfiguration().needToNormalize()) {
+            // must normalize path to cater for Windows and other OS
+            answer = normalizePath(answer);
+        }
 
         return answer;
     }
