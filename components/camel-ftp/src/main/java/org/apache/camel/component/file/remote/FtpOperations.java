@@ -437,9 +437,43 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             log.trace("storeFile(" + name + ")");
         }
 
+        boolean answer = false;
+        String currentDir = null;
+        String path = FileUtil.onlyPath(name);
+        String targetName = name;
+
+        try {
+            if (path != null && endpoint.getConfiguration().isStepwise()) {
+                // must remember current dir so we stay in that directory after the write
+                currentDir = getCurrentDirectory();
+
+                // change to path of name
+                changeCurrentDirectory(path);
+
+                // the target name should be without path, as we have changed directory
+                targetName = FileUtil.stripPath(name);
+            }
+
+            // store the file
+            answer = doStoreFile(name, targetName, exchange);
+        } finally {
+            // change back to current directory if we changed directory
+            if (currentDir != null) {
+                changeCurrentDirectory(currentDir);
+            }
+        }
+
+        return answer;
+    }
+
+    private boolean doStoreFile(String name, String targetName, Exchange exchange) throws GenericFileOperationFailedException {
+        if (log.isTraceEnabled()) {
+            log.trace("doStoreFile(" + targetName + ")");
+        }
+
         // if an existing file already exists what should we do?
         if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail) {
-            boolean existFile = existsFile(name);
+            boolean existFile = existsFile(targetName);
             if (existFile && endpoint.getFileExist() == GenericFileExist.Ignore) {
                 // ignore but indicate that the file was written
                 if (log.isTraceEnabled()) {
@@ -455,9 +489,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
             if (endpoint.getFileExist() == GenericFileExist.Append) {
-                return client.appendFile(name, is);
+                return client.appendFile(targetName, is);
             } else {
-                return client.storeFile(name, is);
+                return client.storeFile(targetName, is);
             }
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
@@ -517,6 +551,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             return;
         }
 
+        // must compact path so FTP server can traverse correctly
+        path = FileUtil.compactPath(path);
+
         // not stepwise should change directory in one operation
         if (!endpoint.getConfiguration().isStepwise()) {
             doChangeDirectory(path);
@@ -555,7 +592,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
         boolean success;
         try {
-            success = client.changeWorkingDirectory(path);
+            if ("..".equals(path)) {
+                changeToParentDirectory();
+                success = true;
+            } else {
+                success = client.changeWorkingDirectory(path);
+            }
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }

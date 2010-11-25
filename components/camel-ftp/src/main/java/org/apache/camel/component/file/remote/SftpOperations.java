@@ -356,6 +356,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             return;
         }
 
+        // must compact path so FTP server can traverse correctly
+        path = FileUtil.compactPath(path);
+
         // not stepwise should change directory in one operation
         if (!endpoint.getConfiguration().isStepwise()) {
             doChangeDirectory(path);
@@ -607,9 +610,43 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             LOG.trace("storeFile(" + name + ")");
         }
 
+        boolean answer = false;
+        String currentDir = null;
+        String path = FileUtil.onlyPath(name);
+        String targetName = name;
+
+        try {
+            if (path != null && endpoint.getConfiguration().isStepwise()) {
+                // must remember current dir so we stay in that directory after the write
+                currentDir = getCurrentDirectory();
+
+                // change to path of name
+                changeCurrentDirectory(path);
+
+                // the target name should be without path, as we have changed directory
+                targetName = FileUtil.stripPath(name);
+            }
+
+            // store the file
+            answer = doStoreFile(name, targetName, exchange);
+        } finally {
+            // change back to current directory if we changed directory
+            if (currentDir != null) {
+                changeCurrentDirectory(currentDir);
+            }
+        }
+
+        return answer;
+    }
+
+    private boolean doStoreFile(String name, String targetName, Exchange exchange) throws GenericFileOperationFailedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("doStoreFile(" + targetName + ")");
+        }
+
         // if an existing file already exists what should we do?
         if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail) {
-            boolean existFile = existsFile(name);
+            boolean existFile = existsFile(targetName);
             if (existFile && endpoint.getFileExist() == GenericFileExist.Ignore) {
                 // ignore but indicate that the file was written
                 if (LOG.isTraceEnabled()) {
@@ -625,10 +662,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         try {
             is = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
             if (endpoint.getFileExist() == GenericFileExist.Append) {
-                channel.put(is, name, ChannelSftp.APPEND);
+                channel.put(is, targetName, ChannelSftp.APPEND);
             } else {
                 // override is default
-                channel.put(is, name);
+                channel.put(is, targetName);
             }
             return true;
         } catch (SftpException e) {

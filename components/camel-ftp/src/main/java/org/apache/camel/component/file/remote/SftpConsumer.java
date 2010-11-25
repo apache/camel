@@ -47,7 +47,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         fileName = FileUtil.stripTrailingSeparator(fileName);
 
         boolean answer = doPollDirectory(fileName, null, fileList);
-        if (isStepwise()) {
+        if (currentDir != null) {
             operations.changeCurrentDirectory(currentDir);
         }
 
