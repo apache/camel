@@ -36,6 +36,14 @@
     <camel.osgi.export.pkg>org.apache.camel.component.validator.msv.*</camel.osgi.export.pkg>
   </properties>
 
+  <repositories>
+      <repository>
+          <id>fusesource.m2</id>
+          <name>Fusesource Dependency Repository</name>
+          <url>http://repo.fusesource.com/maven2-all</url>
+      </repository>
+  </repositories>
+
   <dependencies>
 
     <dependency>
@@ -62,6 +70,11 @@
       <artifactId>xsdlib</artifactId>
       <version>20060615</version>
     </dependency>
+    <dependency>
+      <groupId>relaxngDatatype</groupId>
+      <artifactId>relaxngDatatype</artifactId>
+      <version>20020414</version>
+    </dependency>
 
 
     <!-- for testing -->
@@ -83,33 +96,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <repositories>
-    <!-- repo for isorelax / msv stuff -->
-    <repository>
-      <id>maven-java.net</id>
-      <name>Maven java.net Repository</name>
-      <url>http://download.java.net/maven/1</url>
-      <layout>legacy</layout>
-    </repository>
-    <!-- for maven jaxb plugin -->
-    <repository>
-      <id>java.net</id>
-      <name>java.net Maven Repository</name>
-      <url>http://download.java.net/maven/1</url>
-      <!--<url>https://maven-repository.dev.java.net/nonav/repository</url>-->
-      <layout>legacy</layout>
-    </repository>
-  </repositories>
 
 </project>
