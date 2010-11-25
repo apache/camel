@@ -282,6 +282,13 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         }
 
         public void run() {
+            // template must be started
+            try {
+                template.start();
+            } catch (Exception e) {
+                // ignore
+            }
+
             for (int i = 0; i < maxCalls; i++) {
                 int callId = counter.incrementAndGet();
                 Object reply = "";
