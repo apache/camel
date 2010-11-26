@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -1268,6 +1269,32 @@ public final class ObjectHelper {
 
     public static String getIdentityHashCode(Object object) {
         return "0x" + Integer.toHexString(System.identityHashCode(object));
+    }
+
+    /**
+     * Lookup the constant field on the given class with the given name
+     *
+     * @param clazz  the class
+     * @param name   the name of the field to lookup
+     * @return the value of the constant field, or <tt>null</tt> if not found
+     */
+    public static String lookupConstantFieldValue(Class clazz, String name) {
+        if (clazz == null) {
+            return null;
+        }
+
+        for (Field field : clazz.getFields()) {
+            if (field.getName().equals(name)) {
+                try {
+                    return (String) field.get(null);
+                } catch (IllegalAccessException e) {
+                    // ignore
+                    return null;
+                }
+            }
+        }
+
+        return null;
     }
 
     private static final class ExceptionIterator implements Iterator<Throwable> {

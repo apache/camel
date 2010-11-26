@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
@@ -66,6 +67,7 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -389,6 +391,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // resolve properties before we create the processor
         resolvePropertyPlaceholders(routeContext, this);
 
+        // resolve constant fields (eg Exchange.FILE_NAME)
+        resolveKnownConstantFields(this);
+
         // at first use custom factory
         if (routeContext.getCamelContext().getProcessorFactory() != null) {
             processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, this);
@@ -445,6 +450,56 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                         IntrospectionSupport.setProperty(definition, name, text);
                         if (log.isDebugEnabled()) {
                             log.debug("Changed property [" + name + "] from: " + value + " to: " + text);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Inspects the given processor definition and resolves known fields
+     * <p/>
+     * This implementation will check all the getter/setter pairs on this instance and for all the values
+     * (which is a String type) will check if it refers to a known field (such as on Exchange).
+     *
+     * @param definition   the processor definition
+     */
+    protected void resolveKnownConstantFields(ProcessorDefinition definition) throws Exception {
+        if (log.isTraceEnabled()) {
+            log.trace("Resolving known fields for: " + definition);
+        }
+
+        // find all String getter/setter
+        Map<Object, Object> properties = new HashMap<Object, Object>();
+        IntrospectionSupport.getProperties(definition, properties, null);
+
+        if (!properties.isEmpty()) {
+            if (log.isTraceEnabled()) {
+                log.trace("There are " + properties.size() + " properties on: " + definition);
+            }
+
+            // lookup and resolve properties for String based properties
+            for (Map.Entry entry : properties.entrySet()) {
+                // the name is always a String
+                String name = (String) entry.getKey();
+                Object value = entry.getValue();
+                if (value instanceof String) {
+                    // we can only resolve String typed values
+                    String text = (String) value;
+
+                    // is the value a known field
+                    if (text.startsWith("Exchange.")) {
+                        String field = ObjectHelper.after(text, "Exchange.");
+                        String constant = ObjectHelper.lookupConstantFieldValue(Exchange.class, field);
+                        if (constant != null) {
+                            // invoke setter as the text has changed
+                            IntrospectionSupport.setProperty(definition, name, constant);
+                            if (log.isDebugEnabled()) {
+                                log.debug("Changed property [" + name + "] from: " + value + " to: " + constant);
+                            }
+                        } else {
+                            throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");
                         }
                     }
                 }

@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 
@@ -274,4 +275,11 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("Should get the right class name", "Integer[]", ObjectHelper.normalizeClassName("Integer[] \r"));
         assertEquals("Should get the right class name", "Hello_World", ObjectHelper.normalizeClassName("Hello_World"));
     }
+
+    public void testLookupConstantFieldValue() {
+        assertEquals("CamelFileName", ObjectHelper.lookupConstantFieldValue(Exchange.class, "FILE_NAME"));
+        assertEquals(null, ObjectHelper.lookupConstantFieldValue(Exchange.class, "XXX"));
+        assertEquals(null, ObjectHelper.lookupConstantFieldValue(null, "FILE_NAME"));
+    }
+
 }
