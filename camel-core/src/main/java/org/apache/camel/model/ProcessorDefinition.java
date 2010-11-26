@@ -479,7 +479,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 log.trace("There are " + properties.size() + " properties on: " + definition);
             }
 
-            // lookup and resolve properties for String based properties
+            // lookup and resolve known constant fields for String based properties
             for (Map.Entry entry : properties.entrySet()) {
                 // the name is always a String
                 String name = (String) entry.getKey();
@@ -488,7 +488,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                     // we can only resolve String typed values
                     String text = (String) value;
 
-                    // is the value a known field
+                    // is the value a known field (currently we only support constants from Exchange.class)
                     if (text.startsWith("Exchange.")) {
                         String field = ObjectHelper.after(text, "Exchange.");
                         String constant = ObjectHelper.lookupConstantFieldValue(Exchange.class, field);
