@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -70,6 +71,11 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             // cannot copy headers with a JmsMessage as the underlying javax.jms.Message object goes nuts 
         } else {
             this.originalInMessage = exchange.getIn().copy();
+        }
+
+        // mark the creation time when this Exchange was created
+        if (exchange.getProperty(Exchange.CREATED_TIMESTAMP) == null) {
+            exchange.setProperty(Exchange.CREATED_TIMESTAMP, new Date());
         }
 
         // fire event

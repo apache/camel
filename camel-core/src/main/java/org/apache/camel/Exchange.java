@@ -86,17 +86,18 @@ public interface Exchange {
     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
     String BINDING                    = "CamelBinding";
 
-    String CHARSET_NAME     = "CamelCharsetName";
-    String CONTENT_ENCODING = "Content-Encoding";
-    String CONTENT_TYPE     = "Content-Type";
-    String CORRELATION_ID   = "CamelCorrelationId";
+    String CHARSET_NAME      = "CamelCharsetName";
+    String CREATED_TIMESTAMP = "CamelCreatedTimestamp";
+    String CONTENT_ENCODING  = "Content-Encoding";
+    String CONTENT_TYPE      = "Content-Type";
+    String CORRELATION_ID    = "CamelCorrelationId";
 
     String DATASET_INDEX             = "CamelDataSetIndex";
     String DEFAULT_CHARSET_PROPERTY  = "org.apache.camel.default.charset";
     String DISABLE_HTTP_STREAM_CACHE = "CamelDisableHttpStreamCache";
 
-    String EXCEPTION_CAUGHT     = "CamelExceptionCaught";
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
+    String EXCEPTION_CAUGHT     = "CamelExceptionCaught";
 
     String FAILURE_HANDLED      = "CamelFailureHandled";
     String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
