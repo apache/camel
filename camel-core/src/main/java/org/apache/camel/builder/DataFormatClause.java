@@ -28,6 +28,7 @@ import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
+import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
@@ -160,6 +161,20 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T jaxb(boolean prettyPrint) {
         return dataFormat(new JaxbDataFormat(prettyPrint));
+    }
+
+    /**
+     * Uses the JiBX data format.
+     */
+    public T jibx() {
+        return dataFormat(new JibxDataFormat());
+    }
+
+    /**
+     * Uses the JiBX data format with unmarshall class.
+     */
+    public T jibx(Class unmarshallClass) {
+        return dataFormat(new JibxDataFormat(unmarshallClass));
     }
 
     /**

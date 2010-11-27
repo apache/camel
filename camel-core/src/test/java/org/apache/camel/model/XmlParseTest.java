@@ -245,6 +245,11 @@ public class XmlParseTest extends XmlTestSupport {
         assertFrom(route, "seda:a");
     }
 
+    public void testParseJibxDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithJibxDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
     public void testParseXMLBeansDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithXMLBeansDataFormat.xml");
         assertFrom(route, "seda:a");

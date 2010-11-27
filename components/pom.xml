@@ -64,6 +64,7 @@
     <module>camel-jackson</module>
     <module>camel-javaspace</module>
     <module>camel-jaxb</module>
+    <module>camel-jibx</module>
     <module>camel-jdbc</module>
     <module>camel-jetty</module>
     <module>camel-jing</module>
