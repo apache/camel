@@ -81,11 +81,32 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         assertEquals("Number of books", 1, count);
     }
 
-    public void testMixed() throws Exception {
+    public void testMixedRollbackOnlyLast() throws Exception {
         template.sendBody("direct:mixed", "Hello World");
 
         int count = jdbc.queryForInt("select count(*) from books");
-        assertEquals("Number of books", 4, count);
+        assertEquals("Number of books", 3, count);
+
+        // assert correct books in database
+        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Camel in Action'"));
+        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Tiger in Action'"));
+        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Elephant in Action'"));
+        assertEquals(0, jdbc.queryForInt("select count(*) from books where title = 'Lion in Action'"));
+        assertEquals(0, jdbc.queryForInt("select count(*) from books where title = 'Donkey in Action'"));
+    }
+
+    public void testMixedCommit() throws Exception {
+        template.sendBody("direct:mixed3", "Hello World");
+
+        int count = jdbc.queryForInt("select count(*) from books");
+        assertEquals("Number of books", 5, count);
+
+        // assert correct books in database
+        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Camel in Action'"));
+        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Tiger in Action'"));
+        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Elephant in Action'"));
+        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Lion in Action'"));
+        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Crocodile in Action'"));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -108,21 +129,40 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
                     // all these steps will be okay
                     .setBody(constant("Tiger in Action")).beanRef("bookService")
                     .setBody(constant("Elephant in Action")).beanRef("bookService")
-                    .setBody(constant("Lion in Action")).beanRef("bookService")
                     // continue on route 2
                     .to("direct:mixed2");
 
                 from("direct:mixed2")
-                    // using a different propagation which is requires new
-                    .transacted("PROPAGATION_REQUIRES_NEW")
                     // tell Camel that if this route fails then only rollback this last route
                     // by using (rollback only *last*)
                     .onException(Exception.class).markRollbackOnlyLast().end()
+                    // using a different propagation which is requires new
+                    .transacted("PROPAGATION_REQUIRES_NEW")
                     // this step will be okay
-                    .setBody(constant("Giraffe in Action")).beanRef("bookService")
+                    .setBody(constant("Lion in Action")).beanRef("bookService")
                     // this step will fail with donkey
                     .setBody(constant("Donkey in Action")).beanRef("bookService");
                 // END SNIPPET: e1
+
+                from("direct:mixed3")
+                    // using required
+                    .transacted("PROPAGATION_REQUIRED")
+                    // all these steps will be okay
+                    .setBody(constant("Tiger in Action")).beanRef("bookService")
+                    .setBody(constant("Elephant in Action")).beanRef("bookService")
+                    // continue on route 4
+                    .to("direct:mixed4");
+
+                from("direct:mixed4")
+                    // tell Camel that if this route fails then only rollback this last route
+                    // by using (rollback only *last*)
+                    .onException(Exception.class).markRollbackOnlyLast().end()
+                    // using a different propagation which is requires new
+                    .transacted("PROPAGATION_REQUIRES_NEW")
+                    // this step will be okay
+                    .setBody(constant("Lion in Action")).beanRef("bookService")
+                    // this step will be okay
+                    .setBody(constant("Crocodile in Action")).beanRef("bookService");
             }
         };
     }

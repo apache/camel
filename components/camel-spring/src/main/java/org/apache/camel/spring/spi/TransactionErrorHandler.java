@@ -28,6 +28,7 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -125,7 +126,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         } catch (TransactionRollbackException e) {
             // ignore as its just a dummy exception to force spring TX to rollback
             if (log.isDebugEnabled()) {
-                log.debug("Transaction rollback (" + id + ") for ExchangeId: " + exchange.getExchangeId());
+                log.debug("Transaction rollback (" + id + ") for ExchangeId: " + exchange.getExchangeId() + " due exchange was marked for rollbackOnly");
             }
         } catch (Exception e) {
             log.warn("Transaction rollback (" + id + ") for ExchangeId: " + exchange.getExchangeId() + " due exception: " + e.getMessage());
@@ -134,8 +135,26 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             // mark the end of this transaction boundary
             exchange.getUnitOfWork().endTransactedBy(transactionTemplate);
         }
-    }
 
+        // if it was a local rollback only then remove its marker so outer transaction wont see the marker
+        Boolean onlyLast = (Boolean) exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
+        if (onlyLast != null && onlyLast) {
+            if (log.isDebugEnabled()) {
+                // log exception if there was a cause exception so we have the stacktrace
+                Exception cause = exchange.getException();
+                if (cause != null) {
+                    log.debug("Transaction rollback (" + id + ") for ExchangeId: " + exchange.getExchangeId()
+                        + " due exchange was marked for rollbackOnlyLast and due exception: ", cause);
+                } else {
+                    log.debug("Transaction rollback (" + id + ") for ExchangeId: " + exchange.getExchangeId()
+                        + " due exchange was marked for rollbackOnlyLast");
+                }
+            }
+            // remove caused exception due we was marked as rollback only last
+            // so by removing the exception, any outer transaction will not be affected
+            exchange.setException(null);
+        }
+    }
 
     protected void doInTransactionTemplate(final Exchange exchange) {
 
@@ -146,7 +165,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 // wrapper exception to throw if the exchange failed
                 // IMPORTANT: Must be a runtime exception to let Spring regard it as to do "rollback"
-                RuntimeException rce = null;
+                RuntimeException rce;
 
                 // and now let process the exchange by the error handler
                 processByErrorHandler(exchange);
@@ -154,14 +173,10 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 // after handling and still an exception or marked as rollback only then rollback
                 if (exchange.getException() != null || exchange.isRollbackOnly()) {
 
-                    // if it was a local rollback only then remove its marker so outer transaction
-                    // wont rollback as well (Note: isRollbackOnly() also returns true for ROLLBACK_ONLY_LAST)
-                    exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
-
                     // wrap exception in transacted exception
                     if (exchange.getException() != null) {
                         rce = ObjectHelper.wrapRuntimeCamelException(exchange.getException());
-                    } else if (exchange.isRollbackOnly()) {
+                    } else {
                         // create dummy exception to force spring transaction manager to rollback
                         rce = new TransactionRollbackException();
                     }
@@ -170,10 +185,8 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                         status.setRollbackOnly();
                     }
 
-                    // rethrow if an exception occurred
-                    if (rce != null) {
-                        throw rce;
-                    }
+                    // throw runtime exception to force rollback (which works best to rollback with Spring transaction manager)
+                    throw rce;
                 }
             }
         });
