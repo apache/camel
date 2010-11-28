@@ -144,4 +144,12 @@ public class LoadBalancerDefinition extends IdentifiedType implements LoadBalanc
         });
     }
 
+    @Override
+    public String toString() {
+        if (loadBalancer != null) {
+            return loadBalancer.toString();
+        } else {
+            return loadBalancerTypeName;
+        }
+    }
 }
