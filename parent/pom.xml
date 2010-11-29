@@ -57,6 +57,7 @@
     <derby-version>10.4.2.0</derby-version>
     <dozer-version>5.3.0</dozer-version>
     <easymock-version>2.5.2</easymock-version>
+    <ehcache-bundle-version>1.6.2_1-SNAPSHOT</ehcache-bundle-version>
     <flatpack-version>3.2.0_1</flatpack-version>
     <ftpserver-version>1.0.5</ftpserver-version>
     <fuse-commons-management-version>1.0</fuse-commons-management-version>
@@ -125,7 +126,6 @@
     <smack-version>3.1.0</smack-version>
     <snmp4j-version>1.8.1_3</snmp4j-version>
     <smpp-version>2.1.0_1</smpp-version>
-    <spring-ehcache-version>1.6.2</spring-ehcache-version>
     <spring-integration-version>1.0.4.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-version>3.0.5.RELEASE</spring-version>
@@ -1244,9 +1244,9 @@
       </dependency>
 
       <dependency>
-        <groupId>net.sourceforge.ehcache</groupId>
-        <artifactId>com.springsource.net.sf.ehcache</artifactId>
-        <version>${spring-ehcache-version}</version>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.ehcache</artifactId>
+        <version>${ehcache-bundle-version}</version>
       </dependency>
 
       <!-- hibernate and other db systems -->

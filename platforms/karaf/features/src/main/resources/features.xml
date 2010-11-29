@@ -127,7 +127,7 @@
   </feature>
   <feature name='camel-cache' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:http://repository.springsource.com/maven/bundles/external!net.sourceforge.ehcache/com.springsource.net.sf.ehcache/${spring-ehcache-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ehcache/${ehcache-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle> 
     <bundle>mvn:org.apache.camel/camel-cache/${pom.version}</bundle> 
   </feature>
