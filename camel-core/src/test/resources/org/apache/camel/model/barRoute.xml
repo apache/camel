@@ -15,9 +15,15 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+<!-- START SNIPPET: e1 -->
 <routes xmlns="http://camel.apache.org/schema/spring">
+    <!-- here we define the bar route -->
     <route id="bar">
         <from uri="direct:bar"/>
         <to uri="mock:bar"/>
     </route>
+
+    <!-- we could add more routes if we like,
+         but in this example we stick to one route only -->
 </routes>
+<!-- END SNIPPET: e1 -->
