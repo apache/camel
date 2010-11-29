@@ -32,14 +32,12 @@
 	<description>Camel QuickFIX/J support</description>
 
 	<properties>
-		<camel.osgi.export.pkg>
-			org.apache.camel.component.quickfixj.*
-        </camel.osgi.export.pkg>
+		<camel.osgi.export.pkg>org.apache.camel.component.quickfixj.*</camel.osgi.export.pkg>
 	</properties>
 
     <repositories>
         <repository>
-            <id>open.iona.m2-all</id>
+            <id>fusesource.m2</id>
             <name>Fusesource Dependency Repository</name>
             <url>http://repo.fusesource.com/maven2-all</url>
         </repository>
@@ -53,7 +51,6 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.quickfixj</groupId>
@@ -64,20 +61,22 @@
 			<groupId>org.apache.mina</groupId>
 			<artifactId>mina-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
 
+	    <dependency>
+	      <groupId>org.springframework</groupId>
+	      <artifactId>spring-test</artifactId>
+	      <scope>test</scope>
+	    </dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -86,6 +85,11 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
 			<scope>test</scope>
 		</dependency>
 

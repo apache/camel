@@ -115,7 +115,7 @@ public class QuickfixjEngineTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void missingSettingsResource() throws Exception {
-        new QuickfixjEngine("bogus.cfg", false);
+        new QuickfixjEngine("quickfix:test", "bogus.cfg", false);
     }
 
     @Test
@@ -124,7 +124,7 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), instanceOf(SocketInitiator.class));
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
@@ -138,7 +138,7 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), instanceOf(ThreadedSocketInitiator.class));
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
@@ -152,7 +152,7 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), nullValue());
         assertThat(quickfixjEngine.getAcceptor(), instanceOf(SocketAcceptor.class));
@@ -167,7 +167,7 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), nullValue());
         assertThat(quickfixjEngine.getAcceptor(), instanceOf(ThreadedSocketAcceptor.class));
@@ -185,7 +185,7 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), notNullValue());
@@ -199,11 +199,11 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
-        assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
+        assertThat(quickfixjEngine.getUri(), is("quickfix:test"));
         assertThat(quickfixjEngine.getMessageStoreFactory(), instanceOf(FileStoreFactory.class));
         assertThat(quickfixjEngine.getLogFactory(), instanceOf(ScreenLogFactory.class));
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
@@ -219,11 +219,10 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
-        assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
         assertThat(quickfixjEngine.getMessageStoreFactory(), instanceOf(JdbcStoreFactory.class));
         assertThat(quickfixjEngine.getLogFactory(), instanceOf(JdbcLogFactory.class));
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
@@ -248,11 +247,10 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
-        assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
         assertThat(quickfixjEngine.getMessageStoreFactory(), instanceOf(JdbcStoreFactory.class));
         assertThat(quickfixjEngine.getLogFactory(), instanceOf(ScreenLogFactory.class));
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
@@ -265,11 +263,10 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
-        assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
         assertThat(quickfixjEngine.getMessageStoreFactory(), instanceOf(SleepycatStoreFactory.class));
         assertThat(quickfixjEngine.getLogFactory(), instanceOf(ScreenLogFactory.class));
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
@@ -282,11 +279,10 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
-        assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
         assertThat(quickfixjEngine.getMessageStoreFactory(), instanceOf(MemoryStoreFactory.class));
         assertThat(quickfixjEngine.getLogFactory(), instanceOf(FileLogFactory.class));
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
@@ -299,11 +295,10 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
-        assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
         assertThat(quickfixjEngine.getMessageStoreFactory(), instanceOf(MemoryStoreFactory.class));
         assertThat(quickfixjEngine.getLogFactory(), instanceOf(SLF4JLogFactory.class));
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));
@@ -322,7 +317,7 @@ public class QuickfixjEngineTest {
 
     private void doAmbiguityTest(String exceptionText) throws FieldConvertError, IOException, JMException {
         try {
-            quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+            quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
             fail("Expected exception, but none raised");
         } catch (ConfigError e) {
             assertTrue(e.getMessage().contains(exceptionText));
@@ -340,7 +335,7 @@ public class QuickfixjEngineTest {
         LogFactory logFactory = Mockito.mock(LogFactory.class);
         MessageFactory messageFactory = Mockito.mock(MessageFactory.class);
         
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false, messageStoreFactory, logFactory, messageFactory);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false, messageStoreFactory, logFactory, messageFactory);
  
         assertThat(quickfixjEngine.getMessageStoreFactory(), is(messageStoreFactory));
         assertThat(quickfixjEngine.getLogFactory(), is(logFactory));
@@ -355,7 +350,7 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
         quickfixjEngine.start();
 
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -371,7 +366,7 @@ public class QuickfixjEngineTest {
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
         quickfixjEngine.start();
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> n = mbeanServer.queryNames(new ObjectName("org.quickfixj:type=Connector,role=Acceptor,*"), null);
@@ -383,7 +378,7 @@ public class QuickfixjEngineTest {
         SessionID acceptorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX42, "MARKET", "TRADER");
         SessionID initiatorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX42, "TRADER", "MARKET");
 
-        quickfixjEngine = new QuickfixjEngine("examples/inprocess.cfg", false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", "examples/inprocess.cfg", false);
 
         doLogonEventsTest(acceptorSessionID, initiatorSessionID, quickfixjEngine);
 
@@ -564,7 +559,6 @@ public class QuickfixjEngineTest {
     }
 
     private void assertDefaultConfiguration(QuickfixjEngine quickfixjEngine) throws Exception {
-        assertThat(quickfixjEngine.getSettingsResourceName(), is(settingsFile.getName()));
         assertThat(quickfixjEngine.getMessageStoreFactory(), instanceOf(MemoryStoreFactory.class));
         assertThat(quickfixjEngine.getLogFactory(), instanceOf(ScreenLogFactory.class));
         assertThat(quickfixjEngine.getMessageFactory(), instanceOf(DefaultMessageFactory.class));

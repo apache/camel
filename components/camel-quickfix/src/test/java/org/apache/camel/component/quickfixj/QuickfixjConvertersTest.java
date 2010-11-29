@@ -233,7 +233,7 @@ public class QuickfixjConvertersTest {
 
         TestSupport.writeSettings(settings, settingsFile);
         
-        quickfixjEngine = new QuickfixjEngine(settingsFile.getName(), false);
+        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
         quickfixjEngine.start(); 
     }
 }

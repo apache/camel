@@ -26,6 +26,7 @@ import quickfix.Message;
 import quickfix.SessionID;
 
 public class QuickfixjProducerTest {
+
     @Test
     public void setExceptionOnExchange() throws Exception {
         Exchange mockExchange = Mockito.mock(Exchange.class);

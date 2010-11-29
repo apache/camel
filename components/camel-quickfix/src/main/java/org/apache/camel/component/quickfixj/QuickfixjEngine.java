@@ -94,46 +94,42 @@ public class QuickfixjEngine {
     private final MessageFactory messageFactory;
 
     private boolean started;
-    private String settingsResourceName;
     private List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<QuickfixjEventListener>();
+
+    private final String uri;
 
     public enum ThreadModel {
         ThreadPerConnector, ThreadPerSession;
     }
 
-    public QuickfixjEngine(String settingsResourceName, boolean forcedShutdown)
+    public QuickfixjEngine(String uri, String settingsResourceName, boolean forcedShutdown)
         throws ConfigError, FieldConvertError, IOException, JMException {
 
-        this(settingsResourceName, forcedShutdown, null, null, null);
+        this(uri, settingsResourceName, forcedShutdown, null, null, null);
     }
 
-    public QuickfixjEngine(String settingsResourceName, boolean forcedShutdown,
-                           MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride, MessageFactory messageFactoryOverride)
-        throws ConfigError, FieldConvertError, IOException, JMException {
+    public QuickfixjEngine(String uri, String settingsResourceName, boolean forcedShutdown,
+            MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
+            MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
+        this(uri, loadSettings(settingsResourceName), forcedShutdown, messageStoreFactoryOverride,
+                sessionLogFactoryOverride, messageFactoryOverride);
+    }
 
+    public QuickfixjEngine(String uri, SessionSettings settings, boolean forcedShutdown,
+            MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
+            MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
+
+        this.uri = uri;
         this.forcedShutdown = forcedShutdown;
-        this.settingsResourceName = settingsResourceName;
-
-        InputStream inputStream = ObjectHelper.loadResourceAsStream(settingsResourceName);
-        if (inputStream == null) {
-            throw new IllegalArgumentException("Could not load " + settingsResourceName);
-        }
         
-        SessionSettings settings = new SessionSettings(inputStream);
+        messageFactory = messageFactoryOverride != null ? messageFactoryOverride : new DefaultMessageFactory();
 
-        messageFactory = messageFactoryOverride != null 
-            ? messageFactoryOverride 
-            : new DefaultMessageFactory();
-        
-        sessionLogFactory = sessionLogFactoryOverride != null 
-            ? sessionLogFactoryOverride 
-            : inferLogFactory(settings);
-        
-        messageStoreFactory = messageStoreFactoryOverride != null 
-            ? messageStoreFactoryOverride 
-            : inferMessageStoreFactory(settings);
+        sessionLogFactory = sessionLogFactoryOverride != null ? sessionLogFactoryOverride : inferLogFactory(settings);
 
-        // Set default session schedule if not specified in configuration        
+        messageStoreFactory = messageStoreFactoryOverride != null ? messageStoreFactoryOverride
+                : inferMessageStoreFactory(settings);
+
+        // Set default session schedule if not specified in configuration
         if (!settings.isSetting(Session.SETTING_START_TIME)) {
             settings.setString(Session.SETTING_START_TIME, DEFAULT_START_TIME);
         }
@@ -144,7 +140,7 @@ public class QuickfixjEngine {
         if (!settings.isSetting(Session.SETTING_HEARTBTINT)) {
             settings.setLong(Session.SETTING_HEARTBTINT, DEFAULT_HEARTBTINT);
         }
-        
+
         // Allow specification of the QFJ threading model
         ThreadModel threadModel = ThreadModel.ThreadPerConnector;
         if (settings.isSetting(SETTING_THREAD_MODEL)) {
@@ -157,7 +153,7 @@ public class QuickfixjEngine {
         } else {
             jmxExporter = null;
         }
-        
+
         // From original component implementation...
         // To avoid this exception in OSGi platform
         // java.lang.NoClassDefFoundError: quickfix/fix41/MessageFactory
@@ -165,27 +161,34 @@ public class QuickfixjEngine {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-
             if (isConnectorRole(settings, SessionFactory.ACCEPTOR_CONNECTION_TYPE)) {
-                acceptor = createAcceptor(new Dispatcher(), settings,
-                    messageStoreFactory, sessionLogFactory, messageFactory, threadModel);
+                acceptor = createAcceptor(new Dispatcher(), settings, messageStoreFactory, sessionLogFactory,
+                        messageFactory, threadModel);
             } else {
                 acceptor = null;
             }
-    
+
             if (isConnectorRole(settings, SessionFactory.INITIATOR_CONNECTION_TYPE)) {
-                initiator = createInitiator(new Dispatcher(), settings, 
-                    messageStoreFactory, sessionLogFactory, messageFactory, threadModel);               
+                initiator = createInitiator(new Dispatcher(), settings, messageStoreFactory, sessionLogFactory,
+                        messageFactory, threadModel);
             } else {
                 initiator = null;
             }
-    
+
             if (acceptor == null && initiator == null) {
                 throw new ConfigError("No connector role");
             }
         } finally {
             Thread.currentThread().setContextClassLoader(ccl);
         }
+    }
+
+    private static SessionSettings loadSettings(String settingsResourceName) throws ConfigError {
+        InputStream inputStream = ObjectHelper.loadResourceAsStream(settingsResourceName);
+        if (inputStream == null) {
+            throw new IllegalArgumentException("Could not load " + settingsResourceName);
+        }
+        return new SessionSettings(inputStream);
     }
 
     public void start() throws Exception {
@@ -455,9 +458,9 @@ public class QuickfixjEngine {
             }
         }
     }
-    
-    public String getSettingsResourceName() {
-        return settingsResourceName;
+        
+    public String getUri() {
+        return uri;
     }
 
     // For Testing

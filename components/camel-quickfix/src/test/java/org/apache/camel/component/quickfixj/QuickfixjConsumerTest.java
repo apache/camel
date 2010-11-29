@@ -24,7 +24,6 @@ import org.apache.camel.impl.ServiceSupport;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -80,23 +79,5 @@ public class QuickfixjConsumerTest {
         consumer.onExchange(mockExchange);
         
         Mockito.verify(mockExchange).setException(exception);
-    }
-    
-    @Test
-    @Ignore("Modified behavior")
-    public void propagateException() throws Exception {
-        QuickfixjConsumer consumer = new QuickfixjConsumer(mockEndpoint, mockProcessor);
-        consumer.start();
-        
-        Throwable exception = new Exception("Throwable for test");
-        Mockito.doThrow(exception).when(mockProcessor).process(mockExchange);
-        
-        try {
-            consumer.onExchange(mockExchange);
-            Assert.fail("Exception was not thrown");
-        } catch (Exception e) {
-            Assert.assertThat(e.getMessage(), CoreMatchers.is("Throwable for test"));
-        }
-    }
-    
+    }    
 }
