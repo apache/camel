@@ -86,22 +86,28 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
      * @return <tt>true</tt> to failover
      */
     protected boolean shouldFailOver(Exchange exchange) {
-        if (exchange.getException() != null) {
+        boolean answer = false;
 
+        if (exchange.getException() != null) {
             if (exceptions == null || exceptions.isEmpty()) {
                 // always failover if no exceptions defined
-                return true;
-            }
-
-            for (Class<?> exception : exceptions) {
-                // will look in exception hierarchy 
-                if (exchange.getException(exception) != null) {
-                    return true;
+                answer = true;
+            } else {
+                for (Class<?> exception : exceptions) {
+                    // will look in exception hierarchy
+                    if (exchange.getException(exception) != null) {
+                        answer = true;
+                        break;
+                    }
                 }
             }
         }
 
-        return false;
+        if (log.isTraceEnabled()) {
+            log.trace("Should failover: " + answer + " for exchangeId: " + exchange.getExchangeId());
+        }
+
+        return answer;
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -118,8 +124,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             }
             index.set(counter.get());
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Failover starting with endpoint index " + index);
+        if (log.isTraceEnabled()) {
+            log.trace("Failover starting with endpoint index " + index);
         }
 
         while (first || shouldFailOver(exchange)) {
@@ -143,12 +149,12 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             if (index.get() >= processors.size()) {
                 // out of bounds
                 if (isRoundRobin()) {
-                    log.debug("Failover is round robin enabled and therefore starting from the first endpoint");
+                    log.trace("Failover is round robin enabled and therefore starting from the first endpoint");
                     index.set(0);
                     counter.set(0);
                 } else {
                     // no more processors to try
-                    log.debug("Braking out of failover as we reach the end of endpoints to use for failover");
+                    log.trace("Braking out of failover as we reach the end of endpoints to use for failover");
                     break;
                 }
             }
@@ -175,8 +181,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             }
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Failover complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
+        if (log.isDebugEnabled()) {
+            log.debug("Failover complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
         }
 
         callback.done(true);
@@ -189,7 +195,14 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
      * @param exchange the exchange
      */
     protected void prepareExchangeForFailover(Exchange exchange) {
-        exchange.setException(null);
+        if (exchange.getException() != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failover due " + exchange.getException().getMessage() + " for exchangeId: " + exchange.getExchangeId());
+            }
+
+            // clear exception so we can try failover
+            exchange.setException(null);
+        }
 
         exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, null);
         exchange.setProperty(Exchange.FAILURE_HANDLED, null);
@@ -242,8 +255,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 attempts.incrementAndGet();
                 // are we exhausted by attempts?
                 if (maximumFailoverAttempts > -1 && attempts.get() > maximumFailoverAttempts) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Braking out of failover after " + attempts + " failover attempts");
+                    if (log.isTraceEnabled()) {
+                        log.trace("Braking out of failover after " + attempts + " failover attempts");
                     }
                     break;
                 }
@@ -254,12 +267,12 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 if (index.get() >= processors.size()) {
                     // out of bounds
                     if (isRoundRobin()) {
-                        log.debug("Failover is round robin enabled and therefore starting from the first endpoint");
+                        log.trace("Failover is round robin enabled and therefore starting from the first endpoint");
                         index.set(0);
                         counter.set(0);
                     } else {
                         // no more processors to try
-                        log.debug("Braking out of failover as we reach the end of endpoints to use for failover");
+                        log.trace("Braking out of failover as we reach the end of endpoints to use for failover");
                         break;
                     }
                 }
@@ -278,6 +291,10 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                     // so we break out now, then the callback will be invoked which then continue routing from where we left here
                     return;
                 }
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("Failover complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
             }
 
             // signal callback we are done
