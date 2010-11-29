@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.OrderedComparator;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -139,6 +141,7 @@ public class DefaultChannel extends ServiceSupport implements Channel {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         ServiceHelper.startServices(errorHandler, output);
     }
@@ -171,6 +174,10 @@ public class DefaultChannel extends ServiceSupport implements Channel {
         trace.setRouteContext(routeContext);
         target = trace;
 
+        // sort interceptors according to ordered
+        Collections.sort(interceptors, new OrderedComparator());
+        // then reverse list so the first will be wrapped last, as it would then be first being invoced
+        Collections.reverse(interceptors);
         // wrap the output with the configured interceptors
         for (InterceptStrategy strategy : interceptors) {
             next = target == nextProcessor ? null : nextProcessor;
@@ -178,13 +185,13 @@ public class DefaultChannel extends ServiceSupport implements Channel {
             if (strategy instanceof Tracer) {
                 continue;
             }
-            Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, target, next); 
+            Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, target, next);
             if (!(wrapped instanceof AsyncProcessor)) {
                 LOG.warn("Interceptor: " + strategy + " at: " + outputDefinition + " does not return an AsyncProcessor instance."
-                    + " This causes the asynchronous routing engine to not work as optimal as possible."
-                    + " See more details at the InterceptStrategy javadoc."
-                    + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
-                    + " but its not the most optimal solution. Please consider changing your interceptor to comply.");
+                        + " This causes the asynchronous routing engine to not work as optimal as possible."
+                        + " See more details at the InterceptStrategy javadoc."
+                        + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
+                        + " but its not the most optimal solution. Please consider changing your interceptor to comply.");
 
                 // use a bridge and wrap again which allows us to adapt and leverage the asynchronous routing engine anyway
                 // however its not the most optimal solution, but we can still run.
