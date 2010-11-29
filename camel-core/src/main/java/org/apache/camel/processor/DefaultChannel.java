@@ -141,7 +141,6 @@ public class DefaultChannel extends ServiceSupport implements Channel {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         ServiceHelper.startServices(errorHandler, output);
     }
@@ -151,6 +150,7 @@ public class DefaultChannel extends ServiceSupport implements Channel {
         ServiceHelper.stopServices(output, errorHandler);
     }
 
+    @SuppressWarnings("unchecked")
     public void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
         this.routeContext = routeContext;
         this.definition = outputDefinition;
@@ -176,7 +176,7 @@ public class DefaultChannel extends ServiceSupport implements Channel {
 
         // sort interceptors according to ordered
         Collections.sort(interceptors, new OrderedComparator());
-        // then reverse list so the first will be wrapped last, as it would then be first being invoced
+        // then reverse list so the first will be wrapped last, as it would then be first being invoked
         Collections.reverse(interceptors);
         // wrap the output with the configured interceptors
         for (InterceptStrategy strategy : interceptors) {
