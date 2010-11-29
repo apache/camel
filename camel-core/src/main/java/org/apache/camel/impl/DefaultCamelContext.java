@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.naming.Context;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -69,8 +73,10 @@ import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.management.ManagedManagementStrategy;
+import org.apache.camel.model.Constants;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
@@ -124,6 +130,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultCamelContext extends ServiceSupport implements CamelContext, SuspendableService {
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
+    private JAXBContext jaxbContext;
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
     private String managementName;
     private ClassLoader applicationContextClassLoader;
@@ -559,6 +566,34 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
         // lets now add the routes from the builder
         builder.addRoutesToCamelContext(this);
+    }
+
+    public synchronized RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception {
+        // load routes using JAXB
+        if (jaxbContext == null) {
+            jaxbContext = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES);
+        }
+
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        Object result = unmarshaller.unmarshal(is);
+
+        if (result == null) {
+            throw new IOException("Cannot unmarshal to routes using JAXB from input stream: " + is);
+        }
+
+        // can either be routes or a single route
+        RoutesDefinition answer = null;
+        if (result instanceof RouteDefinition) {
+            RouteDefinition route = (RouteDefinition) result;
+            answer = new RoutesDefinition();
+            answer.getRoutes().add(route);
+        } else if (result instanceof RoutesDefinition) {
+            answer = (RoutesDefinition) result;
+        } else {
+            throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
+        }
+
+        return answer;
     }
 
     public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {

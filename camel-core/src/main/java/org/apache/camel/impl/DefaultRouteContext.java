@@ -59,7 +59,7 @@ public class DefaultRouteContext implements RouteContext {
     private InterceptStrategy managedInterceptStrategy;
     private boolean routeAdded;
     private Boolean trace;
-    private Boolean stramCache;
+    private Boolean streamCache;
     private Boolean handleFault;
     private Long delay;
     private Boolean autoStartup = Boolean.TRUE;
@@ -244,12 +244,12 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public void setStreamCaching(Boolean cache) {
-        this.stramCache = cache;
+        this.streamCache = cache;
     }
 
     public Boolean isStreamCaching() {
-        if (stramCache != null) {
-            return stramCache;
+        if (streamCache != null) {
+            return streamCache;
         } else {
             // fallback to the option from camel context
             return getCamelContext().isStreamCaching();

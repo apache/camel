@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
@@ -337,6 +339,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @throws Exception if the routes could not be created for whatever reason
      */
     void addRoutes(RoutesBuilder builder) throws Exception;
+
+    /**
+     * Loads a collection of route definitions from the given {@link java.io.InputStream}.
+     *
+     * @param is input stream with the route(s) definition to add
+     * @throws Exception if the route definitions could not be loaded for whatever reason
+     * @return the route definitions
+     */
+    RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
 
     /**
      * Adds a collection of route definitions to the context
