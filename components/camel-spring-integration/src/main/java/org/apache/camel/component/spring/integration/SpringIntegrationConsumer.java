@@ -17,15 +17,13 @@
 package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.integration.channel.BeanFactoryChannelResolver;
 import org.springframework.integration.channel.ChannelResolver;
-import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.channel.SubscribableChannel;
 import org.springframework.integration.core.MessageChannel;
 import org.springframework.integration.message.MessageHandler;
 
@@ -38,42 +36,22 @@ import org.springframework.integration.message.MessageHandler;
  * @version $Revision$
  */
 public class SpringIntegrationConsumer  extends DefaultConsumer implements MessageHandler {
-    private SpringCamelContext context;
-    private DirectChannel inputChannel;
+    private final SpringCamelContext context;
+    private final ChannelResolver channelResolver;
+    private SubscribableChannel inputChannel;
     private MessageChannel outputChannel;
-    private String inputChannelName;
-    private ChannelResolver channelResolver;
-    private SpringIntegrationEndpoint endpoint;
 
     public SpringIntegrationConsumer(SpringIntegrationEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.endpoint = endpoint;
-        context = (SpringCamelContext) endpoint.getCamelContext();
-        if (context != null && endpoint.getMessageChannel() == null) {
-            channelResolver = new BeanFactoryChannelResolver(context.getApplicationContext());
-            inputChannelName = endpoint.getDefaultChannel();
-            if (ObjectHelper.isEmpty(inputChannelName)) {
-                inputChannelName = endpoint.getInputChannel();
-            }
-            if (!ObjectHelper.isEmpty(inputChannelName)) {
-                inputChannel = (DirectChannel) channelResolver.resolveChannelName(inputChannelName);
-                ObjectHelper.notNull(inputChannel, "The inputChannel with the name [" + inputChannelName + "]");
-            } else {
-                throw new RuntimeCamelException("Can't find the right inputChannelName, please check your configuration.");
-            }
-        } else {
-            if (endpoint.getMessageChannel() != null) {
-                inputChannel = (DirectChannel)endpoint.getMessageChannel();
-            } else {
-                throw new RuntimeCamelException("Can't find the right message channel, please check your configuration.");
-            }
-        }
-        if (endpoint.isInOut()) {
-            endpoint.setExchangePattern(ExchangePattern.InOut);
-        }
-
+        this.context = (SpringCamelContext) endpoint.getCamelContext();
+        this.channelResolver = new BeanFactoryChannelResolver(context.getApplicationContext());
     }
-    
+
+    @Override
+    public SpringIntegrationEndpoint getEndpoint() {
+        return (SpringIntegrationEndpoint) super.getEndpoint();
+    }
+
     protected void doStop() throws Exception {
         inputChannel.unsubscribe(this);
         super.doStop();
@@ -81,46 +59,84 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
 
     protected void doStart() throws Exception {
         super.doStart();
+
+        if (getEndpoint().getMessageChannel() == null) {
+            String inputChannelName = getEndpoint().getDefaultChannel();
+            if (ObjectHelper.isEmpty(inputChannelName)) {
+                inputChannelName = getEndpoint().getInputChannel();
+            }
+
+            ObjectHelper.notEmpty(inputChannelName, "inputChannelName", getEndpoint());
+            inputChannel = (SubscribableChannel) channelResolver.resolveChannelName(inputChannelName);
+        } else {
+            inputChannel = (SubscribableChannel) getEndpoint().getMessageChannel();
+        }
+
+        if (inputChannel == null) {
+            throw new IllegalArgumentException("Cannot resolve InputChannel on " + getEndpoint());
+        }
+
+        // if we do in-out we need to setup the input channel as well
+        if (getEndpoint().isInOut()) {
+            // we need to setup right inputChannel for further processing
+            ObjectHelper.notEmpty(getEndpoint().getOutputChannel(), "OutputChannel", getEndpoint());
+            outputChannel = channelResolver.resolveChannelName(getEndpoint().getOutputChannel());
+
+            if (outputChannel == null) {
+                throw new IllegalArgumentException("Cannot resolve OutputChannel on " + getEndpoint());
+            }
+        }
+
         inputChannel.subscribe(this);
     }
     
-    public void handleMessage(org.springframework.integration.core.Message<?> siInMessage) {        
-        Exchange  exchange = getEndpoint().createExchange();
+    public void handleMessage(org.springframework.integration.core.Message<?> siInMessage) {
+        // we received a message from spring integration
+        // wrap that in a Camel Exchange and process it
+        Exchange exchange = getEndpoint().createExchange();
         exchange.setIn(new SpringIntegrationMessage(siInMessage));
+
+        // process the exchange
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            //TODO need to find a way to deal with this exception
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            getExceptionHandler().handleException("Error processing exchange" , exchange, e);
+            return;
         }
-        if (endpoint.isInOut()) {
-            // get the output channel from message header
-            Object returnAddress = siInMessage.getHeaders().getReplyChannel();
+
+        // reply logic
+        if (getEndpoint().isInOut()) {
             MessageChannel reply = null;
 
+            // get the output channel from message header
+            Object returnAddress = siInMessage.getHeaders().getReplyChannel();
             if (returnAddress != null) {
                 if (returnAddress instanceof String) {
-                    reply = (MessageChannel)context.getApplicationContext().getBean((String)returnAddress);
+                    reply = (MessageChannel) context.getApplicationContext().getBean((String)returnAddress);
                 } else if (returnAddress instanceof MessageChannel) {
                     reply = (MessageChannel) returnAddress;
                 }
             } else {
-                if (outputChannel != null) {
-                    // using the outputChannel
-                    reply = outputChannel;
-                } else {
-                    if (ObjectHelper.isEmpty(endpoint.getOutputChannel())) {
-                        outputChannel = (MessageChannel) channelResolver.resolveChannelName(endpoint.getOutputChannel());
-                        ObjectHelper.notNull(inputChannel, "The outputChannel with the name [" + endpoint.getOutputChannel() + "]");
-                        reply = outputChannel;
-                    } else {
-                        throw new RuntimeCamelException("Can't find the right outputChannelName");
-                    }
+                reply = outputChannel;
+
+                // we want to do in-out so the inputChannel is mandatory (used to receive reply from spring integration)
+                if (reply == null) {
+                    throw new IllegalArgumentException("OutputChannel has not been configured on " + getEndpoint());
                 }
             }
+
+            if (reply == null) {
+                throw new IllegalArgumentException("Cannot resolve ReplyChannel from message: " + siInMessage);
+            }
+
             // put the message back the outputChannel if we need
             org.springframework.integration.core.Message siOutMessage =
                 SpringIntegrationBinding.storeToSpringIntegrationMessage(exchange.getOut());
+
+            // send the message to spring integration
+            if (log.isDebugEnabled()) {
+                log.debug("Sending " + siOutMessage + " to ReplyChannel: " + reply);
+            }
             reply.send(siOutMessage);
         }        
     }   

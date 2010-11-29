@@ -17,27 +17,31 @@
 -->
 
 <beans:beans xmlns="http://www.springframework.org/schema/integration"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:beans="http://www.springframework.org/schema/beans"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
 			http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
 			http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
 			http://camel.apache.org/schema/spring
 			http://camel.apache.org/schema/spring/camel-spring.xsd">
-    <!-- START SNIPPET: example -->	
+
+    <!-- START SNIPPET: example -->
+    <!-- spring integration channels -->
     <channel id="requestChannel"/>
     <channel id="responseChannel"/>
 
+    <!-- cusom Camel processor -->
     <beans:bean id="myProcessor" class="org.apache.camel.component.spring.integration.MyProcessor"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-      <route>
-        <!-- Using the &amp; as the separator of & -->
-        <from uri="spring-integration://requestChannel?outputChannel=responseChannel&amp;inOut=true"/>
-        <process ref="myProcessor"/>
-      </route>
+    <!-- Camel route -->
+    <camelContext  xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="spring-integration://requestChannel?outputChannel=responseChannel&amp;inOut=true"/>
+            <process ref="myProcessor"/>
+        </route>
     </camelContext>
     <!-- END SNIPPET: example -->
+
 </beans:beans>
 

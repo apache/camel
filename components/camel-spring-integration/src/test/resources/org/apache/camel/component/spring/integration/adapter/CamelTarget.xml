@@ -31,11 +31,13 @@
        http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
  <!-- END SNIPPET: header -->
-  
+
+    <!-- spring integration channels -->
     <outbound-channel-adapter id="channelA" ref="camelTargetA"/>
    	<outbound-channel-adapter id="channelB" ref="camelTargetB"/>
     <channel id="channelC"/>
     <outbound-channel-adapter id="channelD" ref="camelTargetD"/>
+
    <!-- START SNIPPET: example -->
    <!-- Create the camel context here -->
    <camelContext id="camelTargetContext" xmlns="http://camel.apache.org/schema/spring">

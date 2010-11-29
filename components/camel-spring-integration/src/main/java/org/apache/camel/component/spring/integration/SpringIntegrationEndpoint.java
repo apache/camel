@@ -20,15 +20,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.integration.core.MessageChannel;
 
 /**
- * Defines the <a href="http://camel.apache.org/springIntergration.html">Spring Intergration Endpoint</a>
+ * Defines the <a href="http://camel.apache.org/springIntergration.html">Spring Integration Endpoint</a>
  *
  * @version $Revision$
  */
-public class SpringIntegrationEndpoint extends ScheduledPollEndpoint {
+public class SpringIntegrationEndpoint extends DefaultEndpoint {
     private String inputChannel;
     private String outputChannel;
     private String defaultChannel;
@@ -37,12 +38,12 @@ public class SpringIntegrationEndpoint extends ScheduledPollEndpoint {
 
     public SpringIntegrationEndpoint(String uri, String channel, SpringIntegrationComponent component) {
         super(uri, component);
-        defaultChannel = channel;
+        this.defaultChannel = channel;
     }
 
     public SpringIntegrationEndpoint(String uri, MessageChannel channel, CamelContext context) {
         super(uri, context);
-        messageChannel = channel;
+        this.messageChannel = channel;
     }
 
     public SpringIntegrationEndpoint(String endpointUri, MessageChannel messageChannel) {
@@ -51,7 +52,7 @@ public class SpringIntegrationEndpoint extends ScheduledPollEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new SpringIntegrationProducer(this);
+        return new SpringIntegrationProducer((SpringCamelContext) getCamelContext(), this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {

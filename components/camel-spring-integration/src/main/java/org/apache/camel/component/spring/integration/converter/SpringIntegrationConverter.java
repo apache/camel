@@ -37,21 +37,11 @@ public final class SpringIntegrationConverter {
         // Helper class
     }
 
-    /**
-     * @param Spring Integration MessageChannel
-     * @return an Camel Endpoint
-     * @throws Exception
-     */
     @Converter
     public static Endpoint toEndpoint(final MessageChannel channel) throws Exception {
-        if (channel == null) {
-            throw new IllegalArgumentException("The MessageChannel is null");
-        }
-        Endpoint answer = new SpringIntegrationEndpoint("URL", channel, null);
-        // check the channel
+        Endpoint answer = new SpringIntegrationEndpoint("spring-integration://" + channel.getName(), channel, null);
         return answer;
     }
-
 
     @SuppressWarnings("unchecked")
     @Converter
@@ -73,7 +63,5 @@ public final class SpringIntegrationConverter {
     public static org.apache.camel.Message toCamelMessage(final org.springframework.integration.core.Message springMessage) throws Exception {
         return new SpringIntegrationMessage(springMessage);
     }
-
-
 
 }

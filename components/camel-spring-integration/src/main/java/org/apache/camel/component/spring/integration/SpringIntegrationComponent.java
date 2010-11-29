@@ -21,8 +21,7 @@ import java.util.Map;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * Represents the component that manages {@link SpringIntegrationEndpoint}. It holds the
- * list of named direct endpoints.
+ * Represents the component that manages {@link SpringIntegrationEndpoint}.
  *
  * @version $Revision$
  */

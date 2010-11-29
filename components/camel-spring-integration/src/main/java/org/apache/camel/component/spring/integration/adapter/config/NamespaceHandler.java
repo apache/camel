@@ -24,8 +24,9 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * @version $Revision$
  */
 public class NamespaceHandler extends NamespaceHandlerSupport {
+
     public void init() {
-        registerBeanDefinitionParser("camelSource", new CamelSourceAdpaterParser());
+        registerBeanDefinitionParser("camelSource", new CamelSourceAdapterParser());
         registerBeanDefinitionParser("camelTarget", new CamelTargetAdapterParser());
     }
 }

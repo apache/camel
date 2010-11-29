@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,7 +23,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.core.MessageChannel;
 import org.springframework.integration.message.StringMessage;
 
-
 public class SpringIntegrationOneWayConsumerTest extends CamelSpringTestSupport {
     private static final String MESSAGE_BODY = "hello world";
 
@@ -32,14 +30,15 @@ public class SpringIntegrationOneWayConsumerTest extends CamelSpringTestSupport 
     public void testSendingOneWayMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(MESSAGE_BODY);
+
         MessageChannel outputChannel = (MessageChannel) applicationContext.getBean("outputChannel");
         outputChannel.send(new StringMessage(MESSAGE_BODY));
+
         resultEndpoint.assertIsSatisfied();
     }
 
     public ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/integration/oneWayConsumer.xml");
     }
-
 
 }

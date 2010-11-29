@@ -14,16 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.spring.integration;
+package org.apache.camel.component.spring.integration.adapter.config;
 
-public final class SpringIntegrationHelper {
-    private SpringIntegrationHelper() {
-        // Helper class
+import org.w3c.dom.Element;
+import org.apache.camel.component.spring.integration.adapter.CamelSourceAdapter;
+
+/**
+ * Parser for the &lt;camelSource/&gt; element
+ *
+ * @version $Revision$
+ */
+public class CamelSourceAdapterParser extends AbstractCamelContextBeanDefinitionParaser {
+
+    @Override
+    protected Class<?> getBeanClass(Element element) {
+        return CamelSourceAdapter.class;
     }
 
-    public static void checkSpringBeanInstance(Object bean, String name) {
-        if (bean == null) {
-            throw new IllegalArgumentException("Can't find the bean: " + name + " from the Spring context");
-        }
-    }
 }

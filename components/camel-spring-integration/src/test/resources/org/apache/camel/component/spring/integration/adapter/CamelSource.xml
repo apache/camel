@@ -16,53 +16,53 @@
     limitations under the License.
 -->
 <beans:beans xmlns="http://www.springframework.org/schema/integration"
-       xmlns:beans="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:camel-si="http://camel.apache.org/schema/spring/integration"
-       xsi:schemaLocation="
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:camel-si="http://camel.apache.org/schema/spring/integration"
+             xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
-       http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/spring/integration http://camel.apache.org/schema/spring/integration/camel-spring-integration.xsd
     ">
 
-   	<channel id="channelA"/>
-   	<channel id="channelB"/>
-   	<channel id="channelC"/>
+    <!-- START SNIPPET: example -->
+    <!-- spring integration channels -->
+    <channel id="channelA"/>
+    <channel id="channelB"/>
+    <channel id="channelC"/>
 
-	<service-activator input-channel="channelB"
-	          output-channel="channelC"
-	          ref="helloService"
-	          method="sayHello"/>
+    <!-- spring integration service activator -->
+    <service-activator input-channel="channelB" output-channel="channelC" ref="helloService" method="sayHello"/>
 
-   <beans:bean id="helloService" class="org.apache.camel.component.spring.integration.HelloWorldService"/>
+    <!-- custom bean -->
+    <beans:bean id="helloService" class="org.apache.camel.component.spring.integration.HelloWorldService"/>
 
-   <!-- START SNIPPET: example -->
-   <camelContext id="camelSourceContext" xmlns="http://camel.apache.org/schema/spring">
-       <route>
-           <from uri="direct:OneWay"/>
-           <to uri="direct:EndpointB" />
-       </route>
-       <route>
-       	   <from uri="direct:TwoWay"/>
-           <to uri="direct:EndpointC" />
-       </route>
-   </camelContext>
+    <camelContext id="camelSourceContext" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:OneWay"/>
+            <to uri="direct:EndpointB"/>
+        </route>
+        <route>
+            <from uri="direct:TwoWay"/>
+            <to uri="direct:EndpointC"/>
+        </route>
+    </camelContext>
 
-   <!-- camelSource will redirect the message coming for direct:EndpointB to the spring requestChannel channelA -->
+    <!-- camelSource will redirect the message coming for direct:EndpointB to the spring requestChannel channelA -->
+    <camel-si:camelSource id="camelSourceA" camelEndpointUri="direct:EndpointB"
+                          requestChannel="channelA" expectReply="false">
+        <camel-si:camelContextRef>camelSourceContext</camel-si:camelContextRef>
+    </camel-si:camelSource>
 
-   <camel-si:camelSource id="camelSourceA" camelEndpointUri="direct:EndpointB" requestChannel="channelA" expectReply="false">
-       <camel-si:camelContextRef>camelSourceContext</camel-si:camelContextRef>
-   </camel-si:camelSource>
+    <!-- camelSource will redirect the message coming for direct:EndpointC to the spring requestChannel channelB
+         then it will pull the response from channelC and put the response message back to direct:EndpointC -->
 
-   <!-- camelSource will redirect the message coming for direct:EndpointC to the spring requestChannel channelB
-    then it will pull the response from channelC and put the response message back to direct:EndpointC -->
-
-   <camel-si:camelSource id="camelSourceB" camelEndpointUri="direct:EndpointC" requestChannel="channelB" replyChannel="channelC" expectReply="true">
-       <camel-si:camelContextRef>camelSourceContext</camel-si:camelContextRef>
-   </camel-si:camelSource>
-   <!-- END SNIPPET: example -->
+    <camel-si:camelSource id="camelSourceB" camelEndpointUri="direct:EndpointC"
+                          requestChannel="channelB" replyChannel="channelC" expectReply="true">
+        <camel-si:camelContextRef>camelSourceContext</camel-si:camelContextRef>
+    </camel-si:camelSource>
+    <!-- END SNIPPET: example -->
 
 </beans:beans>
 

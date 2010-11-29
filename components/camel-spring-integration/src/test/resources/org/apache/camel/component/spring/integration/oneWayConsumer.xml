@@ -16,22 +16,23 @@
     limitations under the License.
 -->
 <beans:beans xmlns="http://www.springframework.org/schema/integration"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:beans="http://www.springframework.org/schema/beans"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
 			http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
 			http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
 			http://camel.apache.org/schema/spring
 			http://camel.apache.org/schema/spring/camel-spring.xsd">
-	
+
+    <!-- spring integration channel -->
     <channel id="outputChannel"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-      <route>
-        <!-- Using the &amp; as the separator of & -->
-        <from uri="spring-integration://outputChannel"/>
-        <to uri="mock:result"/>
-      </route>
+        <route>
+            <from uri="spring-integration://outputChannel"/>
+            <to uri="mock:result"/>
+        </route>
     </camelContext>
+
 </beans:beans>

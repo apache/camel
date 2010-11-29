@@ -17,9 +17,7 @@
 package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
@@ -39,59 +37,77 @@ import org.springframework.integration.message.MessageHandler;
  * @version $Revision$
  */
 public class SpringIntegrationProducer extends DefaultProducer implements Processor {    
-
-    private SpringCamelContext context;
+    private final ChannelResolver channelResolver;
     private DirectChannel inputChannel;
     private MessageChannel outputChannel;
-    private String outputChannelName;
-    private ChannelResolver channelResolver;
 
-
-    public SpringIntegrationProducer(SpringIntegrationEndpoint endpoint) {
+    public SpringIntegrationProducer(SpringCamelContext context, SpringIntegrationEndpoint endpoint) {
         super(endpoint);
-        context = (SpringCamelContext) endpoint.getCamelContext();
-        if (context != null && endpoint.getMessageChannel() == null) {
-            outputChannelName = endpoint.getDefaultChannel();
-            channelResolver = new BeanFactoryChannelResolver(context.getApplicationContext());
+        this.channelResolver = new BeanFactoryChannelResolver(context.getApplicationContext());
+    }
+
+    @Override
+    public SpringIntegrationEndpoint getEndpoint() {
+        return (SpringIntegrationEndpoint) super.getEndpoint();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (getEndpoint().getMessageChannel() == null) {
+            String outputChannelName = getEndpoint().getDefaultChannel();
             if (ObjectHelper.isEmpty(outputChannelName)) {
-                outputChannelName = endpoint.getInputChannel();
+                outputChannelName = getEndpoint().getInputChannel();
             }
-            if (ObjectHelper.isEmpty(outputChannelName)) {
-                throw new RuntimeCamelException("Cannot find outputChannelName, please check the endpoint uri outputChannel part!");
-            } else {
-                outputChannel = channelResolver.resolveChannelName(outputChannelName);
-            }
+
+            ObjectHelper.notEmpty(outputChannelName, "OutputChannelName", getEndpoint());
+            outputChannel = channelResolver.resolveChannelName(outputChannelName);
         } else {
-            if (endpoint.getMessageChannel() != null) {
-                outputChannel = endpoint.getMessageChannel();
-            } else {
-                throw new RuntimeCamelException("Cannot find message channel, please check your configuration.");
-            }
+            outputChannel = getEndpoint().getMessageChannel();
         }
-        if (endpoint.isInOut()) {
-            endpoint.setExchangePattern(ExchangePattern.InOut);
+
+        if (outputChannel == null) {
+            throw new IllegalArgumentException("Cannot resolve OutputChannel on " + getEndpoint());
+        }
+
+        // if we do in-out we need to setup the input channel as well
+        if (getEndpoint().isInOut()) {
             // we need to setup right inputChannel for further processing
-            if (ObjectHelper.isEmpty(endpoint.getInputChannel())) {
-                throw new RuntimeCamelException("Cannot find inputChannel, please check the endpoint uri inputChannel part!");
-            } else {
-                inputChannel = (DirectChannel)channelResolver.resolveChannelName(endpoint.getInputChannel());
+            ObjectHelper.notEmpty(getEndpoint().getInputChannel(), "InputChannel", getEndpoint());
+            inputChannel = (DirectChannel)channelResolver.resolveChannelName(getEndpoint().getInputChannel());
+
+            if (inputChannel == null) {
+                throw new IllegalArgumentException("Cannot resolve InputChannel on " + getEndpoint());
             }
-        } else {
-            endpoint.setExchangePattern(ExchangePattern.InOnly);
         }
     }
 
     public void process(final Exchange exchange) throws Exception {
         if (exchange.getPattern().isOutCapable()) {
+
+            // we want to do in-out so the inputChannel is mandatory (used to receive reply from spring integration)
+            if (inputChannel == null) {
+                throw new IllegalArgumentException("InputChannel has not been configured on " + getEndpoint());
+            }
             exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL , inputChannel);
+
+            // subscribe so we can receive the reply from spring integration
             inputChannel.subscribe(new MessageHandler() {
                 public void handleMessage(Message<?> message) {                    
+                    if (log.isDebugEnabled()) {
+                        log.debug("Received " + message + " from InputChannel: " + inputChannel);
+                    }
                     SpringIntegrationBinding.storeToCamelMessage(message, exchange.getOut());
                 }
             });
         }
         org.springframework.integration.core.Message siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
-        
+
+        // send the message to spring integration
+        if (log.isDebugEnabled()) {
+            log.debug("Sending " + siOutmessage + " to OutputChannel: " + outputChannel);
+        }
         outputChannel.send(siOutmessage);
     }
 

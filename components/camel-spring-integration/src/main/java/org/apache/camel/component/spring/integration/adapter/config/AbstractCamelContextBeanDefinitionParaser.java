@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.spring.integration.adapter.config;
 
 import org.w3c.dom.Attr;
@@ -31,7 +30,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
 
 /**
- * This BeanDefinition paraser help to inject the camel context into the beans
+ * This BeanDefinition parser help to inject the camel context into the beans
  *
  * @version $Revision$
  */

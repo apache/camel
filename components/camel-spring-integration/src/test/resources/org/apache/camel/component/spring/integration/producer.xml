@@ -17,40 +17,38 @@
 -->
 <!-- START SNIPPET: example -->
 <beans:beans xmlns="http://www.springframework.org/schema/integration"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:beans="http://www.springframework.org/schema/beans"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
 			http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
 			http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
 			http://camel.apache.org/schema/spring
 			http://camel.apache.org/schema/spring/camel-spring.xsd">
-	
-	<channel id="inputChannel"/>
-   	<channel id="outputChannel"/>
-   	<channel id="onewayChannel"/>
 
-	<service-activator input-channel="inputChannel"	          
-	          ref="helloService"
-	          method="sayHello"/>
-	          	      
-	<service-activator input-channel="onewayChannel"	          
-	          ref="helloService"
-	          method="greet"/>
-	          
-	<beans:bean id="helloService" class="org.apache.camel.component.spring.integration.HelloWorldService"/>
-    
+    <!-- spring integration channels -->
+    <channel id="inputChannel"/>
+    <channel id="outputChannel"/>
+    <channel id="onewayChannel"/>
+
+    <!-- spring integration service activators -->
+    <service-activator input-channel="inputChannel" ref="helloService" method="sayHello"/>
+    <service-activator input-channel="onewayChannel" ref="helloService" method="greet"/>
+
+    <!-- custom bean -->
+    <beans:bean id="helloService" class="org.apache.camel.component.spring.integration.HelloWorldService"/>
+
     <!-- START SNIPPET: example -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-      <route>
-        <from uri="direct:twowayMessage"/>
-        <!-- Using the &amp; as the separator of & -->
-        <to uri="spring-integration:inputChannel?inOut=true&amp;inputChannel=outputChannel"/>
-      </route>
-      <route>      
-        <from uri="direct:onewayMessage"/>
-        <to uri="spring-integration:onewayChannel?inOut=false"/>
-      </route>
+        <route>
+            <from uri="direct:twowayMessage"/>
+            <to uri="spring-integration:inputChannel?inOut=true&amp;inputChannel=outputChannel"/>
+        </route>
+        <route>
+            <from uri="direct:onewayMessage"/>
+            <to uri="spring-integration:onewayChannel?inOut=false"/>
+        </route>
     </camelContext>
     <!-- END SNIPPET: example -->
+
 </beans:beans>

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.spring.integration.adapter;
 
 import org.apache.camel.CamelContext;
@@ -52,6 +51,5 @@ public abstract class AbstractCamelAdapter {
     public boolean isExpectReply() {
         return expectReply;
     }
-
 
 }

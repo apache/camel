@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 package org.apache.camel.component.spring.integration.adapter.config;
+
 import org.w3c.dom.Element;
 import org.apache.camel.component.spring.integration.adapter.CamelTargetAdapter;
-
 
 /**
  * Parser for the &lt;camelTarget/&gt; element
  *
  * @version $Revision$
  */
-
 public class CamelTargetAdapterParser extends AbstractCamelContextBeanDefinitionParaser {
+
     @Override
     protected Class<?> getBeanClass(Element element) {
         return CamelTargetAdapter.class;

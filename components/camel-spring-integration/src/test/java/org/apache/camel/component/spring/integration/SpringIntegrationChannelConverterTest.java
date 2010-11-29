@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.spring.integration;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 public class SpringIntegrationChannelConverterTest extends SpringIntegrationOneWayConsumerTest {
+
     public ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/integration/springChannelConverter.xml");
     }
