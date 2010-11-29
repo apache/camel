@@ -141,6 +141,9 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition onCompleteOnly() {
+        if (onFailureOnly) {
+            throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
+        }
         // must define return type as OutputDefinition and not this type to avoid end user being able
         // to invoke onFailureOnly/onCompleteOnly more than once
         setOnCompleteOnly(Boolean.TRUE);
@@ -154,6 +157,9 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition onFailureOnly() {
+        if (onCompleteOnly) {
+            throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
+        }
         // must define return type as OutputDefinition and not this type to avoid end user being able
         // to invoke onFailureOnly/onCompleteOnly more than once
         setOnCompleteOnly(Boolean.FALSE);
