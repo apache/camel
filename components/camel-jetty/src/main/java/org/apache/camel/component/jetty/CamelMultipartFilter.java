@@ -18,26 +18,39 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
-import org.eclipse.jetty.servlets.MultiPartFilter;
 
 /**
  * A multipart filter that processes only initially dispatched requests.
  * Re-dispatched requests are ignored.
  */
-class CamelMultipartFilter extends MultiPartFilter {
+class CamelMultipartFilter implements Filter {
+	
+	private Filter wrapped;
 
-    @Override
+	public CamelMultipartFilter(Filter wrapped) {
+		this.wrapped = wrapped;
+	}
+	
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (request.getAttribute(CamelContinuationServlet.EXCHANGE_ATTRIBUTE_NAME) == null) {
-            super.doFilter(request, response, chain);
+            wrapped.doFilter(request, response, chain);
         } else {
             chain.doFilter(request, response);
         }
     }
+
+	public void destroy() {
+		wrapped.destroy();
+	}
+
+	public void init(FilterConfig config) throws ServletException {
+		wrapped.init(config);
+	}
 
 }

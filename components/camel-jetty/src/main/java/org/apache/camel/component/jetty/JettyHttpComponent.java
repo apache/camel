@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.management.MBeanServer;
+import javax.servlet.Filter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -55,6 +56,7 @@ import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlets.MultiPartFilter;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
@@ -132,6 +134,7 @@ public class JettyHttpComponent extends HttpComponent {
         Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
         Boolean enableMultipartFilter = getAndRemoveParameter(parameters, "enableMultipartFilter",
                                                               Boolean.class, true);
+        Filter multipartFilter = resolveAndRemoveReferenceParameter(parameters, "multipartFilterRef", Filter.class);
 
         // configure http client if we have url configuration for it
         // http client is only used for jetty http producer (hence not very commonly used)
@@ -190,6 +193,11 @@ public class JettyHttpComponent extends HttpComponent {
         }
         
         endpoint.setEnableMultipartFilter(enableMultipartFilter);
+        
+        if (multipartFilter != null) {
+        	endpoint.setMultipartFilter(multipartFilter);
+        	endpoint.setEnableMultipartFilter(true);
+        }
 
         setProperties(endpoint, parameters);
         return endpoint;
@@ -288,8 +296,13 @@ public class JettyHttpComponent extends HttpComponent {
             }
             context.setAttribute("javax.servlet.context.tempdir", file);
         }
-        filterHolder.setFilter(new CamelMultipartFilter());
-        // add the default MultiPartFilter filter for it
+        // if a filter ref was provided, use it.
+        Filter filter = ((JettyHttpEndpoint) endpoint).getMultipartFilter();
+        if (filter == null) {
+	        // if no filter ref was provided, use the default filter
+        	filter = new MultiPartFilter();
+        }
+        filterHolder.setFilter(new CamelMultipartFilter(filter));
         String pathSpec = endpoint.getPath();
         if (pathSpec == null || "".equals(pathSpec)) {
             pathSpec = "/";
@@ -298,6 +311,7 @@ public class JettyHttpComponent extends HttpComponent {
             pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
         }
         context.addFilter(filterHolder, pathSpec, 0);
+        LOG.debug("using multipart filter implementation "+filter.getClass().getName() +" for path "+pathSpec);
     }
 
     /**

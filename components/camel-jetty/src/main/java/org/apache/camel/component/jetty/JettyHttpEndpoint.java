@@ -20,6 +20,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import javax.servlet.Filter;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -40,6 +42,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private JettyHttpBinding jettyBinding;
     private boolean enableJmx;
     private boolean enableMultipartFilter;
+    private Filter multipartFilter;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -120,5 +123,13 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     public void setEnableMultipartFilter(boolean enableMultipartFilter) {
         this.enableMultipartFilter = enableMultipartFilter;
-    }    
+    }
+    
+    public void setMultipartFilter(Filter filter) {
+    	this.multipartFilter = filter;
+    }
+    
+    public Filter getMultipartFilter() {
+    	return multipartFilter;
+    }
 }
