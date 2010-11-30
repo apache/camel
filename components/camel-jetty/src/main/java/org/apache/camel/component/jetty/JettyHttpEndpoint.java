@@ -126,10 +126,10 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     }
     
     public void setMultipartFilter(Filter filter) {
-    	this.multipartFilter = filter;
+        this.multipartFilter = filter;
     }
     
     public Filter getMultipartFilter() {
-    	return multipartFilter;
+        return multipartFilter;
     }
 }

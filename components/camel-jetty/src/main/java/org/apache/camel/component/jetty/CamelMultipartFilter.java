@@ -30,13 +30,12 @@ import javax.servlet.ServletResponse;
  * Re-dispatched requests are ignored.
  */
 class CamelMultipartFilter implements Filter {
-	
-	private Filter wrapped;
+    private Filter wrapped;
 
-	public CamelMultipartFilter(Filter wrapped) {
-		this.wrapped = wrapped;
-	}
-	
+    public CamelMultipartFilter(Filter wrapped) {
+        this.wrapped = wrapped;
+    }
+    
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (request.getAttribute(CamelContinuationServlet.EXCHANGE_ATTRIBUTE_NAME) == null) {
             wrapped.doFilter(request, response, chain);
@@ -45,12 +44,11 @@ class CamelMultipartFilter implements Filter {
         }
     }
 
-	public void destroy() {
-		wrapped.destroy();
-	}
+    public void destroy() {
+        wrapped.destroy();
+    }
 
-	public void init(FilterConfig config) throws ServletException {
-		wrapped.init(config);
-	}
-
+    public void init(FilterConfig config) throws ServletException {
+        wrapped.init(config);
+    }
 }

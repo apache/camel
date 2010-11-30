@@ -195,8 +195,8 @@ public class JettyHttpComponent extends HttpComponent {
         endpoint.setEnableMultipartFilter(enableMultipartFilter);
         
         if (multipartFilter != null) {
-        	endpoint.setMultipartFilter(multipartFilter);
-        	endpoint.setEnableMultipartFilter(true);
+            endpoint.setMultipartFilter(multipartFilter);
+            endpoint.setEnableMultipartFilter(true);
         }
 
         setProperties(endpoint, parameters);
@@ -299,8 +299,8 @@ public class JettyHttpComponent extends HttpComponent {
         // if a filter ref was provided, use it.
         Filter filter = ((JettyHttpEndpoint) endpoint).getMultipartFilter();
         if (filter == null) {
-	        // if no filter ref was provided, use the default filter
-        	filter = new MultiPartFilter();
+            // if no filter ref was provided, use the default filter
+            filter = new MultiPartFilter();
         }
         filterHolder.setFilter(new CamelMultipartFilter(filter));
         String pathSpec = endpoint.getPath();
@@ -311,7 +311,7 @@ public class JettyHttpComponent extends HttpComponent {
             pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
         }
         context.addFilter(filterHolder, pathSpec, 0);
-        LOG.debug("using multipart filter implementation "+filter.getClass().getName() +" for path "+pathSpec);
+        LOG.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
     }
 
     /**
