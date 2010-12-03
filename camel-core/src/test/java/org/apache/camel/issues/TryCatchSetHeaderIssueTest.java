@@ -25,17 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class TryCatchSetHeaderIssueTest extends ContextTestSupport {
 
     public void testTryCatchSetHeaderIssue() throws Exception {
-        getMockEndpoint("mock:end").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:end").expectedHeaderReceived("foo", "error");
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
@@ -46,6 +36,54 @@ public class TryCatchSetHeaderIssueTest extends ContextTestSupport {
                         .setHeader("foo", constant("error"))
                     .end()
                     .to("mock:end");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:end").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:end").expectedHeaderReceived("foo", "error");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testTryCatchTwoSetHeaderIssue() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .doTry()
+                        .setHeader("foo", constant("try"))
+                        .throwException(new IllegalArgumentException("Damn"))
+                    .doCatch(IllegalArgumentException.class)
+                        .setHeader("foo", constant("error"))
+                    .doCatch(Exception.class)
+                        .setHeader("foo", constant("damn"))
+                    .end()
+                    .to("mock:end");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:end").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:end").expectedHeaderReceived("foo", "error");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
             }
         };
     }
