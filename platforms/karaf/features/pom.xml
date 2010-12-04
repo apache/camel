@@ -136,21 +136,6 @@
       <wss4j-version>1.5.8</wss4j-version>
     </properties>
     
-    <repositories>
-      <!-- ServiceMix repo (for org.osgi:org.osgi.impl.bundle.jmx) -->
-      <repository>
-        <id>servicemix</id>
-        <name>Apache ServiceMix Repository</name>
-        <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-        <releases>
-          <enabled>true</enabled>
-        </releases>
-        <snapshots>
-          <enabled>false</enabled>
-        </snapshots>
-      </repository>   
-    </repositories>
-    
     <!-- The validate plugin will export these provided dependencies bundles' export packages first -->  
     <dependencies>
     	<dependency>

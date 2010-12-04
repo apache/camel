@@ -36,14 +36,6 @@
         <camel.osgi.export.pkg>org.apache.camel.component.spring.ws.*</camel.osgi.export.pkg>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>spring.maven.release</id>
-            <name>Spring Release Maven Repo</name>
-            <url>http://repository.springsource.com/maven/bundles/release</url>
-        </repository>
-    </repositories>
-
     <dependencies>
 
         <dependency>

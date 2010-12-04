@@ -53,49 +53,39 @@
             <layout>default</layout>
         </repository>
         <repository>
-            <id>release.openqa.org</id>
-            <name>OpenQA Releases</name>
-            <url>http://archiva.openqa.org/repository/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
+            <id>guiceyfruit.release</id>
+            <name>GuiceyFruit Release Repository</name>
+            <url>http://guiceyfruit.googlecode.com/svn/repo/releases/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
         </repository>
 
-        <!-- scalate SNAPSHOT repo -->
-<!--        <repository>
-            <id>fusesource.snapshots</id>
-            <name>FuseSource Snapshot Repository</name>
-            <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository> -->
     </repositories>
 
     <pluginRepositories>
+        <pluginRepository>
+            <id>fusesource.m2</id>
+            <url>http://repo.fusesource.com/maven2-all</url>
+            <name>Fusesource Dependency Repository</name>
+            <layout>default</layout>
+        </pluginRepository>
         <pluginRepository>
             <id>java.net.m2</id>
             <name>Java.net Repository for Maven</name>
             <url>http://download.java.net/maven/2/</url>
             <layout>default</layout>
         </pluginRepository>
-        <pluginRepository>
-            <id>glassfish-repo-archive</id>
-            <name>Nexus repository collection for Glassfish</name>
-            <url>http://maven.glassfish.org/content/groups/glassfish</url>
-            <snapshots>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </pluginRepository>
     </pluginRepositories>
 
     <dependencies>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
@@ -835,6 +825,7 @@
                     <version>${jersey-version}</version>
                     <scope>provided</scope>
                 </dependency>
+
                 <dependency>
                     <groupId>javax.annotation</groupId>
                     <artifactId>jsr250-api</artifactId>

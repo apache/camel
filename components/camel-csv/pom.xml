@@ -35,15 +35,6 @@
 	<camel.osgi.export.pkg>org.apache.camel.dataformat.csv.*</camel.osgi.export.pkg>
   </properties>
 
-  <repositories>
-    <!-- TODO we can remove this when the commons-csv release syncs to the main repo -->
-    <repository>
-      <id>servicemix</id>
-      <name>Apache ServiceMix Repository</name>
-      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>

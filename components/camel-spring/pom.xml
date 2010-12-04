@@ -207,17 +207,6 @@
 
   </dependencies>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>fusesource.m2</id>
-      <name>Fusesource Release Repository</name>
-      <url>http://repo.fusesource.com/maven2</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
-
   <build>
     <resources>
       <resource>

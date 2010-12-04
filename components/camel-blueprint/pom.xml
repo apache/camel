@@ -99,30 +99,7 @@
             <artifactId>log4j</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
-
-    <repositories>
-        <!-- for maven jaxb plugin -->
-        <repository>
-            <id>java.net</id>
-            <name>java.net Maven Repository</name>
-            <url>http://download.java.net/maven/1</url>
-            <!--<url>https://maven-repository.dev.java.net/nonav/repository</url>-->
-            <layout>legacy</layout>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>fusesource.m2</id>
-            <name>Fusesource Release Repository</name>
-            <url>http://repo.fusesource.com/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
 
     <build>
         <resources>

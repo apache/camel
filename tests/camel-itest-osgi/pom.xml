@@ -34,10 +34,6 @@
 
   <repositories>
     <repository>
-      <id>biz.aQute</id>
-      <url>http://www.aqute.biz/repo</url>
-    </repository>
-    <repository>
       <id>hapi</id>
       <name>HAPI Maven Repository</name>
       <url>http://hl7api.sourceforge.net/m2/</url>

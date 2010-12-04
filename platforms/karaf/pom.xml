@@ -47,81 +47,13 @@
         <snapshots>
           <enabled>true</enabled>
         </snapshots>
+        <releases>
+          <enabled>false</enabled>
+        </releases>
         <id>apache.snapshots</id>
         <name>Apache Snapshot Repository</name>
         <url>http://repository.apache.org/snapshots</url>
       </pluginRepository>
     </pluginRepositories>
-
-    <repositories>
-      <!--ServiceMix OSGi bundle repo -->
-      <repository>
-        <id>servicemix</id>
-        <name>ServiceMix OSGi bundle Repository</name>
-        <url>http://repo2.maven.org/maven2</url>
-        <releases>
-           <enabled>true</enabled>
-        </releases>
-        <snapshots>
-           <enabled>false</enabled>
-        </snapshots>
-      </repository> 
-      <!--ServiceMix OSGi bundle snapshot repo -->
-      <repository>
-        <id>servicemix.snapshot</id>
-        <name>ServiceMix OSGi bundle snapshot Repository</name>
-        <url>http://repository.apache.org/content/groups/snapshots-group</url>
-        <releases>
-           <enabled>false</enabled>
-        </releases>
-        <snapshots>
-           <enabled>true</enabled>
-        </snapshots>
-      </repository>
-      <!-- OPS4J repo -->
-      <repository>
-        <id>ops4j</id>
-        <name>OPS4j Repository</name>
-        <url>http://repository.ops4j.org/maven2</url>
-        <releases>
-          <enabled>true</enabled>
-        </releases>
-        <snapshots>
-          <enabled>false</enabled>
-        </snapshots>
-      </repository>
-      <!-- Jboss maven repo -->
-      <repository>
-        <id>jboss</id>
-          <name>Jboss Repository</name>
-          <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-      </repository>
-      <!-- Spring milestone repo -->
-      <repository>
-        <id>spring-milestone</id>
-        <name>Spring Portfolio Milestone Repository</name>
-        <url>http://s3.amazonaws.com/maven.springframework.org/milestone</url>
-        <releases>
-          <enabled>true</enabled>
-        </releases>
-        <snapshots>
-          <enabled>false</enabled>
-        </snapshots>
-      </repository>
-
-      <!-- Java.net Repository for javax mail -->
-      <repository>
-        <id>java.net.m2</id>
-        <name>Java.net Repository for Maven</name>
-        <url>http://download.java.net/maven/2/</url>
-        <layout>default</layout>
-      </repository>
-    </repositories>
  
 </project>

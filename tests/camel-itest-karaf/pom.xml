@@ -31,13 +31,6 @@
   <name>Camel :: Karaf Integration Tests</name>
   <description>Performs Karaf compliance integration tests</description>
 
-  <repositories>
-    <repository>
-      <id>biz.aQute</id>
-      <url>http://www.aqute.biz/repo</url>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>

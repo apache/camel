@@ -30,24 +30,6 @@
   <description>Camel Examples</description>
   <packaging>pom</packaging>
 
-  <repositories>
-    <!-- this should not be required as its syncd to ibiblio -->
-    <repository>
-      <id>apache.m2.repo</id>
-      <name>Apache Maven2 Repository</name>
-      <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <!-- this should not be required as its syncd to ibiblio -->
-    <pluginRepository>
-      <id>apache.m2.repo</id>
-      <name>Apache Maven2 Repository</name>
-      <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <modules>
     <module>camel-example-aggregate</module>
     <module>camel-example-axis</module>
