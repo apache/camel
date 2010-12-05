@@ -35,8 +35,7 @@
   <properties>
     <compiler.fork>false</compiler.fork>
     <!-- Note that activemq dependency is only used for testing! -->
-    <!-- ActiveMQ has a bug in 5.4.1 so we test using 5.3.2 (see more at CAMEL-3257)-->
-    <activemq-version>5.3.2</activemq-version>
+    <activemq-version>5.4.2</activemq-version>
     <apacheds-version>1.5.7</apacheds-version>
     <aries-blueprint-version>0.2-incubating</aries-blueprint-version>
     <axiom-version>1.2.8</axiom-version>
