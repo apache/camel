@@ -40,13 +40,32 @@ public class BeanWithHeadersAndBodyInject3Test extends ContextTestSupport {
         };
     }
 
-    public void testAnnotations() throws Exception {
+    public void testInOnly() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:finish");
-        end.setExpectedMessageCount(1);
+        end.expectedBodiesReceived("Hello!");
+        end.message(0).header("out").isNull();
+
         sendBody("direct:start", "Test Input");
-        end.assertIsSatisfied();
+
+        assertMockEndpointsSatisfied();
+
         assertNotNull(end.getExchanges().get(0).getIn().getBody());
         assertEquals("Hello!", end.getExchanges().get(0).getIn().getBody());
+    }
+
+    public void testInOut() throws Exception {
+        MockEndpoint end = getMockEndpoint("mock:finish");
+        end.expectedBodiesReceived("Hello!");
+        end.expectedHeaderReceived("out", 123);
+
+        String out = template.requestBody("direct:start", "Test Input", String.class);
+        assertEquals("Hello!", out);
+
+        assertMockEndpointsSatisfied();
+
+        assertNotNull(end.getExchanges().get(0).getIn().getBody());
+        assertEquals("Hello!", end.getExchanges().get(0).getIn().getBody());
+        assertEquals(123, end.getExchanges().get(0).getIn().getHeader("out"));
     }
 
     @Override
@@ -57,7 +76,12 @@ public class BeanWithHeadersAndBodyInject3Test extends ContextTestSupport {
     }
 
     public static class MyBean {
+
         public String doSomething(@Body String body, @Headers Map headers, @OutHeaders Map outHeaders) {
+            if (outHeaders != null) {
+                outHeaders.put("out", 123);
+            }
+
             return "Hello!";
         }
     }
