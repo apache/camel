@@ -60,13 +60,21 @@ public final class PackageHelper {
                         }
                         value = buffer.toString();
                     }
-                    double number = Double.parseDouble(value);
-                    return number >= minimumVersion;
+
+                    if (ObjectHelper.isNotEmpty(value)) {
+                        double number = Double.parseDouble(value);
+                        return number >= minimumVersion;
+                    } else {
+                        LOG.debug("Failed to find out version from package: " + packageName);
+                    }
                 }
             }
         } catch (Exception e) {
-            LOG.debug("Failed to find out " + packageName + " version: " + e, e);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Failed to find out version from package: " + packageName, e);
+            }
         }
+
         return true;
     }
 }
