@@ -36,6 +36,15 @@
     <camel.osgi.export.pkg>org.apache.camel.component.file.remote.*</camel.osgi.export.pkg>
   </properties>
 
+  <!-- needed for jsch -->
+  <repositories>
+	<repository>
+      <id>servicemix</id>
+	  <name>Apache ServiceMix Repository</name>
+	  <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+	</repository>
+  </repositories>
+
   <dependencies>
 
     <dependency>
