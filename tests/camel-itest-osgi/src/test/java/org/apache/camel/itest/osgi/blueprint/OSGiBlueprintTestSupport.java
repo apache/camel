@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.camel.CamelContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +57,7 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
         }
         getInstalledBundle("CamelBlueprintTestBundle1").start();
         getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle1)", 5000);
+        getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle1)", 5000);
     }
 
     @Test
@@ -74,6 +76,7 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
         }
         getInstalledBundle("org.apache.camel.camel-mail").start();
         getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle2)", 5000);
+        getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle2)", 5000);
     }
 
     @Test
@@ -92,6 +95,7 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
         }
         getInstalledBundle("org.apache.camel.camel-jaxb").start();
         getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle3)", 5000);
+        getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle3)", 5000);
     }
 
     @Before
