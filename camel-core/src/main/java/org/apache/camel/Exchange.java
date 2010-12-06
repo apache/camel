@@ -94,6 +94,7 @@ public interface Exchange {
 
     String DATASET_INDEX             = "CamelDataSetIndex";
     String DEFAULT_CHARSET_PROPERTY  = "org.apache.camel.default.charset";
+    String DESTINATION_OVERRIDE_URL = "CamelDestinationOverrideUrl";
     String DISABLE_HTTP_STREAM_CACHE = "CamelDisableHttpStreamCache";
 
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";

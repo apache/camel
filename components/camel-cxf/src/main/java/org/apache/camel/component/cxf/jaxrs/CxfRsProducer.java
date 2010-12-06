@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -30,7 +31,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfOperationException;
+import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.LRUCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
@@ -47,13 +50,16 @@ public class CxfRsProducer extends DefaultProducer {
 
     private static final Log LOG = LogFactory.getLog(CxfRsProducer.class);
 
-    JAXRSClientFactoryBean cfb;
     private boolean throwException;
-
+    
+    // using a cache of factory beans instead of setting the address of a single cfb
+    // to avoid concurrent issues
+    private ClientFactoryBeanCache clientFactoryBeanCache;
+    
     public CxfRsProducer(CxfRsEndpoint endpoint) {
         super(endpoint);
         this.throwException = endpoint.isThrowExceptionOnFailure();
-        cfb = endpoint.createJAXRSClientFactoryBean();
+        clientFactoryBeanCache = new ClientFactoryBeanCache(endpoint.getMaxClientCacheSize());
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -77,6 +83,9 @@ public class CxfRsProducer extends DefaultProducer {
     @SuppressWarnings("unchecked")
     protected void invokeHttpClient(Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
+        JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
+            .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
+        
         WebClient client = cfb.createWebClient();
         String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
         Class responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
@@ -163,6 +172,10 @@ public class CxfRsProducer extends DefaultProducer {
         Object[] varValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
         String methodName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);
         Client target = null;
+        
+        JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
+                                   .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
+        
         if (varValues == null) {
             target = cfb.create();
         } else {
@@ -269,5 +282,43 @@ public class CxfRsProducer extends DefaultProducer {
         }
 
         return answer;
+    }
+    
+    /**
+     * Cache contains {@link org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean}
+     */
+    private class ClientFactoryBeanCache {
+        private LRUCache<String, SoftReference<JAXRSClientFactoryBean>> cache;    
+        
+        public ClientFactoryBeanCache(final int maxCacheSize) {
+            this.cache = new LRUCache<String, SoftReference<JAXRSClientFactoryBean>>(maxCacheSize);
+        }
+
+        public JAXRSClientFactoryBean get(String address) throws Exception {
+            JAXRSClientFactoryBean retval = null;
+            synchronized (cache) {
+                SoftReference<JAXRSClientFactoryBean> ref = cache.get(address);
+                
+                if (ref != null) {
+                    retval = ref.get();
+                }
+
+                if (retval == null) {
+                    retval = ((CxfRsEndpoint)getEndpoint()).createJAXRSClientFactoryBean(address);
+                    
+                    cache.put(address, new SoftReference<JAXRSClientFactoryBean>(retval));
+                    
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Created client factory bean and add to cache for address '" + address + "'");
+                    }
+                    
+                } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Retrieved client factory bean from cache for address '" + address + "'");
+                    }
+                }
+            }
+            return retval;
+        }
     }
 }

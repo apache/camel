@@ -47,7 +47,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private boolean httpClientAPI = true;
     private String address;
     private boolean throwExceptionOnFailure = true;
-
+    private int maxClientCacheSize = 10;
+    
     private AtomicBoolean bindingInitialized = new AtomicBoolean(false);
 
     public CxfRsEndpoint(String endpointUri, CamelContext camelContext) {
@@ -142,9 +143,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         sfb.setStart(false);
     }
 
-    protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb) {
+    protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
         // address
-        cfb.setAddress(getAddress());
+        cfb.setAddress(address);
         if (getResourceClasses() != null) {
             cfb.setResourceClass(getResourceClasses().get(0));
         }
@@ -157,8 +158,12 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     public JAXRSClientFactoryBean createJAXRSClientFactoryBean() {
+        return createJAXRSClientFactoryBean(getAddress());
+    }
+    
+    public JAXRSClientFactoryBean createJAXRSClientFactoryBean(String address) {
         JAXRSClientFactoryBean answer = new SpringJAXRSClientFactoryBean();
-        setupJAXRSClientFactoryBean(answer);
+        setupJAXRSClientFactoryBean(answer, address);
         return answer;
     }
 
@@ -188,5 +193,19 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
+    }
+
+    /**
+     * @param maxClientCacheSize the maxClientCacheSize to set
+     */
+    public void setMaxClientCacheSize(int maxClientCacheSize) {
+        this.maxClientCacheSize = maxClientCacheSize;
+    }
+
+    /**
+     * @return the maxClientCacheSize
+     */
+    public int getMaxClientCacheSize() {
+        return maxClientCacheSize;
     }
 }

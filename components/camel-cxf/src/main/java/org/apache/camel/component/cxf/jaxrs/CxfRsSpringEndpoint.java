@@ -67,15 +67,18 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
         }
     }
     
+    @Override
     protected void setupJAXRSServerFactoryBean(JAXRSServerFactoryBean sfb) {
         checkBeanType(JAXRSServerFactoryBean.class);
         configure(sfb);
         
     }
     
-    protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb) {
+    @Override
+    protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
         checkBeanType(JAXRSClientFactoryBean.class);
-        configure(cfb);        
+        configure(cfb);      
+        cfb.setAddress(address);
     }
     
     public String getBeanId() {

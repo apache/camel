@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
+import java.lang.ref.SoftReference;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,7 +33,9 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,9 +56,9 @@ import org.apache.cxf.service.model.BindingOperationInfo;
  */
 public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     private static final Log LOG = LogFactory.getLog(CxfProducer.class);
-    private Client client;
     private CxfEndpoint endpoint;
-
+    private ClientCache clientCache;
+    
     /**
      * Constructor to create a CxfProducer.  It will create a CXF client
      * object.
@@ -67,7 +70,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     public CxfProducer(CxfEndpoint endpoint) throws Exception {
         super(endpoint);
         this.endpoint = endpoint;
-        client = endpoint.createClient();
+        clientCache = new ClientCache(endpoint.getMaxClientCacheSize());
     }
     
     // As the cxf client async and sync api is implement different,
@@ -81,8 +84,10 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             // create CXF exchange
             ExchangeImpl cxfExchange = new ExchangeImpl();
             
+            Client client = clientCache.get(CxfEndpointUtils.getEffectiveAddress(camelExchange, endpoint.getAddress()));
+
             // prepare binding operation info
-            BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange);
+            BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange, client);
             
             Map<String, Object> invocationContext = new HashMap<String, Object>();
             Map<String, Object> responseContext = new HashMap<String, Object>();
@@ -91,7 +96,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             
             CxfClientCallback cxfClientCallback = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
             // send the CXF async request
-            client.invoke(cxfClientCallback, boi, getParams(endpoint, camelExchange), 
+            client.invoke(cxfClientCallback, boi, getParams(endpoint, camelExchange, client), 
                           invocationContext, cxfExchange);
         } catch (Throwable ex) {
             // error occurred before we had a chance to go async
@@ -116,17 +121,20 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         // create CXF exchange
         ExchangeImpl cxfExchange = new ExchangeImpl();
         
+        Client client = clientCache.get(CxfEndpointUtils.getEffectiveAddress(camelExchange, endpoint.getAddress()));
+
         // prepare binding operation info
-        BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange);
+        BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange, client);
         
         Map<String, Object> invocationContext = new HashMap<String, Object>();
         Map<String, Object> responseContext = new HashMap<String, Object>();
         invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
         invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
+                
         
         try {
             // send the CXF request
-            client.invoke(boi, getParams(endpoint, camelExchange), 
+            client.invoke(boi, getParams(endpoint, camelExchange, client), 
                       invocationContext, cxfExchange);
         } finally {
             // bind the CXF response to Camel exchange
@@ -179,9 +187,9 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         return requestContext.getWrappedMap();
     }
     
-    private BindingOperationInfo prepareBindingOperation(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) {
+    private BindingOperationInfo prepareBindingOperation(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange, Client client) {
         // get binding operation info
-        BindingOperationInfo boi = getBindingOperationInfo(camelExchange);
+        BindingOperationInfo boi = getBindingOperationInfo(camelExchange, client);
         ObjectHelper.notNull(boi, "BindingOperationInfo");
         
         // keep the message wrapper in PAYLOAD mode
@@ -209,8 +217,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         return  boi;
     }
     
-    private void checkParameterSize(CxfEndpoint endpoint, Exchange exchange, Object[] parameters) {
-        BindingOperationInfo boi = getBindingOperationInfo(exchange);
+    private void checkParameterSize(CxfEndpoint endpoint, Exchange exchange, Object[] parameters, Client client) {
+        BindingOperationInfo boi = getBindingOperationInfo(exchange, client);
         if (boi == null) {
             throw new RuntimeCamelException("Can't find the binding operation information from camel exchange");
         }
@@ -254,7 +262,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     /**
      * Get the parameters for the web service operation
      */
-    private Object[] getParams(CxfEndpoint endpoint, Exchange exchange) throws InvalidPayloadException {
+    private Object[] getParams(CxfEndpoint endpoint, Exchange exchange, Client client) throws InvalidPayloadException {
       
         Object[] params = null;
         if (endpoint.getDataFormat() == DataFormat.POJO) {
@@ -278,7 +286,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                 }
             }
             // make sure we have the right number of parameters
-            checkParameterSize(endpoint, exchange, params);
+            checkParameterSize(endpoint, exchange, params, client);
 
         } else if (endpoint.getDataFormat() == DataFormat.PAYLOAD) {
             params = new Object[1];
@@ -303,7 +311,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
      * Get operation name from header and use it to lookup and return a 
      * {@link BindingOperationInfo}.
      */
-    private BindingOperationInfo getBindingOperationInfo(Exchange ex) {
+    private BindingOperationInfo getBindingOperationInfo(Exchange ex, Client client) {
         CxfEndpoint endpoint = (CxfEndpoint)this.getEndpoint();
         BindingOperationInfo answer = null;
         String lp = ex.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
@@ -345,9 +353,46 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         }
         return answer;
     }
-    
-    public Client getClient() {
-        return client;
+
+    // only invoked by unit test
+    public Client getClient() throws Exception {
+        return  clientCache.get(endpoint.getAddress());
     }
 
+    /**
+     * Cache contains {@link org.apache.cxf.endpoint.Client}
+     */
+    private class ClientCache {
+        private LRUCache<String, SoftReference<Client>> cache;    
+        
+        public ClientCache(final int maxCacheSize) {
+            this.cache = new LRUCache<String, SoftReference<Client>>(maxCacheSize);
+        }
+
+        public Client get(String address) throws Exception {
+            Client retval = null;
+            synchronized (cache) {
+                SoftReference<Client> ref = cache.get(address);
+                
+                if (ref != null) {
+                    retval = ref.get();
+                }
+
+                if (retval == null) {
+                    retval = ((CxfEndpoint)getEndpoint()).createClient(address);
+                    cache.put(address, new SoftReference<Client>(retval));
+                    
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Created CXF client and add to cache for address '" + address + "'");
+                    }
+                    
+                } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Retrieved CXF client from cache for address '" + address + "'");
+                    }
+                }
+            }
+            return retval;
+        }
+    }
 }

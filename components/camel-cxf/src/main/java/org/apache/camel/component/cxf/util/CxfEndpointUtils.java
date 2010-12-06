@@ -23,17 +23,21 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceProvider;
 
 import org.apache.camel.CamelException;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 
 public final class CxfEndpointUtils {
+    private static final Log LOG = LogFactory.getLog(CxfEndpointUtils.class);
 
     private CxfEndpointUtils() {
         // not constructed
@@ -155,6 +159,26 @@ public final class CxfEndpointUtils {
         return result;
     }
 
+    /**
+     * Get effective address for a client to invoke a service.  It first looks for the 
+     * {@link org.apache.camel.Exchange#DESTINATION_OVERRIDE_URL} in the IN message header.
+     * If the header is not found, it will return the default address.
+     * 
+     * @param exchange
+     * @param defaultAddress
+     */
+    public static String getEffectiveAddress(Exchange exchange, String defaultAddress) {
+        String retval = exchange.getIn().getHeader(Exchange.DESTINATION_OVERRIDE_URL, String.class);
+        if (retval == null) {
+            retval = defaultAddress;
+        } else {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Client address is overridden by header '" + Exchange.DESTINATION_OVERRIDE_URL
+                          + "' to value '" + retval + "'");
+            }
+        }
+        return retval;
+    }
 }
 
 
