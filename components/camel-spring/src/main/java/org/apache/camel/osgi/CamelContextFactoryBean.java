@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
+import org.apache.camel.core.osgi.OsgiEventAdminNotifier;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,5 +60,17 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
     protected SpringCamelContext newCamelContext() {
         return new OsgiSpringCamelContext(getApplicationContext(), getBundleContext());
     }
-     
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
+        getContext().getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
+        try {
+            getClass().getClassLoader().loadClass("org.osgi.service.event.EventAdmin");
+            getContext().getManagementStrategy().addEventNotifier(new OsgiEventAdminNotifier(bundleContext));
+        } catch (Throwable t) {
+            // Ignore, if the EventAdmin package is not available, just don't use it
+            LOG.debug("EventAdmin package is not available, just don't use it");
+        }
+    }
 }

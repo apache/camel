@@ -31,6 +31,8 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
+import org.apache.camel.core.osgi.OsgiEventAdminNotifier;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
@@ -50,6 +52,8 @@ import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.spi.PackageScanFilter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
@@ -64,6 +68,7 @@ import org.osgi.service.blueprint.container.BlueprintContainer;
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<BlueprintCamelContext> {
+    private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
 
     @XmlAttribute(name = "depends-on", required = false)
     private String dependsOn;
@@ -196,6 +201,19 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     @Override
     protected void findRouteBuildersByContextScan(PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception {
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
+        getContext().getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
+        try {
+            getClass().getClassLoader().loadClass("org.osgi.service.event.EventAdmin");
+            getContext().getManagementStrategy().addEventNotifier(new OsgiEventAdminNotifier(bundleContext));
+        } catch (Throwable t) {
+            // Ignore, if the EventAdmin package is not available, just don't use it
+            LOG.debug("EventAdmin package is not available, just don't use it");
+        }
     }
 
     public String getDependsOn() {

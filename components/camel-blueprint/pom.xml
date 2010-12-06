@@ -35,6 +35,7 @@
         <camel.osgi.import>
             !org.apache.camel.blueprint.*,
             org.apache.camel.*;${camel.osgi.import.strict.version},
+            org.osgi.service.event*;resolution:=optional,
             *
         </camel.osgi.import>
         <camel.osgi.export>

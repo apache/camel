@@ -42,6 +42,7 @@
         !org.apache.camel.component.xslt,
         org.apache.camel.*;${camel.osgi.import.strict.version},
         org.osgi.framework;version="[1.3,2)",
+        org.osgi.service.event;resolution:=optional,
         org.springframework.osgi.*;version="[1.2,2)",
         org.springframework.*;version="[2.5,4)",
         *
