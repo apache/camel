@@ -98,9 +98,7 @@ public class CamelMockBundle extends MockBundle {
             return super.findEntries(path, filePattern, recurse);
         }
     }
-    
-    
-    
+
     public Class loadClass(String name) throws ClassNotFoundException {
         if (isLoadableClass(name)) {
             return super.loadClass(name);

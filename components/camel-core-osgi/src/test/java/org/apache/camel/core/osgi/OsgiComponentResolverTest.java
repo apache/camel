@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class OsgiComponentResolverTest extends CamelOsgiTestSupport {

@@ -21,7 +21,6 @@ import java.io.IOException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Language;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class OsgiLanguageResolverTest extends CamelOsgiTestSupport {

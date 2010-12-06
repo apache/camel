@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.core.osgi.test.MyService;
-import org.apache.camel.impl.osgi.Activator;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.Language;

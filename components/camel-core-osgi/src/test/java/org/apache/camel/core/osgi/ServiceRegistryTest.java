@@ -19,7 +19,6 @@ package org.apache.camel.core.osgi;
 import org.apache.camel.core.osgi.test.MyService;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
-import org.osgi.application.ApplicationContext;
 
 public class ServiceRegistryTest extends CamelOsgiTestSupport {
 
@@ -38,6 +37,5 @@ public class ServiceRegistryTest extends CamelOsgiTestSupport {
         assertNotNull("MyService should not be null", service);
         context.stop();
     }
-    
-   
+
 }
