@@ -27,7 +27,6 @@ import javax.naming.InitialContext;
 import com.google.inject.Binding;
 import com.google.inject.Inject;
 
-import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
@@ -56,7 +55,6 @@ public class GuiceCamelContext extends DefaultCamelContext {
 
     @Inject
     public GuiceCamelContext(com.google.inject.Injector injector) {
-        disableJMX();
         this.injector = injector;
     }
 

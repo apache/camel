@@ -33,6 +33,7 @@
 
   <modules>
     <module>test-bundles</module>
+    <module>camel-itest-standalone</module>
     <module>camel-itest</module>
     <module>camel-itest-spring-2.0</module>
     <module>camel-itest-spring-2.5</module>
