@@ -27,12 +27,14 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.aries.blueprint.ExtendedBlueprintContainer;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiEventAdminNotifier;
+import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
@@ -197,6 +199,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     @Override
     protected void findRouteBuildersByPackageScan(String[] packages, PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception {
+        // add filter to class resolver which then will filter
+        getContext().getPackageScanClassResolver().addFilter(filter);
+        ClassLoader classLoader = new BundleDelegatingClassLoader(((ExtendedBlueprintContainer) blueprintContainer).getBundleContext().getBundle());
+        PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(getContext(), packages, classLoader,
+                                                                                 /*getBeanPostProcessor(),*/ getContext().getPackageScanClassResolver());
+        finder.appendBuilders(builders);
+
+        // and remove the filter
+        getContext().getPackageScanClassResolver().removeFilter(filter);
     }
 
     @Override

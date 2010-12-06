@@ -39,9 +39,7 @@ import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
@@ -98,6 +96,22 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
         getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle3)", 5000);
     }
 
+    @Test
+    public void testRouteWithPackage() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle4").start();
+        getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle4)", 5000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle4)", 5000);
+        assertEquals(1, ctx.getRoutes().size());
+    }
+
+    @Test
+    public void testRouteWithPackageScan() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle5").start();
+        getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle5)", 5000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle5)", 5000);
+        assertEquals(1, ctx.getRoutes().size());
+    }
+
     @Before
     public void setUp() throws Exception {
     }
@@ -126,6 +140,18 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
                     .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle3")
                     .build()).noStart(),
 
+            bundle(newBundle()
+                    .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-4.xml"))
+                    .add(TestRouteBuilder.class)
+                    .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle4")
+                    .build(withBnd())).noStart(),
+
+            bundle(newBundle()
+                    .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-5.xml"))
+                    .add(TestRouteBuilder.class)
+                    .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle5")
+                    .build(withBnd())).noStart(),
+
             // install the spring dm profile
             profile("spring.dm").version("1.2.0"),
             // this is how you set the default log level when using pax logging (logProfile)
@@ -143,6 +169,8 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
                           "camel-core", "camel-blueprint", "camel-test", "camel-mail", "camel-jaxb"),
 
             workingDirectory("target/paxrunner/"),
+
+            //vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
 
             //felix(),
             equinox());
