@@ -56,6 +56,7 @@ public class GuiceCamelContext extends DefaultCamelContext {
 
     @Inject
     public GuiceCamelContext(com.google.inject.Injector injector) {
+        disableJMX();
         this.injector = injector;
     }
 
