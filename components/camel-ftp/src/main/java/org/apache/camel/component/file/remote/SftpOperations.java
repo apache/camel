@@ -267,6 +267,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
+        // must normalize directory first
+        directory = endpoint.getConfiguration().normalizePath(directory);
+
         if (LOG.isTraceEnabled()) {
             LOG.trace("buildDirectory(" + directory + "," + absolute + ")");
         }
@@ -318,14 +321,16 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         boolean success = false;
         for (String dir : dirs) {
             sb.append(dir).append('/');
-            String directory = sb.toString();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Trying to build remote directory by chunk: " + directory);
-            }
+            // must normalize the directory name
+            String directory = endpoint.getConfiguration().normalizePath(sb.toString());
 
-            // do not try to build root / folder
-            if (!directory.equals("/")) {
+            // do not try to build root folder (/ or \)
+            if (!(directory.equals("/") || directory.equals("\\"))) {
                 try {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Trying to build remote directory by chunk: " + directory);
+                    }
+
                     channel.mkdir(directory);
                     success = true;
                 } catch (SftpException e) {

@@ -237,6 +237,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
+        // must normalize directory first
+        directory = endpoint.getConfiguration().normalizePath(directory);
+
         if (log.isTraceEnabled()) {
             log.trace("buildDirectory(" + directory + ")");
         }
@@ -689,10 +692,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         boolean success = false;
         for (String dir : dirs) {
             sb.append(dir).append('/');
-            String directory = sb.toString();
+            // must normalize the directory name
+            String directory = endpoint.getConfiguration().normalizePath(sb.toString());
 
-            // do not try to build root / folder
-            if (!directory.equals("/")) {
+            // do not try to build root folder (/ or \)
+            if (!(directory.equals("/") || directory.equals("\\"))) {
                 if (log.isTraceEnabled()) {
                     log.trace("Trying to build remote directory by chunk: " + directory);
                 }
