@@ -168,6 +168,8 @@ public final class ExchangeHelper {
      * @param handover whether the on completion callbacks should be handed over to the new copy.
      */
     public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover) {
+        String id = exchange.getExchangeId();
+
         Exchange copy = exchange.copy();
         // do not share the unit of work
         copy.setUnitOfWork(null);
@@ -177,7 +179,23 @@ public final class ExchangeHelper {
             uow.handoverSynchronization(copy);
         }
         // set a correlation id so we can track back the original exchange
-        copy.setProperty(Exchange.CORRELATION_ID, exchange.getExchangeId());
+        copy.setProperty(Exchange.CORRELATION_ID, id);
+        return copy;
+    }
+
+    /**
+     * Creates a new instance and copies from the current message exchange so that it can be
+     * forwarded to another destination as a new instance.
+     *
+     * @param exchange original copy of the exchange
+     * @param preserveExchangeId whether or not the exchange id should be preserved
+     * @return the copy
+     */
+    public static Exchange createCopy(Exchange exchange, boolean preserveExchangeId) {
+        Exchange copy = exchange.copy();
+        if (preserveExchangeId) {
+            copy.setExchangeId(exchange.getExchangeId());
+        }
         return copy;
     }
 
