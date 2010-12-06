@@ -162,6 +162,16 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("Claus", name);
     }
 
+    public void testSetProperty() throws Exception {
+        ExampleBean bean = new ExampleBean();
+        bean.setId("123");
+        bean.setName("Claus");
+        bean.setPrice(10.0);
+
+        IntrospectionSupport.setProperty(bean, "name", "James");
+        assertEquals("James", bean.getName());
+    }
+
     public void testAnotherGetProperty() throws Exception {
         AnotherExampleBean bean = new AnotherExampleBean();
         bean.setName("Claus");
@@ -181,7 +191,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals(Boolean.TRUE, IntrospectionSupport.getProperty(bean, "little"));
     }
 
-    public void testGetPropertyLocaleIndependend() throws Exception {
+    public void testGetPropertyLocaleIndependent() throws Exception {
         Locale oldLocale = Locale.getDefault();
         Locale.setDefault(new Locale("tr", "TR"));
 
@@ -210,6 +220,29 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
         Method name = IntrospectionSupport.getPropertyGetter(ExampleBean.class, "name");
         assertEquals("getName", name.getName());
+
+        try {
+            IntrospectionSupport.getPropertyGetter(ExampleBean.class, "xxx");
+            fail("Should have thrown exception");
+        } catch (NoSuchMethodException e) {
+            assertEquals("org.apache.camel.util.jndi.ExampleBean.getXxx()", e.getMessage());
+        }
+    }
+
+    public void testGetPropertySetter() throws Exception {
+        ExampleBean bean = new ExampleBean();
+        bean.setName("Claus");
+        bean.setPrice(10.0);
+
+        Method name = IntrospectionSupport.getPropertySetter(ExampleBean.class, "name");
+        assertEquals("setName", name.getName());
+
+        try {
+            IntrospectionSupport.getPropertySetter(ExampleBean.class, "xxx");
+            fail("Should have thrown exception");
+        } catch (NoSuchMethodException e) {
+            assertEquals("org.apache.camel.util.jndi.ExampleBean.setXxx", e.getMessage());
+        }
     }
 
     public void testIsGetter() throws Exception {

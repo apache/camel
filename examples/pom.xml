@@ -77,14 +77,14 @@
       <repositories>
         <repository>
           <id>dynamic.repo</id>
-          <name>Repository Dynamicly Added Via the Command Line</name>
+          <name>Repository Dynamically Added Via the Command Line</name>
           <url>$remoteRepo</url>
         </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
           <id>dynamic.repo</id>
-          <name>Repository Dynamicly Added Via the Command Line</name>
+          <name>Repository Dynamically Added Via the Command Line</name>
           <url>$remoteRepo</url>
         </pluginRepository>
       </pluginRepositories>

@@ -119,17 +119,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_PROCESSOR).append(",");
-
-        if (definition.hasCustomIdAssigned()) {
-            // use id in name
-            String nodeId = definition.getId();
-            buffer.append(KEY_NAME + "=").append(ObjectName.quote(nodeId));
-        } else {
-            // create a name based on its instance
-            buffer.append(KEY_NAME + "=")
-                .append(processor.getClass().getSimpleName())
-                .append("(").append(ObjectHelper.getIdentityHashCode(processor)).append(")");
-        }
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(definition.getId()));
         return createObjectName(buffer);
     }
 

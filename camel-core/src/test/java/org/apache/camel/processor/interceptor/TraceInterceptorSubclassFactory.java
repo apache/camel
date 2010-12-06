@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.WrapProcessor;
 
 public class TraceInterceptorSubclassFactory implements TraceInterceptorFactory {
     private List<StringBuilder> eventMessages;
@@ -53,8 +54,11 @@ public class TraceInterceptorSubclassFactory implements TraceInterceptorFactory 
             super(node, target, formatter, tracer);
             this.eventMessages = eventMessages;
             this.factory = factory;
+            if (target instanceof WrapProcessor) {
+                target = ((WrapProcessor) target).getProcessor();
+            }
             while (target instanceof DelegateProcessor) {
-                target = ((org.apache.camel.management.InstrumentationProcessor) target).getProcessor();
+                target = ((DelegateProcessor) target).getProcessor();
             }
             if (target.getClass().equals(TraceTestProcessor.class)) {
                 traceThisNode = false;

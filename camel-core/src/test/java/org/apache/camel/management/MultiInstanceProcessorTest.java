@@ -66,7 +66,7 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
         assertEquals("Could not find 1 context: " + s, 1, s.size());
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
-        assertEquals("Could not find 2 processor: " + s, 2, s.size());
+        assertEquals("Could not find 3 processor: " + s, 3, s.size());
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
         assertEquals("Could not find 1 route: " + s, 1, s.size());

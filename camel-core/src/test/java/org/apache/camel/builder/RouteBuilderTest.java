@@ -194,10 +194,6 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda://a", key.getEndpointUri());
-            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Channel channel = unwrapChannel(consumer.getProcessor());
-
-            assertEquals("Should be called with my processor", myProcessor, channel.getNextProcessor());
         }
     }
 
@@ -225,12 +221,6 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda://a", key.getEndpointUri());
-
-            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Channel channel = unwrapChannel(consumer.getProcessor());
-
-            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
-            assertEquals("Should be called with my processor", myProcessor, unwrapChannel(filterProcessor.getProcessor()).getNextProcessor());
         }
     }
 

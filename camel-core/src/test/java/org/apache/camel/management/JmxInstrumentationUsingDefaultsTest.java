@@ -69,7 +69,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         assertEquals("Could not find 1 context: " + s, 1, s.size());
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
-        assertEquals("Could not find 2 processors: " + s, 2, s.size());
+        assertEquals("Could not find 1 processors: " + s, 1, s.size());
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=consumers,*"), null);
         assertEquals("Could not find 1 consumers: " + s, 1, s.size());

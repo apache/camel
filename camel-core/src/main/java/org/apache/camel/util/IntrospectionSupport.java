@@ -219,6 +219,16 @@ public final class IntrospectionSupport {
         }
     }
 
+    public static Method getPropertySetter(Class<?> type, String propertyName) throws NoSuchMethodException {
+        String name = "set" + ObjectHelper.capitalize(propertyName);
+        for (Method method : type.getMethods()) {
+            if (isSetter(method) && method.getName().equals(name)) {
+                return method;
+            }
+        }
+        throw new NoSuchMethodException(type.getCanonicalName() + "." + name);
+    }
+
     public static boolean isPropertyIsGetter(Class<?> type, String propertyName) {
         try {
             Method method = type.getMethod("is" + ObjectHelper.capitalize(propertyName));

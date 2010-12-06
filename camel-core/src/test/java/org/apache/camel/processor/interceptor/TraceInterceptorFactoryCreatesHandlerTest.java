@@ -22,7 +22,9 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.WrapProcessor;
 
 public class TraceInterceptorFactoryCreatesHandlerTest extends TracingTestBase {
 
@@ -38,8 +40,11 @@ public class TraceInterceptorFactoryCreatesHandlerTest extends TracingTestBase {
         public Processor createTraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer) {
             TraceInterceptor interceptor = new TraceInterceptor(node, target, formatter, tracer);
 
+            if (target instanceof WrapProcessor) {
+                target = ((WrapProcessor) target).getProcessor();
+            }
             while (target instanceof DelegateProcessor) {
-                target = ((org.apache.camel.management.InstrumentationProcessor) target).getProcessor();
+                target = ((DelegateProcessor) target).getProcessor();
             }
             if (traceAllNodes || !target.getClass().equals(TraceTestProcessor.class)) {
                 TraceHandlerTestHandler traceHandler = new TraceHandlerTestHandler(eventMessages);

@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Service;
+import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -83,6 +85,12 @@ public class ProcessDefinition extends OutputDefinition<ProcessDefinition> {
             ObjectHelper.notNull(ref, "ref", this);
             processor = routeContext.lookup(getRef(), Processor.class);
             ObjectHelper.notNull(processor, "registry entry called " + getRef(), this);
+        }
+
+        // ensure its wrapped in a Service so we can manage it from eg. JMX
+        // (a Processor must be a Service to be enlisted in JMX)
+        if (!(processor instanceof Service)) {
+            processor = new WrapProcessor(processor, processor);
         }
         return processor;
     }

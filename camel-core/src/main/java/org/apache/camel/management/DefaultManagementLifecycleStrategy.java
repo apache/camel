@@ -28,6 +28,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Channel;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -48,6 +49,7 @@ import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
+import org.apache.camel.management.mbean.ManagedCustomProcessor;
 import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedErrorHandler;
@@ -73,9 +75,12 @@ import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.Delayer;
+import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
+import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -84,6 +89,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAware;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -371,6 +377,11 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
     @SuppressWarnings("unchecked")
     private Object getManagedObjectForService(CamelContext context, Service service, Route route) {
+        // skip channel, UoW and dont double wrap instrumentation
+        if (service instanceof Channel || service instanceof UnitOfWork || service instanceof InstrumentationProcessor) {
+            return null;
+        }
+
         ManagedService answer = null;
 
         if (service instanceof ManagementAware) {
@@ -440,20 +451,46 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         return managedObject;
     }
 
+    @SuppressWarnings("unchecked")
     private Object createManagedObjectForProcessor(CamelContext context, Processor processor,
                                                    ProcessorDefinition definition, Route route) {
-        // skip error handlers
-        if (processor instanceof ErrorHandler) {
-            return false;
-        }
-
         ManagedProcessor answer = null;
-        if (processor instanceof Delayer) {
-            answer = new ManagedDelayer(context, (Delayer) processor, definition);
-        } else if (processor instanceof Throttler) {
-            answer = new ManagedThrottler(context, (Throttler) processor, definition);
-        } else if (processor instanceof SendProcessor) {
-            answer = new ManagedSendProcessor(context, (SendProcessor) processor, definition);
+
+        // unwrap delegates as we want the real target processor
+        Processor target = processor;
+        while (target != null) {
+
+            // skip error handlers
+            if (target instanceof ErrorHandler) {
+                return false;
+            }
+
+            // look for specialized processor which we should prefer to use
+            if (target instanceof Delayer) {
+                answer = new ManagedDelayer(context, (Delayer) target, definition);
+            } else if (target instanceof Throttler) {
+                answer = new ManagedThrottler(context, (Throttler) target, definition);
+            } else if (target instanceof SendProcessor) {
+                answer = new ManagedSendProcessor(context, (SendProcessor) target, definition);
+            } else if (target instanceof ManagementAware) {
+                Object managedObject = ((ManagementAware) target).getManagedObject(processor);
+                answer = new ManagedCustomProcessor(context, managedObject, target, definition);
+            }
+
+            if (answer != null) {
+                // break out as we found an answer
+                break;
+            }
+
+            // no answer yet, so unwrap any delegates and try again
+            if (target instanceof DelegateProcessor) {
+                target = ((DelegateProcessor) target).getProcessor();
+            } else if (target instanceof DelegateAsyncProcessor) {
+                target = ((DelegateAsyncProcessor) target).getProcessor();
+            } else {
+                // no delegate so we dont have any target to try next
+                target = null;
+            }
         }
 
         if (answer == null) {

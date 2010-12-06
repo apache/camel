@@ -32,9 +32,6 @@ import javax.management.MBeanServerFactory;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.modelmbean.InvalidTargetObjectTypeException;
-import javax.management.modelmbean.ModelMBeanInfo;
-import javax.management.modelmbean.RequiredModelMBean;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
@@ -46,8 +43,6 @@ import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
-import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 
 /**
  * Default implementation of the Camel JMX service agent
@@ -65,7 +60,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private ExecutorService executorService;
     private MBeanServer server;
     private final Set<ObjectName> mbeansRegistered = new HashSet<ObjectName>();
-    private MetadataMBeanInfoAssembler assembler;
+    private JmxMBeanAssembler assembler;
     private JMXConnectorServer cs;
 
     private Integer registryPort;
@@ -216,15 +211,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             registerMBeanWithServer(obj, name, forceRegistration);
         } catch (NotCompliantMBeanException e) {
             // If this is not a "normal" MBean, then try to deploy it using JMX annotations
-            ModelMBeanInfo mbi;
-            mbi = assembler.getMBeanInfo(obj, name.toString());
-            RequiredModelMBean mbean = (RequiredModelMBean)server.instantiate(RequiredModelMBean.class.getName());
-            mbean.setModelMBeanInfo(mbi);
-            try {
-                mbean.setManagedResource(obj, "ObjectReference");
-            } catch (InvalidTargetObjectTypeException itotex) {
-                throw new JMException(itotex.getMessage());
-            }
+            Object mbean = assembler.assemble(obj, name);
+            // and register the mbean
             registerMBeanWithServer(mbean, name, forceRegistration);
         }
     }
@@ -245,14 +233,14 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
-        assembler = new MetadataMBeanInfoAssembler();
-        assembler.setAttributeSource(new AnnotationJmxAttributeSource());
 
         // create mbean server if is has not be injected.
         if (server == null) {
             finalizeSettings();
             createMBeanServer();
         }
+
+        assembler = new JmxMBeanAssembler(server);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Starting JMX agent on server: " + getMBeanServer());
