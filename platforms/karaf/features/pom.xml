@@ -92,7 +92,7 @@
       <juel-bundle-version>2.1.2_1</juel-bundle-version>
       <junit-bundle-version>4.7_1</junit-bundle-version>
       <jsmpp-bundle-version>2.1.0_1</jsmpp-bundle-version>
-      <lucene-bundle-version>3.0.1_1</lucene-bundle-version>
+      <lucene-bundle-version>3.0.3_1-SNAPSHOT</lucene-bundle-version>
       <mvel-bundle-version>2.0.8_4</mvel-bundle-version>
       <mina-bundle-version>1.1.7_3</mina-bundle-version>
       <neethi-bundle-version>2.0.4_2</neethi-bundle-version>
