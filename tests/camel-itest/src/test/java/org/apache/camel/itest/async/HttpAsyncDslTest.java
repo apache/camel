@@ -112,7 +112,7 @@ public class HttpAsyncDslTest extends CamelTestSupport {
                     // use a pool of 20 threads for the point forward
                     .threads(20)
                     // do some CPU heavy processing of the message (we simulate and delay just 500 ms)
-                    .unmarshal(mySecureDataFormat).delay(500).to("bean:handleOrder").to("mock:order");
+                    .unmarshal(mySecureDataFormat).delay(1000).to("bean:handleOrder").to("mock:order");
                 // END SNIPPET: e1
             }
         };
