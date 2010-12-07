@@ -142,6 +142,14 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
         assertEquals("direct://start", ctx.getRoutes().get(0).getEndpoint().getEndpointUri());
     }
 
+    @Test
+    public void testRouteBuilderRef() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle9").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle9)", 5000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle9)", 5000);
+        assertEquals(1, ctx.getRoutes().size());
+    }
+
     @Before
     public void setUp() throws Exception {
     }
@@ -201,6 +209,12 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle8")
                         .build()).noStart(),
+
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-9.xml"))
+                        .add(TestRouteBuilder.class)
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle9")
+                        .build(withBnd())).noStart(),
 
                 // install the spring dm profile
                 profile("spring.dm").version("1.2.0"),
