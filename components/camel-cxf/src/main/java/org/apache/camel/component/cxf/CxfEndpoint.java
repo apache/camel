@@ -98,8 +98,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean loggingFeatureEnabled;
     private String address;
     private boolean mtomEnabled;
-    private int maxClientCacheSize = 10;
-    
+
     public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
         super(remaining, cxfComponent);
         setAddress(remaining);        
@@ -247,12 +246,12 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     /**
      * Populate a client factory bean
      */
-    protected void setupClientFactoryBean(ClientProxyFactoryBean factoryBean, Class<?> cls, String serviceAddress) {       
+    protected void setupClientFactoryBean(ClientProxyFactoryBean factoryBean, Class<?> cls) {       
         // service class
         factoryBean.setServiceClass(cls);
         
         // address
-        factoryBean.setAddress(serviceAddress);
+        factoryBean.setAddress(getAddress());
 
         // wsdl url
         if (getWsdlURL() != null) {
@@ -290,9 +289,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         
     }
 
-    protected void setupClientFactoryBean(ClientFactoryBean factoryBean, String serviceAddress) {       
+    protected void setupClientFactoryBean(ClientFactoryBean factoryBean) {       
         // address
-        factoryBean.setAddress(serviceAddress);
+        factoryBean.setAddress(getAddress());
 
         // wsdl url
         if (getWsdlURL() != null) {
@@ -336,13 +335,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * Create a CXF client object
      */
     Client createClient() throws Exception {
-        return createClient(getAddress());
-    }
-    
-    /**
-     * Create a CXF client object
-     */
-    Client createClient(String serviceAddress) throws Exception {
 
         // get service class
         if (getDataFormat().equals(DataFormat.POJO)) { 
@@ -355,14 +347,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             // create client factory bean
             ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
             // setup client factory bean
-            setupClientFactoryBean(factoryBean, cls, serviceAddress);
+            setupClientFactoryBean(factoryBean, cls);
             return ((ClientProxy)Proxy.getInvocationHandler(factoryBean.create())).getClient();
         } else {            
             checkName(portName, "endpoint/port name");
             checkName(serviceName, "service name");
             ClientFactoryBean factoryBean = createClientFactoryBean();
             // setup client factory bean
-            setupClientFactoryBean(factoryBean, serviceAddress);
+            setupClientFactoryBean(factoryBean);
             return factoryBean.create();
         }
         
@@ -588,20 +580,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public boolean isMtomEnabled() {
         return mtomEnabled;
-    }
-
-    /**
-     * @param maxClientCacheSize the maxClientCacheSize to set
-     */
-    public void setMaxClientCacheSize(int maxClientCacheSize) {
-        this.maxClientCacheSize = maxClientCacheSize;
-    }
-
-    /**
-     * @return the maxClientCacheSize
-     */
-    public int getMaxClientCacheSize() {
-        return maxClientCacheSize;
     }
 
     /**

@@ -92,6 +92,16 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange, 
                 requestContext);
         
+        String overrideAddress = camelExchange.getIn().getHeader(Exchange.DESTINATION_OVERRIDE_URL, String.class);
+
+        if (overrideAddress != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Client address is overridden by header '" + Exchange.DESTINATION_OVERRIDE_URL
+                          + "' to value '" + overrideAddress + "'");
+            }
+            requestContext.put(Message.ENDPOINT_ADDRESS, overrideAddress);
+        }
+        
         // propagate attachments
         Set<Attachment> attachments = null;
         boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));

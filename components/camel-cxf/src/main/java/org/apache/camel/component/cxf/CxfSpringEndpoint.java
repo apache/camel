@@ -103,7 +103,7 @@ public class CxfSpringEndpoint extends CxfEndpoint {
      * Create a CXF Client
      */
     @Override
-    Client createClient(String serviceAddress) throws Exception {
+    Client createClient() throws Exception {
         
         // get service class
         Class<?> cls = getSEIClass();    
@@ -120,7 +120,7 @@ public class CxfSpringEndpoint extends CxfEndpoint {
             configure(factoryBean);
 
             // setup client factory bean
-            setupClientFactoryBean(factoryBean, cls, serviceAddress);
+            setupClientFactoryBean(factoryBean, cls);
 
             // fill in values that have not been filled.
             QName serviceQName = null;
@@ -145,7 +145,7 @@ public class CxfSpringEndpoint extends CxfEndpoint {
             configure(factoryBean);
             
             // setup client factory bean
-            setupClientFactoryBean(factoryBean, serviceAddress);
+            setupClientFactoryBean(factoryBean);
             
             // fill in values that have not been filled.
             QName serviceQName = null;
