@@ -33,7 +33,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
-import org.apache.camel.component.seda.CollectionProducer;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.util.CamelContextHelper;

@@ -39,7 +39,7 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
  * @version $Revision$
  */
 public class JmxMBeanAssembler {
-    private final static Log LOG = LogFactory.getLog(JmxMBeanAssembler.class);
+    private static final Log LOG = LogFactory.getLog(JmxMBeanAssembler.class);
     private final MetadataMBeanInfoAssembler assembler;
     private final MBeanServer server;
 
@@ -55,9 +55,9 @@ public class JmxMBeanAssembler {
         // prefer to use the managed instance if it has been annotated with Spring JMX annotations
         if (obj instanceof ManagedInstance) {
             Object custom = ((ManagedInstance) obj).getInstance();
-            if (ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Assembling MBeanInfo for: " + name.toString() + " from custom @ManagedResource object: " + custom);
+            if (custom != null && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Assembling MBeanInfo for: " + name.toString() + " from custom @ManagedResource object: " + custom);
                 }
                 // get the mbean info from the custom managed object
                 mbi = assembler.getMBeanInfo(custom, name.toString());
@@ -68,8 +68,8 @@ public class JmxMBeanAssembler {
 
         if (mbi == null) {
             // use the default provided mbean which has been annotated with Spring JMX annotations
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Assembling MBeanInfo for: " + name.toString() + " from @ManagedResource object: " + obj);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Assembling MBeanInfo for: " + name.toString() + " from @ManagedResource object: " + obj);
             }
             mbi = assembler.getMBeanInfo(obj, name.toString());
         }

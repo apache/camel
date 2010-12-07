@@ -39,12 +39,14 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
+import org.apache.camel.management.mbean.ManagedBeanProcessor;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
@@ -470,6 +472,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
                 answer = new ManagedThrottler(context, (Throttler) target, definition);
             } else if (target instanceof SendProcessor) {
                 answer = new ManagedSendProcessor(context, (SendProcessor) target, definition);
+            } else if (target instanceof BeanProcessor) {
+                answer = new ManagedBeanProcessor(context, (BeanProcessor) target, definition);
             } else if (target instanceof ManagementAware) {
                 return ((ManagementAware) target).getManagedObject(processor);
             }

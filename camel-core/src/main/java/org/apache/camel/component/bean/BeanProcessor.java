@@ -211,6 +211,10 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         return beanHolder.getProcessor();
     }
 
+    public Object getBean() {
+        return beanHolder.getBean();
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 

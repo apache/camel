@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SplitterThrowExceptionInExpressionTest extends ContextTestSupport {
 
-    public void testSplitterAndVerifyMock () throws Exception {
+    public void testSplitterAndVerifyMock() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:error2").expectedMessageCount(1);
         getMockEndpoint("mock:split").expectedMessageCount(0);
