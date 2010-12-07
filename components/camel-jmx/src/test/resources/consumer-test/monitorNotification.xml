@@ -20,7 +20,6 @@
     <message/>
     <sequence>0</sequence>
     <type>jmx.monitor.counter.threshold</type>
-    <derivedGauge>2</derivedGauge>
     <observedAttribute>MonitorNumber</observedAttribute>
     <observedObject>TestDomain:name=simpleBean</observedObject>
     <trigger>1</trigger>

@@ -28,5 +28,6 @@
     
     <xsl:template match="jmx:timestamp"/>
     <xsl:template match="jmx:dateTime"/>
-    
+    <xsl:template match="jmx:derivedGauge"/>
+
 </xsl:stylesheet>
