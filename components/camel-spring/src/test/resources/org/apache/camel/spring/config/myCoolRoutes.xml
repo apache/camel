@@ -15,6 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+<!-- START SNIPPET: e1 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
@@ -22,9 +23,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: e1 -->
     <!-- this is an included XML file where we only the the routeContext -->
-
     <routeContext id="myCoolRoutes" xmlns="http://camel.apache.org/schema/spring">
         <!-- we can have a route -->
         <route id="cool">
@@ -37,6 +36,6 @@
             <to uri="mock:bar"/>
         </route>
     </routeContext>
-    <!-- END SNIPPET: e1 -->
 
 </beans>
+<!-- END SNIPPET: e1 -->
