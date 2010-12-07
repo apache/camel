@@ -32,7 +32,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * @version $Revision$
  */
 @ManagedResource(description = "Managed Processor")
-public class ManagedProcessor extends ManagedPerformanceCounter {
+public class ManagedProcessor extends ManagedPerformanceCounter implements ManagedInstance {
 
     private final CamelContext context;
     private final Processor processor;
@@ -120,4 +120,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter {
         ServiceHelper.stopService(getProcessor());
     }
 
+    public Object getInstance() {
+        return processor;
+    }
 }

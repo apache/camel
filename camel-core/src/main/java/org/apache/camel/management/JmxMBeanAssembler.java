@@ -23,8 +23,12 @@ import javax.management.modelmbean.InvalidTargetObjectTypeException;
 import javax.management.modelmbean.ModelMBeanInfo;
 import javax.management.modelmbean.RequiredModelMBean;
 
-import org.apache.camel.management.mbean.ManagedCustomProcessor;
+import org.apache.camel.management.mbean.ManagedInstance;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 
 /**
@@ -35,7 +39,7 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
  * @version $Revision$
  */
 public class JmxMBeanAssembler {
-
+    private final static Log LOG = LogFactory.getLog(JmxMBeanAssembler.class);
     private final MetadataMBeanInfoAssembler assembler;
     private final MBeanServer server;
 
@@ -46,15 +50,27 @@ public class JmxMBeanAssembler {
     }
 
     public RequiredModelMBean assemble(Object obj, ObjectName name) throws JMException {
-        ModelMBeanInfo mbi;
+        ModelMBeanInfo mbi = null;
 
-        if (obj instanceof ManagedCustomProcessor) {
-            Object custom = ((ManagedCustomProcessor) obj).getManagedObject();
-            // get the mbean info from the custom managed object
-            mbi = assembler.getMBeanInfo(custom, name.toString());
-            // and let the custom object be registered in JMX
-            obj = custom;
-        } else {
+        // prefer to use the managed instance if it has been annotated with Spring JMX annotations
+        if (obj instanceof ManagedInstance) {
+            Object custom = ((ManagedInstance) obj).getInstance();
+            if (ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Assembling MBeanInfo for: " + name.toString() + " from custom @ManagedResource object: " + custom);
+                }
+                // get the mbean info from the custom managed object
+                mbi = assembler.getMBeanInfo(custom, name.toString());
+                // and let the custom object be registered in JMX
+                obj = custom;
+            }
+        }
+
+        if (mbi == null) {
+            // use the default provided mbean which has been annotated with Spring JMX annotations
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Assembling MBeanInfo for: " + name.toString() + " from @ManagedResource object: " + obj);
+            }
             mbi = assembler.getMBeanInfo(obj, name.toString());
         }
 
@@ -63,8 +79,8 @@ public class JmxMBeanAssembler {
 
         try {
             mbean.setManagedResource(obj, "ObjectReference");
-        } catch (InvalidTargetObjectTypeException itotex) {
-            throw new JMException(itotex.getMessage());
+        } catch (InvalidTargetObjectTypeException e) {
+            throw new JMException(e.getMessage());
         }
 
         return mbean;

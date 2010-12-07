@@ -28,10 +28,9 @@ import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "Managed Service")
-public class ManagedService {
-
-    private CamelContext context;
-    private Service service;
+public class ManagedService implements ManagedInstance {
+    private final CamelContext context;
+    private final Service service;
     private Route route;
 
     public ManagedService(CamelContext context, Service service) {
@@ -145,4 +144,7 @@ public class ManagedService {
         }
     }
 
+    public Object getInstance() {
+        return service;
+    }
 }

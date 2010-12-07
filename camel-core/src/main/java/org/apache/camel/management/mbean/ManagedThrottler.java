@@ -27,8 +27,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  */
 @ManagedResource(description = "Managed Throttler")
 public class ManagedThrottler extends ManagedProcessor {
-
-    private Throttler throttler;
+    private final Throttler throttler;
 
     public ManagedThrottler(CamelContext context, Throttler throttler, ProcessorDefinition<?> definition) {
         super(context, throttler, definition);

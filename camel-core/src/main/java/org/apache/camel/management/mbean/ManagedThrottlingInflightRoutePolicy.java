@@ -27,7 +27,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  */
 @ManagedResource(description = "Managed ThrottlingInflightRoutePolicy")
 public class ManagedThrottlingInflightRoutePolicy extends ManagedService {
-
     private final ThrottlingInflightRoutePolicy policy;
 
     public ManagedThrottlingInflightRoutePolicy(CamelContext context, ThrottlingInflightRoutePolicy policy) {

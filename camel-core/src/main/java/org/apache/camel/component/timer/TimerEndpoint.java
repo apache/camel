@@ -25,7 +25,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.ManagementAware;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
@@ -35,7 +34,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * @version $Revision$
  */
 @ManagedResource(description = "Managed Timer Endpoint")
-public class TimerEndpoint extends DefaultEndpoint implements Service, ManagementAware<TimerEndpoint> {
+public class TimerEndpoint extends DefaultEndpoint implements Service {
     private String timerName;
     private Date time;
     private long period = 1000;
@@ -67,10 +66,6 @@ public class TimerEndpoint extends DefaultEndpoint implements Service, Managemen
 
     public Consumer createConsumer(Processor processor) throws Exception {
         return new TimerConsumer(this, processor);
-    }
-
-    public Object getManagedObject(TimerEndpoint object) {
-        return this;
     }
 
     public void start() throws Exception {

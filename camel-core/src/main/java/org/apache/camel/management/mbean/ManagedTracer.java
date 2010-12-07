@@ -29,7 +29,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  */
 @ManagedResource(description = "Managed Tracer")
 public class ManagedTracer {
-
     private final CamelContext camelContext;
     private final Tracer tracer;
 

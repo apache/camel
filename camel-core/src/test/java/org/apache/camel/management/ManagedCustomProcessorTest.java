@@ -25,7 +25,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spi.ManagementAware;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
@@ -84,15 +83,9 @@ public class ManagedCustomProcessorTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
-    @ManagedResource
-    public static class MyCustomProcessor implements ManagementAware<Processor>, Processor {
+    @ManagedResource("My Managed Component")
+    public static class MyCustomProcessor implements Processor {
         private String foo = "hey";
-
-        public Object getManagedObject(Processor object) {
-            // just return this as we use Spring JMX annotations to define which attributes/operations
-            // to be enlisted in JMX
-            return this;
-        }
 
         @ManagedAttribute
         public String getFoo() {

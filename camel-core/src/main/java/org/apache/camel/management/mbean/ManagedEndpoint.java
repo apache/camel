@@ -22,9 +22,8 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "Managed Endpoint")
-public class ManagedEndpoint {
-
-    private Endpoint endpoint;
+public class ManagedEndpoint implements ManagedInstance {
+    private final Endpoint endpoint;
 
     public ManagedEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
@@ -51,5 +50,9 @@ public class ManagedEndpoint {
     @ManagedAttribute(description = "Singleton")
     public boolean isSingleton() {
         return endpoint.isSingleton();
+    }
+
+    public Object getInstance() {
+        return endpoint;
     }
 }

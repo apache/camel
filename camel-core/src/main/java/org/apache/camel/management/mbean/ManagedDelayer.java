@@ -30,8 +30,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  */
 @ManagedResource(description = "Managed Delayer")
 public class ManagedDelayer extends ManagedProcessor {
-
-    private Delayer delayer;
+    private final Delayer delayer;
 
     public ManagedDelayer(CamelContext context, Delayer delayer, ProcessorDefinition<?> definition) {
         super(context, delayer, definition);

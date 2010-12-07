@@ -26,7 +26,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  */
 @ManagedResource(description = "Managed ProducerCache")
 public class ManagedProducerCache extends ManagedService {
-
     private final ProducerCache producerCache;
 
     public ManagedProducerCache(CamelContext context, ProducerCache producerCache) {

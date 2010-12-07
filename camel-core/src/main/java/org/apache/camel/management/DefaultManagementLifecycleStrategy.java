@@ -49,7 +49,6 @@ import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
-import org.apache.camel.management.mbean.ManagedCustomProcessor;
 import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedErrorHandler;
@@ -80,7 +79,6 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
-import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -473,8 +471,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             } else if (target instanceof SendProcessor) {
                 answer = new ManagedSendProcessor(context, (SendProcessor) target, definition);
             } else if (target instanceof ManagementAware) {
-                Object managedObject = ((ManagementAware) target).getManagedObject(processor);
-                answer = new ManagedCustomProcessor(context, managedObject, target, definition);
+                return ((ManagementAware) target).getManagedObject(processor);
             }
 
             if (answer != null) {
@@ -489,13 +486,13 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
                 target = ((DelegateAsyncProcessor) target).getProcessor();
             } else {
                 // no delegate so we dont have any target to try next
-                target = null;
+                break;
             }
         }
 
         if (answer == null) {
             // fallback to a generic processor
-            answer = new ManagedProcessor(context, processor, definition);
+            answer = new ManagedProcessor(context, target, definition);
         }
 
         answer.setRoute(route);

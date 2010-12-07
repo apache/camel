@@ -24,7 +24,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "Managed Counter")
 public abstract class ManagedCounter {
-
     protected Statistic exchangesTotal;
 
     public void init(ManagementStrategy strategy) {

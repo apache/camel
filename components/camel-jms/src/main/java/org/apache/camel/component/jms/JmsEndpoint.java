@@ -44,7 +44,6 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.spi.ManagementAware;
 import org.apache.camel.util.ServiceHelper;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
@@ -61,7 +60,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * @version $Revision:520964 $
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, ManagementAware<JmsEndpoint>, MultipleConsumersSupport, Service {
+public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean pubSubDomain;
     private JmsBinding binding;
@@ -215,10 +214,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      */
     public JmsOperations createInOutTemplate() {
         return configuration.createInOutTemplate(this, pubSubDomain, destinationName, configuration.getRequestTimeout());
-    }
-
-    public Object getManagedObject(JmsEndpoint endpoint) {
-        return this;
     }
 
     public boolean isMultipleConsumersSupported() {

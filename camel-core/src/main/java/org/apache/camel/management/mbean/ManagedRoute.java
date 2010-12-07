@@ -31,11 +31,10 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "Managed Route")
 public class ManagedRoute extends ManagedPerformanceCounter {
-
     public static final String VALUE_UNKNOWN = "Unknown";
-    protected Route route;
-    protected String description;
-    protected CamelContext context;
+    protected final Route route;
+    protected final String description;
+    protected final CamelContext context;
 
     public ManagedRoute(CamelContext context, Route route) {
         this.route = route;

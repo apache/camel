@@ -23,11 +23,15 @@ package org.apache.camel.spi;
  * For example various Camel components will implement this interface to provide
  * management to their endpoints and consumers.
  * <p/>
- * Camel will by default use generic management objects if objects do not implement
- * this interface. These defaults are located in <tt>org.apache.camel.management.mbean</tt>.
+ * A popular choice is to use Spring JMX annotations to decorate your object to pinpoint
+ * the JMX attributes and operations. If you do this then you do <b>not</b> need to use
+ * this interface. This interface is only if you need to be in full control of the MBean
+ * and therefore can return a {@link javax.management.MBeanInfo} object.
  *
  * @version $Revision$
+ * @deprecated use Spring JMX annotations
  */
+@Deprecated
 public interface ManagementAware<T> {
 
     /**

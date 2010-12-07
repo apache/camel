@@ -1003,8 +1003,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Returns true if the given collection of annotations matches the given
-     * type
+     * Returns true if the given collection of annotations matches the given type
      */
     public static boolean hasAnnotation(Annotation[] annotations, Class<?> type) {
         for (Annotation annotation : annotations) {

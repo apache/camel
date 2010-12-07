@@ -27,7 +27,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "PerformanceCounter")
 public abstract class ManagedPerformanceCounter extends ManagedCounter implements PerformanceCounter {
-
     private Statistic exchangesCompleted;
     private Statistic exchangesFailed;
     private Statistic minProcessingTime;

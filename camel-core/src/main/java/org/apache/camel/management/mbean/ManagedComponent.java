@@ -27,10 +27,9 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * @version $Revision$
  */
 @ManagedResource(description = "Managed Component")
-public class ManagedComponent {
-
-    private Component component;
-    private String name;
+public class ManagedComponent implements ManagedInstance {
+    private final Component component;
+    private final String name;
 
     public ManagedComponent(String name, Component component) {
         this.name = name;
@@ -71,4 +70,7 @@ public class ManagedComponent {
         return component.getCamelContext().getName();
     }
 
+    public Object getInstance() {
+        return component;
+    }
 }

@@ -16,27 +16,16 @@
  */
 package org.apache.camel.management.mbean;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorDefinition;
-
 /**
- * A managed custom processor is a processor which implements the {@link org.apache.camel.spi.ManagementAware}
- * interface.
- *
  * @version $Revision$
  */
-public class ManagedCustomProcessor extends ManagedProcessor {
-    private final Object managedObject;
+public interface ManagedInstance {
 
-    public ManagedCustomProcessor(CamelContext context, Object managedObject, Processor processor,
-                                  ProcessorDefinition<?> definition) {
-        super(context, processor, definition);
-        this.managedObject = managedObject;
-    }
-
-    public Object getManagedObject() {
-        return managedObject;
-    }
+    /**
+     * Gets the resource which is being managed.
+     *
+     * @return the resource, such as a {@link org.apache.camel.Processor}, {@link org.apache.camel.Consumer} etc.
+     */
+    Object getInstance();
 
 }

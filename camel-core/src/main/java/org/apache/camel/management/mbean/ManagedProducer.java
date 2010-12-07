@@ -26,8 +26,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  */
 @ManagedResource(description = "Managed Producer")
 public class ManagedProducer extends ManagedService {
-
-    private Producer producer;
+    private final Producer producer;
 
     public ManagedProducer(CamelContext context, Producer producer) {
         super(context, producer);

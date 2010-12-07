@@ -56,12 +56,6 @@ public class JmsTemporaryTopicEndpoint extends JmsEndpoint implements Destinatio
         return true;
     }
     
-    @Override
-    public Object getManagedObject(JmsEndpoint object) {
-        // We don't want to manage this temporary object
-        return null;
-    }
-
     public synchronized Destination getJmsDestination(Session session) throws JMSException {
         if (jmsDestination == null) {
             jmsDestination = createJmsDestination(session);
