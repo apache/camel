@@ -469,6 +469,11 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-quartz/${pom.version}</bundle>
   </feature>
+  <feature name='camel-quickfix' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-spring</feature>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quickfix/${quickfix-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-quickfix/${pom.version}</bundle>
+  </feature>
   <feature name='camel-restlet' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-restlet/${pom.version}</bundle>
