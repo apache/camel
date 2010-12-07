@@ -113,7 +113,7 @@
     <pax-tiny-bundle-version>1.2.0</pax-tiny-bundle-version>
     <protobuf-version>2.3.0</protobuf-version>
     <qpid-version>0.5.0</qpid-version>
-    <quartz-version>1.8.3</quartz-version>
+    <quartz-version>1.8.4</quartz-version>
     <quickfix-version>1.5.0</quickfix-version>
     <restlet-version>1.1.10</restlet-version>
     <rome-version>1.0</rome-version>

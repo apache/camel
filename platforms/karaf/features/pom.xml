@@ -103,7 +103,7 @@
       <osgi.compendium.version>4.2.0</osgi.compendium.version>
       <protobuf-java-bundle-version>2.3.0_1</protobuf-java-bundle-version>
       <pax.web.version>0.7.2</pax.web.version>
-      <quartz-bundle-version>1.8.3_1</quartz-bundle-version>
+      <quartz-bundle-version>1.8.4_1-SNAPSHOT</quartz-bundle-version>
       <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
       <rome-bundle-version>1.0_1</rome-bundle-version>
       <saxon-bundle-version>9.1.0.1_3</saxon-bundle-version>
