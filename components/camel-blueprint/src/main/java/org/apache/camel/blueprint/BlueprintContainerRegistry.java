@@ -16,11 +16,14 @@
  */
 package org.apache.camel.blueprint;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.apache.camel.spi.Registry;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.osgi.service.blueprint.reflect.BeanMetadata;
+import org.osgi.service.blueprint.reflect.ComponentMetadata;
+import org.osgi.service.blueprint.reflect.ReferenceMetadata;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class BlueprintContainerRegistry implements Registry {
 
@@ -35,11 +38,28 @@ public class BlueprintContainerRegistry implements Registry {
     }
 
     public <T> T lookup(String name, Class<T> type) {
-        return null;
+        return type.cast(blueprintContainer.getComponentInstance(name));
     }
 
     public <T> Map<String, T> lookupByType(Class<T> type) {
-        return Collections.emptyMap();
+        return lookupByType(blueprintContainer, type);
+    }
+
+    public static <T> Map<String, T> lookupByType(BlueprintContainer blueprintContainer, Class<T> type) {
+        Map<String, T> objects = new LinkedHashMap<String, T>();
+        for (ComponentMetadata metadata : blueprintContainer.getMetadata(ComponentMetadata.class)) {
+            boolean isSingleton = metadata instanceof BeanMetadata
+                        && (BeanMetadata.SCOPE_SINGLETON.equals(((BeanMetadata) metadata).getScope())
+                            || ((BeanMetadata) metadata).getScope() == null);
+            boolean isReference = metadata instanceof ReferenceMetadata;
+            if (isSingleton || isReference) {
+                Object o = blueprintContainer.getComponentInstance( metadata.getId() );
+                if (type.isInstance( o )) {
+                    objects.put( metadata.getId(), type.cast(o) );
+                }
+            }
+        }
+        return objects;
     }
 
 }

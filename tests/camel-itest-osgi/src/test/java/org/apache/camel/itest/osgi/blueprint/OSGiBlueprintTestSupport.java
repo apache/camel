@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.seda.SedaComponent;
+import org.apache.camel.processor.interceptor.Tracer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -112,6 +114,25 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
         assertEquals(1, ctx.getRoutes().size());
     }
 
+    @Test
+    public void testRouteWithComponentFromBlueprint() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle6").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle6)", 5000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle6)", 5000);
+        assertEquals(1, ctx.getRoutes().size());
+        assertSame(ctn.getComponentInstance("seda"), ctx.getComponent("seda"));
+    }
+
+    @Test
+    public void testRouteWithInterceptStrategy() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle7").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle7)", 5000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle7)", 5000);
+        assertEquals(1, ctx.getRoutes().size());
+        assertEquals(1, ctx.getInterceptStrategies().size());
+        assertEquals(TestInterceptStrategy.class.getName(), ctx.getInterceptStrategies().get(0).getClass().getName());
+    }
+
     @Before
     public void setUp() throws Exception {
     }
@@ -125,55 +146,68 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
 
         Option[] options = options(
 
-            bundle(newBundle()
-                    .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-1.xml"))
-                    .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle1")
-                    .build()).noStart(),
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-1.xml"))
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle1")
+                        .build()).noStart(),
 
-            bundle(newBundle()
-                    .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-2.xml"))
-                    .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle2")
-                    .build()).noStart(),
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-2.xml"))
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle2")
+                        .build()).noStart(),
 
-            bundle(newBundle()
-                    .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-3.xml"))
-                    .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle3")
-                    .build()).noStart(),
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-3.xml"))
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle3")
+                        .build()).noStart(),
 
-            bundle(newBundle()
-                    .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-4.xml"))
-                    .add(TestRouteBuilder.class)
-                    .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle4")
-                    .build(withBnd())).noStart(),
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-4.xml"))
+                        .add(TestRouteBuilder.class)
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle4")
+                        .build(withBnd())).noStart(),
 
-            bundle(newBundle()
-                    .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-5.xml"))
-                    .add(TestRouteBuilder.class)
-                    .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle5")
-                    .build(withBnd())).noStart(),
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-5.xml"))
+                        .add(TestRouteBuilder.class)
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle5")
+                        .build(withBnd())).noStart(),
 
-            // install the spring dm profile
-            profile("spring.dm").version("1.2.0"),
-            // this is how you set the default log level when using pax logging (logProfile)
-            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("TRACE"),
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-6.xml"))
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle6")
+                        .build(withBnd())).noStart(),
 
-            // install blueprint requirements
-            mavenBundle("org.apache.felix", "org.apache.felix.configadmin"),
-            // install tiny bundles
-            mavenBundle("org.ops4j.base", "ops4j-base-store"),
-            wrappedBundle(mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-bnd")),
-            mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-tinybundles"),
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-7.xml"))
+                        .add(TestInterceptStrategy.class)
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle7")
+                        .build()).noStart(),
 
-            // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(),
-                          "camel-core", "camel-blueprint", "camel-test", "camel-mail", "camel-jaxb"),
+                // install the spring dm profile
+                profile("spring.dm").version("1.2.0"),
+                // this is how you set the default log level when using pax logging (logProfile)
+                org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("TRACE"),
 
-            workingDirectory("target/paxrunner/"),
+                // install blueprint requirements
+                mavenBundle("org.apache.felix", "org.apache.felix.configadmin"),
+                // install tiny bundles
+                mavenBundle("org.ops4j.base", "ops4j-base-store"),
+                wrappedBundle(mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-bnd")),
+                mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-tinybundles"),
 
-            //vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
+                // using the features to install the camel components
+                scanFeatures(getCamelKarafFeatureUrl(),
+                        "camel-core", "camel-blueprint", "camel-test", "camel-mail", "camel-jaxb", "camel-jms"),
 
-            //felix(),
-            equinox());
+                workingDirectory("target/paxrunner/"),
+
+//                vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
+
+                //felix(),
+                equinox());
 
         return options;
     }

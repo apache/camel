@@ -16,8 +16,13 @@
  */
 package org.apache.camel.blueprint;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -54,10 +59,14 @@ import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.spi.PackageScanFilter;
+import org.apache.camel.spi.Registry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.osgi.service.blueprint.reflect.BeanMetadata;
+import org.osgi.service.blueprint.reflect.ComponentMetadata;
+import org.osgi.service.blueprint.reflect.ReferenceMetadata;
 
 /**
  * A bean to create and initialize a {@link BlueprintCamelContext}
@@ -182,10 +191,19 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     @Override
     protected void initCustomRegistry(BlueprintCamelContext context) {
+        Registry registry = getBeanForType(Registry.class);
+        if (registry != null) {
+            LOG.info("Using custom Registry: " + registry);
+            context.setRegistry(registry);
+        }
     }
 
     @Override
     protected <S> S getBeanForType(Class<S> clazz) {
+        Collection<S> objects = BlueprintContainerRegistry.lookupByType(blueprintContainer, clazz).values();
+        if (objects.size() == 1) {
+            return objects.iterator().next();
+        }
         return null;
     }
 
@@ -212,6 +230,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     @Override
     protected void findRouteBuildersByContextScan(PackageScanFilter filter, List<RoutesBuilder> builders) throws Exception {
+        ContextScanRouteBuilderFinder finder = new ContextScanRouteBuilderFinder(getContext(), filter);
+        finder.appendBuilders(builders);
     }
 
     @Override
