@@ -133,6 +133,15 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
         assertEquals(TestInterceptStrategy.class.getName(), ctx.getInterceptStrategies().get(0).getClass().getName());
     }
 
+    @Test
+    public void testComponentProperties() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle8").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle8)", 5000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle8)", 5000);
+        assertEquals(1, ctx.getRoutes().size());
+        assertEquals("direct://start", ctx.getRoutes().get(0).getEndpoint().getEndpointUri());
+    }
+
     @Before
     public void setUp() throws Exception {
     }
@@ -184,6 +193,13 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
                         .add(TestInterceptStrategy.class)
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle7")
+                        .build()).noStart(),
+
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-8.xml"))
+                        .add("org/apache/camel/component/properties/cheese.properties", OSGiBlueprintTestSupport.class.getResource("cheese.properties"))
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle8")
                         .build()).noStart(),
 
                 // install the spring dm profile
