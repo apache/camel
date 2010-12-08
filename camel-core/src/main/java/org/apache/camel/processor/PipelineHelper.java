@@ -33,30 +33,30 @@ public final class PipelineHelper {
     }
 
     /**
-     * Should we continue processing the next exchange?
+     * Should we continue processing the exchange?
      *
-     * @param nextExchange the next exchange
+     * @param exchange the next exchange
      * @param message a message to use when logging that we should not continue processing
      * @param log a logger
      * @return <tt>true</tt> to continue processing, <tt>false</tt> to break out, for example if an exception occurred.
      */
-    public static boolean continueProcessing(Exchange nextExchange, String message, Log log) {
+    public static boolean continueProcessing(Exchange exchange, String message, Log log) {
         // check for error if so we should break out
-        boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(nextExchange);
-        if (nextExchange.isFailed() || nextExchange.isRollbackOnly() || exceptionHandled) {
+        boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(exchange);
+        if (exchange.isFailed() || exchange.isRollbackOnly() || exceptionHandled) {
             // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
             // by the error handler. It's still an exception, the exchange still failed.
             if (log.isDebugEnabled()) {
                 StringBuilder sb = new StringBuilder();
-                sb.append("Message exchange has failed " + message + " for exchange: ").append(nextExchange);
-                if (nextExchange.isRollbackOnly()) {
+                sb.append("Message exchange has failed " + message + " for exchange: ").append(exchange);
+                if (exchange.isRollbackOnly()) {
                     sb.append(" Marked as rollback only.");
                 }
-                if (nextExchange.getException() != null) {
-                    sb.append(" Exception: ").append(nextExchange.getException());
+                if (exchange.getException() != null) {
+                    sb.append(" Exception: ").append(exchange.getException());
                 }
-                if (nextExchange.hasOut() && nextExchange.getOut().isFault()) {
-                    sb.append(" Fault: ").append(nextExchange.getOut());
+                if (exchange.hasOut() && exchange.getOut().isFault()) {
+                    sb.append(" Fault: ").append(exchange.getOut());
                 }
                 if (exceptionHandled) {
                     sb.append(" Handled by the error handler.");
@@ -65,6 +65,19 @@ public final class PipelineHelper {
             }
 
             return false;
+        }
+
+
+        // check for stop
+        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
+        if (stop != null) {
+            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, exchange, stop);
+            if (doStop) {
+                if (log.isDebugEnabled()) {
+                    log.debug("ExchangeId: " + exchange.getExchangeId() + " is marked to stop routing: " + exchange);
+                }
+                return false;
+            }
         }
 
         return true;

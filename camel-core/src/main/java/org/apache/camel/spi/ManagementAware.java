@@ -29,7 +29,8 @@ package org.apache.camel.spi;
  * and therefore can return a {@link javax.management.MBeanInfo} object.
  *
  * @version $Revision$
- * @deprecated use Spring JMX annotations
+ * @deprecated use Spring JMX annotations,
+ *             see this <a href="http://camel.apache.org/why-is-my-processor-not-showing-up-in-jconsole.html">FAQ entry</a>
  */
 @Deprecated
 public interface ManagementAware<T> {

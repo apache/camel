@@ -44,6 +44,7 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExpressionComparator;
@@ -147,6 +148,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         ObjectHelper.notNull(context, "camelContext");
         Collection<Endpoint> endpoints = context.getEndpoints();
         for (Endpoint endpoint : endpoints) {
+            // if the endpoint was intercepted we should get the delegate
+            if (endpoint instanceof InterceptSendToEndpoint) {
+                endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();
+            }
             if (endpoint instanceof MockEndpoint) {
                 MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
                 mockEndpoint.assertIsSatisfied();
