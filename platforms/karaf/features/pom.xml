@@ -54,7 +54,7 @@
       <commons-management-version>1.0</commons-management-version>
       <commons-pool-bundle-version>1.5.4_1</commons-pool-bundle-version>
       <dom4j-bundle-version>1.6.1_2</dom4j-bundle-version>
-      <dozer-bundle-version>5.3.0</dozer-bundle-version>
+      <dozer-bundle-version>5.3.1</dozer-bundle-version>
       <el-api-1.0-version>1.0.1</el-api-1.0-version>
       <fastinfoset-version>1.2.7_2</fastinfoset-version>
       <features.file>features.xml</features.file>
