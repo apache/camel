@@ -85,6 +85,11 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
                 }
                 return true;
             }
+
+            @Override
+            public String toString() {
+                return "Allocation repository file: " + getFile();
+            }
         });
     }
 
@@ -156,7 +161,12 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
                 }
                 attempt++;
 
+                // execute and get answer
                 answer = work.execute(tx);
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("TX is read only: " + tx.isReadOnly() + " for executed work: " + work);
+                }
                 // commit work
                 tx.commit();
                 // and flush so we ensure data is spooled to disk
@@ -165,11 +175,11 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
                 done = true;
             } catch (OptimisticUpdateException e) {
                 // retry as we hit an optimistic update error
-                LOG.warn("OptimisticUpdateException occurred at attempt " + attempt + " executing work " + work + " will do rollback and retry.");
+                LOG.warn("OptimisticUpdateException occurred at attempt " + attempt + " executing work " + work + ". Will do rollback and retry.");
                 // no harm doing rollback before retry and no wait is needed
                 tx.rollback();
             } catch (RuntimeException e) {
-                LOG.warn("Error executing work " + work + " will do rollback.", e);
+                LOG.warn("Error executing work " + work + ". Will do rollback.", e);
                 tx.rollback();
                 throw e;
             }
