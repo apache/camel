@@ -20,6 +20,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
@@ -30,7 +32,7 @@ import org.schwering.irc.lib.ssl.SSLTrustManager;
 public class IrcConfiguration implements Cloneable {
     private String target;
     private List<String> channels = new ArrayList<String>();
-    private List<String> keys = new ArrayList<String>();
+    private Dictionary<String, String> keys = new Hashtable<String, String>();
     private String hostname;
     private String password;
     private String nickname;
@@ -49,8 +51,14 @@ public class IrcConfiguration implements Cloneable {
     private boolean onReply;
     private boolean onTopic = true;
     private boolean onPrivmsg = true;
+    private boolean autoRejoin = true;
     private int[] ports = {6667, 6668, 6669};
-    
+
+    /*
+     * Temporary storage for when keys are listed in the parameters before channels.
+     */
+    private String channelKeys;
+
     public IrcConfiguration() {
     }
 
@@ -140,20 +148,32 @@ public class IrcConfiguration implements Cloneable {
                 addChannel(channel);
             }
         }
-    }
 
-    public void setKeys(String keys) {
-        String[] s = keys.split(",");
-        for (String key : s) {
-            this.keys.add(key);
+        if (keys.size() == 0 && channelKeys != null) {
+            setKeys(channelKeys);
         }
     }
 
-    public void setKeys(List<String> keys) {
-        this.keys = keys;
+    public void setKeys(String keys) {
+        if (channels.size() == 0) {
+            // keys are listed in the parameters before channels
+            // store the string and process after channels
+            channelKeys = keys;
+        } else {
+            String[] s = keys.split(",");
+            int index = 0;
+            for (String key : s) {
+                this.keys.put(channels.get(index), key);
+                index++;
+            }
+        }
     }
 
-    public List<String> getKeys() {
+    public String getKey(String channel) {
+        return keys.get(channel);
+    }
+
+    public Dictionary<String, String> getKeys() {
         return keys;
     }
 
@@ -311,6 +331,14 @@ public class IrcConfiguration implements Cloneable {
 
     public void setOnPrivmsg(boolean onPrivmsg) {
         this.onPrivmsg = onPrivmsg;
+    }
+
+    public boolean isAutoRejoin() {
+        return autoRejoin;
+    }
+
+    public void setAutoRejoin(boolean autoRejoin) {
+        this.autoRejoin = autoRejoin;
     }
 
     public String toString() {

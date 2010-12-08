@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.irc;
 
+import java.util.Dictionary;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -90,9 +91,9 @@ public class IrcConfigurationTest extends TestCase {
         List<String> channels = conf.getChannels();
         assertEquals(2, channels.size());
         assertEquals("#camel", channels.get(0));
-        List<String> keys = conf.getKeys();
+        Dictionary<String, String> keys = conf.getKeys();
         assertEquals(2, keys.size());
-        assertEquals("foo", keys.get(1));
+        assertEquals("foo", conf.getKey("#smx"));
     }
 
     @Test
@@ -111,9 +112,9 @@ public class IrcConfigurationTest extends TestCase {
         List<String> channels = conf.getChannels();
         assertEquals(2, channels.size());
         assertEquals("#camel", channels.get(0));
-        List<String> keys = conf.getKeys();
+        Dictionary<String, String> keys = conf.getKeys();
         assertEquals(1, keys.size());
-        assertEquals("foo", keys.get(0));
+        assertEquals("foo", conf.getKey("#camel"));
         assertEquals("Camel Bot", conf.getRealname());
     }
 
@@ -133,10 +134,10 @@ public class IrcConfigurationTest extends TestCase {
         List<String> channels = conf.getChannels();
         assertEquals(2, channels.size());
         assertEquals("#camel", channels.get(0));
-        List<String> keys = conf.getKeys();
+        Dictionary<String, String> keys = conf.getKeys();
         assertEquals(2, keys.size());
-        assertEquals("foo", keys.get(0));
-        assertEquals("bar", keys.get(1));
+        assertEquals("foo", conf.getKey("#camel"));
+        assertEquals("bar", conf.getKey("#smx"));
         assertEquals("Camel Bot", conf.getRealname());
     }
 

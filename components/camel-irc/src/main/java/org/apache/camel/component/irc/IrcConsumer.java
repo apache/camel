@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.irc;
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.schwering.irc.lib.IRCConnection;
@@ -35,7 +32,7 @@ public class IrcConsumer extends DefaultConsumer {
     private final IrcConfiguration configuration;
     private final IrcEndpoint endpoint;
     private final IRCConnection connection;
-    private FilteredIRCEventAdapter listener;
+    private  IRCEventAdapter listener;
 
     public IrcConsumer(IrcEndpoint endpoint, Processor processor, IRCConnection connection) {
         super(endpoint, processor);
@@ -61,39 +58,24 @@ public class IrcConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        listener = new FilteredIRCEventAdapter();
+        listener = getListener();
         connection.addIRCEventListener(listener);
-
-        List<String> channels = endpoint.getConfiguration().getChannels();
-        for (String channel : channels) {
-
-            // find key for channel
-            int ndx = channels.indexOf(channel);
-            String key = null;
-            if (ndx >= 0) {
-                List<String> keys = endpoint.getConfiguration().getKeys();
-                if (keys.size() > 0 && ndx < keys.size()) {
-                    key = keys.get(ndx);
-                }
-            }
-
-            if (ObjectHelper.isNotEmpty(key)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Joining: " + channel + " using " + connection.getClass().getName() + " with key " + key);
-                }
-                connection.doJoin(channel, key);
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Joining: " + channel + " using " + connection.getClass().getName());
-                }
-                connection.doJoin(channel);
-            }
-        }
+        endpoint.joinChannels();
     }
 
     public IRCConnection getConnection() {
         return connection;
+    }
+
+    public IRCEventAdapter getListener() {
+        if (listener == null) {
+            listener = new FilteredIRCEventAdapter();
+        }
+        return listener;
+    }
+
+    public void setListener(IRCEventAdapter listener) {
+        this.listener = listener;
     }
 
     class FilteredIRCEventAdapter extends IRCEventAdapter {
@@ -136,6 +118,12 @@ public class IrcConsumer extends DefaultConsumer {
 
         @Override
         public void onKick(String channel, IRCUser user, String passiveNick, String msg) {
+
+            // check to see if I got kick and if so rejoin if autoRejoin is on
+            if (passiveNick.equals(connection.getNick()) && configuration.isAutoRejoin()) {
+                endpoint.joinChannel(channel);
+            }
+
             if (configuration.isOnKick()) {
                 Exchange exchange = endpoint.createOnKickExchange(channel, user, passiveNick, msg);
                 try {
@@ -205,6 +193,11 @@ public class IrcConsumer extends DefaultConsumer {
                 }
             }
         }
+
+        @Override
+        public void onError(int num, String msg) {
+        }
+
     }
 
 }

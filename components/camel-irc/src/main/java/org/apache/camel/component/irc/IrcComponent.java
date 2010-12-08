@@ -35,26 +35,15 @@ import org.schwering.irc.lib.ssl.SSLIRCConnection;
  */
 public class IrcComponent extends DefaultComponent {
     private static final transient Log LOG = LogFactory.getLog(IrcComponent.class);
-    private IrcConfiguration configuration;
     private final Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
-    private IRCEventListener ircLogger;
-
-    public IrcComponent() {
-        configuration = new IrcConfiguration();
-    }
-
-    public IrcComponent(IrcConfiguration configuration) {
-        this.configuration = configuration;
-    }
 
     public IrcComponent(CamelContext context) {
         super(context);
-        configuration = new IrcConfiguration();
     }
 
     protected IrcEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        // lets make sure we copy the configuration as each endpoint can customize its own version
-        IrcConfiguration config = getConfiguration().copy();
+        // every endpoint gets it's own configuration
+        IrcConfiguration config = new IrcConfiguration();
         config.configure(uri);
 
         IrcEndpoint endpoint = new IrcEndpoint(uri, this, config);
@@ -78,6 +67,7 @@ public class IrcComponent extends DefaultComponent {
 
     protected IRCConnection createConnection(IrcConfiguration configuration) {
         IRCConnection conn = null;
+        IRCEventListener ircLogger;
 
         if (configuration.getUsingSSL()) {
             if (LOG.isDebugEnabled()) {
@@ -85,7 +75,7 @@ public class IrcComponent extends DefaultComponent {
                         + " nick: " + configuration.getNickname() + " user: " + configuration.getUsername());
             }
             SSLIRCConnection sconn = new SSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
-                                                         configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
+                    configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
 
             sconn.addTrustManager(configuration.getTrustManager());
             conn = sconn;
@@ -97,7 +87,7 @@ public class IrcComponent extends DefaultComponent {
             }
 
             conn = new IRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
-                                                         configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
+                    configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
         }
         conn.setEncoding("UTF-8");
         conn.setColors(configuration.isColors());
@@ -140,13 +130,4 @@ public class IrcComponent extends DefaultComponent {
     protected IRCEventListener createIrcLogger(String hostname) {
         return new IrcLogger(LOG, hostname);
     }
-
-    public IrcConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(IrcConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
 }

@@ -16,11 +16,20 @@
  */
 package org.apache.camel.component.irc;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.util.ObjectHelper;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.schwering.irc.lib.IRCConnection;
+import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
 
@@ -30,6 +39,8 @@ import org.schwering.irc.lib.IRCUser;
  * @version $Revision$
  */
 public class IrcEndpoint extends DefaultEndpoint {
+    private static final transient Log LOG = LogFactory.getLog(IrcEndpoint.class);
+    
     private IrcBinding binding;
     private IrcConfiguration configuration;
     private IrcComponent component;
@@ -51,64 +62,55 @@ public class IrcEndpoint extends DefaultEndpoint {
     }
 
     public Exchange createOnPrivmsgExchange(String target, IRCUser user, String msg) {
-        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
-        exchange.setProperty(Exchange.BINDING, getBinding());
+        DefaultExchange exchange = getExchange();
         exchange.setIn(new IrcMessage("PRIVMSG", target, user, msg));
         return exchange;
     }
 
     public Exchange createOnNickExchange(IRCUser user, String newNick) {
-        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
-        exchange.setProperty(Exchange.BINDING, getBinding());
+        DefaultExchange exchange = getExchange();
         exchange.setIn(new IrcMessage("NICK", user, newNick));
         return exchange;
     }
 
     public Exchange createOnQuitExchange(IRCUser user, String msg) {
-        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
-        exchange.setProperty(Exchange.BINDING, getBinding());
+        DefaultExchange exchange = getExchange();
         exchange.setIn(new IrcMessage("QUIT", user, msg));
         return exchange;
     }
 
     public Exchange createOnJoinExchange(String channel, IRCUser user) {
-        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
-        exchange.setProperty(Exchange.BINDING, getBinding());
+        DefaultExchange exchange = getExchange();
         exchange.setIn(new IrcMessage("JOIN", channel, user));
         return exchange;
     }
 
     public Exchange createOnKickExchange(String channel, IRCUser user, String whoWasKickedNick, String msg) {
-        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
-        exchange.setProperty(Exchange.BINDING, getBinding());
+        DefaultExchange exchange = getExchange();
         exchange.setIn(new IrcMessage("KICK", channel, user, whoWasKickedNick, msg));
         return exchange;
     }
 
     public Exchange createOnModeExchange(String channel, IRCUser user, IRCModeParser modeParser) {
-        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
-        exchange.setProperty(Exchange.BINDING, getBinding());
+        DefaultExchange exchange = getExchange();
         exchange.setIn(new IrcMessage("MODE", channel, user, modeParser.getLine()));
         return exchange;
     }
 
     public Exchange createOnPartExchange(String channel, IRCUser user, String msg) {
-        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
-        exchange.setProperty(Exchange.BINDING, getBinding());
+        DefaultExchange exchange = getExchange();
         exchange.setIn(new IrcMessage("PART", channel, user, msg));
         return exchange;
     }
 
     public Exchange createOnReplyExchange(int num, String value, String msg) {
-        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
-        exchange.setProperty(Exchange.BINDING, getBinding());
+        DefaultExchange exchange = getExchange();
         exchange.setIn(new IrcMessage("REPLY", num, value, msg));
         return exchange;
     }
 
     public Exchange createOnTopicExchange(String channel, IRCUser user, String topic) {
-        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
-        exchange.setProperty(Exchange.BINDING, getBinding());
+        DefaultExchange exchange = getExchange();
         exchange.setIn(new IrcMessage("TOPIC", channel, user, topic));
         return exchange;
     }
@@ -146,6 +148,64 @@ public class IrcEndpoint extends DefaultEndpoint {
 
     public void setConfiguration(IrcConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+
+    public void handleIrcError(int num, String msg) {
+        if (IRCEventAdapter.ERR_NICKNAMEINUSE == num) {
+            handleNickInUse();
+        }
+    }
+
+    private void handleNickInUse() {
+        IRCConnection connection = component.getIRCConnection(configuration);
+        String nick = connection.getNick() + "-";
+
+        // hackish but working approach to prevent an endless loop. Abort after 4 nick attempts.
+        if (nick.endsWith("----")) {
+            LOG.error("Unable to set nick: " + nick + " disconnecting");
+        } else {
+            LOG.warn("Unable to set nick: " + nick + " Retrying with " + nick + "-");
+            connection.doNick(nick);
+            // if the nick failure was doing startup channels weren't joined. So join
+            // the channels now. It's a no-op if the channels are already joined.
+            joinChannels();
+        }
+    }
+
+    private DefaultExchange getExchange() {
+        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        return exchange;
+    }
+
+
+    public void joinChannels() {
+        for (String channel : configuration.getChannels()) {
+            joinChannel(channel);
+        }
+    }
+
+    public void joinChannel(String channel) {
+
+        List<String> channels = configuration.getChannels();
+
+        IRCConnection connection = component.getIRCConnection(configuration);
+
+        // check for key for channel
+        String key = configuration.getKey(channel);
+
+        if (ObjectHelper.isNotEmpty(key)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Joining: " + channel + " using " + connection.getClass().getName() + " with key " + key);
+            }
+            connection.doJoin(channel, key);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Joining: " + channel + " using " + connection.getClass().getName());
+            }
+            connection.doJoin(channel);
+        }
     }
 }
 
