@@ -163,6 +163,25 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
         assertNotNull(mth.invoke(producer));
     }
 
+    @Test
+    public void testRouteContext() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle11").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle11)", 5000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle11)", 5000);
+        assertEquals(3, ctx.getRoutes().size());
+    }
+
+    @Test
+    public void testProxy() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle12").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle12)", 5000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle12)", 5000);
+        Object proxy = ctn.getComponentInstance("myProxySender");
+        assertNotNull(proxy);
+        assertEquals(1, proxy.getClass().getInterfaces().length);
+        assertEquals(TestProxySender.class.getName(), proxy.getClass().getInterfaces()[0].getName());
+    }
+
     @Before
     public void setUp() throws Exception {
     }
@@ -236,6 +255,19 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-10.xml"))
                         .add(TestProducer.class)
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle10")
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .build()).noStart(),
+
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-11.xml"))
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle11")
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .build()).noStart(),
+
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-12.xml"))
+                        .add(TestProxySender.class)
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle12")
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
 

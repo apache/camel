@@ -114,10 +114,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class, required = false)
     private CamelJMXAgentDefinition camelJMXAgent;
     @XmlElements({
-//        @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
         @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
-        @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
+        @XmlElement(name = "proxy", type = CamelProxyFactoryBean.class, required = false),
         @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false),
         @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class, required = false)
     })
@@ -148,12 +147,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
     @XmlTransient
     private BlueprintCamelContext context;
-    @XmlTransient
-    private ClassLoader contextClassLoaderOnStart;
-//    @XmlTransient
-//    private ApplicationContext applicationContext;
-//    @XmlTransient
-//    private BeanPostProcessor beanPostProcessor;
     @XmlTransient
     private BlueprintContainer blueprintContainer;
     @XmlTransient
@@ -479,10 +472,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.routes = routes;
     }
 
-    public ClassLoader getContextClassLoaderOnStart() {
-        return contextClassLoaderOnStart;
-    }
-    
     public boolean isImplicitId() {
         return implicitId;
     }

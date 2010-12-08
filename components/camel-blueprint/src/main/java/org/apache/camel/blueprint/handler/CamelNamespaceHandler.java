@@ -33,6 +33,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.blueprint.CamelContextFactoryBean;
+import org.apache.camel.blueprint.CamelRouteContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.impl.CamelPostProcessorHelper;
@@ -75,6 +76,7 @@ import java.util.concurrent.Callable;
 public class CamelNamespaceHandler implements NamespaceHandler {
 
     private static final String CAMEL_CONTEXT = "camelContext";
+    private static final String ROUTE_CONTEXT = "routeContext";
 
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final String BLUEPRINT_NS = "http://camel.apache.org/schema/blueprint";
@@ -194,6 +196,39 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
             return ctx;
         }
+        if (element.getNodeName().equals(ROUTE_CONTEXT)) {
+            // now lets parse the routes with JAXB
+            Binder<Node> binder;
+            try {
+                binder = getJaxbContext().createBinder();
+            } catch (JAXBException e) {
+                throw new ComponentDefinitionException("Failed to create the JAXB binder : " + e, e);
+            }
+            Object value = parseUsingJaxb(element, context, binder);
+            if (!(value instanceof CamelRouteContextFactoryBean)) {
+                throw new ComponentDefinitionException("Expected an instance of " + CamelRouteContextFactoryBean.class);
+            }
+
+            CamelRouteContextFactoryBean rcfb = (CamelRouteContextFactoryBean) value;
+            String id = rcfb.getId();
+
+            MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
+            factory.setId(".camelBlueprint.passThrough." + id);
+            factory.setObject(new PassThroughCallable<Object>(rcfb));
+
+            MutableBeanMetadata factory2 = context.createMetadata(MutableBeanMetadata.class);
+            factory2.setId(".camelBlueprint.factory." + id);
+            factory2.setFactoryComponent(factory);
+            factory2.setFactoryMethod("call");
+
+            MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
+            ctx.setId(id);
+            ctx.setRuntimeClass(List.class);
+            ctx.setFactoryComponent(factory2);
+            ctx.setFactoryMethod("getRoutes");
+
+            return ctx;
+        }
         return null;
     }
 
@@ -213,11 +248,11 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         fact.setCamelContextId(contextId);
 
         MutablePassThroughMetadata eff = context.createMetadata(MutablePassThroughMetadata.class);
-        eff.setId(".camelBlueprint.bean.factory." + id);
+        eff.setId(".camelBlueprint.bean.passthrough." + id);
         eff.setObject(new PassThroughCallable<Object>(fact));
 
         MutableBeanMetadata ef = context.createMetadata(MutableBeanMetadata.class);
-        ef.setId(".camelBlueprint.bean.factory." + contextId);
+        ef.setId(".camelBlueprint.bean.factory." + id);
         ef.setFactoryComponent(eff);
         ef.setFactoryMethod("call");
         ef.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));

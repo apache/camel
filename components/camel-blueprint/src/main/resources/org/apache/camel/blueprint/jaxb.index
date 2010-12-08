@@ -19,3 +19,5 @@ CamelContextFactoryBean
 CamelEndpointFactoryBean
 CamelProducerTemplateFactoryBean
 CamelThreadPoolFactoryBean
+CamelRouteContextFactoryBean
+CamelProxyFactoryBean
