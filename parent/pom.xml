@@ -1006,11 +1006,6 @@
         <artifactId>guiceyfruit-core</artifactId>
         <version>${guiceyfruit-version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.guiceyfruit</groupId>
-        <artifactId>guiceyfruit-junit3</artifactId>
-        <version>${guiceyfruit-version}</version>
-      </dependency>
       
       <!-- optional dozer dependencies -->
       <dependency>

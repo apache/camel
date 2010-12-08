@@ -33,6 +33,9 @@
 
   <properties>    
     <camel.osgi.export.pkg>org.apache.camel.guice.*</camel.osgi.export.pkg>
+    <camel.osgi.import.additional>
+        com.google.inject*;version="[2,3)"        
+    </camel.osgi.import.additional>
   </properties>
 
   <dependencies>

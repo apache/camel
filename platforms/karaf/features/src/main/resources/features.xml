@@ -283,8 +283,7 @@
     <bundle>mvn:org.apache.camel/camel-ftp/${pom.version}</bundle>
   </feature>
   <feature name='camel-guice' version='${pom.version}'>
-    <bundle>mvn:http://guiceyfruit.googlecode.com/svn/repo/releases!org.guiceyfruit/guiceyfruit-core/${guiceyfruit-version}</bundle>
-    <bundle>mvn:http://guiceyfruit.googlecode.com/svn/repo/releases!org.guiceyfruit/guice-all/${guiceyfruit-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.guice/${guice-bundle-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/${gernimo-annotation-spec-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aopalliance/${aopalliance-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
