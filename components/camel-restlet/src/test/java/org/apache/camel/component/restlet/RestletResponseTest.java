@@ -19,6 +19,7 @@ package org.apache.camel.component.restlet;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -58,7 +59,7 @@ public class RestletResponseTest extends RestletTestSupport {
         assertHttpResponse(response, 417, "application/JSON");
     }
     
-    @Test
+    @Test(expected = CamelExecutionException.class)
     public void testRestletProducer() throws Exception {
         Map<String, Object> headers = new HashMap<String, Object>();        
         headers.put("username", "homer");

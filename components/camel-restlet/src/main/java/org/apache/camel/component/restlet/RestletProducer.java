@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,9 +40,11 @@ public class RestletProducer extends DefaultProducer {
     private static final Log LOG = LogFactory.getLog(RestletProducer.class);
     private static final Pattern PATTERN = Pattern.compile("\\{([\\w\\.]*)\\}");
     private Client client;
+    private boolean throwException;
 
     public RestletProducer(RestletEndpoint endpoint) throws Exception {
         super(endpoint);
+        this.throwException = endpoint.isThrowExceptionOnFailure();
         client = new Client(endpoint.getProtocol());
         client.setContext(new Context());
     }
@@ -50,34 +54,40 @@ public class RestletProducer extends DefaultProducer {
         super.doStart();
         client.start();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         client.stop();
         super.doStop();
     }
-    
+
     public void process(Exchange exchange) throws Exception {
-        RestletEndpoint endpoint = (RestletEndpoint)getEndpoint();
-        
+        RestletEndpoint endpoint = (RestletEndpoint) getEndpoint();
+
         String resourceUri = buildUri(endpoint, exchange);
         Request request = new Request(endpoint.getRestletMethod(), resourceUri);
 
         RestletBinding binding = endpoint.getRestletBinding();
         binding.populateRestletRequestFromExchange(request, exchange);
-        
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Client sends a request (method: " + request.getMethod() 
-                    + ", uri: " + resourceUri + ")");
+            LOG.debug("Client sends a request (method: " + request.getMethod() + ", uri: " + resourceUri + ")");
         }
-        
+
         Response response = client.handle(request);
+        if (throwException) {
+            if (response instanceof Response) {
+                Integer respCode = response.getStatus().getCode();
+                if (respCode > 207) {
+                    throw populateRestletProducerException(exchange, response, respCode);
+                }
+            }
+        }
         binding.populateExchangeFromRestletResponse(exchange, response);
     }
 
     private static String buildUri(RestletEndpoint endpoint, Exchange exchange) throws CamelExchangeException {
-        String uri = endpoint.getProtocol() + "://" + endpoint.getHost() + ":" 
-            + endpoint.getPort() + endpoint.getUriPattern();
+        String uri = endpoint.getProtocol() + "://" + endpoint.getHost() + ":" + endpoint.getPort() + endpoint.getUriPattern();
 
         // substitute { } placeholders in uri and use mandatory headers
         if (LOG.isTraceEnabled()) {
@@ -108,4 +118,44 @@ public class RestletProducer extends DefaultProducer {
         return uri;
     }
 
+    protected RestletOperationException populateRestletProducerException(Exchange exchange, Response response, int responseCode) {
+        RestletOperationException exception;
+        String uri = exchange.getFromEndpoint().getEndpointUri();
+        String statusText = response.getStatus().getDescription();
+        Map<String, String> headers = parseResponseHeaders(response, exchange);
+        String copy = response.toString();
+        LOG.warn(headers);
+        if (responseCode >= 300 && responseCode < 400) {
+            String redirectLocation;
+            if (response.getStatus().isRedirection()) {
+                redirectLocation = response.getLocationRef().getHostIdentifier();
+                exception = new RestletOperationException(uri, responseCode, statusText, redirectLocation, headers, copy);
+            } else {
+                //no redirect location
+                exception = new RestletOperationException(uri, responseCode, statusText, null, headers, copy);
+            }
+        } else {
+            //internal server error(error code 500)
+            exception = new RestletOperationException(uri, responseCode, statusText, null, headers, copy);
+        }
+
+        return exception;
+    }
+
+    protected Map<String, String> parseResponseHeaders(Object response, Exchange camelExchange) {
+
+        Map<String, String> answer = new HashMap<String, String>();
+        if (response instanceof Response) {
+
+            for (Map.Entry<String, Object> entry : ((Response) response).getAttributes().entrySet()) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Parse external header " + entry.getKey() + "=" + entry.getValue());
+                }
+                LOG.info("Parse external header " + entry.getKey() + "=" + entry.getValue());
+                answer.put(entry.getKey(), entry.getValue().toString());
+            }
+        }
+
+        return answer;
+    }
 }

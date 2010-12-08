@@ -39,25 +39,26 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_PROTOCOL = "http";
     private static final String DEFAULT_HOST = "localhost";
-    
+
     private Method restletMethod = Method.GET;
 
     // Optional and for consumer only.  This allows a single route to service multiple 
     // methods.  If it is non-null, restletMethod is ignored.
     private Method[] restletMethods;
-    
+
     private String protocol = DEFAULT_PROTOCOL;
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
     private String uriPattern;
-    
+
     // Optional and for consumer only.  This allows a single route to service multiple 
     // URI patterns.  The URI pattern defined in the endpoint will still be honored.
     private List<String> restletUriPatterns;
-    
+
     private Map<String, String> restletRealm;
     private HeaderFilterStrategy headerFilterStrategy;
     private RestletBinding restletBinding;
+    private boolean throwExceptionOnFailure = true;
 
     public RestletEndpoint(RestletComponent component, String remaining) throws Exception {
         super(remaining, component);
@@ -67,7 +68,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return true;
     }
 
-    @Override 
+    @Override
     public boolean isLenientProperties() {
         // true to allow dynamic URI options to be configured and passed to external system.
         return true;
@@ -82,11 +83,11 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     }
 
     public void connect(RestletConsumer restletConsumer) throws Exception {
-        ((RestletComponent)getComponent()).connect(restletConsumer);
+        ((RestletComponent) getComponent()).connect(restletConsumer);
     }
 
     public void disconnect(RestletConsumer restletConsumer) throws Exception {
-        ((RestletComponent)getComponent()).disconnect(restletConsumer);        
+        ((RestletComponent) getComponent()).disconnect(restletConsumer);
     }
 
     public Method getRestletMethod() {
@@ -140,7 +141,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
         if (restletBinding instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware)restletBinding).setHeaderFilterStrategy(headerFilterStrategy);
+            ((HeaderFilterStrategyAware) restletBinding).setHeaderFilterStrategy(headerFilterStrategy);
         }
     }
 
@@ -186,11 +187,19 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
             restletBinding = new DefaultRestletBinding();
         }
         if (restletBinding instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware)restletBinding).setHeaderFilterStrategy(getHeaderFilterStrategy());
+            ((HeaderFilterStrategyAware) restletBinding).setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
     }
 
     public void stop() throws Exception {
         // noop
+    }
+
+    public boolean isThrowExceptionOnFailure() {
+        return throwExceptionOnFailure;
+    }
+
+    public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
+        this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
 }

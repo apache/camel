@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -46,7 +46,7 @@ public class RestletRouteBuilderAuthTest extends CamelSpringTestSupport {
                 response);
     }
 
-    @Test
+    @Test(expected = CamelExecutionException.class)
     public void testhBasicAuthError() throws IOException {
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(RestletConstants.RESTLET_LOGIN, "admin");
