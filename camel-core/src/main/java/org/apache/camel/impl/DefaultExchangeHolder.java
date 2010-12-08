@@ -203,12 +203,15 @@ public class DefaultExchangeHolder implements Serializable {
 
         Map<String, Object> result = new LinkedHashMap<String, Object>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, entry.getValue());
-            if (converted != null) {
-                result.put(entry.getKey(), converted);
-            } else {
-                LOG.warn(type + " containing object: " + entry.getValue() + " with key: " + entry.getKey()
-                        + " cannot be serialized, it will be excluded by the holder.");
+            // silently skip any values which is null
+            if (entry.getValue() != null) {
+                Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, entry.getValue());
+                if (converted != null) {
+                    result.put(entry.getKey(), converted);
+                } else {
+                    LOG.warn(type + " containing object: " + entry.getValue() + " with key: " + entry.getKey()
+                            + " cannot be serialized, it will be excluded by the holder.");
+                }
             }
         }
 
