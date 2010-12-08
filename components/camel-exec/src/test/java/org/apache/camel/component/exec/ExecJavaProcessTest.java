@@ -44,6 +44,7 @@ import static org.apache.camel.component.exec.ExecTestUtils.buildJavaExecutableP
 import static org.apache.camel.component.exec.ExecutableJavaProgram.EXIT_WITH_VALUE_0;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.EXIT_WITH_VALUE_1;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_IN_STDERR;
+import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_ARGS_STDOUT;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_IN_STDOUT;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.READ_INPUT_LINES_AND_PRINT_THEM;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.SLEEP_WITH_TIMEOUT;
@@ -203,9 +204,6 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
     /**
      * Test print in stdout from threads.
-     * 
-     * @see ExecutableJavaProgram#THREADS
-     * @throws Exception
      */
     @Test
     public void testExecJavaProcessThreads() throws Exception {
@@ -224,9 +222,6 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
     /**
      * Test print in stdout using string as args
-     *
-     * @see ExecutableJavaProgram#THREADS
-     * @throws Exception
      */
     @Test
     public void testExecJavaArgsAsString() throws Exception {
@@ -257,10 +252,69 @@ public class ExecJavaProcessTest extends CamelTestSupport {
     }
 
     /**
+     * Test print in stdout using string as args with quotes
+     */
+    @Test
+    public void testExecJavaArgsAsStringWithQuote() throws Exception {
+        output.setExpectedMessageCount(1);
+
+        Exchange exchange = producerTemplate.send("direct:input", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                final String javaAbsolutePath = buildJavaExecutablePath();
+
+                // use string for args
+                String classpath = System.getProperty("java.class.path");
+                String args = "-cp \"" + classpath + "\" " + EXECUTABLE_PROGRAM_ARG + " " + PRINT_ARGS_STDOUT + " \"Hello World\"";
+
+                exchange.getIn().setBody("hello");
+                exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, javaAbsolutePath);
+                exchange.getIn().setHeader(EXEC_COMMAND_ARGS, args);
+                exchange.getIn().setHeader(EXEC_USE_STDERR_ON_EMPTY_STDOUT, true);
+            }
+        });
+
+        output.assertIsSatisfied();
+
+        ExecResult result = exchange.getIn().getBody(ExecResult.class);
+        assertNotNull(result);
+
+        String out = IOConverter.toString(result.getStdout(), exchange);
+        assertEquals(PRINT_ARGS_STDOUT + "\nHello World\n", out);
+    }
+
+    /**
+     * Test print in stdout using string as args with quotes
+     */
+    @Test
+    public void testExecJavaArgsAsStringWithoutQuote() throws Exception {
+        output.setExpectedMessageCount(1);
+
+        Exchange exchange = producerTemplate.send("direct:input", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                final String javaAbsolutePath = buildJavaExecutablePath();
+
+                // use string for args
+                String classpath = System.getProperty("java.class.path");
+                String args = "-cp \"" + classpath + "\" " + EXECUTABLE_PROGRAM_ARG + " " + PRINT_ARGS_STDOUT + " Hello World";
+
+                exchange.getIn().setBody("hello");
+                exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, javaAbsolutePath);
+                exchange.getIn().setHeader(EXEC_COMMAND_ARGS, args);
+                exchange.getIn().setHeader(EXEC_USE_STDERR_ON_EMPTY_STDOUT, true);
+            }
+        });
+
+        output.assertIsSatisfied();
+
+        ExecResult result = exchange.getIn().getBody(ExecResult.class);
+        assertNotNull(result);
+
+        String out = IOConverter.toString(result.getStdout(), exchange);
+        assertEquals(PRINT_ARGS_STDOUT + "\nHello\nWorld\n", out);
+    }
+
+    /**
      * Test if the process will be terminate in about a second
-     * 
-     * @see ExecutableJavaProgram#SLEEP_WITH_TIMEOUT
-     * @throws Exception
      */
     @Test
     public void testExecJavaProcessTimeout() throws Exception {
@@ -277,9 +331,6 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
     /**
      * Test reading of input lines from the executable's stdin
-     * 
-     * @see ExecutableJavaProgram#READ_INPUT_LINES_AND_PRINT_THEM
-     * @throws Exception
      */
     @Test
     public void testExecJavaProcessInputLines() throws Exception {

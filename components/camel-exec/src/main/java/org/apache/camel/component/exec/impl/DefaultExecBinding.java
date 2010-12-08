@@ -27,6 +27,8 @@ import org.apache.camel.component.exec.ExecCommand;
 import org.apache.camel.component.exec.ExecEndpoint;
 import org.apache.camel.component.exec.ExecResult;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.component.exec.impl.ExecParseUtils.splitToWhiteSpaceSeparatedTokens;
 
@@ -36,6 +38,8 @@ import static org.apache.camel.component.exec.impl.ExecParseUtils.splitToWhiteSp
  * @see DefaultExecBinding#writeOutputInMessage(Message, ExecResult)
  */
 public class DefaultExecBinding implements ExecBinding {
+
+    private static final Log LOG = LogFactory.getLog(DefaultExecBinding.class);
 
     @SuppressWarnings("unchecked")
     public ExecCommand readInput(Exchange exchange, ExecEndpoint endpoint) {
@@ -59,6 +63,9 @@ public class DefaultExecBinding implements ExecBinding {
             if (args != null) {
                 // use args from header instead from endpoint
                 s = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, args);
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Parsing argument String to a List: " + s);
             }
             argsList = splitToWhiteSpaceSeparatedTokens(s);
         }

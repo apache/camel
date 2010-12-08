@@ -57,8 +57,9 @@ public final class ExecTestUtils {
      * @return the java executable in a system independent way.
      */
     public static String buildJavaExecutablePath() {
-        String javaHome = (String)System.getenv("JAVA_HOME");
+        String javaHome = System.getenv("JAVA_HOME");
         if (javaHome == null) {
+            System.out.println("The Exec component tests will fail, because the environment variable JAVA_HOME is not set!");
             throw new IllegalStateException("The Exec component tests will fail, because the environment variable JAVA_HOME is not set!");
         }
         File java = new File(javaHome + File.separator + "bin" + File.separator + "java");

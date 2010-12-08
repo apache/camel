@@ -37,6 +37,8 @@ public class ExecutableJavaProgram {
 
     public static final String PRINT_IN_STDOUT = "print.in.stdout";
 
+    public static final String PRINT_ARGS_STDOUT = "print.args.stdout";
+
     public static final String PRINT_IN_STDERR = "print.in.stderr";
 
     public static final String READ_INPUT_LINES_AND_PRINT_THEM = "read.input.lines.and.print.them";
@@ -58,6 +60,11 @@ public class ExecutableJavaProgram {
 
         if (args[0].equals(PRINT_IN_STDOUT)) {
             System.out.print(PRINT_IN_STDOUT);
+            System.exit(0);
+        } else if (args[0].equals(PRINT_ARGS_STDOUT)) {
+            for (String arg : args) {
+                System.out.println(arg);
+            }
             System.exit(0);
         } else if (args[0].equals(PRINT_IN_STDERR)) {
             System.err.print(PRINT_IN_STDERR);
