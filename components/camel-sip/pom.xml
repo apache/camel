@@ -37,31 +37,21 @@
 			org.apache.camel.component.sip.*
 		</camel.osgi.export.pkg>
 	</properties>
-  
-	<repositories>
-		<repository>
-			<id>jboss</id>
-			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 	
   	<dependencies>
 	    <dependency>
 	      	<groupId>org.apache.camel</groupId>
 	      	<artifactId>camel-core</artifactId>
 	    </dependency>   
-            <dependency>
-	      	<groupId>javax.sip</groupId>
-	      	<artifactId>jain-sip-api</artifactId>
-	      	<version>${jain-api-version}</version>
+        <dependency>
+	      	<groupId>org.apache.servicemix.specs</groupId>
+	      	<artifactId>org.apache.servicemix.specs.jain-sip-api-1.2</artifactId>
+	      	<version>${servicemix-specs-version}</version>
 	    </dependency>
 	    <dependency>
-	      	<groupId>javax.sip</groupId>
-	      	<artifactId>jain-sip-ri</artifactId>
-	      	<version>${jain-sip-version}</version>
+	      	<groupId>org.apache.servicemix.bundles</groupId>
+	      	<artifactId>org.apache.servicemix.bundles.jain-sip-ri</artifactId>
+	      	<version>${jain-sip-ri-bundle-version}</version>
 	    </dependency>
 	    	       
 		<!-- testing -->

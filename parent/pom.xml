@@ -84,8 +84,7 @@
     <httpclient-version>3.1</httpclient-version>
     <icu4j-version>4.0.1</icu4j-version>
     <jackson-version>1.6.0</jackson-version>
-    <jain-api-version>1.2</jain-api-version>
-    <jain-sip-version>1.2.153</jain-sip-version>
+    <jain-sip-ri-bundle-version>1.2.154_1</jain-sip-ri-bundle-version>
     <jasypt-version>1.6</jasypt-version>
     <javassist-version>3.9.0.GA</javassist-version>
     <javax-mail-version>1.4.3</javax-mail-version>
@@ -120,6 +119,7 @@
     <saxon-version>9.1.0.8</saxon-version>
     <scala-version>2.8.0</scala-version>
     <scala-plugin-version>2.14.1</scala-plugin-version>
+    <servicemix-specs-version>1.6.0</servicemix-specs-version>
     <shiro-version>1.0.0-incubating</shiro-version>
     <slf4j-version>1.6.1</slf4j-version>
     <smack-version>3.1.0</smack-version>
