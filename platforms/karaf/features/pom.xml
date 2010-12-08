@@ -120,7 +120,7 @@
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
       <stringtemplate-bundle-version>3.2_3</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_3</tagsoup-bundle-version>
-      <velocity-bundle-version>1.6.4_1</velocity-bundle-version>
+      <velocity-bundle-version>1.7_1-SNAPSHOT</velocity-bundle-version>
       <xalan-bundle-version>2.7.1_2</xalan-bundle-version>
       <xerces-bundle-version>2.9.1_3</xerces-bundle-version>
       <xmlbeans-bundle-version>2.5.0_1</xmlbeans-bundle-version>
