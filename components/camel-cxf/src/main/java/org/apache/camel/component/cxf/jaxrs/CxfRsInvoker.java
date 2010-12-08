@@ -51,62 +51,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
         this.endpoint = endpoint;
         this.cxfRsConsumer = consumer;
     }
-    
-    // To work around the invoke reenter issue
-    public Object invoke(Exchange exchange, Object request) {
-        // These code 
-        Response response = exchange.get(Response.class);
-        if (response != null) {
-            return new MessageContentsList(response);
-        }
-        ResourceProvider provider = getResourceProvider(exchange);
-        Object serviceObject = getServiceObject(exchange);
-        try {
-            return invoke(exchange, request, serviceObject);
-        } finally {
-            if (Boolean.TRUE.equals(exchange.get(SUSPENED))) {
-                // should check the 
-                exchange.put(JAXRSUtils.ROOT_INSTANCE, serviceObject);
-                exchange.put(JAXRSUtils.ROOT_PROVIDER, provider);
-            } else {
-                // clean up the resource
-                if (exchange.isOneWay()) {
-                    ProviderFactory.getInstance(exchange.getInMessage()).clearThreadLocalProxies();
-                }
-                if (!isServiceObjectRequestScope(exchange.getInMessage())) {
-                    provider.releaseInstance(exchange.getInMessage(), serviceObject);
-                }
-                exchange.remove(JAXRSUtils.ROOT_INSTANCE);
-                exchange.remove(JAXRSUtils.ROOT_PROVIDER);
-            }
-        }
-    }
-    
-    public Object getServiceObject(Exchange exchange) {
-        if (exchange.get(JAXRSUtils.ROOT_INSTANCE) != null) {
-            return exchange.get(JAXRSUtils.ROOT_INSTANCE);
-        } else {
-            OperationResourceInfo ori = exchange.get(OperationResourceInfo.class);
-            ClassResourceInfo cri = ori.getClassResourceInfo();
-            return cri.getResourceProvider().getInstance(exchange.getInMessage());
-        }
-    }
         
-    private ResourceProvider getResourceProvider(Exchange exchange) {
-        if (exchange.get(JAXRSUtils.ROOT_PROVIDER) != null) {
-            return (ResourceProvider)exchange.get(JAXRSUtils.ROOT_PROVIDER);
-        } else {
-            OperationResourceInfo ori = exchange.get(OperationResourceInfo.class);
-            ClassResourceInfo cri = ori.getClassResourceInfo();
-            return cri.getResourceProvider();
-        }
-    }
-    
-    private boolean isServiceObjectRequestScope(Message inMessage) {
-        Object scope = inMessage.getContextualProperty(SERVICE_OBJECT_SCOPE);
-        return REQUEST_SCOPE.equals(scope);
-    }
-    
     protected Object performInvocation(Exchange cxfExchange, final Object serviceObject, Method method,
                                        Object[] paramArray) throws Exception {
         paramArray = insertExchange(method, paramArray, cxfExchange);
