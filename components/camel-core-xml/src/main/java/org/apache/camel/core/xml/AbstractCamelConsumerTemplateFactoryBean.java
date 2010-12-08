@@ -37,29 +37,14 @@ import org.apache.camel.util.ServiceHelper;
  * @version $Revision: 934375 $
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractCamelConsumerTemplateFactoryBean extends IdentifiedType implements CamelContextAware {
+public abstract class AbstractCamelConsumerTemplateFactoryBean extends AbstractCamelFactoryBean<ConsumerTemplate> {
     @XmlTransient
     private ConsumerTemplate template;
     @XmlAttribute
-    private String camelContextId;
-    @XmlTransient
-    private CamelContext camelContext;
-    @XmlAttribute
     private Integer maximumCacheSize;
 
-    public void afterPropertiesSet() throws Exception {
-        if (camelContext == null && camelContextId != null) {
-            camelContext = getCamelContextWithId(camelContextId);
-        }
-        if (camelContext == null) {
-            throw new IllegalArgumentException("A CamelContext or a CamelContextId must be injected!");
-        }
-    }
-
-    protected abstract CamelContext getCamelContextWithId(String camelContextId);
-
-    public Object getObject() throws Exception {
-        template = new DefaultConsumerTemplate(camelContext);
+    public ConsumerTemplate getObject() throws Exception {
+        template = new DefaultConsumerTemplate(getCamelContext());
 
         // set custom cache size if provided
         if (maximumCacheSize != null) {
@@ -71,12 +56,8 @@ public abstract class AbstractCamelConsumerTemplateFactoryBean extends Identifie
         return template;
     }
 
-    public Class getObjectType() {
+    public Class<DefaultConsumerTemplate> getObjectType() {
         return DefaultConsumerTemplate.class;
-    }
-
-    public boolean isSingleton() {
-        return true;
     }
 
     public void destroy() throws Exception {
@@ -85,22 +66,6 @@ public abstract class AbstractCamelConsumerTemplateFactoryBean extends Identifie
 
     // Properties
     // -------------------------------------------------------------------------
-
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
-    public String getCamelContextId() {
-        return camelContextId;
-    }
-
-    public void setCamelContextId(String camelContextId) {
-        this.camelContextId = camelContextId;
-    }
 
     public Integer getMaximumCacheSize() {
         return maximumCacheSize;

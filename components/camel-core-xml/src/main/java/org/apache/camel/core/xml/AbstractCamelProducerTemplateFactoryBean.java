@@ -37,30 +37,15 @@ import org.apache.camel.util.ServiceHelper;
  * @version $Revision: 934375 $
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractCamelProducerTemplateFactoryBean extends IdentifiedType implements CamelContextAware {
+public abstract class AbstractCamelProducerTemplateFactoryBean extends AbstractCamelFactoryBean<ProducerTemplate> {
     @XmlTransient
     private ProducerTemplate template;
     @XmlAttribute(required = false)
     private String defaultEndpoint;
     @XmlAttribute
-    private String camelContextId;
-    @XmlTransient
-    private CamelContext camelContext;
-    @XmlAttribute
     private Integer maximumCacheSize;
 
-    public void afterPropertiesSet() throws Exception {
-        if (camelContext == null && camelContextId != null) {
-            camelContext = getCamelContextWithId(camelContextId);
-        }
-        if (camelContext == null) {
-            throw new IllegalArgumentException("A CamelContext or a CamelContextId must be injected!");
-        }
-    }
-
-    protected abstract CamelContext getCamelContextWithId(String camelContextId);
-
-    public Object getObject() throws Exception {
+    public ProducerTemplate getObject() throws Exception {
         CamelContext context = getCamelContext();
         if (defaultEndpoint != null) {
             Endpoint endpoint = context.getEndpoint(defaultEndpoint);
@@ -83,12 +68,8 @@ public abstract class AbstractCamelProducerTemplateFactoryBean extends Identifie
         return template;
     }
 
-    public Class getObjectType() {
+    public Class<DefaultProducerTemplate> getObjectType() {
         return DefaultProducerTemplate.class;
-    }
-
-    public boolean isSingleton() {
-        return true;
     }
 
     public void destroy() throws Exception {
@@ -97,14 +78,6 @@ public abstract class AbstractCamelProducerTemplateFactoryBean extends Identifie
 
     // Properties
     // -------------------------------------------------------------------------
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
     public String getDefaultEndpoint() {
         return defaultEndpoint;
     }
@@ -114,14 +87,6 @@ public abstract class AbstractCamelProducerTemplateFactoryBean extends Identifie
      */
     public void setDefaultEndpoint(String defaultEndpoint) {
         this.defaultEndpoint = defaultEndpoint;
-    }
-
-    public String getCamelContextId() {
-        return camelContextId;
-    }
-
-    public void setCamelContextId(String camelContextId) {
-        this.camelContextId = camelContextId;
     }
 
     public Integer getMaximumCacheSize() {

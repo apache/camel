@@ -16,50 +16,28 @@
  */
 package org.apache.camel.blueprint.handler;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
-
-import javax.xml.bind.Binder;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-
+import org.apache.aries.blueprint.BeanProcessor;
 import org.apache.aries.blueprint.ComponentDefinitionRegistry;
 import org.apache.aries.blueprint.ComponentDefinitionRegistryProcessor;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.apache.aries.blueprint.NamespaceHandler;
 import org.apache.aries.blueprint.ParserContext;
 import org.apache.aries.blueprint.PassThroughMetadata;
 import org.apache.aries.blueprint.mutable.MutableBeanMetadata;
 import org.apache.aries.blueprint.mutable.MutablePassThroughMetadata;
+import org.apache.aries.blueprint.mutable.MutableRefMetadata;
 import org.apache.aries.blueprint.mutable.MutableReferenceMetadata;
+import org.apache.aries.blueprint.mutable.MutableValueMetadata;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.blueprint.CamelContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
+import org.apache.camel.core.xml.AbstractCamelFactoryBean;
+import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
-import org.apache.camel.model.AggregateDefinition;
-import org.apache.camel.model.CatchDefinition;
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.ExpressionSubElementDefinition;
-import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.MarshalDefinition;
-import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ResequenceDefinition;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.SendDefinition;
-import org.apache.camel.model.SortDefinition;
-import org.apache.camel.model.UnmarshalDefinition;
-import org.apache.camel.model.WireTapDefinition;
+import org.apache.camel.model.*;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ComponentResolver;
@@ -68,13 +46,31 @@ import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.ComponentDefinitionException;
+import org.osgi.service.blueprint.reflect.BeanMetadata;
 import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.osgi.service.blueprint.reflect.Metadata;
+import org.osgi.service.blueprint.reflect.RefMetadata;
+import org.osgi.service.blueprint.reflect.ValueMetadata;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.bind.Binder;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
 
 public class CamelNamespaceHandler implements NamespaceHandler {
 
@@ -140,27 +136,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             }
 
             CamelContextFactoryBean ccfb = (CamelContextFactoryBean) value;
-            try {
-                PassThroughMetadata ptm = (PassThroughMetadata) context.getComponentDefinitionRegistry().getComponentDefinition("blueprintContainer");
-                ccfb.setBlueprintContainer((BlueprintContainer) ptm.getObject());
-                ptm = (PassThroughMetadata) context.getComponentDefinitionRegistry().getComponentDefinition("blueprintBundleContext");
-                ccfb.setBundleContext((BundleContext) ptm.getObject());
-                ccfb.setImplicitId(implicitId);
-            } catch (Exception e) {
-                throw new ComponentDefinitionException("Unable to initialize camel context factory", e);
-            }
-
-            //
-            // gnodet: the initialization of the CamelContextFactoryBean is now done at the end of the blueprint
-            //    container creation through the use of a ComponentDefinitionRegistryProcessor (those are called
-            //    after all the beans have been initialized.  That's why the calls to #afterPropertiesSet and
-            //    #init are commented.
-            //       This mechanism is now required because the #afterPropertiesSet method on the CamelContext
-            //    will search through the blueprint beans for beans implementing known interfaces such as
-            //    LifeCycle strategies, etc... so that they are automatically wired to the CamelContext.
-            //    However, Blueprint does not support real factories, so in order to do so, we need to actually
-            //    access the beans which lead to a circular exception while looking for the CamelContext itself.
-            //
+            ccfb.setImplicitId(implicitId);
 
             MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
             factory.setId(".camelBlueprint.passThrough." + contextId);
@@ -170,31 +146,96 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             factory2.setId(".camelBlueprint.factory." + contextId);
             factory2.setFactoryComponent(factory);
             factory2.setFactoryMethod("call");
-//            factory2.setInitMethod("afterPropertiesSet");
+            factory2.setInitMethod("afterPropertiesSet");
             factory2.setDestroyMethod("destroy");
+            factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
+            factory2.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
 
             MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
             ctx.setId(contextId);
+            ctx.setRuntimeClass(BlueprintCamelContext.class);
             ctx.setFactoryComponent(factory2);
             ctx.setFactoryMethod("getContext");
-//            ctx.setInitMethod("init");
+            ctx.setInitMethod("init");
             ctx.setDestroyMethod("destroy");
 
-            MutablePassThroughMetadata processorFactory = context.createMetadata(MutablePassThroughMetadata.class);
-            processorFactory.setId(".camelBlueprint.processor.passThrough." + contextId);
-            processorFactory.setObject(new PassThroughCallable<Object>(new CamelDependenciesFinder(ccfb, context)));
+            // Register objects
+            registerBeans(context, contextId, ccfb.getEndpoints());
+            registerBeans(context, contextId, ccfb.getThreadPools());
+            registerBeans(context, contextId, ccfb.getBeans());
 
-            MutableBeanMetadata processor = context.createMetadata(MutableBeanMetadata.class);
-            processor.setId(".camelBlueprint.processor." + contextId);
-            processor.setRuntimeClass(ComponentDefinitionRegistryProcessor.class);
-            processor.setFactoryComponent(processorFactory);
-            processor.setFactoryMethod("call");
-            processor.setProcessor(true);
-            context.getComponentDefinitionRegistry().registerComponentDefinition( processor );
+            // Register processors
+            MutablePassThroughMetadata beanProcessorFactory = context.createMetadata(MutablePassThroughMetadata.class);
+            beanProcessorFactory.setId(".camelBlueprint.processor.bean.passThrough." + contextId);
+            beanProcessorFactory.setObject(new PassThroughCallable<Object>(new CamelInjector(contextId)));
+
+            MutableBeanMetadata beanProcessor = context.createMetadata(MutableBeanMetadata.class);
+            beanProcessor.setId(".camelBlueprint.processor.bean." + contextId);
+            beanProcessor.setRuntimeClass(CamelInjector.class);
+            beanProcessor.setFactoryComponent(beanProcessorFactory);
+            beanProcessor.setFactoryMethod("call");
+            beanProcessor.setProcessor(true);
+            beanProcessor.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
+            context.getComponentDefinitionRegistry().registerComponentDefinition(beanProcessor);
+
+            MutablePassThroughMetadata regProcessorFactory = context.createMetadata(MutablePassThroughMetadata.class);
+            regProcessorFactory.setId(".camelBlueprint.processor.registry.passThrough." + contextId);
+            regProcessorFactory.setObject(new PassThroughCallable<Object>(new CamelDependenciesFinder(contextId, context)));
+
+            MutableBeanMetadata regProcessor = context.createMetadata(MutableBeanMetadata.class);
+            regProcessor.setId(".camelBlueprint.processor.registry." + contextId);
+            regProcessor.setRuntimeClass(CamelDependenciesFinder.class);
+            regProcessor.setFactoryComponent(regProcessorFactory);
+            regProcessor.setFactoryMethod("call");
+            regProcessor.setProcessor(true);
+            regProcessor.addDependsOn(".camelBlueprint.processor.bean." + contextId);
+            regProcessor.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
+            context.getComponentDefinitionRegistry().registerComponentDefinition(regProcessor);
 
             return ctx;
         }
         return null;
+    }
+
+    private void registerBeans(ParserContext context, String contextId, List<?> beans) {
+        if (beans != null) {
+            for (Object bean : beans) {
+                if (bean instanceof AbstractCamelFactoryBean) {
+                    registerBean(context, contextId, (AbstractCamelFactoryBean) bean);
+                }
+            }
+        }
+    }
+
+    protected void registerBean(ParserContext context, String contextId, AbstractCamelFactoryBean<?> fact) {
+        String id = fact.getId();
+
+        fact.setCamelContextId(contextId);
+
+        MutablePassThroughMetadata eff = context.createMetadata(MutablePassThroughMetadata.class);
+        eff.setId(".camelBlueprint.bean.factory." + id);
+        eff.setObject(new PassThroughCallable<Object>(fact));
+
+        MutableBeanMetadata ef = context.createMetadata(MutableBeanMetadata.class);
+        ef.setId(".camelBlueprint.bean.factory." + contextId);
+        ef.setFactoryComponent(eff);
+        ef.setFactoryMethod("call");
+        ef.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
+        ef.setInitMethod("afterPropertiesSet");
+        ef.setDestroyMethod("destroy");
+
+        MutableBeanMetadata e = context.createMetadata(MutableBeanMetadata.class);
+        e.setId(id);
+        e.setRuntimeClass(fact.getObjectType());
+        e.setFactoryComponent(ef);
+        e.setFactoryMethod("getObject");
+
+        context.getComponentDefinitionRegistry().registerComponentDefinition(e);
+    }
+
+    protected BlueprintContainer getBlueprintContainer(ParserContext context) {
+        PassThroughMetadata ptm = (PassThroughMetadata) context.getComponentDefinitionRegistry().getComponentDefinition("blueprintContainer");
+        return (BlueprintContainer) ptm.getObject();
     }
 
     public ComponentMetadata decorate(Node node, ComponentMetadata component, ParserContext context) {
@@ -240,6 +281,18 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         return classes;
     }
 
+    private ValueMetadata createValue(ParserContext context, String value) {
+        MutableValueMetadata v = context.createMetadata(MutableValueMetadata.class);
+        v.setStringValue(value);
+        return v;
+    }
+
+    private RefMetadata createRef(ParserContext context, String value) {
+        MutableRefMetadata r = context.createMetadata(MutableRefMetadata.class);
+        r.setComponentId(value);
+        return r;
+    }
+
     public static class PassThroughCallable<T> implements Callable<T> {
 
         private T value;
@@ -253,29 +306,152 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         }
     }
 
+    public static class CamelInjector extends CamelPostProcessorHelper implements BeanProcessor {
+
+        private final String camelContextName;
+        private BlueprintContainer blueprintContainer;
+
+        public CamelInjector(String camelContextName) {
+            this.camelContextName = camelContextName;
+        }
+
+        public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
+            this.blueprintContainer = blueprintContainer;
+        }
+
+        public Object beforeInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
+            injectFields(bean, beanName);
+            injectMethods(bean, beanName);
+            if (bean instanceof CamelContextAware) {
+                ((CamelContextAware) bean).setCamelContext(getCamelContext());
+            }
+            return bean;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return (CamelContext) blueprintContainer.getComponentInstance(camelContextName);
+        }
+
+        /**
+         * A strategy method to allow implementations to perform some custom JBI
+         * based injection of the POJO
+         *
+         * @param bean the bean to be injected
+         */
+        protected void injectFields(final Object bean, final String beanName) {
+            Class clazz = bean.getClass();
+            do {
+                Field[] fields = clazz.getDeclaredFields();
+                for (Field field : fields) {
+                    EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+                    if (endpointInject != null && matchContext(endpointInject.context())) {
+                        injectField(field, endpointInject.uri(), endpointInject.ref(), bean, beanName);
+                    }
+
+                    Produce produce = field.getAnnotation(Produce.class);
+                    if (produce != null && matchContext(produce.context())) {
+                        injectField(field, produce.uri(), produce.ref(), bean, beanName);
+                    }
+                }
+                clazz = clazz.getSuperclass();
+            } while (clazz != null && clazz != Object.class);
+        }
+
+        protected void injectField(Field field, String endpointUri, String endpointRef, Object bean, String beanName) {
+            setField(field, bean, getInjectionValue(field.getType(), endpointUri, endpointRef, field.getName(), bean, beanName));
+        }
+
+        protected static void setField(Field field, Object instance, Object value) {
+            try {
+                boolean oldAccessible = field.isAccessible();
+                boolean shouldSetAccessible = !Modifier.isPublic(field.getModifiers()) && !oldAccessible;
+                if (shouldSetAccessible) {
+                    field.setAccessible(true);
+                }
+                field.set(instance, value);
+                if (shouldSetAccessible) {
+                    field.setAccessible(oldAccessible);
+                }
+            } catch (IllegalArgumentException ex) {
+                throw new UnsupportedOperationException("Cannot inject value of class: " + value.getClass() + " into: " + field);
+            } catch (IllegalAccessException ex) {
+                throw new IllegalStateException("Could not access method: " + ex.getMessage());
+            }
+        }
+
+        protected void injectMethods(final Object bean, final String beanName) {
+            Class clazz = bean.getClass();
+            do {
+                Method[] methods = clazz.getDeclaredMethods();
+                for (Method method : methods) {
+                    setterInjection(method, bean, beanName);
+                    consumerInjection(method, bean, beanName);
+                }
+                clazz = clazz.getSuperclass();
+            } while (clazz != null && clazz != Object.class);
+        }
+
+        protected void setterInjection(Method method, Object bean, String beanName) {
+            EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
+            if (endpointInject != null && matchContext(endpointInject.context())) {
+                setterInjection(method, bean, beanName, endpointInject.uri(), endpointInject.ref());
+            }
+
+            Produce produce = method.getAnnotation(Produce.class);
+            if (produce != null && matchContext(produce.context())) {
+                setterInjection(method, bean, beanName, produce.uri(), produce.ref());
+            }
+        }
+
+        protected void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointRef) {
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            if (parameterTypes != null) {
+                if (parameterTypes.length != 1) {
+                    LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+                } else {
+                    String propertyName = ObjectHelper.getPropertyName(method);
+                    Object value = getInjectionValue(parameterTypes[0], endpointUri, endpointRef, propertyName, bean, beanName);
+                    ObjectHelper.invokeMethod(method, bean, value);
+                }
+            }
+        }
+
+        public Object afterInit(Object o, String s, BeanCreator beanCreator, BeanMetadata beanMetadata) {
+            return o;
+        }
+
+        public void beforeDestroy(Object o, String s) {
+        }
+
+        public void afterDestroy(Object o, String s) {
+        }
+
+    }
+
     public static class CamelDependenciesFinder implements ComponentDefinitionRegistryProcessor {
 
-        private final CamelContextFactoryBean ccfb;
+        private final String camelContextName;
         private final ParserContext context;
+        private BlueprintContainer blueprintContainer;
 
-        public CamelDependenciesFinder(CamelContextFactoryBean ccfb, ParserContext context) {
-            this.ccfb = ccfb;
+        public CamelDependenciesFinder(String camelContextName, ParserContext context) {
+            this.camelContextName = camelContextName;
             this.context = context;
         }
 
+        public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
+            this.blueprintContainer = blueprintContainer;
+        }
+
         public void process(ComponentDefinitionRegistry componentDefinitionRegistry) {
-            try {
-                ccfb.afterPropertiesSet();
-                ccfb.getContext().init();
-            } catch (Exception e) {
-                throw new ComponentDefinitionException("Unable to initialize camel context factory", e);
-            }
+            CamelContext camelContext = (CamelContext) blueprintContainer.getComponentInstance(camelContextName);
 
             Set<String> components = new HashSet<String>();
             Set<String> languages = new HashSet<String>();
             Set<String> dataformats = new HashSet<String>();
             Set<String> dependsOn = new HashSet<String>();
-            for (RouteDefinition rd : ccfb.getContext().getRouteDefinitions()) {
+            for (RouteDefinition rd : camelContext.getRouteDefinitions()) {
                 findInputComponents(rd.getInputs(), components, languages, dataformats);
                 findOutputComponents(rd.getOutputs(), components, languages, dataformats);
             }
@@ -365,6 +541,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 languages.clear();
                 dataformats.clear();
             }
+
+
         }
 
         public <T extends org.osgi.service.blueprint.reflect.Metadata> T createMetadata(java.lang.Class<T> tClass) {

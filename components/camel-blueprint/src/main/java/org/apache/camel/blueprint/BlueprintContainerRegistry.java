@@ -16,11 +16,12 @@
  */
 package org.apache.camel.blueprint;
 
+import org.apache.aries.blueprint.ExtendedBeanMetadata;
+import org.apache.aries.blueprint.mutable.MutableReferenceMetadata;
 import org.apache.camel.spi.Registry;
+import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
-import org.osgi.service.blueprint.reflect.BeanMetadata;
-import org.osgi.service.blueprint.reflect.ComponentMetadata;
-import org.osgi.service.blueprint.reflect.ReferenceMetadata;
+import org.osgi.service.blueprint.container.NoSuchComponentException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,7 +39,11 @@ public class BlueprintContainerRegistry implements Registry {
     }
 
     public <T> T lookup(String name, Class<T> type) {
-        return type.cast(blueprintContainer.getComponentInstance(name));
+        try {
+            return type.cast(blueprintContainer.getComponentInstance(name));
+        } catch (NoSuchComponentException e) {
+            return null;
+        }
     }
 
     public <T> Map<String, T> lookupByType(Class<T> type) {
@@ -47,16 +52,34 @@ public class BlueprintContainerRegistry implements Registry {
 
     public static <T> Map<String, T> lookupByType(BlueprintContainer blueprintContainer, Class<T> type) {
         Map<String, T> objects = new LinkedHashMap<String, T>();
-        for (ComponentMetadata metadata : blueprintContainer.getMetadata(ComponentMetadata.class)) {
-            boolean isSingleton = metadata instanceof BeanMetadata
-                        && (BeanMetadata.SCOPE_SINGLETON.equals(((BeanMetadata) metadata).getScope())
-                            || ((BeanMetadata) metadata).getScope() == null);
-            boolean isReference = metadata instanceof ReferenceMetadata;
-            if (isSingleton || isReference) {
-                Object o = blueprintContainer.getComponentInstance( metadata.getId() );
-                if (type.isInstance( o )) {
+        for (ExtendedBeanMetadata metadata : blueprintContainer.getMetadata(ExtendedBeanMetadata.class)) {
+            try {
+                Class cl = metadata.getRuntimeClass();
+                if (cl == null && metadata.getClassName() != null) {
+                    Bundle bundle  = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
+                    cl = bundle.loadClass(metadata.getClassName());
+                }
+                if (cl == null || type.isAssignableFrom(cl)) {
+                    Object o = blueprintContainer.getComponentInstance( metadata.getId() );
                     objects.put( metadata.getId(), type.cast(o) );
                 }
+            } catch (Throwable t) {
+                // ignore
+            }
+        }
+        for (MutableReferenceMetadata metadata : blueprintContainer.getMetadata(MutableReferenceMetadata.class)) {
+            try {
+                Class cl = metadata.getRuntimeInterface();
+                if (cl == null && metadata.getInterface() != null) {
+                    Bundle bundle  = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
+                    cl = bundle.loadClass(metadata.getInterface());
+                }
+                if (cl == null || type.isAssignableFrom(cl)) {
+                    Object o = blueprintContainer.getComponentInstance( metadata.getId() );
+                    objects.put( metadata.getId(), type.cast(o) );
+                }
+            } catch (Throwable t) {
+                // ignore
             }
         }
         return objects;

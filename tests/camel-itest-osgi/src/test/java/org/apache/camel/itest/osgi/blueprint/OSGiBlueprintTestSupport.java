@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.seda.SedaComponent;
@@ -150,6 +151,18 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
         assertEquals(1, ctx.getRoutes().size());
     }
 
+    @Test
+    public void testEndpointInjection() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle10").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle10)", 5000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle10)", 5000);
+        Object producer = ctn.getComponentInstance("producer");
+        assertNotNull(producer);
+        assertEquals(TestProducer.class.getName(), producer.getClass().getName());
+        Method mth = producer.getClass().getMethod("getTestEndpoint");
+        assertNotNull(mth.invoke(producer));
+    }
+
     @Before
     public void setUp() throws Exception {
     }
@@ -182,39 +195,49 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-4.xml"))
                         .add(TestRouteBuilder.class)
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle4")
-                        .build(withBnd())).noStart(),
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .build()).noStart(),
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-5.xml"))
                         .add(TestRouteBuilder.class)
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle5")
-                        .build(withBnd())).noStart(),
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .build()).noStart(),
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-6.xml"))
-                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle6")
-                        .build(withBnd())).noStart(),
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .build()).noStart(),
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-7.xml"))
                         .add(TestInterceptStrategy.class)
-                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle7")
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-8.xml"))
                         .add("org/apache/camel/component/properties/cheese.properties", OSGiBlueprintTestSupport.class.getResource("cheese.properties"))
-                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle8")
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-9.xml"))
                         .add(TestRouteBuilder.class)
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle9")
-                        .build(withBnd())).noStart(),
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .build()).noStart(),
+
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-10.xml"))
+                        .add(TestProducer.class)
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle10")
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .build()).noStart(),
 
                 // install the spring dm profile
                 profile("spring.dm").version("1.2.0"),
@@ -234,7 +257,7 @@ public class OSGiBlueprintTestSupport extends AbstractIntegrationTest {
 
                 workingDirectory("target/paxrunner/"),
 
-//                vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
+//                vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
 
                 //felix(),
                 equinox());

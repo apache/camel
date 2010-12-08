@@ -41,7 +41,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision: 925208 $
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractCamelThreadPoolFactoryBean extends IdentifiedType implements CamelContextAware {
+public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFactoryBean<ExecutorService> {
 
     @XmlAttribute(required = true)
     private Integer poolSize;
@@ -60,17 +60,8 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends IdentifiedType 
     private String threadName;
     @XmlAttribute
     private Boolean daemon = Boolean.TRUE;
-    @XmlAttribute
-    private String camelContextId;
-    @XmlTransient
-    private CamelContext camelContext;
 
-    public Object getObject() throws Exception {
-        if (camelContext == null && camelContextId != null) {
-            camelContext = getCamelContextWithId(camelContextId);
-        }
-
-        notNull(camelContext, "camelContext");
+    public ExecutorService getObject() throws Exception {
         if (poolSize == null || poolSize <= 0) {
             throw new IllegalArgumentException("PoolSize must be a positive number");
         }
@@ -81,19 +72,15 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends IdentifiedType 
             rejected = rejectedPolicy.asRejectedExecutionHandler();
         }
 
-        ExecutorService answer = camelContext.getExecutorServiceStrategy().newThreadPool(getId(), getThreadName(), getPoolSize(), max,
+        ExecutorService answer = getCamelContext().getExecutorServiceStrategy().newThreadPool(getId(), getThreadName(), getPoolSize(), max,
                     getKeepAliveTime(), getTimeUnit(), getMaxQueueSize(), rejected, isDaemon());
         return answer;
     }
 
     protected abstract CamelContext getCamelContextWithId(String camelContextId);
 
-    public Class getObjectType() {
+    public Class<ExecutorService> getObjectType() {
         return ExecutorService.class;
-    }
-
-    public boolean isSingleton() {
-        return true;
     }
 
     public Integer getPoolSize() {
@@ -158,22 +145,6 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends IdentifiedType 
 
     public void setDaemon(Boolean daemon) {
         this.daemon = daemon;
-    }
-
-    public String getCamelContextId() {
-        return camelContextId;
-    }
-
-    public void setCamelContextId(String camelContextId) {
-        this.camelContextId = camelContextId;
-    }
-
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
     }
 
 }
