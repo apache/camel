@@ -71,7 +71,7 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(500);
+        oneExchangeDone.matchesMockWaitTime();
 
         // there should be 2 completed events
         // one for the producer template, and another for the Camel route
@@ -86,7 +86,7 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(500);
+        oneExchangeDone.matchesMockWaitTime();
 
         // there should be 1 completed events as direct endpoint will be like a direct method call
         // and the UoW will be re-used
@@ -98,9 +98,9 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").delay(500).to("mock:result");
+                from("seda:foo").to("mock:result");
 
-                from("direct:bar").delay(500).to("mock:result");
+                from("direct:bar").to("mock:result");
             }
         };
     }

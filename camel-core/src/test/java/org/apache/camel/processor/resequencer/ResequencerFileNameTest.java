@@ -36,23 +36,22 @@ public class ResequencerFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").resequence(new MyFileNameExpression()).stream().timeout(500).to("mock:result");
+                from("direct:start").resequence(new MyFileNameExpression()).stream().timeout(100).to("mock:result");
                 // END SNIPPET: example
             }
         };
     }
 
     public void testStreamResequence() throws Exception {
-        resultEndpoint.expectedBodiesReceived("20090612-D001", "20090612-D003", "20090612-D002", "20090615-D001");
-
+        resultEndpoint.expectedBodiesReceived("20090612-D001", "20090612-D003");
         template.requestBody("direct:start", "20090612-D003");
         template.requestBody("direct:start", "20090612-D001");
+        resultEndpoint.assertIsSatisfied();
 
-        Thread.sleep(2000);
-
+        resultEndpoint.reset();
+        resultEndpoint.expectedBodiesReceived("20090612-D002", "20090615-D001");
         template.requestBody("direct:start", "20090615-D001");
         template.requestBody("direct:start", "20090612-D002");
-
         resultEndpoint.assertIsSatisfied();
     }
 }

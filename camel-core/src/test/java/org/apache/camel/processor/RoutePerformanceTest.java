@@ -24,6 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dataset.SimpleDataSet;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.StopWatch;
 
 /**
  * A route for simple performance testing that can be used when we suspect
@@ -36,7 +37,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
     private String uri = "mock:results";
 
     public void testPerformance() throws Exception {
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
 
         MockEndpoint endpoint = getMockEndpoint(uri);
         endpoint.expectedMessageCount((int) dataSet.getSize());
@@ -46,9 +47,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        long delta = System.currentTimeMillis() - start;
-
-        System.out.println("RoutePerformanceTest: Sent: " + size + " Took: " + delta + " ms");
+        System.out.println("RoutePerformanceTest: Sent: " + size + " Took: " + watch.taken() + " ms");
     }
 
     @Override

@@ -29,18 +29,14 @@ public class MulticastParallelTimeout3Test extends ContextTestSupport {
 
     public void testMulticastParallelTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // C will timeout so we only get A and B
-        mock.expectedBodiesReceived("AB");
+        // C will timeout so we only get A and/or B
+        mock.message(0).body().not(body().contains("C"));
 
         getMockEndpoint("mock:A").expectedMessageCount(1);
         getMockEndpoint("mock:B").expectedMessageCount(1);
         getMockEndpoint("mock:C").expectedMessageCount(0);
 
         template.sendBody("direct:start", "Hello");
-
-        // wait at least longer than the delay in C so we can ensure its being cancelled
-        // and wont continue routing
-        Thread.sleep(3000);
 
         assertMockEndpointsSatisfied();
     }
@@ -63,16 +59,16 @@ public class MulticastParallelTimeout3Test extends ContextTestSupport {
                                 return oldExchange;
                             }
                         })
-                        .parallelProcessing().timeout(4000).to("direct:a", "direct:b", "direct:c")
+                        .parallelProcessing().timeout(250).to("direct:a", "direct:b", "direct:c")
                     // use end to indicate end of multicast route
                     .end()
                     .to("mock:result");
 
-                from("direct:a").delay(2000).to("mock:A").setBody(constant("A"));
+                from("direct:a").to("mock:A").setBody(constant("A"));
 
-                from("direct:b").delay(3000).to("mock:B").setBody(constant("B"));
+                from("direct:b").to("mock:B").setBody(constant("B"));
 
-                from("direct:c").delay(6000).to("mock:C").setBody(constant("C"));
+                from("direct:c").delay(500).to("mock:C").setBody(constant("C"));
                 // END SNIPPET: e1
             }
         };

@@ -35,13 +35,11 @@ public class ZipDataFormatFileDeleteTest extends ContextTestSupport {
 
     public void testZipFileDelete() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
-
         template.sendBodyAndHeader("file:target/zip", "Hello World", Exchange.FILE_NAME, "hello.txt");
-
         assertMockEndpointsSatisfied();
 
-        //give a bit time
-        Thread.sleep(1000);
+        // wait till the exchange is done which means the file should then have been deleted
+        oneExchangeDone.matchesMockWaitTime();
 
         File in = new File("target/zip/hello.txt").getAbsoluteFile();
         assertFalse("Should have been deleted " + in, in.exists());

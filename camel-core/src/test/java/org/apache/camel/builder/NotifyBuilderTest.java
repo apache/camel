@@ -41,22 +41,18 @@ public class NotifyBuilderTest extends ContextTestSupport {
         assertEquals(true, notify.matches());
     }
 
-    public void testSedaWhenExchangeDoneSimple() throws Exception {
+    public void testDirectBeerWhenExchangeDoneSimple() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context)
-                .from("seda:beer").whenDone(1)
+                .from("direct:beer").whenDone(1)
                 .create();
 
-        assertEquals("from(seda:beer).whenDone(1)", notify.toString());
+        assertEquals("from(direct:beer).whenDone(1)", notify.toString());
 
         assertEquals(false, notify.matches());
 
-        template.sendBody("seda:beer", "A");
+        template.sendBody("direct:beer", "A");
 
-        // wait up till 5 sec as it should be routed completed now
-        assertEquals(true, notify.matches(5, TimeUnit.SECONDS));
-
-        SedaEndpoint confirm = context.getEndpoint("seda:done", SedaEndpoint.class);
-        assertEquals(1, confirm.getExchanges().size());
+        assertEquals(true, notify.matches());
     }
 
     public void testDirectFromRoute() throws Exception {
@@ -438,58 +434,6 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
         // now it should match
         assertEquals(true, notify.matches());
-    }
-
-    public void testWhenExchangeReceivedWithDelay() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context)
-                .whenReceived(1)
-                .create();
-
-        long start = System.currentTimeMillis();
-        template.sendBody("seda:cheese", "Hello Cheese");
-        long end = System.currentTimeMillis();
-        assertTrue("Should be faster than: " + (end - start), (end - start) < 2000);
-
-        // should be quick as its when received and NOT when done
-        assertEquals(true, notify.matches(5, TimeUnit.SECONDS));
-        long end2 = System.currentTimeMillis();
-
-        assertTrue("Should be faster than: " + (end2 - start), (end2 - start) < 2000);
-    }
-
-    public void testWhenExchangeDoneWithDelay() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context)
-                .whenDone(1)
-                .create();
-
-        long start = System.currentTimeMillis();
-        template.sendBody("seda:cheese", "Hello Cheese");
-        long end = System.currentTimeMillis();
-        assertTrue("Should be faster than: " + (end - start), (end - start) < 2000);
-
-        assertEquals(false, notify.matches());
-
-        // should NOT be quick as its when DONE
-        assertEquals(true, notify.matches(5, TimeUnit.SECONDS));
-        long end2 = System.currentTimeMillis();
-
-        assertTrue("Should be slower than: " + (end2 - start), (end2 - start) > 2900);
-    }
-
-    public void testWhenExchangeDoneAndTimeoutWithDelay() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context)
-                .whenDone(1)
-                .create();
-
-        template.sendBody("seda:cheese", "Hello Cheese");
-
-        assertEquals(false, notify.matches());
-
-        // should timeout
-        assertEquals(false, notify.matches(1, TimeUnit.SECONDS));
-
-        // should NOT timeout
-        assertEquals(true, notify.matches(5, TimeUnit.SECONDS));
     }
 
     public void testWhenExchangeExactlyDone() throws Exception {
@@ -917,13 +861,11 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
                 from("direct:bar").routeId("bar").to("mock:bar");
 
-                from("direct:fail").throwException(new IllegalArgumentException("Damn"));
-
-                from("seda:cheese").delay(3000).to("mock:cheese");
+                from("direct:fail").routeId("fail").throwException(new IllegalArgumentException("Damn"));
 
                 from("direct:cake").routeId("cake").transform(body().prepend("Bye ")).to("log:cake");
 
-                from("seda:beer").to("mock:beer").delay(3000).to("seda:done");
+                from("direct:beer").routeId("beer").to("log:beer").to("mock:beer");
             }
         };
     }

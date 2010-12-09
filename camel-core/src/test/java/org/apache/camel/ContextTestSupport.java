@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.naming.Context;
 
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -39,6 +40,7 @@ public abstract class ContextTestSupport extends TestSupport {
     protected volatile CamelContext context;
     protected volatile ProducerTemplate template;
     protected volatile ConsumerTemplate consumer;
+    protected volatile NotifyBuilder oneExchangeDone;
     private boolean useRouteBuilder = true;
     private Service camelContextService;
 
@@ -80,6 +82,9 @@ public abstract class ContextTestSupport extends TestSupport {
         template.start();
         consumer = context.createConsumerTemplate();
         consumer.start();
+
+        // create a default notifier when 1 exchange is done which is the most common caase
+        oneExchangeDone = new NotifyBuilder(context).whenDone(1).create();
 
         if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();

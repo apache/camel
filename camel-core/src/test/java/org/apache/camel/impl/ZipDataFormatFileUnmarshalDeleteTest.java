@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -34,14 +35,14 @@ public class ZipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
     }
 
     public void testZipFileUnmarshalDelete() throws Exception {
+        // there are 2 exchanges
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
+
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-
         template.sendBodyAndHeader("file:target/zip", "Hello World", Exchange.FILE_NAME, "hello.txt");
-
         assertMockEndpointsSatisfied();
 
-        //give a bit time
-        Thread.sleep(1000);
+        notify.matchesMockWaitTime();
 
         File in = new File("target/zip/hello.txt").getAbsoluteFile();
         assertFalse("Should have been deleted " + in, in.exists());

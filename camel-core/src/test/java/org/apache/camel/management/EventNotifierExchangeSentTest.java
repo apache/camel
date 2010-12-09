@@ -86,13 +86,13 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertEquals("log://foo", e0.getEndpoint().getEndpointUri());
         assertEquals("direct://bar", e1.getEndpoint().getEndpointUri());
         long time = e1.getTimeTaken();
-        assertTrue("Should take about 1 sec, was: " + time, time > 900);
+        assertTrue("Should take about 0.5 sec, was: " + time, time > 400);
 
         assertEquals("mock://result", e2.getEndpoint().getEndpointUri());
 
         assertEquals("direct://start", e3.getEndpoint().getEndpointUri());
         time = e3.getTimeTaken();
-        assertTrue("Should take about 1 sec, was: " + time, time > 900);
+        assertTrue("Should take about 0.5 sec, was: " + time, time > 400);
     }
 
     public void testExchangeSentRecipient() throws Exception {
@@ -103,7 +103,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give it time to complete
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         assertEquals(6, events.size());
         ExchangeSentEvent e0 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(0));
@@ -128,11 +128,11 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to("log:foo").to("direct:bar").to("mock:result");
 
-                from("direct:bar").delay(1000);
+                from("direct:bar").delay(500);
 
                 from("direct:foo").recipientList().header("foo");
 
-                from("direct:cool").delay(2000);
+                from("direct:cool").delay(1000);
             }
         };
     }

@@ -67,11 +67,11 @@ public class PollEnricherTest extends ContextTestSupport {
     }
 
     public void testPollEnrichInOnlyWaitNoTimeout() throws InterruptedException {
-        // use another thread to send it after 2 seconds
+        // use another thread to send it a bit later
         Thread t = new Thread(new Runnable() {
             public void run() {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(250);
                 } catch (InterruptedException e) {
                     // ignore
                 }
@@ -86,7 +86,7 @@ public class PollEnricherTest extends ContextTestSupport {
         // should take approx 1 sec to complete as the other thread is sending a bit later and we wait
         mock.assertIsSatisfied();
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take approx 1 sec: was " + delta, delta > 900);
+        assertTrue("Should take approx 0.25 sec: was " + delta, delta > 150);
     }
 
     // -------------------------------------------------------------

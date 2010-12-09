@@ -38,10 +38,6 @@ public class MulticastParallelTimeoutTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "Hello");
 
-        // wait at least longer than the delay in A so we can ensure its being cancelled
-        // and wont continue routing
-        Thread.sleep(4000);
-
         assertMockEndpointsSatisfied();
     }
 
@@ -63,16 +59,16 @@ public class MulticastParallelTimeoutTest extends ContextTestSupport {
                                 return oldExchange;
                             }
                         })
-                        .parallelProcessing().timeout(1000).to("direct:a", "direct:b", "direct:c")
+                        .parallelProcessing().timeout(250).to("direct:a", "direct:b", "direct:c")
                     // use end to indicate end of multicast route
                     .end()
                     .to("mock:result");
 
-                from("direct:a").delay(3000).to("mock:A").setBody(constant("A"));
+                from("direct:a").delay(500).to("mock:A").setBody(constant("A"));
 
                 from("direct:b").to("mock:B").setBody(constant("B"));
 
-                from("direct:c").delay(500).to("mock:C").setBody(constant("C"));
+                from("direct:c").to("mock:C").setBody(constant("C"));
                 // END SNIPPET: e1
             }
         };

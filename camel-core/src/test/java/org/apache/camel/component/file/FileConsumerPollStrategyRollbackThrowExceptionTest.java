@@ -21,17 +21,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Unit test for poll strategy
  */
 public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextTestSupport {
 
-    private static String event = "";
+    private static volatile String event = "";
 
     private String fileUrl = "file://target/pollstrategy/?pollStrategy=#myPoll";
 
@@ -50,13 +48,8 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
     }
 
     public void testRollbackThrowException() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-
         // let it run for a little, but it fails all the time
         Thread.sleep(2000);
-
-        assertMockEndpointsSatisfied();
 
         // and we should rollback X number of times
         assertTrue(event.startsWith("rollback"));
@@ -73,14 +66,6 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
     private class MyPollStrategy implements PollingConsumerPollStrategy {
 
         public boolean begin(Consumer consumer, Endpoint endpoint) {
-            // start consumer as we simulate the fail in begin
-            // and thus before camel lazy start it itself
-            try {
-                consumer.start();
-            } catch (Exception e) {
-                ObjectHelper.wrapRuntimeCamelException(e);
-            }
-
             // simulate an error on first poll
             throw new IllegalArgumentException("Damn I cannot do this");
         }

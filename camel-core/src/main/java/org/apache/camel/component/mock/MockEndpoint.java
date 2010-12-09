@@ -173,6 +173,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         Collection<Endpoint> endpoints = context.getEndpoints();
         long millis = unit.toMillis(timeout);
         for (Endpoint endpoint : endpoints) {
+            // if the endpoint was intercepted we should get the delegate
+            if (endpoint instanceof InterceptSendToEndpoint) {
+                endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();
+            }
             if (endpoint instanceof MockEndpoint) {
                 MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
                 mockEndpoint.setResultWaitTime(millis);
@@ -190,6 +194,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         ObjectHelper.notNull(context, "camelContext");
         Collection<Endpoint> endpoints = context.getEndpoints();
         for (Endpoint endpoint : endpoints) {
+            // if the endpoint was intercepted we should get the delegate
+            if (endpoint instanceof InterceptSendToEndpoint) {
+                endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();
+            }
             if (endpoint instanceof MockEndpoint) {
                 MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
                 mockEndpoint.reset();

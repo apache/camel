@@ -17,11 +17,9 @@
 package org.apache.camel.impl;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -32,24 +30,15 @@ public class InflightRepositoryRouteTest extends ContextTestSupport {
     private final CountDownLatch latch = new CountDownLatch(1);
 
     public void testInflight() throws Exception {
+        context.setInflightRepository(new MyInflightRepo());
+
         assertEquals(0, context.getInflightRepository().size());
 
-        template.asyncSendBody("direct:start", "Hello World");
-        latch.await(5, TimeUnit.SECONDS);
-
-        assertEquals(1, context.getInflightRepository().size());
-
-        // must be 1 in flight from this endpoint
-        assertEquals(1, context.getInflightRepository().size(context.getEndpoint("direct:start")));
-
-        // but 0 from this endpoint
-        assertEquals(0, context.getInflightRepository().size(context.getEndpoint("mock:result")));
-
-        // wait to be sure its done
-        Thread.sleep(2000);
+        template.sendBody("direct:start", "Hello World");
 
         assertEquals(0, context.getInflightRepository().size());
         assertEquals(0, context.getInflightRepository().size(context.getEndpoint("direct:start")));
+        assertEquals(0, context.getInflightRepository().size(context.getEndpoint("mock:result")));
     }
 
     @Override
@@ -57,13 +46,28 @@ public class InflightRepositoryRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                latch.countDown();
-                            }
-                        }).delay(1000).to("mock:result");
+                from("direct:start").to("mock:result");
             }
         };
+    }
+
+    private class MyInflightRepo extends DefaultInflightRepository {
+
+        @Override
+        public void add(Exchange exchange) {
+            super.add(exchange);
+
+            assertEquals(1, context.getInflightRepository().size());
+
+            assertEquals(1, size(context.getEndpoint("direct:start")));
+
+            // but 0 from this endpoint
+            assertEquals(0, size(context.getEndpoint("mock:result")));
+        }
+
+        @Override
+        public void remove(Exchange exchange) {
+            super.remove(exchange);
+        }
     }
 }

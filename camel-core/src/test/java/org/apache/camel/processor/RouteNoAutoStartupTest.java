@@ -31,7 +31,7 @@ public class RouteNoAutoStartupTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         assertMockEndpointsSatisfied();
     }
@@ -42,7 +42,7 @@ public class RouteNoAutoStartupTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         assertMockEndpointsSatisfied();
 

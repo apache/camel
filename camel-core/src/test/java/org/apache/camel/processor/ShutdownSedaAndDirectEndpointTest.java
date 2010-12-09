@@ -37,7 +37,7 @@ public class ShutdownSedaAndDirectEndpointTest extends ContextTestSupport {
         template.sendBody("seda:foo", "D");
         template.sendBody("seda:foo", "E");
 
-        Thread.sleep(250);
+        Thread.sleep(10);
 
         context.stop();
 
@@ -54,7 +54,7 @@ public class ShutdownSedaAndDirectEndpointTest extends ContextTestSupport {
                     .to("direct:bar");
 
                 from("direct:bar")
-                    .delay(500)
+                    .delay(25)
                     .to("mock:bar");
             }
         };

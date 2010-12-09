@@ -42,6 +42,7 @@ public class SplitterParallelNoStopOnExceptionTest extends ContextTestSupport {
 
     public void testSplitParallelNoStopOnExceptionStop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedMinimumMessageCount(0);
         // we do NOT stop so we receive all messages except the one that goes kaboom
         mock.allMessages().body().isNotEqualTo("Kaboom");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Goodday World", "Bye World");
@@ -73,8 +74,6 @@ public class SplitterParallelNoStopOnExceptionTest extends ContextTestSupport {
                                 if ("Kaboom".equals(body)) {
                                     throw new IllegalArgumentException("Forced");
                                 }
-                                // need to let ok body sleep so when we fail we do not have all tasks running
-                                Thread.sleep(1000);
                             }
                         }).to("mock:split");
             }

@@ -59,7 +59,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
             // simulate CPU processing of the order by sleeping a bit
             try {
-                Thread.sleep(1000);
+                Thread.sleep(250);
             } catch (InterruptedException e) {
                 // ignore
             }
@@ -90,9 +90,10 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
             assertEquals("Simulated fatal error", e.getCause().getMessage());
         }
 
-        // give time for onCompletion to execute
-        // as its being executed asynchronously in another thread
-        Thread.sleep(1000);
+        oneExchangeDone.matchesMockWaitTime();
+
+        // onCompletion is async so we gotta wait a bit for the file to be deleted
+        Thread.sleep(250);
 
         File file = new File("target/mail/backup/");
         String[] files = file.list();

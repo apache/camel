@@ -31,8 +31,8 @@ import org.apache.camel.spi.Synchronization;
  */
 public class SedaUnitOfWorkTest extends ContextTestSupport {
 
-    private static String sync;
-    private static String lastOne;
+    private static volatile String sync;
+    private static volatile String lastOne;
 
     public void testSedaUOW() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -42,8 +42,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // give time for on completiom to run
-        Thread.sleep(100);
+        oneExchangeDone.matchesMockWaitTime();
 
         assertEquals("onCompleteA", sync);
         assertEquals("onCompleteA", lastOne);

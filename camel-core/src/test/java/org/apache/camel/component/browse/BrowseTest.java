@@ -42,16 +42,11 @@ public class BrowseTest extends ContextTestSupport {
         Collection<Endpoint> list = context.getEndpoints();
         assertEquals("number of endpoints", 2, list.size());
 
-        Thread.sleep(2000);
-
         for (Endpoint endpoint : list) {
-
             List<Exchange> exchanges = ((BrowseEndpoint) endpoint).getExchanges();
-
             LOG.debug(">>>> " + endpoint + " has: " + exchanges);
 
             assertEquals("Exchanges received on " + endpoint, 2, exchanges.size());
-
             assertInMessageBodyEquals(exchanges.get(0), body1);
             assertInMessageBodyEquals(exchanges.get(1), body2);
         }

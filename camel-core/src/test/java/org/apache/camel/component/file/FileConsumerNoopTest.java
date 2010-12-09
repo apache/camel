@@ -42,7 +42,7 @@ public class FileConsumerNoopTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // wait a little to let file consumer run some more
-        Thread.sleep(2000);
+        Thread.sleep(250);
 
         File file = new File("target/filenoop").getAbsoluteFile();
         assertEquals("There should be 2 files", 2, file.list().length);
@@ -56,7 +56,7 @@ public class FileConsumerNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filenoop?noop=true").convertBodyTo(String.class).to("mock:result");
+                from("file://target/filenoop?noop=true&delay=10").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

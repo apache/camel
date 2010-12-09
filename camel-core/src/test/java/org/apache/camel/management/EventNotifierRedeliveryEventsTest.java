@@ -78,7 +78,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).redeliveryDelay(100));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).redeliveryDelay(0));
 
                 from("direct:start").throwException(new IllegalArgumentException("Damn"));
             }
@@ -110,7 +110,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).asyncDelayedRedelivery().redeliveryDelay(100));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).asyncDelayedRedelivery().redeliveryDelay(10));
 
                 from("direct:start").throwException(new IllegalArgumentException("Damn"));
             }
@@ -121,7 +121,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(500);
+        Thread.sleep(250);
 
         assertEquals(9, events.size());
 

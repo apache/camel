@@ -43,8 +43,7 @@ public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // and file should still be there in premove directory
-        Thread.sleep(1000);
+        oneExchangeDone.matchesMockWaitTime();
 
         File pre = new File("target/premove/work/hello.txt").getAbsoluteFile();
         assertTrue("Pre move file should exist", pre.exists());

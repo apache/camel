@@ -58,7 +58,7 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("seda:foo", "Hello World");
+        template.sendBody("direct:foo", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -66,12 +66,9 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
         mock.expectedBodiesReceived("stop");
 
         // we send stop command so we should only get 1 message
-        template.sendBody("seda:foo", "stop");
+        template.sendBody("direct:foo", "stop");
 
         assertMockEndpointsSatisfied();
-
-        // give time for slow boxes
-        Thread.sleep(500);
 
         assertTrue("Should be stopped", policy.isStopped());
     }
@@ -81,7 +78,7 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("foo").routePolicy(policy).to("mock:result");
+                from("direct:foo").routeId("foo").routePolicy(policy).to("mock:result");
             }
         };
     }

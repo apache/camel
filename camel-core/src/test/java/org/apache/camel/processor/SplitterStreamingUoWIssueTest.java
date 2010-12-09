@@ -59,11 +59,6 @@ public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
                 from("file:target/splitter?delete=true&sortBy=file:name")
                     .split(body().tokenize(",")).streaming()
                         .to("seda:queue")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                Thread.sleep(200);
-                            }
-                        })
                     .end()
                     .log("End of file ${file:name}")
                     .to("mock:result");

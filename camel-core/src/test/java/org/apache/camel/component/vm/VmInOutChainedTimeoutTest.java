@@ -28,20 +28,18 @@ import org.apache.camel.util.StopWatch;
 public class VmInOutChainedTimeoutTest extends ContextTestSupport {
 
     public void testVmInOutChainedTimeout() throws Exception {
-        // time timeout after 2 sec should trigger a immediately reply
         StopWatch watch = new StopWatch();
         try {
-            template.requestBody("vm:a?timeout=5000", "Hello World");
+            template.requestBody("vm:a?timeout=1000", "Hello World");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
+            // the chained vm caused the timeout
             ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
-            assertEquals(2000, cause.getTimeout());
+            assertEquals(200, cause.getTimeout());
         }
         long delta = watch.stop();
 
-        assertTrue("Should be faster than 4000 millis, was: " + delta, delta < 4000);
-
-        Thread.sleep(2000);
+        assertTrue("Should be faster than 1 sec, was: " + delta, delta < 1100);
     }
 
     @Override
@@ -54,12 +52,12 @@ public class VmInOutChainedTimeoutTest extends ContextTestSupport {
                 from("vm:a")
                         .to("mock:a")
                         // this timeout will trigger an exception to occur
-                        .to("vm:b?timeout=2000")
+                        .to("vm:b?timeout=200")
                         .to("mock:a2");
 
                 from("vm:b")
                         .to("mock:b")
-                        .delay(3000)
+                        .delay(500)
                         .transform().constant("Bye World");
             }
         };

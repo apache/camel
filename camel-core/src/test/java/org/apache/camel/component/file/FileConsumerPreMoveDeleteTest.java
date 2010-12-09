@@ -43,8 +43,7 @@ public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // and file should still be deleted
-        Thread.sleep(1000);
+        oneExchangeDone.matchesMockWaitTime();
 
         File pre = new File("target/premove/work/hello.txt").getAbsoluteFile();
         assertFalse("Pre move file should have been deleted", pre.exists());

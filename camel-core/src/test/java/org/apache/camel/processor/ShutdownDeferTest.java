@@ -48,7 +48,7 @@ public class ShutdownDeferTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(500);
+        Thread.sleep(50);
 
         context.stop();
 
@@ -64,7 +64,7 @@ public class ShutdownDeferTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("seda:foo")
                     .startupOrder(1)
-                    .delay(1000).to("file://target/deferred");
+                    .to("file://target/deferred");
 
                 // use file component to transfer files from route 1 -> route 2 as it
                 // will normally suspend, but by deferring this we can let route 1

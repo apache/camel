@@ -39,7 +39,7 @@ public class FileConsumeNoopIdempotentEnabledTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
 
         // give some time to let consumer try to read the file multiple times
-        Thread.sleep(2000);
+        Thread.sleep(250);
 
         assertMockEndpointsSatisfied();
     }
@@ -49,7 +49,7 @@ public class FileConsumeNoopIdempotentEnabledTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/noop?noop=true&idempotent=true").convertBodyTo(String.class).to("mock:result");
+                from("file://target/noop?noop=true&idempotent=true&delay=10").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

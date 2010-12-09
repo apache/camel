@@ -35,7 +35,7 @@ public class SedaTimeoutTest extends ContextTestSupport {
     }
 
     public void testSedaTineout() throws Exception {
-        Future<String> out = template.asyncRequestBody("seda:foo?timeout=1000", "World", String.class);
+        Future<String> out = template.asyncRequestBody("seda:foo?timeout=100", "World", String.class);
         try {
             out.get();
             fail("Should have thrown an exception");
@@ -50,7 +50,7 @@ public class SedaTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").to("mock:before").delay(3000).transform(body().prepend("Bye ")).to("mock:result");
+                from("seda:foo").to("mock:before").delay(250).transform(body().prepend("Bye ")).to("mock:result");
             }
         };
     }

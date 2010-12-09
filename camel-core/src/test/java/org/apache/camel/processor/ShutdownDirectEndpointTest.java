@@ -36,7 +36,7 @@ public class ShutdownDirectEndpointTest extends ContextTestSupport {
         template.asyncSendBody("direct:bar", "D");
         template.asyncSendBody("direct:bar", "E");
 
-        Thread.sleep(1000);
+        Thread.sleep(10);
 
         context.stop();
 
@@ -49,7 +49,7 @@ public class ShutdownDirectEndpointTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:bar")
-                    .delay(2000)
+                    .delay(25)
                     .to("mock:bar");
             }
         };

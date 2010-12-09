@@ -26,7 +26,7 @@ public class FileConsumerCurrentDirTest extends ContextTestSupport {
 
     public void testCurrentDir() throws Exception {
         // just see if the route can be started and poll in files
-        Thread.sleep(1000);
+        Thread.sleep(500);
     }
 
     @Override

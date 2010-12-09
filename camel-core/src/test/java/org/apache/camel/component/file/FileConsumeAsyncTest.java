@@ -40,9 +40,6 @@ public class FileConsumeAsyncTest extends ContextTestSupport {
         before.expectedMessageCount(1);
         before.assertIsSatisfied();
 
-        // give a little extra time for consumer to stop
-        Thread.sleep(1000);
-
         // file should still exist as its the async done that will complete it
         assertTrue("File should not have been deleted", new File("target/files/report.txt").getAbsoluteFile().exists());
 
@@ -50,8 +47,8 @@ public class FileConsumeAsyncTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.assertIsSatisfied();
 
-        // give a little time for on completion to delete the file
-        Thread.sleep(1000);
+        oneExchangeDone.matchesMockWaitTime();
+
         assertFalse("File should been deleted", new File("target/files/report.txt").getAbsoluteFile().exists());
     }
 
@@ -63,7 +60,7 @@ public class FileConsumeAsyncTest extends ContextTestSupport {
                     .convertBodyTo(String.class)
                     .threads()
                         .to("mock:before")
-                        .delay(3000)
+                        .delay(1000)
                         .to("mock:result");
             }
         };
