@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -203,6 +206,20 @@ public class SplitterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testSplitterWithIterable() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMessageCount(4);
+        resultEndpoint.expectedBodiesReceived("A","B","C","D");
+        final List<String> data = Arrays.asList("A","B","C","D");
+        Iterable itb = new Iterable() {
+            public Iterator iterator() {
+                return data.iterator();
+            }
+        };
+        sendBody("direct:simple", itb);
+        resultEndpoint.assertIsSatisfied();
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -229,6 +246,8 @@ public class SplitterTest extends ContextTestSupport {
                         
                         }                    
                     }).to("mock:result");
+
+                from("direct:simple").split(body()).to("mock:result");
             }
         };
     }

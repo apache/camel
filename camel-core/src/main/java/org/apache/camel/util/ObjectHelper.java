@@ -477,6 +477,8 @@ public final class ObjectHelper {
             return Collections.emptyList().iterator();
         } else if (value instanceof Iterator) {
             return (Iterator)value;
+        } else if (value instanceof Iterable) {
+            return ((Iterable)value).iterator();
         } else if (value instanceof Collection) {
             Collection collection = (Collection)value;
             return collection.iterator();

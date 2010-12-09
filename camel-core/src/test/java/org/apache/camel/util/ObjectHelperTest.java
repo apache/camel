@@ -269,7 +269,24 @@ public class ObjectHelperTest extends TestCase {
         Iterator<Object> it = ObjectHelper.createIterator(msg);
         assertFalse(it.hasNext());
     }
-    
+
+    public void testIterable() {
+        final List<String> data = new ArrayList<String>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        Iterable<String> itb = new Iterable<String>() {
+            public Iterator<String> iterator() {
+                return data.iterator();
+            }
+        };
+        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(itb));
+        assertEquals("A", it.next());
+        assertEquals("B", it.next());
+        assertEquals("C", it.next());
+        assertFalse(it.hasNext());
+    }
+
     public void testNormalizeClassName() {
         assertEquals("Should get the right class name", "my.package-info", ObjectHelper.normalizeClassName("my.package-info"));
         assertEquals("Should get the right class name", "Integer[]", ObjectHelper.normalizeClassName("Integer[] \r"));
