@@ -162,24 +162,24 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
         boolean failed = exchange.isFailed();
 
-        // fire event to signal the exchange is done
+        // at first done the synchronizations
+        UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, LOG);
+
+        // then fire event to signal the exchange is done
         try {
             if (failed) {
                 EventHelper.notifyExchangeFailed(exchange.getContext(), exchange);
             } else {
                 EventHelper.notifyExchangeDone(exchange.getContext(), exchange);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             // must catch exceptions to ensure synchronizations is also invoked
             LOG.warn("Exception occurred during event notification. This exception will be ignored.", e);
-        }
-
-        // done the synchronizations
-        UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, LOG);
-
-        // unregister from inflight registry
-        if (exchange.getContext() != null) {
-            exchange.getContext().getInflightRepository().remove(exchange);
+        } finally {
+            // unregister from inflight registry
+            if (exchange.getContext() != null) {
+                exchange.getContext().getInflightRepository().remove(exchange);
+            }
         }
     }
 

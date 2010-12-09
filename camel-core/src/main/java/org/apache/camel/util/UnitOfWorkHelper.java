@@ -59,7 +59,7 @@ public final class UnitOfWorkHelper {
                         }
                         synchronization.onComplete(exchange);
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     // must catch exceptions to ensure all synchronizations have a chance to run
                     log.warn("Exception occurred during onCompletion. This exception will be ignored.", e);
                 }
