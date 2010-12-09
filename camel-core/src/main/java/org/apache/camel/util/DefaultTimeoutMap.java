@@ -52,7 +52,6 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     private final ConcurrentMap<K, TimeoutMapEntry<K, V>> map = new ConcurrentHashMap<K, TimeoutMapEntry<K, V>>();
     private final ScheduledExecutorService executor;
     private final long purgePollTime;
-    private final long initialDelay = 1000L;
     private final Lock lock = new ReentrantLock();
     private boolean useLock = true;
 
@@ -242,7 +241,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
      * lets schedule each time to allow folks to change the time at runtime
      */
     protected void schedulePoll() {
-        executor.scheduleWithFixedDelay(this, initialDelay, purgePollTime, TimeUnit.MILLISECONDS);
+        executor.scheduleWithFixedDelay(this, 0, purgePollTime, TimeUnit.MILLISECONDS);
     }
 
     /**
