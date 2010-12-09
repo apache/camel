@@ -65,6 +65,13 @@ public abstract class ContextTestSupport extends TestSupport {
         this.camelContextService = camelContextService;
     }
 
+    /**
+     * Convenient api to create a NotifyBuilder to be notified of a specific event
+     */
+    protected NotifyBuilder event() {
+        return new NotifyBuilder(context);
+    }
+    
     @Override
     protected void setUp() throws Exception {
         if (!useJmx()) {
@@ -84,7 +91,7 @@ public abstract class ContextTestSupport extends TestSupport {
         consumer.start();
 
         // create a default notifier when 1 exchange is done which is the most common caase
-        oneExchangeDone = new NotifyBuilder(context).whenDone(1).create();
+        oneExchangeDone = event().whenDone(1).create();
 
         if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();

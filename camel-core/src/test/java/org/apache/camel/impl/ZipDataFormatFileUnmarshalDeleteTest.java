@@ -36,13 +36,13 @@ public class ZipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
 
     public void testZipFileUnmarshalDelete() throws Exception {
         // there are 2 exchanges
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
+        NotifyBuilder event = event().whenDone(2).create();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         template.sendBodyAndHeader("file:target/zip", "Hello World", Exchange.FILE_NAME, "hello.txt");
         assertMockEndpointsSatisfied();
 
-        notify.matchesMockWaitTime();
+        event.matchesMockWaitTime();
 
         File in = new File("target/zip/hello.txt").getAbsoluteFile();
         assertFalse("Should have been deleted " + in, in.exists());
