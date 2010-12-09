@@ -46,9 +46,7 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
         mock.expectedMinimumMessageCount(1);
 
         mock.assertIsSatisfied();
-
-        // give time to NOT delete file
-        Thread.sleep(200);
+        oneExchangeDone.matchesMockWaitTime();
 
         // assert the file is deleted
         File file = new File("./target/deletefile/hello.txt");

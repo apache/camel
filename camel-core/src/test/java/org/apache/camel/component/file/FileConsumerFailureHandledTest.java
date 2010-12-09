@@ -45,8 +45,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/messages/input/", "Paris", Exchange.FILE_NAME, "paris.txt");
         mock.assertIsSatisfied();
 
-        // sleep otherwise the file assertions below could fail
-        Thread.sleep(200);
+        oneExchangeDone.matchesMockWaitTime();
 
         assertFiles("paris.txt", true);
     }
@@ -59,8 +58,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/messages/input/", "London", Exchange.FILE_NAME, "london.txt");
         mock.assertIsSatisfied();
 
-        // sleep otherwise the file assertions below could fail
-        Thread.sleep(200);
+        oneExchangeDone.matchesMockWaitTime();
 
         // london should be deleted as we have failure handled it
         assertFiles("london.txt", true);
@@ -74,8 +72,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/messages/input/", "Dublin", Exchange.FILE_NAME, "dublin.txt");
         mock.assertIsSatisfied();
 
-        // sleep otherwise the file assertions below could fail
-        Thread.sleep(200);
+        oneExchangeDone.matchesMockWaitTime();
 
         // dublin should NOT be deleted, but should be retired on next consumer
         assertFiles("dublin.txt", false);
@@ -89,8 +86,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/messages/input/", "Madrid", Exchange.FILE_NAME, "madrid.txt");
         mock.assertIsSatisfied();
 
-        // sleep otherwise the file assertions below could fail
-        Thread.sleep(200);
+        oneExchangeDone.matchesMockWaitTime();
 
         // madrid should NOT be deleted, but should be retired on next consumer
         assertFiles("madrid.txt", false);

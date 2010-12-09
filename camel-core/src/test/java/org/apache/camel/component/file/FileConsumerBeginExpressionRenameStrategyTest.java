@@ -44,8 +44,6 @@ public class FileConsumerBeginExpressionRenameStrategyTest extends ContextTestSu
 
         template.sendBodyAndHeader("file:target/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
-        Thread.sleep(100);
-
         mock.assertIsSatisfied();
     }
 
@@ -72,7 +70,7 @@ public class FileConsumerBeginExpressionRenameStrategyTest extends ContextTestSu
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?preMove=../inprogress/${file:name.noext}.bak&consumer.delay=5000")
+                from("file://target/reports?preMove=../inprogress/${file:name.noext}.bak")
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) throws Exception {

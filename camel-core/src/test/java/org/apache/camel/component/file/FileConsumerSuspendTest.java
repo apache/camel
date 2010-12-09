@@ -30,9 +30,13 @@ import org.apache.camel.impl.RoutePolicySupport;
  */
 public class FileConsumerSuspendTest extends ContextTestSupport {
 
-    public void testConsumeSuspendFile() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/suspended");
+        super.setUp();
+    }
 
+    public void testConsumeSuspendFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
@@ -40,8 +44,7 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/suspended", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-
-        Thread.sleep(1000);
+        oneExchangeDone.matchesMockWaitTime();
 
         // the route is suspended by the policy so we should only receive one
         String[] files = new File("target/suspended/").getAbsoluteFile().list();
@@ -55,7 +58,7 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 MyPolicy myPolicy = new MyPolicy();
-                from("file://target/suspended?maxMessagesPerPoll=1&delete=true")
+                from("file://target/suspended?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10")
                     .routePolicy(myPolicy).id("myRoute")
                     .convertBodyTo(String.class).to("mock:result");
             }

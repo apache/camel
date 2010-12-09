@@ -33,7 +33,7 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
     private static int counter;
     private static String event = "";
 
-    private String fileUrl = "file://target/pollstrategy/?consumer.pollStrategy=#myPoll&noop=true&delay=10";
+    private String fileUrl = "file://target/pollstrategy/?consumer.pollStrategy=#myPoll&noop=true&initialDelay=0&delay=10";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -55,8 +55,10 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        oneExchangeDone.matchesMockWaitTime();
+
         // give file consumer a bit time
-        Thread.sleep(250);
+        Thread.sleep(20);
 
         assertTrue(event.startsWith("rollbackcommit"));
     }

@@ -31,7 +31,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
 
     private static volatile String event = "";
 
-    private String fileUrl = "file://target/pollstrategy/?pollStrategy=#myPoll";
+    private String fileUrl = "file://target/pollstrategy/?pollStrategy=#myPoll&initialDelay=0&delay=10";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -49,7 +49,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
 
     public void testRollbackThrowException() throws Exception {
         // let it run for a little, but it fails all the time
-        Thread.sleep(2000);
+        Thread.sleep(20);
 
         // and we should rollback X number of times
         assertTrue(event.startsWith("rollback"));

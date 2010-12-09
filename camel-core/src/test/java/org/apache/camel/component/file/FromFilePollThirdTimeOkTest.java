@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -38,6 +39,8 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
     }
 
     public void testPollFileAndShouldBeDeletedAtThirdPoll() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
+
         template.sendBodyAndHeader("file://target/deletefile", body, Exchange.FILE_NAME, "hello.txt");
 
         getMockEndpoint("mock:result").expectedBodiesReceived(body);
@@ -45,9 +48,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(2);
 
         assertMockEndpointsSatisfied();
-
-        // give time to delete file
-        Thread.sleep(500);
+        notify.matchesMockWaitTime();
 
         assertEquals(3, counter);
 
@@ -63,7 +64,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
                 // no redeliveries as we want the file consumer to try again
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).logStackTrace(false).handled(false));
 
-                from("file://target/deletefile?delete=true").process(new Processor() {
+                from("file://target/deletefile?delete=true&initialDelay=0&delay=10").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         counter++;
                         if (counter < 3) {

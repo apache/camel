@@ -45,9 +45,7 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
         mock.message(0).body(String.class).isEqualTo(body);
 
         mock.assertIsSatisfied();
-
-        // give time to NOT delete file
-        Thread.sleep(1000);
+        oneExchangeDone.matchesMockWaitTime();
 
         // assert the file is not moved
         File file = new File("./target/movefile/hello.txt");

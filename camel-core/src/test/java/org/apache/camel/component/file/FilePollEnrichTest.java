@@ -44,9 +44,9 @@ public class FilePollEnrichTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/pollenrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
+        oneExchangeDone.matchesMockWaitTime();
 
         // file should be moved
-        Thread.sleep(1000);
         File file = new File("target/pollenrich/hello.txt").getAbsoluteFile();
         assertFalse("File should have been moved", file.exists());
     }

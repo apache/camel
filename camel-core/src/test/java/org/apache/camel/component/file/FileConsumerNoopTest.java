@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -37,18 +38,16 @@ public class FileConsumerNoopTest extends ContextTestSupport {
     }
 
     public void testNoop() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         assertMockEndpointsSatisfied();
 
-        // wait a little to let file consumer run some more
-        Thread.sleep(250);
+        notify.matchesMockWaitTime();
 
         File file = new File("target/filenoop").getAbsoluteFile();
         assertEquals("There should be 2 files", 2, file.list().length);
-
-        // should not come new files since
-        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -56,7 +55,7 @@ public class FileConsumerNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filenoop?noop=true&delay=10").convertBodyTo(String.class).to("mock:result");
+                from("file://target/filenoop?noop=true&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

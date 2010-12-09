@@ -19,6 +19,7 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
@@ -35,14 +36,15 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
     private static volatile String lastOne;
 
     public void testSedaUOW() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
-
-        oneExchangeDone.matchesMockWaitTime();
+        notify.matchesMockWaitTime();
 
         assertEquals("onCompleteA", sync);
         assertEquals("onCompleteA", lastOne);

@@ -36,6 +36,13 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
     private String fileUrl = "file://target/exclusiveread/slowfile?noop=true&consumer.delay=500&readLock=none";
 
     @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("./target/exclusiveread");
+        createDirectory("./target/exclusiveread/slowfile");
+        super.setUp();
+    }
+
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
@@ -47,8 +54,6 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
     }
 
     public void testPollFileWhileSlowFileIsBeingWritten() throws Exception {
-        deleteDirectory("./target/exclusiveread");
-        createDirectory("./target/exclusiveread/slowfile");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 

@@ -33,9 +33,13 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
 
     private MyPolicy myPolicy = new MyPolicy();
 
-    public void testConsumeSuspendAndResumeFile() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/suspended");
+        super.setUp();
+    }
 
+    public void testConsumeSuspendAndResumeFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
@@ -44,7 +48,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         // the route is suspended by the policy so we should only receive one
         String[] files = new File("target/suspended/").getAbsoluteFile().list();
@@ -52,6 +56,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         assertEquals("The file should exists", 1, files.length);
 
         // reset mock
+        oneExchangeDone.reset();
         mock.reset();
         mock.expectedMessageCount(1);
 
@@ -59,8 +64,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         myPolicy.resumeConsumer();
 
         assertMockEndpointsSatisfied();
-
-        Thread.sleep(500);
+        oneExchangeDone.matchesMockWaitTime();
 
         // and the file is now deleted
         files = new File("target/suspended/").getAbsoluteFile().list();
@@ -73,7 +77,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/suspended?maxMessagesPerPoll=1&delete=true")
+                from("file://target/suspended?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10")
                     .routePolicy(myPolicy).id("myRoute")
                     .convertBodyTo(String.class).to("mock:result");
             }

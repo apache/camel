@@ -33,7 +33,7 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
     private static int counter;
     private static volatile String event = "";
 
-    private String fileUrl = "file://target/pollstrategy/?consumer.pollStrategy=#myPoll&noop=true";
+    private String fileUrl = "file://target/pollstrategy/?consumer.pollStrategy=#myPoll&noop=true&initialDelay=0&delay=10";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

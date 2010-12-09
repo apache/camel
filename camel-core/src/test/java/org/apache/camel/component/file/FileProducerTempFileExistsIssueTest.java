@@ -44,12 +44,7 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
         deleteDirectory("target/tempprefix");
 
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
-
-        Thread.sleep(200);
-
         template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
-
-        Thread.sleep(200);
 
         File file = new File("target/tempprefix/hello.txt").getAbsoluteFile();
         assertEquals(true, file.exists());
@@ -61,12 +56,7 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "foohello.txt");
-
-        Thread.sleep(200);
-
         template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
-
-        Thread.sleep(200);
 
         File file = new File("target/tempprefix/hello.txt").getAbsoluteFile();
         assertEquals(true, file.exists());
@@ -77,12 +67,7 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
         deleteDirectory("target/tempprefix");
 
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
-
-        Thread.sleep(200);
-
         template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo&fileExist=Override", "Bye World", Exchange.FILE_NAME, "hello.txt");
-
-        Thread.sleep(200);
 
         File file = new File("target/tempprefix/hello.txt").getAbsoluteFile();
         assertEquals(true, file.exists());
@@ -93,12 +78,7 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
         deleteDirectory("target/tempprefix");
 
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
-
-        Thread.sleep(200);
-
         template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo&fileExist=Ignore", "Bye World", Exchange.FILE_NAME, "hello.txt");
-
-        Thread.sleep(200);
 
         File file = new File("target/tempprefix/hello.txt").getAbsoluteFile();
         assertEquals(true, file.exists());
@@ -110,9 +90,6 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
         deleteDirectory("target/tempprefix");
 
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
-
-        Thread.sleep(200);
-
         try {
             template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo&fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");
             fail("Should have thrown an exception");
@@ -121,12 +98,11 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
             assertTrue(cause.getMessage().startsWith("File already exist"));
         }
 
-        Thread.sleep(200);
-
         File file = new File("target/tempprefix/hello.txt").getAbsoluteFile();
         assertEquals(true, file.exists());
 
         // should not write new file as we should fail
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
+
 }

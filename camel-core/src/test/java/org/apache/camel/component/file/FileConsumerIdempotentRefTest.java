@@ -30,7 +30,7 @@ import org.apache.camel.spi.IdempotentRepository;
  */
 public class FileConsumerIdempotentRefTest extends ContextTestSupport {
 
-    private static boolean invoked;
+    private static volatile boolean invoked;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -50,7 +50,7 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/idempotent/?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}")
+                from("file://target/idempotent/?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&delay=10")
                         .convertBodyTo(String.class).to("mock:result");
             }
         };
@@ -64,7 +64,7 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(100);
+        oneExchangeDone.matchesMockWaitTime();
 
         // reset mock and set new expectations
         mock.reset();
@@ -76,8 +76,8 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         file = file.getAbsoluteFile();
         file.renameTo(renamed.getAbsoluteFile());
 
-        // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
-        Thread.sleep(2000);
+        // should NOT consume the file again, let a bit time go
+        Thread.sleep(100);
         assertMockEndpointsSatisfied();
 
         assertTrue("MyIdempotentRepository should have been invoked", invoked);
