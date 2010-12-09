@@ -87,6 +87,6 @@ public class TimeoutMapEntry<K, V> implements Comparable<Object>, Map.Entry<K, V
     }
 
     public String toString() {
-        return "Entry for key: " + key;
+        return key + " (times out after " + timeout + " millis)";
     }
 }

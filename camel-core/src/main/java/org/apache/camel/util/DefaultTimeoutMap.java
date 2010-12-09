@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.camel.Service;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,10 +38,14 @@ import org.apache.commons.logging.LogFactory;
  * <p/>
  * This implementation supports thread safe and non thread safe, in the manner you can enable locking or not.
  * By default locking is enabled and thus we are thread safe.
+ * <p/>
+ * You must provide a {@link java.util.concurrent.ScheduledExecutorService} in the constructor which is used
+ * to schedule a background task which check for old entries to purge. This implementation will shutdown the scheduler
+ * if its being stopped.
  *
  * @version $Revision$
  */
-public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Service {
+public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMap<K, V>, Runnable {
 
     protected final transient Log log = LogFactory.getLog(getClass());
 
@@ -52,12 +56,8 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
     private final Lock lock = new ReentrantLock();
     private boolean useLock = true;
 
-    public DefaultTimeoutMap() {
-        this(null, 1000L);
-    }
-
-    public DefaultTimeoutMap(boolean useLock) {
-        this(null, 1000L, useLock);
+    public DefaultTimeoutMap(ScheduledExecutorService executor) {
+        this(executor, 1000);
     }
 
     public DefaultTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
@@ -65,6 +65,7 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
     }
 
     public DefaultTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, boolean useLock) {
+        ObjectHelper.notNull(executor, "ScheduledExecutorService");
         this.executor = executor;
         this.purgePollTime = requestMapPollTimeMillis;
         this.useLock = useLock;
@@ -147,14 +148,18 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
      * The timer task which purges old requests and schedules another poll
      */
     public void run() {
-        if (log.isTraceEnabled()) {
-            log.trace("Running purge task to see if any entries has been timed out");
+        // only run if allowed
+        if (!isRunAllowed()) {
+            log.trace("Purge task not allowed to run");
+            return;
         }
+
+        log.trace("Running purge task to see if any entries has been timed out");
         try {
             purge();
         } catch (Throwable t) {
             // must catch and log exception otherwise the executor will now schedule next run
-            log.error("Exception occurred during purge task", t);
+            log.warn("Exception occurred during purge task. This exception will be ignored.", t);
         }
     }
 
@@ -175,7 +180,7 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
                 if (entry.getValue().getExpireTime() < now) {
                     if (isValidForEviction(entry.getValue())) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Evicting inactive request for correlationID: " + entry);
+                            log.debug("Evicting inactive entry ID: " + entry.getValue());
                         }
                         expired.add(entry.getValue());
                     }
@@ -237,9 +242,7 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
      * lets schedule each time to allow folks to change the time at runtime
      */
     protected void schedulePoll() {
-        if (executor != null) {
-            executor.scheduleWithFixedDelay(this, initialDelay, purgePollTime, TimeUnit.MILLISECONDS);
-        }
+        executor.scheduleWithFixedDelay(this, initialDelay, purgePollTime, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -262,13 +265,17 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
         return System.currentTimeMillis();
     }
 
-    public void start() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
+        if (executor.isShutdown()) {
+            throw new IllegalStateException("The ScheduledExecutorService is shutdown");
+        }
     }
 
-    public void stop() throws Exception {
-        if (executor != null) {
-            executor.shutdown();
-        }
+    @Override
+    protected void doStop() throws Exception {
+        // clear map if we stop
         map.clear();
     }
+
 }
