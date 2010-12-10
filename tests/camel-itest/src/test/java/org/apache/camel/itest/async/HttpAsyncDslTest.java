@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class HttpAsyncDslTest extends CamelTestSupport {
 
-    private static String order = "";
+    private static volatile String order = "";
 
     @Test
     public void testRequestOnly() throws Exception {
@@ -46,7 +46,9 @@ public class HttpAsyncDslTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("CAB", order);
+        // B should be last (either ABC or BAC depending on threading)
+        assertEquals(3, order.length());
+        assertTrue(order.endsWith("B"));
     }
 
     @Test
@@ -60,6 +62,7 @@ public class HttpAsyncDslTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        // should be in strict ABC order as we do request/reply
         assertEquals("ABC", order);
         assertEquals("Order OK", response);
     }
