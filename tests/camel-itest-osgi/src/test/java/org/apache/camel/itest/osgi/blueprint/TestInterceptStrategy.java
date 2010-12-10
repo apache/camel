@@ -24,6 +24,6 @@ import org.apache.camel.spi.InterceptStrategy;
 public class TestInterceptStrategy implements InterceptStrategy {
 
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 }
