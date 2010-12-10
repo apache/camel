@@ -30,7 +30,7 @@ public class RssPollingConsumerTest extends CamelTestSupport {
     @Test
     public void testGrabbingListOfEntries() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        mock.expectedMinimumMessageCount(1);
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
@@ -49,7 +49,7 @@ public class RssPollingConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=false&consumer.delay=100").to("mock:result");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=false").to("mock:result");
             }
         };
     }
