@@ -101,7 +101,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         if (bean instanceof CamelContextAware && canSetCamelContext(bean, beanName)) {
             CamelContextAware contextAware = (CamelContextAware)bean;
             if (camelContext == null) {
-                LOG.warn("No CamelContext defined yet so cannot inject into: " + bean);
+                LOG.warn("No CamelContext defined yet so cannot inject into bean: " + beanName);
             } else {
                 contextAware.setCamelContext(camelContext);
             }
@@ -204,20 +204,18 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     
     
     protected boolean canSetCamelContext(Object bean, String beanName) {
-        boolean answer = true;
         if (bean instanceof CamelContextAware) {
             CamelContextAware camelContextAware = (CamelContextAware) bean;
             CamelContext context = camelContextAware.getCamelContext();
             if (context != null) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("The camel context of " + beanName + " is set, so we skip inject the camel context of it.");
+                    LOG.trace("CamelContext already set on bean with id [" + beanName + "]. Will keep existing CamelContext on bean.");
                 }
-                answer = false;
+                return false;
             }
-        } else {
-            answer = false;
         }
-        return answer;
+
+        return true;
     }
 
     /**

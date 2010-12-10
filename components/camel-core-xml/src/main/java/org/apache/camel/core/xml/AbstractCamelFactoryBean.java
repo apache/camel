@@ -47,9 +47,6 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
         if (camelContext == null && camelContextId != null) {
             camelContext = getCamelContextWithId(camelContextId);
         }
-        if (camelContext == null) {
-            throw new IllegalArgumentException("A CamelContext or a CamelContextId must be injected!");
-        }
         return camelContext;
     }
 
