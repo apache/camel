@@ -19,6 +19,7 @@ package org.apache.camel.builder.xml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
+import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.sax.SAXSource;
@@ -31,6 +32,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.Synchronization;
+import org.apache.camel.util.UnitOfWorkHelper;
 
 /**
  * @version $Revision$
@@ -212,6 +215,36 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         String body = exchange.getOut().getBody(String.class);
         assertTrue(body.endsWith("<goodbye>world!</goodbye>"));
+    }
+
+    public void testXsltOutputFileDelete() throws Exception {
+        // directory must exists
+        deleteDirectory("target/xslt");
+        createDirectory("target/xslt");
+
+        URL styleSheet = getClass().getResource("example.xsl");
+
+        XsltBuilder builder = XsltBuilder.xslt(styleSheet).outputFile().deleteOutputFile();
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("<hello>world!</hello>");
+        exchange.getIn().setHeader(Exchange.XSLT_FILE_NAME, "target/xslt/xsltout.xml");
+
+        builder.process(exchange);
+        assertIsInstanceOf(File.class, exchange.getOut().getBody());
+
+        File file = new File("target/xslt/xsltout.xml").getAbsoluteFile();
+        assertTrue("Output file should exist", file.exists());
+
+        String body = exchange.getOut().getBody(String.class);
+        assertTrue(body.endsWith("<goodbye>world!</goodbye>"));
+
+        // now done the exchange
+        List<Synchronization> onCompletions = exchange.handoverCompletions();
+        UnitOfWorkHelper.doneSynchronizations(exchange, onCompletions, log);
+
+        // the file should be deleted
+        assertFalse("Output file should be deleted", file.exists());
     }
 
     public void testXsltSetConverter() throws Exception {

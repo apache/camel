@@ -39,6 +39,9 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.impl.SynchronizationAdapter;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.FileUtil;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -58,6 +61,7 @@ public class XsltBuilder implements Processor {
     private ResultHandlerFactory resultHandlerFactory = new StringResultHandlerFactory();
     private boolean failOnNullBody = true;
     private URIResolver uriResolver;
+    private boolean deleteOutputFile;
 
     public XsltBuilder() {
     }
@@ -73,6 +77,12 @@ public class XsltBuilder implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         notNull(getTemplate(), "template");
+
+        if (isDeleteOutputFile()) {
+            // add on completion so we can delete the file when the Exchange is done
+            String fileName = ExchangeHelper.getMandatoryHeader(exchange, Exchange.XSLT_FILE_NAME, String.class);
+            exchange.addOnCompletion(new XsltBuilderOnCompletion(fileName));
+        }
 
         Transformer transformer = getTemplate().newTransformer();
         configureTransformer(transformer, exchange);
@@ -162,6 +172,16 @@ public class XsltBuilder implements Processor {
      */
     public XsltBuilder outputFile() {
         setResultHandlerFactory(new FileResultHandlerFactory());
+        return this;
+    }
+
+    /**
+     * Should the output file be deleted when the {@link Exchange} is done.
+     * <p/>
+     * This option should only be used if you use {@link #outputFile()} as well.
+     */
+    public XsltBuilder deleteOutputFile() {
+        this.deleteOutputFile = true;
         return this;
     }
 
@@ -277,6 +297,14 @@ public class XsltBuilder implements Processor {
         this.uriResolver = uriResolver;
     }
 
+    public boolean isDeleteOutputFile() {
+        return deleteOutputFile;
+    }
+
+    public void setDeleteOutputFile(boolean deleteOutputFile) {
+        this.deleteOutputFile = deleteOutputFile;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -330,4 +358,23 @@ public class XsltBuilder implements Processor {
             }
         }
     }
+
+    private final class XsltBuilderOnCompletion extends SynchronizationAdapter {
+        private final String fileName;
+
+        private XsltBuilderOnCompletion(String fileName) {
+            this.fileName = fileName;
+        }
+
+        @Override
+        public void onDone(Exchange exchange) {
+            FileUtil.deleteFile(new File(fileName));
+        }
+
+        @Override
+        public String toString() {
+            return "XsltBuilderOnCompletion";
+        }
+    }
+
 }
