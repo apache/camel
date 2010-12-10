@@ -109,7 +109,7 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
                                 + "<ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">" 
                                 + "<return xmlns=\"http://cxf.component.camel.apache.org/\">" 
                                 + list.get(0) 
-                                +"</return></ns1:echoResponse>";
+                                + "</return></ns1:echoResponse>";
                             List<Element> body = new ArrayList<Element>();
                             body.add(XMLUtils.parse(s).getDocumentElement());
 

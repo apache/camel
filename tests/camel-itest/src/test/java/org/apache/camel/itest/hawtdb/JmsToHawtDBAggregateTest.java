@@ -50,7 +50,7 @@ public class JmsToHawtDBAggregateTest extends CamelSpringTestSupport {
 
         getMockEndpoint("mock:input").expectedMessageCount(10 * count);
         getMockEndpoint("mock:out").expectedMessageCount(count);
-        getMockEndpoint("mock:result").expectedMessageCount(count);;
+        getMockEndpoint("mock:result").expectedMessageCount(count);
         getMockEndpoint("mock:result").allMessages().body().isEqualTo("ABCDEFGHIJ");
         getMockEndpoint("mock:result").expectsNoDuplicates(header("counter"));
 
