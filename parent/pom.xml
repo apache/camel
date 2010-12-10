@@ -90,7 +90,7 @@
     <javax-mail-version>1.4.3</javax-mail-version>
     <jaxen-version>1.1.1</jaxen-version>
     <jdom-version>1.1</jdom-version>
-    <jetty-version>7.2.0.v20101020</jetty-version>
+    <jetty-version>7.2.1.v20101111</jetty-version>
     <jettison-version>1.2</jettison-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
     <jibx-version>1.2.2</jibx-version>
