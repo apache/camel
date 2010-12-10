@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -140,9 +139,9 @@ public class SplitterTest extends ContextTestSupport {
         Message out = result.getOut();
 
         assertMessageHeader(out, "foo", "bar");
-        assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
+        assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
     }
-    
+
     public void testSplitterWithAggregationStrategyParallelStreaming() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(5);
@@ -160,9 +159,9 @@ public class SplitterTest extends ContextTestSupport {
         Message out = result.getOut();
 
         assertMessageHeader(out, "foo", "bar");
-        assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
+        assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
     }
-    
+
     public void testSplitterWithStreaming() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(5);
@@ -175,7 +174,7 @@ public class SplitterTest extends ContextTestSupport {
                 in.setHeader("foo", "bar");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
         for (Exchange exchange : resultEndpoint.getReceivedExchanges()) {
             assertNotNull(exchange.getProperty(Exchange.SPLIT_INDEX));
@@ -183,16 +182,16 @@ public class SplitterTest extends ContextTestSupport {
             assertNull(exchange.getProperty(Exchange.SPLIT_SIZE));
         }
     }
-    
+
     public void testSplitterWithException() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(4);
         resultEndpoint.expectedHeaderReceived("foo", "bar");
-        
+
         MockEndpoint failedEndpoint = getMockEndpoint("mock:failed");
         failedEndpoint.expectedMessageCount(1);
         failedEndpoint.expectedHeaderReceived("foo", "bar");
-        
+
         Exchange result = template.request("direct:exception", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -200,7 +199,7 @@ public class SplitterTest extends ContextTestSupport {
                 in.setHeader("foo", "bar");
             }
         });
-        
+
         assertTrue("The result exchange should have a camel exception", result.getException() instanceof CamelException);
 
         assertMockEndpointsSatisfied();
@@ -209,8 +208,8 @@ public class SplitterTest extends ContextTestSupport {
     public void testSplitterWithIterable() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(4);
-        resultEndpoint.expectedBodiesReceived("A","B","C","D");
-        final List<String> data = Arrays.asList("A","B","C","D");
+        resultEndpoint.expectedBodiesReceived("A", "B", "C", "D");
+        final List<String> data = Arrays.asList("A", "B", "C", "D");
         Iterable itb = new Iterable() {
             public Iterator iterator() {
                 return data.iterator();
@@ -234,18 +233,18 @@ public class SplitterTest extends ContextTestSupport {
                 from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().streaming().to("mock:result");
 
                 from("direct:exception")
-                    .split(body().tokenize(","))
-                    .aggregationStrategy(new MyAggregationStrategy())
-                    .parallelProcessing()
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String string = exchange.getIn().getBody(String.class);
-                            if ("Exception".equals(string)) {
-                                throw new CamelException("Just want to throw exception here");
+                        .split(body().tokenize(","))
+                        .aggregationStrategy(new MyAggregationStrategy())
+                        .parallelProcessing()
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String string = exchange.getIn().getBody(String.class);
+                                if ("Exception".equals(string)) {
+                                    throw new CamelException("Just want to throw exception here");
+                                }
+
                             }
-                        
-                        }                    
-                    }).to("mock:result");
+                        }).to("mock:result");
 
                 from("direct:simple").split(body()).to("mock:result");
             }
