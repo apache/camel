@@ -308,30 +308,6 @@
   </build>
    
   <profiles>
-        <profile>
-           <!-- current osgi test can't run with JDK 1.6.0 -->
-           <id>skip-tests</id>
-           <activation>
-             <jdk>1.6</jdk>
-           </activation>
-           <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
-                        <excludes>
-                            <!-- TODO: temporary disable unit test to let TC not hang -->
-                            <exclude>**/*Test.*</exclude>
-                        </excludes>
-                        <systemPropertyVariables>
-                            <springVersion>${spring-version}</springVersion>
-                        </systemPropertyVariables>
-                    </configuration>
-                </plugin>
-            </plugins>
-           </build>
-        </profile>
 	<profile>
         <id>ci-build-profile</id>
         <activation>
