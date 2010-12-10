@@ -57,7 +57,6 @@ public class RestletTest extends OSGiIntegrationTestSupport {
                         String userName = exchange.getIn().getHeader("username", String.class);
                         assertNotNull("userName should not be null", userName);
                         exchange.getOut().setBody("{" + userName + "}");
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "417");
                         exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/JSON");
                     }
                 });
