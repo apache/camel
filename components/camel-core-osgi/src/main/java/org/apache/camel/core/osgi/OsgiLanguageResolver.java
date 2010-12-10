@@ -27,7 +27,6 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 public class OsgiLanguageResolver implements LanguageResolver {
-
     private static final transient Log LOG = LogFactory.getLog(OsgiLanguageResolver.class);
 
     private final BundleContext bundleContext;

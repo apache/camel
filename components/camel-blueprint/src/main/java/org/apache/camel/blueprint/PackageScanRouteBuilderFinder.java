@@ -18,7 +18,6 @@ package org.apache.camel.blueprint;
 
 import java.lang.reflect.Modifier;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.RoutesBuilder;
@@ -80,7 +79,7 @@ public class PackageScanRouteBuilderFinder {
             // type is valid so create and instantiate the builder
             RoutesBuilder builder = instantiateBuilder(aClass);
 //            if (beanPostProcessor != null) {
-                // Inject the annotated resource
+            // Inject the annotated resource
 //                beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
 //            }
             if (LOG.isDebugEnabled()) {
@@ -94,10 +93,10 @@ public class PackageScanRouteBuilderFinder {
      * Lets ignore beans that are explicitly configured in the Spring XML files
      */
     protected boolean shouldIgnoreBean(Class<?> type) {
-        for (BeanMetadata metadata : blueprintContainer.getMetadata( BeanMetadata.class )) {
+        for (BeanMetadata metadata : blueprintContainer.getMetadata(BeanMetadata.class)) {
             if (BeanMetadata.SCOPE_SINGLETON.equals(metadata.getScope())) {
-                Object bean = blueprintContainer.getComponentInstance( metadata.getId() );
-                if (type.isInstance( bean )) {
+                Object bean = blueprintContainer.getComponentInstance(metadata.getId());
+                if (type.isInstance(bean)) {
                     return true;
                 }
             }

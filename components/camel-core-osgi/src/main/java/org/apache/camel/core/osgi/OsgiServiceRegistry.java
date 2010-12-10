@@ -40,9 +40,9 @@ import org.osgi.framework.ServiceReference;
  * The OsgiServiceRegistry support to get the service object from the bundle context
  */
 public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
-    private BundleContext bundleContext;
-    private Map<String, Object> serviceCacheMap = new ConcurrentHashMap<String, Object>();
-    private ConcurrentLinkedQueue<ServiceReference> serviceReferenceQueue = new ConcurrentLinkedQueue<ServiceReference>();
+    private final BundleContext bundleContext;
+    private final Map<String, Object> serviceCacheMap = new ConcurrentHashMap<String, Object>();
+    private final ConcurrentLinkedQueue<ServiceReference> serviceReferenceQueue = new ConcurrentLinkedQueue<ServiceReference>();
     
     public OsgiServiceRegistry(BundleContext bc) {
         bundleContext = bc;

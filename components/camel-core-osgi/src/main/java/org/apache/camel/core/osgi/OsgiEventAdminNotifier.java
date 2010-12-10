@@ -16,7 +16,12 @@
  */
 package org.apache.camel.core.osgi;
 
+import java.util.Dictionary;
+import java.util.EventObject;
+import java.util.Hashtable;
+
 import org.apache.camel.management.EventNotifierSupport;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -25,29 +30,19 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
-import java.util.Dictionary;
-import java.util.EventObject;
-import java.util.Hashtable;
-
 /**
- * This EventNotifier is in charge of propagating events to EventAdmin if present.
+ * This {@link org.apache.camel.spi.EventNotifier} is in charge of propagating events
+ * to OSGi {@link EventAdmin} if present.
  */
 public class OsgiEventAdminNotifier extends EventNotifierSupport {
 
     public static final String TYPE = "type";
-
     public static final String EVENT = "event";
-
     public static final String TIMESTAMP = "timestamp";
-
     public static final String BUNDLE = "bundle";
-
     public static final String BUNDLE_ID = "bundle.id";
-
     public static final String BUNDLE_SYMBOLICNAME = "bundle.symbolicName";
-
     public static final String BUNDLE_VERSION = "bundle.version";
-
     public static final String CAUSE = "cause";
 
     public static final String TOPIC_CAMEL_EVENTS = "org/apache/camel/";

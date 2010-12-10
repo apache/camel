@@ -16,15 +16,15 @@
  */
 package org.apache.camel.blueprint;
 
-import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.model.RouteDefinition;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.model.RouteDefinition;
 
 @XmlRootElement(name = "routeContext")
 @XmlAccessorType(XmlAccessType.FIELD)

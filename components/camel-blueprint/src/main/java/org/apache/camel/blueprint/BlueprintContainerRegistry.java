@@ -16,15 +16,15 @@
  */
 package org.apache.camel.blueprint;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.aries.blueprint.ExtendedBeanMetadata;
 import org.apache.aries.blueprint.mutable.MutableReferenceMetadata;
 import org.apache.camel.spi.Registry;
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.NoSuchComponentException;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class BlueprintContainerRegistry implements Registry {
 
@@ -56,12 +56,12 @@ public class BlueprintContainerRegistry implements Registry {
             try {
                 Class cl = metadata.getRuntimeClass();
                 if (cl == null && metadata.getClassName() != null) {
-                    Bundle bundle  = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
+                    Bundle bundle = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
                     cl = bundle.loadClass(metadata.getClassName());
                 }
                 if (cl == null || type.isAssignableFrom(cl)) {
-                    Object o = blueprintContainer.getComponentInstance( metadata.getId() );
-                    objects.put( metadata.getId(), type.cast(o) );
+                    Object o = blueprintContainer.getComponentInstance(metadata.getId());
+                    objects.put(metadata.getId(), type.cast(o));
                 }
             } catch (Throwable t) {
                 // ignore
@@ -71,12 +71,12 @@ public class BlueprintContainerRegistry implements Registry {
             try {
                 Class cl = metadata.getRuntimeInterface();
                 if (cl == null && metadata.getInterface() != null) {
-                    Bundle bundle  = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
+                    Bundle bundle = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
                     cl = bundle.loadClass(metadata.getInterface());
                 }
                 if (cl == null || type.isAssignableFrom(cl)) {
-                    Object o = blueprintContainer.getComponentInstance( metadata.getId() );
-                    objects.put( metadata.getId(), type.cast(o) );
+                    Object o = blueprintContainer.getComponentInstance(metadata.getId());
+                    objects.put(metadata.getId(), type.cast(o));
                 }
             } catch (Throwable t) {
                 // ignore

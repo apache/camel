@@ -16,6 +16,24 @@
  */
 package org.apache.camel.blueprint.handler;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import javax.xml.bind.Binder;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import org.apache.aries.blueprint.BeanProcessor;
 import org.apache.aries.blueprint.ComponentDefinitionRegistry;
 import org.apache.aries.blueprint.ComponentDefinitionRegistryProcessor;
@@ -38,7 +56,21 @@ import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
-import org.apache.camel.model.*;
+import org.apache.camel.model.AggregateDefinition;
+import org.apache.camel.model.CatchDefinition;
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.ExpressionSubElementDefinition;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.MarshalDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ResequenceDefinition;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.SortDefinition;
+import org.apache.camel.model.UnmarshalDefinition;
+import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ComponentResolver;
@@ -47,6 +79,7 @@ import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.ComponentDefinitionException;
@@ -55,23 +88,6 @@ import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.osgi.service.blueprint.reflect.Metadata;
 import org.osgi.service.blueprint.reflect.RefMetadata;
 import org.osgi.service.blueprint.reflect.ValueMetadata;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.bind.Binder;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
 
 public class CamelNamespaceHandler implements NamespaceHandler {
 
@@ -84,7 +100,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     private static final transient Log LOG = LogFactory.getLog(CamelNamespaceHandler.class);
 
     private JAXBContext jaxbContext;
-    
+
     public static void renameNamespaceRecursive(Node node) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Document doc = node.getOwnerDocument();
@@ -492,10 +508,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             }
             try {
                 for (String component : components) {
-                    ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.componentResolver."  + component);
+                    ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.componentResolver." + component);
                     if (cm == null) {
                         MutableReferenceMetadata svc = createMetadata(MutableReferenceMetadata.class);
-                        svc.setId(".camelBlueprint.componentResolver."  + component);
+                        svc.setId(".camelBlueprint.componentResolver." + component);
                         svc.setFilter("(component=" + component + ")");
                         try {
                             // Try to set the runtime interface (only with aries blueprint > 0.1
@@ -518,10 +534,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                     }
                 }
                 for (String language : languages) {
-                    ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.languageResolver."  + language);
+                    ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.languageResolver." + language);
                     if (cm == null) {
                         MutableReferenceMetadata svc = createMetadata(MutableReferenceMetadata.class);
-                        svc.setId(".camelBlueprint.languageResolver."  + language);
+                        svc.setId(".camelBlueprint.languageResolver." + language);
                         svc.setFilter("(language=" + language + ")");
                         try {
                             // Try to set the runtime interface (only with aries blueprint > 0.1
@@ -544,10 +560,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                     }
                 }
                 for (String dataformat : dataformats) {
-                    ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.dataformatResolver."  + dataformat);
+                    ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.dataformatResolver." + dataformat);
                     if (cm == null) {
                         MutableReferenceMetadata svc = createMetadata(MutableReferenceMetadata.class);
-                        svc.setId(".camelBlueprint.dataformatResolver."  + dataformat);
+                        svc.setId(".camelBlueprint.dataformatResolver." + dataformat);
                         svc.setFilter("(dataformat=" + dataformat + ")");
                         try {
                             // Try to set the runtime interface (only with aries blueprint > 0.1
@@ -571,7 +587,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 }
             } catch (UnsupportedOperationException e) {
                 LOG.warn("Unable to add dependencies on to camel components OSGi services.  "
-                         + "The Apache Aries blueprint implementation used it too old and the blueprint bundle can not see the org.apache.camel.spi package.");
+                        + "The Apache Aries blueprint implementation used it too old and the blueprint bundle can not see the org.apache.camel.spi package.");
                 components.clear();
                 languages.clear();
                 dataformats.clear();

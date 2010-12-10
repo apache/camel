@@ -30,7 +30,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolver {
-    private Bundle bundle;
+
+    private final Bundle bundle;
     
     public OsgiPackageScanClassResolver(Bundle bundle) {
         this.bundle = bundle;

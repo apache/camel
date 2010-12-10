@@ -16,6 +16,12 @@
  */
 package org.apache.camel.blueprint;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.aries.blueprint.ExtendedBlueprintContainer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -24,12 +30,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.util.ServiceHelper;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * A factory to create a Proxy to a a Camel Pojo Endpoint.
@@ -98,7 +98,6 @@ public class CamelProxyFactoryBean extends AbstractCamelFactoryBean<Object> {
         } catch (Exception e) {
             throw new FailedToCreateProducerException(endpoint, e);
         }
-
     }
 
     public void destroy() throws Exception {

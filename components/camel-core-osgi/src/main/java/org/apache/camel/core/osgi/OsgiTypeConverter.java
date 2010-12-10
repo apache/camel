@@ -36,7 +36,6 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterRegistry, ServiceTrackerCustomizer {
-
     private static final Log LOG = LogFactory.getLog(OsgiTypeConverter.class);
 
     private final BundleContext bundleContext;
