@@ -29,7 +29,7 @@
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel</artifactId>
-  <version>1.6.4</version>
+  <version>1.6.5-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel</name>
   <description>Camel build POM</description>
@@ -135,9 +135,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/camel/tags/camel-1.6.4</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/camel/tags/camel-1.6.4</developerConnection>
-    <url>http://svn.apache.org/viewvc/camel/tags/camel-1.6.4</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/camel/branches/camel-1.x</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/camel/branches/camel-1.x</developerConnection>
+    <url>http://svn.apache.org/viewvc/camel/branches/camel-1.x</url>
   </scm>
 
 

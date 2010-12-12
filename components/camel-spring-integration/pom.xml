@@ -30,14 +30,14 @@
   <parent>
     <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>1.6.4</version>
+    <version>1.6.5-SNAPSHOT</version>
   </parent>
 
   <properties>
 	<camel.osgi.export.pkg>org.apache.camel.component.spring.integration.*</camel.osgi.export.pkg>
   </properties>
 
-  <version>1.6.4</version>
+  <version>1.6.5-SNAPSHOT</version>
 
   <repositories>
     <repository>
