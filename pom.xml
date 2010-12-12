@@ -108,6 +108,18 @@
         <enabled>true</enabled>
       </releases>
     </repository>
+    <repository>
+      <!-- required by com.sun.tools.jxc.maven2:maven-jaxb-schemagen-plugin:jar:1.3-dev deps -->
+      <id>fusesource.repo</id>
+      <name>Fusesource Maven2 Repository</name>
+      <url>http://repo.fusesource.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
   </repositories>
 
   <modules>
