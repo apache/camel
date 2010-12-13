@@ -57,6 +57,7 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
 
         // load in new store and verify we only have the last 5 elements
         IdempotentRepository<String> repo2 = FileIdempotentRepository.fileIdempotentRepository(store);
+        repo2.start();
         assertFalse(repo2.contains("AAAAAAAAAA"));
         assertTrue(repo2.contains("BBBBBBBBBB"));
         assertTrue(repo2.contains("CCCCCCCCCC"));
@@ -92,6 +93,7 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
 
         // 5 elements in cache, and 50 bytes as max size limit for when trunking should start
         repo = FileIdempotentRepository.fileIdempotentRepository(store, 5, 50);
+        repo.start();
 
         super.setUp();
         startEndpoint = resolveMandatoryEndpoint("direct:start");

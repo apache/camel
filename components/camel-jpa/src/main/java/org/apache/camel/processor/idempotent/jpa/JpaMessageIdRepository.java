@@ -20,7 +20,11 @@ import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.IdempotentRepository;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -31,11 +35,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * @version $Revision$
  */
-public class JpaMessageIdRepository implements IdempotentRepository<String> {
+@ManagedResource("JpaMessageIdRepository")
+public class JpaMessageIdRepository extends ServiceSupport implements IdempotentRepository<String> {
     protected static final String QUERY_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";
-    private JpaTemplate jpaTemplate;
-    private String processorName;
-    private TransactionTemplate transactionTemplate;
+    private final JpaTemplate jpaTemplate;
+    private final String processorName;
+    private final TransactionTemplate transactionTemplate;
 
     public JpaMessageIdRepository(JpaTemplate template, String processorName) {
         this(template, createTransactionTemplate(template), processorName);
@@ -63,6 +68,7 @@ public class JpaMessageIdRepository implements IdempotentRepository<String> {
         return transactionTemplate;
     }
 
+    @ManagedOperation(description = "Adds the key to the store")
     @SuppressWarnings("unchecked")
     public boolean add(final String messageId) {
         // Run this in single transaction.
@@ -84,6 +90,7 @@ public class JpaMessageIdRepository implements IdempotentRepository<String> {
         return rc.booleanValue();
     }
 
+    @ManagedOperation(description = "Does the store contain the given key")
     @SuppressWarnings("unchecked")
     public boolean contains(final String messageId) {
         // Run this in single transaction.
@@ -100,6 +107,7 @@ public class JpaMessageIdRepository implements IdempotentRepository<String> {
         return rc.booleanValue();
     }
 
+    @ManagedOperation(description = "Remove the key from the store")
     @SuppressWarnings("unchecked")
     public boolean remove(final String messageId) {
         Boolean rc = (Boolean)transactionTemplate.execute(new TransactionCallback() {
@@ -123,4 +131,16 @@ public class JpaMessageIdRepository implements IdempotentRepository<String> {
         return true;
     }
 
+    @ManagedAttribute(description = "The processor name")
+    public String getProcessorName() {
+        return processorName;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+    }
 }

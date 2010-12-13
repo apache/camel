@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.Service;
+
 /**
  * Access to a repository of Message IDs to implement the
  * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
@@ -24,7 +26,7 @@ package org.apache.camel.spi;
  *
  * @version $Revision$
  */
-public interface IdempotentRepository<E> {
+public interface IdempotentRepository<E> extends Service {
 
     /**
      * Adds the key to the repository.

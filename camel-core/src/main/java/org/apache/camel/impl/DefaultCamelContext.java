@@ -800,7 +800,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 if (service instanceof Endpoint) {
-                    // use specialized endpint add
+                    // use specialized endpoint add
                     strategy.onEndpointAdd((Endpoint) service);
                 } else {
                     strategy.onServiceAdd(this, service, null);
@@ -808,7 +808,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
 
             // only add to services to close if its a singleton
-            // otherwise we could end up with a lot of endpoints (prototype scoped)
+            // otherwise we could for example end up with a lot of prototype scope endpoints
             boolean singleton = true; // assume singleton by default
             if (service instanceof IsSingleton) {
                 singleton = ((IsSingleton) service).isSingleton();

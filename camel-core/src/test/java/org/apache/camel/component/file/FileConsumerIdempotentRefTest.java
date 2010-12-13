@@ -104,6 +104,12 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         public boolean confirm(String key) {
             return true;
         }
+
+        public void start() throws Exception {
+        }
+
+        public void stop() throws Exception {
+        }
     }
     
 }

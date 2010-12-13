@@ -74,7 +74,7 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
             // add the key to the repository
             newKey = idempotentRepository.add(messageId);
         } else {
-            // check if we alrady have the key
+            // check if we already have the key
             newKey = !idempotentRepository.contains(messageId);
         }
 

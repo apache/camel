@@ -23,12 +23,17 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * A file based implementation of {@link org.apache.camel.spi.IdempotentRepository}.
@@ -38,7 +43,8 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class FileIdempotentRepository implements IdempotentRepository<String> {
+@ManagedResource("FileIdempotentRepository")
+public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
     private static final transient Log LOG = LogFactory.getLog(FileIdempotentRepository.class);
     private static final String STORE_DELIMITER = "\n";
     private Map<String, Object> cache;
@@ -105,20 +111,16 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
         return new FileIdempotentRepository(store, cache);
     }
 
-    public boolean add(String messageId) {
+    @ManagedOperation(description = "Adds the key to the store")
+    public boolean add(String key) {
         synchronized (cache) {
-            // init store if not loaded before
-            if (init.compareAndSet(false, true)) {
-                loadStore();
-            }
-
-            if (cache.containsKey(messageId)) {
+            if (cache.containsKey(key)) {
                 return false;
             } else {
-                cache.put(messageId, messageId);
+                cache.put(key, key);
                 if (fileStore.length() < maxFileStoreSize) {
                     // just append to store
-                    appendToStore(messageId);
+                    appendToStore(key);
                 } else {
                     // trunk store and flush the cache
                     trunkStore();
@@ -129,23 +131,17 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
         }
     }
 
+    @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String key) {
         synchronized (cache) {
-            // init store if not loaded before
-            if (init.compareAndSet(false, true)) {
-                loadStore();
-            }
             return cache.containsKey(key);
         }
     }
 
+    @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
         boolean answer;
         synchronized (cache) {
-            // init store if not loaded before
-            if (init.compareAndSet(false, true)) {
-                loadStore();
-            }
             answer = cache.remove(key) != null;
             // trunk store and flush the cache on remove
             trunkStore();
@@ -166,6 +162,11 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
         this.fileStore = fileStore;
     }
 
+    @ManagedAttribute(description = "The file path for the store")
+    public String getFilePath() {
+        return fileStore.getPath();
+    }
+
     public Map<String, Object> getCache() {
         return cache;
     }
@@ -174,15 +175,17 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
         this.cache = cache;
     }
 
+    @ManagedAttribute(description = "The maximum file size for the file store in bytes")
     public long getMaxFileStoreSize() {
         return maxFileStoreSize;
     }
 
     /**
-     * Sets the maximum filesize for the file store in bytes.
+     * Sets the maximum file size for the file store in bytes.
      * <p/>
      * The default is 1mb.
      */
+    @ManagedAttribute(description = "The maximum file size for the file store in bytes")
     public void setMaxFileStoreSize(long maxFileStoreSize) {
         this.maxFileStoreSize = maxFileStoreSize;
     }
@@ -195,6 +198,27 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
             cache.clear();
         }
         cache = new LRUCache<String, Object>(size);
+    }
+
+    @ManagedAttribute(description = "The current cache size")
+    public int getCacheSize() {
+        if (cache != null) {
+            return cache.size();
+        }
+        return 0;
+    }
+
+    /**
+     * Reset and clears the store to force it to reload from file
+     */
+    @ManagedOperation(description = "Reset and reloads the file store")
+    public synchronized void reset() {
+        synchronized (cache) {
+            // trunk and clear, before we reload the store
+            trunkStore();
+            cache.clear();
+            loadStore();
+        }
     }
 
     /**
@@ -277,6 +301,22 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Loaded " + cache.size() + " to the 1st level cache from idempotent filestore: " + fileStore);
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // init store if not loaded before
+        if (init.compareAndSet(false, true)) {
+            loadStore();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // reset will trunk and clear the cache
+        trunkStore();
+        cache.clear();
+        init.set(false);
     }
 
 }
