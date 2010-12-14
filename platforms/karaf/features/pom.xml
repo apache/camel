@@ -66,7 +66,7 @@
       <geronimo-jsp-version>1.0.1</geronimo-jsp-version>
       <geronimo-ws-metadata-spec-version>1.1.2</geronimo-ws-metadata-spec-version>
       <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version>
-      <guice-bundle-version>2.0_1-SNAPSHOT</guice-bundle-version>
+      <guice-bundle-version>2.0_1</guice-bundle-version>
       <hamcrest-bundle-version>1.2-dev1_1</hamcrest-bundle-version>
       <hapi-bundle-version>0.5.1_3</hapi-bundle-version>
       <hibernate-validator-bundle-version>4.1.0.Final_1</hibernate-validator-bundle-version>
@@ -92,7 +92,7 @@
       <juel-bundle-version>2.1.2_1</juel-bundle-version>
       <junit-bundle-version>4.7_1</junit-bundle-version>
       <jsmpp-bundle-version>2.1.0_1</jsmpp-bundle-version>
-      <lucene-bundle-version>3.0.3_1-SNAPSHOT</lucene-bundle-version>
+      <lucene-bundle-version>3.0.3_1</lucene-bundle-version>
       <mvel-bundle-version>2.0.8_4</mvel-bundle-version>
       <mina-bundle-version>1.1.7_3</mina-bundle-version>
       <neethi-bundle-version>2.0.4_2</neethi-bundle-version>
@@ -103,9 +103,9 @@
       <osgi.compendium.version>4.2.0</osgi.compendium.version>
       <protobuf-java-bundle-version>2.3.0_1</protobuf-java-bundle-version>
       <pax.web.version>0.7.2</pax.web.version>
-      <quartz-bundle-version>1.8.4_1-SNAPSHOT</quartz-bundle-version>
+      <quartz-bundle-version>1.8.4_1</quartz-bundle-version>
       <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
-      <quickfix-bundle-version>1.5.0_1-SNAPSHOT</quickfix-bundle-version>
+      <quickfix-bundle-version>1.5.0_1</quickfix-bundle-version>
       <rome-bundle-version>1.0_1</rome-bundle-version>
       <saxon-bundle-version>9.1.0.1_3</saxon-bundle-version>
       <scala-bundle-version>2.8.0_1</scala-bundle-version>
@@ -119,7 +119,7 @@
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
       <stringtemplate-bundle-version>3.2_3</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_3</tagsoup-bundle-version>
-      <velocity-bundle-version>1.7_1-SNAPSHOT</velocity-bundle-version>
+      <velocity-bundle-version>1.7_1</velocity-bundle-version>
       <xalan-bundle-version>2.7.1_2</xalan-bundle-version>
       <xerces-bundle-version>2.9.1_3</xerces-bundle-version>
       <xmlbeans-bundle-version>2.5.0_1</xmlbeans-bundle-version>
