@@ -513,8 +513,9 @@
   </feature>
   <feature name='camel-shiro' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
-    <bundle>wrap:mvn:https://repository.apache.org!org.apache.shiro/shiro-core/${shiro-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-shiro/${pom.version}</bundle>
+	<bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>    
+	<bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.shiro/${shiro-bundle-version}</bundle>
+	<bundle>mvn:org.apache.camel/camel-shiro/${pom.version}</bundle>
   </feature>
   <feature name='camel-smpp' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
