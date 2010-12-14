@@ -53,12 +53,16 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.restlet</artifactId>
+      <groupId>org.restlet</groupId>
+      <artifactId>org.restlet</artifactId>
+    </dependency>
+    <!-- restlet engine is needed at runtime -->
+    <dependency>
+      <groupId>com.noelios.restlet</groupId>
+      <artifactId>com.noelios.restlet</artifactId>      
     </dependency>
 
     <!-- test artifacts -->
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>      
