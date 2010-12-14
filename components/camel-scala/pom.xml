@@ -80,6 +80,18 @@
             <artifactId>scala-library</artifactId>
             <version>${scala-version}</version>
         </dependency>
+        <!-- JMX management of EIPs using Spring JMX annotations -->
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context</artifactId>
+          <optional>true</optional>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-aop</artifactId>
+          <optional>true</optional>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -112,6 +124,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
