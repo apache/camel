@@ -34,7 +34,6 @@
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.dataformat.castor.*</camel.osgi.export.pkg>
     <camel.osgi.import.before.defaults>org.exolab.castor.*;version="[1.2.0,2)"</camel.osgi.import.before.defaults>
-    <castor-version>1.3.1</castor-version>
   </properties>
 
   <dependencies>
@@ -42,16 +41,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-    </dependency>	  
-	<dependency>
-      <groupId>org.codehaus.castor</groupId>
-      <artifactId>castor-xml</artifactId>
-	  <version>${castor-version}</version>
     </dependency>
-	<dependency>
-      <groupId>org.codehaus.castor</groupId>
-      <artifactId>castor-core</artifactId>
-	  <version>${castor-version}</version>
+    <dependency>
+       <groupId>org.apache.servicemix.bundles</groupId>
+       <artifactId>org.apache.servicemix.bundles.castor</artifactId>
     </dependency>
     
     <!-- testing -->

@@ -133,7 +133,9 @@
   </feature>
   <feature name='camel-castor' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:http://repository.springsource.com/maven/bundles/external!org.codehaus.castor/com.springsource.org.castor/${spring-castor-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/${oro-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.regexp/${regexp-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.castor/${castor-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-castor/${pom.version}</bundle>
   </feature>
   <feature name='camel-crypto' version='${pom.version}'>

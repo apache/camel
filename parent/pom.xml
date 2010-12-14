@@ -40,6 +40,7 @@
     <aries-blueprint-version>0.2-incubating</aries-blueprint-version>
     <axiom-version>1.2.8</axiom-version>
     <bouncycastle-version>140</bouncycastle-version>
+    <castor-bundle-version>1.3.1_1</castor-bundle-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <commons-codec>1.4</commons-codec>
     <commons-csv>1.0-r706899_3</commons-csv>
@@ -1005,6 +1006,13 @@
         <groupId>org.guiceyfruit</groupId>
         <artifactId>guiceyfruit-core</artifactId>
         <version>${guiceyfruit-version}</version>
+      </dependency>
+
+      <!-- optional castor dependencies -->
+      <dependency>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.castor</artifactId>
+        <version>${castor-bundle-version}</version>
       </dependency>
       
       <!-- optional dozer dependencies -->
