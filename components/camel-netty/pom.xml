@@ -36,16 +36,17 @@
 			org.apache.camel.component.netty.*
 		</camel.osgi.export.pkg>
 	</properties>
-
+	
+	<!-- disabled jboss repo, as its only used when testing a new netty upgrade directly from jboss
 	<repositories>
-		<repository>
-			<id>jboss</id>
-			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+	    <repository>
+	        <id>jboss</id>
+	        <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+	        <snapshots>
+	            <enabled>false</enabled>
+	        </snapshots>
+	    </repository>
+	</repositories> -->
 
 	<dependencies>
 		<dependency>
@@ -53,9 +54,9 @@
 			<artifactId>camel-core</artifactId>
 		</dependency>
         <dependency>
-            <groupId>org.jboss.netty</groupId>
-            <artifactId>netty</artifactId>
-            <version>${netty-version}</version>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.netty</artifactId>
+            <version>${netty-bundle-version}</version>
         </dependency>
 
 		<!-- testing -->
