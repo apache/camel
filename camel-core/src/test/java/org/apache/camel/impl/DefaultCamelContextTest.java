@@ -88,6 +88,16 @@ public class DefaultCamelContextTest extends TestSupport {
             // expected
         }
     }
+    
+    public void testGetEndPointByTypeUnknown(){
+    	DefaultCamelContext camelContext = new DefaultCamelContext();
+    	try {
+			camelContext.getEndpoint("unknown", Endpoint.class);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
+    }
+
 
     public void testRemoveEndpoint() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
@@ -314,5 +324,4 @@ public class DefaultCamelContextTest extends TestSupport {
         assertEquals(false, ctx.isStarted());
         assertEquals(false, ctx.isSuspended());
     }
-
 }

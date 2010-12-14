@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import static java.lang.String.format;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -465,7 +467,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType) {
         Endpoint endpoint = getEndpoint(name);
-
+        if(endpoint == null){
+        	throw new IllegalArgumentException("No endpoint found with name: " + name);
+        }
         if (endpoint instanceof InterceptSendToEndpoint) {
             endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();
         }
