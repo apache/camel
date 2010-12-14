@@ -191,6 +191,26 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return receiveBodyNoWait(endpoint.getEndpointUri(), type);
     }
 
+    public void doneUoW(Exchange exchange) {
+        try {
+            // The receiveBody method will get a null exchange
+            if (exchange == null) {
+                return;
+            }
+            if (exchange.getUnitOfWork() == null) {
+                // handover completions and done them manually to ensure they are being executed
+                List<Synchronization> synchronizations = exchange.handoverCompletions();
+                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, LOG);
+            } else {
+                // done the unit of work
+                exchange.getUnitOfWork().done(exchange);
+            }
+        } catch (Throwable e) {
+            LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
+                    + ". This exception will be ignored.", e);
+        }
+    }
+
     protected Endpoint resolveMandatoryEndpoint(String endpointUri) {
         return CamelContextHelper.getMandatoryEndpoint(context, endpointUri);
     }
@@ -222,26 +242,6 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             }
         }
         return answer;
-    }
-
-    private static void doneUoW(Exchange exchange) {
-        try {
-            // The receiveBody method will get a null exchange
-            if (exchange == null) {
-                return;
-            }
-            if (exchange.getUnitOfWork() == null) {
-                // handover completions and done them manually to ensure they are being executed
-                List<Synchronization> synchronizations = exchange.handoverCompletions();
-                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, LOG);
-            } else {
-                // done the unit of work
-                exchange.getUnitOfWork().done(exchange);
-            }
-        } catch (Throwable e) {
-            LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
-                    + ". This exception will be ignored.", e);
-        }
     }
 
     private ConsumerCache getConsumerCache() {

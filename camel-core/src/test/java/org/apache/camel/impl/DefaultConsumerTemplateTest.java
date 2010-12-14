@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import java.io.File;
+
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -331,6 +333,24 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         // should be 0
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
+    }
+
+    public void testDoneUoW() throws Exception {
+        deleteDirectory("target/foo");
+        template.sendBodyAndHeader("file:target/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
+
+        Exchange exchange = consumer.receive("file:target/foo?delete=true");
+        assertNotNull(exchange);
+        assertEquals("Hello World", exchange.getIn().getBody(String.class));
+
+        // file should still exists
+        File file = new File("target/foo/hello.txt").getAbsoluteFile();
+        assertTrue("File should exist " + file, file.exists());
+
+        // done the exchange
+        consumer.doneUoW(exchange);
+
+        assertFalse("File should have been deleted " + file, file.exists());
     }
 
 }

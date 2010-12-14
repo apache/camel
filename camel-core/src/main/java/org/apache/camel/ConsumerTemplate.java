@@ -26,7 +26,7 @@ package org.apache.camel;
  * This is <b>not</b> the <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer EIP</a>.
  * <p/>
  * <b>All</b> methods throws {@link RuntimeCamelException} if consuming of
- * the {@link Exchange} failed and an Exception occured. The <tt>getCause</tt>
+ * the {@link Exchange} failed and an Exception occurred. The <tt>getCause</tt>
  * method on {@link RuntimeCamelException} returns the wrapper original caused
  * exception.
  * <p/>
@@ -75,6 +75,8 @@ public interface ConsumerTemplate extends Service {
 
     /**
      * Receives from the endpoint, waiting until there is a response
+     * <p/>
+     * <b>Important:</b> See {@link #doneUoW(Exchange)}
      *
      * @param endpointUri the endpoint to receive from
      * @return the returned exchange
@@ -82,35 +84,46 @@ public interface ConsumerTemplate extends Service {
     Exchange receive(String endpointUri);
 
     /**
-     * Receives from the endpoint, waiting until there is a response
+     * Receives from the endpoint, waiting until there is a response.
+     * <p/>
+     * <b>Important:</b> See {@link #doneUoW(Exchange)}
      *
      * @param endpoint the endpoint to receive from
      * @return the returned exchange
+     * @see #doneUoW(Exchange)
      */
     Exchange receive(Endpoint endpoint);
 
     /**
      * Receives from the endpoint, waiting until there is a response
      * or the timeout occurs
+     * <p/>
+     * <b>Important:</b> See {@link #doneUoW(Exchange)}
      *
      * @param endpointUri the endpoint to receive from
      * @param timeout     timeout in millis to wait for a response
      * @return the returned exchange, or <tt>null</tt> if no response
+     * @see #doneUoW(Exchange)
      */
     Exchange receive(String endpointUri, long timeout);
 
     /**
      * Receives from the endpoint, waiting until there is a response
      * or the timeout occurs
+     * <p/>
+     * <b>Important:</b> See {@link #doneUoW(Exchange)}
      *
      * @param endpoint the endpoint to receive from
      * @param timeout  timeout in millis to wait for a response
      * @return the returned exchange, or <tt>null</tt> if no response
+     * @see #doneUoW(Exchange)
      */
     Exchange receive(Endpoint endpoint, long timeout);
 
     /**
      * Receives from the endpoint, not waiting for a response if non exists.
+     * <p/>
+     * <b>Important:</b> See {@link #doneUoW(Exchange)}
      *
      * @param endpointUri the endpoint to receive from
      * @return the returned exchange, or <tt>null</tt> if no response
@@ -119,6 +132,8 @@ public interface ConsumerTemplate extends Service {
 
     /**
      * Receives from the endpoint, not waiting for a response if non exists.
+     * <p/>
+     * <b>Important:</b> See {@link #doneUoW(Exchange)}
      *
      * @param endpoint the endpoint to receive from
      * @return the returned exchange, or <tt>null</tt> if no response
@@ -234,5 +249,20 @@ public interface ConsumerTemplate extends Service {
      * @return the returned response body, or <tt>null</tt> if no response
      */
     <T> T receiveBodyNoWait(Endpoint endpoint, Class<T> type);
+
+    /**
+     * If you have used any of the <tt>receive</tt> methods which returns a {@link Exchange} type
+     * then you need to invoke this method when you are done using the returned {@link Exchange}.
+     * <p/>
+     * This is needed to ensure any {@link org.apache.camel.spi.Synchronization} works is being executed.
+     * For example if you consumed from a file endpoint, then the consumed file is only moved/delete when
+     * you done the {@link Exchange}.
+     * <p/>
+     * Note for all the other <tt>receive</tt> methods which does <b>not</b> return a {@link Exchange} type,
+     * the done has been executed automatic by Camel itself.
+     *
+     * @param exchange  the exchange
+     */
+    void doneUoW(Exchange exchange);
 
 }
