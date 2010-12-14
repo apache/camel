@@ -74,8 +74,6 @@ public class BlueprintCamelContext extends DefaultCamelContext {
 
     private void maybeStart() throws Exception {
         if (!isStarted() && !isStarting()) {
-            // Make sure we will not get into the endless loop of calling star
-            LOG.info("Starting Apache Camel as property ShouldStartContext is true");
             start();
         } else {
             // ignore as Camel is already started
