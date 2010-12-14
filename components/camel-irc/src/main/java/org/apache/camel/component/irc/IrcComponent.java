@@ -37,11 +37,7 @@ public class IrcComponent extends DefaultComponent {
     private static final transient Log LOG = LogFactory.getLog(IrcComponent.class);
     private final Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
 
-    public IrcComponent(CamelContext context) {
-        super(context);
-    }
-
-    protected IrcEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    public IrcEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // every endpoint gets it's own configuration
         IrcConfiguration config = new IrcConfiguration();
         config.configure(uri);
@@ -117,7 +113,7 @@ public class IrcComponent extends DefaultComponent {
     }
 
     @Override
-    protected synchronized void doStop() throws Exception {
+    protected void doStop() throws Exception {
         // lets use a copy so we can clear the connections eagerly in case of exceptions
         Map<String, IRCConnection> map = new HashMap<String, IRCConnection>(connectionCache);
         connectionCache.clear();
