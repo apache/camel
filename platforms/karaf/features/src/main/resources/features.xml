@@ -477,9 +477,8 @@
   </feature>
   <feature name='camel-restlet' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.restlet/${restlet-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-restlet/${pom.version}</bundle>
-    <bundle>mvn:http://maven.restlet.org!org.restlet/org.restlet/${restlet-version}</bundle>
-    <bundle>mvn:http://maven.restlet.org!com.noelios.restlet/com.noelios.restlet/${restlet-version}</bundle>
   </feature>
   <feature name='camel-rmi' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>

@@ -53,16 +53,11 @@
     </dependency>
 
     <dependency>
-      <groupId>org.restlet</groupId>
-      <artifactId>org.restlet</artifactId>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.restlet</artifactId>
     </dependency>
 
     <!-- test artifacts -->
-    <dependency>
-      <groupId>com.noelios.restlet</groupId>
-      <artifactId>com.noelios.restlet</artifactId>      
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
