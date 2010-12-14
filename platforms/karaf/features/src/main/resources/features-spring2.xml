@@ -445,7 +445,7 @@
   <feature name='camel-ognl' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-version}</bundle>
-    <bundle>mvn:http://repository.springsource.com/maven/bundles/external!org.jboss.javassist/com.springsource.javassist/${javassist-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javassist/${javassist-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ognl/${pom.version}</bundle>
   </feature>
   <feature name='camel-printer' version='${pom.version}'>

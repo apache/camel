@@ -57,7 +57,7 @@
     <derby-version>10.4.2.0</derby-version>
     <dozer-version>5.3.1</dozer-version>
     <easymock-version>2.5.2</easymock-version>
-    <ehcache-bundle-version>1.6.2_1-SNAPSHOT</ehcache-bundle-version>
+    <ehcache-bundle-version>1.6.2_1</ehcache-bundle-version>
     <flatpack-version>3.2.0_1</flatpack-version>
     <ftpserver-version>1.0.5</ftpserver-version>
     <fuse-commons-management-version>1.0</fuse-commons-management-version>
@@ -87,7 +87,7 @@
     <jackson-version>1.6.0</jackson-version>
     <jain-sip-ri-bundle-version>1.2.154_1</jain-sip-ri-bundle-version>
     <jasypt-version>1.6</jasypt-version>
-    <javassist-version>3.9.0.GA</javassist-version>
+    <javassist-bundle-version>3.9.0.GA_1</javassist-bundle-version>
     <javax-mail-version>1.4.3</javax-mail-version>
     <jaxen-version>1.1.1</jaxen-version>
     <jdom-version>1.1</jdom-version>
