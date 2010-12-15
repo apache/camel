@@ -16,20 +16,24 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ValueHolder;
 
 /**
- * Endpoint registry which is a based on a {@link org.apache.camel.util.LRUCache}
- * to keep the last 1000 in an internal cache.
- *
- * @version $Revision$
+ * Key used in {@link EndpointRegistry} in {@link DefaultCamelContext},
+ * to ensure a consistent lookup.
  */
-public class EndpointRegistry extends LRUCache<EndpointKey, Endpoint> {
+final class EndpointKey extends ValueHolder<String> {
 
-    public EndpointRegistry() {
-        // use a cache size of 1000
-        super(1000);
+    EndpointKey(String uri) {
+        // must normalize key
+        super(DefaultCamelContext.normalizeEndpointUri(uri));
+        ObjectHelper.notEmpty(uri, "uri");
+    }
+
+    @Override
+    public String toString() {
+        return get();
     }
 
 }

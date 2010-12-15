@@ -22,6 +22,10 @@ package org.apache.camel.util;
 public class ValueHolder<V> {
     private V value;
 
+    /**
+     * @deprecated should be immutable, will be removed in Camel 3.0
+     */
+    @Deprecated
     public ValueHolder() {
     }
 
@@ -33,8 +37,34 @@ public class ValueHolder<V> {
         return value;
     }
 
+    /**
+     * @deprecated should be immutable, will be removed in Camel 3.0
+     */
+    @Deprecated
     public void set(V val) {
         value = val;
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ValueHolder that = (ValueHolder) o;
+
+        if (value != null ? !value.equals(that.value) : that.value != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return value != null ? value.hashCode() : 0;
+    }
 }

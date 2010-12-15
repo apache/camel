@@ -136,7 +136,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
     private String managementName;
     private ClassLoader applicationContextClassLoader;
-    private final Map<String, Endpoint> endpoints = new EndpointRegistry();
+    private final Map<EndpointKey, Endpoint> endpoints = new EndpointRegistry();
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
@@ -333,19 +333,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public Map<String, Endpoint> getEndpointMap() {
         synchronized (endpoints) {
-            return new TreeMap<String, Endpoint>(endpoints);
+            TreeMap<String, Endpoint> answer = new TreeMap<String, Endpoint>();
+            for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
+                answer.put(entry.getKey().get(), entry.getValue());
+            }
+            return answer;
         }
     }
 
     public Endpoint hasEndpoint(String uri) {
-        // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
-        try {
-            uri = URISupport.normalizeUri(uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
-        }
         synchronized (endpoints) {
-            return endpoints.get(uri);
+            return endpoints.get(getEndpointKey(uri));
         }
     }
 
@@ -353,11 +351,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         Endpoint oldEndpoint;
         synchronized (endpoints) {
             startServices(endpoint);
-            oldEndpoint = endpoints.remove(uri);
+            oldEndpoint = endpoints.remove(getEndpointKey(uri));
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onEndpointAdd(endpoint);
             }
-            addEndpointToRegistry(endpoint);
+            addEndpointToRegistry(uri, endpoint);
             if (oldEndpoint != null) {
                 stopServices(oldEndpoint);
             }
@@ -367,7 +365,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public Collection<Endpoint> removeEndpoints(String uri) throws Exception {
         Collection<Endpoint> answer = new ArrayList<Endpoint>();
-        Endpoint oldEndpoint = endpoints.remove(uri);
+        Endpoint oldEndpoint = endpoints.remove(getEndpointKey(uri));
         if (oldEndpoint != null) {
             answer.add(oldEndpoint);
             stopServices(oldEndpoint);
@@ -380,7 +378,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 }
             }
             for (Endpoint endpoint : answer) {
-                endpoints.remove(endpoint.getEndpointUri());
+                endpoints.remove(getEndpointKey(endpoint.getEndpointUri()));
             }
         }
 
@@ -409,11 +407,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
 
         // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
-        try {
-            uri = URISupport.normalizeUri(uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
-        }
+        uri = normalizeEndpointUri(uri);
 
         if (log.isTraceEnabled()) {
             log.trace("Getting endpoint with normalized uri: " + uri);
@@ -422,7 +416,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         Endpoint answer;
         String scheme = null;
         synchronized (endpoints) {
-            answer = endpoints.get(uri);
+            answer = endpoints.get(getEndpointKey(uri));
             if (answer == null) {
                 try {
                     // Use the URI prefix to find the component.
@@ -449,7 +443,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
                     if (answer != null) {
                         addService(answer);
-                        answer = addEndpointToRegistry(answer);
+                        answer = addEndpointToRegistry(uri, answer);
                     }
                 } catch (Exception e) {
                     throw new ResolveEndpointFailedException(uri, e);
@@ -488,7 +482,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             for (Endpoint endpoint : getEndpoints()) {
                 Endpoint newEndpoint = strategy.registerEndpoint(endpoint.getEndpointUri(), endpoint);
                 if (newEndpoint != null) {
-                    endpoints.put(getEndpointKey(newEndpoint.getEndpointUri(), newEndpoint), newEndpoint);
+                    // put will replace existing endpoint with the new endpoint
+                    endpoints.put(getEndpointKey(endpoint.getEndpointUri()), newEndpoint);
                 }
             }
         }
@@ -497,15 +492,61 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     /**
      * Strategy to add the given endpoint to the internal endpoint registry
      *
+     * @param uri      uri of the endpoint
      * @param endpoint the endpoint to add
      * @return the added endpoint
      */
-    protected Endpoint addEndpointToRegistry(Endpoint endpoint) {
+    protected Endpoint addEndpointToRegistry(String uri, Endpoint endpoint) {
+        ObjectHelper.notEmpty(uri, "uri");
+        ObjectHelper.notNull(endpoint, "endpoint");
+
         for (EndpointStrategy strategy : endpointStrategies) {
-            endpoint = strategy.registerEndpoint(endpoint.getEndpointUri(), endpoint);
+            endpoint = strategy.registerEndpoint(uri, endpoint);
         }
-        endpoints.put(getEndpointKey(endpoint.getEndpointUri(), endpoint), endpoint);
+        endpoints.put(getEndpointKey(uri, endpoint), endpoint);
         return endpoint;
+    }
+
+    /**
+     * Normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order.
+     *
+     * @param uri the uri
+     * @return normalized uri
+     * @throws ResolveEndpointFailedException if uri cannot be normalized
+     */
+    protected static String normalizeEndpointUri(String uri) {
+        try {
+            uri = URISupport.normalizeUri(uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+        return uri;
+    }
+
+    /**
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link EndpointRegistry}
+     *
+     * @param uri the endpoint uri
+     * @return the key
+     */
+    protected EndpointKey getEndpointKey(String uri) {
+        return new EndpointKey(uri);
+    }
+
+    /**
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link EndpointRegistry}
+     *
+     * @param uri      the endpoint uri
+     * @param endpoint the endpoint
+     * @return the key
+     */
+    protected EndpointKey getEndpointKey(String uri, Endpoint endpoint) {
+        if (endpoint != null && !endpoint.isSingleton()) {
+            int counter = endpointKeyCounter.incrementAndGet();
+            return new EndpointKey(uri + ":" + counter);
+        } else {
+            return new EndpointKey(uri);
+        }
     }
 
     // Route Management Methods
@@ -2163,15 +2204,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.uuidGenerator = uuidGenerator;
     }
 
-    protected String getEndpointKey(String uri, Endpoint endpoint) {
-        if (endpoint.isSingleton()) {
-            return uri;
-        } else {
-            int counter = endpointKeyCounter.incrementAndGet();
-            return uri + ":" + counter;
-        }
-    }
-
     protected Map<String, RouteService> getRouteServices() {
         return routeServices;
     }
@@ -2225,7 +2257,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     /**
-     * Reset conext counter to a preset value. Mostly used for tests to ensure a predictable getName()
+     * Reset context counter to a preset value. Mostly used for tests to ensure a predictable getName()
      *
      * @param value new value for the context counter
      */
