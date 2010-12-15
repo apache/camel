@@ -56,5 +56,15 @@ public class JdbcIdempotentRepository implements IdempotentRepository<String> {
         // noop
         return true;
     }
+
+    public void start() throws Exception {
+        // noop
+        
+    }
+
+    public void stop() throws Exception {
+        // noop
+        
+    }
 }
 
