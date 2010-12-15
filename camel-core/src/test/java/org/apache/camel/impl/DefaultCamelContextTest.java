@@ -92,12 +92,12 @@ public class DefaultCamelContextTest extends TestSupport {
     public void testGetEndPointByTypeUnknown() {
         DefaultCamelContext camelContext = new DefaultCamelContext();
         try {
-            camelContext.getEndpoint("unknown", Endpoint.class);
+            camelContext.getEndpoint("xxx", Endpoint.class);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NoSuchEndpointException e) {
+            assertEquals("No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.", e.getMessage());
         }
     }
-
 
     public void testRemoveEndpoint() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();

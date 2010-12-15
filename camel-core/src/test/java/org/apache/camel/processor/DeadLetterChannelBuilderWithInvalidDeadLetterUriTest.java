@@ -39,7 +39,7 @@ public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends Contex
 
             fail("Should have thrown an exception");
         } catch (NoSuchEndpointException e) {
-            assertEquals("No endpoint could be found for: xxx, please check your classpath contains the needed camel component jar.", e.getMessage());
+            assertEquals("No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.", e.getMessage());
         }
     }
 

@@ -49,6 +49,7 @@ import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
@@ -467,7 +468,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType) {
         Endpoint endpoint = getEndpoint(name);
         if (endpoint == null) {
-            throw new IllegalArgumentException("No endpoint found with name: " + name);
+            throw new NoSuchEndpointException(name);
         }
         if (endpoint instanceof InterceptSendToEndpoint) {
             endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();
