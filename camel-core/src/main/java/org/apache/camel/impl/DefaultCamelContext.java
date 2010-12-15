@@ -357,7 +357,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onEndpointAdd(endpoint);
             }
-            addEndpointToRegistry(uri, endpoint);
+            addEndpointToRegistry(endpoint);
             if (oldEndpoint != null) {
                 stopServices(oldEndpoint);
             }
@@ -449,7 +449,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
                     if (answer != null) {
                         addService(answer);
-                        answer = addEndpointToRegistry(uri, answer);
+                        answer = addEndpointToRegistry(answer);
                     }
                 } catch (Exception e) {
                     throw new ResolveEndpointFailedException(uri, e);
@@ -487,7 +487,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             endpointStrategies.add(strategy);
             for (Endpoint endpoint : getEndpoints()) {
                 Endpoint newEndpoint = strategy.registerEndpoint(endpoint.getEndpointUri(), endpoint);
-                if (newEndpoint != endpoint) {
+                if (newEndpoint != null) {
                     endpoints.put(getEndpointKey(newEndpoint.getEndpointUri(), newEndpoint), newEndpoint);
                 }
             }
@@ -497,15 +497,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     /**
      * Strategy to add the given endpoint to the internal endpoint registry
      *
-     * @param uri      uri of endpoint
      * @param endpoint the endpoint to add
      * @return the added endpoint
      */
-    protected Endpoint addEndpointToRegistry(String uri, Endpoint endpoint) {
+    protected Endpoint addEndpointToRegistry(Endpoint endpoint) {
         for (EndpointStrategy strategy : endpointStrategies) {
-            endpoint = strategy.registerEndpoint(uri, endpoint);
+            endpoint = strategy.registerEndpoint(endpoint.getEndpointUri(), endpoint);
         }
-        endpoints.put(getEndpointKey(uri, endpoint), endpoint);
+        endpoints.put(getEndpointKey(endpoint.getEndpointUri(), endpoint), endpoint);
         return endpoint;
     }
 

@@ -120,7 +120,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
 
     private class CustomComponent extends DefaultComponent {
         protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-            return new CustomEndpoint("custom", this);
+            return new CustomEndpoint(uri, this);
         }
     }
 }
