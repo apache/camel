@@ -31,6 +31,7 @@ public class GreeterImpl implements Greeter {
 
     private static final Logger LOG =
         Logger.getLogger(GreeterImpl.class.getPackage().getName());
+    private int oneWayCounter;
 
     public String greetMe(String me) {
         LOG.info("Executing operation greetMe");
@@ -43,6 +44,7 @@ public class GreeterImpl implements Greeter {
         LOG.info("Executing operation greetMeOneWay");
         LOG.info("Executing operation greetMeOneWay\n");
         LOG.info("Hello there " + me);
+        oneWayCounter++;
     }
 
     public String sayHi() {
@@ -59,6 +61,14 @@ public class GreeterImpl implements Greeter {
                  + messageIn);
         LOG.info("Executing operation pingMe, throwing PingMeFault exception\n");
         throw new PingMeFault("PingMeFault raised by server", faultDetail);
+    }
+    
+    public int getOneWayCounter() {
+        return oneWayCounter;
+    }
+    
+    public void resetOneWayCounter() {
+        oneWayCounter = 0;
     }
 
 

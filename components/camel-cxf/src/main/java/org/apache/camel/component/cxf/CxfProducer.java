@@ -69,7 +69,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         this.endpoint = endpoint;
         client = endpoint.createClient();
     }
-    
+   
     // As the cxf client async and sync api is implement different,
     // so we don't delegate the sync process call to the async process 
     public boolean process(Exchange camelExchange, AsyncCallback callback) {
@@ -93,6 +93,9 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             // send the CXF async request
             client.invoke(cxfClientCallback, boi, getParams(endpoint, camelExchange), 
                           invocationContext, cxfExchange);
+            if (boi.getOperationInfo().isOneWay()) {
+                callback.done(false);
+            }
         } catch (Throwable ex) {
             // error occurred before we had a chance to go async
             // so set exception and invoke callback true
