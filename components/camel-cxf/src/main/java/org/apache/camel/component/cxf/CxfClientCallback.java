@@ -58,7 +58,7 @@ public class CxfClientCallback extends ClientCallback {
                         ctx);
             }
             if (LOG.isDebugEnabled()) {
-                LOG.debug(Thread.currentThread().getName() + "calling handleResponse");
+                LOG.debug(Thread.currentThread().getName() + " calling handleResponse");
             }
             camelAsyncCallback.done(false);
         }
@@ -73,11 +73,12 @@ public class CxfClientCallback extends ClientCallback {
             if (!boi.getOperationInfo().isOneWay()) {
                 // copy the InMessage header to OutMessage header
                 camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
-                endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
-                        ctx);
+                // set the camelExchange outbody with the exception
+                camelExchange.getOut().setFault(true);
+                camelExchange.getOut().setBody(ex);
             }
             if (LOG.isDebugEnabled()) {
-                LOG.debug(Thread.currentThread().getName() + "calling handleException");
+                LOG.debug(Thread.currentThread().getName() + " calling handleException");
             }
             camelAsyncCallback.done(false);
         }
