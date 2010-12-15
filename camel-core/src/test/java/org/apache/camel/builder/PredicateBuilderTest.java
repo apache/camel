@@ -85,6 +85,11 @@ public class PredicateBuilderTest extends TestSupport {
         assertMatches(header("name").in("Hiram", "Jonathan", "James", "Claus"));
     }
 
+    public void testEmptyHeaderValueIn() throws Exception {
+        // there is no header with xxx
+        assertDoesNotMatch(header("xxx").in("Hiram", "Jonathan", "James", "Claus"));
+    }
+
     public void testStartsWith() throws Exception {
         assertMatches(header("name").startsWith("J"));
         assertMatches(header("name").startsWith("James"));
