@@ -89,13 +89,13 @@ public class DefaultCamelContextTest extends TestSupport {
         }
     }
     
-    public void testGetEndPointByTypeUnknown(){
-    	DefaultCamelContext camelContext = new DefaultCamelContext();
-    	try {
-			camelContext.getEndpoint("unknown", Endpoint.class);
-			fail();
-		} catch (IllegalArgumentException e) {
-		}
+    public void testGetEndPointByTypeUnknown() {
+        DefaultCamelContext camelContext = new DefaultCamelContext();
+        try {
+            camelContext.getEndpoint("unknown", Endpoint.class);
+            fail();
+        } catch (IllegalArgumentException e) {
+        }
     }
 
 
