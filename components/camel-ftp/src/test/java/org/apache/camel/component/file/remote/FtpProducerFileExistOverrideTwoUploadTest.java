@@ -16,46 +16,47 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.File;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class FtpProducerFileExistOverrideTest extends FtpServerTestSupport {
+public class FtpProducerFileExistOverrideTwoUploadTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/exist?password=admin&delay=2000&noop=true&fileExist=Override";
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+    protected String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/exist?password=admin&tempPrefix=upload-&fileExist=Override&disconnect=true";
     }
 
     @Test
     public void testOverride() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Bye World");
-        mock.expectedFileExists(FTP_ROOT_DIR + "exist/hello.txt", "Bye World");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+
+        // the 1st file should be stored
+        File file = new File(FTP_ROOT_DIR + "exist/hello.txt").getAbsoluteFile();
+        assertTrue(file.exists());
+
+        String body = context.getTypeConverter().convertTo(String.class, file);
+        assertEquals("Hello World", body);
+
+        // just wait a bit before upload 2nd file
+        Thread.sleep(1000);
 
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        // the 2nd file should also exists as we stored with override
+        file = new File(FTP_ROOT_DIR + "exist/hello.txt").getAbsoluteFile();
+        assertTrue(file.exists());
+
+        body = context.getTypeConverter().convertTo(String.class, file);
+        assertEquals("Bye World", body);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from(getFtpUrl()).to("mock:result");
-            }
-        };
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 }
