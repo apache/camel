@@ -279,7 +279,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         assertNotNull(result);
 
         String out = IOConverter.toString(result.getStdout(), exchange);
-        assertEquals(PRINT_ARGS_STDOUT + "\nHello World\n", out);
+        assertTrue(out, out.contains("1Hello World"));
     }
 
     /**
@@ -310,7 +310,8 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         assertNotNull(result);
 
         String out = IOConverter.toString(result.getStdout(), exchange);
-        assertEquals(PRINT_ARGS_STDOUT + "\nHello\nWorld\n", out);
+        assertTrue(out, out.contains("1Hello"));
+        assertTrue(out, out.contains("2World"));
     }
 
     /**

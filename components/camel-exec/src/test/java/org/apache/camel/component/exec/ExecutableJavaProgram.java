@@ -62,8 +62,9 @@ public class ExecutableJavaProgram {
             System.out.print(PRINT_IN_STDOUT);
             System.exit(0);
         } else if (args[0].equals(PRINT_ARGS_STDOUT)) {
-            for (String arg : args) {
-                System.out.println(arg);
+            for (int i = 0; i < args.length; i++) {
+                String arg = args[i];
+                System.out.println(i + arg);
             }
             System.exit(0);
         } else if (args[0].equals(PRINT_IN_STDERR)) {
