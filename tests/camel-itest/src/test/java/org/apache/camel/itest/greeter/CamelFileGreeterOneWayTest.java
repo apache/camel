@@ -57,7 +57,7 @@ public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testMocksAreValid() throws Exception {
+    public void testFileWithOnewayOperation() throws Exception {
         deleteDirectory("target/messages/input/");
         greeterImpl.resetOneWayCounter();
         ProducerTemplate template = context.createProducerTemplate();
