@@ -46,13 +46,18 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
 
     public void testPreMoveSameFileTwice() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Hello Again World");
+        mock.expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader("file://target/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        // give time for consumer to process this file before we drop the next file
-        Thread.sleep(100);
+
+        assertMockEndpointsSatisfied();
+        oneExchangeDone.matchesMockWaitTime();
+
+        // reset and drop the same file again
+        mock.reset();
+        mock.expectedBodiesReceived("Hello Again World");
+
         template.sendBodyAndHeader("file://target/premove", "Hello Again World", Exchange.FILE_NAME, "hello.txt");
-        // give time for consumer to process this file before we drop the next file
         assertMockEndpointsSatisfied();
     }
 

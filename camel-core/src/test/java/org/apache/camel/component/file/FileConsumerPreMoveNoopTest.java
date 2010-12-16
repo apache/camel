@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -51,18 +52,22 @@ public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
 
     public void testPreMoveNoopSameFileTwice() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Hello Again World");
+        mock.expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader("file://target/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        // give time for consumer to process this file before we drop the next file
-        Thread.sleep(100);
-        template.sendBodyAndHeader("file://target/premove", "Hello Again World", Exchange.FILE_NAME, "hello.txt");
-        // give time for consumer to process this file before we drop the next file
 
         assertMockEndpointsSatisfied();
+        oneExchangeDone.matchesMockWaitTime();
 
-        // and file should still be there in premove directory
-        Thread.sleep(250);
+        // reset and drop the same file again
+        mock.reset();
+        oneExchangeDone.reset();
+        mock.expectedBodiesReceived("Hello Again World");
+
+        template.sendBodyAndHeader("file://target/premove", "Hello Again World", Exchange.FILE_NAME, "hello.txt");
+
+        assertMockEndpointsSatisfied();
+        oneExchangeDone.matchesMockWaitTime();
 
         File pre = new File("target/premove/work/hello.txt").getAbsoluteFile();
         assertTrue("Pre move file should exist", pre.exists());
