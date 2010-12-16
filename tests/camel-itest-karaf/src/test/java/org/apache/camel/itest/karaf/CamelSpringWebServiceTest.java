@@ -24,10 +24,10 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("Requires Karaf 2.2 which has slf4j logger improved")
-public class CamelQuickFixTest extends AbstractFeatureTest {
+@Ignore("Fails with some javax.xml.stream issue")
+public class CamelSpringWebServiceTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = "quickfix";
+    public static final String COMPONENT = "spring-ws";
 
     @Test
     public void test() throws Exception {

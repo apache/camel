@@ -549,6 +549,7 @@
   <feature name='camel-spring-ws' version='${pom.version}'>
     <feature version='${pom.version}'>camel-spring</feature>
     <bundle>mvn:org.springframework/spring-web/${spring-version}</bundle>
+    <bundle>mvn:org.springframework/spring-webmvc/${spring-version}</bundle>
     <bundle>mvn:org.springframework.ws/spring-xml/${spring-ws-version}</bundle>
     <bundle>mvn:org.springframework.ws/spring-oxm/${spring-ws-version}</bundle>
     <bundle>mvn:org.springframework.ws/spring-ws-core/${spring-ws-version}</bundle>
