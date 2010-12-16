@@ -131,6 +131,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             // send the CXF request
             client.invoke(boi, getParams(endpoint, camelExchange), 
                       invocationContext, cxfExchange);
+        } catch (Exception exception) {
+            camelExchange.setException(exception);
         } finally {
             // bind the CXF response to Camel exchange
             if (!boi.getOperationInfo().isOneWay()) {
@@ -138,6 +140,11 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                 camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
                         responseContext);
+                if (camelExchange.getException() != null) {
+                    // set the camelExchange outbody with the exception
+                    camelExchange.getOut().setFault(true);
+                    camelExchange.getOut().setBody(camelExchange.getException());
+                }
             }
         }
     }

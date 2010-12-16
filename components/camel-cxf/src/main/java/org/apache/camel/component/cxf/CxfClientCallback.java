@@ -73,6 +73,8 @@ public class CxfClientCallback extends ClientCallback {
             if (!boi.getOperationInfo().isOneWay()) {
                 // copy the InMessage header to OutMessage header
                 camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
+                endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
+                                                                         ctx);
                 // set the camelExchange outbody with the exception
                 camelExchange.getOut().setFault(true);
                 camelExchange.getOut().setBody(ex);
