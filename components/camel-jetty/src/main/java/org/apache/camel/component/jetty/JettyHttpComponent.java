@@ -572,13 +572,13 @@ public class JettyHttpComponent extends HttpComponent {
     
     public JettyHttpBinding getJettyHttpBinding() {
         return jettyHttpBinding;
-	}
+    }
 
-	public void setJettyHttpBinding(JettyHttpBinding jettyHttpBinding) {
+    public void setJettyHttpBinding(JettyHttpBinding jettyHttpBinding) {
         this.jettyHttpBinding = jettyHttpBinding;
-	}
+    }
 
-	public synchronized MBeanContainer getMbContainer() {
+    public synchronized MBeanContainer getMbContainer() {
         // If null, provide the default implementation.
         if (mbContainer == null) {
             MBeanServer mbs = null;

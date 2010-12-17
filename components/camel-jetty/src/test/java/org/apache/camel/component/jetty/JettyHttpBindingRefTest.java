@@ -41,8 +41,7 @@ public class JettyHttpBindingRefTest extends BaseJettyTest {
         try {
             template.requestBody("jetty:http://localhost:{{port}}/myapp/myotherservice", "Hello World");
             fail();
-        }
-        catch (CamelExecutionException e) {
+        } catch (CamelExecutionException e) {
             assertNotNull(e.getCause());
             assertTrue(e.getCause() instanceof HttpOperationFailedException);
 
@@ -53,7 +52,7 @@ public class JettyHttpBindingRefTest extends BaseJettyTest {
     @Test
     public void testCustomJettyHttpBinding() throws Exception {
         
-    	Object out = template.requestBody("jetty:http://localhost:{{port}}/myapp/myotherservice?jettyHttpBindingRef=myownbinder", "Hello World");
+        Object out = template.requestBody("jetty:http://localhost:{{port}}/myapp/myotherservice?jettyHttpBindingRef=myownbinder", "Hello World");
         assertEquals("Not exactly the message the server returned.", context.getTypeConverter().convertTo(String.class, out));
     }
 
@@ -91,9 +90,9 @@ public class JettyHttpBindingRefTest extends BaseJettyTest {
 
             Message answer = exchange.getOut();
 
-	        answer.setHeaders(in.getHeaders());
-	        answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
-	        answer.setBody("Not exactly the message the server returned.");
+            answer.setHeaders(in.getHeaders());
+            answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+            answer.setBody("Not exactly the message the server returned.");
         }
     }
     // END SNIPPET: e1
