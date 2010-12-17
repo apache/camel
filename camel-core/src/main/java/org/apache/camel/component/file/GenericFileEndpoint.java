@@ -86,6 +86,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected long readLockTimeout = 10000;
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
     protected boolean keepLastModified;
+    protected String doneFileName;
 
     public GenericFileEndpoint() {
     }
@@ -276,6 +277,19 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      */
     public void setFileName(String fileLanguageExpression) {
         this.fileName = createFileLanguageExpression(fileLanguageExpression);
+    }
+
+    public String getDoneFileName() {
+        return doneFileName;
+    }
+
+    /**
+     * Sets the done file name.
+     * <p/>
+     * Only ${file.name} and ${file.name.noext} is supported as dynamic placeholders.
+     */
+    public void setDoneFileName(String doneFileName) {
+        this.doneFileName = doneFileName;
     }
 
     public Boolean isIdempotent() {

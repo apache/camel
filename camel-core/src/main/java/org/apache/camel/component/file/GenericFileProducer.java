@@ -17,16 +17,16 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -162,6 +162,27 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 if (!renamed) {
                     throw new GenericFileOperationFailedException("Cannot rename file from: " + tempTarget + " to: " + target);
                 }
+            }
+
+            // any done file to write?
+            if (endpoint.getDoneFileName() != null) {
+                String doneFileName = createDoneName(target);
+                ObjectHelper.notEmpty(doneFileName, "doneFileName", endpoint);
+
+                // create empty exchange with empty body to write as the done file
+                Exchange empty = new DefaultExchange(exchange);
+                empty.getIn().setBody("");
+
+                if (log.isTraceEnabled()) {
+                    log.trace("Writing done file: [" + doneFileName + "]");
+                }
+                // delete any existing done file
+                if (operations.existsFile(doneFileName)) {
+                    if (!operations.deleteFile(doneFileName)) {
+                        throw new GenericFileOperationFailedException("Cannot delete existing done file: " + doneFileName);
+                    }
+                }
+                writeFile(empty, doneFileName);
             }
 
             // lets store the name we really used in the header, so end-users
@@ -311,6 +332,30 @@ public class GenericFileProducer<T> extends DefaultProducer {
             StringBuilder sb = new StringBuilder(fileName.substring(0, path + 1));
             sb.append(tempName);
             return sb.toString();
+        }
+    }
+
+    public String createDoneName(String fileName) {
+        String pattern = endpoint.getDoneFileName();
+        ObjectHelper.notEmpty(pattern, "doneFileName", endpoint);
+
+        // we only support ${file:name} or ${file:name.noext} as dynamic placeholders for done files
+        String path = FileUtil.onlyPath(fileName);
+        String onlyName = FileUtil.stripPath(fileName);
+
+        pattern = pattern.replaceFirst("\\$\\{file:name\\}", onlyName);
+        pattern = pattern.replaceFirst("\\$\\{file:name.noext\\}", FileUtil.stripExt(onlyName));
+
+        // must be able to resolve all placeholders supported
+        if (SimpleLanguage.hasStartToken(pattern)) {
+            throw new ExpressionIllegalSyntaxException(fileName + ". Cannot resolve reminder: " + pattern);
+        }
+
+        // done file must always be in same directory as the real file name
+        if (ObjectHelper.isNotEmpty(pattern)) {
+            return path + File.separator + pattern;
+        } else {
+            return pattern;
         }
     }
 
