@@ -23,6 +23,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.junit.Before;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
@@ -41,6 +42,13 @@ public abstract class AbstractIntegrationTest extends OSGiIntegrationTestSupport
 
     @Inject
     protected BundleContext bundleContext;
+
+    @Before
+    public void setUp() throws Exception {
+        log.info("********************************************************************************");
+        log.info("Testing: " + getTestMethodName() + "(" + getClass().getName() + ")");
+        log.info("********************************************************************************");
+    }
 
     protected <T> T getOsgiService(Class<T> type, long timeout) {
         return getOsgiService(type, null, timeout);
