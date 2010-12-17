@@ -70,9 +70,11 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
 
     public Endpoint resolveEndpoint(RouteContext context) {
         if (endpoint == null) {
-            endpoint = context.resolveEndpoint(getUri(), getRef());
+            return context.resolveEndpoint(getUri(), getRef());
+        } else {
+            return endpoint;
         }
-        return endpoint;
+        
     }
 
     // Properties
