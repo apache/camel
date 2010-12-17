@@ -59,6 +59,16 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("${id}.bak", exchange.getIn().getMessageId() + ".bak");
     }
 
+    public void testInvalidSyntax() throws Exception {
+        assertExpression("${file:onlyname}", file.getName());
+        try {
+            assertExpression("${file:onlyName}", file.getName());
+            fail("Should have thrown exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertEquals("Illegal syntax: File language syntax: onlyName", e.getMessage());
+        }
+    }
+
     public void testFile() throws Exception {
         assertExpression("${file:ext}", "txt");
         assertExpression("${file:name.ext}", "txt");

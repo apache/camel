@@ -311,7 +311,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         }
     }
     
-    public Expression createSimpleFileExpression(String remainder) {
+    protected Expression createSimpleFileExpression(String remainder) {
         if (ObjectHelper.equal(remainder, "name")) {
             return ExpressionBuilder.fileNameExpression();
         } else if (ObjectHelper.equal(remainder, "name.noext")) {
@@ -337,7 +337,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         } else if (ObjectHelper.equal(remainder, "modified")) {
             return ExpressionBuilder.fileLastModifiedExpression();
         }
-        return null;
+        throw new ExpressionIllegalSyntaxException("File language syntax: " + remainder);
     }
 
     public boolean isSingleton() {
