@@ -72,6 +72,7 @@ import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
@@ -210,6 +211,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         if (managementStrategy != null) {
             LOG.info("Using custom ManagementStrategy: " + managementStrategy);
             getContext().setManagementStrategy(managementStrategy);
+        }
+        ManagementNamingStrategy managementNamingStrategy = getBeanForType(ManagementNamingStrategy.class);
+        if (managementNamingStrategy != null) {
+            LOG.info("Using custom ManagementNamingStrategy: " + managementNamingStrategy);
+            getContext().getManagementStrategy().setManagementNamingStrategy(managementNamingStrategy);
         }
         EventFactory eventFactory = getBeanForType(EventFactory.class);
         if (eventFactory != null) {
