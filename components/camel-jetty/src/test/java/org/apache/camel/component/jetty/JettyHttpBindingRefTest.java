@@ -17,37 +17,51 @@
 package org.apache.camel.component.jetty;
 
 import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.DefaultHttpBinding;
+import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.junit.Test;
 
 /**
- * Unit test for http binding ref option.
+ * Unit test for jetty http binding ref option.
  */
 public class JettyHttpBindingRefTest extends BaseJettyTest {
 
     @Test
-    public void testDefaultHttpBinding() throws Exception {
-        Object out = template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World");
+    public void testDefaultJettyHttpBinding() throws Exception {
+        Object out = template.requestBody("jetty:http://localhost:{{port}}/myapp/myservice?jettyHttpBindingRef=default", "Hello World");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, out));
+
+        try {
+            template.requestBody("jetty:http://localhost:{{port}}/myapp/myotherservice", "Hello World");
+            fail();
+        }
+        catch (CamelExecutionException e) {
+            assertNotNull(e.getCause());
+            assertTrue(e.getCause() instanceof HttpOperationFailedException);
+
+            assertFalse("Not exactly the message the server returned.".equals(((HttpOperationFailedException) e.getCause()).getResponseBody()));
+        }
     }
 
     @Test
-    public void testCustomHttpBinding() throws Exception {
-        Object out = template.requestBody("http://localhost:{{port}}/myapp/myotherservice", "Hello World");
-        assertEquals("Something went wrong but we dont care", context.getTypeConverter().convertTo(String.class, out));
+    public void testCustomJettyHttpBinding() throws Exception {
+        
+    	Object out = template.requestBody("jetty:http://localhost:{{port}}/myapp/myotherservice?jettyHttpBindingRef=myownbinder", "Hello World");
+        assertEquals("Not exactly the message the server returned.", context.getTypeConverter().convertTo(String.class, out));
     }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("default", new DefaultHttpBinding());
-        jndi.bind("myownbinder", new MyHttpBinding());
+        jndi.bind("default", new DefaultJettyHttpBinding());
+        jndi.bind("myownbinder", new MyJettyHttpBinding());
         return jndi;
     }
 
@@ -58,9 +72,9 @@ public class JettyHttpBindingRefTest extends BaseJettyTest {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
 
-                from("jetty:http://localhost:{{port}}/myapp/myservice?httpBindingRef=default").transform().constant("Bye World");
+                from("jetty:http://localhost:{{port}}/myapp/myservice").transform().constant("Bye World");
 
-                from("jetty:http://localhost:{{port}}/myapp/myotherservice?httpBindingRef=myownbinder").process(new Processor() {
+                from("jetty:http://localhost:{{port}}/myapp/myotherservice").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new IllegalStateException("Not implemented");
                     }
@@ -70,17 +84,16 @@ public class JettyHttpBindingRefTest extends BaseJettyTest {
     }
 
     // START SNIPPET: e1
-    public class MyHttpBinding extends DefaultHttpBinding {
-
+    public class MyJettyHttpBinding extends DefaultJettyHttpBinding {
         @Override
-        public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
-            // we override the doWriteExceptionResponse as we only want to alter the binding how exceptions is
-            // written back to the client. 
+        protected void populateResponse(Exchange exchange, JettyContentExchange httpExchange, Message in,
+                                        HeaderFilterStrategy strategy, int responseCode) throws IOException {
 
-            // we just return HTTP 200 so the client thinks its okay
-            response.setStatus(200);
-            // and we return this fixed text
-            response.getWriter().write("Something went wrong but we dont care");
+            Message answer = exchange.getOut();
+
+	        answer.setHeaders(in.getHeaders());
+	        answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+	        answer.setBody("Not exactly the message the server returned.");
         }
     }
     // END SNIPPET: e1

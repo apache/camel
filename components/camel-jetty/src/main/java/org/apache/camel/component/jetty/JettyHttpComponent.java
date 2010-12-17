@@ -93,6 +93,7 @@ public class JettyHttpComponent extends HttpComponent {
     protected ThreadPool threadPool;
     protected MBeanContainer mbContainer;
     protected boolean enableJmx;
+    protected JettyHttpBinding jettyHttpBinding;
 
     class ConnectorRef {
         Server server;
@@ -128,6 +129,7 @@ public class JettyHttpComponent extends HttpComponent {
         // must extract well known parameters before we create the endpoint
         List<Handler> handlerList = resolveAndRemoveReferenceListParameter(parameters, "handlers", Handler.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
+        JettyHttpBinding jettyBinding = resolveAndRemoveReferenceParameter(parameters, "jettyHttpBindingRef", JettyHttpBinding.class);
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
@@ -173,6 +175,14 @@ public class JettyHttpComponent extends HttpComponent {
         }
         if (binding != null) {
             endpoint.setBinding(binding);
+        }
+        // prefer to use endpoint configured over component configured
+        if (jettyBinding == null) {
+            // fallback to component configured
+            jettyBinding = getJettyHttpBinding();
+        }
+        if (jettyBinding != null) {
+            endpoint.setJettyBinding(jettyBinding);
         }
         // should we use an exception for failed error codes?
         if (throwExceptionOnFailure != null) {
@@ -559,8 +569,16 @@ public class JettyHttpComponent extends HttpComponent {
     public boolean isEnableJmx() {
         return enableJmx;
     }
+    
+    public JettyHttpBinding getJettyHttpBinding() {
+        return jettyHttpBinding;
+	}
 
-    public synchronized MBeanContainer getMbContainer() {
+	public void setJettyHttpBinding(JettyHttpBinding jettyHttpBinding) {
+        this.jettyHttpBinding = jettyHttpBinding;
+	}
+
+	public synchronized MBeanContainer getMbContainer() {
         // If null, provide the default implementation.
         if (mbContainer == null) {
             MBeanServer mbs = null;
