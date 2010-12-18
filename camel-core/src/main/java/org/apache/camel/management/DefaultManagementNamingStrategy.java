@@ -254,19 +254,9 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_THREAD_POOL + ",");
-        buffer.append(KEY_NAME + "=");
-        if (id == null) {
-            // if no id then use class name as id
-            buffer.append(threadPool.getClass().getSimpleName());
-        } else {
-            buffer.append(id);
-        }
-        if (id == null && sourceId == null) {
-            // if we don't really know the id or source id then use instance hashcode so the name is unique
-            // for this particular thread pool
-            buffer.append("(").append(ObjectHelper.getIdentityHashCode(threadPool)).append(")");
-        } else if (sourceId != null) {
-            // provide source if we know it, this helps end user to know where the pool is used
+        buffer.append(KEY_NAME + "=").append(id);
+        if (sourceId != null) {
+            // provide source id if we know it, this helps end user to know where the pool is used
             buffer.append("(").append(sourceId).append(")");
         }
         return createObjectName(buffer);

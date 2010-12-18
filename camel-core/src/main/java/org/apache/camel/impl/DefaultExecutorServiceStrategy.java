@@ -361,7 +361,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         // add to internal list of thread pools
         executorServices.add(executorService);
 
-        String id = null;
+        String id;
         String sourceId = null;
         String routeId = null;
 
@@ -372,7 +372,16 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
             sourceId = ((OptionalIdentifiedDefinition) source).getShortName();
         } else if (source instanceof String) {
             id = (String) source;
+        } else if (source != null) {
+            // fallback and use the simple class name with hashcode for the id so its unique for this given source
+            id = source.getClass().getSimpleName() + "(" + ObjectHelper.getIdentityHashCode(source) + ")";
+        } else {
+            // no source, so fallback and use the simple class name from thread pool and its hashcode identity so its unique
+            id = executorService.getClass().getSimpleName() + "(" + ObjectHelper.getIdentityHashCode(executorService) + ")";
         }
+
+        // id is mandatory
+        ObjectHelper.notEmpty(id, "id for thread pool " + executorService);
 
         // extract route id if possible
         if (source instanceof ProcessorDefinition) {
