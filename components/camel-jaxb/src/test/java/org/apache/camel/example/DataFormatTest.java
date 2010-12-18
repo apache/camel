@@ -89,7 +89,7 @@ public class DataFormatTest extends CamelTestSupport {
                         to("direct:marshalled");
 
                 from("direct:marshalled").
-                        unmarshal(example).//.jaxb("org.apache.camel.example").
+                        unmarshal().jaxb("org.apache.camel.example").
                         to("mock:result");
                 
                 from("direct:prettyPrint").
