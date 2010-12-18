@@ -16,14 +16,15 @@
  */
 package org.apache.camel.spring.handler;
 
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.core.Conventions;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 
 /**
  * A base class for a parser for a bean.
@@ -85,13 +86,12 @@ public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
             Attr attribute = (Attr) attributes.item(x);
             String name = attribute.getLocalName();
             String fullName = attribute.getName();
-            // assign id as we want them as well
+            // assign id if we want them
             if (fullName.equals("id") && assignId) {
-                // for some id is optional as we have convention over configuration
                 if (attribute.getValue() != null) {
                     builder.addPropertyValue("id", attribute.getValue());
                 }
-                // assign other attributes if eligible
+            // assign other attributes if eligible
             } else if (!fullName.startsWith("xmlns:") && !fullName.equals("xmlns") && isEligibleAttribute(name)) {
                 String propertyName = extractPropertyName(name);
                 Assert.state(StringUtils.hasText(propertyName),

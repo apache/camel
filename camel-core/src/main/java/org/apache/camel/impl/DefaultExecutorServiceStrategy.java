@@ -361,7 +361,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         // add to internal list of thread pools
         executorServices.add(executorService);
 
-        String id = null; //threadPoolProfileId;
+        String id = null;
         String sourceId = null;
         String routeId = null;
 

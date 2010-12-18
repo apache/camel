@@ -605,7 +605,6 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
 
-        // use a String representation of source
         ManagedThreadPool mtp = new ManagedThreadPool(camelContext, threadPool, id, sourceId, routeId, threadPoolProfileId);
         mtp.init(getManagementStrategy());
 
