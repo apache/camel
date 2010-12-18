@@ -38,9 +38,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
@@ -48,8 +51,9 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class JaxbDataFormat implements DataFormat, CamelContextAware {
+public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
+    private final transient Log LOG = LogFactory.getLog(JaxbDataFormat.class);
     private CamelContext camelContext;
     private JAXBContext context;
     private String contextPath;
@@ -103,8 +107,8 @@ public class JaxbDataFormat implements DataFormat, CamelContextAware {
         throws XMLStreamException, JAXBException {
 
         Object e = graph;
-        if (getPartClass() != null && getPartNamespace() != null) {
-            e = new JAXBElement(getPartNamespace(), getPartialClass(exchange), graph);
+        if (partialClass != null && getPartNamespace() != null) {
+            e = new JAXBElement(getPartNamespace(), partialClass, graph);
         }
 
         if (needFiltering(exchange)) {
@@ -128,7 +132,7 @@ public class JaxbDataFormat implements DataFormat, CamelContextAware {
             Object answer;
             Unmarshaller unmarshaller = getContext().createUnmarshaller();
 
-            if (getPartClass() != null) {
+            if (partialClass != null) {
                 // partial unmarshalling
                 Source source;
                 if (needFiltering(exchange)) {
@@ -136,7 +140,7 @@ public class JaxbDataFormat implements DataFormat, CamelContextAware {
                 } else {
                     source = new StreamSource(stream);
                 }
-                answer = unmarshaller.unmarshal(source, getPartialClass(exchange));
+                answer = unmarshaller.unmarshal(source, partialClass);
             } else {
                 if (needFiltering(exchange)) {
                     NonXmlFilterReader reader = createNonXmlFilterReader(exchange, stream);
@@ -164,13 +168,6 @@ public class JaxbDataFormat implements DataFormat, CamelContextAware {
         return exchange == null ? filterNonXmlChars : exchange.getProperty(Exchange.FILTER_NON_XML_CHARS, filterNonXmlChars, Boolean.class);
     }
 
-    private synchronized Class getPartialClass(Exchange exchange) {
-        if (partialClass == null) {
-            partialClass = exchange.getContext().getClassResolver().resolveClass(getPartClass());
-        }
-        return partialClass;
-    }
-
     // Properties
     // -------------------------------------------------------------------------
     public boolean isIgnoreJAXBElement() {        
@@ -181,10 +178,7 @@ public class JaxbDataFormat implements DataFormat, CamelContextAware {
         ignoreJAXBElement = flag;
     }
     
-    public synchronized JAXBContext getContext() throws JAXBException {
-        if (context == null) {
-            context = createContext();
-        }
+    public JAXBContext getContext() {
         return context;
     }
 
@@ -224,19 +218,19 @@ public class JaxbDataFormat implements DataFormat, CamelContextAware {
         this.encoding = encoding;
     }
 
-    public final QName getPartNamespace() {
+    public QName getPartNamespace() {
         return partNamespace;
     }
 
-    public final void setPartNamespace(QName partNamespace) {
+    public void setPartNamespace(QName partNamespace) {
         this.partNamespace = partNamespace;
     }
 
-    public final String getPartClass() {
+    public String getPartClass() {
         return partClass;
     }
 
-    public final void setPartClass(String partClass) {
+    public void setPartClass(String partClass) {
         this.partClass = partClass;
     }
 
@@ -248,13 +242,40 @@ public class JaxbDataFormat implements DataFormat, CamelContextAware {
         this.camelContext = camelContext;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext");
+
+        // create context and resolve partial class up front so they are ready to be used
+        context = createContext();
+        if (partClass != null) {
+            partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClass);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+    }
+
+    /**
+     * Strategy to create JAXB context
+     */
     protected JAXBContext createContext() throws JAXBException {
         if (contextPath != null) {
-            ObjectHelper.notNull(camelContext, "CamelContext", this);
-            // use class loader from CamelContext to ensure the JAXB class loading works in various runtimes
-            return JAXBContext.newInstance(contextPath, camelContext.getClass().getClassLoader());
+            // prefer to use application class loader which is most likely to be able to
+            // load the the class which has been JAXB annotated
+            ClassLoader cl = camelContext.getApplicationContextClassLoader();
+            if (cl != null) {
+                LOG.info("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
+                return JAXBContext.newInstance(contextPath, cl);
+            } else {
+                LOG.info("Creating JAXBContext with contextPath: " + contextPath);
+                return JAXBContext.newInstance(contextPath);
+            }
         } else {
+            LOG.info("Creating JAXBContext");
             return JAXBContext.newInstance();
         }
     }
+
 }
