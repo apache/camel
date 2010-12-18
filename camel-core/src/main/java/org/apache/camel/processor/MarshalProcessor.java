@@ -18,11 +18,15 @@ package org.apache.camel.processor;
 
 import java.io.ByteArrayOutputStream;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * Marshals the body of the incoming message using the given
@@ -30,7 +34,8 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class MarshalProcessor implements Processor, Traceable {
+public class MarshalProcessor extends ServiceSupport implements Processor, Traceable, CamelContextAware {
+    private CamelContext camelContext;
     private final DataFormat dataFormat;
 
     public MarshalProcessor(DataFormat dataFormat) {
@@ -61,5 +66,27 @@ public class MarshalProcessor implements Processor, Traceable {
 
     public String getTraceLabel() {
         return "marshal[" + dataFormat + "]";
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // inject CamelContext on data format
+        if (dataFormat instanceof CamelContextAware) {
+            ((CamelContextAware) dataFormat).setCamelContext(camelContext);
+        }
+        ServiceHelper.startService(dataFormat);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(dataFormat);
     }
 }

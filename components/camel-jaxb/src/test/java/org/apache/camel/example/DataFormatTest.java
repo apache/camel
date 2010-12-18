@@ -41,7 +41,6 @@ public class DataFormatTest extends CamelTestSupport {
 
     @Test
     public void testMarshalThenUnmarshalBean() throws Exception {
-        
         PurchaseOrder bean = new PurchaseOrder();
         bean.setName("Beer");
         bean.setAmount(23);
@@ -77,7 +76,6 @@ public class DataFormatTest extends CamelTestSupport {
         assertTrue("There should some sapce between <Person> and <firstName>", indexFirstName - indexPerson > 8);
     }
 
-
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -91,7 +89,7 @@ public class DataFormatTest extends CamelTestSupport {
                         to("direct:marshalled");
 
                 from("direct:marshalled").
-                        unmarshal().jaxb("org.apache.camel.example").
+                        unmarshal(example).//.jaxb("org.apache.camel.example").
                         to("mock:result");
                 
                 from("direct:prettyPrint").

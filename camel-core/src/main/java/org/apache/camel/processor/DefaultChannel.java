@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -158,6 +159,11 @@ public class DefaultChannel extends ServiceSupport implements Channel {
 
         Processor target = nextProcessor;
         Processor next;
+
+        // init CamelContextAware as early as possible on target
+        if (target instanceof CamelContextAware) {
+            ((CamelContextAware) target).setCamelContext(camelContext);
+        }
 
         // first wrap the output with the managed strategy if any
         InterceptStrategy managed = routeContext.getManagedInterceptStrategy();

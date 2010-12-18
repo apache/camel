@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -35,10 +34,13 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
@@ -46,8 +48,9 @@ import org.apache.camel.util.IOHelper;
  *
  * @version $Revision$
  */
-public class JaxbDataFormat implements DataFormat {
+public class JaxbDataFormat implements DataFormat, CamelContextAware {
 
+    private CamelContext camelContext;
     private JAXBContext context;
     private String contextPath;
     private boolean prettyPrint = true;
@@ -237,9 +240,19 @@ public class JaxbDataFormat implements DataFormat {
         this.partClass = partClass;
     }
 
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     protected JAXBContext createContext() throws JAXBException {
         if (contextPath != null) {
-            return JAXBContext.newInstance(contextPath);
+            ObjectHelper.notNull(camelContext, "CamelContext", this);
+            // use class loader from CamelContext to ensure the JAXB class loading works in various runtimes
+            return JAXBContext.newInstance(contextPath, camelContext.getClass().getClassLoader());
         } else {
             return JAXBContext.newInstance();
         }
