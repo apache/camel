@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import java.util.Iterator;
+import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -24,9 +26,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version $Revision: 1005721 $
  */
-public class ManagedThreadPoolTest extends ContextTestSupport {
+public class DualManagedThreadPoolWithIdTest extends ContextTestSupport {
 
     @Override
     protected boolean useJmx() {
@@ -45,10 +47,7 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
     public void testManagedThreadPool() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=threads1(threads)");
-
-        Boolean shutdown = (Boolean) mbeanServer.getAttribute(on, "Shutdown");
-        assertEquals(false, shutdown.booleanValue());
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=myThreads(threads)");
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(15, corePoolSize.intValue());
@@ -56,27 +55,31 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
         Integer maxPoolSize = (Integer) mbeanServer.getAttribute(on, "MaximumPoolSize");
         assertEquals(30, maxPoolSize.intValue());
 
-        Integer poolSize = (Integer) mbeanServer.getAttribute(on, "PoolSize");
-        assertEquals(0, poolSize.intValue());
+        String id = (String) mbeanServer.getAttribute(on, "Id");
+        assertEquals("myThreads", id);
 
-        Long keepAlive = (Long) mbeanServer.getAttribute(on, "KeepAliveTime");
-        assertEquals(60, keepAlive.intValue());
+        String source = (String) mbeanServer.getAttribute(on, "SourceId");
+        assertEquals("threads", source);
 
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-        template.sendBody("direct:start", "Hello World");
-        assertMockEndpointsSatisfied();
+        String route = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("route1", route);
 
-        // wait a bit to ensure JMX have updated values
-        Thread.sleep(2000);
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=myOtherThreads(threads)");
 
-        poolSize = (Integer) mbeanServer.getAttribute(on, "PoolSize");
-        assertEquals(1, poolSize.intValue());
+        corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
+        assertEquals(1, corePoolSize.intValue());
 
-        Integer largest = (Integer) mbeanServer.getAttribute(on, "LargestPoolSize");
-        assertEquals(1, largest.intValue());
+        maxPoolSize = (Integer) mbeanServer.getAttribute(on, "MaximumPoolSize");
+        assertEquals(2, maxPoolSize.intValue());
 
-        Long completed = (Long) mbeanServer.getAttribute(on, "CompletedTaskCount");
-        assertEquals(1, completed.intValue());
+        id = (String) mbeanServer.getAttribute(on, "Id");
+        assertEquals("myOtherThreads", id);
+
+        source = (String) mbeanServer.getAttribute(on, "SourceId");
+        assertEquals("threads", source);
+
+        route = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("route2", route);
     }
 
     @Override
@@ -84,7 +87,9 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").threads(15, 30).to("mock:result");
+                from("direct:start").threads(15, 30).id("myThreads").to("mock:result");
+
+                from("direct:foo").threads(1, 2).id("myOtherThreads").to("mock:foo");
             }
         };
     }

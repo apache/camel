@@ -67,8 +67,8 @@ import org.springframework.beans.factory.xml.ParserContext;
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final Log LOG = LogFactory.getLog(CamelNamespaceHandler.class);
-    protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(CamelEndpointFactoryBean.class);
-    protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
+    protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(CamelEndpointFactoryBean.class, false);
+    protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class, false);
     protected Set<String> parserElementNames = new HashSet<String>();
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
@@ -95,16 +95,16 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         // register routeContext parser
         registerParser("routeContext", new RouteContextDefinitionParser());
 
-        addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class, true);
-        addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, true);
-        addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class, true);
-        addBeanDefinitionParser("export", CamelServiceExporter.class, true);
-        addBeanDefinitionParser("endpoint", CamelEndpointFactoryBean.class, true);
-        addBeanDefinitionParser("threadPool", CamelThreadPoolFactoryBean.class, true);
+        addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class, true, false);
+        addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, true, false);
+        addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class, true, false);
+        addBeanDefinitionParser("export", CamelServiceExporter.class, true, false);
+        addBeanDefinitionParser("endpoint", CamelEndpointFactoryBean.class, true, false);
+        addBeanDefinitionParser("threadPool", CamelThreadPoolFactoryBean.class, true, true);
 
         // jmx agent and property placeholder cannot be used outside of the camel context
-        addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false);
-        addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false);
+        addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false, false);
+        addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false, false);
 
         // errorhandler could be the sub element of camelContext or defined outside camelContext
         BeanDefinitionParser errorHandlerParser = new ErrorHandlerDefinitionParser();
@@ -137,8 +137,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }
 
-    private void addBeanDefinitionParser(String elementName, Class<?> type, boolean register) {
-        BeanDefinitionParser parser = new BeanDefinitionParser(type);
+    private void addBeanDefinitionParser(String elementName, Class<?> type, boolean register, boolean assignId) {
+        BeanDefinitionParser parser = new BeanDefinitionParser(type, assignId);
         if (register) {
             registerParser(elementName, parser);
         }
@@ -203,7 +203,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected class RouteContextDefinitionParser extends BeanDefinitionParser {
 
         public RouteContextDefinitionParser() {
-            super(CamelRouteContextFactoryBean.class);
+            super(CamelRouteContextFactoryBean.class, false);
         }
 
         @Override
@@ -231,7 +231,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected class CamelContextBeanDefinitionParser extends BeanDefinitionParser {
 
         public CamelContextBeanDefinitionParser(Class type) {
-            super(type);
+            super(type, false);
         }
 
         @Override

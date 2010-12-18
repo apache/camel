@@ -16,17 +16,22 @@
  */
 package org.apache.camel.management;
 
+import java.util.Iterator;
+import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.ThreadPoolProfileSupport;
+import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
  * @version $Revision$
  */
-public class ManagedThreadPoolTest extends ContextTestSupport {
+public class ManagedThreadPoolProfileTest extends ContextTestSupport {
 
     @Override
     protected boolean useJmx() {
@@ -41,7 +46,7 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
         naming.setDomainName("org.apache.camel");
         return context;
     }
- 
+
     public void testManagedThreadPool() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
@@ -51,32 +56,33 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
         assertEquals(false, shutdown.booleanValue());
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
-        assertEquals(15, corePoolSize.intValue());
+        assertEquals(5, corePoolSize.intValue());
 
         Integer maxPoolSize = (Integer) mbeanServer.getAttribute(on, "MaximumPoolSize");
-        assertEquals(30, maxPoolSize.intValue());
+        assertEquals(15, maxPoolSize.intValue());
 
         Integer poolSize = (Integer) mbeanServer.getAttribute(on, "PoolSize");
         assertEquals(0, poolSize.intValue());
 
         Long keepAlive = (Long) mbeanServer.getAttribute(on, "KeepAliveTime");
-        assertEquals(60, keepAlive.intValue());
+        assertEquals(25, keepAlive.intValue());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        // wait a bit to ensure JMX have updated values
-        Thread.sleep(2000);
+        String id = (String) mbeanServer.getAttribute(on, "Id");
+        assertEquals("threads1", id);
 
-        poolSize = (Integer) mbeanServer.getAttribute(on, "PoolSize");
-        assertEquals(1, poolSize.intValue());
+        String source = (String) mbeanServer.getAttribute(on, "SourceId");
+        assertEquals("threads", source);
 
-        Integer largest = (Integer) mbeanServer.getAttribute(on, "LargestPoolSize");
-        assertEquals(1, largest.intValue());
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("route1", routeId);
 
-        Long completed = (Long) mbeanServer.getAttribute(on, "CompletedTaskCount");
-        assertEquals(1, completed.intValue());
+        String profileId = (String) mbeanServer.getAttribute(on, "ThreadPoolProfileId");
+        assertEquals("custom", profileId);
+
     }
 
     @Override
@@ -84,7 +90,16 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").threads(15, 30).to("mock:result");
+                ThreadPoolProfile profile = new ThreadPoolProfileSupport("custom");
+                profile.setPoolSize(5);
+                profile.setMaxPoolSize(15);
+                profile.setKeepAliveTime(25L);
+                profile.setMaxQueueSize(250);
+                profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
+
+                context.getExecutorServiceStrategy().registerThreadPoolProfile(profile);
+
+                from("direct:start").threads().executorServiceRef("custom").to("mock:result");
             }
         };
     }

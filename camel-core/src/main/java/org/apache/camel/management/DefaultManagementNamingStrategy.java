@@ -249,14 +249,24 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         return createObjectName(buffer);
     }
 
-    public ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool, String id, String sourceId) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_THREAD_POOL + ",");
-        buffer.append(KEY_NAME + "=")
-            .append(threadPool.getClass().getSimpleName())
-            .append("(").append(ObjectHelper.getIdentityHashCode(threadPool)).append(")");
+        buffer.append(KEY_NAME + "=");
+        if (id == null) {
+            // if no id then use class name as source id
+            buffer.append(threadPool.getClass().getSimpleName());
+        } else {
+            buffer.append(id);
+        }
+        if (id == null && sourceId == null) {
+            // if we dont really know the id or source id then use hashcode so its unique
+            buffer.append("(").append(ObjectHelper.getIdentityHashCode(threadPool)).append(")");
+        } else if (sourceId != null) {
+            buffer.append("(").append(sourceId).append(")");
+        }
         return createObjectName(buffer);
     }
 

@@ -39,7 +39,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
     
     public ErrorHandlerDefinitionParser() {
         // need to override the default
-        super(null);
+        super(null, false);
     }
 
     protected Class getBeanClass(Element element) {
@@ -114,8 +114,9 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
     }
     
     protected class RedeliveryPolicyDefinitionParser extends BeanDefinitionParser {
+
         public RedeliveryPolicyDefinitionParser(Class type) {
-            super(type);
+            super(type, false);
         }
 
         protected boolean shouldGenerateId() {

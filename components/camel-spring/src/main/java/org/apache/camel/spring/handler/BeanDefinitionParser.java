@@ -16,15 +16,14 @@
  */
 package org.apache.camel.spring.handler;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.core.Conventions;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 
 /**
  * A base class for a parser for a bean.
@@ -35,12 +34,21 @@ import org.springframework.util.StringUtils;
 // as doParse() is final and isEligableAttribute does not allow us to filter out attributes
 // with the name "xmlns:"
 public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    private Class type;
-    
-    public BeanDefinitionParser(Class type) {
+    private final Class type;
+    private final boolean assignId;
+
+    /**
+     * Bean definition parser
+     *
+     * @param type     the type, can be null
+     * @param assignId whether to allow assigning id from the id attribute on the type
+     *                 (there must be getter/setter id on type class).
+     */
+    public BeanDefinitionParser(Class type, boolean assignId) {
         this.type = type;
+        this.assignId = assignId;
     }
-   
+
     protected Class getBeanClass(Element element) {
         return type;
     }
@@ -77,7 +85,14 @@ public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
             Attr attribute = (Attr) attributes.item(x);
             String name = attribute.getLocalName();
             String fullName = attribute.getName();
-            if (!fullName.startsWith("xmlns:") && !fullName.equals("xmlns") && isEligibleAttribute(name)) {
+            // assign id as we want them as well
+            if (fullName.equals("id") && assignId) {
+                // for some id is optional as we have convention over configuration
+                if (attribute.getValue() != null) {
+                    builder.addPropertyValue("id", attribute.getValue());
+                }
+                // assign other attributes if eligible
+            } else if (!fullName.startsWith("xmlns:") && !fullName.equals("xmlns") && isEligibleAttribute(name)) {
                 String propertyName = extractPropertyName(name);
                 Assert.state(StringUtils.hasText(propertyName),
                         "Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");

@@ -27,7 +27,8 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParser {
 
     public SpringSecurityAuthorizationPolicyParser() {
-        super(SpringSecurityAuthorizationPolicy.class);
+        // true = allow id to be set as there is a setter method on target bean
+        super(SpringSecurityAuthorizationPolicy.class, true);
     }
     
     protected boolean isEligibleAttribute(String attributeName) {
@@ -44,9 +45,6 @@ public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParse
         setReferenceIfAttributeDefine(builder, element, "authenticationManager");
         if (ObjectHelper.isNotEmpty(element.getAttribute("authenticationAdapter"))) {
             builder.addPropertyReference("authenticationAdapter", element.getAttribute("authenticationAdapter"));
-        }
-        if (ObjectHelper.isNotEmpty(element.getAttribute("id"))) {
-            builder.addPropertyValue("id", element.getAttribute("id"));
         }
 
         BeanDefinitionBuilder accessPolicyBuilder = BeanDefinitionBuilder.genericBeanDefinition(

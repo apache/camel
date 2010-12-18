@@ -60,7 +60,7 @@ public interface ManagementNamingStrategy {
 
     ObjectName getObjectNameForService(CamelContext context, Service service) throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool) throws MalformedObjectNameException;
+    ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool, String id, String sourceId) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForEventNotifier(CamelContext context, EventNotifier eventNotifier) throws MalformedObjectNameException;
 }

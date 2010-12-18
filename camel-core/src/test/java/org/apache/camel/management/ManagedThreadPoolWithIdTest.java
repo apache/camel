@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version $Revision$
  */
-public class ManagedThreadPoolTest extends ContextTestSupport {
+public class ManagedThreadPoolWithIdTest extends ContextTestSupport {
 
     @Override
     protected boolean useJmx() {
@@ -45,7 +45,7 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
     public void testManagedThreadPool() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=threads1(threads)");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=myThreads(threads)");
 
         Boolean shutdown = (Boolean) mbeanServer.getAttribute(on, "Shutdown");
         assertEquals(false, shutdown.booleanValue());
@@ -66,17 +66,14 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        // wait a bit to ensure JMX have updated values
-        Thread.sleep(2000);
+        String id = (String) mbeanServer.getAttribute(on, "Id");
+        assertEquals("myThreads", id);
 
-        poolSize = (Integer) mbeanServer.getAttribute(on, "PoolSize");
-        assertEquals(1, poolSize.intValue());
+        String source = (String) mbeanServer.getAttribute(on, "SourceId");
+        assertEquals("threads", source);
 
-        Integer largest = (Integer) mbeanServer.getAttribute(on, "LargestPoolSize");
-        assertEquals(1, largest.intValue());
-
-        Long completed = (Long) mbeanServer.getAttribute(on, "CompletedTaskCount");
-        assertEquals(1, completed.intValue());
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("myRoute", routeId);
     }
 
     @Override
@@ -84,7 +81,7 @@ public class ManagedThreadPoolTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").threads(15, 30).to("mock:result");
+                from("direct:start").routeId("myRoute").threads(15, 30).id("myThreads").to("mock:result");
             }
         };
     }

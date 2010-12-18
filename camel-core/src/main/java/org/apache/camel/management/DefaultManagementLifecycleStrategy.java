@@ -598,13 +598,15 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
     }
 
-    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool) {
+    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
+                                String sourceId, String routeId, String threadPoolProfileId) {
         // the agent hasn't been started
         if (!initialized) {
             return;
         }
 
-        ManagedThreadPool mtp = new ManagedThreadPool(camelContext, threadPool);
+        // use a String representation of source
+        ManagedThreadPool mtp = new ManagedThreadPool(camelContext, threadPool, id, sourceId, routeId, threadPoolProfileId);
         mtp.init(getManagementStrategy());
 
         // skip already managed services, for example if a route has been restarted
