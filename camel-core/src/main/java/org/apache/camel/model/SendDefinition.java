@@ -86,6 +86,14 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         this.uri = uri;
     }
 
+    /**
+     * Gets tne endpoint if an {@link Endpoint} instance was set.
+     * <p/>
+     * This implementation may return <tt>null</tt> which means you need to use
+     * {@link #getRef()} or {@link #getUri()} to get information about the endpoint.
+     *
+     * @return the endpoint instance, or <tt>null</tt>
+     */
     public Endpoint getEndpoint() {
         return endpoint;
     }

@@ -63,7 +63,6 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         return "from";
     }
 
-
     public String getLabel() {
         return description(getUri(), getRef(), getEndpoint());
     }
@@ -74,7 +73,6 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         } else {
             return endpoint;
         }
-        
     }
 
     // Properties
@@ -90,8 +88,8 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
      */
     @Required
     public void setUri(String uri) {
-        this.uri = uri;
         clear();
+        this.uri = uri;
     }
 
     public String getRef() {
@@ -105,10 +103,18 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
      * @param ref the reference name to use
      */
     public void setRef(String ref) {
-        this.ref = ref;
         clear();
+        this.ref = ref;
     }
 
+    /**
+     * Gets tne endpoint if an {@link Endpoint} instance was set.
+     * <p/>
+     * This implementation may return <tt>null</tt> which means you need to use
+     * {@link #getRef()} or {@link #getUri()} to get information about the endpoint.
+     *
+     * @return the endpoint instance, or <tt>null</tt>
+     */
     public Endpoint getEndpoint() {
         return endpoint;
     }
@@ -145,6 +151,8 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
 
     protected void clear() {
         this.endpoint = null;
+        this.ref = null;
+        this.uri = null;
     }
 
 }
