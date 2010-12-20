@@ -59,13 +59,13 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
             if (ccl != null) {
                 if (log.isTraceEnabled()) {
-                    log.trace("The thread context class loader: " + ccl + "  is used to load the class");
+                    log.trace("Adding ContextClassLoader from current thread: " + ccl);
                 }
                 classLoaders.add(ccl);
             }
-        } catch (UnsupportedOperationException ex) {
-            // Ignore this exception as the PackageScanClassResolver
-            // don't want use any other classloader
+        } catch (Exception e) {
+            // Ignore this exception
+            log.warn("Cannot add ContextClassLoader from current thread due " + e.getMessage() + ". This exception will be ignored.");
         }
 
         classLoaders.add(DefaultPackageScanClassResolver.class.getClassLoader());

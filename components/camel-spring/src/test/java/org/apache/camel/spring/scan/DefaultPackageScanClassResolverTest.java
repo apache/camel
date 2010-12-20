@@ -139,6 +139,9 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
 
             Thread.currentThread().setContextClassLoader(classLoader);
 
+            // recreate resolver since we mess with context class loader
+            resolver = new DefaultPackageScanClassResolver();
+
             filter.addIncludePattern("a.*.c.*");
             resolver.addFilter(filter);
             Set<Class<?>> scanned = resolver.findByFilter(filter, "a.b.c");
@@ -161,6 +164,9 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             URLClassLoader classLoader = new URLClassLoader(urls, savedClassLoader);
 
             Thread.currentThread().setContextClassLoader(classLoader);
+
+            // recreate resolver since we mess with context class loader
+            resolver = new DefaultPackageScanClassResolver();
 
             filter.addIncludePattern("a.*.c.*");
             resolver.addFilter(filter);
