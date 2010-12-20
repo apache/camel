@@ -19,6 +19,10 @@ package org.apache.camel.itest.osgi.blueprint;
 import java.lang.reflect.Method;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
+import org.apache.camel.builder.DeadLetterChannelBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilderRef;
+import org.apache.camel.model.RouteDefinition;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -32,6 +36,7 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.vmOption;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
@@ -174,6 +179,18 @@ public class CamelBlueprintTest extends OSGiBlueprintTestSupport {
         assertEquals(TestProxySender.class.getName(), proxy.getClass().getInterfaces()[0].getName());
     }
 
+    @Test
+    public void testErrorHandler() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle14").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle14)", 5000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle14)", 5000);
+        assertEquals(1, ctx.getRoutes().size());
+        RouteDefinition rd = ctx.getRouteDefinitions().get(0);
+        assertNotNull(rd.getErrorHandlerRef());
+        Object eh = ctx.getRegistry().lookup(rd.getErrorHandlerRef());
+        assertEquals(DeadLetterChannelBuilder.class.getName(), eh.getClass().getName());
+    }
+
     @Configuration
     public static Option[] configure() throws Exception {
 
@@ -250,8 +267,14 @@ public class CamelBlueprintTest extends OSGiBlueprintTestSupport {
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-12.xml"))
-                        .add(TestProxySender.class)
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle12")
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .build()).noStart(),
+
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-14.xml"))
+                        .add(TestProxySender.class)
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle14")
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
 
@@ -273,7 +296,7 @@ public class CamelBlueprintTest extends OSGiBlueprintTestSupport {
 
                 workingDirectory("target/paxrunner/"),
 
-                // vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
+//                vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
 
                 //felix(),
                 equinox());
