@@ -53,6 +53,7 @@ Rules for Camel's routing and mediation engine can be defined in either a Java b
     <programming-language>Scala</programming-language>
     <programming-language>PHP</programming-language>
 
+    <category rdf:resource="http://projects.apache.org/category/osgi" />
     <category rdf:resource="http://projects.apache.org/category/network-server" />
     <category rdf:resource="http://projects.apache.org/category/network-client" />
     <maintainer>
