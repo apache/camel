@@ -29,13 +29,17 @@ import org.junit.Test;
  */
 public class JettyContentTypeTest extends BaseJettyTest {
 
-    protected void sendMessageWithContentType(boolean usingGZip) {
+    protected void sendMessageWithContentType(String charset, boolean usingGZip) {
         Endpoint endpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("<order>123</order>");
         exchange.getIn().setHeader("User", "Claus");
         exchange.getIn().setHeader("SOAPAction", "test");
-        exchange.getIn().setHeader("Content-Type", "text/xml");
+        if (charset == null) {
+            exchange.getIn().setHeader("Content-Type", "text/xml");
+        } else {
+            exchange.getIn().setHeader("Content-Type", "text/xml; charset=" + charset);
+        }
         if (usingGZip) {
             exchange.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
         }
@@ -48,12 +52,14 @@ public class JettyContentTypeTest extends BaseJettyTest {
 
     @Test
     public void testSameContentType() throws Exception {
-        sendMessageWithContentType(false);
+        sendMessageWithContentType(null, false);
+        sendMessageWithContentType("UTF-8", false);
     }
     
     @Test
     public void testContentTypeWithGZipEncoding() throws Exception {
-        sendMessageWithContentType(true);
+        sendMessageWithContentType(null, true);
+        sendMessageWithContentType("UTF-8", true);
     }
 
     @Test
@@ -89,6 +95,9 @@ public class JettyContentTypeTest extends BaseJettyTest {
             }
             if ("Claus".equals(user) && contentType.startsWith("text/xml") && body.equals("<order>123</order>")) {
                 assertEquals("test", exchange.getIn().getHeader("SOAPAction", String.class));
+                if (contentType.endsWith("UTF-8")) {
+                    assertEquals("Get a wrong charset name.", exchange.getProperty(Exchange.CHARSET_NAME, String.class), "UTF-8");
+                }
                 exchange.getOut().setBody("<order>OK</order>");
                 exchange.getOut().setHeader("Content-Type", "text/xml");
             } else {

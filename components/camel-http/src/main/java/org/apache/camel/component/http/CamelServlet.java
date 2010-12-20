@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -65,6 +66,8 @@ public class CamelServlet extends HttpServlet {
             if (consumer.getEndpoint().isDisableStreamCache()) {
                 exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
             }
+            
+            HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
             exchange.setIn(new HttpMessage(exchange, request, response));
 
             // Have the camel process the HTTP exchange.

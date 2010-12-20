@@ -29,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.http.helper.GZIPHelper;
+import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.component.http.helper.HttpProducerHelper;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.stream.CachedOutputStream;
@@ -224,11 +225,7 @@ public class HttpProducer extends DefaultProducer {
         if (header != null) {
             String contentType = header.getValue();
             // find the charset and set it to the Exchange
-            int index = contentType.indexOf("charset=");
-            if (index > 0) {
-                String charset = contentType.substring(index + 8);
-                exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
-            }
+            HttpHelper.setCharsetFromContentType(contentType, exchange);
         }
         return doExtractResponseBody(is, exchange);
     }
