@@ -20,16 +20,30 @@ import org.apache.camel.model.WhenDefinition;
 
 /**
  * Exception policy key is a compound key for storing:
- * <b>exception class</b> + <b>when</b> => <b>exception type</b>.
+ * <b>route id </b> + <b>exception class</b> + <b>when</b> => <b>exception type</b>.
  * <p/>
  * This is used by Camel to store the onException types configured that has or has not predicates attached (when).
  */
 public final class ExceptionPolicyKey {
 
+    private final String routeId;
     private final Class exceptionClass;
     private final WhenDefinition when;
 
+    @Deprecated
     public ExceptionPolicyKey(Class exceptionClass, WhenDefinition when) {
+        this(null, exceptionClass, when);
+    }
+
+    /**
+     * Key for exception clause
+     *
+     * @param routeId          the route, or use <tt>null</tt> for a global scoped
+     * @param exceptionClass   the exception class
+     * @param when             optional predicate when the exception clause should trigger
+     */
+    public ExceptionPolicyKey(String routeId, Class exceptionClass, WhenDefinition when) {
+        this.routeId = routeId;
         this.exceptionClass = exceptionClass;
         this.when = when;
     }
@@ -42,10 +56,16 @@ public final class ExceptionPolicyKey {
         return when;
     }
 
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Deprecated
     public static ExceptionPolicyKey newInstance(Class exceptionClass) {
         return new ExceptionPolicyKey(exceptionClass, null);
     }
 
+    @Deprecated
     public static ExceptionPolicyKey newInstance(Class exceptionClass, WhenDefinition when) {
         return new ExceptionPolicyKey(exceptionClass, when);
     }
@@ -61,7 +81,10 @@ public final class ExceptionPolicyKey {
 
         ExceptionPolicyKey that = (ExceptionPolicyKey) o;
 
-        if (!exceptionClass.equals(that.exceptionClass)) {
+        if (exceptionClass != null ? !exceptionClass.equals(that.exceptionClass) : that.exceptionClass != null) {
+            return false;
+        }
+        if (routeId != null ? !routeId.equals(that.routeId) : that.routeId != null) {
             return false;
         }
         if (when != null ? !when.equals(that.when) : that.when != null) {
@@ -73,13 +96,14 @@ public final class ExceptionPolicyKey {
 
     @Override
     public int hashCode() {
-        int result = exceptionClass.hashCode();
+        int result = routeId != null ? routeId.hashCode() : 0;
+        result = 31 * result + (exceptionClass != null ? exceptionClass.hashCode() : 0);
         result = 31 * result + (when != null ? when.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "ExceptionPolicyKey[" + exceptionClass + (when != null ? " " + when : "") + "]";
+        return "ExceptionPolicyKey[route: " + (routeId != null ? routeId : "<global>") + ", " + exceptionClass + (when != null ? " " + when : "") + "]";
     }
 }
