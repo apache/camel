@@ -121,7 +121,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         }
 
         JAXBContext context = createContext(type);
-        // must create a new instance of unmarshaller as its not thred safe
+        // must create a new instance of unmarshaller as its not thread safe
         Unmarshaller unmarshaller = context.createUnmarshaller();
 
         if (parentTypeConverter != null) {
