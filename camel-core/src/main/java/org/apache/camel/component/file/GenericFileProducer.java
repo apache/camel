@@ -166,7 +166,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
             // any done file to write?
             if (endpoint.getDoneFileName() != null) {
-                String doneFileName = createDoneName(target);
+                String doneFileName = endpoint.createDoneFileName(target);
                 ObjectHelper.notEmpty(doneFileName, "doneFileName", endpoint);
 
                 // create empty exchange with empty body to write as the done file
@@ -332,30 +332,6 @@ public class GenericFileProducer<T> extends DefaultProducer {
             StringBuilder sb = new StringBuilder(fileName.substring(0, path + 1));
             sb.append(tempName);
             return sb.toString();
-        }
-    }
-
-    public String createDoneName(String fileName) {
-        String pattern = endpoint.getDoneFileName();
-        ObjectHelper.notEmpty(pattern, "doneFileName", endpoint);
-
-        // we only support ${file:name} or ${file:name.noext} as dynamic placeholders for done files
-        String path = FileUtil.onlyPath(fileName);
-        String onlyName = FileUtil.stripPath(fileName);
-
-        pattern = pattern.replaceFirst("\\$\\{file:name\\}", onlyName);
-        pattern = pattern.replaceFirst("\\$\\{file:name.noext\\}", FileUtil.stripExt(onlyName));
-
-        // must be able to resolve all placeholders supported
-        if (SimpleLanguage.hasStartToken(pattern)) {
-            throw new ExpressionIllegalSyntaxException(fileName + ". Cannot resolve reminder: " + pattern);
-        }
-
-        // done file must always be in same directory as the real file name
-        if (ObjectHelper.isNotEmpty(pattern)) {
-            return path + File.separator + pattern;
-        } else {
-            return pattern;
         }
     }
 

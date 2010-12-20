@@ -426,6 +426,29 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             }
         }
 
+        // if done file name is enabled, then the file is only valid if a done file exists
+        if (endpoint.getDoneFileName() != null) {
+            // done file must be in same path as the file
+            String doneFileName = endpoint.createDoneFileName(file.getAbsoluteFilePath());
+            ObjectHelper.notEmpty(doneFileName, "doneFileName", endpoint);
+
+            // is it a done file name?
+            if (endpoint.isDoneFile(file.getFileNameOnly())) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Skipping done file: " + file);
+                }
+                return false;
+            }
+
+            // the file is only valid if the done file exist
+            if (!operations.existsFile(doneFileName)) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Done file: " + doneFileName + " does not exist");
+                }
+                return false;
+            }
+        }
+
         return true;
     }
 
