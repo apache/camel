@@ -19,7 +19,6 @@ package org.apache.camel.component.printer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-
 import javax.print.DocFlavor;
 import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.Sides;
@@ -43,8 +42,7 @@ public class PrinterConfiguration {
     private String sides;
     private Sides internalSides;
     private boolean sendToPrinter = true;
-    private Map printSettings;
-    
+
     public PrinterConfiguration() {
     }
 
@@ -58,13 +56,13 @@ public class PrinterConfiguration {
         if (!protocol.equalsIgnoreCase("lpr")) {
             throw new IllegalArgumentException("Unrecognized Print protocol: " + protocol + " for uri: " + uri);
         }
+
         setUri(uri);
         setHostname(uri.getHost());
         setPort(uri.getPort());
-        LOG.info("URI Path = " + uri.getPath());
         setPrintername(uri.getPath());
         
-        printSettings = URISupport.parseParameters(uri);
+        Map printSettings = URISupport.parseParameters(uri);
         setFlavor((String)printSettings.get("flavor"));
         setMimeType((String)printSettings.get("mimeType"));
         setDocFlavor(assignDocFlavor(flavor, mimeType));
@@ -83,19 +81,16 @@ public class PrinterConfiguration {
         }
     }
 
-    
-    private DocFlavor assignDocFlavor(String flavor, String mimeType) 
-        throws Exception {
-        DocFlavor d = DocFlavor.BYTE_ARRAY.AUTOSENSE;
-
+    private DocFlavor assignDocFlavor(String flavor, String mimeType) throws Exception {
+        // defaults
         if (mimeType == null) {
             mimeType = "AUTOSENSE";
         }
-        
         if (flavor == null) {
             flavor = "DocFlavor.BYTE_ARRAY";
         }
         
+        DocFlavor d = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         DocFlavorAssigner docFlavorAssigner = new DocFlavorAssigner();
         if (mimeType.equalsIgnoreCase("AUTOSENSE")) {
             d = docFlavorAssigner.forMimeTypeAUTOSENSE(flavor);
@@ -149,40 +144,47 @@ public class PrinterConfiguration {
     }
     
     private MediaSizeName assignMediaSize(String size) {
-        MediaSizeName mediaSizeName = null;
-        
         MediaSizeAssigner mediaSizeAssigner = new MediaSizeAssigner();
-        if (size.startsWith("iso")) {
-            mediaSizeName = mediaSizeAssigner.selectMediaSizeNameISO(size);
+
+        MediaSizeName answer;
+
+        if (size == null) {
+            // default to NA letter if no size configured
+            answer = MediaSizeName.NA_LETTER;
+        } else if (size.toLowerCase().startsWith("iso")) {
+            answer = mediaSizeAssigner.selectMediaSizeNameISO(size);
         } else if (size.startsWith("jis")) {
-            mediaSizeName = mediaSizeAssigner.selectMediaSizeNameJIS(size);
+            answer = mediaSizeAssigner.selectMediaSizeNameJIS(size);
         } else if (size.startsWith("na")) {
-            mediaSizeName = mediaSizeAssigner.selectMediaSizeNameNA(size);
+            answer = mediaSizeAssigner.selectMediaSizeNameNA(size);
         } else {
-            mediaSizeName = mediaSizeAssigner.selectMediaSizeNameOther(size);
+            answer = mediaSizeAssigner.selectMediaSizeNameOther(size);
         }
         
-        return mediaSizeName;
+        return answer;
     }
 
     public Sides assignSides(String sidesString) {
-        Sides ret = null;
-        
-        if (sidesString.equalsIgnoreCase("one-sided")) {
-            ret = Sides.ONE_SIDED;
+        Sides answer;
+
+        if (sidesString == null) {
+            // default to one side if no slides configured
+            answer = Sides.ONE_SIDED;
+        } else if (sidesString.equalsIgnoreCase("one-sided")) {
+            answer = Sides.ONE_SIDED;
         } else if (sidesString.equalsIgnoreCase("duplex")) {
-            ret = Sides.DUPLEX;
+            answer = Sides.DUPLEX;
         } else if (sidesString.equalsIgnoreCase("tumble")) {
-            ret = Sides.TUMBLE;
+            answer = Sides.TUMBLE;
         } else if (sidesString.equalsIgnoreCase("two-sided-short-edge")) {
-            ret = Sides.TWO_SIDED_SHORT_EDGE;
+            answer = Sides.TWO_SIDED_SHORT_EDGE;
         } else if (sidesString.equalsIgnoreCase("two-sided-long-edge")) {
-            ret = Sides.TWO_SIDED_LONG_EDGE;
+            answer = Sides.TWO_SIDED_LONG_EDGE;
         } else {
-            ret = Sides.ONE_SIDED;
+            answer = Sides.ONE_SIDED;
         }
         
-        return ret;
+        return answer;
     }
     
     public URI getUri() {

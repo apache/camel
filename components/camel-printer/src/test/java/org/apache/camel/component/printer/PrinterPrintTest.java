@@ -34,7 +34,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     public boolean isUseRouteBuilder() {
         return false;
     }
-    
+
     // Check if there is an awt library
     private boolean isAwtHeadless() {
         return Boolean.getBoolean("java.awt.headless");
@@ -43,14 +43,14 @@ public class PrinterPrintTest extends CamelTestSupport {
     private void sendFile() throws Exception {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
-             // Read from an input stream
+                // Read from an input stream
                 InputStream is = new BufferedInputStream(
-                    new FileInputStream("./src/test/resources/test.txt"));
+                        new FileInputStream("./src/test/resources/test.txt"));
 
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();
                 for (int i = 0; i < n; i++) {
-                    buffer[i] = (byte)is.read();
+                    buffer[i] = (byte) is.read();
                 }
 
                 is.close();
@@ -58,53 +58,53 @@ public class PrinterPrintTest extends CamelTestSupport {
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
                 in.setBody(buffer);
-            }            
-        });       
+            }
+        });
     }
-    
+
     private void sendGIF() throws Exception {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
-             // Read from an input stream
+                // Read from an input stream
                 InputStream is = new BufferedInputStream(
-                    new FileInputStream("./src/test/resources/asf-logo.gif"));
+                        new FileInputStream("./src/test/resources/asf-logo.gif"));
 
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();
                 for (int i = 0; i < n; i++) {
-                    buffer[i] = (byte)is.read();
+                    buffer[i] = (byte) is.read();
                 }
-                  
+
                 is.close();
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
                 in.setBody(buffer);
-            }            
-        });       
+            }
+        });
     }
-    
+
     private void sendJPEG() throws Exception {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
-             // Read from an input stream
+                // Read from an input stream
                 InputStream is = new BufferedInputStream(
-                    new FileInputStream("./src/test/resources/asf-logo.JPG"));
+                        new FileInputStream("./src/test/resources/asf-logo.JPG"));
 
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();
                 for (int i = 0; i < n; i++) {
-                    buffer[i] = (byte)is.read();
+                    buffer[i] = (byte) is.read();
                 }
-                
+
                 is.close();
-                
+
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
                 in.setBody(buffer);
-            }            
-        });       
+            }
+        });
     }
 
     @Test
@@ -116,14 +116,14 @@ public class PrinterPrintTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").
-                    to("lpr://localhost/default?copies=1&flavor=DocFlavor.BYTE_ARRAY&mimeType=AUTOSENSE&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
+                        to("lpr://localhost/default?copies=1&flavor=DocFlavor.BYTE_ARRAY&mimeType=AUTOSENSE&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
             }
         });
         context.start();
 
         sendFile();
     }
-    
+
     @Test
     @Ignore
     public void testSendingGIFToPrinter() throws Exception {
@@ -133,14 +133,14 @@ public class PrinterPrintTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").
-                    to("lpr://localhost/default?flavor=DocFlavor.INPUT_STREAM&mimeType=GIF&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
+                        to("lpr://localhost/default?flavor=DocFlavor.INPUT_STREAM&mimeType=GIF&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
             }
         });
         context.start();
 
         sendGIF();
     }
-    
+
     @Test
     @Ignore
     public void testSendingJPEGToPrinter() throws Exception {
@@ -149,8 +149,8 @@ public class PrinterPrintTest extends CamelTestSupport {
         }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                    to("lpr://localhost/default?copies=2&flavor=DocFlavor.INPUT_STREAM&mimeType=JPEG&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
+                from("direct:start").to("lpr://localhost/default?copies=2&flavor=DocFlavor.INPUT_STREAM"
+                        + "&mimeType=JPEG&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
             }
         });
         context.start();
@@ -158,4 +158,21 @@ public class PrinterPrintTest extends CamelTestSupport {
         sendJPEG();
     }
 
+    /**
+     * Test for resolution of bug CAMEL-3446.
+     * Not specifying mediaSize nor sides attributes make it use
+     * default values when starting the route.
+     */
+    @Test
+    public void testDefaultPrinterConfiguration() throws Exception {
+        if (isAwtHeadless()) {
+            return;
+        }
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:start").to("lpr://localhost/default?sendToPrinter=false");
+            }
+        });
+        context.start();
+    }
 }
