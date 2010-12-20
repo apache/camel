@@ -22,63 +22,63 @@ public class MediaSizeAssigner {
     private MediaSizeName mediaSizeName;
     
     public MediaSizeName selectMediaSizeNameISO(String size) {         
-        if (size.equalsIgnoreCase("iso-a0")) {
+        if (size.equalsIgnoreCase("iso_a0")) {
             mediaSizeName = MediaSizeName.ISO_A0;
-        } else if (size.equalsIgnoreCase("iso-a1")) {
+        } else if (size.equalsIgnoreCase("iso_a1")) {
             mediaSizeName = MediaSizeName.ISO_A1;
-        } else if (size.equalsIgnoreCase("iso-a2")) {
+        } else if (size.equalsIgnoreCase("iso_a2")) {
             mediaSizeName = MediaSizeName.ISO_A2;
-        } else if (size.equalsIgnoreCase("iso-a3")) {
+        } else if (size.equalsIgnoreCase("iso_a3")) {
             mediaSizeName = MediaSizeName.ISO_A3;
-        } else if (size.equalsIgnoreCase("iso-a4")) {
+        } else if (size.equalsIgnoreCase("iso_a4")) {
             mediaSizeName = MediaSizeName.ISO_A4;
-        } else if (size.equalsIgnoreCase("iso-a5")) {
+        } else if (size.equalsIgnoreCase("iso_a5")) {
             mediaSizeName = MediaSizeName.ISO_A5;
-        } else if (size.equalsIgnoreCase("iso-a6")) {
+        } else if (size.equalsIgnoreCase("iso_a6")) {
             mediaSizeName = MediaSizeName.ISO_A6;
-        } else if (size.equalsIgnoreCase("iso-a7")) {
+        } else if (size.equalsIgnoreCase("iso_a7")) {
             mediaSizeName = MediaSizeName.ISO_A7;
-        } else if (size.equalsIgnoreCase("iso-a8")) {
+        } else if (size.equalsIgnoreCase("iso_a8")) {
             mediaSizeName = MediaSizeName.ISO_A8;
-        } else if (size.equalsIgnoreCase("iso-a9")) {
+        } else if (size.equalsIgnoreCase("iso_a9")) {
             mediaSizeName = MediaSizeName.ISO_A9;
-        } else if (size.equalsIgnoreCase("iso-a10")) {
+        } else if (size.equalsIgnoreCase("iso_a10")) {
             mediaSizeName = MediaSizeName.ISO_A10;
-        } else if (size.equalsIgnoreCase("iso-b0")) {
+        } else if (size.equalsIgnoreCase("iso_b0")) {
             mediaSizeName = MediaSizeName.ISO_B0;
-        } else if (size.equalsIgnoreCase("iso-b1")) {
+        } else if (size.equalsIgnoreCase("iso_b1")) {
             mediaSizeName = MediaSizeName.ISO_B1;
-        } else if (size.equalsIgnoreCase("iso-b2")) {
+        } else if (size.equalsIgnoreCase("iso_b2")) {
             mediaSizeName = MediaSizeName.ISO_B2;
-        } else if (size.equalsIgnoreCase("iso-b3")) {
+        } else if (size.equalsIgnoreCase("iso_b3")) {
             mediaSizeName = MediaSizeName.ISO_B3;
-        } else if (size.equalsIgnoreCase("iso-b4")) {
+        } else if (size.equalsIgnoreCase("iso_b4")) {
             mediaSizeName = MediaSizeName.ISO_B4;
-        } else if (size.equalsIgnoreCase("iso-b5")) {
+        } else if (size.equalsIgnoreCase("iso_b5")) {
             mediaSizeName = MediaSizeName.ISO_B5;
-        } else if (size.equalsIgnoreCase("iso-b6")) {
+        } else if (size.equalsIgnoreCase("iso_b6")) {
             mediaSizeName = MediaSizeName.ISO_B6;
-        } else if (size.equalsIgnoreCase("iso-b7")) {
+        } else if (size.equalsIgnoreCase("iso_b7")) {
             mediaSizeName = MediaSizeName.ISO_B7;
-        } else if (size.equalsIgnoreCase("iso-b8")) {
+        } else if (size.equalsIgnoreCase("iso_b8")) {
             mediaSizeName = MediaSizeName.ISO_B8;
-        } else if (size.equalsIgnoreCase("iso-b9")) {
+        } else if (size.equalsIgnoreCase("iso_b9")) {
             mediaSizeName = MediaSizeName.ISO_B9;
-        } else if (size.equalsIgnoreCase("iso-b10")) {
+        } else if (size.equalsIgnoreCase("iso_b10")) {
             mediaSizeName = MediaSizeName.ISO_B10;
-        } else if (size.equalsIgnoreCase("iso-c0")) {
+        } else if (size.equalsIgnoreCase("iso_c0")) {
             mediaSizeName = MediaSizeName.ISO_C0;
-        } else if (size.equalsIgnoreCase("iso-c1")) {
+        } else if (size.equalsIgnoreCase("iso_c1")) {
             mediaSizeName = MediaSizeName.ISO_C1;
-        } else if (size.equalsIgnoreCase("iso-c2")) {
+        } else if (size.equalsIgnoreCase("iso_c2")) {
             mediaSizeName = MediaSizeName.ISO_C2;
-        } else if (size.equalsIgnoreCase("iso-c3")) {
+        } else if (size.equalsIgnoreCase("iso_c3")) {
             mediaSizeName = MediaSizeName.ISO_C3;
-        } else if (size.equalsIgnoreCase("iso-c4")) {
+        } else if (size.equalsIgnoreCase("iso_c4")) {
             mediaSizeName = MediaSizeName.ISO_C4;
-        } else if (size.equalsIgnoreCase("iso-c5")) {
+        } else if (size.equalsIgnoreCase("iso_c5")) {
             mediaSizeName = MediaSizeName.ISO_C5;
-        } else if (size.equalsIgnoreCase("iso-c6")) {
+        } else if (size.equalsIgnoreCase("iso_c6")) {
             mediaSizeName = MediaSizeName.ISO_C6;
         }
         return mediaSizeName;
@@ -86,27 +86,27 @@ public class MediaSizeAssigner {
     
     public MediaSizeName selectMediaSizeNameJIS(String size) {
         
-        if (size.equalsIgnoreCase("jis-b0")) {
+        if (size.equalsIgnoreCase("jis_b0")) {
             mediaSizeName = MediaSizeName.JIS_B0;
-        } else if (size.equalsIgnoreCase("jis-b1")) {
+        } else if (size.equalsIgnoreCase("jis_b1")) {
             mediaSizeName = MediaSizeName.JIS_B1;
-        } else if (size.equalsIgnoreCase("jis-b2")) {
+        } else if (size.equalsIgnoreCase("jis_b2")) {
             mediaSizeName = MediaSizeName.JIS_B2;
-        } else if (size.equalsIgnoreCase("jis-b3")) {
+        } else if (size.equalsIgnoreCase("jis_b3")) {
             mediaSizeName = MediaSizeName.JIS_B3;
-        } else if (size.equalsIgnoreCase("jis-b4")) {
+        } else if (size.equalsIgnoreCase("jis_b4")) {
             mediaSizeName = MediaSizeName.JIS_B4;
-        } else if (size.equalsIgnoreCase("jis-b5")) {
+        } else if (size.equalsIgnoreCase("jis_b5")) {
             mediaSizeName = MediaSizeName.JIS_B5;
-        } else if (size.equalsIgnoreCase("jis-b6")) {
+        } else if (size.equalsIgnoreCase("jis_b6")) {
             mediaSizeName = MediaSizeName.JIS_B6;
-        } else if (size.equalsIgnoreCase("jis-b7")) {
+        } else if (size.equalsIgnoreCase("jis_b7")) {
             mediaSizeName = MediaSizeName.JIS_B7;
-        } else if (size.equalsIgnoreCase("jis-b8")) {
+        } else if (size.equalsIgnoreCase("jis_b8")) {
             mediaSizeName = MediaSizeName.JIS_B8;
-        } else if (size.equalsIgnoreCase("jis-b9")) {
+        } else if (size.equalsIgnoreCase("jis_b9")) {
             mediaSizeName = MediaSizeName.JIS_B9;
-        } else if (size.equalsIgnoreCase("jis-b10")) {
+        } else if (size.equalsIgnoreCase("jis_b10")) {
             mediaSizeName = MediaSizeName.JIS_B10;
         } 
         
@@ -114,9 +114,9 @@ public class MediaSizeAssigner {
     }
 
     public MediaSizeName selectMediaSizeNameNA(String size) {
-        if (size.equalsIgnoreCase("na-letter")) {
+        if (size.equalsIgnoreCase("na_letter")) {
             mediaSizeName = MediaSizeName.NA_LETTER;
-        } else if (size.equalsIgnoreCase("na-legal")) {
+        } else if (size.equalsIgnoreCase("na_legal")) {
             mediaSizeName = MediaSizeName.NA_LEGAL;
         } else if (size.equalsIgnoreCase("executive")) {
             mediaSizeName = MediaSizeName.EXECUTIVE;
@@ -130,9 +130,9 @@ public class MediaSizeAssigner {
             mediaSizeName = MediaSizeName.FOLIO;
         } else if (size.equalsIgnoreCase("quarto")) {
             mediaSizeName = MediaSizeName.QUARTO;
-        } else if (size.equalsIgnoreCase("japanese-postcard")) {
+        } else if (size.equalsIgnoreCase("japanese_postcard")) {
             mediaSizeName = MediaSizeName.JAPANESE_POSTCARD;
-        } else if (size.equalsIgnoreCase("oufuko-postcard")) {
+        } else if (size.equalsIgnoreCase("oufuko_postcard")) {
             mediaSizeName = MediaSizeName.JAPANESE_DOUBLE_POSTCARD;
         } else if (size.equalsIgnoreCase("a")) {
             mediaSizeName = MediaSizeName.A;
@@ -144,41 +144,41 @@ public class MediaSizeAssigner {
             mediaSizeName = MediaSizeName.D;
         } else if (size.equalsIgnoreCase("e")) {
             mediaSizeName = MediaSizeName.E;
-        } else if (size.equalsIgnoreCase("iso-designated-long")) {
+        } else if (size.equalsIgnoreCase("iso_designated_long")) {
             mediaSizeName = MediaSizeName.ISO_DESIGNATED_LONG;
-        } else if (size.equalsIgnoreCase("italian-envelope")) {
+        } else if (size.equalsIgnoreCase("italian_envelope")) {
             mediaSizeName = MediaSizeName.ITALY_ENVELOPE;
-        } else if (size.equalsIgnoreCase("monarch-envelope")) {
+        } else if (size.equalsIgnoreCase("monarch_envelope")) {
             mediaSizeName = MediaSizeName.MONARCH_ENVELOPE;
-        } else if (size.equalsIgnoreCase("personal-envelope")) {
+        } else if (size.equalsIgnoreCase("personal_envelope")) {
             mediaSizeName = MediaSizeName.PERSONAL_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-number-9-envelope")) {
+        } else if (size.equalsIgnoreCase("na_number_9_envelope")) {
             mediaSizeName = MediaSizeName.NA_NUMBER_9_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-number-10-envelope")) {
+        } else if (size.equalsIgnoreCase("na_number_10_envelope")) {
             mediaSizeName = MediaSizeName.NA_NUMBER_10_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-number-11-envelope")) {
+        } else if (size.equalsIgnoreCase("na_number_11_envelope")) {
             mediaSizeName = MediaSizeName.NA_NUMBER_11_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-number-12-envelope")) {
+        } else if (size.equalsIgnoreCase("na_number_12_envelope")) {
             mediaSizeName = MediaSizeName.NA_NUMBER_12_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-number-14-envelope")) {
+        } else if (size.equalsIgnoreCase("na_number_14_envelope")) {
             mediaSizeName = MediaSizeName.NA_NUMBER_14_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-6x9-envelope")) {
+        } else if (size.equalsIgnoreCase("na_6x9_envelope")) {
             mediaSizeName = MediaSizeName.NA_6X9_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-7x9-envelope")) {
+        } else if (size.equalsIgnoreCase("na_7x9_envelope")) {
             mediaSizeName = MediaSizeName.NA_7X9_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-9x11-envelope")) {
+        } else if (size.equalsIgnoreCase("na_9x11_envelope")) {
             mediaSizeName = MediaSizeName.NA_9X11_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-9x12-envelope")) {
+        } else if (size.equalsIgnoreCase("na_9x12_envelope")) {
             mediaSizeName = MediaSizeName.NA_9X12_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-10x13-envelope")) {
+        } else if (size.equalsIgnoreCase("na_10x13_envelope")) {
             mediaSizeName = MediaSizeName.NA_10X13_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-10x14-envelope")) {
+        } else if (size.equalsIgnoreCase("na_10x14_envelope")) {
             mediaSizeName = MediaSizeName.NA_10X14_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-10x15-envelope")) {
+        } else if (size.equalsIgnoreCase("na_10x15_envelope")) {
             mediaSizeName = MediaSizeName.NA_10X15_ENVELOPE;
-        } else if (size.equalsIgnoreCase("na-5x7")) {
+        } else if (size.equalsIgnoreCase("na_5x7")) {
             mediaSizeName = MediaSizeName.NA_5X7;
-        } else if (size.equalsIgnoreCase("na-8x10")) {
+        } else if (size.equalsIgnoreCase("na_8x10")) {
             mediaSizeName = MediaSizeName.NA_8X10;
         } else {
             mediaSizeName = MediaSizeName.NA_LETTER;
@@ -200,9 +200,9 @@ public class MediaSizeAssigner {
             mediaSizeName = MediaSizeName.FOLIO;
         } else if (size.equalsIgnoreCase("quarto")) {
             mediaSizeName = MediaSizeName.QUARTO;
-        } else if (size.equalsIgnoreCase("japanese-postcard")) {
+        } else if (size.equalsIgnoreCase("japanese_postcard")) {
             mediaSizeName = MediaSizeName.JAPANESE_POSTCARD;
-        } else if (size.equalsIgnoreCase("oufuko-postcard")) {
+        } else if (size.equalsIgnoreCase("oufuko_postcard")) {
             mediaSizeName = MediaSizeName.JAPANESE_DOUBLE_POSTCARD;
         } else if (size.equalsIgnoreCase("a")) {
             mediaSizeName = MediaSizeName.A;
@@ -214,13 +214,13 @@ public class MediaSizeAssigner {
             mediaSizeName = MediaSizeName.D;
         } else if (size.equalsIgnoreCase("e")) {
             mediaSizeName = MediaSizeName.E;
-        } else if (size.equalsIgnoreCase("iso-designated-long")) {
+        } else if (size.equalsIgnoreCase("iso_designated_long")) {
             mediaSizeName = MediaSizeName.ISO_DESIGNATED_LONG;
-        } else if (size.equalsIgnoreCase("italian-envelope")) {
+        } else if (size.equalsIgnoreCase("italian_envelope")) {
             mediaSizeName = MediaSizeName.ITALY_ENVELOPE;
-        } else if (size.equalsIgnoreCase("monarch-envelope")) {
+        } else if (size.equalsIgnoreCase("monarch_envelope")) {
             mediaSizeName = MediaSizeName.MONARCH_ENVELOPE;
-        } else if (size.equalsIgnoreCase("personal-envelope")) {
+        } else if (size.equalsIgnoreCase("personal_envelope")) {
             mediaSizeName = MediaSizeName.PERSONAL_ENVELOPE;
         }
         
