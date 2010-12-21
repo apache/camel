@@ -47,7 +47,6 @@ public class RouteboxSedaProducer extends DefaultAsyncProducer implements Routeb
         this.timeout = timeout;
     }
 
-    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // use a new copy of the exchange to route async and handover the on completion to the new copy
         // so its the new copy that performs the on completion callback when its done
