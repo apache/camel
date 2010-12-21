@@ -87,7 +87,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute(required = false)
     private String trace;
     @XmlAttribute(required = false)
-    private String streamCache = "false";
+    private String streamCache;
     @XmlAttribute(required = false)
     private String delayer;
     @XmlAttribute(required = false)
@@ -95,13 +95,13 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute(required = false)
     private String errorHandlerRef;
     @XmlAttribute(required = false)
-    private String autoStartup = "true";
+    private String autoStartup;
     @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
     @XmlAttribute(required = false)
     private ShutdownRunningTask shutdownRunningTask;
     @XmlAttribute(required = false)
-    private Boolean lazyLoadTypeConverters = Boolean.FALSE;
+    private Boolean lazyLoadTypeConverters;
     @XmlElement(name = "properties", required = false)
     private PropertiesDefinition properties;
     @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class, required = false)
