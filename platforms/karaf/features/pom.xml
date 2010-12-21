@@ -125,7 +125,7 @@
       <xerces-bundle-version>2.9.1_3</xerces-bundle-version>
       <xmlbeans-bundle-version>2.5.0_1</xmlbeans-bundle-version>
       <xmlschema-version>1.4.5</xmlschema-version>
-      <xmlsec-bundle-version>1.4.3_2</xmlsec-bundle-version>
+      <xmlsec-bundle-version>1.4.4_1</xmlsec-bundle-version>
       <xmlresolver-bundle-version>1.2_2</xmlresolver-bundle-version>
       <xpp3-bundle-version>1.1.4c_3</xpp3-bundle-version>
       <xstream-bundle-version>1.3_3</xstream-bundle-version>
