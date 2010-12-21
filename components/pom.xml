@@ -92,6 +92,7 @@
     <module>camel-quickfix</module>
     <module>camel-restlet</module>
     <module>camel-rmi</module>
+    <module>camel-routebox</module>
     <module>camel-ruby</module>
     <module>camel-rss</module>
     <module>camel-saxon</module>
