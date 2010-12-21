@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.onexception;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
@@ -291,6 +292,60 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         // this time we pick global scoped as its an exact match, so foo should get the message
         getMockEndpoint("mock:damn").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testOnExceptionRouteAndOnlyGlobalBestMatchType() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(IOException.class)
+                    .handled(true)
+                    .to("mock:foo");
+
+                from("direct:start")
+                    .onException(Exception.class)
+                        .handled(true)
+                        .to("mock:damn")
+                    .end()
+                    .throwException(new FileNotFoundException("unknown.txt"));
+            }
+        });
+        context.start();
+
+        // this time we pick global scoped as its the best match, so foo should get the message
+        getMockEndpoint("mock:damn").expectedMessageCount(0);
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testOnExceptionRouteBestMatchAndGlobalSameType() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(IOException.class)
+                    .handled(true)
+                    .to("mock:foo");
+
+                from("direct:start")
+                    .onException(IOException.class)
+                        .handled(true)
+                        .to("mock:damn")
+                    .end()
+                    .throwException(new FileNotFoundException("unknown.txt"));
+            }
+        });
+        context.start();
+
+        // route scope is preferred over context scoped
+        getMockEndpoint("mock:damn").expectedMessageCount(1);
+        getMockEndpoint("mock:foo").expectedMessageCount(0);
 
         template.sendBody("direct:start", "Hello World");
 

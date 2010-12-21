@@ -185,6 +185,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
                 candidates.put(candidateDiff, candidate);
             } else {
                 // we have an existing candidate already which we should prefer to use
+                // for example we check route scope before context scope (preferring route scopes)
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Existing candidate " + candidates.get(candidateDiff)
                         + " takes precedence over " + candidate + " at level " + candidateDiff);
