@@ -479,9 +479,6 @@ public final class ObjectHelper {
             return (Iterator)value;
         } else if (value instanceof Iterable) {
             return ((Iterable)value).iterator();
-        } else if (value instanceof Collection) {
-            Collection collection = (Collection)value;
-            return collection.iterator();
         } else if (value.getClass().isArray()) {
             // TODO we should handle primitive array types?
             List<Object> list = Arrays.asList((Object[])value);
