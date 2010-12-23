@@ -49,6 +49,7 @@
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-ejb</include>
+        <include>org.apache.camel:camel-eventadmin</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-freemarker</include>
@@ -87,12 +88,14 @@
         <include>org.apache.camel:camel-nagios</include>
         <include>org.apache.camel:camel-netty</include>
         <include>org.apache.camel:camel-ognl</include>
+        <include>org.apache.camel:camel-paxlogging</include>
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-protobuf</include>
         <include>org.apache.camel:camel-quartz</include>
         <include>org.apache.camel:camel-quickfix</include>
         <include>org.apache.camel:camel-restlet</include>
         <include>org.apache.camel:camel-rmi</include>
+        <include>org.apache.camel:camel-routebox</include>
         <include>org.apache.camel:camel-rss</include>
         <include>org.apache.camel:camel-ruby</include>
         <include>org.apache.camel:camel-saxon</include>

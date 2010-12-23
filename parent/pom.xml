@@ -293,6 +293,11 @@
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
+	     <artifactId>camel-eventadmin</artifactId>
+	     <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.camel</groupId>
 	     <artifactId>camel-exec</artifactId>
 	     <version>${project.version}</version>
       </dependency>
@@ -488,6 +493,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-paxlogging</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-printer</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -509,6 +519,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rmi</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-routebox</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
