@@ -78,7 +78,7 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest extends Abstra
         Exchange exch = error.getReceivedExchanges().get(0);
         Exception cause = exch.getProperty(Exchange.EXCEPTION_CAUGHT, IllegalArgumentException.class);
         assertNotNull(cause);
-        assertEquals("@Section and/or @KeyValuePairDataField have not been defined !", cause.getMessage());
+        assertEquals("@Section and/or @KeyValuePairDataField have not been defined!", cause.getMessage());
     }
 
     public List<Map<String, Object>> generateModel() {

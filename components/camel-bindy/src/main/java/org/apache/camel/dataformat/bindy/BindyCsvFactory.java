@@ -83,14 +83,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     public void initCsvModel() throws Exception {
 
         // Find annotated Datafields declared in the Model classes
-        initAnnotedFields();
+        initAnnotatedFields();
 
         // initialize Csv parameter(s)
         // separator and skip first line from @CSVrecord annotation
         initCsvRecordParameters();
     }
 
-    public void initAnnotedFields() {
+    public void initAnnotatedFields() {
 
         for (Class<?> cl : models) {
 
@@ -129,7 +129,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             }
 
             if (!linkFields.isEmpty()) {
-                annotedLinkFields.put(cl.getName(), linkFields);
+                annotatedLinkFields.put(cl.getName(), linkFields);
             }
 
             totalFields = numberMandatoryFields + numberOptionalFields;

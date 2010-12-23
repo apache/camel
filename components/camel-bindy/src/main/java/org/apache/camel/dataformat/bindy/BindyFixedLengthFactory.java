@@ -27,14 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.annotation.Link;
-import org.apache.camel.dataformat.bindy.annotation.OneToMany;
-import org.apache.camel.dataformat.bindy.annotation.Section;
 import org.apache.camel.dataformat.bindy.format.FormatException;
-import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -53,7 +49,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     boolean isOneToMany;
 
     private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
-    private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();
+    private Map<Integer, Field> annotatedFields = new LinkedHashMap<Integer, Field>();
 
     private Map<Integer, List> results;
 
@@ -77,34 +73,33 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      * method uses to initialize the model representing the classes who will
      * bind the data. This process will scan for classes according to the
      * package name provided, check the annotated classes and fields
-     * 
-     * @throws Exception
      */
     public void initFixedLengthModel() throws Exception {
 
         // Find annotated fields declared in the Model classes
-        initAnnotedFields();
+        initAnnotatedFields();
 
         // initialize Fixed length parameter(s)
         // from @FixedLengthrecord annotation
         initFixedLengthRecordParameters();
     }
 
-    public void initAnnotedFields() {
+    public void initAnnotatedFields() {
 
         for (Class<?> cl : models) {
 
             List<Field> linkFields = new ArrayList<Field>();
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Class retrieved : " + cl.getName());
+                LOG.debug("Class retrieved: " + cl.getName());
             }
 
             for (Field field : cl.getDeclaredFields()) {
                 DataField dataField = field.getAnnotation(DataField.class);
                 if (dataField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Position defined in the class : " + cl.getName() + ", position : " + dataField.pos() + ", Field : " + dataField.toString());
+                        LOG.debug("Position defined in the class: " + cl.getName()
+                                + ", position: " + dataField.pos() + ", Field: " + dataField.toString());
                     }
 
                     if (dataField.required()) {
@@ -114,14 +109,14 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     }
 
                     dataFields.put(dataField.pos(), dataField);
-                    annotedFields.put(dataField.pos(), field);
+                    annotatedFields.put(dataField.pos(), field);
                 }
 
                 Link linkField = field.getAnnotation(Link.class);
 
                 if (linkField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Class linked  : " + cl.getName() + ", Field" + field.toString());
+                        LOG.debug("Class linked: " + cl.getName() + ", Field: " + field.toString());
                     }
                     linkFields.add(field);
                 }
@@ -129,15 +124,15 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             }
 
             if (!linkFields.isEmpty()) {
-                annotedLinkFields.put(cl.getName(), linkFields);
+                annotatedLinkFields.put(cl.getName(), linkFields);
             }
 
             totalFields = numberMandatoryFields + numberOptionalFields;
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Number of optional fields : " + numberOptionalFields);
-                LOG.debug("Number of mandatory fields : " + numberMandatoryFields);
-                LOG.debug("Total : " + totalFields);
+                LOG.debug("Number of optional fields: " + numberOptionalFields);
+                LOG.debug("Number of mandatory fields: " + numberMandatoryFields);
+                LOG.debug("Total: " + totalFields);
             }
 
         }
@@ -148,8 +143,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     // we don't split it as this is the case for a CSV record
     @Override
     public void bind(List<String> data, Map<String, Object> model, int line) throws Exception {
-        // TODO Auto-generated method stub
-
+        // noop
     }
 
     public void bind(String record, Map<String, Object> model, int line) throws Exception {
@@ -165,7 +159,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         String pattern;
 
         // Iterate through the list of positions
-        // defined in the @DataFieldf
+        // defined in the @DataField
         // and grab the data from the line
         Collection c = dataFields.values();
         Iterator itr = c.iterator();
@@ -175,13 +169,12 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             offset = dataField.pos();
             length = dataField.length();
 
-            ObjectHelper.notNull(offset, "Position/offset is not defined for  the  field "
-                                         + dataField.toString());
-            ObjectHelper.notNull(offset, "Length is not defined for the  field " + dataField.toString());
+            ObjectHelper.notNull(offset, "Position/offset is not defined for the field: " + dataField.toString());
+            ObjectHelper.notNull(offset, "Length is not defined for the field: " + dataField.toString());
 
             if (offset - 1 <= -1) {
-                throw new IllegalArgumentException("Offset / Position of the field " + dataField.toString()
-                                                   + " cannot be negative !");
+                throw new IllegalArgumentException("Offset/Position of the field " + dataField.toString()
+                                                   + " cannot be negative!");
             }
 
             token = record.substring(offset - 1, offset + length - 1);
@@ -196,16 +189,16 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 // This is not possible for mandatory fields
                 if (token.equals("")) {
                     throw new IllegalArgumentException("The mandatory field defined at the position " + pos
-                                                       + " is empty for the line : " + line);
+                                                       + " is empty for the line: " + line);
                 }
             }
             
             // Get Field to be setted
-            field = annotedFields.get(offset);
+            field = annotatedFields.get(offset);
             field.setAccessible(true);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Pos/Offset : " + offset + ", Data : " + token + ", Field type : " + field.getType());
+                LOG.debug("Pos/Offset: " + offset + ", Data: " + token + ", Field type: " + field.getType());
             }
             
             Format<?> format;
@@ -226,9 +219,9 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 try {
                     value = format.parse(token);
                 } catch (FormatException ie) {
-                    throw new IllegalArgumentException(ie.getMessage() + ", position : " + offset + ", line : " + line, ie);
+                    throw new IllegalArgumentException(ie.getMessage() + ", position: " + offset + ", line: " + line, ie);
                 } catch (Exception e) {
-                    throw new IllegalArgumentException("Parsing error detected for field defined at the position/offset : " + offset + ", line : " + line, e);
+                    throw new IllegalArgumentException("Parsing error detected for field defined at the position/offset: " + offset + ", line: " + line, e);
                 }
             } else {
                 value = getDefaultValueForPrimitive(field.getType());
@@ -241,15 +234,15 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Counter mandatory fields : " + counterMandatoryFields);
+            LOG.debug("Counter mandatory fields: " + counterMandatoryFields);
         }
 
         if (pos < totalFields) {
-            throw new IllegalArgumentException("Some fields are missing (optional or mandatory), line : " + line);
+            throw new IllegalArgumentException("Some fields are missing (optional or mandatory), line: " + line);
         }
 
         if (counterMandatoryFields < numberMandatoryFields) {
-            throw new IllegalArgumentException("Some mandatory fields are missing, line : " + line);
+            throw new IllegalArgumentException("Some mandatory fields are missing, line: " + line);
         }  
         
     }
@@ -266,7 +259,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 Object obj = model.get(clazz.getName());
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Model object : " + obj + ", class : " + obj.getClass().getName());
+                    LOG.debug("Model object: " + obj + ", class: " + obj.getClass().getName());
                 }
 
                 if (obj != null) {
@@ -281,31 +274,24 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
         // Convert Map<Integer, List> into List<List>
         TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(results);
-        List<String> temp = new ArrayList<String>();
-
         for (Integer key : sortValues.keySet()) {
 
             // Get list of values
             List<String> val = sortValues.get(key);
-            String value = (String)val.get(0);
+            String value = val.get(0);
             
             buffer.append(value);
-
         }
         
         return buffer.toString();
-
     }
 
     /**
      * 
-     * Generate a table containing the data formated and sorted with their position/offset
+     * Generate a table containing the data formatted and sorted with their position/offset
      * The result is placed in the Map<Integer, List> results
-     * 
-     * @param clazz
-     * @param obj
-     * @throws Exception
      */
+
     private void generateFixedLengthPositionMap(Class clazz, Object obj) throws Exception {
 
         String result = "";
@@ -326,58 +312,74 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     String pattern = datafield.pattern();
                     int precision = datafield.precision();
 
+
+
                     // Create format
                     Format format = FormatFactory.getFormat(type, pattern, getLocale(), precision);
 
                     // Get field value
                     Object value = field.get(obj);
 
+
                     result = formatString(format, value);
-                    
+
+                    // trim if enabled
+                    if (datafield.trim()) {
+                        result = result.trim();
+                    }
+
                     // Get length of the field, alignment (LEFT or RIGHT), pad
                     int fieldLength = datafield.length();
                     String align = datafield.align();
-                    char paddCharField = datafield.paddingChar();
-                    char paddChar;
+                    char padCharField = datafield.paddingChar();
+                    char padChar;
                     
                     if (fieldLength > 0) {
                        
                         StringBuilder temp = new StringBuilder();
 
-                        // Check if we must padd
+                        // Check if we must pad
                         if (result.length() < fieldLength) {
 
                             // No padding defined for the field
-                            if (paddCharField == 0) {
+                            if (padCharField == 0) {
                                 // We use the padding defined for the Record
-                                paddChar = paddingChar;
+                                padChar = paddingChar;
                             } else {
-                                paddChar = paddCharField;
+                                padChar = padCharField;
                             }
 
                             if (align.contains("R")) {
-                                temp.append(generatePaddingChars(paddChar, fieldLength, result.length()));
+                                temp.append(generatePaddingChars(padChar, fieldLength, result.length()));
                                 temp.append(result);
                             } else if (align.contains("L")) {
                                 temp.append(result);
-                                temp.append(generatePaddingChars(paddChar, fieldLength, result.length()));
+                                temp.append(generatePaddingChars(padChar, fieldLength, result.length()));
                             } else {
-                                throw new IllegalArgumentException("Alignement for the "
-                                                                       + field.getName()
-                                                                       + " must be equal to R for RIGHT or L for LEFT !");
+                                throw new IllegalArgumentException("Alignment for the field: " + field.getName()
+                                        + " must be equal to R for RIGHT or L for LEFT !");
                             }
 
                             result = temp.toString();
+                        } else if (result.length() > fieldLength) {
+                            // we are bigger than allowed
+
+                            // is clipped enabled? if so clip the field
+                            if (datafield.clip()) {
+                                result = result.substring(0, fieldLength);
+                            } else {
+                                throw new IllegalArgumentException("Length for the " + field.getName()
+                                        + " must not be larger than allowed, was: " + result.length() + ", allowed: " + fieldLength);
+                            }
                         }
 
                     } else {
-                        throw new IllegalArgumentException("Lenght of the field : "
-                                                               + field.getName()
-                                                               + " is a mandatory field and cannot be equal to zero or to be negative !");
+                        throw new IllegalArgumentException("Length of the field: " + field.getName()
+                                + " is a mandatory field and cannot be equal to zero or to be negative !");
                     }
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value to be formatted : " + value + ", position : " + datafield.pos() + ", and its formated value : " + result);
+                        LOG.debug("Value to be formatted: " + value + ", position: " + datafield.pos() + ", and its formatted value: " + result);
                     }
 
                 } else {
@@ -388,14 +390,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 key = datafield.pos();
 
                 if (!results.containsKey(key)) {
-
                     List list = new LinkedList();
                     list.add(result);
                     results.put(key, list);
-
                 } else {
-
-                    List list = (LinkedList)results.get(key);
+                    List list = results.get(key);
                     list.add(result);
                 }
 
@@ -406,7 +405,6 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     }
     
     private String generatePaddingChars(char pad, int lengthField, int lengthString) {
-
         StringBuilder buffer = new StringBuilder();
         int size = lengthField - lengthString;
 

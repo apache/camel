@@ -38,80 +38,62 @@ import java.lang.annotation.RetentionPolicy;
 public @interface DataField {
 
     /**
-     * position of the data in the record (mandatory)
-     * 
-     * @return int
+     * Position of the data in the record, must start from 1 (mandatory).
      */
     int pos();
 
     /**
-     * name of the field (optional)
-     * 
-     * @return String
+     * Name of the field (optional)
      */
     String name() default "";
 
     /**
-     * name of the header column (optional)
-     * 
-     * @return String
+     * Name of the header column (optional)
      */
     String columnName() default "";
 
     /**
-     * pattern that the formater will use to transform the data (optional)
-     * 
-     * @return String
+     * Pattern that the formatter will use to transform the data (optional)
      */
     String pattern() default "";
 
     /**
-     * length of the data block (useful for the fixedlength record) 
-     * 
-     * @return int
+     * Length of the data block if the record is set to a fixed length
      */
     int length() default 0;
     
     /**
-     * align the text to the RIGHT or to LEFT part 
-     * 
-     * @return String
+     * Align the text to the right or left. Use values <tt>R</tt> or <tt>L</tt>.
      */
     String align() default "R";
     
     /**
-     * The char to pad with.
-     * @return the char to pad with if the record is set to a fixed length;
-     * 
-     * @return char
+     * The char to pad with if the record is set to a fixed length
      */
     char paddingChar() default ' ';
 
     /**
-     * precision of the BigDecimal number to be created
-     * 
-     * @return int
+     * precision of the {@link java.math.BigDecimal} number to be created
      */
     int precision() default 0;
 
     /**
-     * Position of the field in the message generated
-     * 
-     * @return int
+     * Position of the field in the message generated (should start from 1)
      */
     int position() default 0;
 
     /**
      * Indicates if the field is mandatory
-     * 
-     * @return boolean
      */
     boolean required() default false;
 
     /**
-     * Indicates if the value should be trimed
-     * 
-     * @return boolean
+     * Indicates if the value should be trimmed
      */
     boolean trim() default false;
+
+    /**
+     * Indicates to clip data in the field if it exceeds the allowed length when using fixed length.
+     */
+    boolean clip() default false;
 }

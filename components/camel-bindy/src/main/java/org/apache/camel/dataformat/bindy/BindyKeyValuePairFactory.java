@@ -77,14 +77,14 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     public void initKeyValuePairModel() throws Exception {
 
         // Find annotated KeyValuePairfields declared in the Model classes
-        initAnnotedFields();
+        initAnnotatedFields();
 
         // Initialize key value pair parameter(s)
         initMessageParameters();
 
     }
 
-    public void initAnnotedFields() {
+    public void initAnnotatedFields() {
 
         for (Class<?> cl : models) {
 
@@ -111,7 +111,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             }
 
             if (!linkFields.isEmpty()) {
-                annotedLinkFields.put(cl.getName(), linkFields);
+                annotatedLinkFields.put(cl.getName(), linkFields);
             }
 
         }
