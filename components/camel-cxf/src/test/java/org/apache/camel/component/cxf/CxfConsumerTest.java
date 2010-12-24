@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletRequest;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -55,6 +57,12 @@ public class CxfConsumerTest extends CamelTestSupport {
                     public void process(final Exchange exchange) {
                         assertEquals(DataFormat.POJO, exchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class));
                         Message in = exchange.getIn();
+                        // check the remote IP from the cxfMessage
+                        org.apache.cxf.message.Message cxfMessage = in.getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
+                        assertNotNull("Should get the cxfMessage instance from message header", cxfMessage);
+                        ServletRequest request = (ServletRequest)cxfMessage.get("HTTP.REQUEST");
+                        assertNotNull("Should get the ServletRequest", request);
+                        assertNotNull("Should get the RemoteAddress" + request.getRemoteAddr());
                         // Get the parameter list
                         List<?> parameter = in.getBody(List.class);
                         // Get the operation name

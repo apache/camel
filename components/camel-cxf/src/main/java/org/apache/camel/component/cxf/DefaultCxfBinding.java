@@ -31,9 +31,6 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.Holder;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -59,6 +56,9 @@ import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.service.model.OperationInfo;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * The Default CXF binding implementation.
@@ -448,9 +448,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     @SuppressWarnings("unchecked")
     protected void propagateHeadersFromCxfToCamel(Message cxfMessage,
             org.apache.camel.Message camelMessage, Exchange exchange) {
-        
         Map<String, List<String>> cxfHeaders = (Map)cxfMessage.get(Message.PROTOCOL_HEADERS);
         Map<String, Object> camelHeaders = camelMessage.getHeaders();
+        camelHeaders.put(CxfConstants.CAMEL_CXF_MESSAGE, cxfMessage);
 
         if (cxfHeaders != null) {
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {

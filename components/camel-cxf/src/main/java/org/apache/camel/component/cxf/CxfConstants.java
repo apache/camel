@@ -43,6 +43,7 @@ public interface CxfConstants {
     String JAXWS_CONTEXT = "jaxwsContext";
     String CXF_EXCHANGE = "org.apache.cxf.message.exchange";
     String CAMEL_EXCHANGE = "org.apache.camel.exchange";
+    String CAMEL_CXF_MESSAGE = "CamelCxfMessage";
     String CAMEL_CXF_RS_USING_HTTP_API = "CamelCxfRsUsingHttpAPI";
     String CAMEL_CXF_RS_VAR_VALUES = "CamelCxfRsVarValues";
     String CAMEL_CXF_RS_RESPONSE_CLASS = "CamelCxfRsResponseClass";
