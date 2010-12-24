@@ -60,6 +60,7 @@ public class AsyncDeadLetterChannelTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
         mock.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
+        mock.message(0).header(Exchange.REDELIVERY_MAX_COUNTER).isEqualTo(2);
 
         try {
             template.requestBody("direct:in", "Hello World");

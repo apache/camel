@@ -64,8 +64,8 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
                 // MyRedeliveryProcessor before a redelivery is
                 // attempted. This allows us to alter the message before
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5)
-                        .onRedelivery(new MyRedeliverPrcessor())
-                        // setting delay to zero is just to make unit teting faster
+                        .onRedelivery(new MyRedeliverProcessor())
+                        // setting delay to zero is just to make unit testing faster
                         .redeliveryDelay(0L));
                 // END SNIPPET: e1
 
@@ -86,7 +86,7 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
     // START SNIPPET: e2
     // This is our processor that is executed before every redelivery attempt
     // here we can do what we want in the java code, such as altering the message
-    public class MyRedeliverPrcessor implements Processor {
+    public class MyRedeliverProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
             // the message is being redelivered so we can alter it
@@ -94,9 +94,13 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
             // we just append the redelivery counter to the body
             // you can of course do all kind of stuff instead
             String body = exchange.getIn().getBody(String.class);
-            int count = exchange.getIn().getHeader("CamelRedeliveryCounter", Integer.class);
+            int count = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
 
             exchange.getIn().setBody(body + count);
+
+            // the maximum redelivery was set to 5
+            int max = exchange.getIn().getHeader(Exchange.REDELIVERY_MAX_COUNTER, Integer.class);
+            assertEquals(5, max);
         }
     }
     // END SNIPPET: e2

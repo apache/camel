@@ -480,6 +480,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // its continued then remove traces of redelivery attempted and caught exception
         exchange.getIn().removeHeader(Exchange.REDELIVERED);
         exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
+        exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
         // keep the Exchange.EXCEPTION_CAUGHT as property so end user knows the caused exception
 
         // create log message
@@ -534,7 +535,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e;
         logFailedDelivery(true, false, false, exchange, msg, data, e);
 
-        data.redeliveryCounter = incrementRedeliveryCounter(exchange, e);
+        data.redeliveryCounter = incrementRedeliveryCounter(exchange, e, data);
     }
 
     /**
@@ -579,6 +580,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // its handled then remove traces of redelivery attempted
             exchange.getIn().removeHeader(Exchange.REDELIVERED);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
+            exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
             handled = true;
         } else {
             // must decrement the redelivery counter as we didn't process the redelivery but is
@@ -806,7 +808,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * Increments the redelivery counter and adds the redelivered flag if the
      * message has been redelivered
      */
-    private int incrementRedeliveryCounter(Exchange exchange, Throwable e) {
+    private int incrementRedeliveryCounter(Exchange exchange, Throwable e, RedeliveryData data) {
         Message in = exchange.getIn();
         Integer counter = in.getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
         int next = 1;
@@ -815,6 +817,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
         in.setHeader(Exchange.REDELIVERY_COUNTER, next);
         in.setHeader(Exchange.REDELIVERED, Boolean.TRUE);
+        // if maximum redeliveries is used, then provide that information as well
+        if (data.currentRedeliveryPolicy.getMaximumRedeliveries() > 0) {
+            in.setHeader(Exchange.REDELIVERY_MAX_COUNTER, data.currentRedeliveryPolicy.getMaximumRedeliveries());
+        }
         return next;
     }
 

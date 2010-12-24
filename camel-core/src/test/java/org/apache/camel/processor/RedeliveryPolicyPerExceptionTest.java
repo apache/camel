@@ -46,6 +46,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
         log.info("Found message with headers: " + in.getHeaders());
 
         assertMessageHeader(in, Exchange.REDELIVERY_COUNTER, 2);
+        assertMessageHeader(in, Exchange.REDELIVERY_MAX_COUNTER, 2);
         assertMessageHeader(in, Exchange.REDELIVERED, true);
     }
 
@@ -63,6 +64,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
         log.info("Found message with headers: " + in.getHeaders());
 
         assertMessageHeader(in, Exchange.REDELIVERY_COUNTER, 0);
+        assertMessageHeader(in, Exchange.REDELIVERY_MAX_COUNTER, null);
         assertMessageHeader(in, Exchange.REDELIVERED, false);
     }
 

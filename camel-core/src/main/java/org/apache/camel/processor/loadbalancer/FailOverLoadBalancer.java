@@ -209,6 +209,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         exchange.setProperty(Exchange.EXCEPTION_CAUGHT, null);
         exchange.getIn().removeHeader(Exchange.REDELIVERED);
         exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
+        exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
     }
 
     private boolean processExchange(Processor processor, Exchange exchange,

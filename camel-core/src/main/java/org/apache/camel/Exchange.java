@@ -143,12 +143,13 @@ public interface Exchange {
 
     String ON_COMPLETION = "CamelOnCompletion";
 
-    String REDELIVERED          = "CamelRedelivered";
-    String REDELIVERY_COUNTER   = "CamelRedeliveryCounter";
-    String REDELIVERY_EXHAUSTED = "CamelRedeliveryExhausted";
-    String ROLLBACK_ONLY        = "CamelRollbackOnly";
-    String ROLLBACK_ONLY_LAST   = "CamelRollbackOnlyLast";
-    String ROUTE_STOP           = "CamelRouteStop";
+    String REDELIVERED             = "CamelRedelivered";
+    String REDELIVERY_COUNTER      = "CamelRedeliveryCounter";
+    String REDELIVERY_MAX_COUNTER  = "CamelRedeliveryMaxCounter";
+    String REDELIVERY_EXHAUSTED    = "CamelRedeliveryExhausted";
+    String ROLLBACK_ONLY           = "CamelRollbackOnly";
+    String ROLLBACK_ONLY_LAST      = "CamelRollbackOnlyLast";
+    String ROUTE_STOP              = "CamelRouteStop";
 
     String SOAP_ACTION        = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";

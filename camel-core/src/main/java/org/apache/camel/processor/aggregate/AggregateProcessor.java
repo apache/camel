@@ -738,6 +738,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
                             // set redelivery counter
                             exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
+                            if (recoverable.getMaximumRedeliveries() > 0) {
+                                exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER, recoverable.getMaximumRedeliveries());
+                            }
 
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Delivery attempt: " + data.redeliveryCounter + " to recover aggregated exchange with id: " + exchangeId + "");
