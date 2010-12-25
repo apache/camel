@@ -164,6 +164,7 @@ public class PrinterPrintTest extends CamelTestSupport {
      * default values when starting the route.
      */
     @Test
+    @Ignore
     public void testDefaultPrinterConfiguration() throws Exception {
         if (isAwtHeadless()) {
             return;

@@ -30,39 +30,23 @@ import javax.print.attribute.standard.Copies;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class PrinterProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(PrinterProducer.class);
-    Endpoint endpoint;
-    PrinterConfiguration config;
-    PrinterOperations printerOperations;
-    PrintService printService;
-    String printer;
+    private final PrinterConfiguration config;
+    private PrinterOperations printerOperations;
+    private PrintService printService;
+    private String printer;
     
     public PrinterProducer(Endpoint endpoint, PrinterConfiguration config) throws Exception {
         super(endpoint);
-        this.endpoint = endpoint;
         this.config = config;
-        this.printService = assignPrintService();
-        this.printerOperations = new PrinterOperations(printService, assignPrintJob(printService), assignDocFlavor(), assignPrintAttributes());
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        LOG.info("In PrinterProducer.start()");
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        LOG.info("In PrinterProducer.stop()");
-        super.doStop();
     }
 
     public void process(Exchange exchange) throws Exception {
-        LOG.info("In printerProducer.print()");
         Object body = exchange.getIn().getBody();
         InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
         print(is);
@@ -107,42 +91,26 @@ public class PrinterProducer extends DefaultProducer {
             setPrinter("\\\\" + config.getHostname() + "\\" + config.getPrintername());
             int position = findPrinter(services, printer);
             if (position < 0) {
-                LOG.error("PrintServiceLookup failed. No printer found with the Printer Name: " + printer);
-                throw new PrintException("Printer Lookup Failure. Please verify that the host and printer are registered and reachable from this machine");
+                throw new PrintException("No printer found with name: " + printer + ". Please verify that the host and printer are registered and reachable from this machine.");
             }         
             printService = services[position];
         }
-        // LOG.info("PrintServiceLookup succeeded. PrintService located at " + printService.getName());
         return printService;
     }
     
     private int findPrinter(PrintService[] services, String printer) {
-        boolean found = false;
         int position = -1;
-        for (int i = 0; (i < services.length) && (!found); i++) {
+        for (int i = 0; i < services.length; i++) {
             if (printer.equalsIgnoreCase(services[i].getName())) {
-                found = true;
                 position = i;
+                break;
             }
         }
-        
         return position;
-    }
-
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
-
-    public void setEndpoint(Endpoint endpoint) {
-        this.endpoint = endpoint;
     }
 
     public PrinterConfiguration getConfig() {
         return config;
-    }
-
-    public void setConfig(PrinterConfiguration config) {
-        this.config = config;
     }
 
     public PrinterOperations getPrinterOperations() {
@@ -168,6 +136,23 @@ public class PrinterProducer extends DefaultProducer {
     public void setPrinter(String printer) {
         this.printer = printer;
     }
-    
-    
+
+    @Override
+    protected void doStart() throws Exception {
+        if (printService ==  null) {
+            printService = assignPrintService();
+        }
+        ObjectHelper.notNull(printService, "PrintService", this);
+
+        if (printerOperations == null) {
+            printerOperations = new PrinterOperations(printService, assignPrintJob(printService), assignDocFlavor(), assignPrintAttributes());
+        }
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+    }
+
 }

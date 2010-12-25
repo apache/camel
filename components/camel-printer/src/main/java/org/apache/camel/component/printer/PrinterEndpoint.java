@@ -23,8 +23,11 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 
 public class PrinterEndpoint extends DefaultEndpoint {
-    PrinterConfiguration config;
-    
+    private PrinterConfiguration config;
+
+    public PrinterEndpoint() {
+    }
+
     public PrinterEndpoint(String endpointUri, Component component, PrinterConfiguration config) {
         super(endpointUri, component);
         this.config = config;
