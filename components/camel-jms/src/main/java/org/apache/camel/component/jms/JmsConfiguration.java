@@ -45,6 +45,7 @@ import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
 
+import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
 /**
@@ -1075,13 +1076,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public void setReplyTo(String replyToDestination) {
-        if (replyToDestination.startsWith(QUEUE_PREFIX)) {
-            this.replyToDestination = removeStartingCharacters(replyToDestination.substring(QUEUE_PREFIX.length()), '/');
-        } else if (replyToDestination.startsWith(TOPIC_PREFIX)) {
-            this.replyToDestination = removeStartingCharacters(replyToDestination.substring(TOPIC_PREFIX.length()), '/');
-        } else {
-            this.replyToDestination = replyToDestination;
-        }
+        this.replyToDestination = normalizeDestinationName(replyToDestination);
     }
 
     public String getReplyToDestinationSelectorName() {

@@ -40,6 +40,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 
+import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
+
 /**
  * @version $Revision$
  */
@@ -229,12 +231,11 @@ public class JmsProducer extends DefaultAsyncProducer {
             if (replyTo != null) {
                 // we are routing an existing JmsMessage, origin from another JMS endpoint
                 // then we need to remove the existing JMSReplyTo
-                // as we are not out capable and thus do not expect a reply, and therefore
-                // the consumer of this message we send should not return a reply
+                // as we are not OUT capable and thus do not expect a reply, and therefore
+                // the consumer of this message should not return a reply
                 String to = destinationName != null ? destinationName : "" + destination;
                 LOG.warn("Disabling JMSReplyTo as this Exchange is not OUT capable with JMSReplyTo: " + replyTo
-                        + " for destination: " + to + ". Use preserveMessageQos=true to force Camel to keep the JMSReplyTo."
-                        + " Exchange: " + exchange);
+                        + " for destination: " + to + ". Use preserveMessageQos=true to force Camel to keep the JMSReplyTo on: " + exchange);
                 exchange.getIn().setHeader("JMSReplyTo", null);
             }
         }
@@ -243,33 +244,51 @@ public class JmsProducer extends DefaultAsyncProducer {
             public Message createMessage(Session session) throws JMSException {
                 Message answer = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
 
-                // if the binding did not create the reply to then we have to try to create it here
-                String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);
-                if (replyTo != null && answer.getJMSReplyTo() == null) {
-                    Destination destination = null;
-                    // try using destination resolver to lookup the destination
-                    if (endpoint.getDestinationResolver() != null) {
-                        destination = endpoint.getDestinationResolver().resolveDestinationName(session, replyTo, endpoint.isPubSubDomain());
+                if (endpoint.isDisableReplyTo()) {
+                    // honor disable reply to configuration
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("ReplyTo is disabled on endpoint: " + endpoint);
                     }
-                    if (destination == null) {
-                        // okay then fallback and create the queue
-                        if (endpoint.isPubSubDomain()) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Creating JMSReplyTo topic: " + replyTo);
-                            }
-                            destination = session.createTopic(replyTo);
-                        } else {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Creating JMSReplyTo queue: " + replyTo);
-                            }
-                            destination = session.createQueue(replyTo);
+                    answer.setJMSReplyTo(null);
+                } else {
+                    // if the binding did not create the reply to then we have to try to create it here
+                    if (answer.getJMSReplyTo() == null) {
+                        // prefer reply to from header over endpoint configured
+                        String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);
+                        if (replyTo == null) {
+                            replyTo = endpoint.getReplyTo();
                         }
-                    }
-                    if (destination != null) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Using JMSReplyTo destination: " + destination);
+
+                        if (replyTo != null) {
+                            // must normalize the destination name
+                            replyTo = normalizeDestinationName(replyTo);
+
+                            Destination destination = null;
+                            // try using destination resolver to lookup the destination
+                            if (endpoint.getDestinationResolver() != null) {
+                                destination = endpoint.getDestinationResolver().resolveDestinationName(session, replyTo, endpoint.isPubSubDomain());
+                            }
+                            if (destination == null) {
+                                // okay then fallback and create the queue
+                                if (endpoint.isPubSubDomain()) {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Creating JMSReplyTo topic: " + replyTo);
+                                    }
+                                    destination = session.createTopic(replyTo);
+                                } else {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Creating JMSReplyTo queue: " + replyTo);
+                                    }
+                                    destination = session.createQueue(replyTo);
+                                }
+                            }
+                            if (destination != null) {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Using JMSReplyTo destination: " + destination);
+                                }
+                                answer.setJMSReplyTo(destination);
+                            }
                         }
-                        answer.setJMSReplyTo(destination);
                     }
                 }
 

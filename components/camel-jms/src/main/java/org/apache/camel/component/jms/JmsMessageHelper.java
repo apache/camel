@@ -22,6 +22,12 @@ import java.util.Map;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
+import org.apache.camel.util.ObjectHelper;
+
+import static org.apache.camel.component.jms.JmsConfiguration.QUEUE_PREFIX;
+import static org.apache.camel.component.jms.JmsConfiguration.TOPIC_PREFIX;
+import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+
 /**
  * Utility class for {@link javax.jms.Message}.
  *
@@ -138,6 +144,25 @@ public final class JmsMessageHelper {
             message.setJMSCorrelationID(correlationId);
         } catch (JMSException e) {
             // ignore
+        }
+    }
+
+    /**
+     * Normalizes the destination name, by removing any leading queue or topic prefixes.
+     *
+     * @param destination the destination
+     * @return the normalized destination
+     */
+    public static String normalizeDestinationName(String destination) {
+        if (ObjectHelper.isEmpty(destination)) {
+            return destination;
+        }
+        if (destination.startsWith(QUEUE_PREFIX)) {
+            return removeStartingCharacters(destination.substring(QUEUE_PREFIX.length()), '/');
+        } else if (destination.startsWith(TOPIC_PREFIX)) {
+            return removeStartingCharacters(destination.substring(TOPIC_PREFIX.length()), '/');
+        } else {
+            return destination;
         }
     }
 }
