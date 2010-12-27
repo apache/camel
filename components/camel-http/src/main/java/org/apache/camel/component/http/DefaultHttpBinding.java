@@ -17,19 +17,15 @@
 package org.apache.camel.component.http;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Map;
-
 import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.activation.FileTypeMap;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,12 +52,20 @@ public class DefaultHttpBinding implements HttpBinding {
 
     private boolean useReaderForPayload;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    private HttpEndpoint endpoint;
 
+    @Deprecated
     public DefaultHttpBinding() {
     }
 
+    @Deprecated
     public DefaultHttpBinding(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public DefaultHttpBinding(HttpEndpoint endpoint) {
+        this.endpoint = endpoint;
+        this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
     }
 
     public void readRequest(HttpServletRequest request, HttpMessage message) {
@@ -91,7 +95,7 @@ public class DefaultHttpBinding implements HttpBinding {
             message.getExchange().setProperty(Exchange.CHARSET_NAME, request.getCharacterEncoding());
         }
 
-        popluateRequestParameters(request, message);        
+        populateRequestParameters(request, message);
         
         Object body = message.getBody();
         // reset the stream cache if the body is the instance of StreamCache
@@ -107,10 +111,10 @@ public class DefaultHttpBinding implements HttpBinding {
         headers.put(Exchange.HTTP_PATH, request.getPathInfo());
         headers.put(Exchange.CONTENT_TYPE, request.getContentType());
         
-        popluateAttachments(request, message);
+        populateAttachments(request, message);
     }
     
-    protected void popluateRequestParameters(HttpServletRequest request, HttpMessage message) {
+    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) {
         //we populate the http request parameters without checking the request method
         Map<String, Object> headers = message.getHeaders();
         Enumeration names = request.getParameterNames();
@@ -123,7 +127,8 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
         
-        if (request.getMethod().equals("POST") && request.getContentType() != null && request.getContentType().startsWith("application/x-www-form-urlencoded")) {
+        if (request.getMethod().equals("POST") && request.getContentType() != null
+                && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)) {
             String charset = request.getCharacterEncoding();
             if (charset == null) {
                 charset = "UTF-8";
@@ -147,7 +152,7 @@ public class DefaultHttpBinding implements HttpBinding {
         
     }
     
-    protected void popluateAttachments(HttpServletRequest request, HttpMessage message) {
+    protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
         // check if there is multipart files, if so will put it into DataHandler
         Enumeration names = request.getAttributeNames();
         while (names.hasMoreElements()) {
@@ -189,14 +194,23 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
-        response.setStatus(500); // 500 for internal server error
-        response.setContentType("text/plain");
+        // 500 for internal server error
+        response.setStatus(500);
 
-        // append the stacktrace as response
-        PrintWriter pw = response.getWriter();
-        exception.printStackTrace(pw);
-
-        pw.flush();
+        if (endpoint != null && endpoint.isTransferException()) {
+            // transfer the exception as a serialized java object
+            response.setContentType(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+            ObjectOutputStream oos = new ObjectOutputStream(response.getOutputStream());
+            oos.writeObject(exception);
+            oos.flush();
+            IOHelper.close(oos);
+        } else {
+            // write stacktrace as plain text
+            response.setContentType("text/plain");
+            PrintWriter pw = response.getWriter();
+            exception.printStackTrace(pw);
+            pw.flush();
+        }
     }
 
     public void doWriteFaultResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
@@ -331,7 +345,6 @@ public class DefaultHttpBinding implements HttpBinding {
                     is.close();
                 }
             }
-             
         }
     }
 

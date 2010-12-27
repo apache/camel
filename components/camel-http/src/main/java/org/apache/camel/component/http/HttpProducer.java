@@ -19,6 +19,7 @@ package org.apache.camel.component.http;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,11 +58,13 @@ public class HttpProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(HttpProducer.class);
     private HttpClient httpClient;
     private boolean throwException;
+    private boolean transferException;
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
         this.httpClient = endpoint.createHttpClient();
         this.throwException = endpoint.isThrowExceptionOnFailure();
+        this.transferException = endpoint.isTransferException();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -119,7 +122,7 @@ public class HttpProducer extends DefaultProducer {
         return (HttpEndpoint) super.getEndpoint();
     }
 
-    protected void populateResponse(Exchange exchange, HttpMethod method, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
+    protected void populateResponse(Exchange exchange, HttpMethod method, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException, ClassNotFoundException {
         Message answer = exchange.getOut();
 
         answer.setHeaders(in.getHeaders());
@@ -140,16 +143,23 @@ public class HttpProducer extends DefaultProducer {
         }
     }
 
-    protected HttpOperationFailedException populateHttpOperationFailedException(Exchange exchange, HttpMethod method, int responseCode) throws IOException {
-        HttpOperationFailedException exception;
+    protected Exception populateHttpOperationFailedException(Exchange exchange, HttpMethod method, int responseCode) throws IOException, ClassNotFoundException {
+        Exception answer;
+
         String uri = method.getURI().toString();
         String statusText = method.getStatusLine() != null ? method.getStatusLine().getReasonPhrase() : null;
         Map<String, String> headers = extractResponseHeaders(method.getResponseHeaders());
-        InputStream is = extractResponseBody(method, exchange);
+
+        Object responseBody = extractResponseBody(method, exchange);
+        if (transferException && responseBody != null && responseBody instanceof Exception) {
+            // if the response was a serialized exception then use that
+            return (Exception) responseBody;
+        }
+
         // make a defensive copy of the response body in the exception so its detached from the cache
         String copy = null;
-        if (is != null) {
-            copy = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, is);
+        if (responseBody != null) {
+            copy = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, responseBody);
         }
 
         if (responseCode >= 300 && responseCode < 400) {
@@ -157,17 +167,17 @@ public class HttpProducer extends DefaultProducer {
             Header locationHeader = method.getResponseHeader("location");
             if (locationHeader != null) {
                 redirectLocation = locationHeader.getValue();
-                exception = new HttpOperationFailedException(uri, responseCode, statusText, redirectLocation, headers, copy);
+                answer = new HttpOperationFailedException(uri, responseCode, statusText, redirectLocation, headers, copy);
             } else {
                 // no redirect location
-                exception = new HttpOperationFailedException(uri, responseCode, statusText, null, headers, copy);
+                answer = new HttpOperationFailedException(uri, responseCode, statusText, null, headers, copy);
             }
         } else {
             // internal server error (error code 500)
-            exception = new HttpOperationFailedException(uri, responseCode, statusText, null, headers, copy);
+            answer = new HttpOperationFailedException(uri, responseCode, statusText, null, headers, copy);
         }
 
-        return exception;
+        return answer;
     }
 
     /**
@@ -204,10 +214,10 @@ public class HttpProducer extends DefaultProducer {
      * Extracts the response from the method as a InputStream.
      *
      * @param method  the method that was executed
-     * @return  the response as a stream
+     * @return  the response either as a stream, or as a deserialized java object
      * @throws IOException can be thrown
      */
-    protected static InputStream extractResponseBody(HttpMethod method, Exchange exchange) throws IOException {
+    protected static Object extractResponseBody(HttpMethod method, Exchange exchange) throws IOException, ClassNotFoundException {
         InputStream is = method.getResponseBodyAsStream();
         if (is == null) {
             return null;
@@ -221,16 +231,39 @@ public class HttpProducer extends DefaultProducer {
         }
         
         // Honor the character encoding
+        String contentType = null;
         header = method.getResponseHeader("content-type");
         if (header != null) {
-            String contentType = header.getValue();
+            contentType = header.getValue();
             // find the charset and set it to the Exchange
             HttpHelper.setCharsetFromContentType(contentType, exchange);
         }
-        return doExtractResponseBody(is, exchange);
+        InputStream response = doExtractResponseBodyAsStream(is, exchange);
+        if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
+            return doDeserializeJavaObjectFromResponse(response);
+        } else {
+            return response;
+        }
     }
 
-    private static InputStream doExtractResponseBody(InputStream is, Exchange exchange) throws IOException {
+    private static Object doDeserializeJavaObjectFromResponse(InputStream response) throws ClassNotFoundException, IOException {
+        if (response == null) {
+            LOG.debug("Cannot deserialize transferred exception due no response body.");
+            return null;
+        }
+
+        Object answer = null;
+        ObjectInputStream ois = new ObjectInputStream(response);
+        try {
+            answer = ois.readObject();
+        } finally {
+            IOHelper.close(ois);
+        }
+
+        return answer;
+    }
+
+    private static InputStream doExtractResponseBodyAsStream(InputStream is, Exchange exchange) throws IOException {
         // As httpclient is using a AutoCloseInputStream, it will be closed when the connection is closed
         // we need to cache the stream for it.
         try {

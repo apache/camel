@@ -208,6 +208,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         }
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
+        Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         Boolean disableStreamCache = getAndRemoveParameter(parameters, "disableStreamCache", Boolean.class);
@@ -253,6 +254,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // should we use an exception for failed error codes?
         if (throwExceptionOnFailure != null) {
             endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
+        }
+        // should we transfer exception as serialized object
+        if (transferException != null) {
+            endpoint.setTransferException(transferException);
         }
         if (bridgeEndpoint != null) {
             endpoint.setBridgeEndpoint(bridgeEndpoint);
