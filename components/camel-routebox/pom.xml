@@ -20,7 +20,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>components</artifactId>
+		<artifactId>camel-parent</artifactId>
 		<groupId>org.apache.camel</groupId>
 		<version>2.6-SNAPSHOT</version>
 	    <relativePath>../../parent</relativePath>
