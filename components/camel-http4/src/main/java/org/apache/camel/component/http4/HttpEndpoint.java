@@ -56,6 +56,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private boolean matchOnUriPrefix;
     private boolean chunked = true;
     private boolean disableStreamCache;
+    private boolean transferException;
 
     public HttpEndpoint() {
     }
@@ -187,7 +188,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public HttpBinding getBinding() {
         if (binding == null) {
-            binding = new DefaultHttpBinding(getHeaderFilterStrategy());
+            binding = new DefaultHttpBinding(this);
         }
         return binding;
     }
@@ -279,4 +280,11 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         this.chunked = chunked;
     }
 
+    public boolean isTransferException() {
+        return transferException;
+    }
+
+    public void setTransferException(boolean transferException) {
+        this.transferException = transferException;
+    }
 }

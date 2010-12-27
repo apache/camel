@@ -147,6 +147,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         }
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
+        Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         Boolean disableStreamCache = getAndRemoveParameter(parameters, "disableStreamCache", Boolean.class);
@@ -158,7 +159,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
-        
+
         // validate http uri that end-user did not duplicate the http part that can be a common error
         String part = httpUri.getSchemeSpecificPart();
         if (part != null) {
@@ -189,6 +190,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // should we use an exception for failed error codes?
         if (throwExceptionOnFailure != null) {
             endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
+        }
+        // should we transfer exception as serialized object
+        if (transferException != null) {
+            endpoint.setTransferException(transferException);
         }
         if (bridgeEndpoint != null) {
             endpoint.setBridgeEndpoint(bridgeEndpoint);
