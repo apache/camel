@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -26,6 +27,7 @@ import javax.ws.rs.core.Response;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CxfConstants;
@@ -69,8 +71,12 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                                 // We just put the response Object into the out message body
                                 exchange.getOut().setBody(customer);
                             } else {
-                                Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
-                                throw new WebApplicationException(r);
+                                if ("/customerservice/customers/456".equals(path)) {
+                                    Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
+                                    throw new WebApplicationException(r);
+                                } else {
+                                    throw new RuntimeCamelException("Can't found the customer with uri " + path);
+                                }
                             }
                         }
                         if ("updateCustomer".equals(operationName)) {
@@ -109,6 +115,13 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             fail("Expect to get exception here");
         } catch (FileNotFoundException exception) {
             // do nothing here
+        }
+        url = new URL("http://localhost:9000/rest/customerservice/customers/256");
+        try {
+            url.openStream();
+            fail("Expect to get exception here");
+        } catch (IOException exception) {
+            // expect the Internal error exception
         }
         
     }
