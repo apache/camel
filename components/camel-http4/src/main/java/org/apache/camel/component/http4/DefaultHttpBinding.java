@@ -19,7 +19,6 @@ package org.apache.camel.component.http4;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -34,10 +33,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.http4.helper.CamelFileDataSource;
 import org.apache.camel.component.http4.helper.GZIPHelper;
-import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
@@ -95,7 +95,12 @@ public class DefaultHttpBinding implements HttpBinding {
             message.getExchange().setProperty(Exchange.CHARSET_NAME, request.getCharacterEncoding());
         }
 
-        populateRequestParameters(request, message);
+        try {
+            populateRequestParameters(request, message);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeCamelException("Cannot read request parameters due " + e.getMessage(), e);
+        }
+
         // reset the stream cache
         StreamCache cache = message.getBody(StreamCache.class);
         if (cache != null) {
@@ -113,7 +118,7 @@ public class DefaultHttpBinding implements HttpBinding {
         populateAttachments(request, message);
     }
 
-    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) {
+    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws UnsupportedEncodingException {
         //we populate the http request parameters without checking the request method
         Map<String, Object> headers = message.getHeaders();
         Enumeration names = request.getParameterNames();
@@ -133,18 +138,14 @@ public class DefaultHttpBinding implements HttpBinding {
             }
             // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
             String body = message.getBody(String.class);
-            try {
-                for (String param : body.split("&")) {
-                    String[] pair = param.split("=", 2);
-                    String name = URLDecoder.decode(pair[0], charset);
-                    String value = URLDecoder.decode(pair[1], charset);
-                    if (headerFilterStrategy != null
-                            && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                        headers.put(name, value);
-                    }
+            for (String param : body.split("&")) {
+                String[] pair = param.split("=", 2);
+                String name = URLDecoder.decode(pair[0], charset);
+                String value = URLDecoder.decode(pair[1], charset);
+                if (headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                    headers.put(name, value);
                 }
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
             }
         }
     }
@@ -195,11 +196,7 @@ public class DefaultHttpBinding implements HttpBinding {
         response.setStatus(500);
         if (endpoint != null && endpoint.isTransferException()) {
             // transfer the exception as a serialized java object
-            response.setContentType(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
-            ObjectOutputStream oos = new ObjectOutputStream(response.getOutputStream());
-            oos.writeObject(exception);
-            oos.flush();
-            IOHelper.close(oos);
+            HttpHelper.writeObjectToServletResponse(response, exception);
         } else {
             // write stacktrace as plain text
             response.setContentType("text/plain");
@@ -255,16 +252,8 @@ public class DefaultHttpBinding implements HttpBinding {
                 // copy directly from input stream to output stream
                 IOHelper.copy(is, os);
             } finally {
-                try {
-                    os.close();
-                } catch (Exception e) {
-                    // ignore, maybe client have disconnected or timed out
-                }
-                try {
-                    is.close();
-                } catch (Exception e) {
-                    // ignore, maybe client have disconnected or timed out
-                }
+                IOHelper.close(os);
+                IOHelper.close(is);
             }
         } else {
             // not convertable as a stream so try as a String
@@ -307,7 +296,7 @@ public class DefaultHttpBinding implements HttpBinding {
             os.write(data);
             os.flush();
         } finally {
-            os.close();
+            IOHelper.close(os);
         }
     }
 
@@ -319,25 +308,11 @@ public class DefaultHttpBinding implements HttpBinding {
             return null;
         }
         if (isUseReaderForPayload()) {
+            // use reader to read the response body
             return request.getReader();
         } else {
-            // otherwise use input stream and we need to cache it first
-            InputStream is = HttpConverter.toInputStream(request, httpMessage.getExchange());
-            if (is == null) {
-                return is;
-            }
-            // convert the input stream to StreamCache if the stream cache is not disabled
-            if (httpMessage.getExchange().getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.FALSE, Boolean.class)) {
-                return is;
-            } else {
-                try {
-                    CachedOutputStream cos = new CachedOutputStream(httpMessage.getExchange());
-                    IOHelper.copy(is, cos);
-                    return cos.getStreamCache();
-                } finally {
-                    is.close();
-                }
-            }
+            // reade the response body from servlet request
+            return HttpHelper.readResponseBodyFromServletRequest(request, httpMessage.getExchange());
         }
     }
 
