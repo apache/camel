@@ -248,7 +248,7 @@ public class HttpProducer extends DefaultProducer {
 
     private static Object doDeserializeJavaObjectFromResponse(InputStream response) throws ClassNotFoundException, IOException {
         if (response == null) {
-            LOG.debug("Cannot deserialize transferred exception due no response body.");
+            LOG.debug("Cannot deserialize response body as java object as there are no response body.");
             return null;
         }
 
