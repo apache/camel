@@ -25,10 +25,10 @@ import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
- * A plugable strategy for configuring the http binding so reading request and writing response
+ * A pluggable strategy for configuring the http binding so reading request and writing response
  * can be customized using the Java Servlet API.
  * <p/>
- * This is also used by the camel-jetty by the JettyHttpConsumer.
+ * This is also used by the <tt>camel-jetty</tt> component in the <tt>JettyHttpConsumer</tt> class.
  *
  * @version $Revision$
  */

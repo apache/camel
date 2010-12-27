@@ -17,15 +17,13 @@
 package org.apache.camel.component.http;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
+import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.impl.PollingConsumerSupport;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.IOHelper;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -43,7 +41,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
     public HttpPollingConsumer(HttpEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        httpClient = endpoint.createHttpClient();
+        this.httpClient = endpoint.createHttpClient();
     }
 
     public Exchange receive() {
@@ -68,31 +66,31 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
         }
 
         try {
+            // execute request
             int responseCode = httpClient.executeMethod(method);
+
+            Object body = HttpHelper.readResponseBodyFromInputStream(method.getResponseBodyAsStream(), exchange);
+
             // lets store the result in the output message.
-            LoadingByteArrayOutputStream bos = new LoadingByteArrayOutputStream();
-            InputStream is = method.getResponseBodyAsStream();
-            try {
-                IOHelper.copy(is, bos);
-                bos.flush();
-            } finally {
-                IOHelper.close(is, "input stream", null);
-            }
-            Message message = exchange.getIn();
-            message.setBody(bos.createInputStream());
+            Message message = exchange.getOut();
+            message.setBody(body);
 
             // lets set the headers
             Header[] headers = method.getResponseHeaders();
             HeaderFilterStrategy strategy = endpoint.getHeaderFilterStrategy();
             for (Header header : headers) {
                 String name = header.getName();
+                // mapping the content-type
+                if (name.toLowerCase().equals("content-type")) {
+                    name = Exchange.CONTENT_TYPE;
+                }
                 String value = header.getValue();
                 if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
                     message.setHeader(name, value);
                 }
             }
-        
             message.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+
             return exchange;
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
