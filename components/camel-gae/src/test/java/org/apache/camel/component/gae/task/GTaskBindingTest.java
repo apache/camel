@@ -18,12 +18,12 @@ package org.apache.camel.component.gae.task;
 
 import java.util.List;
 
-import com.google.appengine.api.labs.taskqueue.Queue;
-import com.google.appengine.api.labs.taskqueue.QueueFactory;
-import com.google.appengine.api.labs.taskqueue.TaskOptions;
-import com.google.appengine.api.labs.taskqueue.dev.LocalTaskQueue;
-import com.google.appengine.api.labs.taskqueue.dev.QueueStateInfo.HeaderWrapper;
-import com.google.appengine.api.labs.taskqueue.dev.QueueStateInfo.TaskStateInfo;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+import com.google.appengine.api.taskqueue.dev.LocalTaskQueue;
+import com.google.appengine.api.taskqueue.dev.QueueStateInfo.HeaderWrapper;
+import com.google.appengine.api.taskqueue.dev.QueueStateInfo.TaskStateInfo;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import org.apache.camel.Exchange;
@@ -35,7 +35,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static com.google.appengine.api.labs.taskqueue.TaskOptions.Builder.withDefaults;
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withDefaults;
 import static org.apache.camel.component.gae.http.GHttpTestUtils.getCamelContext;
 import static org.apache.camel.component.gae.task.GTaskTestUtils.createEndpoint;
 import static org.junit.Assert.assertEquals;

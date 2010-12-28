@@ -19,7 +19,7 @@ package org.apache.camel.component.gae.task;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.api.labs.taskqueue.TaskOptions;
+import com.google.appengine.api.taskqueue.TaskOptions;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -77,7 +77,7 @@ public class GTaskBinding implements
      *         <code>exchange</code>.
      */
     public TaskOptions writeRequest(GTaskEndpoint endpoint, Exchange exchange, TaskOptions request) {
-        TaskOptions answer = TaskOptions.Builder.url(getWorkerRoot(endpoint) + endpoint.getPath());
+        TaskOptions answer = TaskOptions.Builder.withUrl(getWorkerRoot(endpoint) + endpoint.getPath());
         writeRequestHeaders(endpoint, exchange, answer);
         writeRequestBody(endpoint, exchange, answer);
         // TODO: consider TaskOptions method (POST, GET, ...)

@@ -19,8 +19,8 @@ package org.apache.camel.component.gae.task;
 import java.net.URI;
 import java.util.Map;
 
-import com.google.appengine.api.labs.taskqueue.Queue;
-import com.google.appengine.api.labs.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.InboundBinding;
