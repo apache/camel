@@ -27,7 +27,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatchStrategy;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.spi.Registry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,7 +56,7 @@ public class RouteboxConfiguration {
     public RouteboxConfiguration() {
     }
 
-    public RouteboxConfiguration(URI uri) throws Exception {
+    public RouteboxConfiguration(URI uri) {
         this();
         this.uri = uri;
     }
@@ -71,7 +70,9 @@ public class RouteboxConfiguration {
         
         setUri(uri);
         setAuthority(uri.getAuthority());
-        LOG.info("Authority: " + uri.getAuthority());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Authority: " + uri.getAuthority());
+        }
         
         setEndpointName(getAuthority());
         
@@ -113,31 +114,28 @@ public class RouteboxConfiguration {
         }
         
         if (parameters.containsKey("innerRegistry")) {
-            innerRegistry = (Registry) component.resolveAndRemoveReferenceParameter(parameters, "innerRegistry", Registry.class);
+            innerRegistry = component.resolveAndRemoveReferenceParameter(parameters, "innerRegistry", Registry.class);
         }
         
         if (isForkContext()) {
             if (innerRegistry != null) {
-                innerContext = (CamelContext) component.resolveAndRemoveReferenceParameter(parameters, "innerContext", CamelContext.class, new DefaultCamelContext(innerRegistry));
+                innerContext = component.resolveAndRemoveReferenceParameter(parameters, "innerContext", CamelContext.class, new DefaultCamelContext(innerRegistry));
             } else {
-                innerContext = (CamelContext) component.resolveAndRemoveReferenceParameter(parameters, "innerContext", CamelContext.class, new DefaultCamelContext());
+                innerContext = component.resolveAndRemoveReferenceParameter(parameters, "innerContext", CamelContext.class, new DefaultCamelContext());
             }
-
         } else {
             innerContext = component.getCamelContext();
         }
         
-        //configureInnerContext();
-        innerProducerTemplate = new DefaultProducerTemplate(innerContext);
-        innerProducerTemplate.start();
+        innerProducerTemplate = innerContext.createProducerTemplate();
         setQueueSize(component.getAndRemoveParameter(parameters, "size", Integer.class, 0));
         consumerUri = component.resolveAndRemoveReferenceParameter(parameters, "consumerUri", URI.class, new URI("routebox:" + getEndpointName()));
         producerUri = component.resolveAndRemoveReferenceParameter(parameters, "producerUri", URI.class, new URI("routebox:" + getEndpointName()));        
         
         dispatchStrategy = component.resolveAndRemoveReferenceParameter(parameters, "dispatchStrategy", RouteboxDispatchStrategy.class, null);
         dispatchMap = (HashMap<String, String>) component.resolveAndRemoveReferenceParameter(parameters, "dispatchMap", HashMap.class, new HashMap<String, String>());
-        if ((dispatchStrategy == null) && (dispatchMap == null)) { 
-            LOG.warn("No Routebox Dispatch Map or Strategy has been set. Routebox may not have more than one inner route");
+        if (dispatchStrategy == null && dispatchMap == null) {
+            LOG.warn("No Routebox Dispatch Map or Strategy has been set. Routebox may not have more than one inner route.");
         }        
     }
 

@@ -27,7 +27,7 @@ import org.apache.camel.component.routebox.RouteboxConfiguration;
 import org.apache.camel.component.routebox.RouteboxEndpoint;
 
 public class RouteboxDirectEndpoint extends RouteboxEndpoint {
-    private volatile Map<String, RouteboxDirectConsumer> consumers = new HashMap<String, RouteboxDirectConsumer>();
+    private final Map<String, RouteboxDirectConsumer> consumers = new HashMap<String, RouteboxDirectConsumer>();
 
     public RouteboxDirectEndpoint(String endpointUri) {
         super(endpointUri);

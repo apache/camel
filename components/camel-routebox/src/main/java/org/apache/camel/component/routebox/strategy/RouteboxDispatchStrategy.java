@@ -25,13 +25,15 @@ import org.apache.camel.Exchange;
  * A strategy for identifying the route consumer in the routebox where the exchange should to be dispatched
  */
 public interface RouteboxDispatchStrategy {
+
     /**
      * Receives an incoming exchange and consumer list and identifies the inner route consumer for dispatching the exchange
      *
-     * @param innerRouteConsumers the list of possible real-time inner route consumers available 
+     * @param destinations the list of possible real-time inner route consumers available
      *        to where the exchange can be dispatched in the routebox
      * @param exchange the incoming exchange
      * @return a selected consumer to whom the exchange can be directed
+     * @throws Exception is thrown if error
      */
     URI selectDestinationUri(List<URI> destinations, Exchange exchange) throws Exception;
 } 

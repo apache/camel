@@ -111,16 +111,10 @@ public class RouteboxSedaEndpoint extends RouteboxEndpoint implements BrowsableE
         return queue;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.MultipleConsumersSupport#isMultipleConsumersSupported()
-     */
     public boolean isMultipleConsumersSupported() {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.spi.BrowsableEndpoint#getExchanges()
-     */
     public List<Exchange> getExchanges() {
         return new ArrayList<Exchange>(getQueue());
     }

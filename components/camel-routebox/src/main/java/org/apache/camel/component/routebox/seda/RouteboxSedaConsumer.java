@@ -41,23 +41,13 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
     private static final transient Log LOG = LogFactory.getLog(RouteboxSedaConsumer.class);
     protected AsyncProcessor processor;
     protected ProducerTemplate producer;
-    private int pendingExchanges;
-    private ExceptionHandler exceptionHandler;
-    
+
     public RouteboxSedaConsumer(RouteboxSedaEndpoint endpoint, Processor processor) {
         super(endpoint);
         this.setProcessor(AsyncProcessorTypeConverter.convert(processor));
-        producer = endpoint.getConfig().getInnerProducerTemplate();
-        producer.setMaximumCacheSize(endpoint.getConfig().getThreads());
-        if (exceptionHandler == null) {
-            exceptionHandler = new LoggingExceptionHandler(getClass());
-        }
+        this.producer = endpoint.getConfig().getInnerProducerTemplate();
     }
 
-
-    /* (non-Javadoc)
-     * @see org.apache.camel.impl.ServiceSupport#doStart()
-     */
     @Override
     protected void doStart() throws Exception {
         ((RouteboxSedaEndpoint)getRouteboxEndpoint()).onStarted(this);
@@ -65,30 +55,24 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
         
         // Create a URI link from the primary context to routes in the new inner context
         int poolSize = getRouteboxEndpoint().getConfig().getThreads();
-        setExecutor(((RouteboxSedaEndpoint)getRouteboxEndpoint()).getCamelContext().getExecutorServiceStrategy()
-                        .newFixedThreadPool(this, ((RouteboxSedaEndpoint)getRouteboxEndpoint()).getEndpointUri(), poolSize));
+        setExecutor(getRouteboxEndpoint().getCamelContext().getExecutorServiceStrategy()
+                .newFixedThreadPool(this, getRouteboxEndpoint().getEndpointUri(), poolSize));
         for (int i = 0; i < poolSize; i++) {
-            getExecutor().execute((Runnable) this);
+            getExecutor().execute(this);
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.impl.ServiceSupport#doStop()
-     */
     @Override
     protected void doStop() throws Exception {
         ((RouteboxSedaEndpoint)getRouteboxEndpoint()).onStopped(this);
         // Shutdown the executor
-        ((RouteboxSedaEndpoint)getRouteboxEndpoint()).getCamelContext().getExecutorServiceStrategy().shutdown(getExecutor());
+        getRouteboxEndpoint().getCamelContext().getExecutorServiceStrategy().shutdown(getExecutor());
         setExecutor(null);
         
         doStopInnerContext(); 
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Runnable#run()
-     */
-    public void run() {       
+    public void run() {
         BlockingQueue<Exchange> queue = ((RouteboxSedaEndpoint)getRouteboxEndpoint()).getQueue();
         while (queue != null && isRunAllowed()) {
             try {
@@ -104,13 +88,13 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
     }
     
     private void dispatchToInnerRoute(BlockingQueue<Exchange> queue, final Exchange exchange) throws InterruptedException {
-        Exchange result = null;
+        Exchange result;
 
         if (exchange != null) {
             if (isRunAllowed()) {
                 try {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("**** Dispatching to Inner Route ****");
+                        LOG.debug("Dispatching to inner route: " + exchange);
                     }
                     RouteboxDispatcher dispatcher = new RouteboxDispatcher(producer);
                     result = dispatcher.dispatchAsync(getRouteboxEndpoint(), exchange); 
@@ -131,33 +115,20 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
         }
     }
     
-    
-    /* (non-Javadoc)
-     * @see org.apache.camel.Consumer#getEndpoint()
-     */
     public Endpoint getEndpoint() {
-        return (Endpoint) getRouteboxEndpoint();
+        return getRouteboxEndpoint();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.spi.ShutdownAware#deferShutdown(org.apache.camel.ShutdownRunningTask)
-     */
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.spi.ShutdownAware#getPendingExchangesSize()
-     */
     public int getPendingExchangesSize() {
-        return getPendingExchanges();
+        // TODO: Get size of queue
+        return 0;
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.spi.ShutdownAware#prepareShutdown()
-     */
     public void prepareShutdown() {
-        
     }
     
     public void setProcessor(AsyncProcessor processor) {
@@ -168,20 +139,4 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
         return processor;
     }
 
-    public void setPendingExchanges(int pendingExchanges) {
-        this.pendingExchanges = pendingExchanges;
-    }
-
-    public int getPendingExchanges() {
-        return pendingExchanges;
-    }
-
-    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
-    }
-
-    public ExceptionHandler getExceptionHandler() {
-        return exceptionHandler;
-    }
-    
 }

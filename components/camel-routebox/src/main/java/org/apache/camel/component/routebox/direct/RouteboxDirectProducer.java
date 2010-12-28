@@ -26,9 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.routebox.RouteboxServiceSupport;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatcher;
-import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
-import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,21 +34,20 @@ import org.apache.commons.logging.LogFactory;
 public class RouteboxDirectProducer extends RouteboxServiceSupport implements Producer, AsyncProcessor {
     private static final transient Log LOG = LogFactory.getLog(RouteboxDirectProducer.class);
     protected ProducerTemplate producer;
-    private ExceptionHandler exceptionHandler;
-    
+
     public RouteboxDirectProducer(RouteboxDirectEndpoint endpoint) {
         super(endpoint);
         producer = endpoint.getConfig().getInnerProducerTemplate();
     }
 
     public void process(Exchange exchange) throws Exception {
-        Exchange result = null;
+        Exchange result;
         
         if ((((RouteboxDirectEndpoint)getRouteboxEndpoint()).getConsumer() == null) && (getRouteboxEndpoint().getConfig().isSendToConsumer())) {
             throw new CamelExchangeException("No consumers available on endpoint: " + getRouteboxEndpoint(), exchange);
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("**** Dispatching to Inner Route ****");
+                LOG.debug("Dispatching to Inner Route " + exchange);
             }
             RouteboxDispatcher dispatcher = new RouteboxDispatcher(producer);
             result = dispatcher.dispatchSync(getRouteboxEndpoint(), exchange);
@@ -64,14 +61,14 @@ public class RouteboxDirectProducer extends RouteboxServiceSupport implements Pr
         boolean flag = true;
         
         if ((((RouteboxDirectEndpoint)getRouteboxEndpoint()).getConsumer() == null) 
-            && (((RouteboxDirectEndpoint)getRouteboxEndpoint()).getConfig().isSendToConsumer())) {
+            && ((getRouteboxEndpoint()).getConfig().isSendToConsumer())) {
             exchange.setException(new CamelExchangeException("No consumers available on endpoint: " + getRouteboxEndpoint(), exchange));
             callback.done(true);
             flag = true;
         } else {
             try {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("**** Dispatching to Inner Route ****");
+                    LOG.debug("Dispatching to Inner Route " + exchange);
                 }
                 
                 RouteboxDispatcher dispatcher = new RouteboxDispatcher(producer);
@@ -97,70 +94,46 @@ public class RouteboxDirectProducer extends RouteboxServiceSupport implements Pr
     }
     
     protected void doStart() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting producer: " + this);
-        }
-        
-        if (!((RouteboxDirectEndpoint)getRouteboxEndpoint()).getConfig().isSendToConsumer()) {
+        if (!(getRouteboxEndpoint()).getConfig().isSendToConsumer()) {
             // start an inner context
             if (!isStartedInnerContext()) {
                 doStartInnerContext(); 
             }
         }
-        
     }
 
     protected void doStop() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Stopping producer: " + this);
-        }
-        
-        if (!((RouteboxDirectEndpoint)getRouteboxEndpoint()).getConfig().isSendToConsumer()) {        
+        if (!(getRouteboxEndpoint()).getConfig().isSendToConsumer()) {
             // stop the inner context
             if (isStartedInnerContext()) {
                 doStopInnerContext();
             }
         }
-
     }
     
-    @Override
-    public String toString() {
-        return "Producer[" + getRouteboxEndpoint()
-                .getEndpointUri() + "]";
-    }
-
     public Endpoint getEndpoint() {
         return getRouteboxEndpoint();
     }
 
     public Exchange createExchange() {
-        return getRouteboxEndpoint()
-                .createExchange();
+        return getRouteboxEndpoint().createExchange();
     }
 
     public Exchange createExchange(ExchangePattern pattern) {
-        return getRouteboxEndpoint()
-                .createExchange(pattern);
+        return getRouteboxEndpoint().createExchange(pattern);
     }
 
     public Exchange createExchange(Exchange exchange) {
-        return getRouteboxEndpoint()
-                .createExchange(exchange);
+        return getRouteboxEndpoint().createExchange(exchange);
     }
 
     public boolean isSingleton() {
         return true;
     }
 
-    public ExceptionHandler getExceptionHandler() {
-        if (exceptionHandler == null) {
-            exceptionHandler = new LoggingExceptionHandler(getClass());
-        }
-        return exceptionHandler;
+    @Override
+    public String toString() {
+        return "Producer[" + getRouteboxEndpoint().getEndpointUri() + "]";
     }
 
-    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
-    }
 }

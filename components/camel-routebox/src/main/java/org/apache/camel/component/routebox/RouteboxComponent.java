@@ -30,7 +30,7 @@ import org.apache.camel.component.routebox.seda.RouteboxSedaEndpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 public class RouteboxComponent extends DefaultComponent {
-    RouteboxConfiguration config;
+    final RouteboxConfiguration config;
     private final Map<String, BlockingQueue<Exchange>> queues = new HashMap<String, BlockingQueue<Exchange>>();
     
     public RouteboxComponent() {

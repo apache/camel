@@ -25,7 +25,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelException;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -40,7 +40,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 public class RouteboxDispatcher {
     private static final transient Log LOG = LogFactory.getLog(RouteboxDispatcher.class);
     private ProducerTemplate producer;
@@ -51,11 +50,11 @@ public class RouteboxDispatcher {
     }
 
     public Exchange dispatchSync(RouteboxEndpoint endpoint, Exchange exchange) throws Exception {
-        URI dispatchUri = null;
-        Exchange reply = null;
+        URI dispatchUri;
+        Exchange reply;
         
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Dispatching exchange" + exchange + "to endpoint " + endpoint.getEndpointUri());
+            LOG.debug("Dispatching exchange " + exchange + " to endpoint " + endpoint.getEndpointUri());
         }
         
         dispatchUri = selectDispatchUri(endpoint, exchange);
@@ -63,18 +62,18 @@ public class RouteboxDispatcher {
         if (exchange.getPattern() == ExchangePattern.InOnly) {
             reply = producer.send(dispatchUri.toASCIIString(), exchange);
         } else {
-            reply = (Exchange) issueRequest(endpoint, ExchangePattern.InOut, exchange.getIn().getBody(), exchange.getIn().getHeaders());        
+            reply = issueRequest(endpoint, ExchangePattern.InOut, exchange.getIn().getBody(), exchange.getIn().getHeaders());
         }
 
         return reply;
     }
     
     public Exchange dispatchAsync(RouteboxEndpoint endpoint, Exchange exchange) throws Exception {
-        URI dispatchUri = null;
-        Exchange reply = null;
+        URI dispatchUri;
+        Exchange reply;
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Dispatching exchange" + exchange + "to endpoint " + endpoint.getEndpointUri());
+            LOG.debug("Dispatching exchange " + exchange + " to endpoint " + endpoint.getEndpointUri());
         }
         
         dispatchUri = selectDispatchUri(endpoint, exchange);
@@ -91,26 +90,27 @@ public class RouteboxDispatcher {
     }
     
     protected URI selectDispatchUri(RouteboxEndpoint endpoint, Exchange exchange) throws Exception {
-        URI dispatchUri = null;
+        URI dispatchUri;
         
         List<URI> consumerUris = getInnerContextConsumerList(endpoint.getConfig().getInnerContext());
         if (consumerUris.isEmpty()) {
-            throw new CamelException("No routes found for dispatch in Routebox");
+            throw new CamelExchangeException("No routes found to dispatch in Routebox at " + endpoint, exchange);
         } else if (consumerUris.size() == 1) {
             dispatchUri = consumerUris.get(0);
         } else {
             if (!endpoint.getConfig().getDispatchMap().isEmpty()) {
-                //apply URI string found in dispatch Map
-                if (endpoint.getConfig().getDispatchMap().containsKey(exchange.getIn().getHeader("ROUTE_DISPATCH_KEY"))) {             
-                    dispatchUri = new URI(endpoint.getConfig().getDispatchMap().get(exchange.getIn().getHeader("ROUTE_DISPATCH_KEY")));
+                // apply URI string found in dispatch Map
+                String key = exchange.getIn().getHeader("ROUTE_DISPATCH_KEY", String.class);
+                if (endpoint.getConfig().getDispatchMap().containsKey(key)) {
+                    dispatchUri = new URI(endpoint.getConfig().getDispatchMap().get(key));
                 } else {
-                    throw new CamelException("No matching entry found in Dispatch Map for ROUTE_DISPATCH_KEY: " + exchange.getIn().getHeader("ROUTE_DISPATCH_KEY"));
+                    throw new CamelExchangeException("No matching entry found in Dispatch Map for ROUTE_DISPATCH_KEY: " + key, exchange);
                 }
             } else {
-                //apply dispatch strategy
+                // apply dispatch strategy
                 dispatchUri = endpoint.getConfig().getDispatchStrategy().selectDestinationUri(consumerUris, exchange);
                 if (dispatchUri == null) {
-                    throw new CamelException("No matching inner routes found for Operation");
+                    throw new CamelExchangeException("No matching inner routes found for Operation", exchange);
                 }
             }
         }
@@ -138,9 +138,7 @@ public class RouteboxDispatcher {
         Exchange exchange = producer.send(endpoint, pattern, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
-                for (Map.Entry<String, Object> header : headers.entrySet()) {
-                    in.setHeader(header.getKey(), header.getValue());
-                }
+                in.getHeaders().putAll(headers);
                 in.setBody(body);
             }
         });

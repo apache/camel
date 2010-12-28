@@ -21,19 +21,24 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public abstract class RouteboxServiceSupport extends ServiceSupport {
-    private static final transient Log LOG = LogFactory.getLog(RouteboxServiceSupport.class);
+    private final transient Log log = LogFactory.getLog(getClass());
+    private ExceptionHandler exceptionHandler;
     private RouteboxEndpoint endpoint;
     private ExecutorService executor;
-    private int pendingExchanges;
-    private boolean startedInnerContext;
-    
+    private volatile boolean startedInnerContext;
+
     public RouteboxServiceSupport(RouteboxEndpoint endpoint) {
         this.endpoint = endpoint;
+        if (exceptionHandler == null) {
+            exceptionHandler = new LoggingExceptionHandler(getClass());
+        }
     }
     
     protected void doStopInnerContext() throws Exception {
@@ -48,8 +53,8 @@ public abstract class RouteboxServiceSupport extends ServiceSupport {
         List<RouteBuilder> routeBuildersList = endpoint.getConfig().getRouteBuilders();
         if (!(routeBuildersList.isEmpty())) {
             for (RouteBuilder routeBuilder : routeBuildersList) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Adding routebuilder " + routeBuilder + " to " + context.getName());
+                if (log.isDebugEnabled()) {
+                    log.debug("Adding RouteBuilder " + routeBuilder + " to " + context.getName());
                 }
                 context.addRoutes(routeBuilder);
             }
@@ -57,14 +62,6 @@ public abstract class RouteboxServiceSupport extends ServiceSupport {
         
         context.start();
         setStartedInnerContext(true);
-    }
-
-    public void setPendingExchanges(int pendingExchanges) {
-        this.pendingExchanges = pendingExchanges;
-    }
-
-    public int getPendingExchanges() {
-        return pendingExchanges;
     }
 
     public RouteboxEndpoint getRouteboxEndpoint() {
@@ -83,14 +80,19 @@ public abstract class RouteboxServiceSupport extends ServiceSupport {
         this.executor = executor;
     }
 
-
     public void setStartedInnerContext(boolean startedInnerContext) {
         this.startedInnerContext = startedInnerContext;
     }
-
 
     public boolean isStartedInnerContext() {
         return startedInnerContext;
     }
 
+    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
+    }
+
+    public ExceptionHandler getExceptionHandler() {
+        return exceptionHandler;
+    }
 }

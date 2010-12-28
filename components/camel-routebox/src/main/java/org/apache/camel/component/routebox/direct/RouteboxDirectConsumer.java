@@ -17,24 +17,20 @@
 package org.apache.camel.component.routebox.direct;
 
 import org.apache.camel.AsyncProcessor;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.component.routebox.RouteboxConsumer;
+import org.apache.camel.component.routebox.RouteboxEndpoint;
 import org.apache.camel.component.routebox.RouteboxServiceSupport;
-import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
-import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 
 public class RouteboxDirectConsumer extends RouteboxServiceSupport implements RouteboxConsumer, ShutdownAware, SuspendableService {
     protected ProducerTemplate producer;
     private final Processor processor;
     private volatile AsyncProcessor asyncProcessor;
-    private ExceptionHandler exceptionHandler;
 
     public RouteboxDirectConsumer(RouteboxDirectEndpoint endpoint, Processor processor) {
         super(endpoint);
@@ -44,43 +40,36 @@ public class RouteboxDirectConsumer extends RouteboxServiceSupport implements Ro
     
     protected void doStart() throws Exception {
         // add consumer to endpoint
-        boolean existing = this == ((RouteboxDirectEndpoint)getRouteboxEndpoint()).getConsumer();
-        if (!existing && ((RouteboxDirectEndpoint)getRouteboxEndpoint()).hasConsumer(this)) {
-            throw new IllegalArgumentException("Cannot add a 2nd consumer to the same endpoint. Endpoint " + getRouteboxEndpoint() + " only allows one consumer.");
+        boolean existing = this == getEndpoint().getConsumer();
+        if (!existing && getEndpoint().hasConsumer(this)) {
+            throw new IllegalArgumentException("Cannot add a 2nd consumer to the same endpoint. Endpoint " + getEndpoint() + " only allows one consumer.");
         }
         if (!existing) {
-            ((RouteboxDirectEndpoint)getRouteboxEndpoint()).addConsumer(this);
+            getEndpoint().addConsumer(this);
         }
         
         // now start the inner context
         if (!isStartedInnerContext()) {
             doStartInnerContext(); 
         }
-        
     }
 
     protected void doStop() throws Exception {
-        ((RouteboxDirectEndpoint)getRouteboxEndpoint()).removeConsumer(this);
+        getEndpoint().removeConsumer(this);
         
         // now stop the inner context
         if (isStartedInnerContext()) {
             doStopInnerContext();
         }
-
     }
 
     protected void doSuspend() throws Exception {
-        ((RouteboxDirectEndpoint)getRouteboxEndpoint()).removeConsumer(this);
+        getEndpoint().removeConsumer(this);
     }
 
     protected void doResume() throws Exception {
         // resume by using the start logic
         doStart();
-    }
-    
-    public Exchange processRequest(Exchange exchange) {
-        return exchange;
-        
     }
     
     /**
@@ -95,54 +84,24 @@ public class RouteboxDirectConsumer extends RouteboxServiceSupport implements Ro
         return asyncProcessor;
     }
 
-    public ExceptionHandler getExceptionHandler() {
-        if (exceptionHandler == null) {
-            exceptionHandler = new LoggingExceptionHandler(getClass());
-        }
-        return exceptionHandler;
-    }
-
-    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
-    }
-
-    /**
-     * Handles the given exception using the {@link #getExceptionHandler()}
-     * 
-     * @param t the exception to handle
-     */
-    protected void handleException(Throwable t) {
-        Throwable newt = (t == null) ? new IllegalArgumentException("Handling [null] exception") : t;
-        getExceptionHandler().handleException(newt);
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.camel.spi.ShutdownAware#deferShutdown(org.apache.camel.ShutdownRunningTask)
-     */
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
         // deny stopping on shutdown as we want direct consumers to run in case some other queues
         // depend on this consumer to run, so it can complete its exchanges
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.spi.ShutdownAware#getPendingExchangesSize()
-     */
     public int getPendingExchangesSize() {
         // return 0 as we do not have an internal memory queue with a variable size
         // of inflight messages. 
         return 0;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.spi.ShutdownAware#prepareShutdown()
-     */
     public void prepareShutdown() {
-        
+        // noop
     }
     
-    public Endpoint getEndpoint() {
-        return (Endpoint) getRouteboxEndpoint();
+    public RouteboxDirectEndpoint getEndpoint() {
+        return (RouteboxDirectEndpoint) getRouteboxEndpoint();
     }
 
     public Processor getProcessor() {
