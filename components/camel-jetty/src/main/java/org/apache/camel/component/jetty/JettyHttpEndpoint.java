@@ -101,6 +101,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
             jettyBinding = new DefaultJettyHttpBinding();
             jettyBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             jettyBinding.setThrowExceptionOnFailure(isThrowExceptionOnFailure());
+            jettyBinding.setTransferException(isTransferException());
         }
         return jettyBinding;
     }

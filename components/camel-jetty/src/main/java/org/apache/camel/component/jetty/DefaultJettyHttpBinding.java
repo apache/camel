@@ -17,12 +17,16 @@
 package org.apache.camel.component.jetty;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpHeaderFilterStrategy;
 import org.apache.camel.component.http.HttpOperationFailedException;
+import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +39,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     private static final transient Log LOG = LogFactory.getLog(DefaultJettyHttpBinding.class);
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private boolean throwExceptionOnFailure;
+    private boolean transferException;
 
     public void populateResponse(Exchange exchange, JettyContentExchange httpExchange) throws Exception {
         int responseCode = httpExchange.getResponseStatus();
@@ -74,13 +79,20 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
 
+    public boolean isTransferException() {
+        return transferException;
+    }
+
+    public void setTransferException(boolean transferException) {
+        this.transferException = transferException;
+    }
+
     protected void populateResponse(Exchange exchange, JettyContentExchange httpExchange,
                                     Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
         Message answer = exchange.getOut();
 
         answer.setHeaders(in.getHeaders());
         answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
-        answer.setBody(extractResponseBody(exchange, httpExchange));
 
         // propagate HTTP response headers
         // must use entrySet to ensure case of keys is preserved
@@ -94,33 +106,61 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
                 answer.setHeader(name, value);
             }
         }
+
+        // extract body after headers has been set as we want to ensure content-type from Jetty HttpExchange
+        // has been populated first
+        answer.setBody(extractResponseBody(exchange, httpExchange));
     }
 
-    protected HttpOperationFailedException populateHttpOperationFailedException(Exchange exchange, JettyContentExchange httpExchange,
+    protected Exception populateHttpOperationFailedException(Exchange exchange, JettyContentExchange httpExchange,
                                                                                 int responseCode) throws IOException {
-        HttpOperationFailedException exception;
+        HttpOperationFailedException answer;
         String uri = httpExchange.getUrl();
         Map<String, String> headers = httpExchange.getHeaders();
-        String body = extractResponseBody(exchange, httpExchange);
+        Object responseBody = extractResponseBody(exchange, httpExchange);
+
+        if (transferException && responseBody != null && responseBody instanceof Exception) {
+            // if the response was a serialized exception then use that
+            return (Exception) responseBody;
+        }
+
+        // make a defensive copy of the response body in the exception so its detached from the cache
+        String copy = null;
+        if (responseBody != null) {
+            copy = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, responseBody);
+        }
 
         if (responseCode >= 300 && responseCode < 400) {
             String locationHeader = httpExchange.getResponseFields().getStringField("location");
             if (locationHeader != null) {
-                exception = new HttpOperationFailedException(uri, responseCode, null, locationHeader, headers, body);
+                answer = new HttpOperationFailedException(uri, responseCode, null, locationHeader, headers, copy);
             } else {
                 // no redirect location
-                exception = new HttpOperationFailedException(uri, responseCode, null, null, headers, body);
+                answer = new HttpOperationFailedException(uri, responseCode, null, null, headers, copy);
             }
         } else {
             // internal server error (error code 500)
-            exception = new HttpOperationFailedException(uri, responseCode, null, null, headers, body);
+            answer = new HttpOperationFailedException(uri, responseCode, null, null, headers, copy);
         }
 
-        return exception;
+        return answer;
     }
 
-    protected String extractResponseBody(Exchange exchange, JettyContentExchange httpExchange) throws IOException {
-        return httpExchange.getBody();
+    protected Object extractResponseBody(Exchange exchange, JettyContentExchange httpExchange) throws IOException {
+        String contentType = httpExchange.getHeaders().get(Exchange.CONTENT_TYPE);
+
+        // if content type is serialized java object, then de-serialize it to a Java object
+        if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
+            try {
+                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, httpExchange.getResponseContentBytes());
+                return HttpHelper.deserializeJavaObjectFromStream(is);
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
+            }
+        } else {
+            // just grab the content as string
+            return httpExchange.getBody();
+        }
     }
 
 }

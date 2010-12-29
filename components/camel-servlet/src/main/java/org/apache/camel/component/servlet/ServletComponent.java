@@ -70,6 +70,9 @@ public class ServletComponent extends HttpComponent {
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
 
         // must extract well known parameters before we create the endpoint
+        Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
+        Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
+        Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
 
@@ -87,6 +90,17 @@ public class ServletComponent extends HttpComponent {
         }
         if (binding != null) {
             endpoint.setBinding(binding);
+        }
+        // should we use an exception for failed error codes?
+        if (throwExceptionOnFailure != null) {
+            endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
+        }
+        // should we transfer exception as serialized object
+        if (transferException != null) {
+            endpoint.setTransferException(transferException);
+        }
+        if (bridgeEndpoint != null) {
+            endpoint.setBridgeEndpoint(bridgeEndpoint);
         }
         if (matchOnUriPrefix != null) {
             endpoint.setMatchOnUriPrefix(matchOnUriPrefix);

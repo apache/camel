@@ -14,40 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http.helper;
+package org.apache.camel.component.jetty.jettyproducer;
 
-import java.io.File;
+import java.io.Serializable;
 
-import javax.activation.FileDataSource;
-import javax.activation.FileTypeMap;
+/**
+ * @version $Revision$
+ */
+public class MyCoolBean implements Serializable {
 
-public class CamelFileDataSource extends FileDataSource {
-    private final String fileName;
-    private FileTypeMap typeMap;
+    private final int id;
+    private final String name;
 
-    public CamelFileDataSource(File file, String fileName) {
-        super(file);
-        this.fileName = fileName;
+    public MyCoolBean(int id, String name) {
+        this.id = id;
+        this.name = name;
     }
-    
-    public String getContentType() {
-        if (typeMap == null) {
-            return FileTypeMap.getDefaultFileTypeMap().getContentType(fileName);
-        } else {
-            return typeMap.getContentType(fileName);
-        }
+
+    public int getId() {
+        return id;
     }
-    
-    public void setFileTypeMap(FileTypeMap map) {
-        typeMap = map;
-    }
-    
+
     public String getName() {
-        if (fileName != null) {
-            return fileName;
-        } else {
-            return super.getName();
-        }
+        return name;
     }
-
 }

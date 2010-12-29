@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -27,14 +29,17 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpMethods;
-import org.apache.camel.component.http.helper.HttpProducerHelper;
+import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jetty.client.HttpClient;
@@ -81,8 +86,8 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
     }
 
     protected JettyContentExchange createHttpExchange(Exchange exchange, AsyncCallback callback) throws Exception {
-        String url = HttpProducerHelper.createURL(exchange, getEndpoint());
-        HttpMethods methodToUse = HttpProducerHelper.createMethod(exchange, getEndpoint(), exchange.getIn().getBody() != null);
+        String url = HttpHelper.createURL(exchange, getEndpoint());
+        HttpMethods methodToUse = HttpHelper.createMethod(exchange, getEndpoint(), exchange.getIn().getBody() != null);
         String method = methodToUse.createMethod(url).getName();
 
         JettyContentExchange httpExchange = new JettyContentExchange(exchange, getBinding(), client);
@@ -100,19 +105,29 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
                 httpExchange.setRequestContentType(contentType);
             }
 
-            // try with String at first
-            String data = exchange.getIn().getBody(String.class);
-            if (data != null) {
-                String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-                if (charset != null) {
-                    httpExchange.setRequestContent(new ByteArrayBuffer(data, charset));
-                } else {
-                    httpExchange.setRequestContent(new ByteArrayBuffer(data));
-                }
+            if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
+                // serialized java object
+                Serializable obj = exchange.getIn().getMandatoryBody(Serializable.class);
+                // write object to output stream
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                HttpHelper.writeObjectToStream(bos, obj);
+                httpExchange.setRequestContent(new ByteArrayBuffer(bos.toByteArray()));
+                IOHelper.close(bos);
             } else {
-                // then fallback to input stream
-                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, exchange.getIn().getBody());
-                httpExchange.setRequestContentSource(is);
+                // try with String at first
+                String data = exchange.getIn().getBody(String.class);
+                if (data != null) {
+                    String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+                    if (charset != null) {
+                        httpExchange.setRequestContent(new ByteArrayBuffer(data, charset));
+                    } else {
+                        httpExchange.setRequestContent(new ByteArrayBuffer(data));
+                    }
+                } else {
+                    // then fallback to input stream
+                    InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, exchange.getIn().getBody());
+                    httpExchange.setRequestContentSource(is);
+                }
             }
         }
 

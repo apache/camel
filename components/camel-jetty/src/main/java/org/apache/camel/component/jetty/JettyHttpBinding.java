@@ -67,4 +67,20 @@ public interface JettyHttpBinding {
      */
     boolean isThrowExceptionOnFailure();
 
+    /**
+     * Whether to transfer exception back as a serialized java object
+     * if processing failed due to an exception
+     *
+     * @param transferException <tt>true</tt> to transfer exception
+     */
+    void setTransferException(boolean transferException);
+
+    /**
+     * Whether to transfer exception back as a serialized java object
+     * if processing failed due to an exception
+     *
+     * @return <tt>true</tt> to transfer exception
+     */
+    boolean isTransferException();
+
 }

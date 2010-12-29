@@ -16,22 +16,23 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.http.helper.GZIPHelper;
 import org.apache.camel.component.http.helper.HttpHelper;
-import org.apache.camel.component.http.helper.HttpProducerHelper;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultProducer;
@@ -42,6 +43,7 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.FileRequestEntity;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
@@ -68,10 +70,10 @@ public class HttpProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (((HttpEndpoint)getEndpoint()).isBridgeEndpoint()) {
+        if (getEndpoint().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
         }
-        HttpMethod method = createMethod(exchange);        
+        HttpMethod method = createMethod(exchange);
         Message in = exchange.getIn();
         String httpProtocolVersion = in.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
         if (httpProtocolVersion != null) {
@@ -79,7 +81,7 @@ public class HttpProducer extends DefaultProducer {
             HttpMethodParams params = method.getParams();
             params.setVersion(HttpVersion.parse(httpProtocolVersion));
         }
-        
+
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
 
         // propagate headers as HTTP headers
@@ -183,7 +185,7 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Strategy when executing the method (calling the remote server).
      *
-     * @param method    the method to execute
+     * @param method the method to execute
      * @return the response code
      * @throws IOException can be thrown
      */
@@ -213,8 +215,8 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Extracts the response from the method as a InputStream.
      *
-     * @param method  the method that was executed
-     * @return  the response either as a stream, or as a deserialized java object
+     * @param method the method that was executed
+     * @return the response either as a stream, or as a deserialized java object
      * @throws IOException can be thrown
      */
     protected static Object extractResponseBody(HttpMethod method, Exchange exchange) throws IOException, ClassNotFoundException {
@@ -223,13 +225,13 @@ public class HttpProducer extends DefaultProducer {
             return null;
         }
 
-        Header header = method.getResponseHeader(Exchange.CONTENT_ENCODING);        
+        Header header = method.getResponseHeader(Exchange.CONTENT_ENCODING);
         String contentEncoding = header != null ? header.getValue() : null;
-        
+
         if (!exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             is = GZIPHelper.uncompressGzip(contentEncoding, is);
         }
-        
+
         // Honor the character encoding
         String contentType = null;
         header = method.getResponseHeader("content-type");
@@ -239,28 +241,12 @@ public class HttpProducer extends DefaultProducer {
             HttpHelper.setCharsetFromContentType(contentType, exchange);
         }
         InputStream response = doExtractResponseBodyAsStream(is, exchange);
+        // if content type is a serialized java object then de-serialize it back to a Java object
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
-            return doDeserializeJavaObjectFromResponse(response);
+            return HttpHelper.deserializeJavaObjectFromStream(response);
         } else {
             return response;
         }
-    }
-
-    private static Object doDeserializeJavaObjectFromResponse(InputStream response) throws ClassNotFoundException, IOException {
-        if (response == null) {
-            LOG.debug("Cannot deserialize response body as java object as there are no response body.");
-            return null;
-        }
-
-        Object answer = null;
-        ObjectInputStream ois = new ObjectInputStream(response);
-        try {
-            answer = ois.readObject();
-        } finally {
-            IOHelper.close(ois);
-        }
-
-        return answer;
     }
 
     private static InputStream doExtractResponseBodyAsStream(InputStream is, Exchange exchange) throws IOException {
@@ -273,30 +259,29 @@ public class HttpProducer extends DefaultProducer {
             // When the InputStream is closed, the CachedOutputStream will be closed
             return cos.getWrappedInputStream();
         } finally {
-            IOHelper.close(is, "Extracting response body", LOG);            
+            IOHelper.close(is, "Extracting response body", LOG);
         }
     }
 
     /**
      * Creates the HttpMethod to use to call the remote server, either its GET or POST.
      *
-     * @param exchange  the exchange
+     * @param exchange the exchange
      * @return the created method as either GET or POST
-     * @throws org.apache.camel.InvalidPayloadException is thrown if message body cannot
-     * be converted to a type supported by HttpClient
+     * @throws CamelExchangeException is thrown if error creating RequestEntity
      */
-    protected HttpMethod createMethod(Exchange exchange) throws InvalidPayloadException {
+    protected HttpMethod createMethod(Exchange exchange) throws CamelExchangeException {
 
-        String url = HttpProducerHelper.createURL(exchange, getEndpoint());
+        String url = HttpHelper.createURL(exchange, getEndpoint());
 
         RequestEntity requestEntity = createRequestEntity(exchange);
-        HttpMethods methodToUse = HttpProducerHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
+        HttpMethods methodToUse = HttpHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
         HttpMethod method = methodToUse.createMethod(url);
 
         // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         if (queryString == null) {
-            queryString = getEndpoint().getHttpUri().getRawQuery();            
+            queryString = getEndpoint().getHttpUri().getRawQuery();
         }
         if (queryString != null) {
             // need to make sure the queryString is URI safe
@@ -304,7 +289,7 @@ public class HttpProducer extends DefaultProducer {
         }
 
         if (methodToUse.isEntityEnclosing()) {
-            ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);
+            ((EntityEnclosingMethod) method).setRequestEntity(requestEntity);
             if (requestEntity != null && requestEntity.getContentType() == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("No Content-Type provided for URL: " + url + " with exchange: " + exchange);
@@ -318,12 +303,11 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Creates a holder object for the data to send to the remote server.
      *
-     * @param exchange  the exchange with the IN message with data to send
+     * @param exchange the exchange with the IN message with data to send
      * @return the data holder
-     * @throws org.apache.camel.InvalidPayloadException is thrown if message body cannot
-     * be converted to a type supported by HttpClient
+     * @throws CamelExchangeException is thrown if error creating RequestEntity
      */
-    protected RequestEntity createRequestEntity(Exchange exchange) throws InvalidPayloadException {
+    protected RequestEntity createRequestEntity(Exchange exchange) throws CamelExchangeException {
         Message in = exchange.getIn();
         if (in.getBody() == null) {
             return null;
@@ -336,8 +320,16 @@ public class HttpProducer extends DefaultProducer {
                 if (data != null) {
                     String contentType = ExchangeHelper.getContentType(exchange);
 
-                    // file based (could potentially also be a FTP file etc)
-                    if (data instanceof File || data instanceof GenericFile) {
+                    if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
+                        // serialized java object
+                        Serializable obj = in.getMandatoryBody(Serializable.class);
+                        // write object to output stream
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        HttpHelper.writeObjectToStream(bos, obj);
+                        answer = new ByteArrayRequestEntity(bos.toByteArray(), HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+                        IOHelper.close(bos);
+                    } else if (data instanceof File || data instanceof GenericFile) {
+                        // file based (could potentially also be a FTP file etc)
                         File file = in.getBody(File.class);
                         if (file != null) {
                             answer = new FileRequestEntity(file, contentType);
@@ -348,7 +340,7 @@ public class HttpProducer extends DefaultProducer {
                         // do not fallback to use the default charset as it can influence the request
                         // (for example application/x-www-form-urlencoded forms being sent)
                         String charset = IOConverter.getCharsetName(exchange, false);
-                        answer = new StringRequestEntity((String)data, contentType, charset);
+                        answer = new StringRequestEntity((String) data, contentType, charset);
                     }
                     // fallback as input stream
                     if (answer == null) {
@@ -358,7 +350,9 @@ public class HttpProducer extends DefaultProducer {
                     }
                 }
             } catch (UnsupportedEncodingException e) {
-                throw new RuntimeCamelException(e);
+                throw new CamelExchangeException("Error creating RequestEntity from message body", exchange, e);
+            } catch (IOException e) {
+                throw new CamelExchangeException("Error serializing message body", exchange, e);
             }
         }
         return answer;

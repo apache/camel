@@ -131,6 +131,7 @@ public class JettyHttpComponent extends HttpComponent {
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
         JettyHttpBinding jettyBinding = resolveAndRemoveReferenceParameter(parameters, "jettyHttpBindingRef", JettyHttpBinding.class);
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
+        Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
@@ -187,6 +188,10 @@ public class JettyHttpComponent extends HttpComponent {
         // should we use an exception for failed error codes?
         if (throwExceptionOnFailure != null) {
             endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
+        }
+        // should we transfer exception as serialized object
+        if (transferException != null) {
+            endpoint.setTransferException(transferException);
         }
         if (bridgeEndpoint != null) {
             endpoint.setBridgeEndpoint(bridgeEndpoint);

@@ -115,19 +115,6 @@ public class JettyContentExchange extends ContentExchange {
         }
     }
 
-    protected int waitForDoneOrFailure() throws InterruptedException {
-        // just wait a little longer than Jetty itself to be safe
-        // as this timeout is a failsafe in case for some reason Jetty does not callback
-        long timeout = client.getTimeout() + 5000;
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for done or failure with timeout: " + timeout);
-        }
-        done.await(timeout, TimeUnit.MILLISECONDS);
-
-        return getStatus();
-    }
-
     public Map<String, String> getHeaders() {
         return headers;
     }
