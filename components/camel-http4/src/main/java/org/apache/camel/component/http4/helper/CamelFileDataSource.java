@@ -22,7 +22,7 @@ import javax.activation.FileDataSource;
 import javax.activation.FileTypeMap;
 
 public class CamelFileDataSource extends FileDataSource {
-    private String fileName;
+    private final String fileName;
     private FileTypeMap typeMap;
 
     public CamelFileDataSource(File file, String fileName) {

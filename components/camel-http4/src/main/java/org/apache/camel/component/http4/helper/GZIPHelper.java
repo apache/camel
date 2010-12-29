@@ -53,8 +53,8 @@ public final class GZIPHelper {
                 gzip.finish();
                 return new ByteArrayInputStream(os.toByteArray());
             } finally {
-                IOHelper.close(gzip, "gzip", null);
-                IOHelper.close(os, "byte array output stream", null);
+                IOHelper.close(gzip, "gzip");
+                IOHelper.close(os, "byte array output stream");
             }
         } else {
             return in;
@@ -73,8 +73,8 @@ public final class GZIPHelper {
                 gzip.finish();
                 return new ByteArrayInputStream(os.toByteArray());
             } finally {
-                IOHelper.close(gzip, "gzip", null);
-                IOHelper.close(os, "byte array", null);
+                IOHelper.close(gzip, "gzip");
+                IOHelper.close(os, "byte array output stream");
             }
         } else {
             return new ByteArrayInputStream(data);
@@ -89,8 +89,8 @@ public final class GZIPHelper {
             gzip.finish();
             return os.toByteArray();
         } finally {
-            gzip.close();
-            os.close();
+            IOHelper.close(gzip, "gzip");
+            IOHelper.close(os, "byte array output stream");
         }
     }
 

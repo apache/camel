@@ -30,11 +30,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class HttpProducerHelperTest {
+public class HttpHelperTest {
 
     @Test
     public void createURLShouldReturnTheHeaderURIIfNotBridgeEndpoint() throws URISyntaxException {
-        String url = HttpProducerHelper.createURL(
+        String url = HttpHelper.createURL(
                 createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", null),
                 createHttpEndpoint(false, "http://camel.apache.org"));
 
@@ -43,7 +43,7 @@ public class HttpProducerHelperTest {
 
     @Test
     public void createURLShouldReturnTheEndpointURIIfBridgeEndpoint() throws URISyntaxException {
-        String url = HttpProducerHelper.createURL(
+        String url = HttpHelper.createURL(
                 createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", null),
                 createHttpEndpoint(true, "http://camel.apache.org"));
 
@@ -52,7 +52,7 @@ public class HttpProducerHelperTest {
 
     @Test
     public void createURLShouldReturnTheEndpointURIIfNotBridgeEndpoint() throws URISyntaxException {
-        String url = HttpProducerHelper.createURL(
+        String url = HttpHelper.createURL(
                 createExchangeWithOptionalCamelHttpUriHeader(null, null),
                 createHttpEndpoint(false, "http://camel.apache.org"));
 
@@ -61,7 +61,7 @@ public class HttpProducerHelperTest {
 
     @Test
     public void createURLShouldReturnTheEndpointURIWithHeaderHttpPathAndAddOneSlash() throws URISyntaxException {
-        String url = HttpProducerHelper.createURL(
+        String url = HttpHelper.createURL(
                 createExchangeWithOptionalCamelHttpUriHeader(null, "search"),
                 createHttpEndpoint(true, "http://www.google.com"));
 
@@ -70,7 +70,7 @@ public class HttpProducerHelperTest {
 
     @Test
     public void createURLShouldReturnTheEndpointURIWithHeaderHttpPathAndRemoveOneSlash() throws URISyntaxException {
-        String url = HttpProducerHelper.createURL(
+        String url = HttpHelper.createURL(
                 createExchangeWithOptionalCamelHttpUriHeader(null, "/search"),
                 createHttpEndpoint(true, "http://www.google.com/"));
 
@@ -79,7 +79,7 @@ public class HttpProducerHelperTest {
 
     @Test
     public void createMethodAlwaysUseUserChoosenMethod() throws URISyntaxException {
-        HttpMethods method = HttpProducerHelper.createMethod(
+        HttpMethods method = HttpHelper.createMethod(
                 createExchangeWithOptionalHttpQueryAndHttpMethodHeader("q=camel", HttpMethods.POST),
                 createHttpEndpoint(true, "http://www.google.com/search"),
                 false);
@@ -89,7 +89,7 @@ public class HttpProducerHelperTest {
 
     @Test
     public void createMethodUseGETIfQueryIsProvidedInHeader() throws URISyntaxException {
-        HttpMethods method = HttpProducerHelper.createMethod(
+        HttpMethods method = HttpHelper.createMethod(
                 createExchangeWithOptionalHttpQueryAndHttpMethodHeader("q=camel", null),
                 createHttpEndpoint(true, "http://www.google.com/search"),
                 false);
@@ -99,7 +99,7 @@ public class HttpProducerHelperTest {
 
     @Test
     public void createMethodUseGETIfQueryIsProvidedInEndpointURI() throws URISyntaxException {
-        HttpMethods method = HttpProducerHelper.createMethod(
+        HttpMethods method = HttpHelper.createMethod(
                 createExchangeWithOptionalHttpQueryAndHttpMethodHeader(null, null),
                 createHttpEndpoint(true, "http://www.google.com/search?q=test"),
                 false);
@@ -109,7 +109,7 @@ public class HttpProducerHelperTest {
 
     @Test
     public void createMethodUseGETIfNoneQueryOrPayloadIsProvided() throws URISyntaxException {
-        HttpMethods method = HttpProducerHelper.createMethod(
+        HttpMethods method = HttpHelper.createMethod(
                 createExchangeWithOptionalHttpQueryAndHttpMethodHeader(null, null),
                 createHttpEndpoint(true, "http://www.google.com/search"),
                 false);
@@ -119,7 +119,7 @@ public class HttpProducerHelperTest {
 
     @Test
     public void createMethodUsePOSTIfNoneQueryButPayloadIsProvided() throws URISyntaxException {
-        HttpMethods method = HttpProducerHelper.createMethod(
+        HttpMethods method = HttpHelper.createMethod(
                 createExchangeWithOptionalHttpQueryAndHttpMethodHeader(null, null),
                 createHttpEndpoint(true, "http://www.google.com/search"),
                 true);

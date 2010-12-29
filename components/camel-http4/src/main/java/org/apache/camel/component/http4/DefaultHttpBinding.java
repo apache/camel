@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
@@ -101,10 +102,10 @@ public class DefaultHttpBinding implements HttpBinding {
             throw new RuntimeCamelException("Cannot read request parameters due " + e.getMessage(), e);
         }
 
-        // reset the stream cache
-        StreamCache cache = message.getBody(StreamCache.class);
-        if (cache != null) {
-            cache.reset();
+        Object body = message.getBody();
+        // reset the stream cache if the body is the instance of StreamCache
+        if (body instanceof StreamCache) {
+            ((StreamCache) body).reset();
         }
 
         // store the method and query and other info in headers
@@ -114,6 +115,19 @@ public class DefaultHttpBinding implements HttpBinding {
         headers.put(Exchange.HTTP_URI, request.getRequestURI());
         headers.put(Exchange.HTTP_PATH, request.getPathInfo());
         headers.put(Exchange.CONTENT_TYPE, request.getContentType());
+
+        // if content type is serialized java object, then de-serialize it to a Java object
+        if (request.getContentType() != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(request.getContentType())) {
+            try {
+                InputStream is = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
+                Object object = HttpHelper.deserializeJavaObjectFromStream(is);
+                if (object != null) {
+                    message.setBody(object);
+                }
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
+            }
+        }
 
         populateAttachments(request, message);
     }
@@ -242,6 +256,20 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     protected void doWriteDirectResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
+        // if content type is serialized Java object, then serialize and write it to the response
+        String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
+        if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
+            try {
+                Object object = message.getMandatoryBody(Serializable.class);
+                HttpHelper.writeObjectToServletResponse(response, object);
+                // object is written so return
+                return;
+            } catch (InvalidPayloadException e) {
+                throw IOHelper.createIOException(e);
+            }
+        }
+
+        // other kind of content type
         InputStream is = null;
         if (checkChunked(message, exchange)) {
             is = message.getBody(InputStream.class);
