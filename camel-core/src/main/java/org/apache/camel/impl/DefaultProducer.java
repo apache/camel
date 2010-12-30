@@ -62,14 +62,28 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
     }
 
     protected void doStart() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Starting producer: " + this);
+        // log at debug level for singletons, for prototype scoped log at trace level to not spam logs
+        if (isSingleton()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Starting producer: " + this);
+            }
+        } else {
+            if (log.isTraceEnabled()) {
+                log.trace("Starting producer: " + this);
+            }
         }
     }
 
     protected void doStop() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Stopping producer: " + this);
+        // log at debug level for singletons, for prototype scoped log at trace level to not spam logs
+        if (isSingleton()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Stopping producer: " + this);
+            }
+        } else {
+            if (log.isTraceEnabled()) {
+                log.trace("Stopping producer: " + this);
+            }
         }
     }
 }
