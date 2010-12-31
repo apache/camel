@@ -10,6 +10,9 @@
     <th>Route</th>
     <th colspan="2">Status</th>
     <th>Remove</th>
+    <th>Exchanges (Completed/Failed/Inflight)</th>
+    <th>Processing Time (Min/Max/Mean)</th>
+    <th>Message Time (First/Last)</th>
   </tr>
 <ul>
   #for(i <- it.getRoutes)
@@ -39,6 +42,15 @@
     	#if(i.isStartable)
       		<a href='${uri("/routes/" + i.getId + "/remove")}'>remove</a>
       	#end
+    </td>
+    <td>
+      ${i.getStatistic("ExchangesCompleted")} / ${i.getStatistic("ExchangesFailed")} / ${i.getStatistic("InflightExchanges")}
+    </td>
+    <td>
+      ${i.getStatistic("MinProcessingTime")} / ${i.getStatistic("MaxProcessingTime")} / ${i.getStatistic("MeanProcessingTime")}
+    </td>
+    <td>
+      ${i.getStatistic("FirstExchangeCompletedTimestamp")} / ${i.getStatistic("LastExchangeCompletedTimestamp")}
     </td>
   </tr>
   #end
