@@ -43,7 +43,7 @@ public class SmppComponent extends DefaultComponent {
         super(context);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         if (this.configuration == null) {

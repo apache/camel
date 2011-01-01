@@ -164,7 +164,7 @@ public class SmppBindingTest {
         SmppMessage smppMessage = binding.createSmppMessage(alertNotification);
         
         assertNull(smppMessage.getBody());
-        assertEquals(9, smppMessage.getHeaders().size());
+        assertEquals(10, smppMessage.getHeaders().size());
         assertEquals(1, smppMessage.getHeader(SmppBinding.SEQUENCE_NUMBER));
         assertEquals(1, smppMessage.getHeader(SmppBinding.COMMAND_ID));
         assertEquals(0, smppMessage.getHeader(SmppBinding.COMMAND_STATUS));
@@ -174,6 +174,7 @@ public class SmppBindingTest {
         assertEquals("1717", smppMessage.getHeader(SmppBinding.ESME_ADDR));
         assertEquals((byte) 8, smppMessage.getHeader(SmppBinding.ESME_ADDR_NPI));
         assertEquals((byte) 2, smppMessage.getHeader(SmppBinding.ESME_ADDR_TON));
+        assertEquals(SmppMessageType.AlertNotification.toString(), smppMessage.getHeader(SmppBinding.MESSAGE_TYPE));
     }
 
     @Test
@@ -184,7 +185,7 @@ public class SmppBindingTest {
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
-        assertEquals(7, smppMessage.getHeaders().size());
+        assertEquals(8, smppMessage.getHeaders().size());
         assertEquals("2", smppMessage.getHeader(SmppBinding.ID));
         assertEquals(1, smppMessage.getHeader(SmppBinding.DELIVERED));
         // To avoid the test failure when running in different TimeZone
@@ -193,6 +194,7 @@ public class SmppBindingTest {
         //assertEquals(new Date(1251753000000L), smppMessage.getHeader(SmppBinding.SUBMIT_DATE));
         assertEquals(1, smppMessage.getHeader(SmppBinding.SUBMITTED));
         assertEquals(DeliveryReceiptState.DELIVRD, smppMessage.getHeader(SmppBinding.FINAL_STATUS));
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(), smppMessage.getHeader(SmppBinding.MESSAGE_TYPE));
     }
     
     @Test
@@ -209,7 +211,7 @@ public class SmppBindingTest {
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
-        assertEquals(7, smppMessage.getHeaders().size());
+        assertEquals(8, smppMessage.getHeaders().size());
         assertEquals(1, smppMessage.getHeader(SmppBinding.SEQUENCE_NUMBER));
         assertEquals(1, smppMessage.getHeader(SmppBinding.COMMAND_ID));
         assertEquals("1818", smppMessage.getHeader(SmppBinding.SOURCE_ADDR));
@@ -217,6 +219,7 @@ public class SmppBindingTest {
         assertEquals("090831230627004+", smppMessage.getHeader(SmppBinding.SCHEDULE_DELIVERY_TIME));
         assertEquals("090901230627004+", smppMessage.getHeader(SmppBinding.VALIDITY_PERIOD));
         assertEquals("WAP", smppMessage.getHeader(SmppBinding.SERVICE_TYPE));
+        assertEquals(SmppMessageType.DeliverSm.toString(), smppMessage.getHeader(SmppBinding.MESSAGE_TYPE));
     }
     
     @Test
@@ -233,7 +236,7 @@ public class SmppBindingTest {
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
-        assertEquals(7, smppMessage.getHeaders().size());
+        assertEquals(8, smppMessage.getHeaders().size());
         assertEquals(1, smppMessage.getHeader(SmppBinding.SEQUENCE_NUMBER));
         assertEquals(1, smppMessage.getHeader(SmppBinding.COMMAND_ID));
         assertEquals("1818", smppMessage.getHeader(SmppBinding.SOURCE_ADDR));
@@ -241,6 +244,7 @@ public class SmppBindingTest {
         assertEquals("090831230627004+", smppMessage.getHeader(SmppBinding.SCHEDULE_DELIVERY_TIME));
         assertEquals("090901230627004+", smppMessage.getHeader(SmppBinding.VALIDITY_PERIOD));
         assertEquals("WAP", smppMessage.getHeader(SmppBinding.SERVICE_TYPE));
+        assertEquals(SmppMessageType.DeliverSm.toString(), smppMessage.getHeader(SmppBinding.MESSAGE_TYPE));
     }
     
     @Test
@@ -260,7 +264,7 @@ public class SmppBindingTest {
         SmppMessage smppMessage = binding.createSmppMessage(dataSm, "1");
         
         assertNull(smppMessage.getBody());
-        assertEquals(13, smppMessage.getHeaders().size());
+        assertEquals(14, smppMessage.getHeaders().size());
         assertEquals("1", smppMessage.getHeader(SmppBinding.ID));
         assertEquals(1, smppMessage.getHeader(SmppBinding.SEQUENCE_NUMBER));
         assertEquals(1, smppMessage.getHeader(SmppBinding.COMMAND_ID));
@@ -274,6 +278,7 @@ public class SmppBindingTest {
         assertEquals("WAP", smppMessage.getHeader(SmppBinding.SERVICE_TYPE));
         assertEquals((byte) 0, smppMessage.getHeader(SmppBinding.REGISTERED_DELIVERY));
         assertEquals((byte) 0, smppMessage.getHeader(SmppBinding.DATA_CODING));
+        assertEquals(SmppMessageType.DataSm.toString(), smppMessage.getHeader(SmppBinding.MESSAGE_TYPE));
     }
 
     @Test

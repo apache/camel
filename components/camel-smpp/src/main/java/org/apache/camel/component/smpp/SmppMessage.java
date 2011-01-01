@@ -59,6 +59,22 @@ public class SmppMessage extends DefaultMessage {
     public SmppMessage newInstance() {
         return new SmppMessage(this.configuration);
     }
+    
+    public boolean isAlertNotification() {
+        return command instanceof AlertNotification;
+    }
+    
+    public boolean isDataSm() {
+        return command instanceof DataSm;
+    }
+    
+    public boolean isDeliverSm() {
+        return command instanceof DeliverSm && !((DeliverSm) command).isSmscDeliveryReceipt();
+    }
+    
+    public boolean isDeliveryReceipt() {
+        return command instanceof DeliverSm && ((DeliverSm) command).isSmscDeliveryReceipt();
+    }
 
     @Override
     protected Object createBody() {

@@ -70,6 +70,7 @@ public class SmppBinding {
     public static final String ESME_ADDR = "CamelSmppEsmeAddr";
     public static final String FINAL_STATUS = "CamelSmppStatus";
     public static final String DATA_CODING = "CamelSmppDataCoding";
+    public static final String MESSAGE_TYPE = "CamelSmppMessageType";
 
     private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
 
@@ -185,6 +186,7 @@ public class SmppBinding {
     public SmppMessage createSmppMessage(AlertNotification alertNotification) {
         SmppMessage smppMessage = new SmppMessage(alertNotification, configuration);
 
+        smppMessage.setHeader(MESSAGE_TYPE, SmppMessageType.AlertNotification.toString());
         smppMessage.setHeader(SEQUENCE_NUMBER, alertNotification.getSequenceNumber());
         smppMessage.setHeader(COMMAND_ID, alertNotification.getCommandId());
         smppMessage.setHeader(COMMAND_STATUS, alertNotification.getCommandStatus());
@@ -205,6 +207,7 @@ public class SmppBinding {
         SmppMessage smppMessage = new SmppMessage(deliverSm, configuration);
 
         if (deliverSm.isSmscDeliveryReceipt()) {
+            smppMessage.setHeader(MESSAGE_TYPE, SmppMessageType.DeliveryReceipt.toString());
             DeliveryReceipt smscDeliveryReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
             smppMessage.setBody(smscDeliveryReceipt.getText());
 
@@ -218,6 +221,7 @@ public class SmppBinding {
             smppMessage.setHeader(SUBMITTED, smscDeliveryReceipt.getSubmitted());
             smppMessage.setHeader(FINAL_STATUS, smscDeliveryReceipt.getFinalStatus());
         } else {
+            smppMessage.setHeader(MESSAGE_TYPE, SmppMessageType.DeliverSm.toString());
             if (deliverSm.getShortMessage() != null) {
                 smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(),
                         configuration.getEncoding())));
@@ -247,6 +251,7 @@ public class SmppBinding {
     public SmppMessage createSmppMessage(DataSm dataSm, String smppMessageId) {
         SmppMessage smppMessage = new SmppMessage(dataSm, configuration);
 
+        smppMessage.setHeader(MESSAGE_TYPE, SmppMessageType.DataSm.toString());
         smppMessage.setHeader(ID, smppMessageId);
         smppMessage.setHeader(SEQUENCE_NUMBER, dataSm.getSequenceNumber());
         smppMessage.setHeader(COMMAND_ID, dataSm.getCommandId());

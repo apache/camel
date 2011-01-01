@@ -17,6 +17,7 @@
 package org.apache.camel.component.smpp;
 
 import org.jsmpp.bean.AlertNotification;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.junit.Test;
 
@@ -50,6 +51,17 @@ public class SmppMessageTest {
         
         assertTrue(message.getCommand() instanceof AlertNotification);
         assertTrue(message.getHeaders().isEmpty());
+        assertTrue(message.isAlertNotification());
+    }
+    
+    @Test
+    public void testSmppMessageDataSm() {
+        DataSm command = new DataSm();
+        message = new SmppMessage(command, new SmppConfiguration());
+        
+        assertTrue(message.getCommand() instanceof DataSm);
+        assertTrue(message.getHeaders().isEmpty());
+        assertTrue(message.isDataSm());
     }
 
     @Test
@@ -59,8 +71,21 @@ public class SmppMessageTest {
         
         assertTrue(message.getCommand() instanceof DeliverSm);
         assertTrue(message.getHeaders().isEmpty());
+        assertTrue(message.isDeliverSm());
     }
-
+    
+    @Test
+    public void testSmppMessageDeliverReceipt() {
+        DeliverSm command = new DeliverSm();
+        command.setSmscDeliveryReceipt();
+        command.setShortMessage("id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!".getBytes());
+        message = new SmppMessage(command, new SmppConfiguration());
+        
+        assertTrue(message.getCommand() instanceof DeliverSm);
+        assertTrue(message.getHeaders().isEmpty());
+        assertTrue(message.isDeliveryReceipt());
+    }
+    
     @Test
     public void newInstanceShouldReturnAnInstanceWithoutACommand() {
         message = new SmppMessage(new SmppConfiguration());
