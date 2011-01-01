@@ -45,7 +45,6 @@ import org.apache.mina.transport.socket.nio.SocketConnector;
 public class MinaProducer extends DefaultProducer implements ServicePoolAware {
     private static final transient Log LOG = LogFactory.getLog(MinaProducer.class);
     private IoSession session;
-    private MinaEndpoint endpoint;
     private CountDownLatch latch;
     private boolean lazySessionCreation;
     private long timeout;
@@ -55,11 +54,15 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
 
     public MinaProducer(MinaEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
         this.lazySessionCreation = endpoint.getConfiguration().isLazySessionCreation();
         this.timeout = endpoint.getConfiguration().getTimeout();
         this.sync = endpoint.getConfiguration().isSync();
         this.noReplyLogger = new Logger(LOG, endpoint.getConfiguration().getNoReplyLogLevel());
+    }
+    
+    @Override
+    public MinaEndpoint getEndpoint() {
+        return (MinaEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -78,19 +81,19 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
         }
 
         // set the exchange encoding property
-        if (endpoint.getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(endpoint.getConfiguration().getCharsetName()));
+        if (getEndpoint().getConfiguration().getCharsetName() != null) {
+            exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
         }
 
-        Object body = MinaPayloadHelper.getIn(endpoint, exchange);
+        Object body = MinaPayloadHelper.getIn(getEndpoint(), exchange);
         if (body == null) {
             noReplyLogger.log("No payload to send for exchange: " + exchange);
             return; // exit early since nothing to write
         }
 
         // if textline enabled then covert to a String which must be used for textline
-        if (endpoint.getConfiguration().isTextline()) {
-            body = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
+        if (getEndpoint().getConfiguration().isTextline()) {
+            body = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
         }
 
         // if sync is true then we should also wait for a response (synchronous mode)
@@ -130,7 +133,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
                 throw new CamelExchangeException("Error occurred in ResponseHandler", exchange, handler.getCause());
             } else if (!handler.isMessageReceived()) {
                 // no message received
-                throw new CamelExchangeException("No response received from remote server: " + endpoint.getEndpointUri(), exchange);
+                throw new CamelExchangeException("No response received from remote server: " + getEndpoint().getEndpointUri(), exchange);
             } else {
                 // set the result on either IN or OUT on the original exchange depending on its pattern
                 if (ExchangeHelper.isOutCapable(exchange)) {
@@ -150,13 +153,13 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
         }
 
         // should we disconnect, the header can override the configuration
-        boolean disconnect = endpoint.getConfiguration().isDisconnect();
+        boolean disconnect = getEndpoint().getConfiguration().isDisconnect();
         if (close != null) {
             disconnect = close;
         }
         if (disconnect) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Closing session when complete at address: " + endpoint.getAddress());
+                LOG.debug("Closing session when complete at address: " + getEndpoint().getAddress());
             }
             session.close();
         }
@@ -173,7 +176,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
     @Override
     protected void doStop() throws Exception {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Stopping connector: " + connector + " at address: " + endpoint.getAddress());
+            LOG.debug("Stopping connector: " + connector + " at address: " + getEndpoint().getAddress());
         }
         closeConnection();
         super.doStop();
@@ -196,14 +199,14 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
     }
 
     private void openConnection() {
-        SocketAddress address = endpoint.getAddress();
-        connector = endpoint.getConnector();
+        SocketAddress address = getEndpoint().getAddress();
+        connector = getEndpoint().getConnector();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating connector to address: " + address + " using connector: " + connector + " timeout: " + timeout + " millis.");
         }
-        IoHandler ioHandler = new ResponseHandler(endpoint);
+        IoHandler ioHandler = new ResponseHandler(getEndpoint());
         // connect and wait until the connection is established
-        ConnectFuture future = connector.connect(address, ioHandler, endpoint.getConnectorConfig());
+        ConnectFuture future = connector.connect(address, ioHandler, getEndpoint().getConnectorConfig());
         future.join();
         session = future.getSession();
     }
