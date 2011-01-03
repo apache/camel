@@ -33,23 +33,26 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
  */
 public class MailProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(MailProducer.class);
-    private final MailEndpoint endpoint;
     private final JavaMailSender sender;
 
     public MailProducer(MailEndpoint endpoint, JavaMailSender sender) {
         super(endpoint);
-        this.endpoint = endpoint;
         this.sender = sender;
     }
 
     public void process(final Exchange exchange) {
         sender.send(new MimeMessagePreparator() {
             public void prepare(MimeMessage mimeMessage) throws Exception {
-                endpoint.getBinding().populateMailMessage(endpoint, mimeMessage, exchange);
+                getEndpoint().getBinding().populateMailMessage(getEndpoint(), mimeMessage, exchange);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Sending MimeMessage: " + MailUtils.dumpMessage(mimeMessage));
                 }
             }
         });
+    }
+    
+    @Override
+    public MailEndpoint getEndpoint() {
+        return (MailEndpoint) super.getEndpoint();
     }
 }
