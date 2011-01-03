@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.csv.CSVParser;
@@ -58,7 +59,7 @@ public class CsvDataFormat implements DataFormat {
             config.setDelimiter(delimiter.charAt(0));
         }
 
-        OutputStreamWriter out = new OutputStreamWriter(outputStream);
+        OutputStreamWriter out = new OutputStreamWriter(outputStream, IOConverter.getCharsetName(exchange));
         CSVWriter csv = new CSVWriter(config);
         csv.setWriter(out);
 
@@ -88,7 +89,7 @@ public class CsvDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        InputStreamReader in = new InputStreamReader(inputStream);
+        InputStreamReader in = new InputStreamReader(inputStream, IOConverter.getCharsetName(exchange));
         if (delimiter != null) {
             strategy.setDelimiter(delimiter.charAt(0));
         }
@@ -166,5 +167,4 @@ public class CsvDataFormat implements DataFormat {
             }
         }
     }
-
 }
