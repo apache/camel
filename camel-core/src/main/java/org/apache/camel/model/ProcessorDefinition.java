@@ -2424,6 +2424,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Adds a processor which removes the headers on the IN message
+     *
+     * @param pattern  a pattern to match header names to be removed
+     * @param excludePatterns one or more pattern of header names that should be excluded (= preserved)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type removeHeaders(String pattern, String... excludePatterns) {
+        RemoveHeadersDefinition answer = new RemoveHeadersDefinition(pattern, excludePatterns);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
      * Adds a processor which removes the header on the FAULT message
      *
      * @param name  the header name

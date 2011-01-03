@@ -128,6 +128,10 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public boolean removeHeaders(String pattern) {
+        return removeHeaders(pattern, (String[]) null);
+    }
+
+    public boolean removeHeaders(String pattern, String... excludePatterns) {
         if (!hasHeaders()) {
             return false;
         }
@@ -136,11 +140,24 @@ public class DefaultMessage extends MessageSupport {
         for (Map.Entry<String, Object> entry : headers.entrySet()) {
             String key = entry.getKey();
             if (EndpointHelper.matchPattern(key, pattern)) {
+                if (excludePatterns != null && isExcludePatternMatch(key, excludePatterns)) {
+                    continue;
+                }
                 matches = true;
                 headers.remove(entry.getKey());
             }
+
         }
         return matches;
+    }
+
+    private boolean isExcludePatternMatch(String key, String... excludePatterns) {
+        for (String pattern : excludePatterns) {
+            if (EndpointHelper.matchPattern(key, pattern)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Map<String, Object> getHeaders() {

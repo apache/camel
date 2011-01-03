@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessorBuilder;
@@ -34,12 +35,22 @@ import org.apache.camel.util.ObjectHelper;
 public class RemoveHeadersDefinition extends OutputDefinition<RemoveHeadersDefinition> {
     @XmlAttribute(required = true)
     private String pattern;
+    @XmlAttribute(required = false)
+    private String excludePattern;
+    // in XML we cannot use String[] for attributes, so we provide a single attribute instead
+    @XmlTransient
+    private String[] excludePatterns;
 
     public RemoveHeadersDefinition() {
     }
 
     public RemoveHeadersDefinition(String pattern) {
         setPattern(pattern);
+    }
+    
+    public RemoveHeadersDefinition(String pattern, String... excludePatterns) {
+        setPattern(pattern);
+        setExcludePatterns(excludePatterns);
     }
 
     @Override
@@ -60,7 +71,13 @@ public class RemoveHeadersDefinition extends OutputDefinition<RemoveHeadersDefin
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getPattern(), "patterns", this);
-        return ProcessorBuilder.removeHeaders(getPattern());
+        if (getExcludePatterns() != null) {
+            return ProcessorBuilder.removeHeaders(getPattern(), getExcludePatterns());
+        } else if (getExcludePattern() != null) {
+            return ProcessorBuilder.removeHeaders(getPattern(), getExcludePattern());
+        } else {
+            return ProcessorBuilder.removeHeaders(getPattern());
+        }
     }
 
     public void setPattern(String pattern) {
@@ -69,5 +86,21 @@ public class RemoveHeadersDefinition extends OutputDefinition<RemoveHeadersDefin
 
     public String getPattern() {
         return pattern;
+    }
+
+    public String[] getExcludePatterns() {
+        return excludePatterns;
+    }
+
+    public void setExcludePatterns(String[] excludePatterns) {
+        this.excludePatterns = excludePatterns;
+    }
+
+    public String getExcludePattern() {
+        return excludePattern;
+    }
+
+    public void setExcludePattern(String excludePattern) {
+        this.excludePattern = excludePattern;
     }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import java.util.Arrays;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -182,6 +184,22 @@ public final class ProcessorBuilder {
             @Override
             public String toString() {
                 return "removeHeaders(" + pattern +  ")";
+            }
+        };
+    }
+    
+    /**
+     * Removes all headers on the IN message, except for the ones provided in the <tt>names</tt> parameter
+     */
+    public static Processor removeHeaders(final String pattern, final String... exceptionPatterns) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().removeHeaders(pattern, exceptionPatterns);
+            }
+
+            @Override
+            public String toString() {
+                return "removeHeaders(" + pattern + ", " + Arrays.toString(exceptionPatterns) + ")";
             }
         };
     }

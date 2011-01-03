@@ -133,6 +133,16 @@ public interface Message {
      * @return boolean whether any headers matched
      */
     boolean removeHeaders(String pattern);
+    
+    /**
+     * Removes the headers from this message that match the given <tt>pattern</tt>, 
+     * except for the ones matching one ore more <tt>exceptionPatterns</tt>
+     * 
+     * @param pattern pattern of names that should be removed
+     * @param excludePatterns one or more pattern of header names that should be excluded (= preserved)
+     * @return boolean whether any headers matched
+     */ 
+    boolean removeHeaders(String pattern, String... excludePatterns);
 
     /**
      * Returns all of the headers associated with the message.

@@ -128,6 +128,151 @@ public class DefaultMessageHeaderTest extends TestCase {
         assertTrue(msg.getHeaders().isEmpty());
     }
 
+    public void testRemoveHeaderWithNullArg() {
+        Message msg = new DefaultMessage();
+        assertNull(msg.getHeader("foo"));
+
+        msg.setHeader("tick", "bla");
+        msg.setHeader("tack", "blaa");
+        msg.setHeader("tock", "blaaa");
+
+        assertEquals("bla", msg.getHeader("tick"));
+        assertEquals("blaa", msg.getHeader("tack"));
+        assertEquals("blaaa", msg.getHeader("tock"));
+
+        msg.removeHeader(null);
+
+        assertFalse(msg.getHeaders().isEmpty());
+    }
+
+    public void testRemoveHeaderWithNullValue() {
+        Message msg = new DefaultMessage();
+        assertNull(msg.getHeader("foo"));
+
+        msg.setHeader("tick", null);
+        msg.removeHeader("tick");
+
+        assertTrue(msg.getHeaders().isEmpty());
+    }
+
+    public void testRemoveHeadersWithWildcard() {
+        Message msg = new DefaultMessage();
+        assertNull(msg.getHeader("foo"));
+
+        msg.setHeader("tick", "bla");
+        msg.setHeader("tack", "blaa");
+        msg.setHeader("tock", "blaaa");
+
+        assertEquals("bla", msg.getHeader("tick"));
+        assertEquals("blaa", msg.getHeader("tack"));
+        assertEquals("blaaa", msg.getHeader("tock"));
+
+        msg.removeHeaders("t*");
+
+        assertTrue(msg.getHeaders().isEmpty());
+    }
+
+    public void testRemoveHeadersAllWithWildcard() {
+        Message msg = new DefaultMessage();
+        assertNull(msg.getHeader("foo"));
+
+        msg.setHeader("tick", "bla");
+        msg.setHeader("tack", "blaa");
+        msg.setHeader("tock", "blaaa");
+
+        assertEquals("bla", msg.getHeader("tick"));
+        assertEquals("blaa", msg.getHeader("tack"));
+        assertEquals("blaaa", msg.getHeader("tock"));
+
+        msg.removeHeaders("*");
+
+        assertTrue(msg.getHeaders().isEmpty());
+    }
+
+    public void testRemoveHeadersWithExclude() {
+        Message msg = new DefaultMessage();
+        assertNull(msg.getHeader("foo"));
+
+        msg.setHeader("tick", "bla");
+        msg.setHeader("tiack", "blaa");
+        msg.setHeader("tiock", "blaaa");
+        msg.setHeader("tiuck", "blaaaa");
+
+        msg.removeHeaders("ti*", "tiuck", "tiack");
+
+        assertEquals(2, msg.getHeaders().size());
+        assertEquals("blaa", msg.getHeader("tiack"));
+        assertEquals("blaaaa", msg.getHeader("tiuck"));
+    }
+
+    public void testRemoveHeadersAllWithExclude() {
+        Message msg = new DefaultMessage();
+        assertNull(msg.getHeader("foo"));
+
+        msg.setHeader("tick", "bla");
+        msg.setHeader("tack", "blaa");
+        msg.setHeader("tock", "blaaa");
+
+        assertEquals("bla", msg.getHeader("tick"));
+        assertEquals("blaa", msg.getHeader("tack"));
+        assertEquals("blaaa", msg.getHeader("tock"));
+
+        msg.removeHeaders("*", "tick", "tock", "toe");
+
+        // new message headers
+        assertEquals("bla", msg.getHeader("tick"));
+        assertEquals(null, msg.getHeader("tack"));
+        assertEquals("blaaa", msg.getHeader("tock"));
+    }
+
+    public void testRemoveHeadersWithWildcardInExclude() {
+        Message msg = new DefaultMessage();
+        assertNull(msg.getHeader("foo"));
+
+        msg.setHeader("tick", "bla");
+        msg.setHeader("tack", "blaa");
+        msg.setHeader("taick", "blaa");
+        msg.setHeader("tock", "blaaa");
+
+        msg.removeHeaders("*", "ta*");
+
+        assertEquals(2, msg.getHeaders().size());
+        assertEquals("blaa", msg.getHeader("tack"));
+        assertEquals("blaa", msg.getHeader("taick"));
+    }
+
+    public void testRemoveHeadersWithNulls() {
+        Message msg = new DefaultMessage();
+        assertNull(msg.getHeader("foo"));
+
+        msg.setHeader("tick", "bla");
+        msg.setHeader("tack", "blaa");
+        msg.setHeader("tock", "blaaa");
+        msg.setHeader("taack", "blaaaa");
+
+        assertEquals("bla", msg.getHeader("tick"));
+        assertEquals("blaa", msg.getHeader("tack"));
+        assertEquals("blaaa", msg.getHeader("tock"));
+        assertEquals("blaaaa", msg.getHeader("taack"));
+
+        msg.removeHeaders(null, null, null, null);
+
+        assertFalse(msg.getHeaders().isEmpty());
+    }
+
+    public void testRemoveHeadersWithNonExcludeHeaders() {
+        Message msg = new DefaultMessage();
+        assertNull(msg.getHeader("foo"));
+
+        msg.setHeader("tick", "bla");
+        msg.setHeader("tack", "blaa");
+        msg.setHeader("tock", "blaaa");
+
+        msg.removeHeaders("*", "camels", "are", "fun");
+
+        assertTrue(msg.getHeaders().isEmpty());
+    }
+
     public void testWithDefaults() {
         DefaultMessage msg = new DefaultMessage();
         // must have exchange so to leverage the type converters
@@ -144,8 +289,6 @@ public class DefaultMessageHeaderTest extends TestCase {
         assertEquals(null, msg.getHeader("beer"));
         assertEquals("foo", msg.getHeader("beer", "foo"));
         assertEquals(Integer.valueOf(123), msg.getHeader("beer", "123", Integer.class));
-
     }
-
 
 }
