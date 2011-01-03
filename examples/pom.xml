@@ -53,6 +53,7 @@
     <module>camel-example-reportincident</module>
     <module>camel-example-reportincident-ws-security-osgi</module>
     <module>camel-example-route-throttling</module>
+    <module>camel-example-simplejirabot</module>
     <module>camel-example-spring</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
