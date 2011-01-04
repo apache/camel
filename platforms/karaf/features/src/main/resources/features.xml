@@ -402,6 +402,7 @@
   </feature>
   <feature name='camel-juel' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
     <bundle>mvn:org.ops4j.pax.web/pax-web-jsp/${pax.web.version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.juel/${juel-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-juel/${pom.version}</bundle>
