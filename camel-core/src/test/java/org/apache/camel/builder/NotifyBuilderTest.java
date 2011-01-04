@@ -24,6 +24,17 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class NotifyBuilderTest extends ContextTestSupport {
 
+    public void testMustBeCreated() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1);
+
+        try {
+            notify.matches();
+            fail("Should have thrown an exception");
+        } catch (IllegalStateException e) {
+            assertEquals("NotifyBuilder has not been created. Invoke the create() method before matching.", e.getMessage());
+        }
+    }
+
     public void testDirectWhenExchangeDoneSimple() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context)
                 .from("direct:foo").whenDone(1)

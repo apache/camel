@@ -68,6 +68,7 @@ public class NotifyBuilder {
     // the current state while building an event predicate where we use a stack and the operation
     private final Stack<EventPredicate> stack = new Stack<EventPredicate>();
     private EventOperation operation;
+    private boolean created;
 
     // computed value whether all the predicates matched
     private boolean matches;
@@ -1005,6 +1006,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder create() {
         doCreate(EventOperation.and);
+        created = true;
         return this;
     }
 
@@ -1016,6 +1018,9 @@ public class NotifyBuilder {
      * @return <tt>true</tt> if matching, <tt>false</tt> otherwise
      */
     public boolean matches() {
+        if (!created) {
+            throw new IllegalStateException("NotifyBuilder has not been created. Invoke the create() method before matching.");
+        }
         return matches;
     }
 
@@ -1030,6 +1035,9 @@ public class NotifyBuilder {
      * @return <tt>true</tt> if matching, <tt>false</tt> otherwise due to timeout
      */
     public boolean matches(long timeout, TimeUnit timeUnit) {
+        if (!created) {
+            throw new IllegalStateException("NotifyBuilder has not been created. Invoke the create() method before matching.");
+        }
         try {
             latch.await(timeout, timeUnit);
         } catch (InterruptedException e) {
@@ -1053,6 +1061,9 @@ public class NotifyBuilder {
      * @return <tt>true</tt> if matching, <tt>false</tt> otherwise due to timeout
      */
     public boolean matchesMockWaitTime() {
+        if (!created) {
+            throw new IllegalStateException("NotifyBuilder has not been created. Invoke the create() method before matching.");
+        }
         long timeout = 0;
         for (Endpoint endpoint : context.getEndpoints()) {
             if (endpoint instanceof MockEndpoint) {
