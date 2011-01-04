@@ -57,7 +57,7 @@
     <derby-version>10.4.2.0</derby-version>
     <dozer-version>5.3.1</dozer-version>
     <easymock-version>2.5.2</easymock-version>
-    <ehcache-bundle-version>1.6.2_1</ehcache-bundle-version>
+    <ehcache-bundle-version>2.3.0_1</ehcache-bundle-version>
     <flatpack-version>3.2.0_1</flatpack-version>
     <ftpserver-version>1.0.5</ftpserver-version>
     <fuse-commons-management-version>1.0</fuse-commons-management-version>
