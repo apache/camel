@@ -40,8 +40,14 @@ public class ServletComponent extends HttpComponent {
     
     private CamelServlet camelServlet;
     
+    private CamelServletService camelServletService;
+        
     public void setCamelServlet(CamelServlet servlet) {
         camelServlet = servlet;
+    }
+    
+    public void setCamelServletService(CamelServletService service) {
+        camelServletService = service;
     }
 
     public CamelServlet getCamelServlet(String servletName) {
@@ -56,6 +62,10 @@ public class ServletComponent extends HttpComponent {
                 + " or configure a org.apache.camel.component.servlet.CamelHttpTransportServlet servlet in web.xml ");
         }
         return answer;
+    }
+    
+    public CamelServletService getCamelServletService() {
+        return camelServletService;
     }
     
     @Override
@@ -119,17 +129,25 @@ public class ServletComponent extends HttpComponent {
     }
     
     public void connect(HttpConsumer consumer) throws Exception {
-        ServletEndpoint endpoint = (ServletEndpoint) consumer.getEndpoint();
-        CamelServlet servlet = getCamelServlet(endpoint.getServletName());
-        ObjectHelper.notNull(servlet, "CamelServlet");
-        servlet.connect(consumer);
+        if (getCamelServletService() != null) {
+            getCamelServletService().connect(consumer);
+        } else {
+            ServletEndpoint endpoint = (ServletEndpoint) consumer.getEndpoint();
+            CamelServlet servlet = getCamelServlet(endpoint.getServletName());
+            ObjectHelper.notNull(servlet, "CamelServlet");
+            servlet.connect(consumer);
+        }
     }
 
     public void disconnect(HttpConsumer consumer) throws Exception {
-        ServletEndpoint endpoint = (ServletEndpoint) consumer.getEndpoint();
-        CamelServlet servlet = getCamelServlet(endpoint.getServletName());
-        ObjectHelper.notNull(servlet, "CamelServlet");
-        servlet.disconnect(consumer);
+        if (getCamelServletService() != null) {
+            getCamelServletService().disconnect(consumer);
+        } else {
+            ServletEndpoint endpoint = (ServletEndpoint) consumer.getEndpoint();
+            CamelServlet servlet = getCamelServlet(endpoint.getServletName());
+            ObjectHelper.notNull(servlet, "CamelServlet");
+            servlet.disconnect(consumer);
+        }
     }
 
 }

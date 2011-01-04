@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CamelHttpTransportServlet extends CamelServlet {
+public class CamelHttpTransportServlet extends CamelServlet implements CamelServletService {
     private static final transient Log LOG = LogFactory.getLog(CamelHttpTransportServlet.class);
     private static final Map<String, CamelServlet> CAMEL_SERVLET_MAP = new ConcurrentHashMap<String, CamelServlet>();
     private String servletName;
