@@ -20,9 +20,10 @@ import java.net.URI;
 import java.util.Map;
 
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.URISupport;
 
-public class CacheConfiguration {
+public class CacheConfiguration implements Cloneable {
     private String cacheName;
     private int maxElementsInMemory = 1000;
     private MemoryStoreEvictionPolicy memoryStoreEvictionPolicy = MemoryStoreEvictionPolicy.LFU;
@@ -40,7 +41,17 @@ public class CacheConfiguration {
     public CacheConfiguration(URI uri) throws Exception {
         parseURI(uri);
     }
-    
+
+    public CacheConfiguration copy() {
+        try {
+            CacheConfiguration copy = (CacheConfiguration) clone();
+            // override any properties where a reference copy isn't what we want
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
     public void parseURI(URI uri) throws Exception {
         String protocol = uri.getScheme();
         

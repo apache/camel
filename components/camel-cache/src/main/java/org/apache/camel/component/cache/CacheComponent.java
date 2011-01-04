@@ -22,24 +22,29 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
 public class CacheComponent extends DefaultComponent {
-    private CacheConfiguration config;
+    private CacheConfiguration configuration;
     private CacheManagerFactory cacheManagerFactory = new CacheManagerFactory();
     
     public CacheComponent() {
-        config = new CacheConfiguration();
+        configuration = new CacheConfiguration();
     }
 
     public CacheComponent(CamelContext context) {
         super(context);
-        config = new CacheConfiguration();
+        configuration = new CacheConfiguration();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        // must use copy as each endpoint can have different options
+        ObjectHelper.notNull(configuration, "configuration");
+        CacheConfiguration config = configuration.copy();
+
         config.parseURI(new URI(uri));
         
         CacheEndpoint cacheEndpoint = new CacheEndpoint(uri, this, config, cacheManagerFactory);
@@ -53,6 +58,19 @@ public class CacheComponent extends DefaultComponent {
 
     public void setCacheManagerFactory(CacheManagerFactory cacheManagerFactory) {
         this.cacheManagerFactory = cacheManagerFactory;
+    }
+
+    public CacheConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * Sets the Cache configuration
+     *
+     * @param configuration the configuration to use by default for endpoints
+     */
+    public void setConfiguration(CacheConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
