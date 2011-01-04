@@ -33,6 +33,7 @@ import net.sf.flatpack.writer.DelimiterWriterFactory;
 import net.sf.flatpack.writer.FixedWriterFactory;
 import net.sf.flatpack.writer.Writer;
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -95,7 +96,7 @@ public class FlatpackDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        InputStreamReader reader = new InputStreamReader(stream);
+        InputStreamReader reader = new InputStreamReader(stream, IOConverter.getCharsetName(exchange));
         try {
             Parser parser = createParser(exchange, reader);
             DataSet dataSet = parser.parse();
@@ -163,13 +164,13 @@ public class FlatpackDataFormat implements DataFormat {
         if (isFixed()) {
             Resource resource = getDefinition();
             ObjectHelper.notNull(resource, "resource");
-            return getParserFactory().newFixedLengthParser(new InputStreamReader(resource.getInputStream()), bodyReader);
+            return getParserFactory().newFixedLengthParser(new InputStreamReader(resource.getInputStream(), IOConverter.getCharsetName(exchange)), bodyReader);
         } else {
             Resource resource = getDefinition();
             if (resource == null) {
                 return getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
             } else {
-                return getParserFactory().newDelimitedParser(new InputStreamReader(resource.getInputStream()), bodyReader, delimiter, textQualifier, ignoreFirstRecord);
+                return getParserFactory().newDelimitedParser(new InputStreamReader(resource.getInputStream(), IOConverter.getCharsetName(exchange)), bodyReader, delimiter, textQualifier, ignoreFirstRecord);
             }
         }
     }
@@ -178,8 +179,8 @@ public class FlatpackDataFormat implements DataFormat {
         if (isFixed()) {
             Resource resource = getDefinition();
             ObjectHelper.notNull(resource, "resource");
-            FixedWriterFactory factory = new FixedWriterFactory(new InputStreamReader(resource.getInputStream()));
-            return factory.createWriter(new OutputStreamWriter(stream));
+            FixedWriterFactory factory = new FixedWriterFactory(new InputStreamReader(resource.getInputStream(), IOConverter.getCharsetName(exchange)));
+            return factory.createWriter(new OutputStreamWriter(stream, IOConverter.getCharsetName(exchange)));
         } else {
             Resource resource = getDefinition();
             if (resource == null) {
@@ -188,13 +189,11 @@ public class FlatpackDataFormat implements DataFormat {
                 for (String key : firstRow.keySet()) {
                     factory.addColumnTitle(key);
                 }
-                return factory.createWriter(new OutputStreamWriter(stream));
+                return factory.createWriter(new OutputStreamWriter(stream, IOConverter.getCharsetName(exchange)));
             } else {
-                DelimiterWriterFactory factory = new DelimiterWriterFactory(new InputStreamReader(resource.getInputStream()), delimiter, textQualifier);
-                return factory.createWriter(new OutputStreamWriter(stream));
+                DelimiterWriterFactory factory = new DelimiterWriterFactory(new InputStreamReader(resource.getInputStream(), IOConverter.getCharsetName(exchange)), delimiter, textQualifier);
+                return factory.createWriter(new OutputStreamWriter(stream, IOConverter.getCharsetName(exchange)));
             }
         }
     }
-
-
 }
