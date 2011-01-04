@@ -70,7 +70,7 @@ public abstract class AbstractCastorDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        Reader reader = new InputStreamReader(inputStream);
+        Reader reader = new InputStreamReader(inputStream, encoding);
         return getUnmarshaller(exchange).unmarshal(reader);
     }
 
@@ -165,5 +165,4 @@ public abstract class AbstractCastorDataFormat implements DataFormat {
     public void setValidation(boolean validation) {
         this.validation = validation;
     }
-
 }
