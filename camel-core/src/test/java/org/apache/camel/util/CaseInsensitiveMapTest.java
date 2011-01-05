@@ -20,9 +20,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -475,5 +477,39 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(456, map.get("Bar"));
         assertEquals("cheese", map.get("cAKe"));
     }
+
+    public void testCopyMapWithCamelHeadersTest() throws Exception {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("CamelA", "A");
+        map.put("CamelB", "B");
+        map.put("CamelC", "C");
+
+        // retain maps so we can profile that the map doesn't duplicate
+        // camel keys as they are intern
+        List<Map> maps = new ArrayList<Map>();
+
+        for (int i = 0; i < 10000; i++) {
+            Map<String, Object> copy = new CaseInsensitiveMap(map);
+            assertEquals(3, copy.size());
+            assertEquals("A", copy.get("CamelA"));
+            assertEquals("B", copy.get("CamelB"));
+            assertEquals("C", copy.get("CamelC"));
+
+            maps.add(copy);
+        }
+
+        assertEquals(10000, maps.size());
+
+        assertEquals(3, map.size());
+        assertEquals("A", map.get("CamelA"));
+        assertEquals("B", map.get("CamelB"));
+        assertEquals("C", map.get("CamelC"));
+
+        // use a memory profiler to see memory allocation
+        // often you may want to give it time to run so you
+        // have chance to capture memory snapshot in profiler
+        // Thread.sleep(9999999);
+    }
+
 
 }

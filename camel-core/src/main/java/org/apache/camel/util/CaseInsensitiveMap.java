@@ -65,7 +65,7 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
 
     @Override
     public Object get(Object key) {
-        String s = key.toString().toLowerCase();
+        String s = assembleKey(key);
         Object answer = super.get(s);
         if (answer == null) {
             // fallback to lookup by original key
@@ -79,7 +79,7 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
     public synchronized Object put(String key, Object value) {
         // invalidate views as we mutate
         entrySetView = null;
-        String s = key.toLowerCase();
+        String s = assembleKey(key);
         originalKeys.put(s, key);
         return super.put(s, value);
     }
@@ -101,7 +101,7 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
 
         // invalidate views as we mutate
         entrySetView = null;
-        String s = key.toString().toLowerCase();
+        String s = assembleKey(key);
         originalKeys.remove(s);
         return super.remove(s);
     }
@@ -120,8 +120,18 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
             return false;
         }
 
-        String s = key.toString().toLowerCase();
+        String s = assembleKey(key);
         return super.containsKey(s);
+    }
+
+    private static String assembleKey(Object key) {
+        String s = key.toString().toLowerCase();
+        if (s.startsWith("camel")) {
+            // use intern String for headers which is Camel* headers
+            // this reduces memory allocations needed for those common headers
+            s = s.intern();
+        }
+        return s;
     }
 
     @Override
