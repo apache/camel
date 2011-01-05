@@ -149,21 +149,12 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 // Create POJO where CSV data will be stored
                 model = factory.factory();
                 
-                // Added for camel- jira ticket
-                // We will remove the first and last character  of the line
-                // when the separator contains quotes, double quotes 
-                // e.g. ',' or "," ...
-                // REMARK : We take the assumption that the data fields are
-                // quoted or double quoted like that 
-                // e.g : "1 ", "street 1, NY", "USA"
-                if (separator.length() > 1) {
-                    String tempLine = line.substring(1, line.length() - 1);
-                    line = tempLine;
-                }
                 // Split the CSV record according to the separator defined in
                 // annotated class @CSVRecord
                 String[] tokens = line.split(separator, -1);
                 List<String> result = Arrays.asList(tokens);
+                // must unquote tokens before use
+                result = unquoteTokens(result);
 
                 if (result.size() == 0 || result.isEmpty()) {
                     throw new java.lang.IllegalArgumentException("No records have been defined in the CSV !");
@@ -205,6 +196,23 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             IOHelper.close(in, "in", LOG);
         }
 
+    }
+
+    /**
+     * Unquote the tokens, by removing leading and trailing quote chars
+     */
+    private List<String> unquoteTokens(List<String> result) {
+        List<String> answer = new ArrayList<String>(result.size());
+        for (String s : result) {
+            if (s.startsWith("\"") || s.startsWith("'")) {
+                s = s.substring(1);
+            }
+            if (s.endsWith("\"") || s.endsWith("'")) {
+                s = s.substring(0, s.length() - 1);
+            }
+            answer.add(s);
+        }
+        return answer;
     }
 
     protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {

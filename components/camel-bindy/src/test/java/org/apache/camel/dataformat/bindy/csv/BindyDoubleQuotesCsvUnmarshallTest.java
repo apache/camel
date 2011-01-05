@@ -26,15 +26,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
-import org.apache.camel.test.junit4.TestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration
 public class BindyDoubleQuotesCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {
@@ -77,7 +74,7 @@ public class BindyDoubleQuotesCsvUnmarshallTest extends AbstractJUnit4SpringCont
 
     }
     
-    @CsvRecord(separator = "\",\"")
+    @CsvRecord(separator = ",")
     public static class Order {
 
         @DataField(pos = 1)
