@@ -640,7 +640,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return answer;
     }
 
-    public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
+    public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         for (RouteDefinition routeDefinition : routeDefinitions) {
             removeRouteDefinition(routeDefinition);
         }
@@ -672,14 +672,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return answer;
     }
 
-    public void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
+    public synchronized void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         this.routeDefinitions.removeAll(routeDefinitions);
         for (RouteDefinition routeDefinition : routeDefinitions) {
             removeRouteDefinition(routeDefinition);
         }
     }
 
-    public void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
+    public synchronized void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
         String id = routeDefinition.idOrCreate(nodeIdFactory);
         stopRoute(id);
         removeRoute(id);
