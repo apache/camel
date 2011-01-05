@@ -69,7 +69,7 @@ public final class DefaultExchange implements Exchange {
     public DefaultExchange(Endpoint fromEndpoint) {
         this(fromEndpoint, ExchangePattern.InOnly);
     }
-    
+
     public DefaultExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
         this(fromEndpoint.getCamelContext(), pattern);
         this.fromEndpoint = fromEndpoint;
@@ -113,6 +113,8 @@ public final class DefaultExchange implements Exchange {
 
     public Object getProperty(String name) {
         if (hasProperties()) {
+            // use intern String for properties which is Camel* properties
+            // this reduces memory allocations needed for those common properties
             if (name.startsWith("Camel")) {
                 name = name.intern();
             }
