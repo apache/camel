@@ -18,23 +18,34 @@ package org.apache.camel.dataformat.soap;
 
 import com.example.customerservice.Customer;
 import com.example.customerservice.CustomerService;
+import com.example.customerservice.GetAllCustomersResponse;
 import com.example.customerservice.GetCustomersByName;
 import com.example.customerservice.GetCustomersByNameResponse;
 import com.example.customerservice.NoSuchCustomer;
 import com.example.customerservice.NoSuchCustomerException;
+import com.example.customerservice.SaveCustomer;
 
 /**
- * Simple implementation of CustomerService that supports
- * returning a customer or a NoSuchCustomerException depending on input
+ * Simple implementation of CustomerService that supports returning a customer
+ * or a NoSuchCustomerException depending on input
  */
 public class CustomerServiceImpl implements CustomerService {
+    private Customer lastSavedCustomer;
+
+    public Customer getLastSavedCustomer() {
+        return lastSavedCustomer;
+    }
+
+    public void setLastSavedCustomer(Customer lastSavedCustomer) {
+        this.lastSavedCustomer = lastSavedCustomer;
+    }
 
     /**
-     * If the request.name is "none" a NoSuchCustomerException is thrown in any other case
-     * a dummy customer is returned that has the same name as the request
+     * If the request.name is "none" a NoSuchCustomerException is thrown in any
+     * other case a dummy customer is returned that has the same name as the
+     * request
      */
-    public GetCustomersByNameResponse getCustomersByName(GetCustomersByName request)
-        throws NoSuchCustomerException {
+    public GetCustomersByNameResponse getCustomersByName(GetCustomersByName request) throws NoSuchCustomerException {
         if ("none".equals(request.getName())) {
             NoSuchCustomer noSuchCustomer = new NoSuchCustomer();
             noSuchCustomer.setCustomerId(request.getName());
@@ -46,6 +57,22 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setRevenue(100000);
         response.getReturn().add(customer);
         return response;
+    }
+
+    /**
+     * This method is to test a call without input parameter
+     */
+    public GetAllCustomersResponse getAllCustomers() {
+        GetAllCustomersResponse response = new GetAllCustomersResponse();
+        Customer customer = new Customer();
+        customer.setName("Smith");
+        customer.setRevenue(100000);
+        response.getReturn().add(customer);
+        return response;
+    }
+
+    public void saveCustomer(SaveCustomer request) {
+        lastSavedCustomer = request.getCustomer();
     }
 
 }

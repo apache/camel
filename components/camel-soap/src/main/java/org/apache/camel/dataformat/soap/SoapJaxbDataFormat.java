@@ -32,10 +32,12 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.WebFault;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
+import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.xmlsoap.schemas.soap.envelope.Body;
 import org.xmlsoap.schemas.soap.envelope.Detail;
@@ -124,10 +126,9 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * is used.
      */
     public void marshal(Exchange exchange, final Object inputObject, OutputStream stream) throws IOException {
-
         checkElementNameStrategy(exchange);
 
-        String soapAction = (String) exchange.getIn().getHeader(Exchange.SOAP_ACTION);
+        String soapAction = getSoapActionFromExchange(exchange);
         if (soapAction == null && inputObject instanceof BeanInvocation) {
             BeanInvocation beanInvocation = (BeanInvocation) inputObject;
             WebMethod webMethod = beanInvocation.getMethod().getAnnotation(WebMethod.class);
@@ -169,21 +170,31 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      *            for name resolution
      * @return JAXBElement for the body content
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private JAXBElement<?> createBodyContentFromObject(final Object inputObject, String soapAction) {
-        Object graph;
+        Object paramObject;
         if (inputObject instanceof BeanInvocation) {
             BeanInvocation bi = (BeanInvocation) inputObject;
-            if (bi.getArgs().length > 1) {
-                throw new RuntimeCamelException(
-                        "SoapDataFormat does not work with Beaninvocations that contain more than 1 parameter");
+            if (bi.getArgs() == null || bi.getArgs().length == 0) {
+                paramObject = null;
+            } else if (bi.getArgs().length == 1) {
+                paramObject = bi.getArgs()[0];
+            } else {
+                throw new RuntimeCamelException("SoapDataFormat does not work with " 
+                        + "Beaninvocations that contain more than 1 parameter");                
             }
-            graph = (bi.getArgs().length == 1) ? bi.getArgs()[0] : null;
         } else {
-            graph = inputObject;
+            paramObject = inputObject;
         }
-        QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, graph.getClass());
-        return new JAXBElement(name, graph.getClass(), graph);
+        if (paramObject == null) {
+            return null;
+        }
+        QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, paramObject.getClass());
+        if (name == null) {
+            // This can happen if a method has no parameter or return type
+            return null;
+        }
+        return new JAXBElement(name, paramObject.getClass(), paramObject);
     }
 
     /**
@@ -213,6 +224,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         fault.setFaultcode(FAULT_CODE_SERVER);
         fault.setFaultstring(exception.getMessage());
         Detail detailEl = new ObjectFactory().createDetail();
+        @SuppressWarnings("rawtypes")
         JAXBElement<?> faultDetailContent = new JAXBElement(name, faultObject.getClass(), faultObject);
         detailEl.getAny().add(faultDetailContent);
         fault.setDetail(detailEl);
@@ -223,12 +235,35 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * Unmarshal a given SOAP xml stream and return the content of the SOAP body
      */
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
-        Object rootObject = JAXBIntrospector.getValue(super.unmarshal(exchange, stream));
+        
+        String soapAction = getSoapActionFromExchange(exchange);
+        
+        // Determine the method name for an eventual BeanProcessor in the route
+        if (soapAction != null && elementNameStrategy instanceof ServiceInterfaceStrategy) {
+            ServiceInterfaceStrategy strategy = (ServiceInterfaceStrategy) elementNameStrategy;
+            String methodName = strategy.getMethodForSoapAction(soapAction);
+            exchange.getOut().setHeader(Exchange.BEAN_METHOD_NAME, methodName);
+        }
+        
+        // Store soap action for an eventual later marshal step.
+        // This is necessary as the soap action in the message may get lost on the way
+        if (soapAction != null) {
+            exchange.setProperty(Exchange.SOAP_ACTION, soapAction);
+        }
+        
+        Object unmarshalledObject = super.unmarshal(exchange, stream);
+        Object rootObject = JAXBIntrospector.getValue(unmarshalledObject);
         if (rootObject.getClass() != Envelope.class) {
             throw new RuntimeCamelException("Expected Soap Envelope but got " + rootObject.getClass());
         }
         Envelope envelope = (Envelope) rootObject;
-        Object payloadEl = envelope.getBody().getAny().get(0);
+        List<Object> anyElement = envelope.getBody().getAny();
+        if (anyElement.size() == 0) {
+            // No parameter so return null
+            return null;
+
+        }
+        Object payloadEl = anyElement.get(0);
         Object payload = JAXBIntrospector.getValue(payloadEl);
         if (payload instanceof Fault) {
             Exception exception = createExceptionFromFault((Fault) payload);
@@ -237,6 +272,21 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         } else {
             return isIgnoreJAXBElement() ? payload : payloadEl;
         }
+    }
+
+    private String getSoapActionFromExchange(Exchange exchange) {
+        Message inMessage = exchange.getIn();
+        String soapAction = inMessage .getHeader(Exchange.SOAP_ACTION, String.class);
+        if (soapAction == null) {
+            soapAction = inMessage.getHeader("SOAPAction", String.class);
+            if (soapAction != null && soapAction.startsWith("\"")) {
+                soapAction = soapAction.substring(1, soapAction.length() - 1);
+            }
+        }
+        if (soapAction == null) {
+            soapAction = exchange.getProperty(Exchange.SOAP_ACTION, String.class);
+        }
+        return soapAction;
     }
 
     /**

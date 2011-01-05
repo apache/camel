@@ -33,8 +33,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * Test that uses a dynamic proxy for CustomerService to send a request as SOAP and
- * work with a static return SOAP message. 
+ * Test that uses a dynamic proxy for CustomerService to send a request as SOAP
+ * and work with a static return SOAP message.
  */
 public class SoapClientTest extends CamelTestSupport {
 
@@ -42,9 +42,8 @@ public class SoapClientTest extends CamelTestSupport {
     CustomerService customerService;
 
     @Test
-    public void testRoundTrip() throws Exception {
-        GetCustomersByNameResponse response = customerService
-                .getCustomersByName(new GetCustomersByName());
+    public void testRoundTripGetCustomersByName() throws Exception {
+        GetCustomersByNameResponse response = customerService.getCustomersByName(new GetCustomersByName());
 
         Assert.assertEquals(1, response.getReturn().size());
         Customer firstCustomer = response.getReturn().get(0);
@@ -54,19 +53,15 @@ public class SoapClientTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            String jaxbPackage = GetCustomersByName.class.getPackage()
-                    .getName();
+            String jaxbPackage = GetCustomersByName.class.getPackage().getName();
 
             @Override
             public void configure() throws Exception {
                 ElementNameStrategy elNameStrat = new ServiceInterfaceStrategy(CustomerService.class, true);
-                SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(
-                        jaxbPackage, elNameStrat);
-                final InputStream in = this.getClass().getResourceAsStream(
-                        "response.xml");
-                from("direct:start").marshal(soapDataFormat)
-                        .process(new FileReplyProcessor(in)).unmarshal(
-                                soapDataFormat);
+                SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(jaxbPackage, elNameStrat);
+                final InputStream in = this.getClass().getResourceAsStream("response.xml");
+                from("direct:start").marshal(soapDataFormat).process(new FileReplyProcessor(in))
+                        .unmarshal(soapDataFormat);
             }
         };
     }

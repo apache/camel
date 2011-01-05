@@ -55,33 +55,44 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         this.isClient = isClient;
         this.fallBackStrategy = new TypeNameStrategy();
     }
+    
+    public String getMethodForSoapAction(String soapAction) {
+        MethodInfo methodInfo = soapActionToMethodInfo.get(soapAction);
+        return (methodInfo == null) ? null : methodInfo.getName();
+    }
 
     private TypeInfo getOutInfo(Method method) {
         ResponseWrapper respWrap = method.getAnnotation(ResponseWrapper.class);
-        if (respWrap != null) {
-            if (respWrap.className() != null) {
-                return new TypeInfo(respWrap.className(), new QName(respWrap.targetNamespace(), respWrap.localName()));
-            }
+        if (respWrap != null && respWrap.className() != null) {
+            return new TypeInfo(respWrap.className(), new QName(respWrap.targetNamespace(), respWrap.localName()));
+        }
+        Class<?> returnType = method.getReturnType();
+        if (Void.TYPE.equals(returnType)) {
+            return new TypeInfo(null, null);
         } else {
             Class<?> type = method.getReturnType();
             WebResult webResult = method.getAnnotation(WebResult.class);
             if (webResult != null) {
                 return new TypeInfo(type.getName(), new QName(webResult.targetNamespace(), webResult.name()));
+            } else {
+                throw new IllegalArgumentException("Result type of method " + method.getName()
+                    + " is not annotated with WebParam. This is not yet supported");
             }
         }
-        throw new RuntimeCamelException("The method " + method.getName()
-                + " has no ResponseWrapper and no suitable return type");
+        
     }
 
     private TypeInfo getInInfo(Method method) {
         RequestWrapper requestWrapper = method.getAnnotation(RequestWrapper.class);
         Class<?>[] types = method.getParameterTypes();
-        if (requestWrapper != null) {
-            if (requestWrapper.className() != null) {
-                return new TypeInfo(requestWrapper.className(), new QName(requestWrapper.targetNamespace(),
-                        requestWrapper.localName()));
-            }
-        } else if (types.length == 1) {
+        if (types.length == 0) {
+            return new TypeInfo(null, null);
+        }
+        if (requestWrapper != null && requestWrapper.className() != null) {
+            return new TypeInfo(requestWrapper.className(), new QName(requestWrapper.targetNamespace(),
+                    requestWrapper.localName()));
+        }
+        if (types.length == 1) {
             Annotation[] firstParamAnnotations = method.getParameterAnnotations()[0];
             for (Annotation annotation : firstParamAnnotations) {
                 if (annotation instanceof WebParam) {
@@ -89,8 +100,11 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
                     return new TypeInfo(types[0].getName(), new QName(webParam.targetNamespace(), webParam.name()));
                 }
             }
+            throw new IllegalArgumentException("Parameter of method " + method.getName()
+                    + " is not annotated with WebParam. This is not yet supported");
         }
-        return null;
+        throw new IllegalArgumentException("Method " + method.getName()
+                + " has more than one parameter and no request wrapper. This is not yet supported");
     }
 
     /**
@@ -105,14 +119,16 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         TypeInfo outInfo = getOutInfo(method);
         WebMethod webMethod = method.getAnnotation(WebMethod.class);
         String soapAction = (webMethod != null) ? webMethod.action() : null;
-        return new MethodInfo(soapAction, inInfo, outInfo);
+        return new MethodInfo(method.getName(), soapAction, inInfo, outInfo);
     }
 
     private void analyzeServiceInterface(Class<?> serviceInterface) {
         Method[] methods = serviceInterface.getMethods();
         for (Method method : methods) {
             MethodInfo info = analyzeMethod(method);
-            inTypeNameToQName.put(info.getIn().getTypeName(), info.getIn().getElName());
+            if (info.getIn() != null) {
+                inTypeNameToQName.put(info.getIn().getTypeName(), info.getIn().getElName());
+            }
             if (info.getSoapAction() != null && !"".equals(info.getSoapAction())) {
                 soapActionToMethodInfo.put(info.getSoapAction(), info);
             }
@@ -152,10 +168,12 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
             }
         }
         QName qName = null;
-        if (isClient) {
-            qName = inTypeNameToQName.get(type.getName());
-        } else {
-            qName = outTypeNameToQName.get(type.getName());
+        if (type != null) {
+            if (isClient) {
+                qName = inTypeNameToQName.get(type.getName());
+            } else {
+                qName = outTypeNameToQName.get(type.getName());
+            }
         }
         if (qName == null) {
             try {

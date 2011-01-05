@@ -19,25 +19,32 @@ package org.apache.camel.dataformat.soap.name;
 /**
  * Value object to hold information about a method in a JAX-WS service interface
  */
-final class MethodInfo {
+public final class MethodInfo {
+    private String name;
     private String soapAction;
     private TypeInfo in;
     private TypeInfo out;
-    
+
     /**
      * Initialize 
      * 
+     * @param name method name
      * @param soapAction
      * @param in input parameter (document style so only one parameter)
      * @param out return type
      */
-    public MethodInfo(String soapAction, TypeInfo in, TypeInfo out) {
+    public MethodInfo(String name, String soapAction, TypeInfo in, TypeInfo out) {
         super();
+        this.name = name;
         this.soapAction = soapAction;
         this.in = in;
         this.out = out;
     }
 
+    public String getName() {
+        return name;
+    }
+    
     public String getSoapAction() {
         return soapAction;
     }
