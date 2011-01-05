@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchangeFormatter;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class Logger implements Processor {
+public class Logger extends ServiceSupport implements Processor {
     private Log log;
     private LoggingLevel level;
     private ExchangeFormatter formatter = DefaultExchangeFormatter.getInstance();
@@ -305,5 +306,15 @@ public class Logger implements Processor {
 
     public void setLogName(String logName) {
         this.log = LogFactory.getLog(logName);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

@@ -19,6 +19,7 @@ package org.apache.camel.component.log;
 import org.apache.camel.Component;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.processor.Logger;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * Log endpoint.
@@ -43,6 +44,16 @@ public class LogEndpoint extends ProcessorEndpoint {
         return logger;
     }
 
+    @Override
+    public void start() throws Exception {
+        ServiceHelper.startService(logger);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        ServiceHelper.stopService(logger);
+    }
+    
     public void setLogger(Logger logger) {
         this.logger = logger;
         // the logger is the processor

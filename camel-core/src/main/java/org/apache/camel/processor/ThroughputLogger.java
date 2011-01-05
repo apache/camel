@@ -17,25 +17,38 @@
 package org.apache.camel.processor;
 
 import java.text.NumberFormat;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A logger for logging message throughput.
- *  
+ *
  * @version $Revision$
  */
 public class ThroughputLogger extends Logger {
-    private int groupSize = 100;
-    private long startTime;
-    private long groupStartTime;
+    private static final Log LOG = LogFactory.getLog(ThroughputLogger.class);
+
     private final AtomicInteger receivedCounter = new AtomicInteger();
     private NumberFormat numberFormat = NumberFormat.getNumberInstance();
+    private long groupReceivedCount;
+    private boolean groupActiveOnly;
+    private Integer groupSize;
+    private long groupDelay = 1000;
+    private Long groupInterval;
+    private long startTime;
+    private long groupStartTime;
     private String action = "Received";
     private String logMessage;
+    private CamelContext camelContext;
+    private ScheduledExecutorService logSchedulerService;
 
     public ThroughputLogger() {
     }
@@ -56,9 +69,26 @@ public class ThroughputLogger extends Logger {
         super(logName, level);
     }
 
-    public ThroughputLogger(String logName, LoggingLevel level, int groupSize) {
+    public ThroughputLogger(String logName, LoggingLevel level, Integer groupSize) {
         super(logName, level);
         setGroupSize(groupSize);
+    }
+
+    public ThroughputLogger(CamelContext camelContext, String logName, LoggingLevel level,
+                            Long groupInterval, Long groupDelay, Boolean groupActiveOnly) {
+        super(logName, level);
+
+        //initialize the startTime (since no messages may be received before a timer log event)
+        if (startTime == 0) {
+            startTime = System.currentTimeMillis();
+        }
+
+        this.camelContext = camelContext;
+        setGroupInterval(groupInterval);
+        setGroupActiveOnly(groupActiveOnly);
+        if (groupDelay != null) {
+            setGroupDelay(groupDelay);
+        }
     }
 
     public ThroughputLogger(String logName, int groupSize) {
@@ -76,21 +106,52 @@ public class ThroughputLogger extends Logger {
             startTime = System.currentTimeMillis();
         }
         int receivedCount = receivedCounter.incrementAndGet();
-        if (receivedCount % groupSize == 0) {
-            logMessage = createLogMessage(exchange, receivedCount);
-            super.process(exchange);
+
+        //only process if groupSize is set...otherwise we're in groupInterval mode
+        if (groupSize != null) {
+            if (receivedCount % groupSize == 0) {
+                logMessage = createLogMessage(exchange, receivedCount);
+                super.process(exchange);
+            }
         }
     }
 
-    public int getGroupSize() {
+    public Integer getGroupSize() {
         return groupSize;
     }
 
-    public void setGroupSize(int groupSize) {
-        if (groupSize == 0) {
-            throw new IllegalArgumentException("groupSize cannot be zero!");
+    public void setGroupSize(Integer groupSize) {
+        if (groupSize == null || groupSize <= 0) {
+            throw new IllegalArgumentException("groupSize must be positive, was: " + groupSize);
         }
         this.groupSize = groupSize;
+    }
+
+    public Long getGroupInterval() {
+        return groupInterval;
+    }
+
+    public void setGroupInterval(Long groupInterval) {
+        if (groupInterval == null || groupInterval <= 0) {
+            throw new IllegalArgumentException("groupInterval must be positive, was: " + groupInterval);
+        }
+        this.groupInterval = groupInterval;
+    }
+
+    public long getGroupDelay() {
+        return groupDelay;
+    }
+
+    public void setGroupDelay(long groupDelay) {
+        this.groupDelay = groupDelay;
+    }
+
+    public boolean getGroupActiveOnly() {
+        return groupActiveOnly;
+    }
+
+    private void setGroupActiveOnly(boolean groupActiveOnly) {
+        this.groupActiveOnly = groupActiveOnly;
     }
 
     public NumberFormat getNumberFormat() {
@@ -114,6 +175,27 @@ public class ThroughputLogger extends Logger {
         return logMessage;
     }
 
+    @Override
+    public void start() throws Exception {
+        // if an interval was specified, create a background thread
+        if (groupInterval != null) {
+            ObjectHelper.notNull(camelContext, "CamelContext", this);
+
+            logSchedulerService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "ThroughputLogger", 1);
+            Runnable scheduledLogTask = new ScheduledLogTask();
+            LOG.info("scheduling throughput log to run every " + groupInterval + " millis.");
+            // must use fixed rate to have it trigger at every X interval
+            logSchedulerService.scheduleAtFixedRate(scheduledLogTask, groupDelay, groupInterval, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    @Override
+    public void stop() throws Exception {
+        if (logSchedulerService != null) {
+            camelContext.getExecutorServiceStrategy().shutdownNow(logSchedulerService);
+        }
+    }
+
     protected String createLogMessage(Exchange exchange, int receivedCount) {
         long time = System.currentTimeMillis();
         if (groupStartTime == 0) {
@@ -131,11 +213,59 @@ public class ThroughputLogger extends Logger {
                 + " messages per second. average: " + numberFormat.format(average);
     }
 
-    // timeOneMessage = elapsed / messageCount
-    // messagePerSend = 1000 / timeOneMessage
+    /**
+     * Background task that logs throughput stats.
+     */
+    private final class ScheduledLogTask implements Runnable {
+
+        public void run() {
+            // only run if CamelContext has been fully started
+            if (!camelContext.getStatus().isStarted()) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("ThroughputLogger cannot start because CamelContext(" + camelContext.getName() + ") has not been started yet");
+                }
+                return;
+            }
+
+            LOG.trace("ThroughputLogger started");
+            createGroupIntervalLogMessage();
+            LOG.trace("ThroughputLogger complete");
+        }
+    }
+
+    protected void createGroupIntervalLogMessage() {
+        int receivedCount = receivedCounter.get();
+
+        // if configured, hide log messages when no new messages have been received
+        if (groupActiveOnly && receivedCount == groupReceivedCount) {
+            return;
+        }
+
+        long time = System.currentTimeMillis();
+        if (groupStartTime == 0) {
+            groupStartTime = startTime;
+        }
+
+        long duration = time - groupStartTime;
+        long currentCount = receivedCount - groupReceivedCount;
+        double rate = messagesPerSecond(currentCount, groupStartTime, time);
+        double average = messagesPerSecond(receivedCount, startTime, time);
+
+        groupStartTime = time;
+        groupReceivedCount = receivedCount;
+
+        String message = getAction() + ": " + receivedCount + " messages so far. Last group took: " + duration
+                + " millis which is: " + numberFormat.format(rate)
+                + " messages per second. average: " + numberFormat.format(average);
+        log(message);
+    }
+
     protected double messagesPerSecond(long messageCount, long startTime, long endTime) {
+        // timeOneMessage = elapsed / messageCount
+        // messagePerSend = 1000 / timeOneMessage
         double rate = messageCount * 1000.0;
         rate /= endTime - startTime;
         return rate;
     }
+
 }

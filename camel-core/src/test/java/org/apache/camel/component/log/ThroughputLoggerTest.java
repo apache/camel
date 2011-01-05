@@ -25,7 +25,19 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ThroughputLoggerTest extends ContextTestSupport {
 
-    public void testSendMessageToLog() throws Exception {
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    public void testSendMessageToLogUsingGroupSize() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("seda:in").to("log:hello?groupSize=2").delay(100).to("mock:result");
+            }
+        });
+        context.start();
+        
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(4);
 
@@ -37,13 +49,21 @@ public class ThroughputLoggerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("seda:in").to("log:hello?groupSize=2").delay(100).to("mock:result");
+    public void testSendMessageToLogUsingGroupInterval() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("seda:in").to("log:hello?groupInterval=200&groupDelay=100&groupActiveOnly=false").delay(50).to("mock:result");
             }
-        };
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(20);
+
+        for (int i = 0; i < 20; i++) {
+            template.sendBody("seda:in", "Hello World");
+        }
+        
+        assertMockEndpointsSatisfied();
     }
 }

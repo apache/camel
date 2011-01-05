@@ -36,10 +36,15 @@ public class LogComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         LoggingLevel level = getLoggingLevel(parameters);
         Integer groupSize = getAndRemoveParameter(parameters, "groupSize", Integer.class);
+        Long groupInterval = getAndRemoveParameter(parameters, "groupInterval", Long.class);
 
         Logger logger;
         if (groupSize != null) {
             logger = new ThroughputLogger(remaining, level, groupSize);
+        } else if (groupInterval != null) {
+            Boolean groupActiveOnly = getAndRemoveParameter(parameters, "groupActiveOnly", Boolean.class, Boolean.TRUE);
+            Long groupDelay = getAndRemoveParameter(parameters, "groupDelay", Long.class);
+            logger = new ThroughputLogger(this.getCamelContext(), remaining, level, groupInterval, groupDelay, groupActiveOnly);
         } else {
             LogFormatter formatter = new LogFormatter();
             IntrospectionSupport.setProperties(formatter, parameters);
