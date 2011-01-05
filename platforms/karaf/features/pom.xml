@@ -39,6 +39,7 @@
       <antlr-bundle-version>2.7.7_2</antlr-bundle-version>
       <aopalliance-bundle-version>1.0_3</aopalliance-bundle-version>
       <asm-bundle-version>2.2.3_3</asm-bundle-version>
+      <aws-java-sdk-bundle-version>1.1.1_1-SNAPSHOT</aws-java-sdk-bundle-version>
       <bcel-bundle-version>5.2_2</bcel-bundle-version>
       <cglib-version>2.1_3_6</cglib-version>
       <cometd-java-server-bundle-version>1.0.1_1</cometd-java-server-bundle-version>
