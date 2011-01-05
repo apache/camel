@@ -57,6 +57,7 @@
     <module>camel-example-spring</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
+    <module>camel-example-spring-ws</module>
     <module>camel-example-spring-xquery</module>
     <module>camel-example-spring-security</module>
     <module>camel-example-tracer</module>
