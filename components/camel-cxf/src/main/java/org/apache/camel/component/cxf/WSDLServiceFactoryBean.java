@@ -16,16 +16,29 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.cxf.service.factory.AbstractServiceConfiguration;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.apache.cxf.service.invoker.Invoker;
 
 /**
  * A service factory bean class that create a service factory without requiring a service class
  * (SEI).
- *
+ * It will pick the first one service name and first one port/endpoint name in the WSDL, if 
+ * there is service name or port/endpoint name setted.
  * @version $Revision$
  */
 public class WSDLServiceFactoryBean extends ReflectionServiceFactoryBean {
+    
+    public WSDLServiceFactoryBean() {
+        // set up the service configure to help us find the service name and endpoint name from WSDL
+        WSDLServiceConfiguration configuration = new WSDLServiceConfiguration(this);
+        List<AbstractServiceConfiguration> list = new ArrayList<AbstractServiceConfiguration>();
+        list.add(configuration);
+        this.setServiceConfigurations(list);
+    }
 
     @Override
     protected void initializeWSDLOperations() {

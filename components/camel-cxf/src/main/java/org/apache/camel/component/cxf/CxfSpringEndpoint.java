@@ -162,8 +162,8 @@ public class CxfSpringEndpoint extends CxfEndpoint {
                 factoryBean.setEndpointName(new QName(getEndpointNamespace(), getEndpointLocalName()));
             }
             
-            ObjectHelper.notNull(factoryBean.getEndpointName(), "Please provide endpoint/port name");
-            ObjectHelper.notNull(factoryBean.getServiceName(), "Please provide service name");
+            checkName(factoryBean.getEndpointName(), "endpoint/port name");
+            checkName(factoryBean.getServiceName(), "service name");
             return (Client)factoryBean.create();
         }
     }
@@ -210,8 +210,8 @@ public class CxfSpringEndpoint extends CxfEndpoint {
         }
 
         if (cls == null) {
-            ObjectHelper.notNull(answer.getEndpointName(), "Please provide endpoint/port name");
-            ObjectHelper.notNull(answer.getServiceName(), "Please provide service name");
+            checkName(answer.getEndpointName(), "endpoint/port name");
+            checkName(answer.getServiceName(), "service name");
         }
         return answer;
     }

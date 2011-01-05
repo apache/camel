@@ -30,14 +30,10 @@
    <!-- Added the import for testing the CAMEL-329 -->
 
    <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9013/pizza_service/services/PizzaService"
-    		serviceClass="org.apache.camel.pizza.Pizza"/>
+    		wsdlURL="pizza_service.wsdl"/>
 
    <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9023/new_pizza_service/services/PizzaService"
-    		wsdlURL="pizza_service.wsdl"
-    		serviceClass="org.apache.camel.pizza.Pizza"
-    		endpointName="s:PizzaPort"
-    		serviceName="s:PizzaService"
-    	xmlns:s="http://camel.apache.org/pizza" />
+    		wsdlURL="pizza_service.wsdl"/>
   
 
 </beans>

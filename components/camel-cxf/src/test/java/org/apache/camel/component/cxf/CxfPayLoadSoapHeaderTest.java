@@ -45,20 +45,22 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfPayLoadSoapHeaderTest extends CamelTestSupport {
-    protected AbstractXmlApplicationContext applicationContext; 
-       
-    protected String routerEndpointURI = "cxf:bean:routerEndpoint?dataFormat=PAYLOAD";
-    protected String serviceEndpointURI = "cxf:bean:serviceEndpoint?dataFormat=PAYLOAD";
     
     private final QName serviceName = new QName("http://camel.apache.org/pizza", "PizzaService");
     
+    protected String getRouterEndpointURI() {
+        return "cxf:http://localhost:9013/pizza_service/services/PizzaService?wsdlURL=classpath:pizza_service.wsdl&dataFormat=PAYLOAD";
+    }
+    protected String getServiceEndpointURI() {
+        return "cxf:http://localhost:9023/new_pizza_service/services/PizzaService?wsdlURL=classpath:pizza_service.wsdl&dataFormat=PAYLOAD";
+    }     
     
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: payload
-                from(routerEndpointURI).process(new Processor() {
+                from(getRouterEndpointURI()).process(new Processor() {
                     @SuppressWarnings("unchecked")
                     public void process(Exchange exchange) throws Exception {
                         CxfPayload<SoapHeader> payload = exchange.getIn().getBody(CxfPayload.class);
@@ -77,26 +79,12 @@ public class CxfPayLoadSoapHeaderTest extends CamelTestSupport {
                     }
                     
                 })
-                .to(serviceEndpointURI);
+                .to(getServiceEndpointURI());
                 // END SNIPPET: payload
             }
         };
     }
-
-    @Before
-    public void setUp() throws Exception {
-        applicationContext = createApplicationContext();
-        super.setUp();
-        assertNotNull("Should have created a valid spring context", applicationContext);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
-        super.tearDown();
-    }
+    
     
     @BeforeClass
     public static void startService() {
@@ -132,16 +120,6 @@ public class CxfPayLoadSoapHeaderTest extends CamelTestSupport {
 
         return service.getPizzaPort();
     }
-    
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
-    }
-
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/PizzaEndpoints.xml");
-    }
-    
     
 
 }

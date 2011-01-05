@@ -27,7 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -208,8 +207,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertEquals("The response value is wrong", "q1=new&q2=world", response);
     }
 
-    @Test
-    @Ignore("TODO: Fixme")
+    @Test    
     public void testRestServerDirectlyGetCustomer() {
         // we cannot convert directly to Customer as we need camel-jaxb
         String response = template.requestBodyAndHeader("cxfrs:http://localhost:9002/customerservice/customers/123",

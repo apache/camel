@@ -360,9 +360,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         
     }
     
-    void checkName(String value, String name) {
+    void checkName(Object value, String name) {
         if (ObjectHelper.isEmpty(value)) {
-            LOG.warn("The " + name + "is empty, cxf will try to load the first one in wsdl for you");
+            LOG.warn("The " + name + " of " + this.getEndpointUri() + " is empty, cxf will try to load the first one in wsdl for you.");
         }
     }
 
@@ -384,8 +384,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         ServerFactoryBean answer = null;
         
         if (cls == null) {
-            ObjectHelper.notNull(portName, "Please provide endpoint/port name");
-            ObjectHelper.notNull(serviceName, "Please provide service name");
+            checkName(portName, " endpoint/port name");
+            checkName(serviceName, " service name");
             answer = new ServerFactoryBean(new WSDLServiceFactoryBean());
         } else if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
             answer = new JaxWsServerFactoryBean();
