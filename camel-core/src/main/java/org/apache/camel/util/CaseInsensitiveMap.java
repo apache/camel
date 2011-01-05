@@ -55,12 +55,12 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
 
     public CaseInsensitiveMap(int initialCapacity, float loadFactor) {
         super(initialCapacity, loadFactor);
-        originalKeys = new HashMap<String, String>(initialCapacity);
+        originalKeys = new HashMap<String, String>(initialCapacity, loadFactor);
     }
 
     public CaseInsensitiveMap(int initialCapacity) {
         super(initialCapacity);
-        originalKeys = new HashMap<String, String>();
+        originalKeys = new HashMap<String, String>(initialCapacity);
     }
 
     @Override
@@ -80,15 +80,32 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
         // invalidate views as we mutate
         entrySetView = null;
         String s = assembleKey(key);
-        originalKeys.put(s, key);
+        if (key.startsWith("Camel")) {
+            // use intern String for headers which is Camel* headers
+            // this reduces memory allocations needed for those common headers
+            originalKeys.put(s, key.intern());
+        } else {
+            originalKeys.put(s, key);
+        }
         return super.put(s, value);
     }
 
     @Override
     public synchronized void putAll(Map<? extends String, ?> map) {
+        entrySetView = null;
         if (map != null && !map.isEmpty()) {
             for (Map.Entry<? extends String, ?> entry : map.entrySet()) {
-                put(entry.getKey(), entry.getValue());
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                String s = assembleKey(key);
+                if (key.startsWith("Camel")) {
+                    // use intern String for headers which is Camel* headers
+                    // this reduces memory allocations needed for those common headers
+                    originalKeys.put(s, key.intern());
+                } else {
+                    originalKeys.put(s, key);
+                }
+                super.put(s, value);
             }
         }
     }
