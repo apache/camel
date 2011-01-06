@@ -31,25 +31,25 @@ public class SplitterNoAggregationStrategyTest extends ContextTestSupport {
 
     public void testSplitNoAggregationStrategy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedBodiesReceived("Hello World", "Bye World");
+        mock.expectedBodiesReceived("Hello World", "Bye World", "Hi World");
 
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceived("Hello World,Bye World");
+        result.expectedBodiesReceived("Hello World,Bye World,Hi World");
 
-        template.sendBody("direct:start", "Hello World,Bye World");
+        template.sendBody("direct:start", "Hello World,Bye World,Hi World");
 
         assertMockEndpointsSatisfied();
     }
 
     public void testSplitNoAggregationStrategyException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedBodiesReceived("Hello World", "Bye World");
+        mock.expectedBodiesReceived("Hello World", "Bye World","Hi World");
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);
 
         try {
-            template.sendBody("direct:start", "Hello World,Kaboom,Bye World");
+            template.sendBody("direct:start", "Hello World,Kaboom,Bye World,Hi World");
             fail("Should thrown an exception");
         } catch (CamelExecutionException e) {
             assertEquals("Forced", e.getCause().getMessage());

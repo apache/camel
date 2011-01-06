@@ -30,20 +30,20 @@ public class SplitterNoStopOnExceptionTest extends ContextTestSupport {
 
     public void testSplitNoStopOnExceptionOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedBodiesReceived("Hello World", "Bye World");
+        mock.expectedBodiesReceived("Hello World", "Bye World", "Hi World");
 
-        template.sendBody("direct:start", "Hello World,Bye World");
+        template.sendBody("direct:start", "Hello World,Bye World,Hi World");
 
         assertMockEndpointsSatisfied();
     }
 
     public void testSplitNoStopOnExceptionStop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        // we do not stop so we split to completion and thus we receive 2 messages
-        mock.expectedBodiesReceived("Hello World", "Bye World");
+        // we do not stop so we split to completion and thus we receive 3 messages
+        mock.expectedBodiesReceived("Hello World", "Bye World", "Hi World");
 
         try {
-            template.sendBody("direct:start", "Hello World,Kaboom,Bye World");
+            template.sendBody("direct:start", "Hello World,Kaboom,Bye World,Hi World");
             fail("Should thrown an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());

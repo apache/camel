@@ -16,43 +16,38 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
  */
-public class SplitterParallelNoStopOnExceptionTest extends ContextTestSupport {
+public class SplitterStreamingStopOnExceptionErrorHandlingTest extends ContextTestSupport {
 
-    public void testSplitParallelNoStopOnExceptionOk() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
+    public void testSplitterStreamingNoError() throws Exception {
+        getMockEndpoint("mock:a").expectedBodiesReceived("A", "B", "C", "D", "E");
+        getMockEndpoint("mock:b").expectedBodiesReceived("A", "B", "C", "D", "E");
+        getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E");
 
-        template.sendBody("direct:start", "Hello World,Bye World,Hi World");
+        template.sendBody("direct:start", "A,B,C,D,E");
 
         assertMockEndpointsSatisfied();
     }
 
-    public void testSplitParallelNoStopOnExceptionStop() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedMinimumMessageCount(0);
-        // we do NOT stop so we receive all messages except the one that goes kaboom
-        mock.allMessages().body().isNotEqualTo("Kaboom");
-        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Goodday World", "Bye World", "Hi World");
+    public void testSplitterStreamingWithError() throws Exception {
+        getMockEndpoint("mock:a").expectedBodiesReceived("A", "B", "Kaboom");
+        getMockEndpoint("mock:b").expectedBodiesReceived("A", "B");
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
         try {
-            template.sendBody("direct:start", "Hello World,Goodday World,Kaboom,Bye World,Hi World");
-            fail("Should thrown an exception");
+            template.sendBody("direct:start", "A,B,Kaboom,D,E");
+            fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Forced", cause.getMessage());
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            assertEquals("Cannot do this", e.getCause().getCause().getMessage());
         }
 
         assertMockEndpointsSatisfied();
@@ -63,21 +58,21 @@ public class SplitterParallelNoStopOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // use a pool with 2 concurrent tasks so we cannot run to fast
-                ExecutorService service = Executors.newFixedThreadPool(2);
-
                 from("direct:start")
-                        .split(body().tokenize(",")).parallelProcessing().executorService(service)
+                    .split(body().tokenize(",")).streaming().stopOnException()
+                        .to("mock:a")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = exchange.getIn().getBody(String.class);
                                 if ("Kaboom".equals(body)) {
-                                    throw new IllegalArgumentException("Forced");
+                                    throw new IllegalArgumentException("Cannot do this");
                                 }
                             }
-                        }).to("mock:split");
+                        })
+                        .to("mock:b")
+                    .end()
+                    .to("mock:result");
             }
         };
     }
-
 }
