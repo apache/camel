@@ -15,14 +15,14 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
+ <!-- START SNIPPET: service -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:osgi="http://www.springframework.org/schema/osgi"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/osgi  http://www.springframework.org/schema/osgi/spring-osgi.xsd">
-
+      
     <bean id="osgiServlet" class="org.apache.camel.component.servlet.CamelHttpTransportServlet"/>
      
     <osgi:service ref="osgiServlet">
@@ -37,3 +37,4 @@
     </osgi:service>
   
 </beans>
+<!-- END SNIPPET: service -->
