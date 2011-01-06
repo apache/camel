@@ -56,8 +56,10 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     private static final transient Log LOG = LogFactory.getLog(JdbcAggregationRepository.class);
     private static final String ID = "id";
     private static final String EXCHANGE = "exchange";
-    private final TransactionTemplate transactionTemplate;
-    private final TransactionTemplate transactionTemplateReadOnly;
+    private PlatformTransactionManager transactionManager;
+    private DataSource dataSource;
+    private TransactionTemplate transactionTemplate;
+    private TransactionTemplate transactionTemplateReadOnly;
     private JdbcTemplate jdbcTemplate;
     private LobHandler lobHandler = new DefaultLobHandler();
     private String repositoryName;
@@ -71,31 +73,40 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     /**
      * Creates an aggregation repository
      */
-    public JdbcAggregationRepository(PlatformTransactionManager transactionManager, String repositoryName, DataSource datasource) {
-        ObjectHelper.notNull(transactionManager, "The 'transactionManager' argument cannot be null.");
-        ObjectHelper.notNull(repositoryName, "The 'repositoryName' argument cannot be null.");
-        ObjectHelper.notNull(datasource, "The 'datasource' argument cannot be null.");
+    public JdbcAggregationRepository() {
+    }
 
-        this.transactionTemplate = new TransactionTemplate(transactionManager);
-        this.transactionTemplate.setPropagationBehavior(TransactionTemplate.PROPAGATION_REQUIRED);
-
-        this.transactionTemplateReadOnly = new TransactionTemplate(transactionManager);
-        this.transactionTemplateReadOnly.setPropagationBehavior(TransactionTemplate.PROPAGATION_REQUIRED);
-        this.transactionTemplateReadOnly.setReadOnly(true);
-
-        this.repositoryName = repositoryName;
-        this.jdbcTemplate = new JdbcTemplate(datasource);
+    /**
+     * Creates an aggregation repository with the three mandatory parameters
+     */
+    public JdbcAggregationRepository(PlatformTransactionManager transactionManager, String repositoryName, DataSource dataSource) {
+        this.setRepositoryName(repositoryName);
+        this.setTransactionManager(transactionManager);
+        this.setDataSource(dataSource);
     }
 
     /**
      * @param repositoryName the repositoryName to set
      */
-    public void setRepositoryName(String repositoryName) {
+    public final void setRepositoryName(String repositoryName) {
         this.repositoryName = repositoryName;
     }
 
-    public void setDataSource(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    public final void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+        
+        transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.setPropagationBehavior(TransactionTemplate.PROPAGATION_REQUIRED);
+
+        transactionTemplateReadOnly = new TransactionTemplate(transactionManager);
+        transactionTemplateReadOnly.setPropagationBehavior(TransactionTemplate.PROPAGATION_REQUIRED);
+        transactionTemplateReadOnly.setReadOnly(true);
+    }
+
+    public final void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+
+        jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -340,8 +351,9 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(repositoryName, "The repository name must be specified");
-        ObjectHelper.notNull(jdbcTemplate.getDataSource(), "Data Source cannot be null");
+        ObjectHelper.notNull(repositoryName, "RepositoryName");
+        ObjectHelper.notNull(transactionManager, "TransactionManager");
+        ObjectHelper.notNull(dataSource, "DataSource");
 
         // log number of existing exchanges
         int current = getKeys().size();

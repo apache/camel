@@ -45,15 +45,15 @@
     </jdbc:embedded-database>
 
     <bean id="repo1" class="org.apache.camel.component.jdbc.aggregationrepository.JdbcAggregationRepository">
-		<constructor-arg ref="txManager1" />
-		<constructor-arg value="aggregationRepo1" />
-		<constructor-arg ref="dataSource1" />
+        <property name="repositoryName" value="aggregationRepo1" />
+        <property name="transactionManager" ref="txManager1" />
+        <property name="dataSource" ref="dataSource1" />
     </bean>
 
-	<bean id="repo2" class="org.apache.camel.component.jdbc.aggregationrepository.JdbcAggregationRepository">
-		<constructor-arg ref="txManager2" />
-		<constructor-arg value="aggregationRepo2" />
-		<constructor-arg ref="dataSource2" />
+    <bean id="repo2" class="org.apache.camel.component.jdbc.aggregationrepository.JdbcAggregationRepository">
+        <property name="repositoryName" value="aggregationRepo2" />
+        <property name="transactionManager" ref="txManager2" />
+        <property name="dataSource" ref="dataSource2" />
     </bean>
 
     <bean id="txManager1" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
