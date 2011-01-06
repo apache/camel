@@ -175,7 +175,9 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      *
      * @param handled  handled or not
      * @return the builder
+     * @deprecated will be removed in Camel 3.0
      */
+    @Deprecated
     public CatchDefinition handled(boolean handled) {
         Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
         return handled(expression);
@@ -186,7 +188,9 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      *
      * @param handled  predicate that determines true or false
      * @return the builder
+     * @deprecated will be removed in Camel 3.0
      */
+    @Deprecated
     public CatchDefinition handled(Predicate handled) {
         setHandledPolicy(handled);
         return this;
@@ -197,7 +201,9 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      *
      * @param handled  expression that determines true or false
      * @return the builder
+     * @deprecated will be removed in Camel 3.0
      */
+    @Deprecated
     public CatchDefinition handled(Expression handled) {
         setHandledPolicy(toPredicate(handled));
         return this;

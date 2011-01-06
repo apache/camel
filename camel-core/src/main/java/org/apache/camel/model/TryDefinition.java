@@ -174,7 +174,9 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      *
      * @param handled  handled or not
      * @return the builder
+     * @deprecated will be removed in Camel 3.0
      */
+    @Deprecated
     public TryDefinition handled(boolean handled) {
         Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
         return handled(expression);
@@ -185,7 +187,9 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      *
      * @param handled  predicate that determines true or false
      * @return the builder
+     * @deprecated will be removed in Camel 3.0
      */
+    @Deprecated
     public TryDefinition handled(Predicate handled) {
         // we must use a delegate so we can use the fluent builder based on TryDefinition
         // to configure all with try .. catch .. finally
@@ -203,7 +207,9 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      *
      * @param handled  expression that determines true or false
      * @return the builder
+     * @deprecated will be removed in Camel 3.0
      */
+    @Deprecated
     public TryDefinition handled(Expression handled) {
         return handled(toPredicate(handled));
     }
