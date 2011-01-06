@@ -53,7 +53,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
-    private final transient Log LOG = LogFactory.getLog(JaxbDataFormat.class);
+    private static final transient Log LOG = LogFactory.getLog(JaxbDataFormat.class);
     private CamelContext camelContext;
     private JAXBContext context;
     private String contextPath;
