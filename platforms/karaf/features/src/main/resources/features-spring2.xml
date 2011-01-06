@@ -365,6 +365,13 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jdbc/${pom.version}</bundle>
   </feature>
+  <feature name='camel-jdbc-aggregator' version='${pom.version}'>
+    <bundle>mvn:org.springframework/spring-core/${spring-version}</bundle>
+    <bundle>mvn:org.springframework/spring-tx/${spring-version}</bundle>
+    <feature version='${pom.version}'>camel-core</feature>    
+    <bundle>mvn:org.springframework/spring-jdbc/${spring-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-jdbc-aggregator/${pom.version}</bundle>
+  </feature>
   <feature name='camel-jing' version='${pom.version}'>
     <feature version='${pom.version}'>camel-spring</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>

@@ -70,6 +70,7 @@
         <include>org.apache.camel:camel-jaxb</include>
         <include>org.apache.camel:camel-jcr</include>
         <include>org.apache.camel:camel-jdbc</include>
+        <include>org.apache.camel:camel-jdbc-aggregator</include>
         <include>org.apache.camel:camel-jetty</include>
         <include>org.apache.camel:camel-jibx</include>
         <include>org.apache.camel:camel-jing</include>

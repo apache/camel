@@ -73,6 +73,7 @@
     <geronimo-servlet-spec-version>1.1.1</geronimo-servlet-spec-version>
     <groovy-version>1.7.6</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
+    <h2-version>1.2.144</h2-version>
     <hamcrest-version>1.2-dev1</hamcrest-version>
     <hawtbuf-version>1.2</hawtbuf-version>
     <hawtdb-version>1.5</hawtdb-version>
@@ -399,6 +400,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jdbc</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jdbc-aggregator</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1283,6 +1289,11 @@
         <groupId>hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
         <version>${hsqldb-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>${h2-version}</version>
       </dependency>
 
       <!-- optional SNMP4J -->
