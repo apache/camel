@@ -78,11 +78,6 @@ public class ThroughputLogger extends Logger {
                             Long groupInterval, Long groupDelay, Boolean groupActiveOnly) {
         super(logName, level);
 
-        //initialize the startTime (since no messages may be received before a timer log event)
-        if (startTime == 0) {
-            startTime = System.currentTimeMillis();
-        }
-
         this.camelContext = camelContext;
         setGroupInterval(groupInterval);
         setGroupActiveOnly(groupActiveOnly);
@@ -227,13 +222,17 @@ public class ThroughputLogger extends Logger {
                 return;
             }
 
-            LOG.trace("ThroughputLogger started");
             createGroupIntervalLogMessage();
-            LOG.trace("ThroughputLogger complete");
         }
     }
 
     protected void createGroupIntervalLogMessage() {
+        
+        // this indicates that no messages have been received yet...don't log yet
+        if (startTime == 0) {
+            return;
+        }
+        
         int receivedCount = receivedCounter.get();
 
         // if configured, hide log messages when no new messages have been received
@@ -254,7 +253,7 @@ public class ThroughputLogger extends Logger {
         groupStartTime = time;
         groupReceivedCount = receivedCount;
 
-        String message = getAction() + ": " + receivedCount + " messages so far. Last group took: " + duration
+        String message = getAction() + ": " + currentCount + " new messages, with total " + receivedCount + " so far. Last group took: " + duration
                 + " millis which is: " + numberFormat.format(rate)
                 + " messages per second. average: " + numberFormat.format(average);
         log(message);

@@ -52,7 +52,7 @@ public class ThroughputLoggerTest extends ContextTestSupport {
     public void testSendMessageToLogUsingGroupInterval() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("seda:in").to("log:hello?groupInterval=200&groupDelay=100&groupActiveOnly=false").delay(50).to("mock:result");
+                from("seda:in").to("log:hello?groupInterval=200&groupDelay=400&groupActiveOnly=false").delay(50).to("mock:result");
             }
         });
         context.start();
