@@ -111,8 +111,19 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         Map<String, Object> triggerParameters = IntrospectionSupport.extractProperties(parameters, "trigger.");
         Map<String, Object> jobParameters = IntrospectionSupport.extractProperties(parameters, "job.");
 
-        // create the trigger either cron or simple
         Trigger trigger;
+
+        // if we're starting up and not running in Quartz clustered mode then check for a name conflict.
+        if (!isClustered()) {
+            // check to see if this trigger already exists
+            trigger = getScheduler().getTrigger(name, group);
+            if (trigger != null) {
+                String msg = "A Quartz job already exists with the name/group: " + name + "/" + group;
+                throw new IllegalArgumentException(msg);
+            }
+        }
+
+        // create the trigger either cron or simple
         if (ObjectHelper.isNotEmpty(cron)) {
             trigger = createCronTrigger(cron);
         } else {
@@ -232,29 +243,37 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         }
     }
 
-    public void removeJob(JobDetail job, Trigger trigger) throws SchedulerException {
+    public void pauseJob(Trigger trigger) throws SchedulerException {
         JOBS.decrementAndGet();
 
         if (isClustered()) {
-            // do not remove jobs which are clustered, as we want the jobs to continue running on the other nodes
+            // do not pause jobs which are clustered, as we want the jobs to continue running on the other nodes
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Cannot removing job using trigger: " + trigger.getGroup() + "/" + trigger.getName() + " as the JobStore is clustered.");
+                LOG.debug("Cannot pause job using trigger: " + trigger.getGroup() + "/" + trigger.getName() + " as the JobStore is clustered.");
             }
-            return;
-        }
-
-        // only unschedule volatile jobs
-        if (job.isVolatile()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Removing job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
-            }
-            getScheduler().unscheduleJob(trigger.getName(), trigger.getGroup());
         } else {
-            // but pause jobs so we can resume them if the application restarts
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Pausing job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
             }
             getScheduler().pauseTrigger(trigger.getName(), trigger.getGroup());
+            getScheduler().pauseJob(trigger.getName(), trigger.getGroup());
+        }
+    }
+
+    public void deleteJob(String name, String group) throws SchedulerException {
+        if (isClustered()) {
+            // do not pause jobs which are clustered, as we want the jobs to continue running on the other nodes
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Cannot delete job using trigger: " + group + "/" + name + " as the JobStore is clustered.");
+            }
+        } else {
+            Trigger trigger  = getScheduler().getTrigger(name, group);
+            if (trigger != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Deleting job using trigger: " + group + "/" + name);
+                }
+                getScheduler().unscheduleJob(name, group);
+            }
         }
     }
 

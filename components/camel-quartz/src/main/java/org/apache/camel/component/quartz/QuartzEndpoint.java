@@ -21,7 +21,7 @@ import java.util.Date;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Service;
+import org.apache.camel.ShutdownableService;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
@@ -42,7 +42,7 @@ import org.quartz.Trigger;
  *
  * @version $Revision:520964 $
  */
-public class QuartzEndpoint extends DefaultEndpoint implements Service {
+public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableService {
     private static final transient Log LOG = LogFactory.getLog(QuartzEndpoint.class);
 
     private LoadBalancer loadBalancer;
@@ -80,8 +80,12 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
         getComponent().addJob(detail, trigger);
     }
 
-    public void removeTrigger(final Trigger trigger, final JobDetail detail) throws SchedulerException {
-        getComponent().removeJob(detail, trigger);
+    public void pauseTrigger(final Trigger trigger) throws SchedulerException {
+        getComponent().pauseJob(trigger);
+    }
+
+    public void deleteTrigger(final Trigger trigger) throws SchedulerException {
+        getComponent().deleteJob(trigger.getName(), trigger.getGroup());
     }
 
     /**
@@ -218,7 +222,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
     public synchronized void consumerStopped(final QuartzConsumer consumer) throws SchedulerException {
         ObjectHelper.notNull(trigger, "trigger");
         if (started) {
-            removeTrigger(getTrigger(), getJobDetail());
+            pauseTrigger(getTrigger());
             started = false;
         }
 
@@ -245,4 +249,8 @@ public class QuartzEndpoint extends DefaultEndpoint implements Service {
         ServiceHelper.stopService(loadBalancer);
     }
 
+    public void shutdown() throws Exception {
+        ObjectHelper.notNull(trigger, "trigger");
+        deleteTrigger(getTrigger());
+    }
 }
