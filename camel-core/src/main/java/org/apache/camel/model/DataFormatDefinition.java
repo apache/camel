@@ -85,7 +85,7 @@ public class DataFormatDefinition extends IdentifiedType {
         if (dataFormat == null) {
             dataFormat = createDataFormat(routeContext);
             if (dataFormat == null) {
-                throw new IllegalArgumentException("Data format could not be created. Ensure that the dataformat is valid and the associated camel component is present on the classpath");
+                throw new IllegalArgumentException("Data format could not be created. Ensure that the dataformat is valid and the associated Camel component is present on the classpath");
             } else {
                 configureDataFormat(dataFormat);
             }
