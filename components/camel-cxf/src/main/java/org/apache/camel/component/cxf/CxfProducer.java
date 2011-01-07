@@ -232,7 +232,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         int experctMessagePartsSize = boi.getInput().getMessageParts().size();
         
         if (parameters.length < experctMessagePartsSize) {
-            throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Experct size "
+            throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Expect size "
                                                + experctMessagePartsSize + ", Parameter size " + parameters.length);
         }
         
@@ -255,7 +255,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             }
           
             if (holdersSize + experctMessagePartsSize + soapHeadersSize < parameters.length) {
-                throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Experct size "
+                throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Expect size "
                                                    + (experctMessagePartsSize + holdersSize + soapHeadersSize) + ", Parameter size " + parameters.length);
             }
         }
