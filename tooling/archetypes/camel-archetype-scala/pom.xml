@@ -32,8 +32,15 @@
   <artifactId>camel-archetype-scala</artifactId>
   <name>Camel :: Archetypes :: Scala Router</name>
   <description>Creates a new Camel project using Scala DSL.</description>
+  <packaging>maven-archetype</packaging>
 
   <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.archetype</groupId>
+        <artifactId>archetype-packaging</artifactId>
+      </extension>
+    </extensions>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
