@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
@@ -52,6 +54,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
@@ -120,6 +123,19 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     }
 
+    /**
+     * Class that represents prepared fine grained error handlers when processing multicasted/splitted exchanges
+     * <p/>
+     * See the <tt>createProcessorExchangePair</tt> and <tt>createErrorHandler</tt> methods.
+     */
+    static final class PreparedErrorHandler extends KeyValueHolder<RouteContext, Processor> {
+
+        public PreparedErrorHandler(RouteContext key, Processor value) {
+            super(key, value);
+        }
+
+    }
+
     private final CamelContext camelContext;
     private Collection<Processor> processors;
     private final AggregationStrategy aggregationStrategy;
@@ -128,6 +144,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     private final boolean stopOnException;
     private final ExecutorService executorService;
     private final long timeout;
+    private final ConcurrentMap<PreparedErrorHandler, Processor> errorHandlers = new ConcurrentHashMap<PreparedErrorHandler, Processor>();
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors) {
         this(camelContext, processors, null);
@@ -672,27 +689,53 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         // set property which endpoint we send to
         setToEndpoint(copy, prepared);
 
-        // TODO: optimize to reuse error handlers instead of re-building for each exchange pair
         // rework error handling to support fine grained error handling
+        prepared = createErrorHandler(exchange, prepared);
+
+        return new DefaultProcessorExchangePair(index, processor, prepared, copy);
+    }
+
+    protected Processor createErrorHandler(Exchange exchange, Processor processor) {
+        Processor answer = processor;
+
         if (exchange.getUnitOfWork() != null && exchange.getUnitOfWork().getRouteContext() != null) {
             // wrap the producer in error handler so we have fine grained error handling on
             // the output side instead of the input side
             // this is needed to support redelivery on that output alone and not doing redelivery
             // for the entire multicast block again which will start from scratch again
             RouteContext routeContext = exchange.getUnitOfWork().getRouteContext();
+
+            // create key for cache
+            final PreparedErrorHandler key = new PreparedErrorHandler(routeContext, processor);
+
+            // lookup cached first to reuse and preserve memory
+            answer = errorHandlers.get(key);
+            if (answer != null) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Using existing error handler for: " + processor);
+                }
+                return answer;
+            }
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Creating error handler for: " + processor);
+            }
             ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
             // create error handler (create error handler directly to keep it light weight,
             // instead of using ProcessorDefinition.wrapInErrorHandler)
             try {
-                prepared = builder.createErrorHandler(routeContext, prepared);
+                processor = builder.createErrorHandler(routeContext, processor);
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
-                prepared = new UnitOfWorkProcessor(prepared);
+                answer = new UnitOfWorkProcessor(processor);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
+
+            // add to cache
+            errorHandlers.putIfAbsent(key, answer);
         }
 
-        return new DefaultProcessorExchangePair(index, processor, prepared, copy);
+        return answer;
     }
 
     protected void doStart() throws Exception {
@@ -707,6 +750,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(processors);
+        errorHandlers.clear();
     }
 
     protected static void setToEndpoint(Exchange exchange, Processor processor) {
