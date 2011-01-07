@@ -43,7 +43,7 @@ public class SplitterNoAggregationStrategyTest extends ContextTestSupport {
 
     public void testSplitNoAggregationStrategyException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedBodiesReceived("Hello World", "Bye World","Hi World");
+        mock.expectedBodiesReceived("Hello World", "Bye World", "Hi World");
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);
