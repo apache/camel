@@ -18,7 +18,10 @@ package org.apache.camel.component.xquery;
 
 import java.lang.annotation.Annotation;
 
+import org.w3c.dom.Node;
+
 import net.sf.saxon.functions.Collection;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.component.bean.DefaultAnnotationExpressionFactory;
@@ -29,6 +32,7 @@ import org.apache.camel.language.NamespacePrefix;
  * @version $Revision$
  */
 public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
+
     @SuppressWarnings("unchecked")
     @Override
     public Expression createExpression(CamelContext camelContext, Annotation annotation,
@@ -37,12 +41,12 @@ public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressi
         XQueryBuilder builder = XQueryBuilder.xquery(xQuery);
         if (annotation instanceof XQuery) {
             XQuery xQueryAnnotation = (XQuery)annotation;
+            builder.setStripsAllWhiteSpace(xQueryAnnotation.stripsAllWhiteSpace());
+
             NamespacePrefix[] namespaces = xQueryAnnotation.namespaces();
             if (namespaces != null) {
                 for (NamespacePrefix namespacePrefix : namespaces) {
-                    // TODO
-                    // builder = builder.namespace(namespacePrefix.prefix(),
-                    // namespacePrefix.uri());
+                    builder = builder.namespace(namespacePrefix.prefix(), namespacePrefix.uri());
                 }
             }
         }
@@ -50,7 +54,12 @@ public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressi
             builder.setResultsFormat(ResultFormat.String);
         } else if (expressionReturnType.isAssignableFrom(Collection.class)) {
             builder.setResultsFormat(ResultFormat.List);
+        } else if (expressionReturnType.isAssignableFrom(Node.class)) {
+            builder.setResultsFormat(ResultFormat.DOM);
+        } else if (expressionReturnType.isAssignableFrom(byte[].class)) {
+            builder.setResultsFormat(ResultFormat.Bytes);
         }
         return builder;
     }
+
 }

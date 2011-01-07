@@ -46,6 +46,7 @@ import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.Whitespace;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -80,6 +81,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private Properties properties = new Properties();
     private Class resultType;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
+    private boolean stripsAllWhiteSpace = true;
 
     @Override
     public String toString() {
@@ -310,6 +312,16 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return this;
     }
 
+    public XQueryBuilder stripsAllWhiteSpace() {
+        setStripsAllWhiteSpace(true);
+        return this;
+    }
+
+    public XQueryBuilder stripsIgnorableWhiteSpace() {
+        setStripsAllWhiteSpace(false);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -332,7 +344,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
-        // change configuration, we must re intialize
+        // change configuration, we must re initialize
         initialized.set(false);
     }
 
@@ -342,7 +354,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public void setStaticQueryContext(StaticQueryContext staticQueryContext) {
         this.staticQueryContext = staticQueryContext;
-        // change context, we must re intialize
+        // change context, we must re initialize
         initialized.set(false);
     }
 
@@ -376,6 +388,14 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public void setResultType(Class resultType) {
         this.resultType = resultType;
+    }
+
+    public boolean isStripsAllWhiteSpace() {
+        return stripsAllWhiteSpace;
+    }
+
+    public void setStripsAllWhiteSpace(boolean stripsAllWhiteSpace) {
+        this.stripsAllWhiteSpace = stripsAllWhiteSpace;
     }
 
     // Implementation methods
@@ -457,6 +477,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             }
             configuration = new Configuration();
             configuration.setHostLanguage(Configuration.XQUERY);
+            configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
 
             staticQueryContext = new StaticQueryContext(getConfiguration());
             Set<Map.Entry<String, String>> entries = namespacePrefixes.entrySet();
