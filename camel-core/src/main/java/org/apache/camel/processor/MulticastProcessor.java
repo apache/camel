@@ -226,7 +226,6 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         final AtomicInteger total = new AtomicInteger(0);
 
-        final List<Future<Exchange>> tasks = new ArrayList<Future<Exchange>>();
         final Iterator<ProcessorExchangePair> it = pairs.iterator();
         while (it.hasNext()) {
             final ProcessorExchangePair pair = it.next();
@@ -263,7 +262,6 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     return subExchange;
                 }
             });
-            tasks.add(task);
 
             total.incrementAndGet();
         }
@@ -338,15 +336,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         if (timedOut || stoppedOnException) {
             if (timedOut && LOG.isDebugEnabled()) {
-                LOG.debug("Cancelling future tasks due timeout after " + timeout + " millis.");
+                LOG.debug("Cancelling tasks due timeout after " + timeout + " millis.");
             }
             if (stoppedOnException && LOG.isDebugEnabled()) {
-                LOG.debug("Cancelling future tasks due stopOnException.");
+                LOG.debug("Cancelling tasks due stopOnException.");
             }
             // cancel tasks as we timed out (its safe to cancel done tasks)
-            for (Future future : tasks) {
-                future.cancel(true);
-            }
+            running.set(false);
         }
 
         if (LOG.isDebugEnabled()) {
