@@ -502,6 +502,10 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-rmi/${pom.version}</bundle>
   </feature>
+  <feature name='camel-routebox' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-routebox/${pom.version}</bundle>
+  </feature>
   <feature name='camel-rss' version='${pom.version}'>
     <feature version='${pom.version}'>camel-atom</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
