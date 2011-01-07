@@ -189,6 +189,11 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         }
     }
 
+    @Override
+    protected Integer getExchangeIndex(Exchange exchange) {
+        return exchange.getProperty(Exchange.SPLIT_INDEX, Integer.class);
+    }
+
     public Expression getExpression() {
         return expression;
     }

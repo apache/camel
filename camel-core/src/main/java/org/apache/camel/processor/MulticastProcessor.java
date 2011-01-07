@@ -232,7 +232,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             final Exchange subExchange = pair.getExchange();
             updateNewExchange(subExchange, total.intValue(), pairs, it);
 
-            Future<Exchange> task = completion.submit(new Callable<Exchange>() {
+            completion.submit(new Callable<Exchange>() {
                 public Exchange call() throws Exception {
                     if (!running.get()) {
                         // do not start processing the task if we are not running
@@ -246,14 +246,16 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     }
 
                     // Decide whether to continue with the multicast or not; similar logic to the Pipeline
-                    boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + total.get(), LOG);
+                    Integer number = getExchangeIndex(subExchange);
+                    boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + number, LOG);
                     if (stopOnException && !continueProcessing) {
-                        if (subExchange.getException() != null) {
-                            // wrap in exception to explain where it failed
-                            throw new CamelExchangeException("Parallel processing failed for number " + total.get(), subExchange, subExchange.getException());
-                        }
                         // signal to stop running
                         running.set(false);
+                        // throw caused exception
+                        if (subExchange.getException() != null) {
+                            // wrap in exception to explain where it failed
+                            throw new CamelExchangeException("Parallel processing failed for number " + number, subExchange, subExchange.getException());
+                        }
                     }
 
                     if (LOG.isTraceEnabled()) {
@@ -318,7 +320,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 Exchange subExchange = future.get();
 
                 // Decide whether to continue with the multicast or not; similar logic to the Pipeline
-                boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + total.get(), LOG);
+                Integer number = getExchangeIndex(subExchange);
+                boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + number, LOG);
                 if (stopOnException && !continueProcessing) {
                     // we want to stop on exception and an exception or failure occurred
                     // this is similar to what the pipeline does, so we should do the same to not surprise end users
@@ -635,6 +638,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
     }
 
+    protected Integer getExchangeIndex(Exchange exchange) {
+        return exchange.getProperty(Exchange.MULTICAST_INDEX, Integer.class);
+    }
+
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
         List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>(processors.size());
 
@@ -665,6 +672,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         // set property which endpoint we send to
         setToEndpoint(copy, prepared);
 
+        // TODO: optimize to reuse error handlers instead of re-building for each exchange pair
         // rework error handling to support fine grained error handling
         if (exchange.getUnitOfWork() != null && exchange.getUnitOfWork().getRouteContext() != null) {
             // wrap the producer in error handler so we have fine grained error handling on
