@@ -84,7 +84,9 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
 
                 from("file:target/split")
                     .split(body().tokenize("\n")).streaming().parallelProcessing()
-                        .to("log:split?groupSize=1000");
+                        .to("log:split?groupSize=1000")
+                    .end()
+                    .log("Done splitting ${file:name}");
             }
         };
     }
