@@ -109,6 +109,13 @@ public class XmppBinding {
             }
         }
 
+        answer.put(XmppConstants.MESSAGE_TYPE, xmppMessage.getType());
+        answer.put(XmppConstants.SUBJECT, xmppMessage.getSubject());
+        answer.put(XmppConstants.THREAD_ID, xmppMessage.getThread());
+        answer.put(XmppConstants.FROM, xmppMessage.getFrom());
+        answer.put(XmppConstants.PACKET_ID, xmppMessage.getPacketID());
+        answer.put(XmppConstants.TO, xmppMessage.getTo());
+                
         return answer;
     }
 }
