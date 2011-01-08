@@ -312,6 +312,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
         allTasksSubmitted.set(true);
 
+        // its to hard to do parallel async routing so we let the caller thread be synchronously
+        // and have it pickup the replies and do the aggregation (eg we use a latch to wait)
         // wait for aggregation to be done
         if (LOG.isDebugEnabled()) {
             LOG.debug("Waiting for on-the-fly aggregation to complete aggregating " + total.get() + " responses.");
@@ -389,8 +391,6 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         private void aggregateOnTheFly() throws InterruptedException, ExecutionException {
-            // its to hard to do parallel async routing so we let the caller thread be synchronously
-            // and have it pickup the replies and do the aggregation
             boolean timedOut = false;
             boolean stoppedOnException = false;
             final StopWatch watch = new StopWatch();
