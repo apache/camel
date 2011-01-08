@@ -62,12 +62,12 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
         StopWatch watch = new StopWatch();
 
         NotifyBuilder builder = new NotifyBuilder(context).whenDone(lines + 1).create();
-        boolean done = builder.matches(5, TimeUnit.MINUTES);
+        boolean done = builder.matches(120, TimeUnit.SECONDS);
 
         log.info("Took " + TimeUtils.printDuration(watch.stop()));
 
         if (!done) {
-            throw new CamelException("Could not split file in 5 minutes");
+            throw new CamelException("Could not split file in 2 minutes");
         }
 
         // need a little sleep for capturing memory profiling
@@ -83,7 +83,7 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
                 //context.getExecutorServiceStrategy().getDefaultThreadPoolProfile().setMaxPoolSize(10);
 
                 from("file:target/split")
-                    .split(body().tokenize("\n")).parallelProcessing()
+                    .split(body().tokenize("\n")).streaming().parallelProcessing()
                         .to("log:split?groupSize=1000");
             }
         };
