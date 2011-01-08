@@ -47,6 +47,13 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(Byte.valueOf("4"), ObjectConverter.toByte("4"));
         assertEquals(null, ObjectConverter.toByte(new Date()));
     }
+    
+    public void testToClass() {
+        assertEquals(String.class, ObjectConverter.toClass(String.class));
+        assertEquals(String.class, ObjectConverter.toClass("java.lang.String"));
+        assertEquals(null, ObjectConverter.toClass(new Integer(4)));
+        assertEquals(null, ObjectConverter.toClass("foo.Bar"));
+    }
 
     public void testToShort() {
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort(Short.valueOf("4")));

@@ -84,6 +84,7 @@ public interface Exchange {
     String BATCH_COMPLETE             = "CamelBatchComplete";
     String BEAN_METHOD_NAME           = "CamelBeanMethodName";
     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
+    String BEAN_TYPE_NAME             = "CamelBeanTypeName";
     String BINDING                    = "CamelBinding";
 
     String CHARSET_NAME      = "CamelCharsetName";

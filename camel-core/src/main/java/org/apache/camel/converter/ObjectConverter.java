@@ -65,6 +65,7 @@ public final class ObjectConverter {
     /**
      * Creates an iterator over the value
      */
+    @SuppressWarnings("rawtypes")
     @Converter
     public static Iterator iterator(Object value) {
         return ObjectHelper.createIterator(value);
@@ -105,6 +106,21 @@ public final class ObjectConverter {
     @Converter
     public static String fromCharArray(char[] value) {
         return new String(value);
+    }
+    
+    /**
+     * Returns the converted value, or null if the value is null
+     */
+    @SuppressWarnings("rawtypes")
+    @Converter
+    public static Class toClass(Object value) {
+        if (value instanceof Class) {
+            return (Class) value;
+        } else if (value instanceof String) {
+            return ObjectHelper.loadClass((String) value);
+        } else {
+            return null;
+        }
     }
 
     /**

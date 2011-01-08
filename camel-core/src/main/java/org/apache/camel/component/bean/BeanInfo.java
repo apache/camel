@@ -129,10 +129,12 @@ public class BeanInfo {
         return null;
     }
 
+    @SuppressWarnings("rawtypes")
     public MethodInvocation createInvocation(Object pojo, Exchange exchange) throws AmbiguousMethodCallException, MethodNotFoundException {
         MethodInfo methodInfo = null;
 
         String name = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
+        Class type = exchange.getIn().getHeader(Exchange.BEAN_TYPE_NAME, Class.class);
         if (name != null) {
             if (hasMethod(name)) {
                 List<MethodInfo> methods = getOperations(name);
@@ -143,7 +145,7 @@ public class BeanInfo {
                     // there are more methods with that name so we cannot decide which to use
 
                     // but first lets try to choose a method and see if that comply with the name
-                    methodInfo = chooseMethod(pojo, exchange, name);
+                    methodInfo = chooseMethod(pojo, exchange, name, type);
                     if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
                         throw new AmbiguousMethodCallException(exchange, methods);
                     }
@@ -154,7 +156,7 @@ public class BeanInfo {
             }
         }
         if (methodInfo == null) {
-            methodInfo = chooseMethod(pojo, exchange, name);
+            methodInfo = chooseMethod(pojo, exchange, name, null);
         }
         if (methodInfo == null) {
             methodInfo = defaultMethod;
@@ -280,7 +282,7 @@ public class BeanInfo {
         return answer;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected MethodInfo createMethodInfo(Class clazz, Method method) {
         Class[] parameterTypes = method.getParameterTypes();
         Annotation[][] parametersAnnotations = method.getParameterAnnotations();
@@ -349,15 +351,17 @@ public class BeanInfo {
      * @param pojo the bean to invoke a method on
      * @param exchange the message exchange
      * @param name an optional name of the method that must match, use <tt>null</tt> to indicate all methods
+     * @param type an optional type of the method parameter that must match, use <tt>null</tt> to indicate all types
      * @return the method to invoke or null if no definitive method could be matched
      * @throws AmbiguousMethodCallException is thrown if cannot chose method due to ambiguous
      */
-    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name) throws AmbiguousMethodCallException {
+    @SuppressWarnings("rawtypes")
+    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name, Class type) throws AmbiguousMethodCallException {
         // @Handler should be select first
         // then any single method that has a custom @annotation
         // or any single method that has a match parameter type that matches the Exchange payload
         // and last then try to select the best among the rest
-
+        
         if (name != null) {
             // filter all lists to only include methods with this name
             removeNonMatchingMethods(operationsWithHandlerAnnotation, name);
@@ -368,6 +372,13 @@ public class BeanInfo {
             removeAllSetterOrGetterMethods(operationsWithHandlerAnnotation);
             removeAllSetterOrGetterMethods(operationsWithCustomAnnotation);
             removeAllSetterOrGetterMethods(operationsWithBody);
+        }
+        
+        if (type != null) {
+            // filter all lists to only include methods with this argument type
+            removeNonMatchingMethods(operationsWithHandlerAnnotation, type);
+            removeNonMatchingMethods(operationsWithCustomAnnotation, type);
+            removeNonMatchingMethods(operationsWithBody, type);
         }
 
         if (operationsWithHandlerAnnotation.size() > 1) {
@@ -404,6 +415,7 @@ public class BeanInfo {
         return null;
     }
     
+    @SuppressWarnings("rawtypes")
     private MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList)
         throws AmbiguousMethodCallException {
         // lets see if we can find a method who's body param type matches the message body
@@ -661,6 +673,19 @@ public class BeanInfo {
             MethodInfo info = it.next();
             if (!name.equals(info.getMethod().getName())) {
                 // name does not match so remove it
+                it.remove();
+            }
+        }
+    }
+    
+    @SuppressWarnings("rawtypes")
+    private static void removeNonMatchingMethods(List<MethodInfo> methods, Class type) {
+        Iterator<MethodInfo> it = methods.iterator();
+        while (it.hasNext()) {
+            MethodInfo info = it.next();
+            Class<?>[] parameterTypes = info.getMethod().getParameterTypes();
+            if (!(parameterTypes.length > 0 && parameterTypes[0].isAssignableFrom(type))) {
+                // type does not match so remove it
                 it.remove();
             }
         }
