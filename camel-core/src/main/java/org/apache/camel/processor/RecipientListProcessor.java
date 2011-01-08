@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -189,8 +190,10 @@ public class RecipientListProcessor extends MulticastProcessor {
         setToEndpoint(copy, prepared);
 
         // rework error handling to support fine grained error handling
-        prepared = createErrorHandler(exchange, prepared);
+        RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
+        prepared = createErrorHandler(routeContext, prepared);
 
+        // and create the pair
         return new RecipientProcessorExchangePair(index, producerCache, endpoint, producer, prepared, copy);
     }
 

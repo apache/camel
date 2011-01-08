@@ -285,6 +285,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             total.incrementAndGet();
         }
 
+        // TODO: in streaming mode we need to aggregate on-the-fly
+
         // its to hard to do parallel async routing so we let the caller thread be synchronously
         // and have it pickup the replies and do the aggregation
         boolean timedOut = false;
@@ -664,7 +666,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         int index = 0;
         for (Processor processor : processors) {
-            result.add(createProcessorExchangePair(index++, processor, exchange));
+            // copy exchange, and do not share the unit of work
+            Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+            // and add the pair
+            RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
+            result.add(createProcessorExchangePair(index++, processor, copy, routeContext));
         }
 
         return result;
@@ -676,34 +682,33 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * You <b>must</b> use this method to create the instances of {@link ProcessorExchangePair} as they
      * need to be specially prepared before use.
      *
-     * @param processor the processor
-     * @param exchange  the exchange
+     * @param index        the index
+     * @param processor    the processor
+     * @param exchange     the exchange
+     * @param routeContext the route context
      * @return prepared for use
      */
-    protected ProcessorExchangePair createProcessorExchangePair(int index, Processor processor, Exchange exchange) {
+    protected ProcessorExchangePair createProcessorExchangePair(int index, Processor processor,
+                                                                Exchange exchange, RouteContext routeContext) {
         Processor prepared = processor;
 
-        // copy exchange, and do not share the unit of work
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
-
         // set property which endpoint we send to
-        setToEndpoint(copy, prepared);
+        setToEndpoint(exchange, prepared);
 
         // rework error handling to support fine grained error handling
-        prepared = createErrorHandler(exchange, prepared);
+        prepared = createErrorHandler(routeContext, prepared);
 
-        return new DefaultProcessorExchangePair(index, processor, prepared, copy);
+        return new DefaultProcessorExchangePair(index, processor, prepared, exchange);
     }
 
-    protected Processor createErrorHandler(Exchange exchange, Processor processor) {
-        Processor answer = processor;
+    protected Processor createErrorHandler(RouteContext routeContext, Processor processor) {
+        Processor answer;
 
-        if (exchange.getUnitOfWork() != null && exchange.getUnitOfWork().getRouteContext() != null) {
+        if (routeContext != null) {
             // wrap the producer in error handler so we have fine grained error handling on
             // the output side instead of the input side
             // this is needed to support redelivery on that output alone and not doing redelivery
             // for the entire multicast block again which will start from scratch again
-            RouteContext routeContext = exchange.getUnitOfWork().getRouteContext();
 
             // create key for cache
             final PreparedErrorHandler key = new PreparedErrorHandler(routeContext, processor);
@@ -725,14 +730,18 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // instead of using ProcessorDefinition.wrapInErrorHandler)
             try {
                 processor = builder.createErrorHandler(routeContext, processor);
-                // and wrap in unit of work processor so the copy exchange also can run under UoW
-                answer = new UnitOfWorkProcessor(processor);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
 
+            // and wrap in unit of work processor so the copy exchange also can run under UoW
+            answer = new UnitOfWorkProcessor(processor);
+
             // add to cache
             errorHandlers.putIfAbsent(key, answer);
+        } else {
+            // and wrap in unit of work processor so the copy exchange also can run under UoW
+            answer = new UnitOfWorkProcessor(processor);
         }
 
         return answer;
@@ -781,8 +790,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     /**
      * Sets the given {@link org.apache.camel.processor.aggregate.AggregationStrategy} on the {@link Exchange}.
      *
-     * @param exchange  the exchange
-     * @param aggregationStrategy  the strategy
+     * @param exchange            the exchange
+     * @param aggregationStrategy the strategy
      */
     protected void setAggregationStrategyOnExchange(Exchange exchange, AggregationStrategy aggregationStrategy) {
         Map property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
