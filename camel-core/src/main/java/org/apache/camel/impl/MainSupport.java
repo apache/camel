@@ -58,6 +58,28 @@ public abstract class MainSupport extends ServiceSupport {
     protected final List<CamelContext> camelContexts = new ArrayList<CamelContext>();
     protected ProducerTemplate camelTemplate;
 
+    /**
+     * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
+     */
+    private final class HangupInterceptor extends Thread {
+        Log log = LogFactory.getLog(this.getClass());
+        MainSupport mainInstance;
+
+        public HangupInterceptor(MainSupport main) {
+            mainInstance = main;
+        }
+
+        @Override
+        public void run() {
+            log.info("Received hang up - stopping the main instance.");
+            try {
+                mainInstance.stop();
+            } catch (Exception ex) {
+                log.warn(ex);
+            }
+        }
+    }
+
     protected MainSupport() {
         addOption(new Option("h", "help", "Displays the help screen") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
@@ -106,7 +128,7 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * Runs this process with the given arguments
+     * Runs this process with the given arguments, and will wait until completed, or the JVM terminates.
      */
     public void run() throws Exception {
         if (!completed.get()) {
@@ -122,6 +144,15 @@ public abstract class MainSupport extends ServiceSupport {
                 LOG.error("Failed: " + e, e);
             }
         }
+    }
+
+    /**
+     * Enables the hangup support. Gracefully stops by calling stop() on a
+     * Hangup signal.
+     */
+    public void enableHangupSupport() {
+        HangupInterceptor interceptor = new HangupInterceptor(this);
+        Runtime.getRuntime().addShutdownHook(interceptor);
     }
 
     /**
