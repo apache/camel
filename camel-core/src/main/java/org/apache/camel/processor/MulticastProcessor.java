@@ -145,7 +145,6 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     private final boolean streaming;
     private final boolean stopOnException;
     private final ExecutorService executorService;
-    private ExecutorService aggregationExecutorService;
     private final long timeout;
     private final ConcurrentMap<PreparedErrorHandler, Processor> errorHandlers = new ConcurrentHashMap<PreparedErrorHandler, Processor>();
 
@@ -234,6 +233,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     protected void doProcessParallel(final Exchange original, final AtomicExchange result, final Iterable<ProcessorExchangePair> pairs,
                                      final boolean streaming, final AsyncCallback callback) throws Exception {
 
+        ObjectHelper.notNull(executorService, "ExecutorService", this);
+
         final CompletionService<Exchange> completion;
         if (streaming) {
             // execute tasks in parallel+streaming and aggregate in the order they are finished (out of order sequence)
@@ -259,8 +260,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             AggregateOnTheFlyTask task = new AggregateOnTheFlyTask(result, original, total, completion, running,
                     aggregationOnTheFlyDone, allTasksSubmitted, executionException);
 
-            // and start the task using the aggregation execution service
-            aggregationExecutorService.submit(task);
+            // and start the aggregation task so we can aggregate on-the-fly
+            executorService.submit(task);
         }
 
         LOG.trace("Starting to submit parallel tasks");
@@ -421,11 +422,15 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     }
                     future = completion.poll(left, TimeUnit.MILLISECONDS);
                 } else {
-                    // take will wait until the task is complete
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Polling completion task #" + aggregated);
                     }
-                    future = completion.take();
+                    // we must not block so poll every second
+                    future = completion.poll(1, TimeUnit.SECONDS);
+                    if (future == null) {
+                        // and continue loop which will recheck if we are done
+                        continue;
+                    }
                 }
 
                 if (future == null && timedOut) {
@@ -865,9 +870,6 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
         if (timeout > 0 && !isParallelProcessing()) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled");
-        }
-        if (isParallelProcessing()) {
-            aggregationExecutorService = getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "AggregationTask");
         }
         ServiceHelper.startServices(processors);
     }

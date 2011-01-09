@@ -111,6 +111,15 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
                                                                 isParallelProcessing(), getExecutorService(), isStreaming(), isStopOnException(), getTimeout());
         rlp.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
 
+        // start the service
+        try {
+            ServiceHelper.startService(rlp);
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
+
         // now let the multicast process the exchange
         return AsyncProcessorHelper.process(rlp, exchange, callback);
     }

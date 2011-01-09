@@ -59,6 +59,9 @@ public final class ServiceHelper {
      * Starts all of the given services
      */
     public static void startServices(Object... services) throws Exception {
+        if (services == null) {
+            return;
+        }
         for (Object value : services) {
             startService(value);
         }
@@ -68,6 +71,9 @@ public final class ServiceHelper {
      * Starts all of the given services
      */
     public static void startServices(Collection<?> services) throws Exception {
+        if (services == null) {
+            return;
+        }
         for (Object value : services) {
             if (value instanceof Service) {
                 Service service = (Service)value;
@@ -83,6 +89,9 @@ public final class ServiceHelper {
      * Stops all of the given services, throwing the first exception caught
      */
     public static void stopServices(Object... services) throws Exception {
+        if (services == null) {
+            return;
+        }
         List<Object> list = Arrays.asList(services);
         stopServices(list);
     }
@@ -106,6 +115,9 @@ public final class ServiceHelper {
      * Stops all of the given services, throwing the first exception caught
      */
     public static void stopServices(Collection<?> services) throws Exception {
+        if (services == null) {
+            return;
+        }
         Exception firstException = null;
         for (Object value : services) {
             if (value instanceof Service) {
@@ -134,6 +146,9 @@ public final class ServiceHelper {
      * Stops and shutdowns all of the given services, throwing the first exception caught
      */
     public static void stopAndShutdownServices(Object... services) throws Exception {
+        if (services == null) {
+            return;
+        }
         List<Object> list = Arrays.asList(services);
         stopAndShutdownServices(list);
     }
@@ -163,6 +178,9 @@ public final class ServiceHelper {
      * Stops and shutdowns all of the given services, throwing the first exception caught
      */
     public static void stopAndShutdownServices(Collection<?> services) throws Exception {
+        if (services == null) {
+            return;
+        }
         Exception firstException = null;
 
         for (Object value : services) {
@@ -194,6 +212,9 @@ public final class ServiceHelper {
     }
 
     public static void resumeServices(Collection<?> services) throws Exception {
+        if (services == null) {
+            return;
+        }
         Exception firstException = null;
         for (Object value : services) {
             if (value instanceof Service) {
@@ -254,6 +275,9 @@ public final class ServiceHelper {
     }
 
     public static void suspendServices(Collection<?> services) throws Exception {
+        if (services == null) {
+            return;
+        }
         Exception firstException = null;
         for (Object value : services) {
             if (value instanceof Service) {
