@@ -156,7 +156,8 @@ public class BeanInfo {
             }
         }
         if (methodInfo == null) {
-            methodInfo = chooseMethod(pojo, exchange, name, null);
+            // no name or type
+            methodInfo = chooseMethod(pojo, exchange, null, null);
         }
         if (methodInfo == null) {
             methodInfo = defaultMethod;

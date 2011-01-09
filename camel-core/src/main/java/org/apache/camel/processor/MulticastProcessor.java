@@ -381,11 +381,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 } else {
                     executionException.set(ObjectHelper.wrapRuntimeCamelException(e));
                 }
+            } finally {
+                // must signal we are done so the latch can open and let the other thread continue processing
+                LOG.trace("Signaling we are done aggregating on the fly");
+                aggregationOnTheFlyDone.countDown();
             }
-
-            // must signal we are done so the latch can open and let the other thread continue processing
-            LOG.trace("Signaling we are done aggregating on the fly");
-            aggregationOnTheFlyDone.countDown();
 
             LOG.trace("Aggregate on the fly task +++ done +++");
         }
@@ -399,7 +399,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // not a for loop as on the fly may still run
             while (!done) {
                 // check if we have already aggregate everything
-                if (allTasksSubmitted.get() && aggregated >= total.get() || stoppedOnException) {
+                if (allTasksSubmitted.get() && aggregated >= total.get()) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Done aggregating " + aggregated + " exchanges on the fly.");
                     }

@@ -49,10 +49,10 @@ public class ObjectConverterTest extends TestCase {
     }
     
     public void testToClass() {
-        assertEquals(String.class, ObjectConverter.toClass(String.class));
-        assertEquals(String.class, ObjectConverter.toClass("java.lang.String"));
-        assertEquals(null, ObjectConverter.toClass(new Integer(4)));
-        assertEquals(null, ObjectConverter.toClass("foo.Bar"));
+        assertEquals(String.class, ObjectConverter.toClass(String.class, null));
+        assertEquals(String.class, ObjectConverter.toClass("java.lang.String", null));
+        assertEquals(null, ObjectConverter.toClass(new Integer(4), null));
+        assertEquals(null, ObjectConverter.toClass("foo.Bar", null));
     }
 
     public void testToShort() {

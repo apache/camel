@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -113,11 +114,16 @@ public final class ObjectConverter {
      */
     @SuppressWarnings("rawtypes")
     @Converter
-    public static Class toClass(Object value) {
+    public static Class toClass(Object value, Exchange exchange) {
         if (value instanceof Class) {
             return (Class) value;
         } else if (value instanceof String) {
-            return ObjectHelper.loadClass((String) value);
+            // prefer to use class resolver API
+            if (exchange != null) {
+                return exchange.getContext().getClassResolver().resolveClass((String) value);
+            } else {
+                return ObjectHelper.loadClass((String) value);
+            }
         } else {
             return null;
         }

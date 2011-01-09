@@ -193,6 +193,9 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
             if (isExplicitMethod) {
                 in.setHeader(Exchange.BEAN_METHOD_NAME, prevMethod);
             }
+            if (isExplicitType) {
+                in.setHeader(Exchange.BEAN_TYPE_NAME, prevType);
+            }
         }
 
         // if the method returns something then set the value returned on the Exchange
