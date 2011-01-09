@@ -19,7 +19,6 @@ package org.apache.camel;
 import java.util.Date;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.Main;
 
 /**
  * @version $Revision: 909028 $
