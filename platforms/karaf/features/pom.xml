@@ -119,6 +119,7 @@
       <spring3-version>3.0.5.RELEASE</spring3-version>
       <spring-osgi-version>1.2.0</spring-osgi-version>
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
+      <spymemcached-bundle-version>2.5_1-SNAPSHOT</spymemcached-bundle-version>
       <stringtemplate-bundle-version>3.2_3</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_3</tagsoup-bundle-version>
       <velocity-bundle-version>1.7_1</velocity-bundle-version>

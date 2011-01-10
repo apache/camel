@@ -423,6 +423,11 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.juel/${juel-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-juel/${pom.version}</bundle>
   </feature>
+  <feature name='camel-kestrel' version='${pom.version}'>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spymemcached/${spymemcached-bundle-version}</bundle>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-kestrel/${pom.version}</bundle>
+  </feature>
   <feature name='camel-ldap' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-ldap/${pom.version}</bundle>
