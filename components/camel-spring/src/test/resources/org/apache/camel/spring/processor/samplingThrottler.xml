@@ -37,7 +37,7 @@
         </route>
         <route>
             <from uri="direct:sample-messageFrequency-via-dsl"/>
-            <sample messageFrequency="10">
+            <sample messageFrequency="5">
                 <to uri="mock:result"/>
             </sample>
         </route>
