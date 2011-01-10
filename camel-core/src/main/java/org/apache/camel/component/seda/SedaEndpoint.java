@@ -35,6 +35,7 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * An implementation of the <a
@@ -103,7 +104,11 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return conumserMulticastProcessor;
     }
     
-    protected synchronized void updateMulticastProcessor() {
+    protected synchronized void updateMulticastProcessor() throws Exception {
+        if (conumserMulticastProcessor != null) {
+            ServiceHelper.stopService(conumserMulticastProcessor);
+        }
+
         int size = getConsumers().size();
         if (size == 0 && multicastExecutor != null) {
             // stop the multicastExecutor
@@ -118,7 +123,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             processors.add(consumer.getProcessor());
         }
         conumserMulticastProcessor = new MulticastProcessor(getCamelContext(), processors, null, true, multicastExecutor, false, false, 0);
-   
+        ServiceHelper.startService(conumserMulticastProcessor);
     }
 
     public void setQueue(BlockingQueue<Exchange> queue) {
@@ -203,12 +208,12 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         producers.remove(producer);
     }
 
-    void onStarted(SedaConsumer consumer) {
+    void onStarted(SedaConsumer consumer) throws Exception {
         consumers.add(consumer);
         updateMulticastProcessor();
     }
 
-    void onStopped(SedaConsumer consumer) {
+    void onStopped(SedaConsumer consumer) throws Exception {
         consumers.remove(consumer);
         updateMulticastProcessor();
     }

@@ -27,7 +27,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.model.ExecutorServiceAwareDefinition;
 import org.apache.camel.spi.ExecutorServiceStrategy;
@@ -49,12 +49,12 @@ import org.apache.camel.util.ObjectHelper;
 public final class ExecutorServiceHelper {
 
     public static final String DEFAULT_PATTERN = "Camel Thread ${counter} - ${name}";
-    private static AtomicInteger threadCounter = new AtomicInteger();
+    private static AtomicLong threadCounter = new AtomicLong();
 
     private ExecutorServiceHelper() {
     }
 
-    private static int nextThreadCounter() {
+    private static long nextThreadCounter() {
         return threadCounter.getAndIncrement();
     }
 
@@ -152,15 +152,15 @@ public final class ExecutorServiceHelper {
     }
 
     /**
-     * Creates a new cached thread pool
+     * Creates a new cached thread pool.
+     * <p/>
+     * <b>Important:</b> Using cached thread pool is discouraged as they have no upper bound and can overload the JVM.
      *
      * @param pattern pattern of the thread name
      * @param name    ${name} in the pattern name
      * @param daemon  whether the threads is daemon or not
      * @return the created pool
-     * @deprecated using cached thread pool is discouraged as they have no upper bound and can overload the JVM
      */
-    @Deprecated
     public static ExecutorService newCachedThreadPool(final String pattern, final String name, final boolean daemon) {
         return Executors.newCachedThreadPool(new ThreadFactory() {
             public Thread newThread(Runnable r) {
@@ -187,7 +187,7 @@ public final class ExecutorServiceHelper {
      *
      * @param pattern      pattern of the thread name
      * @param name         ${name} in the pattern name
-     * @param corePoolSize the core size
+     * @param corePoolSize the core pool size
      * @param maxPoolSize  the maximum pool size
      * @return the created pool
      */
@@ -201,7 +201,7 @@ public final class ExecutorServiceHelper {
      *
      * @param pattern      pattern of the thread name
      * @param name         ${name} in the pattern name
-     * @param corePoolSize the core size
+     * @param corePoolSize the core pool size
      * @param maxPoolSize  the maximum pool size
      * @param maxQueueSize the maximum number of tasks in the queue, use <tt>Integer.MAX_VALUE</tt> or <tt>-1</tt> to indicate unbounded
      * @return the created pool
@@ -216,7 +216,7 @@ public final class ExecutorServiceHelper {
      *
      * @param pattern                  pattern of the thread name
      * @param name                     ${name} in the pattern name
-     * @param corePoolSize             the core size
+     * @param corePoolSize             the core pool size
      * @param maxPoolSize              the maximum pool size
      * @param keepAliveTime            keep alive time
      * @param timeUnit                 keep alive time unit

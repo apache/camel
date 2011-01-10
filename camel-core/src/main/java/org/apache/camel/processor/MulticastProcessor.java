@@ -144,6 +144,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     private final boolean streaming;
     private final boolean stopOnException;
     private final ExecutorService executorService;
+    private ExecutorService aggregateExecutorService;
     private final long timeout;
     private final ConcurrentMap<PreparedErrorHandler, Processor> errorHandlers = new ConcurrentHashMap<PreparedErrorHandler, Processor>();
 
@@ -233,6 +234,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                                      final boolean streaming, final AsyncCallback callback) throws Exception {
 
         ObjectHelper.notNull(executorService, "ExecutorService", this);
+        ObjectHelper.notNull(aggregateExecutorService, "AggregateExecutorService", this);
 
         final CompletionService<Exchange> completion;
         if (streaming) {
@@ -260,7 +262,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     aggregationOnTheFlyDone, allTasksSubmitted, executionException);
 
             // and start the aggregation task so we can aggregate on-the-fly
-            executorService.submit(task);
+            aggregateExecutorService.submit(task);
         }
 
         LOG.trace("Starting to submit parallel tasks");
@@ -383,11 +385,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 }
             } finally {
                 // must signal we are done so the latch can open and let the other thread continue processing
-                LOG.trace("Signaling we are done aggregating on the fly");
+                LOG.debug("Signaling we are done aggregating on the fly");
+                LOG.trace("Aggregate on the fly task +++ done +++");
                 aggregationOnTheFlyDone.countDown();
             }
-
-            LOG.trace("Aggregate on the fly task +++ done +++");
         }
 
         private void aggregateOnTheFly() throws InterruptedException, ExecutionException {
@@ -879,6 +880,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
         if (timeout > 0 && !isParallelProcessing()) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled");
+        }
+        if (isParallelProcessing() && aggregateExecutorService == null) {
+            // use cached thread pool so we ensure the aggregate on-the-fly task always will have assigned a thread
+            // and run the tasks when the task is submitted. If not then the aggregate task may not be able to run
+            // and signal completion during processing, which would lead to a dead-lock
+            aggregateExecutorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, "AggregateTask");
         }
         ServiceHelper.startServices(processors);
     }
