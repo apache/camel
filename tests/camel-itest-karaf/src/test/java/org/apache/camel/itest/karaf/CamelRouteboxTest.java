@@ -23,9 +23,9 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-public class CamelExecTest extends AbstractFeatureTest {
-    
-    public static final String COMPONENT = extractName(CamelExecTest.class);
+public class CamelRouteboxTest extends AbstractFeatureTest {
+
+    public static final String COMPONENT = extractName(CamelRouteboxTest.class);
 
     @Test
     public void test() throws Exception {
