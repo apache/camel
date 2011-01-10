@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,10 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration
-@Ignore
 public class JettyJmsTwowayTest extends AbstractJUnit4SpringContextTests {
-
-    // TODO: Jetty async producer needs to be implemented before this test can pass
 
     @Autowired
     protected CamelContext camelContext;
@@ -51,6 +47,5 @@ public class JettyJmsTwowayTest extends AbstractJUnit4SpringContextTests {
         });
         assertEquals("get result ", "<response><hello>Willem</hello></response>", exchange.getOut().getBody(String.class));
         template.stop();
-        Thread.sleep(2000);
     }
 }

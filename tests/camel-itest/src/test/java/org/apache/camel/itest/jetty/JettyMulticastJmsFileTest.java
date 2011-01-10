@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,10 +28,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration
-@Ignore
 public class JettyMulticastJmsFileTest extends AbstractJUnit4SpringContextTests {
-
-    // TODO: Jetty async producer needs to be implemented before this test can pass
 
     @Autowired
     protected CamelContext camelContext;

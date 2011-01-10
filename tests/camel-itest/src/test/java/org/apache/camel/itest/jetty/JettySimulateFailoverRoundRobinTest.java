@@ -25,16 +25,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
-
-    // TODO: Jetty async producer needs to be implemented before this test can pass
 
     private String bad = "jetty:http://localhost:8871/bad";
     private String bad2 = "jetty:http://localhost:8872/bad2";

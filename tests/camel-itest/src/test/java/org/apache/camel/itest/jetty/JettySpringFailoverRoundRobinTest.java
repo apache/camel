@@ -17,7 +17,6 @@
 package org.apache.camel.itest.jetty;
 
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,10 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version $Revision$
  */
-@Ignore
 public class JettySpringFailoverRoundRobinTest extends CamelSpringTestSupport {
-
-    // TODO: Jetty async producer needs to be implemented before this test can pass
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {

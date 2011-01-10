@@ -23,8 +23,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.interceptor.Tracer;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,11 +32,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration
-@Ignore
 public class JettyFileMulticastTest extends AbstractJUnit4SpringContextTests {
     
-    // TODO: Jetty async producer needs to be implemented before this test can pass
-
     @Autowired
     protected CamelContext camelContext;
 
