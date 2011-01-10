@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util.concurrent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.DelayQueue;
@@ -65,7 +67,8 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
             // if the answer is 0 then this task is ready to be taken
             return id - index.get();
         }
-        
+
+        @SuppressWarnings("unchecked")
         public int compareTo(Delayed o) {
             SubmitOrderFutureTask other = (SubmitOrderFutureTask) o;
             return (int) (this.id - other.id);
@@ -75,6 +78,12 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         protected void done() {
             // when we are done add to the completion queue
             completionQueue.add(this);
+        }
+
+        @Override
+        public String toString() {
+            // output using zero-based index
+            return "SubmitOrderedFutureTask[" + (id - 1) + "]";
         }
     }
 
@@ -89,7 +98,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         }
         SubmitOrderFutureTask f = new SubmitOrderFutureTask(id.incrementAndGet(), task);
         executor.execute(f);
-        return (Future<V>) f;
+        return f;
     }
 
     public Future<V> submit(Runnable task, Object result) {
@@ -104,18 +113,37 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
     @SuppressWarnings("unchecked")
     public Future<V> take() throws InterruptedException {
         index.incrementAndGet();
-        return (Future) completionQueue.take();
+        return completionQueue.take();
     }
 
     @SuppressWarnings("unchecked")
     public Future<V> poll() {
         index.incrementAndGet();
-        return (Future) completionQueue.poll();
+        Future answer = completionQueue.poll();
+        if (answer == null) {
+            // decrease counter if we didnt get any data
+            index.decrementAndGet();
+        }
+        return answer;
     }
 
     @SuppressWarnings("unchecked")
     public Future<V> poll(long timeout, TimeUnit unit) throws InterruptedException {
         index.incrementAndGet();
-        return (Future) completionQueue.poll(timeout, unit);
+        Future answer = completionQueue.poll(timeout, unit);
+        if (answer == null) {
+            // decrease counter if we didnt get any data
+            index.decrementAndGet();
+        }
+        return answer;
     }
+
+    /**
+     * Marks the current task as timeout, which allows you to poll the next
+     * tasks which may already have been completed.
+     */
+    public void timeoutTask() {
+        index.incrementAndGet();
+    }
+
 }

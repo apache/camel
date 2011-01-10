@@ -61,6 +61,7 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.AtomicException;
 import org.apache.camel.util.concurrent.AtomicExchange;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.camel.util.concurrent.SubmitOrderedCompletionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -115,12 +116,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         public void begin() {
             // noop
-            LOG.trace("ProcessorExchangePair #" + index + " begin: " + exchange);
         }
 
         public void done() {
             // noop
-            LOG.trace("ProcessorExchangePair #" + index + " done: " + exchange);
         }
 
     }
@@ -412,6 +411,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     // we are timed out but try to grab if some tasks has been completed
                     // poll will return null if no tasks is present
                     future = completion.poll();
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Polled completion task #" + aggregated + " after timeout to grab already completed tasks: " + future);
+                    }
                 } else if (timeout > 0) {
                     long left = timeout - watch.taken();
                     if (left < 0) {
@@ -451,7 +453,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         // log a WARN we timed out since it will not be aggregated and the Exchange will be lost
                         LOG.warn("Parallel processing timed out after " + timeout + " millis for number " + aggregated + ". This task will be cancelled and will not be aggregated.");
                     }
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Timeout occurred after " + timeout + " millis for number " + aggregated + " task.");
+                    }
                     timedOut = true;
+
+                    // mark that index as timed out, which allows us to try to retrieve
+                    // any already completed tasks in the next loop
+                    ExecutorServiceHelper.timeoutTask(completion);
                 } else {
                     // there is a result to aggregate
                     Exchange subExchange = future.get();

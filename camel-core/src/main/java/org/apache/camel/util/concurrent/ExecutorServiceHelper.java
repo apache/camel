@@ -17,6 +17,7 @@
 package org.apache.camel.util.concurrent;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -345,6 +346,20 @@ public final class ExecutorServiceHelper {
         }
 
         return null;
+    }
+
+    /**
+     * Timeout the completion service.
+     * <p/>
+     * This can be used to mark the completion service as timed out, allowing you to poll any already completed tasks.
+     * This applies when using the {@link SubmitOrderedCompletionService}.
+     *
+     * @param completionService the completion service.
+     */
+    public static void timeoutTask(CompletionService completionService) {
+        if (completionService instanceof SubmitOrderedCompletionService) {
+            ((SubmitOrderedCompletionService) completionService).timeoutTask();
+        }
     }
 
 }
