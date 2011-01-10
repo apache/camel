@@ -43,6 +43,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private boolean enableJmx;
     private boolean enableMultipartFilter;
     private Filter multipartFilter;
+    private Long continuationTimeout;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -132,5 +133,13 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     
     public Filter getMultipartFilter() {
         return multipartFilter;
+    }
+
+    public Long getContinuationTimeout() {
+        return continuationTimeout;
+    }
+
+    public void setContinuationTimeout(Long continuationTimeout) {
+        this.continuationTimeout = continuationTimeout;
     }
 }

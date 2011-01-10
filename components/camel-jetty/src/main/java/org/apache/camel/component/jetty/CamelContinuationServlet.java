@@ -42,9 +42,15 @@ public class CamelContinuationServlet extends CamelServlet {
     static final String EXCHANGE_ATTRIBUTE_ID = "CamelExchangeId";
 
     private static final long serialVersionUID = 1L;
+    // jetty will by default use 30000 millis as default timeout
+    private Long continuationTimeout;
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (log.isTraceEnabled()) {
+            log.trace("Service: " + request);
+        }
+
         // is there a consumer registered for the request.
         HttpConsumer consumer = resolve(request);
         if (consumer == null) {
@@ -56,6 +62,9 @@ public class CamelContinuationServlet extends CamelServlet {
         if (result == null) {
             // no asynchronous result so leverage continuation
             final Continuation continuation = ContinuationSupport.getContinuation(request);
+            if (continuationTimeout != null) {
+                continuation.setTimeout(continuationTimeout);
+            }
 
             // are we suspended and a request is dispatched initially?
             if (consumer.isSuspended() && continuation.isInitial()) {
@@ -106,7 +115,7 @@ public class CamelContinuationServlet extends CamelServlet {
 
         try {
             if (log.isTraceEnabled()) {
-                log.trace("Resuming continuation of exchangeId: " + result.getExchangeId());
+                log.trace("Resumed continuation and writing response for exchangeId: " + result.getExchangeId());
             }
             // now lets output to the response
             consumer.getBinding().writeResponse(result, response);
@@ -116,4 +125,11 @@ public class CamelContinuationServlet extends CamelServlet {
         }
     }
 
+    public Long getContinuationTimeout() {
+        return continuationTimeout;
+    }
+
+    public void setContinuationTimeout(Long continuationTimeout) {
+        this.continuationTimeout = continuationTimeout;
+    }
 }
