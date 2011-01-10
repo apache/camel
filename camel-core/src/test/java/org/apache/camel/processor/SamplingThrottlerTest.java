@@ -87,6 +87,32 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    public void testSamplingUsingmessageFrequency() throws Exception {
+        long totalMessages = 100;
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(10);
+        mock.setResultWaitTime(100);
+
+        for (int i = 0; i < totalMessages; i++) {
+            template.sendBody("direct:sample-messageFrequency", "<message>" + i + "</message>");
+        }
+        
+        mock.assertIsSatisfied();
+    }
+    
+    public void testSamplingUsingmessageFrequencyViaDSL() throws Exception {
+        long totalMessages = 50;
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(10);
+        mock.setResultWaitTime(100);
+
+        for (int i = 0; i < totalMessages; i++) {
+            template.sendBody("direct:sample-messageFrequency-via-dsl", "<message>" + i + "</message>");
+        }
+        
+        mock.assertIsSatisfied();
+    }
+    
     private void sendExchangesThroughDroppingThrottler(List<Exchange> sentExchanges, int messages) throws Exception {
         ProducerTemplate myTemplate = context.createProducerTemplate();
 
@@ -130,6 +156,15 @@ public class SamplingThrottlerTest extends ContextTestSupport {
                 from("direct:sample-configured-via-dsl")
                     .sample().samplePeriod(1).timeUnits(TimeUnit.SECONDS)
                     .to("mock:result");
+                
+                from("direct:sample-messageFrequency")
+                    .sample(10)
+                    .to("mock:result");
+                
+                from("direct:sample-messageFrequency-via-dsl")
+                    .sample().sampleMessageFrequency(5)
+                    .to("mock:result");
+
                 // END SNIPPET: e1
             }
         };

@@ -43,6 +43,9 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
     private Long samplePeriod;
 
     @XmlAttribute()
+    private Long messageFrequency;
+
+    @XmlAttribute()
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     private TimeUnit units;
 
@@ -54,9 +57,17 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
         this.units = units;
     }
 
+    public SamplingDefinition(long messageFrequency) {
+        this.messageFrequency = messageFrequency;
+    }
+    
     @Override
     public String toString() {
-        return "Sample[1 Exchange per " + getSamplePeriod() + " " + getUnits().toString().toLowerCase() + " -> " + getOutputs() + "]";
+        if (messageFrequency != null) {
+            return "Sample[1 Exchange per " + getMessageFrequency() + " messages received -> " + getOutputs() + "]";
+        } else {
+            return "Sample[1 Exchange per " + getSamplePeriod() + " " + getUnits().toString().toLowerCase() + " -> " + getOutputs() + "]";
+        }
     }
 
     @Override
@@ -66,22 +77,42 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
 
     @Override
     public String getLabel() {
-        return "sample[1 Exchange per " + getSamplePeriod() + " " + getUnits().toString().toLowerCase() + "]";
+        if (messageFrequency != null) {
+            return "sample[1 Exchange per " + getMessageFrequency() + " messages received]";
+        } else {
+            return "sample[1 Exchange per " + getSamplePeriod() + " " + getUnits().toString().toLowerCase() + "]";
+        }
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, true);
-        // should default be 1 sample period
-        long time = getSamplePeriod() != null ? getSamplePeriod() : 1L;
-        // should default be in seconds
-        TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
-        return new SamplingThrottler(childProcessor, time, tu);
+        
+        if (messageFrequency != null) {
+            return new SamplingThrottler(childProcessor, messageFrequency);
+        } else {
+            // should default be 1 sample period
+            long time = getSamplePeriod() != null ? getSamplePeriod() : 1L;
+            // should default be in seconds
+            TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
+            return new SamplingThrottler(childProcessor, time, tu);
+        }
     }
 
     // Fluent API
     // -------------------------------------------------------------------------
 
+    /**
+     * Sets the sample message count which only a single {@link org.apache.camel.Exchange} will pass through after this many received.
+     *
+     * @param messageFrequency 
+     * @return the builder
+     */
+    public SamplingDefinition sampleMessageFrequency(long messageFrequency) {
+        setMessageFrequency(messageFrequency);
+        return this;
+    }
+    
     /**
      * Sets the sample period during which only a single {@link org.apache.camel.Exchange} will pass through.
      *
@@ -115,6 +146,14 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
         this.samplePeriod = samplePeriod;
     }
 
+    public Long getMessageFrequency() {
+        return messageFrequency;
+    }
+
+    public void setMessageFrequency(Long messageFrequency) {
+        this.messageFrequency = messageFrequency;
+    }
+    
     public void setUnits(String units) {
         this.units = TimeUnit.valueOf(units);
     }

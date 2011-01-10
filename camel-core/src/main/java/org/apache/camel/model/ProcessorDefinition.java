@@ -1538,6 +1538,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a>
+     * Creates a sampling throttler allowing you to extract a sample of exchanges
+     * from the traffic through a route. It is configured with a sampling message frequency
+     * during which only a single exchange is allowed to pass through.
+     * All other exchanges will be stopped.
+     *
+     * @param messageFrequency this is the sample message frequency, only one exchange is 
+     *              allowed through for this many messages received
+     * @return the builder
+     */
+    public SamplingDefinition sample(long messageFrequency) {
+        SamplingDefinition answer = new SamplingDefinition(messageFrequency);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
      * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
