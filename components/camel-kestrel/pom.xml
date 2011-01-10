@@ -81,4 +81,16 @@
 
     </dependencies>
 
+    <!-- JVM assertions must be disabled when testin/using spymemcached, see CAMEL-3480 -->
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <enableAssertions>false</enableAssertions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
