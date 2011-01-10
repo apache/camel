@@ -176,7 +176,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             }
            
             // use a multicast processor to process it
-            MulticastProcessor mp = endpoint.getConumserMulticastProcessor();
+            MulticastProcessor mp = endpoint.getConsumerMulticastProcessor();
 
             // and use the asynchronous routing engine to support it
             AsyncProcessorHelper.process(mp, exchange, new AsyncCallback() {
