@@ -188,6 +188,7 @@ public class ThroughputLogger extends Logger {
     public void stop() throws Exception {
         if (logSchedulerService != null) {
             camelContext.getExecutorServiceStrategy().shutdownNow(logSchedulerService);
+            logSchedulerService = null;
         }
     }
 

@@ -212,8 +212,10 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         // must shutdown executor on stop to avoid overhead of having them running
         // use shutdown now to force the tasks which are polling for new exchanges
         // to stop immediately to avoid them picking up new exchanges arriving in the mean time
-        endpoint.getCamelContext().getExecutorServiceStrategy().shutdownNow(executor);
-        executor = null;
+        if (executor != null) {
+            endpoint.getCamelContext().getExecutorServiceStrategy().shutdownNow(executor);
+            executor = null;
+        }
     }
 
 }

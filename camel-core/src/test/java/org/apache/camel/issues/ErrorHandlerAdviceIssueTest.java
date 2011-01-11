@@ -54,6 +54,8 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedMessageCount(0);
 
         // TODO: stop timer route causes the test to fail
+        // we will revisit this in Camel 3.0 where interceptors/cross cutting concerns
+        // is applied at runtime
         // context.stopRoute("timer");
 
         template.sendBody("direct:start", "Hello World");
