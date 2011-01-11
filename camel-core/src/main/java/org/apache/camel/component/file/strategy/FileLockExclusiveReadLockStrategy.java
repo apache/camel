@@ -41,6 +41,7 @@ import org.apache.commons.logging.LogFactory;
 public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
     private static final transient Log LOG = LogFactory.getLog(FileLockExclusiveReadLockStrategy.class);
     private long timeout;
+    private long checkInterval = 1000;
     private FileLock lock;
     private String lockFileName;
 
@@ -128,10 +129,10 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
 
     private boolean sleep() {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
+            LOG.trace("Exclusive read lock not granted. Sleeping for " + checkInterval + " millis.");
         }
         try {
-            Thread.sleep(1000);
+            Thread.sleep(checkInterval);
             return false;
         } catch (InterruptedException e) {
             if (LOG.isDebugEnabled()) {
@@ -145,16 +146,12 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
         return timeout;
     }
 
-    /**
-     * Sets an optional timeout period.
-     * <p/>
-     * If the readlock could not be granted within the time period then the wait is stopped and the
-     * acquireReadLock returns <tt>false</tt>.
-     *
-     * @param timeout period in millis
-     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public void setCheckInterval(long checkInterval) {
+        this.checkInterval = checkInterval;
     }
 
 }

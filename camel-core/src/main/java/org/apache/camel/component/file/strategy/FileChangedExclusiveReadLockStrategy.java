@@ -34,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveReadLockStrategy {
     private static final transient Log LOG = LogFactory.getLog(FileChangedExclusiveReadLockStrategy.class);
     private long timeout;
+    private long checkInterval = 1000;
 
     @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
@@ -111,10 +112,10 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
 
     private boolean sleep() {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
+            LOG.trace("Exclusive read lock not granted. Sleeping for " + checkInterval + " millis.");
         }
         try {
-            Thread.sleep(1000);
+            Thread.sleep(checkInterval);
             return false;
         } catch (InterruptedException e) {
             if (LOG.isDebugEnabled()) {
@@ -130,6 +131,14 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
 
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public long getCheckInterval() {
+        return checkInterval;
+    }
+
+    public void setCheckInterval(long checkInterval) {
+        this.checkInterval = checkInterval;
     }
 
 }

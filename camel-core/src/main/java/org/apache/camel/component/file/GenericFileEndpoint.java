@@ -84,6 +84,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected Comparator<GenericFile<T>> sorter;
     protected Comparator<Exchange> sortBy;
     protected String readLock = "none";
+    protected long readLockCheckInterval = 1000;
     protected long readLockTimeout = 10000;
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
     protected boolean keepLastModified;
@@ -107,11 +108,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     public abstract Exchange createExchange(GenericFile<T> file);
 
     public abstract String getScheme();
-    
+
     public abstract char getFileSeparator();
-    
+
     public abstract boolean isAbsolute(String name);
-    
+
     /**
      * Return the file name that will be auto-generated for the given message if
      * none is provided
@@ -296,11 +297,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     public Boolean isIdempotent() {
         return idempotent != null ? idempotent : false;
     }
-    
+
     public String getCharset() {
         return charset;
     }
-    
+
     public void setCharset(String charset) {
         IOConverter.validateCharset(charset);
         this.charset = charset;
@@ -413,6 +414,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setReadLock(String readLock) {
         this.readLock = readLock;
+    }
+
+    public long getReadLockCheckInterval() {
+        return readLockCheckInterval;
+    }
+
+    public void setReadLockCheckInterval(long readLockCheckInterval) {
+        this.readLockCheckInterval = readLockCheckInterval;
     }
 
     public long getReadLockTimeout() {
@@ -530,9 +539,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
             message.setHeader(Exchange.FILE_NAME, name);
         }
     }
-    
+
     /**
      * Set up the exchange properties with the options of the file endpoint
+     *
      * @param exchange
      */
     public void configureExchange(Exchange exchange) {
@@ -545,6 +555,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     /**
      * Strategy to configure the move or premove option based on a String input.
      * <p/>
+     *
      * @param expression the original string input
      * @return configured string or the original if no modifications is needed
      */
@@ -597,6 +608,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         if (readLock != null) {
             params.put("readLock", readLock);
         }
+        if (readLockCheckInterval > 0) {
+            params.put("readLockCheckInterval", readLockCheckInterval);
+        }
         if (readLockTimeout > 0) {
             params.put("readLockTimeout", readLockTimeout);
         }
@@ -620,7 +634,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      * <p/>
      * This method should only be invoked if a done filename property has been set on this endpoint.
      *
-     * @param fileName  the file name
+     * @param fileName the file name
      * @return name of the associated done file name
      */
     protected String createDoneFileName(String fileName) {
@@ -660,7 +674,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      * <p/>
      * This method should only be invoked if a done filename property has been set on this endpoint.
      *
-     * @param fileName  the file name
+     * @param fileName the file name
      * @return <tt>true</tt> if its a done file, <tt>false</tt> otherwise
      */
     protected boolean isDoneFile(String fileName) {

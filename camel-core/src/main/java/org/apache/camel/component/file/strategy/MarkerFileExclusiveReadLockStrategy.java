@@ -84,6 +84,10 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         // noop
     }
 
+    public void setCheckInterval(long checkInterval) {
+        // noop
+    }
+
     private static void deleteLockFiles(File dir, boolean recursive) {
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {

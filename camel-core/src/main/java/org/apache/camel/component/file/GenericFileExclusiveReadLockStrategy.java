@@ -26,10 +26,10 @@ import org.apache.camel.Exchange;
  * <p/>
  * Camel supports out of the box the following strategies:
  * <ul>
- *   <li>FileRenameExclusiveReadLockStrategy waiting until its possible to rename the file.</li>
- *   <li>FileLockExclusiveReadLockStrategy acquiring a RW file lock for the duration of the processing.</li>
- *   <li>MarkerFileExclusiveReadLockStrategy using a marker file for acquiring read lock.</li>
- *   <li>FileChangedExclusiveReadLockStrategy using a file changed detection for acquiring read lock.</li>
+ * <li>FileRenameExclusiveReadLockStrategy waiting until its possible to rename the file.</li>
+ * <li>FileLockExclusiveReadLockStrategy acquiring a RW file lock for the duration of the processing.</li>
+ * <li>MarkerFileExclusiveReadLockStrategy using a marker file for acquiring read lock.</li>
+ * <li>FileChangedExclusiveReadLockStrategy using a file changed detection for acquiring read lock.</li>
  * </ul>
  */
 public interface GenericFileExclusiveReadLockStrategy<T> {
@@ -38,7 +38,7 @@ public interface GenericFileExclusiveReadLockStrategy<T> {
      * Allows custom logic to be run on startup preparing the strategy, such as removing old lock files etc.
      *
      * @param operations generic file operations
-     * @param endpoint the endpoint
+     * @param endpoint   the endpoint
      * @throws Exception can be thrown in case of errors
      */
     void prepareOnStartup(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint) throws Exception;
@@ -74,5 +74,19 @@ public interface GenericFileExclusiveReadLockStrategy<T> {
      * @param timeout period in millis
      */
     void setTimeout(long timeout);
+
+
+    /**
+     * Sets the check interval period.
+     * <p/>
+     * The check interval is used for sleeping between attempts to acquire read lock.
+     * Setting a high value allows to cater for <i>slow writes</i> in case the producer
+     * of the file is slow.
+     * <p/>
+     * The default period is 1000 millis.
+     *
+     * @param checkInterval interval in millis
+     */
+    void setCheckInterval(long checkInterval);
 
 }
