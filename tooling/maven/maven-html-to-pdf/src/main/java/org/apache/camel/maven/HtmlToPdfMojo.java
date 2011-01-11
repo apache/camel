@@ -59,7 +59,6 @@ public class HtmlToPdfMojo extends AbstractMojo {
      * The URL to the confluence page to convert.
      *
      * @parameter expression="${page}"
-     *            default-value="http://cwiki.apache.org/confluence/display/CAMEL/Index"
      * @required
      */
     private String page;
