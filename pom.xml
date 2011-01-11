@@ -72,7 +72,7 @@
 
   <issueManagement>
     <system>jira</system>
-    <url>https://issues.apache.org/activemq/browse/CAMEL</url>
+    <url>https://issues.apache.org/jira/browse/CAMEL</url>
   </issueManagement>
 
   <distributionManagement>
