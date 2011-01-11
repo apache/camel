@@ -17,7 +17,8 @@
 
 package org.apache.camel.component.cxf.util;
 
-import com.sun.org.apache.xerces.internal.dom.ElementImpl;
+import org.w3c.dom.Element;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -53,7 +54,7 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
                 from("direct:toString").split().xpath("//one:other", namespaces)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            ElementImpl element = (ElementImpl) exchange.getIn().getBody();
+                            Element element = (Element) exchange.getIn().getBody();
                             String message = CxfUtils.elementToString(element);
                             exchange.getOut().setBody(message);
                         }
@@ -72,7 +73,7 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         int i = 0;
         for (Exchange exchange : result.getExchanges()) {
-            ElementImpl element = (ElementImpl) exchange.getIn().getBody();           
+            Element element = (Element) exchange.getIn().getBody();           
             String message = CxfUtils.elementToString(element);            
             log.info("The splited message is " + message);
             assertTrue("The splitted message should start with <other", message.indexOf("<other") == 0);
