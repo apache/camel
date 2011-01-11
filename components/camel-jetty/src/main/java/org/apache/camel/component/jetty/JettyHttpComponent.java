@@ -95,6 +95,7 @@ public class JettyHttpComponent extends HttpComponent {
     protected boolean enableJmx;
     protected JettyHttpBinding jettyHttpBinding;
     protected Long continuationTimeout;
+    protected boolean useContinuation = true;
 
     class ConnectorRef {
         Server server;
@@ -140,6 +141,7 @@ public class JettyHttpComponent extends HttpComponent {
                                                               Boolean.class, true);
         Filter multipartFilter = resolveAndRemoveReferenceParameter(parameters, "multipartFilterRef", Filter.class);
         Long continuationTimeout = getAndRemoveParameter(parameters, "continuationTimeout", Long.class);
+        Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
 
         // configure http client if we have url configuration for it
         // http client is only used for jetty http producer (hence not very commonly used)
@@ -218,6 +220,9 @@ public class JettyHttpComponent extends HttpComponent {
 
         if (continuationTimeout != null) {
             endpoint.setContinuationTimeout(continuationTimeout);
+        }
+        if (useContinuation != null) {
+            endpoint.setUseContinuation(useContinuation);
         }
 
         setProperties(endpoint, parameters);
@@ -653,6 +658,14 @@ public class JettyHttpComponent extends HttpComponent {
         this.continuationTimeout = continuationTimeout;
     }
 
+    public boolean isUseContinuation() {
+        return useContinuation;
+    }
+
+    public void setUseContinuation(boolean useContinuation) {
+        this.useContinuation = useContinuation;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected CamelServlet createServletForConnector(Server server, Connector connector,
@@ -674,15 +687,26 @@ public class JettyHttpComponent extends HttpComponent {
             }
         }
 
-        // use Jetty continuations
-        CamelContinuationServlet camelServlet = new CamelContinuationServlet();
-        // configure timeout and log it so end user know what we are using
-        Long timeout = endpoint.getContinuationTimeout() != null ? endpoint.getContinuationTimeout() : getContinuationTimeout();
-        if (timeout != null) {
-            LOG.info("Using Jetty continuation timeout: " + timeout + " millis for: " + endpoint);
-            camelServlet.setContinuationTimeout(timeout);
+        CamelServlet camelServlet;
+        boolean jetty = endpoint.getUseContinuation() != null ? endpoint.getUseContinuation() : isUseContinuation();
+        if (jetty) {
+            // use Jetty continuations
+            CamelContinuationServlet jettyServlet = new CamelContinuationServlet();
+            // configure timeout and log it so end user know what we are using
+            Long timeout = endpoint.getContinuationTimeout() != null ? endpoint.getContinuationTimeout() : getContinuationTimeout();
+            if (timeout != null) {
+                LOG.info("Using Jetty continuation timeout: " + timeout + " millis for: " + endpoint);
+                jettyServlet.setContinuationTimeout(timeout);
+            } else {
+                LOG.info("Using default Jetty continuation timeout for: " + endpoint);
+            }
+
+            // use the jetty servlet
+            camelServlet = jettyServlet;
         } else {
-            LOG.info("Using default Jetty continuation timeout for: " + endpoint);
+            // do not use jetty so use a plain servlet
+            camelServlet = new CamelServlet();
+            LOG.info("Jetty continuation is disabled for: " + endpoint);
         }
 
         ServletHolder holder = new ServletHolder();

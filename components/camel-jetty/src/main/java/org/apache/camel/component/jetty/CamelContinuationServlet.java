@@ -96,6 +96,9 @@ public class CamelContinuationServlet extends CamelServlet {
             // must suspend before we process the exchange
             continuation.suspend();
 
+            if (log.isTraceEnabled()) {
+                log.trace("Processing request for exchangeId: " + exchange.getExchangeId());
+            }
             // use the asynchronous API to process the exchange
             consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
@@ -122,6 +125,9 @@ public class CamelContinuationServlet extends CamelServlet {
         } catch (IOException e) {
             log.error("Error processing request", e);
             throw e;
+        } catch (Exception e) {
+            log.error("Error processing request", e);
+            throw new ServletException(e);
         }
     }
 

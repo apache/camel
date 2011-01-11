@@ -43,39 +43,55 @@ public class CamelServlet extends HttpServlet {
    
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (log.isTraceEnabled()) {
+            log.trace("Service: " + request);
+        }
+
+        // Is there a consumer registered for the request.
+        HttpConsumer consumer = resolve(request);
+        if (consumer == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        // are we suspended?
+        if (consumer.isSuspended()) {
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            return;
+        }
+
+        // create exchange and set data on it
+        Exchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
+        if (consumer.getEndpoint().isBridgeEndpoint()) {
+            exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+        }
+        if (consumer.getEndpoint().isDisableStreamCache()) {
+            exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
+        }
+
+        HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
+        exchange.setIn(new HttpMessage(exchange, request, response));
+
         try {
-
-            // Is there a consumer registered for the request.
-            HttpConsumer consumer = resolve(request);
-            if (consumer == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
+            if (log.isTraceEnabled()) {
+                log.trace("Processing request for exchangeId: " + exchange.getExchangeId());
             }
-
-            // are we suspended?
-            if (consumer.isSuspended()) {
-                response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-                return;
-            }
-
-            // create exchange and set data on it
-            Exchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
-            if (consumer.getEndpoint().isBridgeEndpoint()) {
-                exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
-            }
-            if (consumer.getEndpoint().isDisableStreamCache()) {
-                exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
-            }
-            
-            HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
-            exchange.setIn(new HttpMessage(exchange, request, response));
-
-            // Have the camel process the HTTP exchange.
+            // process the exchange
             consumer.getProcessor().process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+        try {
+            if (log.isTraceEnabled()) {
+                log.trace("Writing response for exchangeId: " + exchange.getExchangeId());
+            }
 
             // now lets output to the response
             consumer.getBinding().writeResponse(exchange, response);
-
+        } catch (IOException e) {
+            log.error("Error processing request", e);
+            throw e;
         } catch (Exception e) {
             log.error("Error processing request", e);
             throw new ServletException(e);
