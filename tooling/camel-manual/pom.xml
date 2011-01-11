@@ -56,7 +56,8 @@
               </execution>
             </executions>    
             <configuration>
-              <page>https://cwiki.apache.org/confluence/display/CAMEL/Book+In+One+Page</page>
+              <page>http://camel.apache.org/book-in-one-page.html</page>
+              <contentDivClass>wiki-content maincontent</contentDivClass>
               <head><![CDATA[ 
                   <link href="file:${basedir}/src/styles/print.css" rel="stylesheet" type="text/css" />
                   <style type="text/css">
