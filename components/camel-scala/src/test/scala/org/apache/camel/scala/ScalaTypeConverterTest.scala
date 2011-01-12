@@ -25,7 +25,9 @@ import org.apache.camel.impl.DefaultPackageScanClassResolver
 import org.apache.camel.impl.converter.DefaultTypeConverter
 import org.apache.camel.util.ReflectionInjector
 import org.apache.camel.util.ServiceHelper
+import scala.xml.Elem
 
+import javax.xml.parsers.DocumentBuilderFactory
 import org.w3c.dom.Document
 
 /**
@@ -40,12 +42,40 @@ class ScalaTypeConverterTest extends TestCase {
     // noop
   }
 
-  // TODO: Fixme, fails on Linux
-  def xxxtestDocumentConverter = {
+  def testDocumentConverter = {
     ServiceHelper.startService(converter)
     val result = converter.convertTo(classOf[Document], <persons/>)
     assertNotNull(result)
     assertNotNull(result.getElementsByTagName("persons"))
   }
 
+  def testXmlStringToElemConverter = {
+    ServiceHelper.startService(converter)
+    val result = converter.convertTo(classOf[Elem], "<persons/>")
+    assertNotNull(result)
+    assertEquals(<persons/>, result)
+  }
+
+  def testDomDocumentToElemConverter = {
+    val factory = DocumentBuilderFactory.newInstance()
+    val parser = factory.newDocumentBuilder()
+    val doc = parser.newDocument()
+    val root = doc.createElement("persons")
+    doc.appendChild(root)
+    ServiceHelper.startService(converter)
+    val result = converter.convertTo(classOf[Elem], doc)
+    assertNotNull(result)
+    assertEquals(<persons/>, result)
+  }
+
+  def testDomNodeToElemConverter = {
+    val factory = DocumentBuilderFactory.newInstance()
+    val parser = factory.newDocumentBuilder()
+    val doc = parser.newDocument()
+    val node = doc.createElement("persons")
+    ServiceHelper.startService(converter)
+    val result = converter.convertTo(classOf[Elem], node)
+    assertNotNull(result)
+    assertEquals(<persons/>, result)
+  }
 }

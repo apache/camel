@@ -20,6 +20,9 @@ import _root_.scala.xml.Elem
 
 import org.apache.camel.Converter
 import org.apache.camel.converter.jaxp.XmlConverter
+import scala.xml.XML
+import org.w3c.dom.Document
+import org.w3c.dom.Node
 
 /**
  * Converter implementation for supporting some common Scala types within Apache Camel
@@ -31,4 +34,12 @@ import org.apache.camel.converter.jaxp.XmlConverter
    @Converter
    def convertToDocument(xml: Elem) = converter.toDOMDocument(xml.toString)
 
+   @Converter
+   def convertToElem(xmlString: String) = XML.loadString(xmlString)
+
+   @Converter
+   def domDocumentToElem(doc: Document) = XML.load(converter.toInputStream(doc))
+
+   @Converter
+   def domNodeToElem(node: Node) = XML.loadString(converter.toString(node, null))
 }
