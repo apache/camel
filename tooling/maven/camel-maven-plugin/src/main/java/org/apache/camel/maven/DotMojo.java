@@ -50,7 +50,7 @@ import org.codehaus.plexus.util.cli.Commandline;
  *
  * @version $Revision$
  * @goal dot
- * @requiresDependencyResolution runtime
+ * @requiresDependencyResolution test
  * @phase prepare-package
  * @execute phase="test-compile"
  * @see <a href="http://www.graphviz.org/">GraphViz</a>
