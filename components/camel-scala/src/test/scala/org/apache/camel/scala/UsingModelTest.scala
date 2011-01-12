@@ -37,7 +37,7 @@ class UsingModelTest extends TestCase {
     val bean = new BeanDefinition("myBean", "someMethod")
     route.addOutput(bean)
 
-    println("Created route: " + route)
+    assertEquals("Route[[From[seda:foo]] -> [Bean[ref:myBean method: someMethod]]]", route.toString())
   }
 
 }
