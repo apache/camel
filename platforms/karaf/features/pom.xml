@@ -77,7 +77,7 @@
       <isorelax-bundle-version>20050913_1</isorelax-bundle-version>
       <jackrabbit-version>1.5.3</jackrabbit-version>
       <jaxb-bundle-version>2.2.1.1_1</jaxb-bundle-version>
-      <jasypt-bundle-version>1.6_1</jasypt-bundle-version>
+      <jasypt-bundle-version>1.7_2-SNAPSHOT</jasypt-bundle-version>
       <jetty6-bundle-version>6.1.22_1</jetty6-bundle-version>
       <jexcelapi-bundle-version>2.4.2_2</jexcelapi-bundle-version>
       <javax.el-bundle-version>2.1.0</javax.el-bundle-version>
@@ -85,6 +85,7 @@
       <jdom-bundle-version>1.1_2</jdom-bundle-version>
       <jettison-bundle-version>1.2</jettison-bundle-version>
       <jing-bundle-version>20030619_1</jing-bundle-version>
+      <jibx-bundle-version>1.2.2_1-SNAPSHOT</jibx-bundle-version>
       <jodatime-bundle-version>1.5.2_2</jodatime-bundle-version>
       <josql-bundle-version>1.5_3</josql-bundle-version>
       <jsch-bundle-version>0.1.44_1</jsch-bundle-version>
@@ -146,13 +147,19 @@
     	    <artifactId>org.osgi.core</artifactId>
     	    <version>4.2.0</version>
     	    <scope>provided</scope>
-    	</dependency>        
-    	<dependency>
-    	    <groupId>org.ops4j.pax.logging</groupId>
-    	    <artifactId>pax-logging-api</artifactId>
-    	    <version>1.4</version>
-    	    <scope>provided</scope>
     	</dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-api</artifactId>
+            <version>${pax-logging-version}</version>
+            <scope>provided</scope>
+        </dependency>        
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-service</artifactId>
+            <version>${pax-logging-version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.framework</artifactId>

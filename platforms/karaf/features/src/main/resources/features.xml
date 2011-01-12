@@ -260,6 +260,7 @@
   </feature>
   <feature name='camel-dozer' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
     <bundle>mvn:org.ops4j.pax.web/pax-web-jsp/${pax.web.version}</bundle>
     <bundle>mvn:net.sf.dozer/dozer-osgi/${dozer-bundle-version}</bundle>
     <bundle>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
@@ -267,6 +268,10 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlbeans/${xmlbeans-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-dozer/${pom.version}</bundle>
+  </feature>
+  <feature name='camel-eventAdmin' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-eventAdmin/${pom.version}</bundle>
   </feature>
   <feature name='camel-exec' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
@@ -371,6 +376,16 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jing/${jing-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jing/${pom.version}</bundle>
   </feature>
+  <feature name='camel-jibx' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-jibx/${pom.version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jibx/${jibx-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.joda-time/${jodatime-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/${dom4j-bundle-version}</bundle>
+  </feature>
   <feature name='camel-jdbc' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jdbc/${pom.version}</bundle>
@@ -472,6 +487,10 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javassist/${javassist-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ognl/${pom.version}</bundle>
+  </feature>
+  <feature name='camel-paxlogging' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>    
+    <bundle>mvn:org.apache.camel/camel-paxlogging/${pom.version}</bundle>
   </feature>
   <feature name='camel-printer' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
@@ -580,6 +599,9 @@
   </feature>
   <feature name='camel-spring-ws' version='${pom.version}'>
     <feature version='${pom.version}'>camel-spring</feature>
+    <bundle>mvn:javax.mail/mail/${javax-mail-version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
+    <bundle>mvn:org.springframework/spring-jms/${spring3-version}</bundle>
     <bundle>mvn:org.springframework/spring-web/${spring3-version}</bundle>
     <bundle>mvn:org.springframework/spring-webmvc/${spring3-version}</bundle>
     <bundle>mvn:org.springframework.ws/spring-xml/${spring-ws-version}</bundle>
@@ -604,6 +626,10 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/${antlr-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.stringtemplate/${stringtemplate-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-stringtemplate/${pom.version}</bundle>
+  </feature>
+  <feature name='camel-syslog' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-syslog/${pom.version}</bundle>
   </feature>
   <feature name='camel-tagsoup' version='${pom.version}'>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.tagsoup/${tagsoup-bundle-version}</bundle>
