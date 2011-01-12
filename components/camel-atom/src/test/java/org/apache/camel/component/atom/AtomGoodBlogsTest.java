@@ -23,43 +23,38 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 
 /**
- * Unit test with good sample for the wiki documentation
+ * Example for wiki documentation
  */
-public class AtomGoodBlogsTest extends CamelTestSupport {
+public class AtomGoodBlogsTest extends TestSupport {
 
     // START SNIPPET: e1
 
     // This is the CamelContext that is the heart of Camel
     private CamelContext context;
 
-    @Override
     protected CamelContext createCamelContext() throws Exception {
-        // We initialize Camel
 
-        SimpleRegistry registry = new SimpleRegistry();
         // First we register a blog service in our bean registry
+        SimpleRegistry registry = new SimpleRegistry();
         registry.put("blogService", new BlogService());
 
         // Then we create the camel context with our bean registry
         context = new DefaultCamelContext(registry);
 
         // Then we add all the routes we need using the route builder DSL syntax
-        context.addRoutes(createRouteBuilder());
-
-        // And finally we must start Camel to let the magic routing begins
-        context.start();
+        context.addRoutes(createMyRoutes());
 
         return context;
     }
 
     /**
-     * This is the route builder where we create our routes in the advanced Camel DSL syntax
+     * This is the route builder where we create our routes using the Camel DSL
      */
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createMyRoutes() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // We pool the atom feeds from the source for further processing in the seda queue
@@ -85,21 +80,27 @@ public class AtomGoodBlogsTest extends CamelTestSupport {
     }
 
     /**
-     * This is the actual junit test method that does the assertion that our routes is working
-     * as expected
+     * This is the actual junit test method that does the assertion that our routes is working as expected
      */
     @Test
     public void testFiltering() throws Exception {
+        // create and start Camel
+        context = createCamelContext();
+        context.start();
+
         // Get the mock endpoint
         MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
 
-        // There should be two good blog entries from the feed
+        // There should be at least two good blog entries from the feed
         mock.expectedMinimumMessageCount(2);
 
         // Asserts that the above expectations is true, will throw assertions exception if it failed
         // Camel will default wait max 20 seconds for the assertions to be true, if the conditions
         // is true sooner Camel will continue
         mock.assertIsSatisfied();
+
+        // stop Camel after use
+        context.stop();
     }
 
     /**
