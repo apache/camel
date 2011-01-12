@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -24,10 +23,9 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("Somehow camel-spring-ws bundle doesnt register the component")
-public class CamelSpringWsTest extends AbstractFeatureTest {
+public class CamelSyslogTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelSpringWsTest.class);
+    public static final String COMPONENT = extractName(CamelSyslogTest.class);
 
     @Test
     public void test() throws Exception {
@@ -36,8 +34,7 @@ public class CamelSpringWsTest extends AbstractFeatureTest {
 
     @Configuration
     public static Option[] configure() {
-        // does not work with felix
-        return configure(COMPONENT, false, true);
+        return configure(COMPONENT);
     }
 
 }

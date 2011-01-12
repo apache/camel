@@ -18,7 +18,6 @@ package org.apache.camel.itest.karaf;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.JibxDataFormat;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -26,7 +25,6 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("A feature is missing")
 public class CamelJibxTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelJibxTest.class);

@@ -82,7 +82,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     }
     
     public static UrlReference getKarafFeatureUrl() {
-        String karafVersion = "2.1.0";
+        String karafVersion = "2.1.3";
         System.out.println("*** The karaf version is " + karafVersion + " ***");
 
         String type = "xml/features";
