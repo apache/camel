@@ -29,7 +29,7 @@ public class CamelJdbcAggregatorTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
+        // its not a component
     }
 
     @Configuration

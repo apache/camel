@@ -31,7 +31,7 @@ public class CamelSpringJavaconfigTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        // TODO: how to test that ?
+        // TODO: spring javaconfig is being removed in Camel 3.0
     }
 
     @Configuration

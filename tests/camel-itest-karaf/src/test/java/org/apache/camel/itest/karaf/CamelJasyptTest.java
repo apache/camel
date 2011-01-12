@@ -16,6 +16,7 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -23,13 +24,14 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
+@Ignore("Does not work on JDK 1.5")
 public class CamelJasyptTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelJasyptTest.class);
 
     @Test
     public void test() throws Exception {
-        // TODO: how to actually test ?
+        // not a component
     }
 
     @Configuration
