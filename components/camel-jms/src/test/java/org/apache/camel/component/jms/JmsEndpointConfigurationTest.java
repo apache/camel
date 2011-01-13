@@ -37,7 +37,7 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * @version $Revision$
@@ -190,7 +190,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(-1, endpoint.getTimeToLive());
         assertEquals(-1, endpoint.getTransactionTimeout());
         assertEquals(null, endpoint.getAcknowledgementModeName());
-        assertEquals(2, endpoint.getAcknowledgementMode());
+        assertEquals(1, endpoint.getAcknowledgementMode());
         assertEquals(-1, endpoint.getCacheLevel());
         assertEquals(null, endpoint.getCacheLevelName());
         assertNotNull(endpoint.getCamelId());
@@ -408,7 +408,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        camelContext.addComponent("jms", jmsComponentClientAcknowledge(connectionFactory));
+        camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
     }

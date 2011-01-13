@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jencks.amqpool.PooledConnectionFactory;
 import org.junit.Test;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 /**
  * @version $Revision$
  */
@@ -68,7 +68,7 @@ public class JmsRouteUsingJMSXGroupTest extends CamelTestSupport {
         PooledConnectionFactory pool = new PooledConnectionFactory(new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false"));
         pool.setMaxConnections(10);
 
-        camelContext.addComponent("jms", jmsComponentClientAcknowledge(pool));
+        camelContext.addComponent("jms", jmsComponentAutoAcknowledge(pool));
 
         return camelContext;
     }

@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
 
@@ -64,7 +64,7 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
                 "vm://localhost?broker.persistent=false");
         camelContext.addComponent(componentName,
-                jmsComponentClientAcknowledge(connectionFactory));
+                jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
     }

@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * Tests how the correlation between request and reply is done
@@ -155,11 +155,11 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        JmsComponent jmsComponent = jmsComponentClientAcknowledge(connectionFactory);
+        JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
         jmsComponent.setUseMessageIDAsCorrelationID(false);
         camelContext.addComponent("jms", jmsComponent);
 
-        JmsComponent jmsComponent2 = jmsComponentClientAcknowledge(connectionFactory);
+        JmsComponent jmsComponent2 = jmsComponentAutoAcknowledge(connectionFactory);
         jmsComponent2.setUseMessageIDAsCorrelationID(true);
         camelContext.addComponent("jms2", jmsComponent2);
 
