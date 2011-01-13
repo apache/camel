@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,10 +20,13 @@ package org.apache.camel.component.eventadmin;
  * EventAdmin constants
  */
 public final class EventAdminConstants {
-
+   
     /**
      * A header used to explicitely specify the target topic for the Exchange
      */
     public static final String EVENTADMIN_TOPIC = "CamelEventAdminTopic";
 
+    private EventAdminConstants() {
+        // constants class
+    }
 }
