@@ -20,43 +20,26 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.FileUtil;
 
 /**
  * @version $Revision: 937951 $
  */
-public class ManagedMemoryIdempotentConsumerTest extends ContextTestSupport {
+public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
     private IdempotentRepository<String> repo;
 
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
-        return context;
-    }
-
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         // services
         Set<ObjectName> names = CastUtils.cast(mbeanServer.queryNames(new ObjectName("org.apache.camel" + ":type=services,*"), null));

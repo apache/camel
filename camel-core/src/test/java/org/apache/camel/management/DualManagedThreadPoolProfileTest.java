@@ -16,13 +16,9 @@
  */
 package org.apache.camel.management;
 
-import java.util.Iterator;
-import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.ThreadPoolProfileSupport;
@@ -31,24 +27,10 @@ import org.apache.camel.spi.ThreadPoolProfile;
 /**
  * @version $Revision: 1005721 $
  */
-public class DualManagedThreadPoolProfileTest extends ContextTestSupport {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
-        return context;
-    }
+public class DualManagedThreadPoolProfileTest extends ManagementTestSupport {
 
     public void testManagedThreadPool() throws Exception {
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=threads1(threads)");
 

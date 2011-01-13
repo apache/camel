@@ -21,8 +21,6 @@ import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -31,24 +29,10 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 /**
  * @version $Revision: 950375 $
  */
-public class ManagedCustomBeanTest extends ContextTestSupport {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
-        return context;
-    }
+public class ManagedCustomBeanTest extends ManagementTestSupport {
 
     public void testManageCustomBean() throws Exception {
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"custom\"");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);

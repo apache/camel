@@ -20,31 +20,15 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * @version $Revision$
  */
-public class ManagedUnregisterProcessorTest extends ContextTestSupport {
+public class ManagedUnregisterProcessorTest extends ManagementTestSupport {
 
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
-        return context;
-    }
-  
     public void testUnregisterProcessor() throws Exception {
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
         assertEquals(1, set.size());

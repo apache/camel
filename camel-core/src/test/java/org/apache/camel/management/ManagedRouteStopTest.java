@@ -20,27 +20,21 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
  */
-public class ManagedRouteStopTest extends ContextTestSupport {
+public class ManagedRouteStopTest extends ManagementTestSupport {
 
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-    
     public void testStopRoute() throws Exception {
         // fire a message to get it running
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());

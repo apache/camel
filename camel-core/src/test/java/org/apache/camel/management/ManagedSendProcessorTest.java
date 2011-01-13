@@ -20,8 +20,6 @@ import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,21 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class ManagedSendProcessorTest extends ContextTestSupport {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
-        return context;
-    }
+public class ManagedSendProcessorTest extends ManagementTestSupport {
 
     public void testManageSendProcessor() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
@@ -56,7 +40,7 @@ public class ManagedSendProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // get the stats for the route
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mysend\"");

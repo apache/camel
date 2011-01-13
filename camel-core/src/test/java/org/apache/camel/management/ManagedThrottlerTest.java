@@ -20,28 +20,12 @@ import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
  */
-public class ManagedThrottlerTest extends ContextTestSupport {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
-        return context;
-    }
+public class ManagedThrottlerTest extends ManagementTestSupport {
 
     public void testManageThrottler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(10);
@@ -58,7 +42,7 @@ public class ManagedThrottlerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // get the stats for the route
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
         ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mythrottler\"");

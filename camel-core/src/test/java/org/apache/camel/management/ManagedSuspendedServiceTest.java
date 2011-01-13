@@ -21,7 +21,6 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,17 +30,12 @@ import org.apache.camel.impl.RoutePolicySupport;
 /**
  * @version $Revision$
  */
-public class ManagedSuspendedServiceTest extends ContextTestSupport {
+public class ManagedSuspendedServiceTest extends ManagementTestSupport {
 
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-   
     public void testConsumeSuspendAndResumeFile() throws Exception {
         deleteDirectory("target/suspended");
 
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
         assertEquals(1, set.size());

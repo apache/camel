@@ -29,23 +29,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 /**
  * @version $Revision$
  */
-public class ManagedUnregisterConsumerTest extends ContextTestSupport {
+public class ManagedUnregisterConsumerTest extends ManagementTestSupport {
 
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
-        return context;
-    }
-    
     public void testUnregisterConsumer() throws Exception {
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
         assertEquals(1, set.size());

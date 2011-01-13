@@ -20,22 +20,16 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
  */
-public class ManagedRegisterRouteTest extends ContextTestSupport {
+public class ManagedRegisterRouteTest extends ManagementTestSupport {
 
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-    
     public void testRoutes() throws Exception {
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());

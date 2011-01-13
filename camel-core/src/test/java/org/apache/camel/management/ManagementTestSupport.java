@@ -17,31 +17,33 @@
 package org.apache.camel.management;
 
 import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
 
 /**
+ * Base class for JMX tests.
+ *
  * @version $Revision$
  */
-public class ManagedBrowseableEndpointEmptyTest extends ManagementTestSupport {
-
-    public void testBrowseableEndpointEmpty() throws Exception {
-        MBeanServer mbeanServer = getMBeanServer();
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
-
-        String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
-        assertNull(out);
-    }
+public abstract class ManagementTestSupport extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("log:foo").to("mock:result");
-            }
-        };
+    protected boolean useJmx() {
+        return true;
+    }
+
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
+        naming.setHostName("localhost");
+        naming.setDomainName("org.apache.camel");
+        return context;
+    }
+
+    protected MBeanServer getMBeanServer() {
+        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
 }

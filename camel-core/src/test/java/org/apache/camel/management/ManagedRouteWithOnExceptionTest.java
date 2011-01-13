@@ -17,18 +17,12 @@
 package org.apache.camel.management;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
  */
-public class ManagedRouteWithOnExceptionTest extends ContextTestSupport {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
+public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
 
     @Override
     protected void setUp() throws Exception {

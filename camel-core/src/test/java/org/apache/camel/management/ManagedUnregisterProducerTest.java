@@ -16,35 +16,15 @@
  */
 package org.apache.camel.management;
 
-import java.util.Set;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * @version $Revision$
  */
-public class ManagedUnregisterProducerTest extends ContextTestSupport {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
-        return context;
-    }
+public class ManagedUnregisterProducerTest extends ManagementTestSupport {
 
     public void testUnregisterProducer() throws Exception {
         // send a message so the managed producer is started
@@ -61,7 +41,7 @@ public class ManagedUnregisterProducerTest extends ContextTestSupport {
 
         // TODO: producers are not managed due they can lead to memory leak CAMEL-2484
 
-//        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+//        MBeanServer mbeanServer = getMBeanServer();
 
 //        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=producers,*"), null);
 //        assertEquals(0, set.size());

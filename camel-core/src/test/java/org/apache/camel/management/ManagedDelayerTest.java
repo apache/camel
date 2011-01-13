@@ -19,29 +19,13 @@ package org.apache.camel.management;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
  */
-public class ManagedDelayerTest extends ContextTestSupport {
+public class ManagedDelayerTest extends ManagementTestSupport {
 
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
-        return context;
-    }
-    
     public void testManageDelay() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -50,7 +34,7 @@ public class ManagedDelayerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // get the stats for the route
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
         ObjectName delayerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mydelayer\"");

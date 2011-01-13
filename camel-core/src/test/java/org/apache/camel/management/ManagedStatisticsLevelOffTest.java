@@ -22,27 +22,17 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
  */
-public class ManagedStatisticsLevelOffTest extends ContextTestSupport {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
+public class ManagedStatisticsLevelOffTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
-
         // disable it by default
         context.getManagementStrategy().setStatisticsLevel(ManagementStatisticsLevel.Off);
         return context;
@@ -53,7 +43,7 @@ public class ManagedStatisticsLevelOffTest extends ContextTestSupport {
         template.sendBody("direct:start", "Bye World");
 
         // get the stats for the route
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());

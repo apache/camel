@@ -32,11 +32,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsTest {
 
     @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

@@ -20,7 +20,6 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,12 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class ManagedRouteRemoveTest extends ContextTestSupport {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
+public class ManagedRouteRemoveTest extends ManagementTestSupport {
 
     @Override
     protected void setUp() throws Exception {
@@ -43,7 +37,7 @@ public class ManagedRouteRemoveTest extends ContextTestSupport {
     }
 
     public void testRemove() throws Exception {
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 
         MockEndpoint mock = getMockEndpoint("mock:result");

@@ -23,28 +23,19 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
  */
-public class ManagedServiceUrlPathTest extends ContextTestSupport {
+public class ManagedServiceUrlPathTest extends ManagementTestSupport {
 
     private static final String JMXSERVICEURL = "service:jmx:rmi:///jndi/rmi://localhost:2113/foo/bar";
     private JMXConnector clientConnector;
 
     @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
 
         // START SNIPPET: e1
         context.getManagementStrategy().getManagementAgent().setServiceUrlPath("/foo/bar");

@@ -22,25 +22,18 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 
 /**
  * @version $Revision$
  */
-public class RemoveRouteDefinitionTest extends ContextTestSupport {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
+public class RemoveRouteDefinitionTest extends ManagementTestSupport {
 
     @SuppressWarnings("unchecked")
     public void testShutdownRoute() throws Exception {
         
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());
@@ -62,7 +55,7 @@ public class RemoveRouteDefinitionTest extends ContextTestSupport {
     
     public void testStopRoute() throws Exception {
         
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());

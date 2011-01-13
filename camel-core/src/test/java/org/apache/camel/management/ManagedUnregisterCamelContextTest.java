@@ -17,38 +17,21 @@
 package org.apache.camel.management;
 
 import java.util.Map;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * @version $Revision$
  */
-public class ManagedUnregisterCamelContextTest extends ContextTestSupport {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
-        return context;
-    }
+public class ManagedUnregisterCamelContextTest extends ManagementTestSupport {
 
     @SuppressWarnings("unchecked")
     public void testUnregisterCamelContext() throws Exception {
         // The camel context already started by ContextTestSupport in the startup method
         
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
 

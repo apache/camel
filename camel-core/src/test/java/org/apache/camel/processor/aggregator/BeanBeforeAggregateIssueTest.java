@@ -34,24 +34,24 @@ public class BeanBeforeAggregateIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("seda:start")
-					.bean(TestBean.class)
-					.aggregate(constant("true"), new BodyInAggregatingStrategy())
-					    .completionSize(2)
-					    .to("mock:result");
-			}
-		};
-	}
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:start")
+                    .bean(TestBean.class)
+                    .aggregate(constant("true"), new BodyInAggregatingStrategy())
+                        .completionSize(2)
+                        .to("mock:result");
+            }
+        };
+    }
 
-	public static final class TestBean {
+    public static final class TestBean {
 
-		public String doNothing(String foo) {
-			return foo;
-		}
-	}
+        public String doNothing(String foo) {
+            return foo;
+        }
+    }
 }

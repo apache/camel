@@ -22,29 +22,13 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
  */
-public class ManagedProducerCacheTest extends ContextTestSupport {
+public class ManagedProducerCacheTest extends ManagementTestSupport {
 
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
-        return context;
-    }
-    
     public void testManageProducerCache() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -53,7 +37,7 @@ public class ManagedProducerCacheTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // get the stats for the route
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer = getMBeanServer();
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=services,*"), null);
         assertEquals(6, set.size());
         List<ObjectName> list = new ArrayList<ObjectName>(set);
