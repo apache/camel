@@ -70,7 +70,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
             throw new IllegalArgumentException("Damn I cannot do this");
         }
 
-        public void commit(Consumer consumer, Endpoint endpoint) {
+        public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
             event += "commit";
         }
 

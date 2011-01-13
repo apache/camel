@@ -72,7 +72,7 @@ public class FromFtpSimulateNetworkIssueRecoverTest extends FtpServerTestSupport
     public class MyPollStrategy extends RemoteFilePollingConsumerPollStrategy {
 
         @Override
-        public void commit(Consumer consumer, Endpoint endpoint) {
+        public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
             counter++;
             if (counter < 3) {
                 throw new IllegalArgumentException("Forced by unit test");

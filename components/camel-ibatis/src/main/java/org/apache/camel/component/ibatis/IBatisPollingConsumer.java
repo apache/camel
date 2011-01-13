@@ -142,8 +142,7 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
      * Polls the database
      */
     @Override
-    protected void poll() throws Exception {
-
+    protected int poll() throws Exception {
         // must reset for each poll
         shutdownRunningTask = null;
         pendingExchanges = 0;
@@ -176,14 +175,14 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
         }
 
         // process all the exchanges in this batch
-        processBatch(CastUtils.cast(answer));
+        return processBatch(CastUtils.cast(answer));
     }
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
-    public void processBatch(Queue<Object> exchanges) throws Exception {
+    public int processBatch(Queue<Object> exchanges) throws Exception {
         final IBatisEndpoint endpoint = getEndpoint();
 
         int total = exchanges.size();
@@ -222,6 +221,8 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
                 handleException(e);
             }
         }
+
+        return total;
     }
 
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {

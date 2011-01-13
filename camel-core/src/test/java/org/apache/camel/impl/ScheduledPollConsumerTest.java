@@ -37,7 +37,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
                 return true;
             }
 
-            public void commit(Consumer consumer, Endpoint endpoint) {
+            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
             }
 
             public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
@@ -79,7 +79,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
                 return true;
             }
 
-            public void commit(Consumer consumer, Endpoint endpoint) {
+            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
                 event += "commit";
             }
 

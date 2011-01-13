@@ -41,11 +41,18 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
         super(endpoint, processor, executor);
     }
 
-    protected void poll() throws Exception {
+    protected int poll() throws Exception {
+        int messagesPolled = 0;
+
         while (isPollAllowed()) {
             Exchange exchange = pollingConsumer.receiveNoWait();
             if (exchange == null) {
                 break;
+            }
+
+            messagesPolled++;
+            if (log.isTraceEnabled()) {
+                log.trace("Polled " + messagesPolled + " " + exchange);
             }
 
             // if the result of the polled exchange has output we should create a new exchange and
@@ -58,6 +65,8 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
             }
             getProcessor().process(exchange);
         }
+
+        return messagesPolled;
     }
 
     @Override

@@ -59,7 +59,7 @@ public class SqsConsumer extends ScheduledPollConsumer implements BatchConsumer,
     }
 
     @Override
-    protected void poll() throws Exception {
+    protected int poll() throws Exception {
         // must reset for each poll
         shutdownRunningTask = null;
         pendingExchanges = 0;
@@ -71,7 +71,7 @@ public class SqsConsumer extends ScheduledPollConsumer implements BatchConsumer,
         ReceiveMessageResult messageResult = getClient().receiveMessage(request);
         
         Queue<Exchange> exchanges = createExchanges(messageResult.getMessages());
-        processBatch(CastUtils.cast(exchanges));
+        return processBatch(CastUtils.cast(exchanges));
     }
     
     protected Queue<Exchange> createExchanges(List<Message> messages) {
@@ -88,7 +88,7 @@ public class SqsConsumer extends ScheduledPollConsumer implements BatchConsumer,
         return answer;
     }
     
-    public void processBatch(Queue<Object> exchanges) throws Exception {
+    public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
@@ -124,6 +124,8 @@ public class SqsConsumer extends ScheduledPollConsumer implements BatchConsumer,
 
             getProcessor().process(exchange);
         }
+
+        return total;
     }
     
     /**

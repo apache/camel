@@ -37,7 +37,7 @@ public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollSt
         return true;
     }
 
-    public void commit(Consumer consumer, Endpoint endpoint) {
+    public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
         // noop
     }
 

@@ -35,10 +35,11 @@ public class MockScheduledPollConsumer extends ScheduledPollConsumer {
     }
     
     @Override
-    protected void poll() throws Exception {
+    protected int poll() throws Exception {
         if (exceptionToThrowOnPoll != null) {
             throw exceptionToThrowOnPoll;
         }
+        return 0;
     }
 
     public void setExceptionToThrowOnPoll(Exception exceptionToThrowOnPoll) {

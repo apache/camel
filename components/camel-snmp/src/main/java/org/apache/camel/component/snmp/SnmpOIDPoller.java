@@ -111,7 +111,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
     }
 
     @Override
-    protected void poll() throws Exception {
+    protected int poll() throws Exception {
         this.pdu.clear();
         this.pdu.setType(PDU.GET);
 
@@ -122,6 +122,8 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
 
         // send the request
         snmp.send(pdu, target, null, this);
+
+        return 1;
     }
 
     public void onResponse(ResponseEvent event) {

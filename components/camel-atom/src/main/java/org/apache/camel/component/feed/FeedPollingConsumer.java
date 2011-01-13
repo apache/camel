@@ -32,9 +32,15 @@ public abstract class FeedPollingConsumer extends ScheduledPollConsumer {
         this.endpoint = endpoint;
     }
 
-    protected void poll() throws Exception {
-        Exchange exchange = endpoint.createExchange(createFeed());
-        getProcessor().process(exchange);
+    protected int poll() throws Exception {
+        Object feed = createFeed();
+        if (feed != null) {
+            Exchange exchange = endpoint.createExchange(feed);
+            getProcessor().process(exchange);
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     protected abstract Object createFeed() throws Exception;

@@ -46,9 +46,10 @@ public interface BatchConsumer extends Consumer {
      * data alongside the Exchange.
      *
      * @param exchanges list of items in this batch
+     * @return number of messages actually processed
      * @throws Exception if an internal processing error has occurred.
      */
-    void processBatch(Queue<Object> exchanges) throws Exception;
+    int processBatch(Queue<Object> exchanges) throws Exception;
 
     /**
      * Whether processing the batch is still allowed.

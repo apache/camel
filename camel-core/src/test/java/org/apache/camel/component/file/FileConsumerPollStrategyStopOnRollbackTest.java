@@ -87,7 +87,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
             return true;
         }
 
-        public void commit(Consumer consumer, Endpoint endpoint) {
+        public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
             event += "commit";
         }
 

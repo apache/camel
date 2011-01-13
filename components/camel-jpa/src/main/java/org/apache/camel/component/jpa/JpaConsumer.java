@@ -71,12 +71,12 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
     }
 
     @Override
-    protected void poll() throws Exception {
+    protected int poll() throws Exception {
         // must reset for each poll
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        template.execute(new JpaCallback() {
+        Object messagePolled = template.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 Queue<DataHolder> answer = new LinkedList<DataHolder>();
 
@@ -91,27 +91,26 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
                     answer.add(holder);
                 }
 
+                int messagePolled;
                 try {
-                    processBatch(CastUtils.cast(answer));
+                    messagePolled = processBatch(CastUtils.cast(answer));
                 } catch (Exception e) {
                     throw new PersistenceException(e);
                 }
 
                 entityManager.flush();
-                return null;
+                return messagePolled;
             }
         });
+
+        return endpoint.getCamelContext().getTypeConverter().convertTo(int.class, messagePolled);
     }
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
-    public void processBatch(Queue<Object> exchanges) throws Exception {
-        if (exchanges.isEmpty()) {
-            return;
-        }
-
+    public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
         // limit if needed
@@ -148,6 +147,8 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
                 getDeleteHandler().deleteObject(entityManager, result);
             }
         }
+
+        return total;
     }
 
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {

@@ -79,10 +79,11 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         super.doStop();
     }
 
-    protected void poll() throws Exception {
+    protected int poll() throws Exception {
         // must reset for each poll
         shutdownRunningTask = null;
         pendingExchanges = 0;
+        int polledMessages = 0;
 
         ensureIsConnected();
 
@@ -97,7 +98,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
 
         if (getEndpoint().getConfiguration().getFetchSize() == 0) {
             LOG.warn("Fetch size is 0 meaning the configuration is set to poll no new messages at all. Camel will skip this poll.");
-            return;
+            return 0;
         }
 
         // ensure folder is open
@@ -117,7 +118,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
                     messages = folder.getMessages();
                 }
 
-                processBatch(CastUtils.cast(createExchanges(messages)));
+                polledMessages = processBatch(CastUtils.cast(createExchanges(messages)));
             } else if (count == -1) {
                 throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
             }
@@ -134,13 +135,15 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
                 LOG.debug("Could not close mailbox folder: " + folder.getName(), e);
             }
         }
+
+        return polledMessages;
     }
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
-    public void processBatch(Queue<Object> exchanges) throws Exception {
+    public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
         // limit if needed
@@ -184,6 +187,8 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
             // process the exchange
             processExchange(exchange);
         }
+
+        return total;
     }
 
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {

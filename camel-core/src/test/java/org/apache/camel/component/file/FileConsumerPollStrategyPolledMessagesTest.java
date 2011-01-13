@@ -14,83 +14,86 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote;
+package org.apache.camel.component.file;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.junit.Test;
 
 /**
- * Unit test for login failure due bad password and no re connect attempts allowed
+ * Unit test for poll strategy
  */
-public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSupport {
+public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSupport {
 
-    private CountDownLatch latch = new CountDownLatch(1);
+    private static int maxPolls;
+    private final CountDownLatch latch = new CountDownLatch(1);
 
-    private String getFtpUrl() {
-        return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremember"
-                + "&throwExceptionOnConnectFailed=true&maximumReconnectAttempts=0&pollStrategy=#myPoll";
-    }
+    private String fileUrl = "file://target/pollstrategy/?consumer.pollStrategy=#myPoll";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myPoll", new MyPoll());
+        jndi.bind("myPoll", new MyPollStrategy());
         return jndi;
     }
 
-    @Test
-    public void testBadLogin() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(0);
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        deleteDirectory("target/pollstrategy");
+    }
 
-        latch.await(5, TimeUnit.SECONDS);
+    public void testPolledMessages() throws Exception {
+        template.sendBodyAndHeader("file:target/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/pollstrategy/", "Bye World", Exchange.FILE_NAME, "bye.txt");
+
+        // start route now files have been created
+        context.startRoute("foo");
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
 
         assertMockEndpointsSatisfied();
 
-        // consumer should be stopped
-        Thread.sleep(1000);
+        // wait for commit to be issued
+        latch.await(5, TimeUnit.SECONDS);
 
-        Consumer consumer = context.getRoute("foo").getConsumer();
-        assertTrue("Consumer should be stopped", ((ServiceSupport)consumer).isStopped());
+        assertEquals(2, maxPolls);
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            @Override
             public void configure() throws Exception {
-                from(getFtpUrl()).routeId("foo").to("mock:result");
+                from(fileUrl).routeId("foo").noAutoStartup()
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }
 
-    private class MyPoll implements PollingConsumerPollStrategy {
+    private class MyPollStrategy implements PollingConsumerPollStrategy {
 
         public boolean begin(Consumer consumer, Endpoint endpoint) {
             return true;
         }
 
         public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
+            if (polledMessages > maxPolls) {
+                maxPolls = polledMessages;
+            }
+            latch.countDown();
         }
 
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
-            GenericFileOperationFailedException e = assertIsInstanceOf(GenericFileOperationFailedException.class, cause);
-            assertEquals(530, e.getCode());
-
-            // stop the consumer
-            consumer.stop();
-
-            latch.countDown();
-
             return false;
         }
     }
+
 }

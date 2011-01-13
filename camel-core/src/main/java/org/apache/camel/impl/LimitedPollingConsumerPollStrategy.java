@@ -55,7 +55,7 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
     }
 
     @Override
-    public void commit(Consumer consumer, Endpoint endpoint) {
+    public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
         // we could commit so clear state
         state.remove(consumer);
     }

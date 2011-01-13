@@ -59,7 +59,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     /**
      * Poll for files
      */
-    protected void poll() throws Exception {
+    protected int poll() throws Exception {
         // must reset for each poll
         fileExpressionResult = null;
         shutdownRunningTask = null;
@@ -71,7 +71,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             if (log.isDebugEnabled()) {
                 log.debug("Skipping poll as pre poll check returned false");
             }
-            return;
+            return 0;
         }
 
         // gather list of files to process
@@ -118,9 +118,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         }
 
         Queue<Exchange> q = exchanges;
-        processBatch(CastUtils.cast(q));
+        int polledMessages = processBatch(CastUtils.cast(q));
 
         postPollCheck();
+
+        return polledMessages;
     }
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
@@ -128,7 +130,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     }
 
     @SuppressWarnings("unchecked")
-    public void processBatch(Queue<Object> exchanges) {
+    public int processBatch(Queue<Object> exchanges) {
         int total = exchanges.size();
 
         // limit if needed
@@ -162,6 +164,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
         }
+
+        return total;
     }
 
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {

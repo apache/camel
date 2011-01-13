@@ -94,8 +94,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                     boolean begin = pollStrategy.begin(this, getEndpoint());
                     if (begin) {
                         retryCounter++;
-                        poll();
-                        pollStrategy.commit(this, getEndpoint());
+                        int polledMessages = poll();
+                        pollStrategy.commit(this, getEndpoint(), polledMessages);
                     } else {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Cannot begin polling as pollStrategy returned false: " + pollStrategy);
@@ -183,10 +183,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     /**
      * The polling method which is invoked periodically to poll this consumer
-     * 
+     *
+     * @return number of messages polled, will be <tt>0</tt> if no message was polled at all.
      * @throws Exception can be thrown if an exception occurred during polling
      */
-    protected abstract void poll() throws Exception;
+    protected abstract int poll() throws Exception;
 
     @Override
     protected void doStart() throws Exception {

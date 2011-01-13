@@ -40,15 +40,17 @@ public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
         this.throttleEntries = throttleEntries;
     }
 
-    public void poll() throws Exception {
+    public int poll() throws Exception {
         if (feed == null) {
             // populate new feed
             feed = createFeed();
             populateList(feed);
         }
 
+        int polledMessages = 0;
         while (hasNextEntry()) {
             Object entry = list.get(entryIndex--);
+            polledMessages++;
 
             boolean valid = true;
             if (entryFilter != null) {
@@ -59,7 +61,7 @@ public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
                 getProcessor().process(exchange);
                 if (this.throttleEntries) {
                     // return and wait for the next poll to continue from last time (this consumer is stateful)
-                    return;
+                    return polledMessages;
                 }
             }
         }
@@ -67,6 +69,8 @@ public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
         // reset feed and list to be able to poll again
         feed = null;
         resetList();
+
+        return polledMessages;
     }
 
     protected abstract EntryFilter createEntryFilter(Date lastUpdate);
