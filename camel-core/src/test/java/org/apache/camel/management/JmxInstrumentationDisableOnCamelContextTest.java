@@ -32,7 +32,7 @@ public class JmxInstrumentationDisableOnCamelContextTest extends JmxInstrumentat
 
     @Override
     protected boolean useJmx() {
-        return true;
+        return false;
     }
 
     @Override
@@ -44,8 +44,6 @@ public class JmxInstrumentationDisableOnCamelContextTest extends JmxInstrumentat
 
     @Override
     public void testMBeansRegistered() throws Exception {
-        assertDefaultDomain();
-
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
