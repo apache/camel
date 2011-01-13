@@ -23,7 +23,7 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
         <camel:route>
             <camel:from uri="direct:start"/>
             <!-- convert the body to the model which should involve Dozer -->
@@ -32,7 +32,10 @@
         </camel:route>
     </camelContext>
 
-    <bean id="dozerConverterLoader" class="org.apache.camel.converter.dozer.DozerTypeConverterLoader"/>
+    <bean id="dozerConverterLoader" class="org.apache.camel.converter.dozer.DozerTypeConverterLoader">
+        <constructor-arg ref="camelContext"/>
+        <constructor-arg ref="mapper"/>
+    </bean>
 
     <bean id="mapper" class="org.dozer.DozerBeanMapper">
         <property name="mappingFiles">

@@ -19,7 +19,6 @@ package org.apache.camel.itest.osgi.dozer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.apache.camel.itest.osgi.dozer.service.Customer;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -38,7 +37,6 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory
  * @version $Revision$
  */
 @RunWith(JUnit4TestRunner.class)
-@Ignore("DozerBeanMapper can't load the configure from OSGi in Dozer 5.3.1")
 public class DozerTest extends OSGiIntegrationSpringTestSupport {
 
     @Override

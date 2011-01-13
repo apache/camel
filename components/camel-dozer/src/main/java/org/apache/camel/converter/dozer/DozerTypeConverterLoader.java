@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,9 +34,11 @@ import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.dozer.classmap.ClassMap;
 import org.dozer.classmap.MappingFileData;
+import org.dozer.config.BeanContainer;
 import org.dozer.loader.api.BeanMappingBuilder;
 import org.dozer.loader.xml.MappingFileReader;
 import org.dozer.loader.xml.XMLParserFactory;
+import org.dozer.util.DozerClassLoader;
 
 /**
  * <code>DozerTypeConverterLoader</code> provides the mechanism for registering
@@ -99,6 +102,9 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         this.camelContext = camelContext;
         this.mapper = mapper;
 
+        CamelToDozerClassResolverAdapter adapter = new CamelToDozerClassResolverAdapter(camelContext);
+        BeanContainer.getInstance().setClassLoader(adapter);
+        
         Map<String, DozerBeanMapper> mappers = new HashMap<String, DozerBeanMapper>(camelContext.getRegistry().lookupByType(DozerBeanMapper.class));
         if (mapper != null) {
             mappers.put("parameter", mapper);
@@ -176,6 +182,28 @@ public class DozerTypeConverterLoader implements CamelContextAware {
 
     public void setCamelContext(CamelContext camelContext) {
         init(camelContext, null);
+    }
+
+    private static final class CamelToDozerClassResolverAdapter implements DozerClassLoader {
+
+        private final ClassResolver classResolver;
+
+        private CamelToDozerClassResolverAdapter(CamelContext camelContext) {
+            classResolver = camelContext.getClassResolver();
+        }
+
+        public Class<?> loadClass(String s) {
+            return classResolver.resolveClass(s);
+        }
+
+        public URL loadResource(String s) {
+            URL url = classResolver.loadResourceAsURL(s);
+            if (url == null) {
+                // DozerClassLoader as a fallback
+                url = DozerClassLoader.class.getClassLoader().getResource(s);
+            } 
+            return url;
+        }
     }
 
 }
