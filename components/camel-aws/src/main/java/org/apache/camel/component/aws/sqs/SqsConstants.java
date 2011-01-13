@@ -23,8 +23,8 @@ package org.apache.camel.component.aws.sqs;
  */
 public interface SqsConstants {
 
-    String ATTRIBUTES = "CamelSqsAttributes";
-    String MD5_OF_BODY = "CamelSqsMD5OfBody";
-    String MESSAGE_ID = "CamelSqsMessageId";
-    String RECEIPT_HANDLE = "CamelSqsReceiptHandle";
+    String ATTRIBUTES = "CamelAwsSqsAttributes";
+    String MD5_OF_BODY = "CamelAwsSqsMD5OfBody";
+    String MESSAGE_ID = "CamelAwsSqsMessageId";
+    String RECEIPT_HANDLE = "CamelAwsSqsReceiptHandle";
 }
