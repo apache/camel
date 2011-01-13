@@ -40,7 +40,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     private OIDList oids = new OIDList();
     private String address;
-    private String protocol;
+    private String protocol = "udp";
     private int retries = DEFAULT_SNMP_RETRIES;
     private int timeout = DEFAULT_SNMP_TIMEOUT;
     private int snmpVersion = DEFAULT_SNMP_VERSION;

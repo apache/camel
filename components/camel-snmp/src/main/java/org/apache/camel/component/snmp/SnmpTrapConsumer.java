@@ -28,7 +28,9 @@ import org.snmp4j.Snmp;
 import org.snmp4j.TransportMapping;
 import org.snmp4j.smi.Address;
 import org.snmp4j.smi.GenericAddress;
+import org.snmp4j.smi.TcpAddress;
 import org.snmp4j.smi.UdpAddress;
+import org.snmp4j.transport.DefaultTcpTransportMapping;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponder {
@@ -53,23 +55,38 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         if (LOG.isInfoEnabled()) {
             LOG.info("Starting trap consumer on " + this.endpoint.getAddress());
         }
+
         this.listenGenericAddress = GenericAddress.parse(this.endpoint.getAddress());
-        this.transport = new DefaultUdpTransportMapping((UdpAddress)this.listenGenericAddress);
+
+        // either tcp or udp
+        if ("tcp".equals(endpoint.getProtocol())) {
+            this.transport = new DefaultTcpTransportMapping((TcpAddress)this.listenGenericAddress);
+        } else if ("udp".equals(endpoint.getProtocol())) {
+            this.transport = new DefaultUdpTransportMapping((UdpAddress)this.listenGenericAddress);
+        } else {
+            throw new IllegalArgumentException("Unknown protocol: " + endpoint.getProtocol());
+        }
+
         this.snmp = new Snmp(transport);
         this.snmp.addCommandResponder(this);
         
         // listen to the transport
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Starting trap consumer on " + endpoint.getAddress() + " using " + endpoint.getProtocol() + " protocol");
+        }
         this.transport.listen();
+        LOG.info("Started trap consumer on " + endpoint.getAddress() + " using " + endpoint.getProtocol() + " protocol");
     }
 
     @Override
     protected void doStop() throws Exception {
         // stop listening to the transport
         if (this.transport != null && this.transport.isListening()) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Stopping trap consumer on " + this.endpoint.getAddress());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Stopping trap consumer on " + this.endpoint.getAddress());
             }
             this.transport.close();
+            LOG.info("Stopped trap consumer on " + this.endpoint.getAddress());
         }
         
         super.doStop();
@@ -92,8 +109,8 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         Exchange exchange = endpoint.createExchange(pdu);
         try {
             getProcessor().process(exchange);
-        } catch (Exception ex) {
-            exchange.setException(ex);
+        } catch (Exception e) {
+            getExceptionHandler().handleException(e);
         }
     }
 }
