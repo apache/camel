@@ -54,6 +54,7 @@ public class Jt400DataQueueProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         if (!endpoint.getSystem().isConnected()) {
+            log.info("Connecting to " + endpoint);
             endpoint.getSystem().connectService(AS400.DATAQUEUE);
         }
     }
@@ -61,6 +62,7 @@ public class Jt400DataQueueProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         if (endpoint.getSystem().isConnected()) {
+            log.info("Disconnecting from " + endpoint);
             endpoint.getSystem().disconnectAllServices();
         }
     }

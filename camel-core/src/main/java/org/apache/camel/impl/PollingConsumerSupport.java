@@ -19,6 +19,8 @@ package org.apache.camel.impl;
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A useful base class for implementations of {@link PollingConsumer}
@@ -26,6 +28,7 @@ import org.apache.camel.spi.ExceptionHandler;
  * @version $Revision$
  */
 public abstract class PollingConsumerSupport extends ServiceSupport implements PollingConsumer {
+    protected final transient Log log = LogFactory.getLog(getClass());
     private final Endpoint endpoint;
     private ExceptionHandler exceptionHandler;
 

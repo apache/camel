@@ -17,6 +17,7 @@
 package org.apache.camel.component.jt400;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;
@@ -34,7 +35,7 @@ import org.apache.camel.impl.PollingConsumerSupport;
 
 
 /**
- * {@link PollingConsumer} that polls a data queue for data
+ * {@link org.apache.camel.PollingConsumer} that polls a data queue for data
  */
 public class Jt400DataQueueConsumer extends PollingConsumerSupport {
 
@@ -51,6 +52,7 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
     @Override
     protected void doStart() throws Exception {
         if (!endpoint.getSystem().isConnected()) {
+            log.info("Connecting to " + endpoint);
             endpoint.getSystem().connectService(AS400.DATAQUEUE);
         }
     }
@@ -58,21 +60,16 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
     @Override
     protected void doStop() throws Exception {
         if (endpoint.getSystem().isConnected()) {
+            log.info("Disconnecting from " + endpoint);
             endpoint.getSystem().disconnectAllServices();
         }
     }
 
-    /**
-     * {@link Jt400DataQueueConsumer#receive(long)}
-     */
     public Exchange receive() {
         // -1 to indicate a blocking read from data queue
         return receive(-1);
     }
 
-    /**
-     * {@link Jt400DataQueueConsumer#receive(long)}
-     */
     public Exchange receiveNoWait() {
         return receive(0);
     }
@@ -93,10 +90,18 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
         try {
             DataQueueEntry entry;
             if (timeout >= 0) {
-                entry = queue.read((int)timeout);
+                int seconds = (int)timeout / 1000;
+                if (log.isTraceEnabled()) {
+                    log.trace("Reading from data queue: " + queue.getName() + " with " + seconds + " seconds timeout");
+                }
+                entry = queue.read(seconds);
             } else {
-                entry = queue.read();
+                if (log.isTraceEnabled()) {
+                    log.trace("Reading from data queue: " + queue.getName() + " with no timeout");
+                }
+                entry = queue.read(-1);
             }
+
             Exchange exchange = new DefaultExchange(endpoint.getCamelContext());
             if (entry != null) {
                 if (endpoint.getFormat() == Format.binary) {
@@ -107,18 +112,19 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
                 return exchange;
             }
         } catch (AS400SecurityException e) {
-            throw new RuntimeCamelException("Unable to read from data queue: " + e.getMessage(), e);
+            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
         } catch (ErrorCompletingRequestException e) {
-            throw new RuntimeCamelException("Unable to read from data queue: " + e.getMessage(), e);
+            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
         } catch (IOException e) {
-            throw new RuntimeCamelException("Unable to read from data queue: " + e.getMessage(), e);
+            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
         } catch (IllegalObjectTypeException e) {
-            throw new RuntimeCamelException("Unable to read from data queue: " + e.getMessage(), e);
+            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
         } catch (InterruptedException e) {
-            throw new RuntimeCamelException("Unable to read from data queue: " + e.getMessage(), e);
+            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
         } catch (ObjectDoesNotExistException e) {
-            throw new RuntimeCamelException("Unable to read from data queue: " + e.getMessage(), e);
+            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
         }
         return null;
     }
+
 }
