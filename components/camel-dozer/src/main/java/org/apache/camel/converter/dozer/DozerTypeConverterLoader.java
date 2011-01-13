@@ -199,7 +199,7 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         public URL loadResource(String s) {
             URL url = classResolver.loadResourceAsURL(s);
             if (url == null) {
-                // DozerClassLoader as a fallback
+                // using the classloader of DozerClassLoader as a fallback
                 url = DozerClassLoader.class.getClassLoader().getResource(s);
             } 
             return url;
