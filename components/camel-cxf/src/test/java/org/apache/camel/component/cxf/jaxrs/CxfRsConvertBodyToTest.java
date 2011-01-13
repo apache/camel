@@ -37,14 +37,14 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                Response OK = Response.ok().build();
+                Response ok = Response.ok().build();
 
                 from(CXF_RS_ENDPOINT_URI)
                     // should be able to convert to Customer
                     .convertBodyTo(Customer.class)
                     .to("mock:result")
                     // respond with OK
-                    .transform(constant(OK));
+                    .transform(constant(ok));
             };
         };
     }

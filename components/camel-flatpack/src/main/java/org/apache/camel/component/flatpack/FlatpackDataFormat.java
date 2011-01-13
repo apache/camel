@@ -170,7 +170,8 @@ public class FlatpackDataFormat implements DataFormat {
             if (resource == null) {
                 return getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
             } else {
-                return getParserFactory().newDelimitedParser(new InputStreamReader(resource.getInputStream(), IOConverter.getCharsetName(exchange)), bodyReader, delimiter, textQualifier, ignoreFirstRecord);
+                return getParserFactory().newDelimitedParser(new InputStreamReader(resource.getInputStream(), IOConverter.getCharsetName(exchange)), 
+                                                             bodyReader, delimiter, textQualifier, ignoreFirstRecord);
             }
         }
     }
