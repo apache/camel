@@ -43,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A Consumer of messages from the Amazon Web Service Simple Queue Service
- * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
+ * <a href="http://aws.amazon.com/aws-sqs/">AWS SQS</a>
  * 
  * @version $Revision: $
  */

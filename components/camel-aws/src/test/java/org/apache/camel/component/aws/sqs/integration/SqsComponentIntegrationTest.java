@@ -89,9 +89,9 @@ public class SqsComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("sqs://MyQueue?accessKey=xxx&secretKey=yyy");
+                    .to("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy");
                 
-                from("sqs://MyQueue?accessKey=xxx&secretKey=yyy")
+                from("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy")
                     .to("mock:result");
             }
         };

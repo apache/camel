@@ -97,9 +97,9 @@ public class SqsComponentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
+                    .to("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
                 
-                from("sqs://MyQueue?amazonSQSClient=#amazonSQSClient")
+                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient")
                     .to("mock:result");
             }
         };

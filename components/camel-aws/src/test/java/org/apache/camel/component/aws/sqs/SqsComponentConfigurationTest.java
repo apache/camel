@@ -29,7 +29,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         SqsComponent component = new SqsComponent(context);
-        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("sqs://MyQueue?accessKey=xxx&secretKey=yyy");
+        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy");
         
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -47,7 +47,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSQSClient", mock);
         
         SqsComponent component = new SqsComponent(context);
-        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
+        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
         
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
         assertNull(endpoint.getConfiguration().getAccessKey());
@@ -67,7 +67,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("attributeNames", attributeNames);
         
         SqsComponent component = new SqsComponent(context);
-        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("sqs://MyQueue?accessKey=xxx&secretKey=yyy&attributeNames=#attributeNames"
+        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy&attributeNames=#attributeNames"
                 + "&DefaultVisibilityTimeout=1000&visibilityTimeout=2000");
         
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
@@ -82,7 +82,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithPollConsumerConfiguration() throws Exception {
         SqsComponent component = new SqsComponent(context);
-        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("sqs://MyQueue?accessKey=xxx&secretKey=yyy&initialDelay=300&delay=400&maxMessagesPerPoll=50");
+        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy&initialDelay=300&delay=400&maxMessagesPerPoll=50");
         SqsConsumer consumer = (SqsConsumer) endpoint.createConsumer(null);
         
         assertEquals(300, consumer.getInitialDelay());
@@ -93,12 +93,12 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         SqsComponent component = new SqsComponent(context);
-        component.createEndpoint("sqs://MyQueue?secretKey=yyy");
+        component.createEndpoint("aws-sqs://MyQueue?secretKey=yyy");
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         SqsComponent component = new SqsComponent(context);
-        component.createEndpoint("sqs://MyQueue?accessKey=xxx");
+        component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx");
     }
 }
