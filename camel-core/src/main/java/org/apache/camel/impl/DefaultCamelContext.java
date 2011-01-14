@@ -726,7 +726,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    public synchronized void stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean giveUp) throws Exception {
+    public synchronized boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean giveUp) throws Exception {
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
@@ -739,6 +739,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 routeService.setRemovingRoutes(false);
                 stopRouteService(routeService);
             }
+            return completed;
         }
     }
     
