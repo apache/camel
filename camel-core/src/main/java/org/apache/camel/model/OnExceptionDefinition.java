@@ -54,21 +54,21 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefinition> {
 
-    @XmlElement(name = "exception")
+    @XmlElement(name = "exception", required = true)
     private List<String> exceptions = new ArrayList<String>();
-    @XmlElement(name = "onWhen", required = false)
+    @XmlElement(name = "onWhen")
     private WhenDefinition onWhen;
-    @XmlElement(name = "retryWhile", required = false)
+    @XmlElement(name = "retryWhile")
     private ExpressionSubElementDefinition retryWhile;
-    @XmlElement(name = "redeliveryPolicy", required = false)
+    @XmlElement(name = "redeliveryPolicy")
     private RedeliveryPolicyDefinition redeliveryPolicy;
-    @XmlElement(name = "handled", required = false)
+    @XmlElement(name = "handled")
     private ExpressionSubElementDefinition handled;
-    @XmlElement(name = "continued", required = false)
+    @XmlElement(name = "continued")
     private ExpressionSubElementDefinition continued;
-    @XmlAttribute(name = "onRedeliveryRef", required = false)
+    @XmlAttribute(name = "onRedeliveryRef")
     private String onRedeliveryRef;
-    @XmlAttribute(name = "useOriginalMessage", required = false)
+    @XmlAttribute(name = "useOriginalMessage")
     private Boolean useOriginalMessagePolicy;
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
@@ -169,7 +169,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
             handle = handled.createPredicate(routeContext);
         }
 
-        return new CatchProcessor(getExceptionClasses(), childProcessor, when, handle);
+        List<Class> exceptions = getExceptionClasses();
+        if (exceptions.isEmpty()) {
+            throw new IllegalArgumentException("At least one exception must be configured on " + this);
+        }
+
+        return new CatchProcessor(exceptions, childProcessor, when, handle);
     }
 
     // Fluent API

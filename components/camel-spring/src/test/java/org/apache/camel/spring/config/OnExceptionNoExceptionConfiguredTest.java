@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring.config;
 
-import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,23 +23,21 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version $Revision$
  */
-public class ErrorHandlerCamelContextRefNotFoundTest extends SpringTestSupport {
+public class OnExceptionNoExceptionConfiguredTest extends SpringTestSupport {
 
     @Override
     protected void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("ErrorHandlerBuilder with id foo not found in registry.", iae.getMessage());
+        } catch (Exception e) {
+            // expected
         }
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/ErrorHandlerCamelContextRefNotFoundTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/OnExceptionNoExceptionConfiguredTest.xml");
     }
     
     public void testDummy() {
