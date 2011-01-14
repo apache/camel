@@ -89,32 +89,18 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public void prepare() {
         if (prepared.compareAndSet(false, true)) {
-            // at first init the parent
-            RouteDefinitionHelper.initParent(this);
-
-            // abstracts is the cross cutting concerns
-            List<ProcessorDefinition> abstracts = new ArrayList<ProcessorDefinition>();
-
-            // upper is the cross cutting concerns such as interceptors, error handlers etc
-            List<ProcessorDefinition> upper = new ArrayList<ProcessorDefinition>();
-
-            // lower is the regular route
-            List<ProcessorDefinition> lower = new ArrayList<ProcessorDefinition>();
-
-            RouteDefinitionHelper.prepareRouteForInit(this, abstracts, lower);
-
-            // rebuild route as upper + lower
-            this.clearOutput();
-            this.getOutputs().addAll(lower);
-            this.getOutputs().addAll(0, upper);
+            RouteDefinitionHelper.prepareRoute(this);
         }
     }
 
     /**
-     * Marks the route definition as already prepared, for example using custom logic
-     * such as a {@link RouteBuilder} or from <tt>camel-core-xml</tt> component.
+     * Marks the route definition as prepared.
+     * <p/>
+     * This is needed if routes have been created by components such as
+     * <tt>camel-spring</tt> or <tt>camel-blueprint</tt>.
+     * Usually they share logic in the <tt>camel-core-xml</tt> module which prepares the routes.
      */
-    public void customPrepared() {
+    public void markPrepared() {
         prepared.set(true);
     }
 

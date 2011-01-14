@@ -319,7 +319,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             // mark all route definitions as custom prepared because
             // a route builder prepares the route definitions correctly already
             for (RouteDefinition route : getRouteCollection().getRoutes()) {
-                route.customPrepared();
+                route.markPrepared();
             }
         }
     }

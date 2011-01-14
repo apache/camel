@@ -24,9 +24,11 @@
             <handled>
                 <constant>true</constant>
             </handled>
+            <to uri="log:error"/>
             <to uri="mock:error"/>
         </onException>
         <process ref="myProcessor"/>
+        <to uri="log:bar"/>
         <to uri="mock:bar"/>
     </route>
 

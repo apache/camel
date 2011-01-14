@@ -298,159 +298,16 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
      */
     private void prepareRoutes() {
         for (RouteDefinition route : getRoutes()) {
+            // leverage logic from route definition helper to prepare the route
+            RouteDefinitionHelper.prepareRoute(route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
+                    getInterceptSendToEndpoints(), getOnCompletions());
 
-            // at first init the parent
-            RouteDefinitionHelper.initParent(route);
-
-            // abstracts is the cross cutting concerns
-            List<ProcessorDefinition> abstracts = new ArrayList<ProcessorDefinition>();
-
-            // upper is the cross cutting concerns such as interceptors, error handlers etc
-            List<ProcessorDefinition> upper = new ArrayList<ProcessorDefinition>();
-
-            // lower is the regular route
-            List<ProcessorDefinition> lower = new ArrayList<ProcessorDefinition>();
-
-            RouteDefinitionHelper.prepareRouteForInit(route, abstracts, lower);
-
-            // interceptors should be first for the cross cutting concerns
-            initInterceptors(route, upper);
-            // then on completion
-            initOnCompletions(abstracts, upper);
-            // then transactions
-            initTransacted(abstracts, lower);
-            // then on exception
-            initOnExceptions(abstracts, upper);
-
-            // rebuild route as upper + lower
-            route.clearOutput();
-            route.getOutputs().addAll(lower);
-            route.getOutputs().addAll(0, upper);
-
-            // mark as custom prepared
-            route.customPrepared();
+            // mark the route as prepared now
+            route.markPrepared();
         }
     }
 
     protected abstract void initCustomRegistry(T context);
-
-    private void initOnExceptions(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper) {
-        // add global on exceptions if any
-        List<OnExceptionDefinition> onExceptions = getOnExceptions();
-        if (onExceptions != null && !onExceptions.isEmpty()) {
-            // init the parent
-            for (OnExceptionDefinition global : onExceptions) {
-                RouteDefinitionHelper.initParent(global);
-            }
-            abstracts.addAll(onExceptions);
-        }
-
-        // now add onExceptions to the route
-        for (ProcessorDefinition output : abstracts) {
-            if (output instanceof OnExceptionDefinition) {
-                // on exceptions must be added at top, so the route flow is correct as
-                // on exceptions should be the first outputs
-                upper.add(0, output);
-            }
-        }
-    }
-
-    private void initInterceptors(RouteDefinition route, List<ProcessorDefinition> upper) {
-        // configure intercept
-        for (InterceptDefinition intercept : getIntercepts()) {
-            intercept.afterPropertiesSet();
-            // init the parent
-            RouteDefinitionHelper.initParent(intercept);
-            // add as first output so intercept is handled before the actual route and that gives
-            // us the needed head start to init and be able to intercept all the remaining processing steps
-            upper.add(0, intercept);
-        }
-
-        // configure intercept from
-        for (InterceptFromDefinition intercept : getInterceptFroms()) {
-
-            // should we only apply interceptor for a given endpoint uri
-            boolean match = true;
-            if (intercept.getUri() != null) {
-                match = false;
-                for (FromDefinition input : route.getInputs()) {
-                    if (EndpointHelper.matchEndpoint(input.getUri(), intercept.getUri())) {
-                        match = true;
-                        break;
-                    }
-                }
-            }
-
-            if (match) {
-                intercept.afterPropertiesSet();
-                // init the parent
-                RouteDefinitionHelper.initParent(intercept);
-                // add as first output so intercept is handled before the actual route and that gives
-                // us the needed head start to init and be able to intercept all the remaining processing steps
-                upper.add(0, intercept);
-            }
-        }
-
-        // configure intercept send to endpoint
-        for (InterceptSendToEndpointDefinition intercept : getInterceptSendToEndpoints()) {
-            intercept.afterPropertiesSet();
-            // init the parent
-            RouteDefinitionHelper.initParent(intercept);
-            // add as first output so intercept is handled before the actual route and that gives
-            // us the needed head start to init and be able to intercept all the remaining processing steps
-            upper.add(0, intercept);
-        }
-    }
-
-    private void initOnCompletions(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper) {
-        List<OnCompletionDefinition> completions = new ArrayList<OnCompletionDefinition>();
-
-        // find the route scoped onCompletions
-        for (ProcessorDefinition out : abstracts) {
-            if (out instanceof OnCompletionDefinition) {
-                completions.add((OnCompletionDefinition) out);
-            }
-        }
-
-        // only add global onCompletion if there are no route already
-        if (completions.isEmpty()) {
-            completions = getOnCompletions();
-            // init the parent
-            for (OnCompletionDefinition global : completions) {
-                RouteDefinitionHelper.initParent(global);
-            }
-        }
-
-        // are there any completions to init at all?
-        if (completions.isEmpty()) {
-            return;
-        }
-
-        upper.addAll(completions);
-    }
-
-    private void initTransacted(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> lower) {
-        TransactedDefinition transacted = null;
-
-        // add to correct type
-        for (ProcessorDefinition type : abstracts) {
-            if (type instanceof TransactedDefinition) {
-                if (transacted == null) {
-                    transacted = (TransactedDefinition) type;
-                } else {
-                    throw new IllegalArgumentException("The route can only have one transacted defined");
-                }
-            }
-        }
-
-        if (transacted != null) {
-            // the outputs should be moved to the transacted policy
-            transacted.getOutputs().addAll(lower);
-            // and add it as the single output
-            lower.clear();
-            lower.add(transacted);
-        }
-    }
 
     private void initJMXAgent() throws Exception {
         CamelJMXAgentDefinition camelJMXAgent = getCamelJMXAgent();
