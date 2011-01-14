@@ -200,6 +200,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         // create JMS listener and start it
         listenerContainer = createListenerContainer();
         listenerContainer.afterPropertiesSet();
+        log.info("Starting reply listener container on endpoint: " + endpoint);
         listenerContainer.start();
     }
 
@@ -208,6 +209,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         ServiceHelper.stopService(correlation);
 
         if (listenerContainer != null) {
+            log.info("Stopping reply listener container on endpoint: " + endpoint);
             listenerContainer.stop();
             listenerContainer.destroy();
             listenerContainer = null;

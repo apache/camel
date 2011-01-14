@@ -36,7 +36,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ValueHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 
@@ -68,16 +67,10 @@ public class JmsProducer extends DefaultAsyncProducer {
                 try {
                     if (endpoint.getReplyTo() != null) {
                         replyManager = endpoint.getReplyManager(endpoint.getReplyTo());
-                        if (LOG.isInfoEnabled()) {
-                            LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from: " + endpoint.getReplyTo()
-                                    + " queue with " + endpoint.getConcurrentConsumers() + " concurrent consumers.");
-                        }
+                        LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from: " + endpoint.getReplyTo());
                     } else {
                         replyManager = endpoint.getReplyManager();
-                        if (LOG.isInfoEnabled()) {
-                            LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from temporary queue with "
-                                    + endpoint.getConcurrentConsumers() + " concurrent consumers.");
-                        }
+                        LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from temporary queue");
                     }
                 } catch (Exception e) {
                     throw new FailedToCreateProducerException(endpoint, e);
