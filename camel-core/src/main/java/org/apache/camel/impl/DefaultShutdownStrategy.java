@@ -133,17 +133,17 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             future.cancel(true);
 
             //if set, stop processing and return false to indicate that the shutdown is giving up
-            if( giveUp ) {
+            if (giveUp) {
                 LOG.warn("Timeout occurred. Giving up now.");
-            	return false;
+                return false;
             } else {
-	            if (shutdownNowOnTimeout) {
-	                LOG.warn("Timeout occurred. Now forcing the routes to be shutdown now.");
-	                // force the routes to shutdown now
-	                shutdownRoutesNow(routesOrdered);
-	            } else {
-	                LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes.");
-	            }
+                if (shutdownNowOnTimeout) {
+                    LOG.warn("Timeout occurred. Now forcing the routes to be shutdown now.");
+                    // force the routes to shutdown now
+                    shutdownRoutesNow(routesOrdered);
+                } else {
+                    LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes.");
+                }
             }
         } catch (ExecutionException e) {
             // unwrap execution exception
