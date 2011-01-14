@@ -740,7 +740,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 stopRouteService(routeService);
             }
             return completed;
-        }
+        } 
+        return false;
     }
     
     public synchronized void stopRoute(String routeId) throws Exception {
