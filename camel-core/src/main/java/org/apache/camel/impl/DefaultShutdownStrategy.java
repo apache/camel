@@ -85,18 +85,22 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     public void suspend(CamelContext context, List<RouteStartupOrder> routes) throws Exception {
-        doShutdown(context, routes, getTimeout(), getTimeUnit(), true);
+        doShutdown(context, routes, getTimeout(), getTimeUnit(), true, false);
     }
 
     public void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
-        doShutdown(context, routes, timeout, timeUnit, false);
+        doShutdown(context, routes, timeout, timeUnit, false, false);
+    }
+
+    public boolean shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit, boolean giveUp) throws Exception {
+        return doShutdown(context, routes, timeout, timeUnit, false, giveUp);
     }
 
     public void suspend(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
-        doShutdown(context, routes, timeout, timeUnit, true);
+        doShutdown(context, routes, timeout, timeUnit, true, false);
     }
 
-    protected void doShutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit, boolean suspendOnly) throws Exception {
+    protected boolean doShutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit, boolean suspendOnly, boolean giveUp) throws Exception {
         StopWatch watch = new StopWatch();
 
         // at first sort according to route startup order
@@ -128,12 +132,18 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // timeout then cancel the task
             future.cancel(true);
 
-            if (shutdownNowOnTimeout) {
-                LOG.warn("Timeout occurred. Now forcing the routes to be shutdown now.");
-                // force the routes to shutdown now
-                shutdownRoutesNow(routesOrdered);
+            //if set, stop processing and return false to indicate that the shutdown is giving up
+            if( giveUp ) {
+                LOG.warn("Timeout occurred. Giving up now.");
+            	return false;
             } else {
-                LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes.");
+	            if (shutdownNowOnTimeout) {
+	                LOG.warn("Timeout occurred. Now forcing the routes to be shutdown now.");
+	                // force the routes to shutdown now
+	                shutdownRoutesNow(routesOrdered);
+	            } else {
+	                LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes.");
+	            }
             }
         } catch (ExecutionException e) {
             // unwrap execution exception
@@ -144,6 +154,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         long seconds = TimeUnit.SECONDS.convert(watch.stop(), TimeUnit.MILLISECONDS);
 
         LOG.info("Graceful shutdown of " + routesOrdered.size() + " routes completed in " + seconds + " seconds");
+        return true;
     }
 
     public void setTimeout(long timeout) {

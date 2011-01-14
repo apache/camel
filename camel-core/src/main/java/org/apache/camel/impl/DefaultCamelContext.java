@@ -726,6 +726,22 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
+    public synchronized void stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean giveUp) throws Exception {
+        RouteService routeService = routeServices.get(routeId);
+        if (routeService != null) {
+            List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
+            RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
+            routes.add(order);
+
+            boolean completed = getShutdownStrategy().shutdown(this, routes, timeout, timeUnit, giveUp);
+            if (completed) {
+	            // must stop route service as well
+	            routeService.setRemovingRoutes(false);
+	            stopRouteService(routeService);
+            }
+        }
+    }
+    
     public synchronized void stopRoute(String routeId) throws Exception {
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {

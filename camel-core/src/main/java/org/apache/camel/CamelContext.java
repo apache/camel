@@ -427,6 +427,8 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
 
+    void stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean giveUp) throws Exception;
+    
     /**
      * Shutdown and <b>removes</b> the given route using {@link org.apache.camel.spi.ShutdownStrategy}.
      *
