@@ -551,6 +551,10 @@
     <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-script/${pom.version}</bundle>
   </feature>
+  <feature name='camel-ruby' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-script</feature>
+    <bundle>mvn:org.jruby/jruby/${jruby-version}</bundle>
+  </feature>
   <feature name='camel-sip' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jain-sip-api-1.2/${servicemix-specs-version}</bundle>
