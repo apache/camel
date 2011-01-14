@@ -110,7 +110,7 @@
       <quickfix-bundle-version>1.5.0_1</quickfix-bundle-version>
       <regexp-bundle-version>1.3_1</regexp-bundle-version>      
       <rome-bundle-version>1.0_1</rome-bundle-version>
-      <saxon-bundle-version>9.1.0.1_3</saxon-bundle-version>
+      <saxon-bundle-version>9.1.0.8_1</saxon-bundle-version>
       <scala-bundle-version>2.8.1_1</scala-bundle-version>
       <jaxws.api.version>2.2</jaxws.api.version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
