@@ -127,16 +127,10 @@ public class MethodCallExpression extends ExpressionDefinition {
     
     @Override
     public Expression createExpression(CamelContext camelContext) {
-        Expression answer;
-
-        if (beanType != null) {            
+        if (beanType != null) {
             instance = ObjectHelper.newInstance(beanType);
-            // TODO: correct not to validate?
-            // answer = new BeanExpression(instance, getMethod(), parameterType);
             return new BeanExpression(instance, getMethod(), parameterType);
         } else if (instance != null) {
-            // TODO: correct not to validate?
-            // answer = new BeanExpression(instance, getMethod(), parameterType);
             return new BeanExpression(instance, getMethod(), parameterType);
         } else {
             String ref = beanName();
@@ -144,13 +138,11 @@ public class MethodCallExpression extends ExpressionDefinition {
             BeanHolder holder = new RegistryBean(camelContext, ref);
             // get the bean which will check that it exists
             instance = holder.getBean();
-            answer = new BeanExpression(ref, getMethod(), parameterType);
+            // only validate when it was a ref for a bean, so we can eager check
+            // this on startup of Camel
+            validateHasMethod(camelContext, instance, getMethod(), parameterType);
+            return new BeanExpression(ref, getMethod(), parameterType);
         }
-
-        // validate method
-        validateHasMethod(camelContext, instance, getMethod(), parameterType);
-
-        return answer;
     }
 
     @Override
