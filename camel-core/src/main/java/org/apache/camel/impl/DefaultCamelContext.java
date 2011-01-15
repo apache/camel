@@ -694,11 +694,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public void startRoute(RouteDefinition route) throws Exception {
+        // must ensure route is prepared, before we can start it
+        route.prepare();
+
         List<Route> routes = new ArrayList<Route>();
         List<RouteContext> routeContexts = route.addRoutes(this, routes);
         RouteService routeService = new RouteService(this, route, routeContexts, routes);
-        // must ensure route is prepared, before we can start it 
-        route.prepare();
         startRouteService(routeService, true);
     }
 

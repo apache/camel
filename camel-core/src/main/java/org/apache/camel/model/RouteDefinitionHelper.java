@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.util.EndpointHelper;
 
 /**
@@ -113,7 +114,7 @@ public final class RouteDefinitionHelper {
         RouteDefinitionHelper.prepareRouteForInit(route, abstracts, lower);
 
         // interceptors should be first for the cross cutting concerns
-        initInterceptors(route, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
+        initInterceptors(route, abstracts, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
         // then on completion
         initOnCompletions(abstracts, upper, onCompletions);
         // then transactions
@@ -148,10 +149,39 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    private static void initInterceptors(RouteDefinition route, List<ProcessorDefinition> upper,
+    private static void initInterceptors(RouteDefinition route, List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper,
                                          List<InterceptDefinition> intercepts,
                                          List<InterceptFromDefinition> interceptFromDefinitions,
                                          List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
+
+        // move the abstracts interceptors into the dedicated list
+        for (ProcessorDefinition processor : abstracts) {
+            if (processor instanceof InterceptSendToEndpointDefinition) {
+                if (interceptSendToEndpointDefinitions == null) {
+                    interceptSendToEndpointDefinitions = new ArrayList<InterceptSendToEndpointDefinition>();
+                }
+                interceptSendToEndpointDefinitions.add((InterceptSendToEndpointDefinition) processor);
+            } else if (processor instanceof InterceptFromDefinition) {
+                if (interceptFromDefinitions == null) {
+                    interceptFromDefinitions = new ArrayList<InterceptFromDefinition>();
+                }
+                interceptFromDefinitions.add((InterceptFromDefinition) processor);
+            } else if (processor instanceof InterceptDefinition) {
+                if (intercepts == null) {
+                    intercepts = new ArrayList<InterceptDefinition>();
+                }
+                intercepts.add((InterceptDefinition) processor);
+            }
+        }
+
+        doInitInterceptors(route, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
+    }
+
+    private static void doInitInterceptors(RouteDefinition route, List<ProcessorDefinition> upper,
+                                         List<InterceptDefinition> intercepts,
+                                         List<InterceptFromDefinition> interceptFromDefinitions,
+                                         List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
+
         // configure intercept
         if (intercepts != null && !intercepts.isEmpty()) {
             for (InterceptDefinition intercept : intercepts) {
