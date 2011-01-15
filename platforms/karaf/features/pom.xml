@@ -39,7 +39,7 @@
       <antlr-bundle-version>2.7.7_2</antlr-bundle-version>
       <aopalliance-bundle-version>1.0_3</aopalliance-bundle-version>
       <asm-bundle-version>2.2.3_3</asm-bundle-version>
-      <aws-java-sdk-bundle-version>1.1.1_1-SNAPSHOT</aws-java-sdk-bundle-version>
+      <aws-java-sdk-bundle-version>1.1.1_1</aws-java-sdk-bundle-version>
       <bcel-bundle-version>5.2_2</bcel-bundle-version>
       <cglib-version>2.1_3_6</cglib-version>
       <cometd-java-server-bundle-version>1.0.1_1</cometd-java-server-bundle-version>
@@ -85,7 +85,7 @@
       <jdom-bundle-version>1.1_2</jdom-bundle-version>
       <jettison-bundle-version>1.2</jettison-bundle-version>
       <jing-bundle-version>20030619_1</jing-bundle-version>
-      <jibx-bundle-version>1.2.2_1-SNAPSHOT</jibx-bundle-version>
+      <jibx-bundle-version>1.2.2_1</jibx-bundle-version>
       <jodatime-bundle-version>1.5.2_2</jodatime-bundle-version>
       <josql-bundle-version>1.5_3</josql-bundle-version>
       <jsch-bundle-version>0.1.44_1</jsch-bundle-version>
@@ -120,7 +120,7 @@
       <spring3-version>3.0.5.RELEASE</spring3-version>
       <spring-osgi-version>1.2.0</spring-osgi-version>
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
-      <spymemcached-bundle-version>2.5_1-SNAPSHOT</spymemcached-bundle-version>
+      <spymemcached-bundle-version>2.5_1</spymemcached-bundle-version>
       <stringtemplate-bundle-version>3.2_3</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_3</tagsoup-bundle-version>
       <velocity-bundle-version>1.7_1</velocity-bundle-version>
