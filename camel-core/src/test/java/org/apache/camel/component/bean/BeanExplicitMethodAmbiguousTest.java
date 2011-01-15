@@ -91,11 +91,11 @@ public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
                 
                 from("direct:foo").beanRef("dummy", "bar");
                 
-                from("direct:explicitString").to("bean:dummy?method=bar&type=java.lang.String");
+                from("direct:explicitString").to("bean:dummy?method=bar&parameterType=java.lang.String");
                 
-                from("direct:explicitReader").to("bean:dummy?method=bar&type=java.io.Reader");
+                from("direct:explicitReader").to("bean:dummy?method=bar&parameterType=java.io.Reader");
                 
-                from("direct:explicitInputStream").to("bean:dummy?method=bar&type=java.io.InputStream");
+                from("direct:explicitInputStream").to("bean:dummy?method=bar&parameterType=java.io.InputStream");
             }
         };
     }

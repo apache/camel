@@ -16,6 +16,9 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -46,6 +49,8 @@ public class BeanDefinition extends OutputDefinition<BeanDefinition> {
     private String method;
     @XmlAttribute(required = false)
     private Class<?> beanType;
+    @XmlAttribute(required = false)
+    private Class<?> parameterType;
     @XmlTransient
     private Object bean;
 
@@ -59,6 +64,12 @@ public class BeanDefinition extends OutputDefinition<BeanDefinition> {
     public BeanDefinition(String ref, String method) {
         this.ref = ref;
         this.method = method;
+    }
+    
+    public BeanDefinition(String ref, String method, Class<?> parameterType) {
+        this.ref = ref;
+        this.method = method;
+        this.parameterType = parameterType;
     }
 
     @Override
@@ -98,6 +109,14 @@ public class BeanDefinition extends OutputDefinition<BeanDefinition> {
 
     public void setBeanType(Class<?> beanType) {
         this.beanType = beanType;
+    }
+    
+    public Class<?> getParameterType() {
+        return parameterType;
+    }
+
+    public void setParameterType(Class<?> parameterType) {
+        this.parameterType = parameterType;
     }
     
     // Fluent API
@@ -145,7 +164,19 @@ public class BeanDefinition extends OutputDefinition<BeanDefinition> {
         setBean(beanType);
         return this;
     }
+    
+    /**
+     * Sets the Class of the method parameter that camel will call
+     *
+     * @param parameterType the Class of the method parameter
+     * @return the builder
+     */
+    public BeanDefinition parameterType(Class<?> parameterType) {
+        setParameterType(parameterType);
+        return this;
+    }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public Processor createProcessor(RouteContext routeContext) {
         BeanProcessor answer;
@@ -171,11 +202,21 @@ public class BeanDefinition extends OutputDefinition<BeanDefinition> {
         }
         if (method != null) {
             answer.setMethod(method);
-
+            
             // check there is a method with the given name, and leverage BeanInfo for that
             BeanInfo info = new BeanInfo(routeContext.getCamelContext(), bean.getClass());
-            if (!info.hasMethod(method)) {
-                throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
+            if (parameterType != null) {
+                answer.setParameterType(parameterType);
+                
+                List<Class> parameterTypes = new ArrayList<Class>();
+                parameterTypes.add(parameterType);
+                if (!info.hasMethod(method, parameterTypes)) {
+                    throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method, parameterTypes));
+                }
+            } else {
+                if (!info.hasMethod(method)) {
+                    throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
+                }
             }
         }
         return answer;
@@ -187,6 +228,9 @@ public class BeanDefinition extends OutputDefinition<BeanDefinition> {
             String methodText = "";
             if (method != null) {
                 methodText = " method: " + method;
+            }
+            if (parameterType != null) {
+                methodText = methodText + " parameterType: " + parameterType;
             }
             return "ref:" + ref + methodText;
         } else if (bean != null) {

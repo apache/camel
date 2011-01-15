@@ -2194,6 +2194,25 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
+    
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param bean  the bean to invoke
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
+     * @param parameterType the method parameter type to invoke on the bean (can be used to avoid ambiguty)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type bean(Object bean, String method, Class parameterType) {
+        BeanDefinition answer = new BeanDefinition();
+        answer.setBean(bean);
+        answer.setMethod(method);
+        answer.setParameterType(parameterType);
+        addOutput(answer);
+        return (Type) this;
+    }
 
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
@@ -2226,6 +2245,25 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
+    
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param  beanType  the bean class, Camel will instantiate an object at runtime
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
+     * @param parameterType the method parameter type to invoke on the bean (can be used to avoid ambiguty)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type bean(Class beanType, String method, Class parameterType) {
+        BeanDefinition answer = new BeanDefinition();
+        answer.setBeanType(beanType);
+        answer.setMethod(method);
+        answer.setParameterType(parameterType);
+        addOutput(answer);
+        return (Type) this;
+    }
 
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
@@ -2252,6 +2290,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type beanRef(String ref, String method) {
         BeanDefinition answer = new BeanDefinition(ref, method);
+        addOutput(answer);
+        return (Type) this;
+    }
+    
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param ref  reference to a bean to lookup in the registry
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
+     * @param method  the method parameter type to invoke on the bean (can be used to avoid ambiguty)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type beanRef(String ref, String method, Class parameterType) {
+        BeanDefinition answer = new BeanDefinition(ref, method, parameterType);
         addOutput(answer);
         return (Type) this;
     }
@@ -2943,5 +2997,4 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public String getLabel() {
         return "";
     }
-
 }

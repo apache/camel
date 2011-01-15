@@ -19,26 +19,11 @@ package org.apache.camel.component.bean;
 import java.io.InputStream;
 import java.io.Reader;
 
-import org.apache.camel.Handler;
-
 /**
- * @version $Revision$
+ * @version $Revision: 1031258 $
  */
 public class MyDummyBean {
-
-    public String hello(String s) {
-        return "Hello " + s;
-    }
-
-    public String hello(String s, String t) {
-        return "Hello " + s + " and " + t;
-    }
-
-    @Handler
-    public String bye(String s) {
-        return "Bye " + s;
-    }
-
+    
     public String bar(String s) {
         return "String";
     }
@@ -61,14 +46,5 @@ public class MyDummyBean {
     
     public boolean shouldProcess(InputStream i) {
         return false;
-    }
-    
-    public String test() {
-        return "test";
-    }
-
-    @Override
-    public String toString() {
-        return this.getClass().getName();
     }
 }

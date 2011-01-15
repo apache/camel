@@ -211,6 +211,22 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * href="http://camel.apache.org/bean-language.html>bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
+     * 
+     * @param bean the name of the bean looked up the registry
+     * @param method the name of the method to invoke on the bean
+     * @param parameterType the parameter type of the method to invoke on the bean
+     * @return the builder to continue processing the DSL
+     */
+    @SuppressWarnings("rawtypes")
+    public T method(String bean, String method, Class parameterType) {
+        return delegate.method(bean, method, parameterType);
+    }
+    
+    /**
+     * Evaluates an expression using the <a
+     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * which basically means the bean is invoked to determine the expression
+     * value.
      *
      * @param instance the instance of the bean
      * @param method the name of the method to invoke on the bean
@@ -218,6 +234,21 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      */
     public T method(Object instance, String method) {
         return delegate.method(instance, method);
+    }
+    
+    /**
+     * Evaluates an expression using the <a
+     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * which basically means the bean is invoked to determine the expression
+     * value.
+     *
+     * @param instance the instance of the bean
+     * @param method the name of the method to invoke on the bean
+     * @param parameterType the parameter type of the method to invoke on the bean
+     * @return the builder to continue processing the DSL
+     */
+    public T method(Object instance, String method, Class parameterType) {
+        return delegate.method(instance, method, parameterType);
     }
 
     /**
@@ -232,6 +263,21 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      */
     public T method(Class<?> beanType, String method) {
         return delegate.method(beanType, method);
+    }
+    
+    /**
+     * Evaluates an expression using the <a
+     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * which basically means the bean is invoked to determine the expression
+     * value.
+     * 
+     * @param beanType the Class of the bean which we want to invoke
+     * @param method the name of the method to invoke on the bean
+     * @param parameterType the parameter type of the method to invoke on the bean
+     * @return the builder to continue processing the DSL
+     */
+    public T method(Class<?> beanType, String method, Class parameterType) {
+        return delegate.method(beanType, method, parameterType);
     }
 
     /**

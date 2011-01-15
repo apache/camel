@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.List;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 
@@ -25,13 +27,21 @@ import org.apache.camel.Exchange;
 public class MethodNotFoundException extends CamelExchangeException {
     private static final long serialVersionUID = -7411465307141051012L;
 
-    private final String methodName;
     private final Object bean;
+    private final String methodName;
+    @SuppressWarnings("rawtypes")
+    private final List<Class> parameterTypes;
 
     public MethodNotFoundException(Exchange exchange, Object pojo, String methodName) {
-        super("Method with name: " + methodName + " not found on bean: " + pojo, exchange);
+        this(exchange, pojo, methodName, null);
+    }
+    
+    @SuppressWarnings("rawtypes")
+    public MethodNotFoundException(Exchange exchange, Object pojo, String methodName, List<Class> parameterTypes) {
+        super("Method with name: " + methodName + " and parameter types: " + parameterTypes + " not found on bean: " + pojo, exchange);
         this.methodName = methodName;
         this.bean = pojo;
+        this.parameterTypes = parameterTypes;
     }
 
     public String getMethodName() {
@@ -40,5 +50,10 @@ public class MethodNotFoundException extends CamelExchangeException {
 
     public Object getBean() {
         return bean;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public List<Class> getParameterTypes() {
+        return parameterTypes;
     }
 }

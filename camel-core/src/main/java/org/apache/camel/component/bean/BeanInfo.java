@@ -352,12 +352,12 @@ public class BeanInfo {
      * @param pojo the bean to invoke a method on
      * @param exchange the message exchange
      * @param name an optional name of the method that must match, use <tt>null</tt> to indicate all methods
-     * @param type an optional type of the method parameter that must match, use <tt>null</tt> to indicate all types
+     * @param parameterType an optional type of the method parameter that must match, use <tt>null</tt> to indicate all types
      * @return the method to invoke or null if no definitive method could be matched
      * @throws AmbiguousMethodCallException is thrown if cannot chose method due to ambiguous
      */
     @SuppressWarnings("rawtypes")
-    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name, Class type) throws AmbiguousMethodCallException {
+    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name, Class parameterType) throws AmbiguousMethodCallException {
         // @Handler should be select first
         // then any single method that has a custom @annotation
         // or any single method that has a match parameter type that matches the Exchange payload
@@ -375,11 +375,11 @@ public class BeanInfo {
             removeAllSetterOrGetterMethods(operationsWithBody);
         }
         
-        if (type != null) {
+        if (parameterType != null) {
             // filter all lists to only include methods with this argument type
-            removeNonMatchingMethods(operationsWithHandlerAnnotation, type);
-            removeNonMatchingMethods(operationsWithCustomAnnotation, type);
-            removeNonMatchingMethods(operationsWithBody, type);
+            removeNonMatchingMethods(operationsWithHandlerAnnotation, parameterType);
+            removeNonMatchingMethods(operationsWithCustomAnnotation, parameterType);
+            removeNonMatchingMethods(operationsWithBody, parameterType);
         }
 
         if (operationsWithHandlerAnnotation.size() > 1) {
@@ -712,7 +712,51 @@ public class BeanInfo {
      * @return <tt>true</tt> if we have such a method.
      */
     public boolean hasMethod(String methodName) {
-        return getOperations(methodName) != null;
+        return hasMethod(methodName, null);
+    }
+    
+    /**
+     * Do we have a method with the given name.
+     * <p/>
+     * Shorthand method names for getters is supported, so you can pass in eg 'name' and Camel
+     * will can find the real 'getName' method instead.
+     *
+     * @param methodName the method name
+     * @param parameterTypes the parameter types
+     * @return <tt>true</tt> if we have such a method.
+     */
+    @SuppressWarnings("rawtypes")
+    public boolean hasMethod(String methodName, List<Class> parameterTypes) {
+        List<MethodInfo> methods = getOperations(methodName);
+        if (methods == null || methods.isEmpty()) {
+            return false;
+        }
+        
+        if (parameterTypes == null || parameterTypes.isEmpty()) {
+            return true;
+        }
+        
+        for (MethodInfo methodInfo : methods) {
+            List<ParameterInfo> parameters = methodInfo.getParameters();
+            
+            if (parameters.size() == parameterTypes.size()) {
+                Iterator<Class> parameterTypesIterator = parameterTypes.iterator();
+                boolean matchingMethodFound = true;
+                
+                for (ParameterInfo parameterInfo : parameters) {
+                    if (!parameterInfo.getType().isAssignableFrom(parameterTypesIterator.next())) {
+                        matchingMethodFound = false;
+                        break; 
+                    }
+                }
+                
+                if (matchingMethodFound) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 
     /**

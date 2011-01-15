@@ -48,7 +48,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     private BeanHolder beanHolder;
     private boolean shorthandMethod;
     @SuppressWarnings("rawtypes")
-    private Class type;
+    private Class parameterType;
 
     public BeanProcessor(Object pojo, BeanInfo beanInfo) {
         this(new ConstantBeanHolder(pojo, beanInfo));
@@ -76,13 +76,13 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         AsyncProcessorHelper.process(this, exchange);
     }
 
-    @SuppressWarnings({ "unused", "rawtypes" })
+    @SuppressWarnings({ "rawtypes" })
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // do we have an explicit method name we always should invoke
         boolean isExplicitMethod = ObjectHelper.isNotEmpty(method);
         // do we have an explicit parameter type we should invoke if we have multiple possible
         // methods
-        boolean isExplicitType = ObjectHelper.isNotEmpty(type);
+        boolean isExplicitParameterType = ObjectHelper.isNotEmpty(parameterType);
 
         Object bean = beanHolder.getBean();
         BeanInfo beanInfo = beanHolder.getBeanInfo();
@@ -145,9 +145,9 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
                 prevMethod = in.getHeader(Exchange.BEAN_METHOD_NAME, String.class);
                 in.setHeader(Exchange.BEAN_METHOD_NAME, method);
             }
-            if (isExplicitType) {
+            if (isExplicitParameterType) {
                 prevType = in.getHeader(Exchange.BEAN_TYPE_NAME, Class.class);
-                in.setHeader(Exchange.BEAN_TYPE_NAME, type);
+                in.setHeader(Exchange.BEAN_TYPE_NAME, parameterType);
             }
             try {
                 invocation = beanInfo.createInvocation(bean, exchange);
@@ -193,7 +193,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
             if (isExplicitMethod) {
                 in.setHeader(Exchange.BEAN_METHOD_NAME, prevMethod);
             }
-            if (isExplicitType) {
+            if (isExplicitParameterType) {
                 in.setHeader(Exchange.BEAN_TYPE_NAME, prevType);
             }
         }
@@ -274,18 +274,18 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     }
     
     @SuppressWarnings("rawtypes")
-    public Class getType() {
-        return type;
+    public Class getParameterType() {
+        return parameterType;
     }
 
     /**
-     * Sets the type/class name to which the body should converted before the suitable method is
+     * Sets the parameter type/class name to which the body should converted before the suitable method is
      * determined.
-     * @param type
+     * @param parameterType
      */
     @SuppressWarnings("rawtypes")
-    public void setType(Class type) {
-        this.type = type;
+    public void setParameterType(Class parameterType) {
+        this.parameterType = parameterType;
     }
 
     // Implementation methods
