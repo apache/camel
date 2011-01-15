@@ -22,7 +22,9 @@ import java.util.Map;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 
 /**
@@ -35,8 +37,10 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
             template.requestBody("direct:start", "World", String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            RuntimeBeanExpressionException rbee = assertIsInstanceOf(RuntimeBeanExpressionException.class, e.getCause());
-            ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, rbee.getCause());
+            RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
+            MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, rce.getCause());
+            assertEquals("getOther[xx", mnfe.getMethodName());
+            ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, mnfe.getCause());
             assertEquals("Illegal syntax: getOther[xx", cause.getMessage());
             assertEquals("getOther[xx", cause.getExpression());
         }

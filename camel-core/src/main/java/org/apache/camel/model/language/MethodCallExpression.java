@@ -27,13 +27,16 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.language.bean.BeanExpression;
+import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OgnlHelper;
 
 /**
  * For expressions and predicates using the
@@ -127,22 +130,23 @@ public class MethodCallExpression extends ExpressionDefinition {
     
     @Override
     public Expression createExpression(CamelContext camelContext) {
+        Expression answer;
         if (beanType != null) {
             instance = ObjectHelper.newInstance(beanType);
-            return new BeanExpression(instance, getMethod(), parameterType);
+            answer = new BeanExpression(instance, getMethod(), parameterType);
         } else if (instance != null) {
-            return new BeanExpression(instance, getMethod(), parameterType);
+            answer = new BeanExpression(instance, getMethod(), parameterType);
         } else {
             String ref = beanName();
             // if its a ref then check that the ref exists
             BeanHolder holder = new RegistryBean(camelContext, ref);
             // get the bean which will check that it exists
             instance = holder.getBean();
-            // only validate when it was a ref for a bean, so we can eager check
-            // this on startup of Camel
-            validateHasMethod(camelContext, instance, getMethod(), parameterType);
-            return new BeanExpression(ref, getMethod(), parameterType);
+            answer = new BeanExpression(ref, getMethod(), parameterType);
         }
+
+        validateHasMethod(camelContext, instance, getMethod(), parameterType);
+        return answer;
     }
 
     @Override
@@ -151,7 +155,9 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     /**
-     * Validates the given bean has the method
+     * Validates the given bean has the method.
+     * <p/>
+     * This implementation will skip trying to validate OGNL method name expressions.
      *
      * @param context  camel context
      * @param bean     the bean instance
@@ -164,11 +170,23 @@ public class MethodCallExpression extends ExpressionDefinition {
             return;
         }
 
+        // do not try to validate ognl methods
+        if (OgnlHelper.isValidOgnlExpression(method)) {
+            return;
+        }
+
+        // if invalid OGNL then fail
+        if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
+            ExpressionIllegalSyntaxException cause = new ExpressionIllegalSyntaxException(method);
+            throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(bean, method, cause));
+        }
+
         BeanInfo info = new BeanInfo(context, bean.getClass());
         List<Class> parameterTypes = new ArrayList<Class>();
         if (parameterType != null) {
-            parameterTypes.add(parameterType);            
+            parameterTypes.add(parameterType);
         }
+
         if (!info.hasMethod(method, parameterTypes)) {
             throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method, parameterTypes));
         }

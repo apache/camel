@@ -101,6 +101,23 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         }
     }
 
+    public void testMethodNotExistsOnInstance() throws Exception {
+        final MyBean myBean = new MyBean();
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:typo").bean(myBean, "ups").to("mock:result");
+                }
+            });
+            fail("Should throw an exception");
+        } catch (FailedToCreateRouteException e) {
+            MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
+            assertEquals("ups", mnfe.getMethodName());
+            assertSame(myBean, mnfe.getBean());
+        }
+    }
+
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         bean = new MyBean();
