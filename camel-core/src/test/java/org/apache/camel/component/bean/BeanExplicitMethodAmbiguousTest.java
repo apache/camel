@@ -17,7 +17,6 @@
 package org.apache.camel.component.bean;
 
 import java.io.ByteArrayInputStream;
-import java.io.StringReader;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -50,36 +49,16 @@ public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
         assertEquals("Bye Camel", out);
     }
     
-    public void testBeanImplicitMethodInvocationStringBody() throws Exception {
+    public void testBeanExplicitMethodInvocationStringBody() throws Exception {
         String out = template.requestBody("direct:foo", "Camel", String.class);
         assertEquals("String", out);
     }
     
-    public void testBeanImplicitMethodInvocationReaderBody() throws Exception {
-        String out = template.requestBody("direct:foo", new StringReader("Camel"), String.class);
-        assertEquals("Reader", out);
-    }
-    
-    public void testBeanImplicitMethodInvocationInputStreamBody() throws Exception {
+    public void testBeanExplicitMethodInvocationInputStreamBody() throws Exception {
         String out = template.requestBody("direct:foo", new ByteArrayInputStream("Camel".getBytes()), String.class);
         assertEquals("InputStream", out);
     }
-    
-    public void testBeanExplicitMethodInvocationString() throws Exception {
-        String out = template.requestBody("direct:explicitString", new ByteArrayInputStream("Camel".getBytes()), String.class);
-        assertEquals("String", out);
-    }
-    
-    public void testBeanExplicitMethodInvocationReader() throws Exception {
-        String out = template.requestBody("direct:explicitReader", new ByteArrayInputStream("Camel".getBytes()), String.class);
-        assertEquals("Reader", out);
-    }
 
-    public void testBeanExplicitMethodInvocationInputStream() throws Exception {
-        String out = template.requestBody("direct:explicitInputStream", "Camel", String.class);
-        assertEquals("InputStream", out);
-    }
-    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -90,12 +69,6 @@ public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
                 from("direct:bye").beanRef("dummy");
                 
                 from("direct:foo").beanRef("dummy", "bar");
-                
-                from("direct:explicitString").to("bean:dummy?method=bar&parameterType=java.lang.String");
-                
-                from("direct:explicitReader").to("bean:dummy?method=bar&parameterType=java.io.Reader");
-                
-                from("direct:explicitInputStream").to("bean:dummy?method=bar&parameterType=java.io.InputStream");
             }
         };
     }

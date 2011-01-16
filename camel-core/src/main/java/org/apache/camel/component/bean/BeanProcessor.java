@@ -47,8 +47,6 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     private String method;
     private BeanHolder beanHolder;
     private boolean shorthandMethod;
-    @SuppressWarnings("rawtypes")
-    private Class parameterType;
 
     public BeanProcessor(Object pojo, BeanInfo beanInfo) {
         this(new ConstantBeanHolder(pojo, beanInfo));
@@ -76,13 +74,9 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         AsyncProcessorHelper.process(this, exchange);
     }
 
-    @SuppressWarnings({ "rawtypes" })
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // do we have an explicit method name we always should invoke
         boolean isExplicitMethod = ObjectHelper.isNotEmpty(method);
-        // do we have an explicit parameter type we should invoke if we have multiple possible
-        // methods
-        boolean isExplicitParameterType = ObjectHelper.isNotEmpty(parameterType);
 
         Object bean = beanHolder.getBean();
         BeanInfo beanInfo = beanHolder.getBeanInfo();
@@ -104,7 +98,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         }
 
         Message in = exchange.getIn();
-        
+
         // Now it gets a bit complicated as ProxyHelper can proxy beans which we later
         // intend to invoke (for example to proxy and invoke using spring remoting).
         // and therefore the message body contains a BeanInvocation object.
@@ -128,14 +122,13 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
                 return true;
             }
         }
-        
+
         // set temporary header which is a hint for the bean info that introspect the bean
         if (in.getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) == null) {
             in.setHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, isMultiParameterArray());
         }
 
         String prevMethod = null;
-        Class prevType = null;
         MethodInvocation invocation;
         if (methodObject != null) {
             invocation = beanInfo.createInvocation(methodObject, bean, exchange);
@@ -144,10 +137,6 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
             if (isExplicitMethod) {
                 prevMethod = in.getHeader(Exchange.BEAN_METHOD_NAME, String.class);
                 in.setHeader(Exchange.BEAN_METHOD_NAME, method);
-            }
-            if (isExplicitParameterType) {
-                prevType = in.getHeader(Exchange.BEAN_TYPE_NAME, Class.class);
-                in.setHeader(Exchange.BEAN_TYPE_NAME, parameterType);
             }
             try {
                 invocation = beanInfo.createInvocation(bean, exchange);
@@ -192,9 +181,6 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         } finally {
             if (isExplicitMethod) {
                 in.setHeader(Exchange.BEAN_METHOD_NAME, prevMethod);
-            }
-            if (isExplicitParameterType) {
-                in.setHeader(Exchange.BEAN_TYPE_NAME, prevType);
             }
         }
 
@@ -271,21 +257,6 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
      */
     public void setShorthandMethod(boolean shorthandMethod) {
         this.shorthandMethod = shorthandMethod;
-    }
-    
-    @SuppressWarnings("rawtypes")
-    public Class getParameterType() {
-        return parameterType;
-    }
-
-    /**
-     * Sets the parameter type/class name to which the body should converted before the suitable method is
-     * determined.
-     * @param parameterType
-     */
-    @SuppressWarnings("rawtypes")
-    public void setParameterType(Class parameterType) {
-        this.parameterType = parameterType;
     }
 
     // Implementation methods

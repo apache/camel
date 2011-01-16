@@ -129,12 +129,10 @@ public class BeanInfo {
         return null;
     }
 
-    @SuppressWarnings("rawtypes")
     public MethodInvocation createInvocation(Object pojo, Exchange exchange) throws AmbiguousMethodCallException, MethodNotFoundException {
         MethodInfo methodInfo = null;
 
         String name = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
-        Class type = exchange.getIn().getHeader(Exchange.BEAN_TYPE_NAME, Class.class);
         if (name != null) {
             if (hasMethod(name)) {
                 List<MethodInfo> methods = getOperations(name);
@@ -145,7 +143,7 @@ public class BeanInfo {
                     // there are more methods with that name so we cannot decide which to use
 
                     // but first lets try to choose a method and see if that comply with the name
-                    methodInfo = chooseMethod(pojo, exchange, name, type);
+                    methodInfo = chooseMethod(pojo, exchange, name);
                     if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
                         throw new AmbiguousMethodCallException(exchange, methods);
                     }
@@ -157,7 +155,7 @@ public class BeanInfo {
         }
         if (methodInfo == null) {
             // no name or type
-            methodInfo = chooseMethod(pojo, exchange, null, null);
+            methodInfo = chooseMethod(pojo, exchange, null);
         }
         if (methodInfo == null) {
             methodInfo = defaultMethod;
@@ -283,7 +281,7 @@ public class BeanInfo {
         return answer;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings("unchecked")
     protected MethodInfo createMethodInfo(Class clazz, Method method) {
         Class[] parameterTypes = method.getParameterTypes();
         Annotation[][] parametersAnnotations = method.getParameterAnnotations();
@@ -352,17 +350,15 @@ public class BeanInfo {
      * @param pojo the bean to invoke a method on
      * @param exchange the message exchange
      * @param name an optional name of the method that must match, use <tt>null</tt> to indicate all methods
-     * @param parameterType an optional type of the method parameter that must match, use <tt>null</tt> to indicate all types
      * @return the method to invoke or null if no definitive method could be matched
      * @throws AmbiguousMethodCallException is thrown if cannot chose method due to ambiguous
      */
-    @SuppressWarnings("rawtypes")
-    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name, Class parameterType) throws AmbiguousMethodCallException {
+    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name) throws AmbiguousMethodCallException {
         // @Handler should be select first
         // then any single method that has a custom @annotation
         // or any single method that has a match parameter type that matches the Exchange payload
         // and last then try to select the best among the rest
-        
+
         if (name != null) {
             // filter all lists to only include methods with this name
             removeNonMatchingMethods(operationsWithHandlerAnnotation, name);
@@ -373,13 +369,6 @@ public class BeanInfo {
             removeAllSetterOrGetterMethods(operationsWithHandlerAnnotation);
             removeAllSetterOrGetterMethods(operationsWithCustomAnnotation);
             removeAllSetterOrGetterMethods(operationsWithBody);
-        }
-        
-        if (parameterType != null) {
-            // filter all lists to only include methods with this argument type
-            removeNonMatchingMethods(operationsWithHandlerAnnotation, parameterType);
-            removeNonMatchingMethods(operationsWithCustomAnnotation, parameterType);
-            removeNonMatchingMethods(operationsWithBody, parameterType);
         }
 
         if (operationsWithHandlerAnnotation.size() > 1) {
@@ -416,7 +405,6 @@ public class BeanInfo {
         return null;
     }
     
-    @SuppressWarnings("rawtypes")
     private MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList)
         throws AmbiguousMethodCallException {
         // lets see if we can find a method who's body param type matches the message body
@@ -678,19 +666,6 @@ public class BeanInfo {
             }
         }
     }
-    
-    @SuppressWarnings("rawtypes")
-    private static void removeNonMatchingMethods(List<MethodInfo> methods, Class type) {
-        Iterator<MethodInfo> it = methods.iterator();
-        while (it.hasNext()) {
-            MethodInfo info = it.next();
-            Class<?>[] parameterTypes = info.getMethod().getParameterTypes();
-            if (!(parameterTypes.length > 0 && parameterTypes[0].isAssignableFrom(type))) {
-                // type does not match so remove it
-                it.remove();
-            }
-        }
-    }
 
     private static Class<?> getTargetClass(Class<?> clazz) {
         if (clazz != null && clazz.getName().contains(CGLIB_CLASS_SEPARATOR)) {
@@ -712,51 +687,7 @@ public class BeanInfo {
      * @return <tt>true</tt> if we have such a method.
      */
     public boolean hasMethod(String methodName) {
-        return hasMethod(methodName, null);
-    }
-    
-    /**
-     * Do we have a method with the given name.
-     * <p/>
-     * Shorthand method names for getters is supported, so you can pass in eg 'name' and Camel
-     * will can find the real 'getName' method instead.
-     *
-     * @param methodName the method name
-     * @param parameterTypes the parameter types
-     * @return <tt>true</tt> if we have such a method.
-     */
-    @SuppressWarnings("rawtypes")
-    public boolean hasMethod(String methodName, List<Class> parameterTypes) {
-        List<MethodInfo> methods = getOperations(methodName);
-        if (methods == null || methods.isEmpty()) {
-            return false;
-        }
-        
-        if (parameterTypes == null || parameterTypes.isEmpty()) {
-            return true;
-        }
-        
-        for (MethodInfo methodInfo : methods) {
-            List<ParameterInfo> parameters = methodInfo.getParameters();
-            
-            if (parameters.size() == parameterTypes.size()) {
-                Iterator<Class> parameterTypesIterator = parameterTypes.iterator();
-                boolean matchingMethodFound = true;
-                
-                for (ParameterInfo parameterInfo : parameters) {
-                    if (!parameterInfo.getType().isAssignableFrom(parameterTypesIterator.next())) {
-                        matchingMethodFound = false;
-                        break; 
-                    }
-                }
-                
-                if (matchingMethodFound) {
-                    return true;
-                }
-            }
-        }
-        
-        return false;
+        return getOperations(methodName) != null;
     }
 
     /**

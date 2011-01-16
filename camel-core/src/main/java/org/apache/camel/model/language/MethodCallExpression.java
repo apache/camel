@@ -16,9 +16,6 @@
  */
 package org.apache.camel.model.language;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,7 +31,6 @@ import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.language.bean.BeanExpression;
-import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 
@@ -58,8 +54,6 @@ public class MethodCallExpression extends ExpressionDefinition {
     private Class<?> beanType;
     @XmlTransient
     private Object instance;
-    @XmlAttribute(required = false)
-    private Class parameterType;
 
     public MethodCallExpression() {
     }
@@ -69,28 +63,18 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(String beanName, String method) {
-        this(beanName, method, null);
-    }
-    
-    public MethodCallExpression(String beanName, String method, Class parameterType) {
         super(beanName);
         this.method = method;
-        this.parameterType = parameterType;
     }
     
     public MethodCallExpression(Object instance) {
         this(instance, null);
     }
-
-    public MethodCallExpression(Object instance, String method) {
-        this(instance, method, null);
-    }
     
-    public MethodCallExpression(Object instance, String method, Class parameterType) {
+    public MethodCallExpression(Object instance, String method) {
         super(instance.getClass().getName());
         this.instance = instance;
         this.method = method;
-        this.parameterType = parameterType;
     }
 
     public MethodCallExpression(Class<?> type) {
@@ -98,14 +82,9 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
     
     public MethodCallExpression(Class<?> type, String method) {
-        this(type, method, null);
-    }
-    
-    public MethodCallExpression(Class<?> type, String method, Class parameterType) {
         super(type.toString());
         this.beanType = type;
         this.method = method;
-        this.parameterType = parameterType;
     }
 
     public String getLanguage() {
@@ -119,33 +98,25 @@ public class MethodCallExpression extends ExpressionDefinition {
     public void setMethod(String method) {
         this.method = method;
     }
-    
-    public Class getParameterType() {
-        return parameterType;
-    }
 
-    public void setParameterType(Class parameterType) {
-        this.parameterType = parameterType;
-    }
-    
     @Override
     public Expression createExpression(CamelContext camelContext) {
         Expression answer;
         if (beanType != null) {
             instance = ObjectHelper.newInstance(beanType);
-            answer = new BeanExpression(instance, getMethod(), parameterType);
+            answer = new BeanExpression(instance, getMethod());
         } else if (instance != null) {
-            answer = new BeanExpression(instance, getMethod(), parameterType);
+            answer = new BeanExpression(instance, getMethod());
         } else {
             String ref = beanName();
             // if its a ref then check that the ref exists
             BeanHolder holder = new RegistryBean(camelContext, ref);
             // get the bean which will check that it exists
             instance = holder.getBean();
-            answer = new BeanExpression(ref, getMethod(), parameterType);
+            answer = new BeanExpression(ref, getMethod());
         }
 
-        validateHasMethod(camelContext, instance, getMethod(), parameterType);
+        validateHasMethod(camelContext, instance, getMethod());
         return answer;
     }
 
@@ -164,8 +135,7 @@ public class MethodCallExpression extends ExpressionDefinition {
      * @param method   the method, can be <tt>null</tt> if no method name provided
      * @throws org.apache.camel.RuntimeCamelException is thrown if bean does not have the method
      */
-    @SuppressWarnings("rawtypes")
-    protected void validateHasMethod(CamelContext context, Object bean, String method, Class parameterType) {
+    protected void validateHasMethod(CamelContext context, Object bean, String method) {
         if (method == null) {
             return;
         }
@@ -182,13 +152,8 @@ public class MethodCallExpression extends ExpressionDefinition {
         }
 
         BeanInfo info = new BeanInfo(context, bean.getClass());
-        List<Class> parameterTypes = new ArrayList<Class>();
-        if (parameterType != null) {
-            parameterTypes.add(parameterType);
-        }
-
-        if (!info.hasMethod(method, parameterTypes)) {
-            throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method, parameterTypes));
+        if (!info.hasMethod(method)) {
+            throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
         }
     }
 
@@ -205,6 +170,6 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public String toString() {
-        return "bean{" + beanName() + (method != null ? ", method=" + method : "") + (parameterType != null ? ", parameterTypes=" + parameterType : "") + "}";
+        return "bean{" + beanName() + (method != null ? ", method=" + method : "") + "}";
     }
 }

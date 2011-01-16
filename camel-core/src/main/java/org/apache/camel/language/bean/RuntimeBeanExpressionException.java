@@ -30,24 +30,12 @@ public class RuntimeBeanExpressionException extends RuntimeExpressionException {
     private final Exchange exchange;
     private final String beanName;
     private final String method;
-    @SuppressWarnings("rawtypes")
-    private final Class parameterType;
 
     public RuntimeBeanExpressionException(Exchange exchange, String beanName, String method, Throwable e) {
         super("Failed to invoke method: " + method + " on " + beanName + " due to: " + e, e);
         this.exchange = exchange;
         this.beanName = beanName;
         this.method = method;
-        this.parameterType = null;
-    }
-    
-    @SuppressWarnings("rawtypes")
-    public RuntimeBeanExpressionException(Exchange exchange, String beanName, String method, Class parameterType, Throwable e) {
-        super("Failed to invoke method: " + method + " with parameter type: " + parameterType + " on " + beanName + " due to: " + e, e);
-        this.exchange = exchange;
-        this.beanName = beanName;
-        this.method = method;
-        this.parameterType = parameterType;
     }
 
     public String getBeanName() {
@@ -60,10 +48,5 @@ public class RuntimeBeanExpressionException extends RuntimeExpressionException {
 
     public String getMethod() {
         return method;
-    }
-    
-    @SuppressWarnings("rawtypes")
-    public Class getParameterType() {
-        return parameterType;
     }
 }

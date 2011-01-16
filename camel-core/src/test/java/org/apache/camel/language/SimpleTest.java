@@ -708,8 +708,7 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.getFriend.getFriend.getName}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            assertEquals("Failed to invoke method: .getFriend.getFriend.getName with "
-                    + "parameter type: null on null due to: java.lang.NullPointerException", e.getMessage());
+            assertEquals("Failed to invoke method: .getFriend.getFriend.getName on null due to: java.lang.NullPointerException", e.getMessage());
             assertIsInstanceOf(NullPointerException.class, e.getCause());
         }
     }
@@ -735,8 +734,7 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.friend.friend.name}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            assertEquals("Failed to invoke method: .friend.friend.name with "
-                    + "parameter type: null on null due to: java.lang.NullPointerException", e.getMessage());
+            assertEquals("Failed to invoke method: .friend.friend.name on null due to: java.lang.NullPointerException", e.getMessage());
             assertIsInstanceOf(NullPointerException.class, e.getCause());
         }
     }

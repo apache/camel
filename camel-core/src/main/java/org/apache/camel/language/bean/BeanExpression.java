@@ -42,34 +42,20 @@ public class BeanExpression implements Expression, Predicate {
     private String beanName;
     private String method;
     private Object bean;
-    @SuppressWarnings("rawtypes")
-    private Class parameterType;
-    
-    public BeanExpression(Object bean, String method) {
-        this(bean, method, null);
-    }
 
-    @SuppressWarnings("rawtypes")
-    public BeanExpression(Object bean, String method, Class parameterType) {
+    public BeanExpression(Object bean, String method) {
         this.bean = bean;
         this.method = method;
-        this.parameterType = parameterType;
     }
 
     public BeanExpression(String beanName, String method) {
-        this(beanName, method, null);
-    }
-    
-    @SuppressWarnings("rawtypes")
-    public BeanExpression(String beanName, String method, Class parameterType) {
         this.beanName = beanName;
         this.method = method;
-        this.parameterType = parameterType;
     }
 
     @Override
     public String toString() {
-        return "BeanExpression[bean:" + (bean == null ? beanName : bean) + " method: " + method + " parameterType: " + parameterType + "]";
+        return "BeanExpression[bean:" + (bean == null ? beanName : bean) + " method: " + method + "]";
     }
 
     public Object evaluate(Exchange exchange) {
@@ -86,7 +72,7 @@ public class BeanExpression implements Expression, Predicate {
         // validate OGNL
         if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
             ExpressionIllegalSyntaxException cause = new ExpressionIllegalSyntaxException(method);
-            throw new RuntimeBeanExpressionException(exchange, beanName, method, parameterType, cause);
+            throw new RuntimeBeanExpressionException(exchange, beanName, method, cause);
         }
 
         if (OgnlHelper.isValidOgnlExpression(method)) {
@@ -97,16 +83,16 @@ public class BeanExpression implements Expression, Predicate {
                 ognl.process(exchange);
                 return ognl.getResult();
             } catch (Exception e) {
-                throw new RuntimeBeanExpressionException(exchange, beanName, method, parameterType, e);
+                throw new RuntimeBeanExpressionException(exchange, beanName, method, e);
             }
         } else {
             // regular non ognl invocation
-            InvokeProcessor invoke = new InvokeProcessor(holder, method, parameterType);
+            InvokeProcessor invoke = new InvokeProcessor(holder, method);
             try {
                 invoke.process(exchange);
                 return invoke.getResult();
             } catch (Exception e) {
-                throw new RuntimeBeanExpressionException(exchange, beanName, method, parameterType, e);
+                throw new RuntimeBeanExpressionException(exchange, beanName, method, e);
             }
         }
     }
@@ -128,17 +114,11 @@ public class BeanExpression implements Expression, Predicate {
 
         private BeanHolder beanHolder;
         private String methodName;
-        private Class parameterType;
         private Object result;
 
         private InvokeProcessor(BeanHolder beanHolder, String methodName) {
-            this(beanHolder, methodName, null);
-        }
-        
-        private InvokeProcessor(BeanHolder beanHolder, String methodName, Class parameterType) {
             this.beanHolder = beanHolder;
             this.methodName = methodName;
-            this.parameterType = parameterType;
         }
 
         public void process(Exchange exchange) throws Exception {
@@ -147,9 +127,6 @@ public class BeanExpression implements Expression, Predicate {
                 processor.setMethod(methodName);
                 // enable OGNL like invocation
                 processor.setShorthandMethod(true);
-            }
-            if (parameterType != null) {
-                processor.setParameterType(parameterType);
             }
             try {
                 // copy the original exchange to avoid side effects on it
@@ -164,7 +141,7 @@ public class BeanExpression implements Expression, Predicate {
                     exchange.setException(resultExchange.getException());
                 }
             } catch (Exception e) {
-                throw new RuntimeBeanExpressionException(exchange, beanName, methodName, parameterType, e);
+                throw new RuntimeBeanExpressionException(exchange, beanName, methodName, e);
             }
         }
 
@@ -252,7 +229,6 @@ public class BeanExpression implements Expression, Predicate {
             }
         }
 
-        @SuppressWarnings("rawtypes")
         private Object lookupResult(Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean) {
             // trim key
             key = key.trim();
@@ -308,4 +284,5 @@ public class BeanExpression implements Expression, Predicate {
             return result;
         }
     }
+
 }

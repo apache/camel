@@ -38,7 +38,7 @@ public class MyDummyBean {
     public String bye(String s) {
         return "Bye " + s;
     }
-
+    
     public String bar(String s) {
         return "String";
     }
@@ -49,26 +49,5 @@ public class MyDummyBean {
     
     public String bar(InputStream s) {
         return "InputStream";
-    }
-
-    public boolean shouldProcess(String s) {
-        return true;
-    }
-    
-    public boolean shouldProcess(Reader r) {
-        return false;
-    }
-    
-    public boolean shouldProcess(InputStream i) {
-        return false;
-    }
-    
-    public String test() {
-        return "test";
-    }
-
-    @Override
-    public String toString() {
-        return this.getClass().getName();
     }
 }

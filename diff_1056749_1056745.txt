@@ -1,0 +1,320 @@
+Index: camel-core/src/test/java/org/apache/camel/component/bean/BeanExplicitMethodAmbiguousTest.java
+===================================================================
+--- camel-core/src/test/java/org/apache/camel/component/bean/BeanExplicitMethodAmbiguousTest.java	(revision 1056749)
++++ camel-core/src/test/java/org/apache/camel/component/bean/BeanExplicitMethodAmbiguousTest.java	(revision 1056745)
+@@ -17,7 +17,6 @@
+ package org.apache.camel.component.bean;
+ 
+ import java.io.ByteArrayInputStream;
+-import java.io.StringReader;
+ 
+ import org.apache.camel.ContextTestSupport;
+ import org.apache.camel.builder.RouteBuilder;
+@@ -50,36 +49,16 @@
+         assertEquals("Bye Camel", out);
+     }
+     
+-    public void testBeanImplicitMethodInvocationStringBody() throws Exception {
++    public void testBeanExplicitMethodInvocationStringBody() throws Exception {
+         String out = template.requestBody("direct:foo", "Camel", String.class);
+         assertEquals("String", out);
+     }
+     
+-    public void testBeanImplicitMethodInvocationReaderBody() throws Exception {
+-        String out = template.requestBody("direct:foo", new StringReader("Camel"), String.class);
+-        assertEquals("Reader", out);
+-    }
+-    
+-    public void testBeanImplicitMethodInvocationInputStreamBody() throws Exception {
++    public void testBeanExplicitMethodInvocationInputStreamBody() throws Exception {
+         String out = template.requestBody("direct:foo", new ByteArrayInputStream("Camel".getBytes()), String.class);
+         assertEquals("InputStream", out);
+     }
+-    
+-    public void testBeanExplicitMethodInvocationString() throws Exception {
+-        String out = template.requestBody("direct:explicitString", new ByteArrayInputStream("Camel".getBytes()), String.class);
+-        assertEquals("String", out);
+-    }
+-    
+-    public void testBeanExplicitMethodInvocationReader() throws Exception {
+-        String out = template.requestBody("direct:explicitReader", new ByteArrayInputStream("Camel".getBytes()), String.class);
+-        assertEquals("Reader", out);
+-    }
+ 
+-    public void testBeanExplicitMethodInvocationInputStream() throws Exception {
+-        String out = template.requestBody("direct:explicitInputStream", "Camel", String.class);
+-        assertEquals("InputStream", out);
+-    }
+-    
+     @Override
+     protected RouteBuilder createRouteBuilder() throws Exception {
+         return new RouteBuilder() {
+@@ -90,12 +69,6 @@
+                 from("direct:bye").beanRef("dummy");
+                 
+                 from("direct:foo").beanRef("dummy", "bar");
+-                
+-                from("direct:explicitString").to("bean:dummy?method=bar&type=java.lang.String");
+-                
+-                from("direct:explicitReader").to("bean:dummy?method=bar&type=java.io.Reader");
+-                
+-                from("direct:explicitInputStream").to("bean:dummy?method=bar&type=java.io.InputStream");
+             }
+         };
+     }
+Index: camel-core/src/test/java/org/apache/camel/converter/ObjectConverterTest.java
+===================================================================
+--- camel-core/src/test/java/org/apache/camel/converter/ObjectConverterTest.java	(revision 1056749)
++++ camel-core/src/test/java/org/apache/camel/converter/ObjectConverterTest.java	(revision 1056745)
+@@ -47,13 +47,6 @@
+         assertEquals(Byte.valueOf("4"), ObjectConverter.toByte("4"));
+         assertEquals(null, ObjectConverter.toByte(new Date()));
+     }
+-    
+-    public void testToClass() {
+-        assertEquals(String.class, ObjectConverter.toClass(String.class));
+-        assertEquals(String.class, ObjectConverter.toClass("java.lang.String"));
+-        assertEquals(null, ObjectConverter.toClass(new Integer(4)));
+-        assertEquals(null, ObjectConverter.toClass("foo.Bar"));
+-    }
+ 
+     public void testToShort() {
+         assertEquals(Short.valueOf("4"), ObjectConverter.toShort(Short.valueOf("4")));
+Index: camel-core/src/main/java/org/apache/camel/Exchange.java
+===================================================================
+--- camel-core/src/main/java/org/apache/camel/Exchange.java	(revision 1056749)
++++ camel-core/src/main/java/org/apache/camel/Exchange.java	(revision 1056745)
+@@ -84,7 +84,6 @@
+     String BATCH_COMPLETE             = "CamelBatchComplete";
+     String BEAN_METHOD_NAME           = "CamelBeanMethodName";
+     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
+-    String BEAN_TYPE_NAME             = "CamelBeanTypeName";
+     String BINDING                    = "CamelBinding";
+ 
+     String CHARSET_NAME      = "CamelCharsetName";
+Index: camel-core/src/main/java/org/apache/camel/converter/ObjectConverter.java
+===================================================================
+--- camel-core/src/main/java/org/apache/camel/converter/ObjectConverter.java	(revision 1056749)
++++ camel-core/src/main/java/org/apache/camel/converter/ObjectConverter.java	(revision 1056745)
+@@ -65,7 +65,6 @@
+     /**
+      * Creates an iterator over the value
+      */
+-    @SuppressWarnings("rawtypes")
+     @Converter
+     public static Iterator iterator(Object value) {
+         return ObjectHelper.createIterator(value);
+@@ -107,21 +106,6 @@
+     public static String fromCharArray(char[] value) {
+         return new String(value);
+     }
+-    
+-    /**
+-     * Returns the converted value, or null if the value is null
+-     */
+-    @SuppressWarnings("rawtypes")
+-    @Converter
+-    public static Class toClass(Object value) {
+-        if (value instanceof Class) {
+-            return (Class) value;
+-        } else if (value instanceof String) {
+-            return ObjectHelper.loadClass((String) value);
+-        } else {
+-            return null;
+-        }
+-    }
+ 
+     /**
+      * Returns the converted value, or null if the value is null
+Index: camel-core/src/main/java/org/apache/camel/component/bean/BeanProcessor.java
+===================================================================
+--- camel-core/src/main/java/org/apache/camel/component/bean/BeanProcessor.java	(revision 1056749)
++++ camel-core/src/main/java/org/apache/camel/component/bean/BeanProcessor.java	(revision 1056745)
+@@ -47,8 +47,6 @@
+     private String method;
+     private BeanHolder beanHolder;
+     private boolean shorthandMethod;
+-    @SuppressWarnings("rawtypes")
+-    private Class type;
+ 
+     public BeanProcessor(Object pojo, BeanInfo beanInfo) {
+         this(new ConstantBeanHolder(pojo, beanInfo));
+@@ -76,13 +74,9 @@
+         AsyncProcessorHelper.process(this, exchange);
+     }
+ 
+-    @SuppressWarnings({ "unused", "rawtypes" })
+     public boolean process(Exchange exchange, AsyncCallback callback) {
+         // do we have an explicit method name we always should invoke
+         boolean isExplicitMethod = ObjectHelper.isNotEmpty(method);
+-        // do we have an explicit parameter type we should invoke if we have multiple possible
+-        // methods
+-        boolean isExplicitType = ObjectHelper.isNotEmpty(type);
+ 
+         Object bean = beanHolder.getBean();
+         BeanInfo beanInfo = beanHolder.getBeanInfo();
+@@ -104,7 +98,7 @@
+         }
+ 
+         Message in = exchange.getIn();
+-        
++
+         // Now it gets a bit complicated as ProxyHelper can proxy beans which we later
+         // intend to invoke (for example to proxy and invoke using spring remoting).
+         // and therefore the message body contains a BeanInvocation object.
+@@ -128,14 +122,13 @@
+                 return true;
+             }
+         }
+-        
++
+         // set temporary header which is a hint for the bean info that introspect the bean
+         if (in.getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) == null) {
+             in.setHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, isMultiParameterArray());
+         }
+ 
+         String prevMethod = null;
+-        Class prevType = null;
+         MethodInvocation invocation;
+         if (methodObject != null) {
+             invocation = beanInfo.createInvocation(methodObject, bean, exchange);
+@@ -145,10 +138,6 @@
+                 prevMethod = in.getHeader(Exchange.BEAN_METHOD_NAME, String.class);
+                 in.setHeader(Exchange.BEAN_METHOD_NAME, method);
+             }
+-            if (isExplicitType) {
+-                prevType = in.getHeader(Exchange.BEAN_TYPE_NAME, Class.class);
+-                in.setHeader(Exchange.BEAN_TYPE_NAME, type);
+-            }
+             try {
+                 invocation = beanInfo.createInvocation(bean, exchange);
+             } catch (Throwable e) {
+@@ -269,22 +258,7 @@
+     public void setShorthandMethod(boolean shorthandMethod) {
+         this.shorthandMethod = shorthandMethod;
+     }
+-    
+-    @SuppressWarnings("rawtypes")
+-    public Class getType() {
+-        return type;
+-    }
+ 
+-    /**
+-     * Sets the type/class name to which the body should converted before the suitable method is
+-     * determined.
+-     * @param type
+-     */
+-    @SuppressWarnings("rawtypes")
+-    public void setType(Class type) {
+-        this.type = type;
+-    }
+-
+     // Implementation methods
+     //-------------------------------------------------------------------------
+     protected void doStart() throws Exception {
+Index: camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java
+===================================================================
+--- camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java	(revision 1056749)
++++ camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java	(revision 1056745)
+@@ -129,12 +129,10 @@
+         return null;
+     }
+ 
+-    @SuppressWarnings("rawtypes")
+     public MethodInvocation createInvocation(Object pojo, Exchange exchange) throws AmbiguousMethodCallException, MethodNotFoundException {
+         MethodInfo methodInfo = null;
+ 
+         String name = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
+-        Class type = exchange.getIn().getHeader(Exchange.BEAN_TYPE_NAME, Class.class);
+         if (name != null) {
+             if (hasMethod(name)) {
+                 List<MethodInfo> methods = getOperations(name);
+@@ -145,7 +143,7 @@
+                     // there are more methods with that name so we cannot decide which to use
+ 
+                     // but first lets try to choose a method and see if that comply with the name
+-                    methodInfo = chooseMethod(pojo, exchange, name, type);
++                    methodInfo = chooseMethod(pojo, exchange, name);
+                     if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
+                         throw new AmbiguousMethodCallException(exchange, methods);
+                     }
+@@ -156,7 +154,7 @@
+             }
+         }
+         if (methodInfo == null) {
+-            methodInfo = chooseMethod(pojo, exchange, name, null);
++            methodInfo = chooseMethod(pojo, exchange, name);
+         }
+         if (methodInfo == null) {
+             methodInfo = defaultMethod;
+@@ -282,7 +280,7 @@
+         return answer;
+     }
+ 
+-    @SuppressWarnings({ "unchecked", "rawtypes" })
++    @SuppressWarnings("unchecked")
+     protected MethodInfo createMethodInfo(Class clazz, Method method) {
+         Class[] parameterTypes = method.getParameterTypes();
+         Annotation[][] parametersAnnotations = method.getParameterAnnotations();
+@@ -351,17 +349,15 @@
+      * @param pojo the bean to invoke a method on
+      * @param exchange the message exchange
+      * @param name an optional name of the method that must match, use <tt>null</tt> to indicate all methods
+-     * @param type an optional type of the method parameter that must match, use <tt>null</tt> to indicate all types
+      * @return the method to invoke or null if no definitive method could be matched
+      * @throws AmbiguousMethodCallException is thrown if cannot chose method due to ambiguous
+      */
+-    @SuppressWarnings("rawtypes")
+-    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name, Class type) throws AmbiguousMethodCallException {
++    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name) throws AmbiguousMethodCallException {
+         // @Handler should be select first
+         // then any single method that has a custom @annotation
+         // or any single method that has a match parameter type that matches the Exchange payload
+         // and last then try to select the best among the rest
+-        
++
+         if (name != null) {
+             // filter all lists to only include methods with this name
+             removeNonMatchingMethods(operationsWithHandlerAnnotation, name);
+@@ -373,13 +369,6 @@
+             removeAllSetterOrGetterMethods(operationsWithCustomAnnotation);
+             removeAllSetterOrGetterMethods(operationsWithBody);
+         }
+-        
+-        if (type != null) {
+-            // filter all lists to only include methods with this argument type
+-            removeNonMatchingMethods(operationsWithHandlerAnnotation, type);
+-            removeNonMatchingMethods(operationsWithCustomAnnotation, type);
+-            removeNonMatchingMethods(operationsWithBody, type);
+-        }
+ 
+         if (operationsWithHandlerAnnotation.size() > 1) {
+             // if we have more than 1 @Handler then its ambiguous
+@@ -415,7 +404,6 @@
+         return null;
+     }
+     
+-    @SuppressWarnings("rawtypes")
+     private MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList)
+         throws AmbiguousMethodCallException {
+         // lets see if we can find a method who's body param type matches the message body
+@@ -677,19 +665,6 @@
+             }
+         }
+     }
+-    
+-    @SuppressWarnings("rawtypes")
+-    private static void removeNonMatchingMethods(List<MethodInfo> methods, Class type) {
+-        Iterator<MethodInfo> it = methods.iterator();
+-        while (it.hasNext()) {
+-            MethodInfo info = it.next();
+-            Class<?>[] parameterTypes = info.getMethod().getParameterTypes();
+-            if (!(parameterTypes.length > 0 && parameterTypes[0].isAssignableFrom(type))) {
+-                // type does not match so remove it
+-                it.remove();
+-            }
+-        }
+-    }
+ 
+     private static Class<?> getTargetClass(Class<?> clazz) {
+         if (clazz != null && clazz.getName().contains(CGLIB_CLASS_SEPARATOR)) {

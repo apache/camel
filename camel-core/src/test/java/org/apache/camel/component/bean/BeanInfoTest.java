@@ -16,14 +16,10 @@
  */
 package org.apache.camel.component.bean;
 
-import java.io.InputStream;
-import java.io.Reader;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.InOnly;
@@ -49,40 +45,6 @@ public class BeanInfoTest extends TestCase {
         assertEquals("inOnlyMethod", operations.get(0).getMethod().getName());
         assertEquals("inOutMethod", operations.get(1).getMethod().getName());
         assertEquals("robustInOnlyMethod", operations.get(2).getMethod().getName());
-    }
-    
-    @SuppressWarnings("rawtypes")
-    public void testHasMethodWithParameterTypes() throws Exception {
-        BeanInfo info = createBeanInfo(MyDummyBean.class);
-
-        assertTrue(info.hasMethod("test", null));
-        
-        List<Class> parameterTypes = new ArrayList<Class>();
-        assertTrue(info.hasMethod("test", parameterTypes));
-        
-        parameterTypes.clear();
-        parameterTypes.add(String.class);
-        assertTrue(info.hasMethod("hello", parameterTypes));
-        
-        // method with two Strings
-        parameterTypes.add(String.class);
-        assertTrue(info.hasMethod("hello", parameterTypes));
-        
-        parameterTypes.clear();
-        parameterTypes.add(String.class);
-        assertTrue(info.hasMethod("bar", parameterTypes));
-        
-        parameterTypes.clear();
-        parameterTypes.add(Reader.class);
-        assertTrue(info.hasMethod("bar", parameterTypes));
-        
-        parameterTypes.clear();
-        parameterTypes.add(InputStream.class);
-        assertTrue(info.hasMethod("bar", parameterTypes));
-        
-        parameterTypes.clear();
-        parameterTypes.add(Long.class);
-        assertFalse(info.hasMethod("bar", parameterTypes));
     }
 
     public void testMethodPatternUsingMethodAnnotations() throws Exception {
