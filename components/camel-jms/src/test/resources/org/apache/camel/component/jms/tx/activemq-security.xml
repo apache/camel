@@ -25,7 +25,7 @@
     <!-- you may want to use a specific activemq-core.xsd version
          that matches your broker, such as activemq-core-5.3.0.xsd -->
 
-    <broker:broker id="broker" useJmx="true" brokerName="myBroker" persistent="false" dataDirectory="target/activemq">
+    <broker:broker id="broker" useJmx="false" brokerName="myBroker" persistent="false" dataDirectory="target/activemq">
 
         <broker:plugins>
             <broker:simpleAuthenticationPlugin>

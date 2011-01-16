@@ -42,7 +42,7 @@
   </bean>
 
   <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory" depends-on="broker">
-    <property name="brokerURL" value="vm://localhost"/>
+    <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
   </bean>
 
   <bean id="broker" class="org.apache.activemq.xbean.BrokerFactoryBean">

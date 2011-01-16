@@ -32,7 +32,7 @@
             <bean
                 class="org.apache.activemq.ActiveMQConnectionFactory">
                 <property name="brokerURL"
-                    value="vm://localhost?broker.persistent=false" />
+                    value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false" />
             </bean>
         </property>
 

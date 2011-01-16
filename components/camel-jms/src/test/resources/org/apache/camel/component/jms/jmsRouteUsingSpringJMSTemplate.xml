@@ -37,7 +37,7 @@
   </bean>
 
   <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-    <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+    <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
   </bean>
 
   <!-- END SNIPPET: example -->

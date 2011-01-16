@@ -27,7 +27,7 @@
 
     <amq:broker brokerName="myBroker"
                 id="broker"
-                useJmx="true"
+                useJmx="false"
                 persistent="false"
                 start="true"
                 dataDirectory="target/data">

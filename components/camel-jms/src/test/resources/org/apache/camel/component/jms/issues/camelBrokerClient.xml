@@ -35,7 +35,7 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
     <bean id="jmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-                <property name="brokerURL" value="vm://localhost"/>
+                <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
             </bean>
         </property>
         <property name="maxConnections" value="8"/>
