@@ -153,7 +153,7 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        activeMQComponent = ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false");
+        activeMQComponent = ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false&broker.useJmx=false");
         // as this is a unit test I dont want to wait 20 sec before timeout occurs, so we use 10
         activeMQComponent.getConfiguration().setRequestTimeout(10000);
         camelContext.addComponent("activemq", activeMQComponent);

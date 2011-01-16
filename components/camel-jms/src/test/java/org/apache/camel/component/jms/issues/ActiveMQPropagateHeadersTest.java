@@ -70,7 +70,7 @@ public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         // START SNIPPET: example
-        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
+        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false&broker.useJmx=false"));
         // END SNIPPET: example
 
         return camelContext;

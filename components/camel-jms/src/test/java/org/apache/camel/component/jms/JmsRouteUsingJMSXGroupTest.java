@@ -65,7 +65,7 @@ public class JmsRouteUsingJMSXGroupTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        PooledConnectionFactory pool = new PooledConnectionFactory(new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false"));
+        PooledConnectionFactory pool = new PooledConnectionFactory(new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false"));
         pool.setMaxConnections(10);
 
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(pool));

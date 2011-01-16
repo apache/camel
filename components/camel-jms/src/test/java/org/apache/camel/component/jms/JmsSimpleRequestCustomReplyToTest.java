@@ -107,7 +107,7 @@ public class JmsSimpleRequestCustomReplyToTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQComponent amq = ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false");
+        ActiveMQComponent amq = ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false&broker.useJmx=false");
         // as this is a unit test I dont want to wait 20 sec before timeout occurs, so we use 10
         amq.getConfiguration().setRequestTimeout(10000);
         camelContext.addComponent(componentName, amq);

@@ -61,7 +61,7 @@ public class JmsDeadLetterChannelInOutTest extends CamelTestSupport {
 
         // must be persistent so the consumer can receive the message as we receive AFTER the message
         // has been published
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=true");
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=true&broker.useJmx=false");
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

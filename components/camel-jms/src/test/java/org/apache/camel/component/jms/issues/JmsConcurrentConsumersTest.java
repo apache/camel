@@ -72,7 +72,7 @@ public class JmsConcurrentConsumersTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-            "vm://localhost?broker.persistent=false");
+            "vm://localhost?broker.persistent=false&broker.useJmx=false");
         camelContext.addComponent("activemq", jmsComponent(connectionFactory));
 
         return camelContext;
