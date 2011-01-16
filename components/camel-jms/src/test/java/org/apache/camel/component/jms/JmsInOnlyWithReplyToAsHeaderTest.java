@@ -63,7 +63,9 @@ public class JmsInOnlyWithReplyToAsHeaderTest extends CamelTestSupport {
                     .to("log:foo?showAll=true", "mock:foo")
                     .transform(body().prepend("Bye "));
 
-                from("activemq:queue:bar")
+                // we should disable reply to to avoid sending the message back to our self
+                // after we have consumed it
+                from("activemq:queue:bar?disableReplyTo=true")
                     .to("log:bar?showAll=true", "mock:bar");
             }
         };
