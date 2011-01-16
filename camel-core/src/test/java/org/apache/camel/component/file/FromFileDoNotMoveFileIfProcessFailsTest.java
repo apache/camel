@@ -41,8 +41,9 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
         template.sendBodyAndHeader("file://target/movefile", body, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:error");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).isEqualTo(body);
+        // it could potentially retry the file on the 2nd poll and then fail again
+        // so it should be minimum message count
+        mock.expectedMinimumMessageCount(1);
 
         mock.assertIsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
@@ -56,7 +57,8 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false).handled(false));
+                onException(IllegalArgumentException.class)
+                    .to("mock:error");
 
                 from("file://target/movefile?move=done").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

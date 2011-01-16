@@ -57,7 +57,8 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false).handled(false));
+                onException(IllegalArgumentException.class)
+                    .to("mock:error");
 
                 from("file://target/deletefile?delete=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
