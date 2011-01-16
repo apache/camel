@@ -70,17 +70,17 @@ public interface ShutdownStrategy extends Service {
     void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception;
 
     /**
-     * Shutdown the routes using a specified timeout instead of the default timeout values and supports "give up" mode
+     * Shutdown the route using a specified timeout instead of the default timeout values and supports abortAfterTimeout mode
      *
      * @param context   the camel context
-     * @param routes    the routes, ordered by the order they was started
+     * @param route     the route
      * @param timeout   timeout
      * @param timeUnit  the unit to use
-     * @param giveUp    should give up after timeout
+     * @param abortAfterTimeout   should abort shutdown after timeout
      * @return <tt>true</tt> if the route is stopped before the timeout
-     * @throws Exception is thrown if error shutting down the consumers, however its preferred to avoid this
+     * @throws Exception is thrown if error shutting down the consumer, however its preferred to avoid this
      */
-    boolean shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit, boolean giveUp) throws Exception;
+    boolean shutdown(CamelContext context, RouteStartupOrder route, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception;
 
     /**
      * Suspends the routes using a specified timeout instead of the default timeout values

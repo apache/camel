@@ -143,6 +143,14 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         context.stopRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }
 
+    @ManagedOperation(description = "Stop route, abort stop after timeout (in seconds)")
+    public boolean stop(Long timeout, Boolean abortAfterTimeout) throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
+        return context.stopRoute(getRouteId(), timeout, TimeUnit.SECONDS, abortAfterTimeout);
+    }
+
     @ManagedOperation(description = "Shutdown and remove route")
     @Deprecated
     public void shutdown() throws Exception {

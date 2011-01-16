@@ -92,15 +92,17 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         doShutdown(context, routes, timeout, timeUnit, false, false);
     }
 
-    public boolean shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit, boolean giveUp) throws Exception {
-        return doShutdown(context, routes, timeout, timeUnit, false, giveUp);
+    public boolean shutdown(CamelContext context, RouteStartupOrder route, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
+        List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
+        routes.add(route);
+        return doShutdown(context, routes, timeout, timeUnit, false, abortAfterTimeout);
     }
 
     public void suspend(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
         doShutdown(context, routes, timeout, timeUnit, true, false);
     }
 
-    protected boolean doShutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit, boolean suspendOnly, boolean giveUp) throws Exception {
+    protected boolean doShutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit, boolean suspendOnly, boolean abortAfterTimeout) throws Exception {
         StopWatch watch = new StopWatch();
 
         // at first sort according to route startup order
@@ -121,7 +123,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
 
         // use another thread to perform the shutdowns so we can support timeout
-        Future future = getExecutorService().submit(new ShutdownTask(context, routesOrdered, suspendOnly));
+        Future future = getExecutorService().submit(new ShutdownTask(context, routesOrdered, suspendOnly, abortAfterTimeout));
         try {
             if (timeout > 0) {
                 future.get(timeout, timeUnit);
@@ -132,9 +134,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // timeout then cancel the task
             future.cancel(true);
 
-            //if set, stop processing and return false to indicate that the shutdown is giving up
-            if (giveUp) {
-                LOG.warn("Timeout occurred. Giving up now.");
+            // if set, stop processing and return false to indicate that the shutdown is aborting
+            if (abortAfterTimeout) {
+                LOG.warn("Timeout occurred. Aborting the shutdown now.");
                 return false;
             } else {
                 if (shutdownNowOnTimeout) {
@@ -331,11 +333,13 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         private final CamelContext context;
         private final List<RouteStartupOrder> routes;
         private final boolean suspendOnly;
+        private final boolean abortAfterTimeout;
 
-        public ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, boolean suspendOnly) {
+        public ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, boolean suspendOnly, boolean abortAfterTimeout) {
             this.context = context;
             this.routes = routes;
             this.suspendOnly = suspendOnly;
+            this.abortAfterTimeout = abortAfterTimeout;
         }
 
         public void run() {
@@ -434,9 +438,15 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                                  + (TimeUnit.SECONDS.convert(getTimeout(), getTimeUnit()) - (loopCount++ * loopDelaySeconds)) + " seconds.");
                         Thread.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
-                        LOG.warn("Interrupted while waiting during graceful shutdown, will force shutdown now.");
-                        Thread.currentThread().interrupt();
-                        break;
+                        if (abortAfterTimeout) {
+                            LOG.warn("Interrupted while waiting during graceful shutdown, will abort.");
+                            //Thread.currentThread().interrupt();
+                            return;
+                        } else {
+                            LOG.warn("Interrupted while waiting during graceful shutdown, will force shutdown now.");
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
                     }
                 } else {
                     done = true;
