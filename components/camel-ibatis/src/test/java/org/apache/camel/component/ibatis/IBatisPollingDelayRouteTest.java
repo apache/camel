@@ -42,7 +42,7 @@ public class IBatisPollingDelayRouteTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         long delta = System.currentTimeMillis() - start;
 
-        assertTrue("Should not take that long: " + delta, delta < 5000);
+        assertTrue("Should not take that long: " + delta, delta < 7000);
     }
 
     private void createTestData() {
