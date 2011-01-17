@@ -47,7 +47,7 @@ public class JmsAutoStartupTest extends CamelTestSupport {
 
         template.sendBody("activemq:queue:foo", "Hello World");
 
-        Thread.sleep(3000);
+        Thread.sleep(2000);
 
         assertMockEndpointsSatisfied();
 

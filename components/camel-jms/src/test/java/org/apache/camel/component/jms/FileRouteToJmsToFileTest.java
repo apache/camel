@@ -23,6 +23,7 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -39,6 +40,7 @@ public class FileRouteToJmsToFileTest extends CamelTestSupport {
     @Test
     public void testRouteFileToFile() throws Exception {
         deleteDirectory("target/file2file");
+        NotifyBuilder notify = new NotifyBuilder(context).from("activemq:queue:hello").whenDone(1).create();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -47,8 +49,7 @@ public class FileRouteToJmsToFileTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // sleep a little to let the file be written
-        Thread.sleep(1000);
+        notify.matchesMockWaitTime();
 
         File file = new File("./target/file2file/out/hello.txt");
         file = file.getAbsoluteFile();

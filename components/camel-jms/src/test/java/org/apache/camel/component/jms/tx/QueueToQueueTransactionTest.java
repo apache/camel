@@ -31,8 +31,7 @@ import org.junit.Test;
  * Transaction classes can be joined into one.
  */
 public class QueueToQueueTransactionTest extends AbstractTransactionTest {
-   
-    
+
     protected int getExpectedRouteCount() {
         return 0;
     }
@@ -45,7 +44,6 @@ public class QueueToQueueTransactionTest extends AbstractTransactionTest {
 
             @Override
             public void configure() throws Exception {
-
                 Policy required = lookup("PROPAGATION_REQUIRED_POLICY", SpringTransactionPolicy.class);
                 from("activemq:queue:foo?transacted=true").policy(required).process(new ConditionalExceptionProcessor())
                     .to("activemq:queue:bar?transacted=true");

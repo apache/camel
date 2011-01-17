@@ -16,44 +16,20 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends AbstractTransactionTest {
-   
-    
+
     protected int getExpectedRouteCount() {
         return 0;
     }
     
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/ActiveMQWithoutTransactionManager.xml");
-    }
-    
-    @Ignore
-    public void xtestRollbackUsingXmlQueueToQueue() throws Exception {
-
-        // configure routes and add to camel context
-        context.addRoutes(new SpringRouteBuilder() {
-
-            @Override
-            public void configure() throws Exception {
-                errorHandler(noErrorHandler());
-                from("activemq:queue:foo?transacted=true").process(new ConditionalExceptionProcessor())
-                    .to("activemq:queue:bar?transacted=true");
-                from("activemq:queue:bar?transacted=true").to("mock:endpoint");
-                
-            }
-        });
-        MockEndpoint endpoint = (MockEndpoint) context.getEndpoint("mock:endpoint");
-        endpoint.expectedMessageCount(1);
-        endpoint.expectedBodiesReceived("blah");
-        assertResult();
-        endpoint.assertIsSatisfied();
     }
     
     @Test
@@ -66,18 +42,21 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
                 from("activemq:queue:foo?transacted=false").process(new ConditionalExceptionProcessor())
-                    .to("activemq:queue:bar?transacted=false");
-                
-                
+                        .to("activemq:queue:bar?transacted=false");
+
+
             }
         });
-        
+
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         template.sendBody("activemq:queue:foo", "blah");
-        Thread.sleep(3000L);        
+
+        notify.matchesMockWaitTime();
+
         assertTrue("Expected only 1 calls to process() (1 failure) but encountered "
                    + getConditionalExceptionProcessor().getCount() + "."
                    , getConditionalExceptionProcessor().getCount() == 1);
-        
-    }    
+    }
     
 }

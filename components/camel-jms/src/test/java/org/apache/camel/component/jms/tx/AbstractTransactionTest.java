@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.Channel;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.DefaultErrorHandler;
@@ -39,7 +40,6 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
  */
 public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
 
-   
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -53,15 +53,18 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
     }
 
     protected void assertResult() throws InterruptedException {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         template.sendBody("activemq:queue:foo", "blah");
-        Thread.sleep(3000L);        
+
+        notify.matchesMockWaitTime();
+
         assertTrue("Expected only 2 calls to process() (1 failure, 1 success) but encountered "
                    + getConditionalExceptionProcessor().getCount() + "."
                    , getConditionalExceptionProcessor().getCount() == 2);
     }
 
     protected ConditionalExceptionProcessor getConditionalExceptionProcessor() {
-
         Route route = context.getRoutes().get(0);
         assertNotNull(route);
         return getConditionalExceptionProcessor(route);
@@ -72,14 +75,10 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
      * lets unwrap that and return the actual processor
      */
     protected ConditionalExceptionProcessor getConditionalExceptionProcessor(Route route) {
-
-        //
         // the following is very specific (and brittle) and is not generally
         // useful outside these transaction tests (nor intended to be).
-        //
         EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-        Processor processor = findProcessorByClass(consumerRoute.getProcessor(),
-                                                   ConditionalExceptionProcessor.class);
+        Processor processor = findProcessorByClass(consumerRoute.getProcessor(), ConditionalExceptionProcessor.class);
         return assertIsInstanceOf(ConditionalExceptionProcessor.class, processor);
     }
 
