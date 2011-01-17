@@ -123,7 +123,7 @@ public class XmlConverter {
             return;
         }
 
-        Transformer transformer = createTransfomer();
+        Transformer transformer = createTransformer();
         if (transformer == null) {
             throw new TransformerException("Could not create a transformer - JAXP is misconfigured!");
         }
@@ -767,7 +767,15 @@ public class XmlConverter {
         this.transformerFactory = transformerFactory;
     }
 
+    /**
+     * @deprecated use {@link #createTransformer}, will be removed in Camel 3.0
+     */
+    @Deprecated
     public Transformer createTransfomer() throws TransformerConfigurationException {
+        return createTransformer();
+    }
+
+    public Transformer createTransformer() throws TransformerConfigurationException {
         TransformerFactory factory = getTransformerFactory();
         return factory.newTransformer();
     }
