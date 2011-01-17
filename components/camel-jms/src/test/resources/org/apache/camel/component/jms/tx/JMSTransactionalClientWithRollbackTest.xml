@@ -25,6 +25,8 @@
     <!-- START SNIPPET: e1 -->
     <!-- here we define our camel context -->
     <camelContext id="myroutes" xmlns="http://camel.apache.org/schema/spring">
+        <!-- disable JMX during testing -->
+        <jmxAgent id="agent" disabled="true"/>
         <!-- and now our route using the XML syntax -->
         <route errorHandlerRef="errorHandler">
             <!-- 1: from the jms queue -->

@@ -22,6 +22,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="agent" disabled="true"/>
         <route>
             <from uri="activemq:queue:in"/>
             <resequence>

@@ -22,6 +22,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" autoStartup="false">
+        <jmxAgent id="agent" disabled="true"/>
         <route id="foo">
             <from uri="activemq:queue:foo"/>
             <transform><simple>Bye ${body}</simple></transform>

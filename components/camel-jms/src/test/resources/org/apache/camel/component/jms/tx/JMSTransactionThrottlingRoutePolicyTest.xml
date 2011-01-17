@@ -48,6 +48,7 @@
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="agent" disabled="true"/>
         <route routePolicyRef="myPolicy">
             <from uri="activemq:queue:foo?concurrentConsumers=20"/>
             <transacted/>

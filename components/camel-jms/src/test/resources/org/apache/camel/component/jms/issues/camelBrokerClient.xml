@@ -22,34 +22,12 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <jmxAgent id="agent" createConnector="true"/>
+        <jmxAgent id="agent" disabled="true"/>
         <template id="template"/>
     </camelContext>
 
-    <!-- use jencks connection pooling so its more effecient to send JMS messages -->
-    <!--<amqpool:pool id="jmsConnectionFactory" xmlns:amqpool="http://jencks.org/amqpool/2.0"-->
-                  <!--brokerURL="tcp://localhost:61616"-->
-                  <!--maxConnections="8"/>-->
-
-    <!-- another pool supplied by Dejan -->
-    <bean id="jmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
-        <property name="connectionFactory">
-            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-                <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
-            </bean>
-        </property>
-        <property name="maxConnections" value="8"/>
-    </bean>
-
-
-    <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
-        <property name="connectionFactory" ref="jmsFactory"/>
-        <property name="transacted" value="false"/>
-        <property name="concurrentConsumers" value="10"/>
-    </bean>
-
     <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="configuration" ref="jmsConfig"/>
+        <property name="brokerURL" value="vm://myBroker"/>
     </bean>
 
 </beans>

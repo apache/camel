@@ -22,6 +22,7 @@
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="agent" disabled="true"/>
         <consumerTemplate id="consumer"/>
         <route>
             <from uri="timer://foo?delay=3000"/>

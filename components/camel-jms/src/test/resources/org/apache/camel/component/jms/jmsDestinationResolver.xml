@@ -24,6 +24,7 @@
 
   <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+      <jmxAgent id="agent" disabled="true"/>
   </camelContext>
 
   <bean id="destinationResolver" class="org.apache.camel.component.jms.MyDestinationResolver"/>

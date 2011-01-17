@@ -26,6 +26,7 @@
   <bean id="sayService" class="org.apache.camel.spring.remoting.SayService" scope="singleton"/>
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+      <jmxAgent id="agent" disabled="true"/>
     <!-- create the client proxy -->
     <proxy id="sayProxy" serviceUrl="activemq:test.serviceQueue"
            serviceInterface="org.apache.camel.spring.remoting.ISay"/>
@@ -37,7 +38,7 @@
   </camelContext>
 
   <!-- configure the ActiveMQ component -->
-  <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
+  <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
     <property name="connectionFactory">
       <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>

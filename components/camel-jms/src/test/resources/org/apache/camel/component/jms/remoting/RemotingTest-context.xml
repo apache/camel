@@ -23,25 +23,26 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <bean id="sayService" class="org.apache.camel.spring.remoting.SayService" scope="singleton"/>
+    <bean id="sayService" class="org.apache.camel.spring.remoting.SayService" scope="singleton"/>
 
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <!-- create the client proxy -->
-    <proxy id="sayProxy" serviceUrl="jms:test.serviceQueue"
-           serviceInterface="org.apache.camel.spring.remoting.ISay"/>
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="agent" disabled="true"/>
+        <!-- create the client proxy -->
+        <proxy id="sayProxy" serviceUrl="jms:test.serviceQueue"
+               serviceInterface="org.apache.camel.spring.remoting.ISay"/>
 
-    <!-- export the service -->
-    <export id="say" uri="jms:test.serviceQueue" serviceRef="sayService"
-            serviceInterface="org.apache.camel.spring.remoting.ISay"/>
+        <!-- export the service -->
+        <export id="say" uri="jms:test.serviceQueue" serviceRef="sayService"
+                serviceInterface="org.apache.camel.spring.remoting.ISay"/>
 
-  </camelContext>
+    </camelContext>
 
-  <!-- configure the JMS component -->
-  <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
-    <property name="connectionFactory">
-      <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
-      </bean>
-    </property>
-  </bean>
+    <!-- configure the JMS component -->
+    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+                <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+            </bean>
+        </property>
+    </bean>
 </beans>

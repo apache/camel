@@ -22,6 +22,7 @@
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="agent" disabled="true"/>
         <route errorHandlerRef="myDeadLetterErrorHandler">
             <from uri="activemq:in"/>
             <process ref="myFailureProcessor"/>
@@ -29,7 +30,7 @@
         </route>
     </camelContext>
 
-    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
                 <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>

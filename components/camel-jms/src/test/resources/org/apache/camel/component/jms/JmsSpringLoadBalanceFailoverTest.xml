@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
+    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
                 <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
@@ -35,6 +35,7 @@
     </bean>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="agent" disabled="true"/>
 
         <route>
             <from uri="direct:start"/>

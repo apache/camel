@@ -24,6 +24,7 @@
     <import resource="AbstractTransactionTest.xml"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="agent" disabled="true"/>
         <route>
             <from uri="activemq:queue:foo"/>
             <transacted ref="PROPAGATION_REQUIRED_POLICY"/>

@@ -41,7 +41,6 @@
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
         <property name="transactionManager" ref="jmsTransactionManager"/>
         <property name="transacted" value="true"/>
-        <property name="transactedInOut" value="true"/>
         <property name="concurrentConsumers" value="1"/>
     </bean>
 
@@ -49,15 +48,14 @@
         <property name="connectionFactory" ref="jmsConnectionFactory-1"/>
         <property name="transactionManager" ref="jmsTransactionManager-1"/>
         <property name="transacted" value="true"/>
-        <property name="transactedInOut" value="true"/>
         <property name="concurrentConsumers" value="1"/>
     </bean>
 
-    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="configuration" ref="jmsConfig"/>
     </bean>
 
-    <bean id="activemq-1" class="org.apache.camel.component.jms.JmsComponent">
+    <bean id="activemq-1" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="configuration" ref="jmsConfig-1"/>
     </bean>
 

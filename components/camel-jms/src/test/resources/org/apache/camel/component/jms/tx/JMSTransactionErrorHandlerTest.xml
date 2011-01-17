@@ -58,6 +58,8 @@
 
     <!-- START SNIPPET: e2 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <!-- disable JMX during testing -->
+        <jmxAgent id="agent" disabled="true"/>
         <route errorHandlerRef="myErrorHandler">
             <!-- 1: from the jms queue -->
             <from uri="activemq:queue:okay"/>

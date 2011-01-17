@@ -42,7 +42,7 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
 
     @Test
     public void testRollbackUsingXmlQueueToQueueRequestReplyUsingDynamicMessageSelector() throws Exception {
-        final ConditionalExceptionProcessor cp = new ConditionalExceptionProcessor(10);
+        final ConditionalExceptionProcessor cp = new ConditionalExceptionProcessor(5);
         context.addRoutes(new SpringRouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -64,7 +64,7 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
             }
         });
 
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 5; ++i) {
             Object reply = template.requestBody("activemq:queue:foo", "blah" + i);
             assertTrue("Received unexpeced reply", reply.equals("Re: blah" + i));
             assertTrue(cp.getErrorMessage(), cp.getErrorMessage() == null);

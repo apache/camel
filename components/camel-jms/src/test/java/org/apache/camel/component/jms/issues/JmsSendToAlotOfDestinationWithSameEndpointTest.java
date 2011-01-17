@@ -39,7 +39,7 @@ public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelSpringT
 
     @Test
     public void testSendToAlotOfMessageToQueues() throws Exception {
-        int size = 1000;
+        int size = 100;
 
         LOG.info("About to send " + size + " messages");
 

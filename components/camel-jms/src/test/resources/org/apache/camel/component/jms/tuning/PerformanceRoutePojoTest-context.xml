@@ -25,6 +25,7 @@
     <bean id="pojo" class="org.apache.camel.component.jms.tuning.RoutePojo"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="agent" disabled="true"/>
         <route>
             <from uri="direct:gold"/>
             <to uri="mock:gold"/>
@@ -44,7 +45,7 @@
         </route>
     </camelContext>
 
-    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
                 <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>

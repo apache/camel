@@ -21,29 +21,30 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="direct:start"/>
-      <to ref="customJmsEndpoint"/>
-    </route>
-    <route>
-      <from ref="customJmsEndpoint"/>
-      <to uri="mock:result"/>
-    </route>
-  </camelContext>
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="agent" disabled="true"/>
+        <route>
+            <from uri="direct:start"/>
+            <to ref="customJmsEndpoint"/>
+        </route>
+        <route>
+            <from ref="customJmsEndpoint"/>
+            <to uri="mock:result"/>
+        </route>
+    </camelContext>
 
-  <bean id="customJmsEndpoint" class="org.apache.camel.component.jms.JmsEndpoint">
-    <property name="connectionFactory">
-      <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
-      </bean>
-    </property>
+    <bean id="customJmsEndpoint" class="org.apache.camel.component.jms.JmsEndpoint">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+            </bean>
+        </property>
 
-    <!-- lets specify the exact JMS destination to use -->
-    <property name="destination" ref="jmsQueue"/>
-  </bean>
+        <!-- lets specify the exact JMS destination to use -->
+        <property name="destination" ref="jmsQueue"/>
+    </bean>
 
-  <bean id="jmsQueue" class="org.apache.activemq.command.ActiveMQQueue">
-    <property name="physicalName" value="Test.Camel.CustomEndpoint"/>
-  </bean>
+    <bean id="jmsQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <property name="physicalName" value="Test.Camel.CustomEndpoint"/>
+    </bean>
 </beans>
