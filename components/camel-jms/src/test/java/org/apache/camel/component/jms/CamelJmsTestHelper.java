@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -28,22 +28,22 @@ import org.apache.activemq.ActiveMQConnectionFactory;
  */
 public final class CamelJmsTestHelper {
 
-    private static Random ran = new Random();
+    private static AtomicInteger counter = new AtomicInteger(0);
 
     private CamelJmsTestHelper() {
     }
 
     public static ConnectionFactory createConnectionFactory() {
         // using a unique broker name improves testing when running the entire test suite in the same JVM
-        int id = ran.nextInt(100000);
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker-" + id + "?broker.persistent=false&broker.useJmx=false");
+        int id = counter.incrementAndGet();
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://test-broker-" + id + "?broker.persistent=false&broker.useJmx=false");
         return connectionFactory;
     }
 
     public static ConnectionFactory createPersistentConnectionFactory() {
         // using a unique broker name improves testing when running the entire test suite in the same JVM
-        int id = ran.nextInt(100000);
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker-" + id + "?broker.persistent=true&broker.useJmx=false");
+        int id = counter.incrementAndGet();
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://test-broker-" + id + "?broker.persistent=true&broker.useJmx=false");
         return connectionFactory;
     }
 }
