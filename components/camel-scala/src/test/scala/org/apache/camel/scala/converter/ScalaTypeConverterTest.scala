@@ -14,17 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala;
+package org.apache.camel.scala.converter;
 
 import junit.framework.TestCase
 import junit.framework.Assert._
 
-import org.apache.camel.impl.DefaultClassResolver
-import org.apache.camel.impl.DefaultFactoryFinderResolver
-import org.apache.camel.impl.DefaultPackageScanClassResolver
-import org.apache.camel.impl.converter.DefaultTypeConverter
-import org.apache.camel.util.ReflectionInjector
-import org.apache.camel.util.ServiceHelper
+import org.apache.camel.ContextTestSupport
 import scala.xml.Elem
 
 import javax.xml.parsers.DocumentBuilderFactory
@@ -33,25 +28,16 @@ import org.w3c.dom.Document
 /**
  * Test case for ScalaTypeConverter
  */
-class ScalaTypeConverterTest extends TestCase {
+class ScalaTypeConverterTest extends ContextTestSupport {
   
-  val converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-      new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()))
-
-  def testDummy = {
-    // noop
-  }
-
   def testDocumentConverter = {
-    ServiceHelper.startService(converter)
-    val result = converter.convertTo(classOf[Document], <persons/>)
+    val result = context.getTypeConverter.convertTo(classOf[Document], <persons/>)
     assertNotNull(result)
     assertNotNull(result.getElementsByTagName("persons"))
   }
 
   def testXmlStringToElemConverter = {
-    ServiceHelper.startService(converter)
-    val result = converter.convertTo(classOf[Elem], "<persons/>")
+    val result = context.getTypeConverter.convertTo(classOf[Elem], "<persons/>")
     assertNotNull(result)
     assertEquals(<persons/>, result)
   }
@@ -62,8 +48,8 @@ class ScalaTypeConverterTest extends TestCase {
     val doc = parser.newDocument()
     val root = doc.createElement("persons")
     doc.appendChild(root)
-    ServiceHelper.startService(converter)
-    val result = converter.convertTo(classOf[Elem], doc)
+
+    val result = context.getTypeConverter.convertTo(classOf[Elem], doc)
     assertNotNull(result)
     assertEquals(<persons/>, result)
   }
@@ -73,8 +59,8 @@ class ScalaTypeConverterTest extends TestCase {
     val parser = factory.newDocumentBuilder()
     val doc = parser.newDocument()
     val node = doc.createElement("persons")
-    ServiceHelper.startService(converter)
-    val result = converter.convertTo(classOf[Elem], node)
+
+    val result = context.getTypeConverter.convertTo(classOf[Elem], node)
     assertNotNull(result)
     assertEquals(<persons/>, result)
   }
