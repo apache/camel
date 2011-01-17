@@ -18,35 +18,35 @@ package org.apache.camel.component.jms.issues;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
-
+import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
-import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+
 /**
  * Unit test using a fixed replyTo specified on the JMS endpoint
  * 
  * @version $Revision$
  */
 public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
-    private static final String MQURI = "vm://localhost?broker.persistent=false&broker.useJmx=false";
-    private ActiveMQComponent amq;
-    
+    private JmsComponent amq;
 
     @Test
     public void testCustomJMSReplyToInOut() throws Exception {
@@ -116,8 +116,9 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        amq = activeMQComponent(MQURI);
-        camelContext.addComponent("activemq", amq);
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
+        amq = camelContext.getComponent("activemq", JmsComponent.class);
         return camelContext;
     }
 

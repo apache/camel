@@ -154,7 +154,7 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
         jmsComponent.setUseMessageIDAsCorrelationID(false);
         camelContext.addComponent("jms", jmsComponent);

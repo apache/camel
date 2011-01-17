@@ -28,7 +28,6 @@ public class JmsRouteUsingSpringAndJmsNameTest extends JmsRouteUsingSpringTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpringAndJmsName.xml");
     }
 
-
     @Override
     @Before
     public void setUp() throws Exception {

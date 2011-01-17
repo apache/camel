@@ -53,7 +53,8 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
     }
 
     protected void assertResult() throws InterruptedException {
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+        // should be 1 completed and 1 failed
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
         template.sendBody("activemq:queue:foo", "blah");
 

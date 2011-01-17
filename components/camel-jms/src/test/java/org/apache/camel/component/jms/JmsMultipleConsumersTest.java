@@ -24,6 +24,8 @@ import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.CamelTestSupport;
 
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+
 /**
  * @version $Revision$
  */
@@ -76,8 +78,8 @@ public class JmsMultipleConsumersTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");
-        camelContext.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
     }

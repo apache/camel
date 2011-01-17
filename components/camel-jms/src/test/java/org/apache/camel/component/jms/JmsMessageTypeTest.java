@@ -40,7 +40,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         camelContext.getTypeConverterRegistry().addTypeConverter(byte[].class, MyFooBean.class, new MyFooBean());

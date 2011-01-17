@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms; 
+package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -60,12 +59,9 @@ public class JmsFilterTest extends CamelTestSupport {
     
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        
-        // connect to embedded ActiveMQ JMS broker
-        ConnectionFactory connectionFactory = 
-            new ActiveMQConnectionFactory("vm://localhost");
-        camelContext.addComponent("jms",
-            JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
+
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        camelContext.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
     }

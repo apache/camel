@@ -23,6 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 
@@ -31,6 +32,7 @@ import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComp
  *
  * @version $Revision$
  */
+@Ignore
 public class JmsHammerTest extends CamelTestSupport {
 
     private static final Log LOG = LogFactory.getLog(JmsHammerTest.class);

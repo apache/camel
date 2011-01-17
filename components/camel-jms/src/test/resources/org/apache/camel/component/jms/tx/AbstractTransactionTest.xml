@@ -22,11 +22,11 @@
     http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+        <property name="brokerURL" value="vm://broker1?broker.persistent=false&amp;broker.useJmx=false"/>
     </bean>
 
     <bean id="jmsConnectionFactory-1" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+        <property name="brokerURL" value="vm://broker2?broker.persistent=false&amp;broker.useJmx=false"/>
     </bean>
 
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">

@@ -99,7 +99,7 @@ public class ConsumeJmsObjectMessageTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         jmsTemplate = new JmsTemplate(connectionFactory);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 

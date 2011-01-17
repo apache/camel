@@ -18,7 +18,7 @@ package org.apache.camel.component.jms.issues;
 
 import java.util.Date;
 import java.util.List;
-import javax.jms.Destination;
+import javax.jms.ConnectionFactory;
 import javax.jms.Message;
 
 import org.apache.activemq.command.ActiveMQQueue;
@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsBinding;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.mock.AssertionClause;
@@ -33,7 +34,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.junit.Test;
-import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * @version $Revision$
@@ -70,7 +72,8 @@ public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         // START SNIPPET: example
-        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false&broker.useJmx=false"));
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         // END SNIPPET: example
 
         return camelContext;

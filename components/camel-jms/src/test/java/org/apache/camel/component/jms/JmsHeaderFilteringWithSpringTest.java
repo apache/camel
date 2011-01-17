@@ -29,7 +29,6 @@ public class JmsHeaderFilteringWithSpringTest extends JmsHeaderFilteringTest {
     
     private ClassPathXmlApplicationContext applicationContext;
 
-   
     @Override
     protected CamelContext createCamelContext() throws Exception {   
         applicationContext = createApplicationContext();
@@ -40,7 +39,6 @@ public class JmsHeaderFilteringWithSpringTest extends JmsHeaderFilteringTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsHeaderFilteringWithSpring.xml");
     }
 
-    
     @Override
     @After
     public void tearDown() throws Exception {

@@ -133,7 +133,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     public static class ContextBuilderMessageID implements ContextBuilder {
         public CamelContext buildContext(CamelContext context) throws Exception {
             ConnectionFactory connectionFactory =
-                new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
+                CamelJmsTestHelper.createConnectionFactory();
             JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
             jmsComponent.setUseMessageIDAsCorrelationID(true);
             jmsComponent.setConcurrentConsumers(maxServerTasks);
@@ -150,7 +150,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             ContextBuilder contextBuilderCorrelationID = new ContextBuilder() {
                 public CamelContext buildContext(CamelContext context) throws Exception {
                     ConnectionFactory connectionFactory =
-                        new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
+                        CamelJmsTestHelper.createConnectionFactory();
                     ActiveMQComponent jmsComponent = ActiveMQComponent.activeMQComponent();
                     jmsComponent.setConnectionFactory(connectionFactory);
                     jmsComponent.setUseMessageIDAsCorrelationID(false);
@@ -163,7 +163,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             ContextBuilder contextBuilderMessageIDNamedReplyToSelector = new ContextBuilder() {
                 public CamelContext buildContext(CamelContext context) throws Exception {
                     ConnectionFactory connectionFactory =
-                        new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
+                        CamelJmsTestHelper.createConnectionFactory();
                     ActiveMQComponent jmsComponent = ActiveMQComponent.activeMQComponent();
                     jmsComponent.setConnectionFactory(connectionFactory);
                     jmsComponent.setUseMessageIDAsCorrelationID(true);
@@ -177,7 +177,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             ContextBuilder contextBuilderCorrelationIDNamedReplyToSelector = new ContextBuilder() {
                 public CamelContext buildContext(CamelContext context) throws Exception {
                     ConnectionFactory connectionFactory =
-                        new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
+                        CamelJmsTestHelper.createConnectionFactory();
                     ActiveMQComponent jmsComponent = ActiveMQComponent.activeMQComponent();
                     jmsComponent.setConnectionFactory(connectionFactory);
                     jmsComponent.setUseMessageIDAsCorrelationID(false);
@@ -192,7 +192,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             ContextBuilder contextBuilderCorrelationIDDiffComp = new ContextBuilder() {
                 public CamelContext buildContext(CamelContext context) throws Exception {
                     ConnectionFactory connectionFactory =
-                        new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
+                        CamelJmsTestHelper.createConnectionFactory();
                     ActiveMQComponent jmsComponent = ActiveMQComponent.activeMQComponent();
                     jmsComponent.setConnectionFactory(connectionFactory);
                     jmsComponent.setConcurrentConsumers(maxServerTasks);
@@ -210,7 +210,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             ContextBuilder contextBuilderMessageIDDiffComp = new ContextBuilder() {
                 public CamelContext buildContext(CamelContext context) throws Exception {
                     ConnectionFactory connectionFactory =
-                        new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
+                        CamelJmsTestHelper.createConnectionFactory();
                     ActiveMQComponent jmsComponent = ActiveMQComponent.activeMQComponent();
                     jmsComponent.setConnectionFactory(connectionFactory);
                     jmsComponent.setUseMessageIDAsCorrelationID(true);

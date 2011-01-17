@@ -64,7 +64,7 @@ public class JmsSuspendResumeTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         // must use persistent so the message is not lost
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=true&broker.useJmx=false");
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

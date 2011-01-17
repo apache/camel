@@ -16,14 +16,17 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import org.apache.activemq.camel.component.ActiveMQComponent;
+import javax.jms.ConnectionFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * Unit test using a fixed replyTo specified on the JMS endpoint
@@ -31,8 +34,6 @@ import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComp
  * @version $Revision$
  */
 public class JmsJMSReplyToConsumerEndpointUsingInOutTest extends CamelTestSupport {
-    private static final String MQURI = "vm://localhost?broker.persistent=false&broker.useJmx=false";
-    private ActiveMQComponent amq;
 
     @Test
     public void testCustomJMSReplyToInOut() throws Exception {
@@ -57,8 +58,8 @@ public class JmsJMSReplyToConsumerEndpointUsingInOutTest extends CamelTestSuppor
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        amq = activeMQComponent(MQURI);
-        camelContext.addComponent("activemq", amq);
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
 

@@ -16,27 +16,29 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.TextMessage;
 
-import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
-import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * @version $Revision$
  */
 public class JmsAnotherCustomJMSReplyToTest extends CamelTestSupport {
-    private static final String MQURI = "vm://localhost?broker.persistent=false&broker.useJmx=false";
-    private ActiveMQComponent amq;
-    
+    private JmsComponent amq;
+
     @Test
     public void testCustomJMSReplyToInOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -85,8 +87,11 @@ public class JmsAnotherCustomJMSReplyToTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        amq = activeMQComponent(MQURI);
-        camelContext.addComponent("activemq", amq);
+
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
+
+        amq = camelContext.getComponent("activemq", JmsComponent.class);
         return camelContext;
     }
 
