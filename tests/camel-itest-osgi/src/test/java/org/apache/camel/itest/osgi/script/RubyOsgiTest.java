@@ -36,6 +36,7 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory
  * Test camel-script for Ruby expressions in OSGi
  */
 @RunWith(JUnit4TestRunner.class)
+@Ignore("You need an OSGi-ified version of JRuby for this to pass")
 public class RubyOsgiTest extends OSGiIntegrationTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -45,7 +46,6 @@ public class RubyOsgiTest extends OSGiIntegrationTestSupport {
         };
     }
 
-    @Ignore("You need an OSGi-ified version of JRuby for this to pass")
     @Test
     public void testSendMessage() throws Exception {
         MockEndpoint mock = getMandatoryEndpoint("mock:finish", MockEndpoint.class);
@@ -58,7 +58,6 @@ public class RubyOsgiTest extends OSGiIntegrationTestSupport {
 
     @Configuration
     public static Option[] configure() {
-        System.out.println("URL: " + getCamelKarafFeatureUrl());
         Option[] options = options(
 
                 // install the spring dm profile
