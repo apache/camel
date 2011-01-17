@@ -18,11 +18,18 @@ package org.apache.camel.component.jms;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
@@ -31,7 +38,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.CamelTestSupport;
-import org.junit.Ignore;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -52,9 +58,9 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     protected static String endpointReplyToUriB = componentName + ":queue:test.b?replyTo=queue:test.a.reply";
     protected static String request = "Hello World";
     protected static String expectedReply = "Re: " + request;
-    protected static int maxTasks = 100;
-    protected static int maxServerTasks = 1/*maxTasks / 5*/;
-    protected static int maxCalls = 10;
+    protected static int maxTasks = 20;
+    protected static int maxServerTasks = 1;
+    protected static int maxCalls = 5;
     protected static AtomicBoolean inited = new AtomicBoolean(false);
     protected static Map<String, ContextBuilder> contextBuilders = new HashMap<String, ContextBuilder>();
     protected static Map<String, RouteBuilder> routeBuilders = new HashMap<String, RouteBuilder>();
@@ -131,10 +137,6 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
             jmsComponent.setUseMessageIDAsCorrelationID(true);
             jmsComponent.setConcurrentConsumers(maxServerTasks);
-            /*
-            jmsComponent.getConfiguration().setRequestTimeout(600000);
-            jmsComponent.getConfiguration().setRequestMapPurgePollTimeMillis(30000);
-             */
             context.addComponent(componentName, jmsComponent);
             return context;
         }
@@ -149,13 +151,10 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 public CamelContext buildContext(CamelContext context) throws Exception {
                     ConnectionFactory connectionFactory =
                         new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
-                    JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
+                    ActiveMQComponent jmsComponent = ActiveMQComponent.activeMQComponent();
+                    jmsComponent.setConnectionFactory(connectionFactory);
                     jmsComponent.setUseMessageIDAsCorrelationID(false);
                     jmsComponent.setConcurrentConsumers(maxServerTasks);
-                    /*
-                    jmsComponent.getConfiguration().setRequestTimeout(600000);
-                    jmsComponent.getConfiguration().setRequestMapPurgePollTimeMillis(60000);
-                    */
                     context.addComponent(componentName, jmsComponent);
                     return context;
                 }
@@ -165,7 +164,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 public CamelContext buildContext(CamelContext context) throws Exception {
                     ConnectionFactory connectionFactory =
                         new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
-                    JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
+                    ActiveMQComponent jmsComponent = ActiveMQComponent.activeMQComponent();
+                    jmsComponent.setConnectionFactory(connectionFactory);
                     jmsComponent.setUseMessageIDAsCorrelationID(true);
                     jmsComponent.setConcurrentConsumers(maxServerTasks);
                     jmsComponent.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
@@ -178,7 +178,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 public CamelContext buildContext(CamelContext context) throws Exception {
                     ConnectionFactory connectionFactory =
                         new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
-                    JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
+                    ActiveMQComponent jmsComponent = ActiveMQComponent.activeMQComponent();
+                    jmsComponent.setConnectionFactory(connectionFactory);
                     jmsComponent.setUseMessageIDAsCorrelationID(false);
                     jmsComponent.setConcurrentConsumers(maxServerTasks);
                     jmsComponent.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
@@ -192,14 +193,16 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 public CamelContext buildContext(CamelContext context) throws Exception {
                     ConnectionFactory connectionFactory =
                         new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
-                    JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
-                    jmsComponent.setUseMessageIDAsCorrelationID(false);
+                    ActiveMQComponent jmsComponent = ActiveMQComponent.activeMQComponent();
+                    jmsComponent.setConnectionFactory(connectionFactory);
                     jmsComponent.setConcurrentConsumers(maxServerTasks);
                     context.addComponent(componentName, jmsComponent);
-                    jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
-                    jmsComponent.setUseMessageIDAsCorrelationID(false);
-                    jmsComponent.setConcurrentConsumers(maxServerTasks);
-                    context.addComponent(componentName1, jmsComponent);
+
+                    ActiveMQComponent jmsComponent1 = ActiveMQComponent.activeMQComponent();
+                    jmsComponent1.setConnectionFactory(connectionFactory);
+                    jmsComponent1.setUseMessageIDAsCorrelationID(false);
+                    jmsComponent1.setConcurrentConsumers(maxServerTasks);
+                    context.addComponent(componentName1, jmsComponent1);
                     return context;
                 }
             };
@@ -208,14 +211,17 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 public CamelContext buildContext(CamelContext context) throws Exception {
                     ConnectionFactory connectionFactory =
                         new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
-                    JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
+                    ActiveMQComponent jmsComponent = ActiveMQComponent.activeMQComponent();
+                    jmsComponent.setConnectionFactory(connectionFactory);
                     jmsComponent.setUseMessageIDAsCorrelationID(true);
                     jmsComponent.setConcurrentConsumers(maxServerTasks);
                     context.addComponent(componentName, jmsComponent);
-                    jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
-                    jmsComponent.setUseMessageIDAsCorrelationID(true);
-                    jmsComponent.setConcurrentConsumers(maxServerTasks);
-                    context.addComponent(componentName1, jmsComponent);
+
+                    ActiveMQComponent jmsComponent1 = ActiveMQComponent.activeMQComponent();
+                    jmsComponent1.setConnectionFactory(connectionFactory);
+                    jmsComponent1.setUseMessageIDAsCorrelationID(true);
+                    jmsComponent1.setConcurrentConsumers(maxServerTasks);
+                    context.addComponent(componentName1, jmsComponent1);
                     return context;
                 }
             };
@@ -270,7 +276,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         }
     }
 
-    public class Task extends Thread {
+    public class Task implements Callable {
         private AtomicInteger counter;
         private String fromUri;
         private volatile boolean ok = true;
@@ -281,14 +287,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             this.fromUri = fromUri;
         }
 
-        public void run() {
-            // template must be started
-            try {
-                template.start();
-            } catch (Exception e) {
-                // ignore
-            }
-
+        public Object call() throws Exception {
             for (int i = 0; i < maxCalls; i++) {
                 int callId = counter.incrementAndGet();
                 Object reply = "";
@@ -303,7 +302,9 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                               + "'; Received: '" +  reply + "'";
                 }
             }
+            return this;
         }
+
         public void assertSuccess() {
             assertTrue(message, ok);
         }
@@ -313,7 +314,6 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     protected void setUp() throws Exception {
         init();
         super.setUp();
-        Thread.sleep(1000);
     }
 
     public void testUseMessageIDAsCorrelationID() throws Exception {
@@ -429,18 +429,28 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         runRequestReplyThreaded(endpointUriA);
     }
 
+    @SuppressWarnings("unchecked")
     protected void runRequestReplyThreaded(String fromUri) throws Exception {
+        // start template
+        template.start();
+
+        ExecutorService executor = context.getExecutorServiceStrategy().newFixedThreadPool(this, "Task", maxTasks);
+        CompletionService<Task> completionService = new ExecutorCompletionService<Task>(executor);
+
         final AtomicInteger counter = new AtomicInteger(-1);
-        Task[] tasks = new Task[maxTasks];
-        for (int i = 0; i < maxTasks; ++i) {
+        for (int i = 0; i < maxTasks; i++) {
             Task task = new Task(counter, fromUri);
-            tasks[i] = task;
-            task.start();
+            completionService.submit(task);
         }
-        for (int i = 0; i < maxTasks; ++i) {
-            tasks[i].join();
-            tasks[i].assertSuccess();
+
+        for (int i = 0; i < maxTasks; i++) {
+            Future<Task> future = completionService.take();
+            Task task = future.get(60, TimeUnit.SECONDS);
+            assertNotNull("Should complete the task", task);
+            task.assertSuccess();
         }
+
+        context.getExecutorServiceStrategy().shutdownNow(executor);
     }
 
     protected CamelContext createCamelContext() throws Exception {
