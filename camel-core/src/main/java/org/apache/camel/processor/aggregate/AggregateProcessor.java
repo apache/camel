@@ -252,14 +252,19 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         } else {
             // if batch consumer completion is enabled then we need to complete the group
             if ("consumer".equals(complete)) {
-                for (String batchKey : batchConsumerCorrelationKeys) {                    
-                    Exchange batchAnswer = aggregationRepository.get(camelContext, batchKey);
-                    // There is no aggregated exchange
-                    if (batchAnswer == null) {
+                for (String batchKey : batchConsumerCorrelationKeys) {
+                    Exchange batchAnswer;
+                    if (batchKey.equals(key)) {
+                        // skip the current aggregated key as we have already aggregated it and have the answer
                         batchAnswer = answer;
+                    } else {
+                        batchAnswer = aggregationRepository.get(camelContext, batchKey);
                     }
-                    batchAnswer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
-                    onCompletion(batchKey, batchAnswer, false);
+
+                    if (batchAnswer != null) {
+                        batchAnswer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
+                        onCompletion(batchKey, batchAnswer, false);
+                    }
                 }
                 batchConsumerCorrelationKeys.clear();
             } else {
