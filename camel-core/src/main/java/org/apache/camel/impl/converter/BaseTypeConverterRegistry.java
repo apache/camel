@@ -36,6 +36,7 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterAware;
+import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;

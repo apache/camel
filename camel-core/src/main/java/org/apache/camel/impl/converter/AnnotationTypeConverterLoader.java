@@ -20,8 +20,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +34,9 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
@@ -59,9 +61,21 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         this.resolver = resolver;
     }
 
-    public void load(TypeConverterRegistry registry) throws Exception {
-        String[] packageNames = findPackageNames();
+    public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
+        String[] packageNames;
+        try {
+            packageNames = findPackageNames();
+            if (packageNames == null || packageNames.length == 0) {
+                throw new TypeConverterLoaderException("Cannot find package names to be used for classpath scanning for annotated type converters.");
+            }
+        } catch (Exception e) {
+            throw new TypeConverterLoaderException("Cannot find package names to be used for classpath scanning for annotated type converters.", e);
+        }
+
         Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packageNames);
+        if (classes == null || classes.isEmpty()) {
+            throw new TypeConverterLoaderException("Cannot find any type converter classes from the following packages: " + Arrays.asList(packageNames));
+        }
 
         LOG.info("Found " + packageNames.length + " packages with " + classes.size() + " @Converter classes to load");
 
@@ -231,7 +245,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     }
 
     protected void registerTypeConverter(TypeConverterRegistry registry,
-            Method method, Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
+                                         Method method, Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         registry.addTypeConverter(toType, fromType, typeConverter);
     }
 

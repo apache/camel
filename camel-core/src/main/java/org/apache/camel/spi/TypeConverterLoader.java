@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.converter;
+package org.apache.camel.spi;
 
-import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.TypeConverterLoaderException;
 
 /**
- * A pluggable strategy to load type converters into a registry from some kind of mechanism
+ * A pluggable strategy to load type converters into a
+ * {@link TypeConverterRegistry} from some kind of mechanism.
  *
  * @version $Revision$
  */
@@ -29,7 +30,7 @@ public interface TypeConverterLoader {
      * A pluggable strategy to load type converters into a registry from some kind of mechanism
      *
      * @param registry the registry to load the type converters into
-     * @throws Exception if the type converters could not be loaded
+     * @throws org.apache.camel.TypeConverterLoaderException if the type converters could not be loaded
      */
-    void load(TypeConverterRegistry registry) throws Exception;
+    void load(TypeConverterRegistry registry) throws TypeConverterLoaderException;
 }

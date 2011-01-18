@@ -52,7 +52,7 @@ public interface TypeConverterRegistry {
     TypeConverter lookup(Class<?> toType, Class<?> fromType);
 
     /**
-     * Sets the injector to be used for creating new instances during type convertions.
+     * Sets the injector to be used for creating new instances during type conversions.
      *
      * @param injector the injector
      */

@@ -40,8 +40,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Converter;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
-import org.apache.camel.impl.converter.TypeConverterLoader;
 import org.apache.camel.impl.osgi.tracker.BundleTracker;
 import org.apache.camel.impl.osgi.tracker.BundleTrackerCustomizer;
 import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
@@ -53,6 +53,7 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.PackageScanFilter;
+import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -273,15 +274,22 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     protected static class BundleTypeConverterLoader extends BaseResolver<TypeConverter> implements TypeConverterLoader {
 
         private final AnnotationTypeConverterLoader loader = new Loader();
+        private final Bundle bundle;
 
         public BundleTypeConverterLoader(Bundle bundle) {
             super(bundle, TypeConverter.class);
+            ObjectHelper.notNull(bundle, "bundle");
+            this.bundle = bundle;
         }
 
-        public synchronized void load(TypeConverterRegistry registry) throws Exception {
+        public synchronized void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
             // must be synchronized to ensure we don't load type converters concurrently
             // which cause Camel apps to fails in OSGi thereafter
-            loader.load(registry);
+            try {
+                loader.load(registry);
+            } catch (Exception e) {
+                throw new TypeConverterLoaderException("Cannot load type converters using OSGi bundle: " + bundle.getBundleId(), e);
+            }
         }
 
         public void register() {
@@ -295,7 +303,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             }
 
             @SuppressWarnings("unchecked")
-            public void load(TypeConverterRegistry registry) throws Exception {
+            public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
                 PackageScanFilter test = new AnnotatedWithPackageScanFilter(Converter.class, true);
                 Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
                 Set<String> packages = getConverterPackages(bundle.getEntry(META_INF_TYPE_CONVERTER));
