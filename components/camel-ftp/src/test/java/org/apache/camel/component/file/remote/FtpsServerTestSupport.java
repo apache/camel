@@ -28,7 +28,6 @@ import org.apache.ftpserver.ssl.SslConfigurationFactory;
  * Abstract base class for unit testing using a secure FTP Server (over SSL/TLS)
  * 
  * @version $Revision$
- * @author muellerc
  */
 public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
     

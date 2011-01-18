@@ -22,7 +22,6 @@ package org.apache.camel.component.file.remote;
  * and without client authentication.
  * 
  * @version $Revision$
- * @author muellerc
  */
 public abstract class FtpsServerExplicitTLSWithoutClientAuthTestSupport extends FtpsServerTestSupport {
     

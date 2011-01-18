@@ -24,14 +24,13 @@ import org.junit.Test;
  * Test the ftps component over TLS (implicit) with client authentication
  * 
  * @version $Revision$
- * @author muellerc
  */
 public class FileToFtpsImplicitTLSWithClientAuthTest extends FtpsServerImplicitTLSWithClientAuthTestSupport {
     
     private String getFtpUrl() {
-        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=5000&disableSecureDataChannelDefaults=true"
+        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=2000&disableSecureDataChannelDefaults=true"
                 + "&securityProtocol=TLS&isImplicit=true&ftpClient.keyStore.file=./src/test/resources/server.jks&ftpClient.keyStore.type=JKS"
-                + "&ftpClient.keyStore.algorithm=SunX509&ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password";
+                + "&ftpClient.keyStore.algorithm=SunX509&ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password&delete=true";
     }
     
     @Test
@@ -50,8 +49,9 @@ public class FileToFtpsImplicitTLSWithClientAuthTest extends FtpsServerImplicitT
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                from("file:src/main/data?noop=true").log("Got ${file:name}").to(getFtpUrl());
+
                 from(getFtpUrl()).to("mock:result");
-                from("file:src/main/data?noop=true&consumer.delay=5000").to(getFtpUrl());
             }
         };
     }

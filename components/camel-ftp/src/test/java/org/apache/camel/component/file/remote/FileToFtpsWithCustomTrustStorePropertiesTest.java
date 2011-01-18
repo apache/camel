@@ -24,14 +24,13 @@ import org.junit.Test;
  * Test the ftps component over SSL (explicit) and without client authentication
  * 
  * @version $Revision$
- * @author muellerc
  */
 public class FileToFtpsWithCustomTrustStorePropertiesTest extends FtpsServerExplicitSSLWithoutClientAuthTestSupport {
     
     private String getFtpUrl() {
-        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=5000&disableSecureDataChannelDefaults=true"
+        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=2000&disableSecureDataChannelDefaults=true"
                 + "&securityProtocol=SSL&isImplicit=false&ftpClient.trustStore.file=./src/test/resources/server.jks&ftpClient.trustStore.type=JKS"
-                + "&ftpClient.trustStore.algorithm=SunX509&ftpClient.trustStore.password=password";
+                + "&ftpClient.trustStore.algorithm=SunX509&ftpClient.trustStore.password=password&delete=true";
     }
     
     @Test
@@ -50,8 +49,9 @@ public class FileToFtpsWithCustomTrustStorePropertiesTest extends FtpsServerExpl
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                from("file:src/main/data?noop=true").log("Got ${file:name}").to(getFtpUrl());
+
                 from(getFtpUrl()).to("mock:result");
-                from("file:src/main/data?noop=true&consumer.delay=5000").to(getFtpUrl());
             }
         };
     }

@@ -24,13 +24,12 @@ import org.junit.Test;
  * Test the ftps component over SSL (implicit) without client authentication
  * 
  * @version $Revision$
- * @author muellerc
  */
 public class FileToFtpsImplicitSSLWithoutClientAuthTest extends FtpsServerImplicitSSLWithoutClientAuthTestSupport {
     
     private String getFtpUrl() {
-        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=5000&disableSecureDataChannelDefaults=true"
-                + "&securityProtocol=SSL&isImplicit=true";
+        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=2000&disableSecureDataChannelDefaults=true"
+                + "&securityProtocol=SSL&isImplicit=true&delete=true";
     }
     
     @Test
@@ -49,8 +48,9 @@ public class FileToFtpsImplicitSSLWithoutClientAuthTest extends FtpsServerImplic
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                from("file:src/main/data?noop=true").log("Got ${file:name}").to(getFtpUrl());
+
                 from(getFtpUrl()).to("mock:result");
-                from("file:src/main/data?noop=true&consumer.delay=5000").to(getFtpUrl());
             }
         };
     }
