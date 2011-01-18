@@ -36,10 +36,10 @@ public class StreamGroupLinesTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("./target/stream");
-        createDirectory("./target/stream");
+        deleteDirectory("target/stream");
+        createDirectory("target/stream");
 
-        File file = new File("./target/stream/streamfile.txt");
+        File file = new File("target/stream/streamfile.txt");
         file = file.getAbsoluteFile();
         file.createNewFile();
 
@@ -81,7 +81,7 @@ public class StreamGroupLinesTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("stream:file?fileName=./target/stream/streamfile.txt&groupLines=3").to("mock:result");
+                from("stream:file?fileName=target/stream/streamfile.txt&groupLines=3").to("mock:result");
             }
         };
     }

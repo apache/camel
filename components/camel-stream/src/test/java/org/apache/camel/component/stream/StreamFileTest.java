@@ -43,10 +43,10 @@ public class StreamFileTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("./target/stream");
-        createDirectory("./target/stream");
+        deleteDirectory("target/stream");
+        createDirectory("target/stream");
 
-        File file = new File("./target/stream/streamfile.txt");
+        File file = new File("target/stream/streamfile.txt");
         file = file.getAbsoluteFile();
         file.createNewFile();
 
@@ -63,7 +63,7 @@ public class StreamFileTest extends CamelTestSupport {
             mock.expectedBodiesReceived("Hello");
 
             // can not use route builder as we need to have the file created in the setup before route builder starts
-            Endpoint endpoint = context.getEndpoint("stream:file?fileName=./target/stream/streamfile.txt&delay=100");
+            Endpoint endpoint = context.getEndpoint("stream:file?fileName=target/stream/streamfile.txt&delay=100");
             Consumer consumer = endpoint.createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     template.send("mock:result", exchange);
