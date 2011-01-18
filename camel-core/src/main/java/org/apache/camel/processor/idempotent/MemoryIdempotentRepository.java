@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.LRUCache;
-
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -36,7 +35,8 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  */
 @ManagedResource("MemoryIdempotentRepository")
 public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
-    private final Map<String, Object> cache;
+    private Map<String, Object> cache;
+    private int cacheSize;
 
     public MemoryIdempotentRepository() {
         this.cache = new LRUCache<String, Object>(1000);
@@ -116,8 +116,15 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
         return cache.size();
     }
 
+    public void setCacheSize(int cacheSize) {
+        this.cacheSize = cacheSize;
+    }
+
     @Override
     protected void doStart() throws Exception {
+        if (cacheSize > 0) {
+            cache = new LRUCache<String, Object>(cacheSize);
+        }
     }
 
     @Override
