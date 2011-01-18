@@ -123,13 +123,6 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         initReplyManager();
 
-        // note due to JMS transaction semantics we cannot use a single transaction
-        // for sending the request and receiving the response
-        final Destination replyTo = replyManager.getReplyTo();
-        if (replyTo == null) {
-            throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
-        }
-
         // when using message id as correlation id, we need at first to use a provisional correlation id
         // which we then update to the real JMSMessageID when the message has been sent
         // this is done with the help of the MessageSentCallback
@@ -149,6 +142,12 @@ public class JmsProducer extends DefaultAsyncProducer {
         MessageCreator messageCreator = new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
+
+                // get the reply to destination to be used from the reply manager
+                Destination replyTo = replyManager.getReplyTo();
+                if (replyTo == null) {
+                    throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
+                }
                 message.setJMSReplyTo(replyTo);
                 replyManager.setReplyToSelectorHeader(in, message);
 

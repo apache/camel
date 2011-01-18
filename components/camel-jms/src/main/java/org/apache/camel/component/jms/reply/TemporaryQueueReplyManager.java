@@ -91,15 +91,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             public Destination resolveDestinationName(Session session, String destinationName,
                                                       boolean pubSubDomain) throws JMSException {
                 // use a temporary queue to gather the reply message
-                TemporaryQueue queue = null;
-                synchronized (TemporaryQueueReplyManager.this) {
-                    try {
-                        queue = session.createTemporaryQueue();
-                        setReplyTo(queue);
-                    } finally {
-                        TemporaryQueueReplyManager.this.notifyAll();
-                    }
-                }
+                TemporaryQueue queue = session.createTemporaryQueue();
+                setReplyTo(queue);
                 return queue;
             }
         });

@@ -117,14 +117,10 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         public Destination resolveDestinationName(Session session, String destinationName,
                                                   boolean pubSubDomain) throws JMSException {
             synchronized (PersistentQueueReplyManager.this) {
-                try {
-                    // resolve the reply to destination
-                    if (destination == null) {
-                        destination = delegate.resolveDestinationName(session, destinationName, pubSubDomain);
-                        setReplyTo(destination);
-                    }
-                } finally {
-                    PersistentQueueReplyManager.this.notifyAll();
+                // resolve the reply to destination
+                if (destination == null) {
+                    destination = delegate.resolveDestinationName(session, destinationName, pubSubDomain);
+                    setReplyTo(destination);
                 }
             }
             return destination;

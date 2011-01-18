@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.jms.reply;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -46,7 +48,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected JmsEndpoint endpoint;
     protected Destination replyTo;
     protected AbstractMessageListenerContainer listenerContainer;
-    protected long replyToResolverTimeout = 5000;
+    protected final CountDownLatch replyToLatch = new CountDownLatch(1);
+    protected final long replyToTimeout = 10000;
     protected CorrelationMap correlation;
 
     public void setScheduledExecutorService(ScheduledExecutorService executorService) {
@@ -62,18 +65,27 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             log.trace("ReplyTo destination: " + replyTo);
         }
         this.replyTo = replyTo;
+        // trigger latch as the reply to has been resolved and set
+        replyToLatch.countDown();
     }
 
     public Destination getReplyTo() {
-        synchronized (this) {
-            try {
-                // wait for the reply to destination to be resolved
-                if (replyTo == null) {
-                    wait(replyToResolverTimeout);
-                }
-            } catch (Throwable e) {
-                // ignore
+        if (replyTo != null) {
+            return replyTo;
+        }
+        try {
+            // the reply to destination has to be resolved using a DestinationResolver using
+            // the MessageListenerContainer which occurs asynchronously so we have to wait
+            // for that to happen before we can retrieve the reply to destination to be used
+            log.trace("Waiting for replyTo to be set");
+            boolean done = replyToLatch.await(replyToTimeout, TimeUnit.MILLISECONDS);
+            if (!done) {
+                log.warn("ReplyTo destination was not set and timeout occurred");
+            } else {
+                log.trace("Waiting for replyTo to be set done");
             }
+        } catch (InterruptedException e) {
+            // ignore
         }
         return replyTo;
     }
