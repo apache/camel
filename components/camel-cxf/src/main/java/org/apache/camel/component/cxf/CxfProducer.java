@@ -233,7 +233,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         
         if (parameters.length < experctMessagePartsSize) {
             throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Expect size "
-                                               + experctMessagePartsSize + ", Parameter size " + parameters.length);
+                                               + experctMessagePartsSize + ", Parameter size " + parameters.length
+                                               + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
         }
         
         if (parameters.length > experctMessagePartsSize) {
@@ -256,7 +257,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
           
             if (holdersSize + experctMessagePartsSize + soapHeadersSize < parameters.length) {
                 throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Expect size "
-                                                   + (experctMessagePartsSize + holdersSize + soapHeadersSize) + ", Parameter size " + parameters.length);
+                                                   + (experctMessagePartsSize + holdersSize + soapHeadersSize) + ", Parameter size " + parameters.length
+                                                   + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
             }
         }
     }
