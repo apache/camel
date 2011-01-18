@@ -22,10 +22,10 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <!-- START SNIPPET: e1 -->
     <!-- repository for the idempotent consumer -->
     <bean id="myRepo" class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository"/>
 
-    <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
