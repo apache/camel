@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test for Camel attachments and Mail attachments.
@@ -36,6 +37,9 @@ public class MailContentTypeResolverTest extends CamelTestSupport {
 
     @Test
     public void testCustomContentTypeResolver() throws Exception {
+        // clear mailbox
+        Mailbox.clearAll();
+
         // create an exchange with a normal body and attachment to be produced as email
         Endpoint endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");
 

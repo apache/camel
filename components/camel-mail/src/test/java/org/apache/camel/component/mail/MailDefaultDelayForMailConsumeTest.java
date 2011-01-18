@@ -21,6 +21,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
+import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test for testing mail polling is happening according to the default poll interval.
@@ -29,6 +30,9 @@ public class MailDefaultDelayForMailConsumeTest extends CamelTestSupport {
 
     @Test
     public void testConsuming() throws Exception {
+        // clear mailbox
+        Mailbox.clearAll();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello London");
 
