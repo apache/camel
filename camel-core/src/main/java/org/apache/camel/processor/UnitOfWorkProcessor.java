@@ -92,21 +92,35 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
             try {
                 uow.start();
             } catch (Exception e) {
-                throw wrapRuntimeCamelException(e);
+                callback.done(true);
+                exchange.setException(e);
+                return true;
             }
 
             // process the exchange
-            return processor.process(exchange, new AsyncCallback() {
-                public void done(boolean doneSync) {
-                    // Order here matters. We need to complete the callbacks
-                    // since they will likely update the exchange with some final results.
-                    try {
-                        callback.done(doneSync);
-                    } finally {
-                        doneUow(uow, exchange);
+            try {
+                return processor.process(exchange, new AsyncCallback() {
+                    public void done(boolean doneSync) {
+                        // Order here matters. We need to complete the callbacks
+                        // since they will likely update the exchange with some final results.
+                        try {
+                            callback.done(doneSync);
+                        } finally {
+                            doneUow(uow, exchange);
+                        }
                     }
+                });
+            } catch (Throwable e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Caught unhandled exception while processing ExchangeId: " + exchange.getExchangeId(), e);
                 }
-            });
+                // fallback and catch any exceptions the process may not have caught
+                // we must ensure to done the UoW in all cases and issue done on the callback
+                doneUow(uow, exchange);
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
         } else {
             // There was an existing UoW, so we should just pass through..
             // so that the guy the initiated the UoW can terminate it.

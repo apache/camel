@@ -87,8 +87,12 @@ public class EndpointMessageListener implements MessageListener {
             if (correlationId != null) {
                 LOG.debug("Received Message has JMSCorrelationID [" + correlationId + "]");
             }
-            
-            processor.process(exchange);
+
+            try {
+                processor.process(exchange);
+            } catch (Throwable e) {
+                exchange.setException(e);
+            }
             if (LOG.isTraceEnabled()) {
                 LOG.trace("onMessage.process END");
             }
