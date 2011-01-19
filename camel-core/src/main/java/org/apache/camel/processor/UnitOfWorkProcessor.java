@@ -111,14 +111,19 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
                     }
                 });
             } catch (Throwable e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Caught unhandled exception while processing ExchangeId: " + exchange.getExchangeId(), e);
-                }
+                LOG.warn("Caught unhandled exception while processing ExchangeId: " + exchange.getExchangeId(), e);
+
                 // fallback and catch any exceptions the process may not have caught
                 // we must ensure to done the UoW in all cases and issue done on the callback
-                doneUow(uow, exchange);
                 exchange.setException(e);
-                callback.done(true);
+
+                // Order here matters. We need to complete the callbacks
+                // since they will likely update the exchange with some final results.
+                try {
+                    callback.done(true);
+                } finally {
+                    doneUow(uow, exchange);
+                }
                 return true;
             }
         } else {

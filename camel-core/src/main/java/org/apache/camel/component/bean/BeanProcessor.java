@@ -78,8 +78,16 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         // do we have an explicit method name we always should invoke
         boolean isExplicitMethod = ObjectHelper.isNotEmpty(method);
 
-        Object bean = beanHolder.getBean();
-        BeanInfo beanInfo = beanHolder.getBeanInfo();
+        Object bean;
+        BeanInfo beanInfo;
+        try {
+            bean = beanHolder.getBean();
+            beanInfo = beanHolder.getBeanInfo();
+        } catch (Throwable e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
 
         // do we have a custom adapter for this POJO to a Processor
         // should not be invoked if an explicit method has been set

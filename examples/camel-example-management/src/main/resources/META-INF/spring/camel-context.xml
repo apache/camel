@@ -24,11 +24,11 @@
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent" depends-on="camel">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
     </bean>
 
-    <bean id="stock" class="org.apache.camel.example.management.StockService">
+    <bean id="stock" class="org.apache.camel.example.management.StockService" depends-on="camel">
         <property name="symbols" ref="symbols"/>
     </bean>
 
@@ -37,18 +37,6 @@
         <value>APPLE</value>
         <value>JAVA</value>
     </u:list>
-
-    <bean id="dlc" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-        <property name="deadLetterUri" value="activemq:queue:dead"/>
-        <property name="redeliveryPolicy" ref="redeliveyPolicy"/>
-    </bean>
-
-    <bean id="redeliveyPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
-        <property name="maximumRedeliveries" value="5"/>
-        <property name="backOffMultiplier" value="2.0"/>
-        <property name="useExponentialBackOff" value="true"/>
-        <property name="maximumRedeliveryDelay" value="30000"/>
-    </bean>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <!-- Default JMX connector url: "service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel" -->
@@ -70,7 +58,7 @@
             </split>
         </route>
 
-        <route errorHandlerRef="dlc">
+        <route>
             <from uri="activemq:queue:stock"/>
             <delay><constant>100</constant></delay>
             <bean ref="stock" method="transform"/>
