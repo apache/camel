@@ -28,6 +28,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.cxfbean.CxfBeanBinding;
+import org.apache.camel.component.cxf.cxfbean.DefaultCxfBeanBinding;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.component.cxf.util.CxfMessageHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -89,7 +91,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     public void setCheckException(boolean exception) {
         checkException = exception;
     }
-    
+
     public boolean isCheckException() {
         return checkException;
     }
@@ -138,8 +140,9 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
     protected void incoming(org.apache.camel.Exchange camelExchange) {
         getLogger().log(Level.FINE, "server received request: ", camelExchange);
-        org.apache.cxf.message.Message inMessage =
-            CxfMessageHelper.getCxfInMessage(headerFilterStrategy, camelExchange, false);
+        DefaultCxfBeanBinding beanBinding = new DefaultCxfBeanBinding();
+        org.apache.cxf.message.Message inMessage = 
+            beanBinding.createCxfMessageFromCamelExchange(camelExchange, headerFilterStrategy);
 
         inMessage.put(CxfConstants.CAMEL_EXCHANGE, camelExchange);
         ((MessageImpl)inMessage).setDestination(this);
