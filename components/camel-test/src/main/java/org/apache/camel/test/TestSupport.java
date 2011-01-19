@@ -464,6 +464,14 @@ public abstract class TestSupport extends TestCase {
     }
 
     /**
+     * To be used to check is a file is found in the file system
+     */
+    public static void assertFileExists(String filename) {
+        File file = new File(filename).getAbsoluteFile();
+        assertTrue("File " + filename + " should exist", file.exists());
+    }
+
+    /**
      * Is this OS the given platform.
      * <p/>
      * Uses <tt>os.name</tt> from the system properties to determine the OS.

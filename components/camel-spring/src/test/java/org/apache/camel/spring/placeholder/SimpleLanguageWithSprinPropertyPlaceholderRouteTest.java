@@ -62,14 +62,17 @@ public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends Abstrac
 
         Thread.sleep(500);
         
-        assertFileExists("target/outBox/");
+        assertFileExists("target/outBox/" + getTestFileName());
     }
 
-    private void assertFileExists(String directory) {
+    private String getTestFileName() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         String s = sdf.format(new Date());
-        String name = directory + "test-" + s + ".txt";
-        File file = new File(name).getAbsoluteFile();
-        assertTrue("File should exist: " + name, file.exists());
+        return "test-" + s + ".txt";
+    }
+    
+    private void assertFileExists(String filename) {
+        File file = new File(filename).getAbsoluteFile();
+        assertTrue("File " + filename + " should exist", file.exists());
     }
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -111,12 +110,6 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
                 "Hello World", "birthday", date);
 
         assertFileExists(FTP_ROOT_DIR + "filelanguage/mybirthday-19740420.txt");
-    }
-
-    private static void assertFileExists(String filename) {
-        File file = new File(filename);
-        file = file.getAbsoluteFile();
-        assertTrue("File " + filename + " should exists", file.exists());
     }
 
     public class MyGuidGenerator {
