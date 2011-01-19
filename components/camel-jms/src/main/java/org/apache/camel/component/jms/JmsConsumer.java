@@ -45,7 +45,7 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         return (JmsEndpoint) super.getEndpoint();
     }
 
-    public AbstractMessageListenerContainer getListenerContainer() {
+    public AbstractMessageListenerContainer getListenerContainer() throws Exception {
         if (listenerContainer == null) {
             createMessageListenerContainer();
         }
@@ -64,7 +64,7 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         messageListener.setBinding(endpoint.getBinding());
     }
 
-    protected void createMessageListenerContainer() {
+    protected void createMessageListenerContainer() throws Exception {
         listenerContainer = getEndpoint().createMessageListenerContainer();
         getEndpoint().configureListenerContainer(listenerContainer);
         listenerContainer.setMessageListener(getEndpointMessageListener());

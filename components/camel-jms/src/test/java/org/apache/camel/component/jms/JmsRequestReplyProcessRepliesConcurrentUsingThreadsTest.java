@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -66,8 +65,9 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Cam
             public void configure() throws Exception {
                 from("seda:start")
                     .inOut().to("activemq:queue:foo")
-                    .threads(5)
                     .log("reply   - ${body}")
+                    .threads(5)
+                    .log("delay   - ${body}")
                     .delay(2000)
                     .log("done    - ${body}")
                     .to("mock:result");

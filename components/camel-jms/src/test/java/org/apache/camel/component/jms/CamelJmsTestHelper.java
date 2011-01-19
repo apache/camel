@@ -34,16 +34,32 @@ public final class CamelJmsTestHelper {
     }
 
     public static ConnectionFactory createConnectionFactory() {
+        return createConnectionFactory(null);
+    }
+
+    public static ConnectionFactory createConnectionFactory(String options) {
         // using a unique broker name improves testing when running the entire test suite in the same JVM
         int id = counter.incrementAndGet();
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://test-broker-" + id + "?broker.persistent=false&broker.useJmx=false");
+        String url = "vm://test-broker-" + id + "?broker.persistent=false&broker.useJmx=false";
+        if (options != null) {
+            url = url + "&" + options;
+        }
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
         return connectionFactory;
     }
 
     public static ConnectionFactory createPersistentConnectionFactory() {
+        return createPersistentConnectionFactory(null);
+    }
+
+    public static ConnectionFactory createPersistentConnectionFactory(String options) {
         // using a unique broker name improves testing when running the entire test suite in the same JVM
         int id = counter.incrementAndGet();
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://test-broker-" + id + "?broker.persistent=true&broker.useJmx=false");
+        String url = "vm://test-broker-" + id + "?broker.persistent=true&broker.useJmx=false";
+        if (options != null) {
+            url = url + "&" + options;
+        }
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
         return connectionFactory;
     }
 }

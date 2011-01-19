@@ -150,7 +150,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return createConsumer(processor, listenerContainer);
     }
 
-    public AbstractMessageListenerContainer createMessageListenerContainer() {
+    public AbstractMessageListenerContainer createMessageListenerContainer() throws Exception {
         return configuration.createMessageListenerContainer(this);
     }
 

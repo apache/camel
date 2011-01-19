@@ -25,6 +25,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PackageHelper;
 import org.apache.commons.logging.Log;
@@ -354,7 +355,7 @@ public class JmsConfiguration implements Cloneable {
         return template;
     }
 
-    public AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) {
+    public AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) throws Exception {
         AbstractMessageListenerContainer container = chooseMessageListenerContainerImplementation();
         configureMessageListenerContainer(container, endpoint);
         return container;
@@ -824,7 +825,7 @@ public class JmsConfiguration implements Cloneable {
 
 
     protected void configureMessageListenerContainer(AbstractMessageListenerContainer container,
-                                                     JmsEndpoint endpoint) {
+                                                     JmsEndpoint endpoint) throws Exception {
         container.setConnectionFactory(getListenerConnectionFactory());
         if (endpoint instanceof DestinationEndpoint) {
             container.setDestinationResolver(createDestinationResolver((DestinationEndpoint) endpoint));
@@ -915,6 +916,12 @@ public class JmsConfiguration implements Cloneable {
             if (transactionTimeout >= 0) {
                 listenerContainer.setTransactionTimeout(transactionTimeout);
             }
+            if (taskExecutor != null) {
+                listenerContainer.setTaskExecutor(taskExecutor);
+            } else if (taskExecutorSpring2 != null) {
+                // use reflection to invoke to support spring 2 when JAR is compiled with Spring 3.0
+                IntrospectionSupport.setProperty(listenerContainer, "taskExecutor", endpoint.getTaskExecutorSpring2());
+            }
         } else if (container instanceof SimpleMessageListenerContainer) {
             // this includes SimpleMessageListenerContainer102
             SimpleMessageListenerContainer listenerContainer = (SimpleMessageListenerContainer) container;
@@ -924,6 +931,9 @@ public class JmsConfiguration implements Cloneable {
             listenerContainer.setPubSubNoLocal(pubSubNoLocal);
             if (taskExecutor != null) {
                 listenerContainer.setTaskExecutor(taskExecutor);
+            } else if (taskExecutorSpring2 != null) {
+                // use reflection to invoke to support spring 2 when JAR is compiled with Spring 3.0
+                IntrospectionSupport.setProperty(listenerContainer, "taskExecutor", endpoint.getTaskExecutorSpring2());
             }
         }
     }

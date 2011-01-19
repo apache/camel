@@ -170,7 +170,6 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
             answer = new PersistentQueueMessageListenerContainer(dynamicMessageSelector);
         }
 
-        answer.setConnectionFactory(endpoint.getListenerConnectionFactory());
         DestinationResolver resolver = endpoint.getDestinationResolver();
         if (resolver == null) {
             resolver = answer.getDestinationResolver();
@@ -183,6 +182,12 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);
         answer.setConcurrentConsumers(1);
+        answer.setConnectionFactory(endpoint.getConnectionFactory());
+        String clientId = endpoint.getClientId();
+        if (clientId != null) {
+            clientId += ".CamelReplyManager";
+            answer.setClientId(clientId);
+        }
         // must use cache level session
         answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_SESSION);
 
@@ -201,8 +206,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         }
         if (endpoint.getTaskExecutor() != null) {
             answer.setTaskExecutor(endpoint.getTaskExecutor());
-        }
-        if (endpoint.getTaskExecutorSpring2() != null) {
+        } else if (endpoint.getTaskExecutorSpring2() != null) {
             // use reflection to invoke to support spring 2 when JAR is compiled with Spring 3.0
             IntrospectionSupport.setProperty(answer, "taskExecutor", endpoint.getTaskExecutorSpring2());
         }

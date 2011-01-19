@@ -26,7 +26,6 @@ import javax.jms.TemporaryQueue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.IntrospectionSupport;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -102,24 +101,32 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         answer.setSubscriptionDurable(false);
         answer.setConcurrentConsumers(1);
         answer.setConnectionFactory(endpoint.getConnectionFactory());
-        answer.setSessionTransacted(false);
         String clientId = endpoint.getClientId();
         if (clientId != null) {
             clientId += ".CamelReplyManager";
             answer.setClientId(clientId);
         }
-        TaskExecutor taskExecutor = endpoint.getTaskExecutor();
-        if (taskExecutor != null) {
-            answer.setTaskExecutor(taskExecutor);
+
+        // we cannot do request-reply over JMS with transaction
+        answer.setSessionTransacted(false);
+
+        // other optional properties
+        if (endpoint.getExceptionListener() != null) {
+            answer.setExceptionListener(endpoint.getExceptionListener());
         }
-        if (endpoint.getTaskExecutorSpring2() != null) {
+        if (endpoint.getReceiveTimeout() >= 0) {
+            answer.setReceiveTimeout(endpoint.getReceiveTimeout());
+        }
+        if (endpoint.getRecoveryInterval() >= 0) {
+            answer.setRecoveryInterval(endpoint.getRecoveryInterval());
+        }
+        if (endpoint.getTaskExecutor() != null) {
+            answer.setTaskExecutor(endpoint.getTaskExecutor());
+        } else if (endpoint.getTaskExecutorSpring2() != null) {
             // use reflection to invoke to support spring 2 when JAR is compiled with Spring 3.0
             IntrospectionSupport.setProperty(answer, "taskExecutor", endpoint.getTaskExecutorSpring2());
         }
-        ExceptionListener exceptionListener = endpoint.getExceptionListener();
-        if (exceptionListener != null) {
-            answer.setExceptionListener(exceptionListener);
-        }
+
         return answer;
     }
 
