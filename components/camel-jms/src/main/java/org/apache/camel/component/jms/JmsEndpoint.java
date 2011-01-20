@@ -495,11 +495,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
-    public boolean isLogWarnWhenReplyToIsDiscarded() {
-        return getConfiguration().isLogWarnWhenReplyToIsDiscarded();
-    }
-
-    @ManagedAttribute
     public String getReplyToDestinationSelectorName() {
         return getConfiguration().getReplyToDestinationSelectorName();
     }
@@ -789,11 +784,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setReplyTo(String replyToDestination) {
         getConfiguration().setReplyTo(replyToDestination);
-    }
-
-    @ManagedAttribute
-    public void setLogWarnWhenReplyToIsDiscarded(boolean logWarnWhenReplyToIsDiscarded) {
-        getConfiguration().setLogWarnWhenReplyToIsDiscarded(logWarnWhenReplyToIsDiscarded);
     }
 
     @ManagedAttribute

@@ -108,7 +108,6 @@ public class JmsConfiguration implements Cloneable {
     private int transactionTimeout = -1;
     private boolean preserveMessageQos;
     private boolean disableReplyTo;
-    private boolean logWarnWhenReplyToIsDiscarded = true;
     private boolean eagerLoadingOfProperties;
     // Always make a JMS message copy when it's passed to Producer
     private boolean alwaysCopyMessage;
@@ -1088,14 +1087,6 @@ public class JmsConfiguration implements Cloneable {
 
     public void setReplyTo(String replyToDestination) {
         this.replyToDestination = normalizeDestinationName(replyToDestination);
-    }
-
-    public boolean isLogWarnWhenReplyToIsDiscarded() {
-        return logWarnWhenReplyToIsDiscarded;
-    }
-
-    public void setLogWarnWhenReplyToIsDiscarded(boolean logWarnWhenReplyToIsDiscarded) {
-        this.logWarnWhenReplyToIsDiscarded = logWarnWhenReplyToIsDiscarded;
     }
 
     public String getReplyToDestinationSelectorName() {

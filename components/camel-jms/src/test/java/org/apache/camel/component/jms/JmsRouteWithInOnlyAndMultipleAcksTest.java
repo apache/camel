@@ -78,8 +78,7 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
                 // the original order request initiator
                 from("amq:queue:inbox")
                     .to("mock:inbox")
-                    // we dont care about the WARN log so we disable that
-                    .inOnly("amq:topic:orderServiceNotification?logWarnWhenReplyToIsDiscarded=false")
+                    .inOnly("amq:topic:orderServiceNotification")
                     .beanRef("orderService", "handleOrder");
 
                 // this route collects an order request notification
