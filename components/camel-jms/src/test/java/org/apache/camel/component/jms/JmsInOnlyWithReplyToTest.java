@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -62,7 +61,9 @@ public class JmsInOnlyWithReplyToTest extends CamelTestSupport {
                     .to("log:foo?showAll=true", "mock:foo")
                     .transform(body().prepend("Bye "));
 
-                from("activemq:queue:bar")
+                // we should disable reply to to avoid sending the message back to our self
+                // after we have consumed it
+                from("activemq:queue:bar?disableReplyTo=true")
                     .to("log:bar?showAll=true", "mock:bar");
             }
         };
