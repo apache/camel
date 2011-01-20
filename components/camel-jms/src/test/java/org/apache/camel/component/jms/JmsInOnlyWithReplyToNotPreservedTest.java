@@ -28,17 +28,20 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * @version $Revision$
  */
-public class JmsInOnlyWithReplyToTest extends CamelTestSupport {
+public class JmsInOnlyWithReplyToNotPreservedTest extends CamelTestSupport {
 
     @Test
     public void testSendInOnlyWithReplyTo() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("World");
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:done").expectedBodiesReceived("World");
 
         template.sendBody("direct:start", "World");
 
         assertMockEndpointsSatisfied();
+
+        // there should be no messages on the bar queue
+        Object msg = consumer.receiveBody("activemq:queue:bar", 1000);
+        assertNull("Should be no message on bar queue", msg);
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -54,17 +57,12 @@ public class JmsInOnlyWithReplyToTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:foo?replyTo=queue:bar&preserveMessageQos=true")
+                    .to("activemq:queue:foo?replyTo=queue:bar")
                     .to("mock:done");
 
                 from("activemq:queue:foo")
                     .to("log:foo?showAll=true", "mock:foo")
                     .transform(body().prepend("Bye "));
-
-                // we should disable reply to to avoid sending the message back to our self
-                // after we have consumed it
-                from("activemq:queue:bar?disableReplyTo=true")
-                    .to("log:bar?showAll=true", "mock:bar");
             }
         };
     }
