@@ -250,8 +250,14 @@ public class JmsProducer extends DefaultAsyncProducer {
                 // the consumer of this message should not return a reply so we remove it
                 // unless we use preserveMessageQos=true to tell that we still want to use JMSReplyTo
                 if (jmsReplyTo != null && !(endpoint.isPreserveMessageQos() || endpoint.isExplicitQosEnabled())) {
-                    LOG.warn("Disabling JMSReplyTo: " + jmsReplyTo + " for destination: " + to
-                        + ". Use preserveMessageQos=true to force Camel to keep the JMSReplyTo on endpoint: " + endpoint);
+                    // log a warn if enabled otherwise a debug level
+                    String msg = "Disabling JMSReplyTo: " + jmsReplyTo + " for destination: " + to
+                            + ". Use preserveMessageQos=true to force Camel to keep the JMSReplyTo on endpoint: " + endpoint;
+                    if (endpoint.isLogWarnWhenReplyToIsDiscarded()) {
+                        LOG.warn(msg);
+                    } else {
+                        LOG.debug(msg);
+                    }
                     jmsReplyTo = null;
                 }
 
