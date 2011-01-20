@@ -20,10 +20,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * For expressions and predicates using a constant
- *
  */
 @XmlRootElement(name = "constant")
 public class ConstantExpression extends ExpressionDefinition {
+
     public ConstantExpression() {
     }
 

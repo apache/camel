@@ -31,6 +31,7 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.bean.MethodNotFoundException;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.SimpleLanguage;
 
@@ -38,6 +39,22 @@ import org.apache.camel.language.simple.SimpleLanguage;
  * @version $Revision$
  */
 public class SimpleTest extends LanguageTestSupport {
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myAnimal", new Animal("Donkey", 17));
+        return jndi;
+    }
+
+    public void testRefExpression() throws Exception {
+        assertExpression("ref:myAnimal", "Donkey");
+        assertExpression("${ref:myAnimal}", "Donkey");
+        assertExpression("ref:unknown", null);
+        assertExpression("${ref:unknown}", null);
+        assertExpression("Hello ${ref:myAnimal}", "Hello Donkey");
+        assertExpression("Hello ${ref:unknown}", "Hello ");
+    }
 
     public void testConstantExpression() throws Exception {
         assertExpression("Hello World", "Hello World");

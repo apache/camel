@@ -389,6 +389,24 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for lookup a bean in the {@link org.apache.camel.spi.Registry}
+     *
+     * @return an expression object which will return the bean
+     */
+    public static Expression refExpression(final String ref) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getContext().getRegistry().lookup(ref);
+            }
+
+            @Override
+            public String toString() {
+                return "ref(" + ref + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for the {@link org.apache.camel.CamelContext}
      *
      * @return an expression object which will return the camel context

@@ -304,6 +304,12 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             return ExpressionBuilder.propertiesComponentExpression(key, locations);
         }
 
+        // ref: prefix
+        remainder = ifStartsWithReturnRemainder("ref:", expression);
+        if (remainder != null) {
+            return ExpressionBuilder.refExpression(remainder);
+        }
+
         if (strict) {
             throw new ExpressionIllegalSyntaxException(expression);
         } else {
