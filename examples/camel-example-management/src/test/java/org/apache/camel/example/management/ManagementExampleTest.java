@@ -43,6 +43,7 @@ public class ManagementExampleTest extends CamelSpringTestSupport {
 
         // Find the endpoints
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
+        // now there is no managed endpoint for the bean
         assertEquals(6, set.size()); 
         
         // Find the routes
