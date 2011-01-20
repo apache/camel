@@ -115,9 +115,14 @@ public class BindyFixedLengthDataFormat implements DataFormat {
             // TODO Test if we have a Footer (containing by example checksum)
 
             while (scanner.hasNextLine()) {
-
+                String line;
+                
                 // Read the line
-                String line = scanner.nextLine().trim();
+                if (factory.isTrimRecordOnUnmarshal()) {
+                    line = scanner.nextLine().trim();
+                } else {
+                    line = scanner.nextLine();
+                }
 
                 if (ObjectHelper.isEmpty(line)) {
                     // skip if line is empty

@@ -61,6 +61,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     private boolean hasFooter;
     private char paddingChar;
     private int recordLength;
+    private boolean trimRecordOnUnmarshal;
 
     public BindyFixedLengthFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
         super(resolver, packageNames);
@@ -459,6 +460,17 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     LOG.debug("Length of the record :  " + recordLength);
                 }
 
+                // Get length of the record
+                recordLength = record.length();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Length of the record :  " + recordLength);
+                }
+                
+                // Get trimRecord parameter
+                trimRecordOnUnmarshal = record.trimRecordOnUnmarshal();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Trim record :  " + trimRecordOnUnmarshal);
+                }
             }
         }
     }
@@ -492,6 +504,16 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
     public int recordLength() {
         return recordLength;
+    }
+
+    /**
+     * Flag indicating whether the fixed length record should be trimmed
+     * 
+     * @return boolean
+     */
+
+    public boolean isTrimRecordOnUnmarshal() {
+        return trimRecordOnUnmarshal;
     }
 
 }

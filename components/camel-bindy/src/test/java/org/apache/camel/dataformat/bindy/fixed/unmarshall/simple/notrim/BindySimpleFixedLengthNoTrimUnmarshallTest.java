@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.trim;
+package org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.notrim;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -40,9 +40,9 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration
-public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringContextTests {
+public class BindySimpleFixedLengthNoTrimUnmarshallTest extends AbstractJUnit4SpringContextTests {
 
-    private static final transient Log LOG = LogFactory.getLog(BindySimpleFixedLengthUnmarshallTest.class);
+    private static final transient Log LOG = LogFactory.getLog(BindySimpleFixedLengthNoTrimUnmarshallTest.class);
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";
@@ -63,7 +63,7 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
 
-        expected = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009";
+        expected = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009    ";
 
         template.sendBody(expected);
 
@@ -72,7 +72,7 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyFixedLengthDataFormat camelDataFormat = new BindyFixedLengthDataFormat("org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.trim");
+        BindyFixedLengthDataFormat camelDataFormat = new BindyFixedLengthDataFormat("org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.notrim");
 
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);
@@ -80,7 +80,7 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
 
     }
     
-    @FixedLengthRecord(length = 65, paddingChar = ' ')
+    @FixedLengthRecord(length = 69, paddingChar = ' ', trimRecordOnUnmarshal = false)
     public static class Order {
 
         @DataField(pos = 1, length = 2)
@@ -203,7 +203,7 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
         public void setOrderDate(Date orderDate) {
             this.orderDate = orderDate;
         }
-
+        
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
