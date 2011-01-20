@@ -33,10 +33,14 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  */
 public class MailConsumerUnsupportedCharsetTest extends CamelTestSupport {
 
+    @Override
+    public void setUp() throws Exception {
+        prepareMailbox();
+        super.setUp();
+    }
+
     @Test
     public void testConsumeUnsupportedCharset() throws Exception {
-        prepareMailbox();
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 

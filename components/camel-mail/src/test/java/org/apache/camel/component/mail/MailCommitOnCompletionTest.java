@@ -35,9 +35,14 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  */
 public class MailCommitOnCompletionTest extends CamelTestSupport {
 
+    @Override
+    public void setUp() throws Exception {
+        prepareMailbox();
+        super.setUp();
+    }
+
     @Test
     public void testCommitOnCompletion() throws Exception {
-        prepareMailbox();
         Mailbox mailbox = Mailbox.get("jones@localhost");
         assertEquals(5, mailbox.size());
 

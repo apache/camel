@@ -36,8 +36,8 @@ public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        super.setUp();
         prepareMailbox();
+        super.setUp();
     }
 
     @Test

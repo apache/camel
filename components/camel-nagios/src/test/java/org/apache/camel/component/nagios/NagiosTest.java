@@ -79,7 +79,7 @@ public class NagiosTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // sleep a little to let nagios stub process the payloads
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         assertEquals(1, nagios.getMessagePayloadList().size());
 
@@ -106,7 +106,7 @@ public class NagiosTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // sleep a little to let nagios stub process the payloads
-        Thread.sleep(2000);
+        Thread.sleep(3000);
 
         assertEquals(2, nagios.getMessagePayloadList().size());
 
@@ -137,7 +137,7 @@ public class NagiosTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // sleep a little to let nagios stub process the payloads
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         assertEquals(1, nagios.getMessagePayloadList().size());
 
@@ -162,7 +162,7 @@ public class NagiosTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // sleep a little to let nagios stub process the payloads
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         assertEquals(1, nagios.getMessagePayloadList().size());
 
@@ -191,7 +191,7 @@ public class NagiosTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // sleep a little to let nagios stub process the payloads
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         assertEquals(1, nagios.getMessagePayloadList().size());
 

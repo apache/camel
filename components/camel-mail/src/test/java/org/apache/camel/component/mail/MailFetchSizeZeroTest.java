@@ -33,9 +33,14 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  */
 public class MailFetchSizeZeroTest extends CamelTestSupport {
 
+    @Override
+    public void setUp() throws Exception {
+        prepareMailbox();
+        super.setUp();
+    }
+
     @Test
     public void testFetchSize() throws Exception {
-        prepareMailbox();
         Mailbox mailbox = Mailbox.get("bill@localhost");
         assertEquals(5, mailbox.size());
 

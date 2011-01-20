@@ -37,10 +37,14 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
 
     private static int counter;
 
+    @Override
+    public void setUp() throws Exception {
+        prepareMailbox();
+        super.setUp();
+    }
+
     @Test
     public void testRoolbackIfProcessFails() throws Exception {
-        prepareMailbox();
-
         getMockEndpoint("mock:result").expectedBodiesReceived("Message 1");
         // the first 2 attempt should fail
         getMockEndpoint("mock:error").expectedMessageCount(2);

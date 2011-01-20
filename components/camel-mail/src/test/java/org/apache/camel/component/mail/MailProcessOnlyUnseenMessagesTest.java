@@ -34,10 +34,14 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  */
 public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
 
+    @Override
+    public void setUp() throws Exception {
+        prepareMailbox();
+        super.setUp();
+    }
+
     @Test
     public void testProcessOnlyUnseenMessages() throws Exception {
-        prepareMailbox();
-
         sendBody("direct:a", "Message 3");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
