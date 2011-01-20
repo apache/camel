@@ -80,7 +80,7 @@ public class BindySimpleFixedLengthNoTrimUnmarshallTest extends AbstractJUnit4Sp
 
     }
     
-    @FixedLengthRecord(length = 69, paddingChar = ' ', trimRecordOnUnmarshal = false)
+    @FixedLengthRecord(length = 69, paddingChar = ' ')
     public static class Order {
 
         @DataField(pos = 1, length = 2)

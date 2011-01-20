@@ -467,7 +467,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 }
                 
                 // Get trimRecord parameter
-                trimRecordOnUnmarshal = record.trimRecordOnUnmarshal();
+                trimRecordOnUnmarshal = record.trim();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Trim record :  " + trimRecordOnUnmarshal);
                 }

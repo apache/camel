@@ -60,6 +60,6 @@ public @interface FixedLengthRecord {
     
     boolean hasFooter() default false;
     
-    boolean trimRecordOnUnmarshal() default true;
+    boolean trim() default false;
 
 }
