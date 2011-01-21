@@ -28,10 +28,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfConstants;
-import org.apache.camel.component.cxf.cxfbean.CxfBeanBinding;
 import org.apache.camel.component.cxf.cxfbean.DefaultCxfBeanBinding;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
-import org.apache.camel.component.cxf.util.CxfMessageHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -178,7 +176,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             try {
                 incoming(exchange);
             } catch (Throwable ex) {
-                getLogger().log(Level.WARNING, "Failed to process incoming message: ", ex);
+                exchange.setException(ex);
             }
         }
     }
