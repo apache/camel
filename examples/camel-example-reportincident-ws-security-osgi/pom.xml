@@ -213,7 +213,7 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<manifestLocation>META-INF</manifestLocation>
+					<manifestLocation>target/META-INF</manifestLocation>
 					<instructions>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Export-Package>org.apache.camel.example.reportincident*</Export-Package>
