@@ -59,7 +59,5 @@ public @interface FixedLengthRecord {
     boolean hasHeader() default false;
     
     boolean hasFooter() default false;
-    
-    boolean trim() default false;
 
 }
