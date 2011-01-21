@@ -34,6 +34,7 @@ import javax.management.ObjectName;
 import org.apache.mina.common.TransportType;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -374,6 +375,7 @@ public class QuickfixjEngineTest {
     }
 
     @Test
+    @Ignore("The session events may arrive out of order, so the test code must be refactored to cater for that - in doLogonEventsTest")
     public void sessionEvents() throws Exception {
         SessionID acceptorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX42, "MARKET", "TRADER");
         SessionID initiatorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX42, "TRADER", "MARKET");
