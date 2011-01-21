@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -42,13 +43,16 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         for (String path : uri) {
             if (path.startsWith("ref:")) {
                 Properties prop = loadPropertiesFromRegistry(context, path);
+                prop = prepareLoadedProperties(prop);
                 answer.putAll(prop);
             } else if (path.startsWith("file:")) {
                 Properties prop = loadPropertiesFromFilePath(context, path);
+                prop = prepareLoadedProperties(prop);
                 answer.putAll(prop);
             } else {
                 // default to classpath
                 Properties prop = loadPropertiesFromClasspath(context, path);
+                prop = prepareLoadedProperties(prop);
                 answer.putAll(prop);
             }
         }
@@ -86,6 +90,33 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         Properties answer = context.getRegistry().lookup(path, Properties.class);
         if (answer == null) {
             throw new FileNotFoundException("Properties " + path + " not found in registry");
+        }
+        return answer;
+    }
+
+    /**
+     * Strategy to prepare loaded properties before being used by Camel.
+     * <p/>
+     * This implementation will ensure values are trimmed, as loading properties from
+     * a file with values having trailing spaces is not automatic trimmed by the Properties API
+     * from the JDK.
+     *
+     * @param properties  the properties
+     * @return the prepared properties
+     */
+    protected Properties prepareLoadedProperties(Properties properties) {
+        Properties answer = new Properties();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            // trim string values which can be a problem when loading from a properties file and there
+            // is leading or trailing spaces in the value
+            if (value instanceof String) {
+                String s = (String) value;
+                s = s.trim();
+                value = s;
+            }
+            answer.put(key, value);
         }
         return answer;
     }
