@@ -179,6 +179,10 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
             token = record.substring(offset - 1, offset + length - 1);
 
+            if (dataField.trim()) {
+                token = token.trim();
+            }
+
             // Check mandatory field
             if (dataField.required()) {
 
