@@ -34,6 +34,7 @@ import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.spi.Language;
 
 /**
  * @version $Revision$
@@ -48,6 +49,9 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testRefExpression() throws Exception {
+        assertExpressionResultInstanceOf("ref:myAnimal", Animal.class);
+        assertExpressionResultInstanceOf("${ref:myAnimal}", Animal.class);
+        
         assertExpression("ref:myAnimal", "Donkey");
         assertExpression("${ref:myAnimal}", "Donkey");
         assertExpression("ref:unknown", null);
@@ -379,7 +383,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testBodyOGNLAsMap() throws Exception {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("foo", "Camel");
         map.put("bar", 6);
         exchange.getIn().setBody(map);
@@ -389,7 +393,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
     
     public void testBodyOGNLAsMapShorthand() throws Exception {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("foo", "Camel");
         map.put("bar", 6);
         exchange.getIn().setBody(map);
@@ -806,6 +810,18 @@ public class SimpleTest extends LanguageTestSupport {
         return "simple";
     }
 
+    protected void assertExpressionResultInstanceOf(String expressionText, Class<?> expectedType) {
+        // TODO [hz]: we should refactor TestSupport.assertExpression(Expression, Exchange, Object)
+        // into 2 methods, a helper that returns the value and use that helper in assertExpression
+        // Then use the helper here to get the value and move this method to LanguageTestSupport
+        Language language = assertResolveLanguage(getLanguageName());
+        Expression expression = language.createExpression(expressionText);
+        assertNotNull("Cannot assert type when no type is provided", expectedType);
+        assertNotNull("No Expression could be created for text: " + expressionText + " language: " + language, expression);
+        Object answer = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Animal.class, answer);
+    }
+
     public static final class Animal {
         private String name;
         private int age;
@@ -843,17 +859,17 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public static final class Order {
-        private List lines;
+        private List<OrderLine> lines;
 
-        public Order(List lines) {
+        public Order(List<OrderLine> lines) {
             this.lines = lines;
         }
 
-        public List getLines() {
+        public List<OrderLine> getLines() {
             return lines;
         }
 
-        public void setLines(List lines) {
+        public void setLines(List<OrderLine> lines) {
             this.lines = lines;
         }
     }
