@@ -61,9 +61,9 @@ public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending " + value + " with id " + id);
             }
-            template.sendBodyAndHeaders("seda:start?size=" + SIZE, value, headers);
+            template.sendBodyAndHeaders("seda:start", value, headers);
             // simulate a little delay
-            Thread.sleep(3);
+            Thread.sleep(5);
         }
 
         LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
@@ -87,6 +87,8 @@ public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
             public void configure() throws Exception {
                 HawtDBAggregationRepository repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");
                 repo.setUseRecovery(true);
+                // for faster unit testing
+                repo.setRecoveryInterval(500);
 
                 from("seda:start?size=" + SIZE)
                     .to("log:input?groupSize=500")
