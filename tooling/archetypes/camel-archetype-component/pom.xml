@@ -54,6 +54,7 @@
             <configuration>
               <tasks>
                 <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$CAMEL_VERSION_REPLACEME$" value="${project.version}" casesensitive="true" />
+                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$MAVEN_COMPILER_PLUGIN_VERSION_REPLACEME$" value="${maven-compiler-plugin-version}" casesensitive="true" />
               </tasks>
             </configuration>
           </execution>

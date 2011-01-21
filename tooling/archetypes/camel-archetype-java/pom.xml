@@ -58,6 +58,7 @@
                   <replacefilter token="$LOG4J_VERSION_REPLACEME$" value="${log4j-version}" />
                   <replacefilter token="$JAXB_API_VERSION_REPLACEME$" value="${jaxb-api-version}" /> 
                   <replacefilter token="$JAXB_IMPL_VERSION_REPLACEME$" value="${jaxb-version}" />
+                  <replacefilter token="$MAVEN_COMPILER_PLUGIN_VERSION_REPLACEME$" value="${maven-compiler-plugin-version}" />
                 </replace>
               </tasks>
             </configuration>
