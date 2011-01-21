@@ -18,31 +18,25 @@ package org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.trim;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
-import org.apache.camel.dataformat.bindy.fixed.marshall.simple.BindySimpleFixedLengthMarshallTest.Order;
-import org.apache.camel.test.junit4.TestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-
 @ContextConfiguration
 public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringContextTests {
-
-    private static final transient Log LOG = LogFactory.getLog(BindySimpleFixedLengthUnmarshallTest.class);
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";
@@ -63,12 +57,21 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
 
-        expected = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009";
+        expected = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     ";
 
         template.sendBody(expected);
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
+
+        // check the model
+        Map map = (Map) result.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        BindySimpleFixedLengthUnmarshallTest.Order order = (BindySimpleFixedLengthUnmarshallTest.Order) map.values().iterator().next();
+        Assert.assertEquals(10, order.getOrderNr());
+        // the field is not trimmed
+        Assert.assertEquals("  Pauline", order.getFirstName());
+        Assert.assertEquals("M    ", order.getLastName());
+        Assert.assertEquals("Hello     ", order.getComment());
     }
 
     public static class ContextConfig extends RouteBuilder {
@@ -80,7 +83,7 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
 
     }
     
-    @FixedLengthRecord(length = 65, paddingChar = ' ', trim = true)
+    @FixedLengthRecord(length = 75)
     public static class Order {
 
         @DataField(pos = 1, length = 2)
@@ -115,6 +118,9 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
 
         @DataField(pos = 56, length = 10, pattern = "dd-MM-yyyy")
         private Date orderDate;
+
+        @DataField(pos = 66, length = 10)
+        private String comment;
 
         public int getOrderNr() {
             return orderNr;
@@ -202,6 +208,14 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
 
         public void setOrderDate(Date orderDate) {
             this.orderDate = orderDate;
+        }
+
+        public String getComment() {
+            return comment;
+        }
+
+        public void setComment(String comment) {
+            this.comment = comment;
         }
 
         @Override

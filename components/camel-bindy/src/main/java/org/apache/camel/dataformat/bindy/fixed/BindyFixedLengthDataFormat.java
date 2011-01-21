@@ -117,12 +117,8 @@ public class BindyFixedLengthDataFormat implements DataFormat {
             while (scanner.hasNextLine()) {
                 String line;
                 
-                // Read the line
-                if (factory.isTrimRecordOnUnmarshal()) {
-                    line = scanner.nextLine().trim();
-                } else {
-                    line = scanner.nextLine();
-                }
+                // Read the line (should not trim as its fixed length)
+                line = scanner.nextLine();
 
                 if (ObjectHelper.isEmpty(line)) {
                     // skip if line is empty
