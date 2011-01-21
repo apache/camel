@@ -44,7 +44,7 @@
         <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>5.0-2</version>
+            <version>5.0-3</version>
             <scope>provided</scope>
         </dependency>
 
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>openejb-core</artifactId>
-            <version>3.1.2</version>
+            <version>3.1.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
