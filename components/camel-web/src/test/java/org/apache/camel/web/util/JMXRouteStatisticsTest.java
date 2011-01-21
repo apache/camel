@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.util.CastUtils;
@@ -44,12 +45,14 @@ public class JMXRouteStatisticsTest extends Assert {
         List<RouteDefinition> list = routes.getRoutes();
         Object exchangesCompleted = statistics.getRouteStatistic(camelContext, list.get(0).getId(), "ExchangesCompleted");
         assertEquals("JMX value incorrect, should be 0", new Long(0), exchangesCompleted);
-        
+
+        NotifyBuilder notify = new NotifyBuilder(camelContext).whenDone(1).create();
+
         ProducerTemplate template = camelContext.createProducerTemplate();
         template.sendBody("seda:foo", "test");
-        
-        Thread.sleep(100);
-        
+
+        notify.matchesMockWaitTime();
+
         exchangesCompleted = statistics.getRouteStatistic(camelContext, list.get(0).getId(), "ExchangesCompleted");
         assertEquals("JMX value incorrect, should be 1", new Long(1), exchangesCompleted);
     }

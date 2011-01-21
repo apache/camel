@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+public class UriCharactersEncoderTest extends Assert {
 
-public class UriCharachersEncoderTest extends Assert {
     @Test
     public void testEncoder() {
         String afterEncoding = "direct:%2F%2Fstart";
