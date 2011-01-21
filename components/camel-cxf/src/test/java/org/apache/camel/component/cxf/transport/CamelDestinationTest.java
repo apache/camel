@@ -25,8 +25,10 @@ import javax.xml.namespace.QName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.transport.CamelDestination.ConsumerProcessor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
@@ -40,6 +42,8 @@ import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.MessageObserver;
 import org.easymock.classextension.EasyMock;
+import org.hamcrest.core.IsNull;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class CamelDestinationTest extends CamelTransportTestSupport {
@@ -239,6 +243,26 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         error.assertIsSatisfied();
         
         destination.shutdown();
+    }
+    
+    @Test
+    public void testExceptionForwardedToExchange() throws IOException {
+        final RuntimeException expectedException = new RuntimeException("We simulate an exception in CXF processing");
+        
+        DefaultCamelContext camelContext = new DefaultCamelContext();
+        CamelDestination dest = EasyMock.createMock(CamelDestination.class);
+        dest.incoming(EasyMock.isA(org.apache.camel.Exchange.class));
+        EasyMock.expectLastCall().andThrow(expectedException);
+        EasyMock.replay(dest);
+        ConsumerProcessor consumerProcessor = dest.new ConsumerProcessor();
+        
+        // Send our dummy exchange and check that the exception that occured on incoming is set
+        DefaultExchange exchange = new DefaultExchange(camelContext);
+        consumerProcessor.process(exchange);
+        Exception exc = exchange.getException();
+        Assert.assertNotNull(exc);
+        Assert.assertEquals(expectedException, exc);
+        EasyMock.verify(dest);
     }
 
 }
