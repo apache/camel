@@ -18,9 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,22 +28,19 @@ import org.junit.Test;
 public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin&delay=2000&noop=true&fileExist=Fail";
+        return "ftp://admin@localhost:" + getPort() + "?password=admin&fileExist=Fail";
     }
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        // create existing file on ftp server
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
     @Test
     public void testFail() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists(FTP_ROOT_DIR + "/hello.txt", "Hello World");
-
         try {
             template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
             fail("Should have thrown an exception");
@@ -54,16 +49,12 @@ public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
             assertEquals("File already exist: hello.txt. Cannot write new file.", cause.getMessage());
         }
 
-        assertMockEndpointsSatisfied();
+        // root file should still exist
+        assertFileExists(FTP_ROOT_DIR + "hello.txt");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from(getFtpUrl()).to("mock:result");
-            }
-        };
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 }
