@@ -35,7 +35,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class DefaultJMXAgentTest extends SpringTestSupport {
 
     protected MBeanServerConnection mbsc;
-    protected long sleepForConnection;
+    protected long sleepForConnection = 2000;
 
     @Override
     protected void setUp() throws Exception {
