@@ -19,17 +19,19 @@ package org.apache.camel.builder.script;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 import static org.apache.camel.builder.script.ScriptBuilder.script;
 
 /**
  * Unit test for a BeanSheel script
  */
-public class BeanShellScriptRouteTest extends ContextTestSupport {
+public class BeanShellScriptRouteTest extends CamelTestSupport {
 
+    @Test
     public void testSendMatchingMessage() throws Exception {
         if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
             return;
@@ -45,6 +47,7 @@ public class BeanShellScriptRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendNonMatchingMessage() throws Exception {
         if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
             return;

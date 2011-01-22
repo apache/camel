@@ -20,8 +20,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.ScriptTestHelper;
+import org.junit.Test;
 
 /**
  * @version $Revision$
@@ -29,6 +29,7 @@ import org.apache.camel.ScriptTestHelper;
 public class Jsr223Test extends TestCase {
     private String [] scriptNames = {"beanshell", "groovy", "js", "python", "ruby", "javascript"};
 
+    @Test
     public void testLanguageNames() throws Exception {
         if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
             return;

@@ -36,8 +36,15 @@ public class DisableJmxAgentTest extends DefaultJMXAgentTest {
    
     @Override
     public void testQueryMbeans() throws Exception {
-        assertEquals(0, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=routes,*"), null).size());
-        assertEquals(0, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=processors,*"), null).size());
+        // whats the numbers before, because the JVM can have left overs when unit testing
+        int before = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
+
+        // start route should enlist the consumer to JMX if JMX was enabled
+        context.startRoute("foo");
+
+        int after = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
+
+        assertEquals("Should not have added consumer to JMX", before, after);
     }
 
 }

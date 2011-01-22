@@ -16,29 +16,32 @@
  */
 package org.apache.camel.builder.script;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Unit test for a Groovy script based on end-user question.
  */
-public class GroovyScriptRouteTest extends ContextTestSupport {
+@Ignore("May fail on CI server on JDK 1.6")
+public class GroovyScriptRouteTest extends CamelTestSupport {
 
+    @Test
     public void testGroovyScript() throws Exception {
         if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
             return;
         }
 
-        // TODO: fails on some JDL1.6 boxes
-//        MockEndpoint mock = getMockEndpoint("mock:result");
-//        mock.expectedBodiesReceived("Hello World");
-//        mock.expectedHeaderReceived("foo", "Hello World");
-//
-//        template.sendBodyAndHeader("seda:a", "Hello World", "foo", "London");
-//
-//        mock.assertIsSatisfied();
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+        mock.expectedHeaderReceived("foo", "Hello World");
+
+        template.sendBodyAndHeader("seda:a", "Hello World", "foo", "London");
+
+        mock.assertIsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

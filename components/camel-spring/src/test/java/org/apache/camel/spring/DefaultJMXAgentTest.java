@@ -18,7 +18,6 @@ package org.apache.camel.spring;
 
 import java.lang.management.ManagementFactory;
 import java.util.List;
-
 import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerFactory;
@@ -61,11 +60,15 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     }
 
     public void testQueryMbeans() throws Exception {
-        int routes = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=routes,*"), null).size();
-        int processors = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=processors,*"), null).size();
+        // whats the numbers before, because the JVM can have left overs when unit testing
+        int before = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
 
-        assertTrue("Should contain routes", routes > 0);
-        assertTrue("Should contain processors", processors > 0);
+        // start route should enlist the consumer to JMX
+        context.startRoute("foo");
+
+        int after = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
+
+        assertTrue("Should have added consumer to JMX, before: " + before + ", after: " + after, after > before);
     }
 
     @Override

@@ -19,15 +19,19 @@ package org.apache.camel.builder.script;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Tests a routing expression using Ruby
  */
-public class RubyExpressionTest extends ContextTestSupport {
+@Ignore("May fail on CI server on JDK 1.6")
+public class RubyExpressionTest extends CamelTestSupport {
 
+    @Test
     public void testSendMatchingMessage() throws Exception {
         if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
             return;
@@ -43,6 +47,7 @@ public class RubyExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendNonMatchingMessage() throws Exception {
         if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
             return;

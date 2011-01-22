@@ -18,12 +18,14 @@ package org.apache.camel.language.script;
 
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.ScriptTestHelper;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class JavaScriptLanguageTest extends LanguageTestSupport {
-    
+
+    @Test
     public void testLanguageExpressions() throws Exception {
         if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
             return;

@@ -19,24 +19,23 @@ package org.apache.camel.builder.script;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Tests a routing expression using JavaScript
  */
-public class JavaScriptExpressionTest extends ContextTestSupport {
+public class JavaScriptExpressionTest extends CamelTestSupport {
     
+    @Test
     public void testSendMatchingMessage() throws Exception {
         if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
             return;
         }
 
-        // TODO Currently, this test fails because the JavaScript expression in createRouteBuilder
-        // below returns false
-        // To fix that, we need to figure out how to get the expression to return the right value
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
@@ -50,6 +49,7 @@ public class JavaScriptExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendNonMatchingMessage() throws Exception {
         if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
             return;

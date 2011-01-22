@@ -24,7 +24,7 @@
 
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
+    <route id="foo" autoStartup="false">
       <from uri="seda:start"/>
       <to uri="mock:result"/>
     </route>
