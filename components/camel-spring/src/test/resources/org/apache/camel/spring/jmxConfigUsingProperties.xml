@@ -33,7 +33,7 @@
                   statisticsLevel="RoutesOnly"
                 />
 
-        <route>
+        <route id="foo" autoStartup="false">
             <from uri="seda:start"/>
             <to uri="mock:result"/>
         </route>
