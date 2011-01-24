@@ -51,6 +51,8 @@ import org.apache.cxf.wsdl.EndpointReferenceUtils;
 
 /**
  * @version $Revision$
+ * 
+ * Forwards messages from Camel to CXF and the CXF response back to Camel
  */
 public class CamelDestination extends AbstractDestination implements Configurable {
     protected static final String BASE_BEAN_NAME_SUFFIX = ".camel-destination";
@@ -243,6 +245,9 @@ public class CamelDestination extends AbstractDestination implements Configurabl
                                             camelExchange.getOut().getHeaders(), camelExchange);            
     }
 
+    /**
+     * Receives a response from CXF and forwards it to the camel route the request came in from
+     */
     private class CamelOutputStream extends CachedOutputStream {
         private Message outMessage;
 

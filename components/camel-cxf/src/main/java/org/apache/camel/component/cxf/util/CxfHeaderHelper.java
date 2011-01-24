@@ -85,9 +85,9 @@ public final class CxfHeaderHelper {
             return;
         }
 
+        // Copy the CXF protocol headers to the camel headers
         Map<String, List<String>> cxfHeaders =
             CastUtils.cast((Map)message.get(Message.PROTOCOL_HEADERS));
-
         if (cxfHeaders != null) {
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {
                 if (!strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
@@ -115,6 +115,13 @@ public final class CxfHeaderHelper {
         value = message.get(key);
         if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
             headers.put(key, value);
+        }
+        
+        // propagate response code
+        key = Message.RESPONSE_CODE;
+        value = message.get(key);
+        if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
+            headers.put(Exchange.HTTP_RESPONSE_CODE, value);
         }
     }
 
