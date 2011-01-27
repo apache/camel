@@ -66,7 +66,7 @@ public class MulticastParallelTimeout2Test extends ContextTestSupport {
 
                 from("direct:a").to("mock:A").setBody(constant("A"));
 
-                from("direct:b").delay(500).to("mock:B").setBody(constant("B"));
+                from("direct:b").delay(1000).to("mock:B").setBody(constant("B"));
 
                 from("direct:c").to("mock:C").setBody(constant("C"));
                 // END SNIPPET: e1
