@@ -78,7 +78,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         Trigger trigger = createTrigger(action, route);
         updateScheduledRouteDetails(action, jobDetail, trigger);
         
-        loadCallbackDataIntoSchedulerContext(action, route);
+        loadCallbackDataIntoSchedulerContext(jobDetail, action, route);
         getScheduler().scheduleJob(jobDetail, trigger);
         
         if (LOG.isDebugEnabled()) {
@@ -153,9 +153,10 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         }
     }
     
-    protected void loadCallbackDataIntoSchedulerContext(Action action, Route route) throws SchedulerException {
-        getScheduler().getContext().put(SCHEDULED_ACTION, action);
-        getScheduler().getContext().put(SCHEDULED_ROUTE, route);
+    protected void loadCallbackDataIntoSchedulerContext(JobDetail jobDetail, Action action, Route route) throws SchedulerException {
+/*        getScheduler().getContext().put(SCHEDULED_ACTION, action);
+        getScheduler().getContext().put(SCHEDULED_ROUTE, route);*/
+        getScheduler().getContext().put(jobDetail.getName(), new ScheduledJobState(action, route));
     }    
         
     public String retrieveTriggerName(Action action) {

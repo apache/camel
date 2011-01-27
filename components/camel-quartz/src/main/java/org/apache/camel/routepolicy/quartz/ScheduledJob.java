@@ -41,8 +41,11 @@ public class ScheduledJob implements Job, Serializable, ScheduledRoutePolicyCons
             throw new JobExecutionException("Failed to obtain scheduler context for job " + jobExecutionContext.getJobDetail().getName());
         }
         
-        Action storedAction = (Action) schedulerContext.get(SCHEDULED_ACTION);
-        storedRoute = (Route) schedulerContext.get(SCHEDULED_ROUTE);
+/*        Action storedAction = (Action) schedulerContext.get(SCHEDULED_ACTION);
+        storedRoute = (Route) schedulerContext.get(SCHEDULED_ROUTE);*/
+        ScheduledJobState state = (ScheduledJobState) schedulerContext.get(jobExecutionContext.getJobDetail().getName());
+        Action storedAction = state.getAction(); 
+        storedRoute = state.getRoute();
         
         ScheduledRoutePolicy policy = (ScheduledRoutePolicy) storedRoute.getRouteContext().getRoutePolicy();
         try {
