@@ -17,15 +17,12 @@
 package org.apache.camel.routepolicy.quartz;
 
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
