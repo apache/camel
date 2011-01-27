@@ -154,8 +154,6 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
     }
     
     protected void loadCallbackDataIntoSchedulerContext(JobDetail jobDetail, Action action, Route route) throws SchedulerException {
-/*        getScheduler().getContext().put(SCHEDULED_ACTION, action);
-        getScheduler().getContext().put(SCHEDULED_ROUTE, route);*/
         getScheduler().getContext().put(jobDetail.getName(), new ScheduledJobState(action, route));
     }    
         
