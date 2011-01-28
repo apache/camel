@@ -35,9 +35,11 @@ import org.apache.camel.util.PredicateAssertHelper;
  */
 public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuilder> implements Runnable {
 
-    private List<Predicate> predicates = new ArrayList<Predicate>();
     protected final MockEndpoint mock;
     protected volatile int currentIndex;
+    private final List<Predicate> predicates = new ArrayList<Predicate>();
+    private final Expression previous = new PreviousTimestamp();
+    private final Expression next = new NextTimestamp();
 
     public AssertionClause(MockEndpoint mock) {
         super(null);
@@ -72,26 +74,6 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
      * Adds a {@link TimeClause} predicate for message arriving.
      */
     public TimeClause arrives() {
-        Expression next = new Expression() {
-            public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Date answer = null;
-                if (currentIndex < mock.getReceivedCounter() - 1) {
-                    answer = mock.getReceivedExchanges().get(currentIndex + 1).getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
-                }
-                return (T) answer;
-            }
-        };
-
-        Expression previous = new Expression() {
-            public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Date answer = null;
-                if (currentIndex > 0 && mock.getReceivedCounter() > 0) {
-                    answer = mock.getReceivedExchanges().get(currentIndex - 1).getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
-                }
-                return (T) answer;
-            }
-        };
-
         final TimeClause clause = new TimeClause(previous, next);
         addPredicate(new Predicate() {
             public boolean matches(Exchange exchange) {
@@ -118,6 +100,28 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
 
     protected void addPredicate(Predicate predicate) {
         predicates.add(predicate);
+    }
+
+    @SuppressWarnings("unchecked")
+    private final class PreviousTimestamp implements Expression {
+        public <T> T evaluate(Exchange exchange, Class<T> type) {
+            Date answer = null;
+            if (currentIndex > 0 && mock.getReceivedCounter() > 0) {
+                answer = mock.getReceivedExchanges().get(currentIndex - 1).getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
+            }
+            return (T) answer;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private final class NextTimestamp implements Expression {
+        public <T> T evaluate(Exchange exchange, Class<T> type) {
+            Date answer = null;
+            if (currentIndex < mock.getReceivedCounter() - 1) {
+                answer = mock.getReceivedExchanges().get(currentIndex + 1).getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
+            }
+            return (T) answer;
+        }
     }
 
     /**
