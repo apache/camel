@@ -314,6 +314,13 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
+     * Sets the assert period on all the Mock endpoints
+     */
+    protected void setAssertPeriod(long period) {
+        MockEndpoint.setAssertPeriod(context, period);
+    }
+
+    /**
      * Reset all Mock endpoints.
      */
     protected void resetMocks() {

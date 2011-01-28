@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -57,6 +58,16 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A Mock endpoint which provides a literate, fluent API for testing routes
  * using a <a href="http://jmock.org/">JMock style</a> API.
+ * <p/>
+ * The mock endpoint have two set of methods
+ * <ul>
+ *   <li>expectedXXX or expectsXXX - To set pre conditions, before the test is executed</li>
+ *   <li>assertXXX - To assert assertions, after the test has been executed</li>
+ * </ul>
+ * Its <b>important</b> to know the difference between the two set. The former is used to
+ * set expectations before the test is being started (eg before the mock receives messages).
+ * The latter is used after the test has been executed, to verify the expectations; or
+ * other assertions which you can perform after the test has been completed.
  *
  * @version $Revision$
  */
@@ -73,6 +84,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private long sleepForEmptyTest;
     private long resultWaitTime;
     private long resultMinimumWaitTime;
+    private long assertPeriod;
     private int expectedMinimumCount;
     private List<Object> expectedBodyValues;
     private List<Object> actualBodyValues;
@@ -181,6 +193,28 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                 MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
                 mockEndpoint.setResultWaitTime(millis);
                 mockEndpoint.assertIsSatisfied();
+            }
+        }
+    }
+
+    /**
+     * Sets the assert period on all the expectations on any {@link MockEndpoint} instances registered
+     * in the given context.
+     *
+     * @param context the camel context used to find all the available endpoints
+     * @param period the period in millis
+     */
+    public static void setAssertPeriod(CamelContext context, long period) {
+        ObjectHelper.notNull(context, "camelContext");
+        Collection<Endpoint> endpoints = context.getEndpoints();
+        for (Endpoint endpoint : endpoints) {
+            // if the endpoint was intercepted we should get the delegate
+            if (endpoint instanceof InterceptSendToEndpoint) {
+                endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();
+            }
+            if (endpoint instanceof MockEndpoint) {
+                MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
+                mockEndpoint.setAssertPeriod(period);
             }
         }
     }
@@ -304,6 +338,17 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      */
     public void assertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
         LOG.info("Asserting: " + this + " is satisfied");
+        doAssertIsSatisfied(timeoutForEmptyEndpoints);
+        if (assertPeriod > 0) {
+            // if an assert period was set then re-assert again to ensure the assertion is still valid
+            Thread.sleep(assertPeriod);
+            LOG.info("Re-asserting: " + this + " is satisfied after " + assertPeriod + " millis");
+            // do not use timeout when we re-assert
+            doAssertIsSatisfied(0);
+        }
+    }
+
+    protected void doAssertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
         if (expectedCount == 0) {
             if (timeoutForEmptyEndpoints > 0) {
                 LOG.debug("Sleeping for: " + timeoutForEmptyEndpoints + " millis to check there really are no messages received");
@@ -384,6 +429,18 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      */
     public void expectedMessageCount(int expectedCount) {
         setExpectedMessageCount(expectedCount);
+    }
+
+    /**
+     * Sets a grace period after which the mock endpoint will re-assert
+     * to ensure the preliminary assertion is still valid.
+     * <p/>
+     * By default this period is disabled
+     *
+     * @param period grace period in millis
+     */
+    public void setAssertPeriod(long period) {
+        this.assertPeriod = period;
     }
 
     /**
@@ -480,7 +537,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         for (int i = 0; i < predicates.length; i++) {
             final int messageIndex = i;
             final Predicate predicate = predicates[i];
-            final AssertionClause clause = new AssertionClause() {
+            final AssertionClause clause = new AssertionClause(this) {
                 public void run() {
                     addPredicate(predicate);
                     applyAssertionOn(MockEndpoint.this, messageIndex, assertExchangeReceived(messageIndex));
@@ -755,7 +812,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * @return the assertion clause
      */
     public AssertionClause message(final int messageIndex) {
-        final AssertionClause clause = new AssertionClause() {
+        final AssertionClause clause = new AssertionClause(this) {
             public void run() {
                 applyAssertionOn(MockEndpoint.this, messageIndex, assertExchangeReceived(messageIndex));
             }
@@ -770,7 +827,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * @return the assertion clause
      */
     public AssertionClause allMessages() {
-        final AssertionClause clause = new AssertionClause() {
+        final AssertionClause clause = new AssertionClause(this) {
             public void run() {
                 List<Exchange> list = getReceivedExchanges();
                 int index = 0;
@@ -901,6 +958,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         sleepForEmptyTest = 0;
         resultWaitTime = 0;
         resultMinimumWaitTime = 0L;
+        assertPeriod = 0L;
         expectedMinimumCount = -1;
         expectedBodyValues = null;
         actualBodyValues = new ArrayList<Object>();
@@ -951,6 +1009,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             LOG.debug(getEndpointUri() + " >>>> " + counter + " : " + exchange + " with body: " + actualBody);
         }
 
+        // record timestamp when exchange was received
+        exchange.setProperty(Exchange.RECEIVED_TIMESTAMP, new Date());
         receivedExchanges.add(exchange);
 
         Processor processor = processors.get(getReceivedCounter()) != null

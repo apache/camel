@@ -80,4 +80,9 @@ public class Time {
     protected static long daysAsSeconds(long value) {
         return hoursAsSeconds(value) * 24;
     }
+
+    @Override
+    public String toString() {
+        return number + " " + timeUnit.toString().toLowerCase();
+    }
 }

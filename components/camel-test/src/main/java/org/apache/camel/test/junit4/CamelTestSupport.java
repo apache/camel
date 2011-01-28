@@ -39,6 +39,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultDebugger;
+import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ProcessorDefinition;
@@ -64,6 +65,17 @@ public abstract class CamelTestSupport extends TestSupport {
 
     public boolean isUseRouteBuilder() {
         return useRouteBuilder;
+    }
+
+    /**
+     * Override to enable auto mocking endpoints based on the pattern.
+     * <p/>
+     * Return <tt>*</tt> to mock all endpoints.
+     *
+     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
+     */
+    public String isMockEndpoints() {
+        return null;
     }
 
     public void setUseRouteBuilder(boolean useRouteBuilder) {
@@ -111,6 +123,12 @@ public abstract class CamelTestSupport extends TestSupport {
         template.start();
         consumer = context.createConsumerTemplate();
         consumer.start();
+
+        // enable auto mocking if enabled
+        String pattern = isMockEndpoints();
+        if (pattern != null) {
+            context.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
+        }
 
         postProcessTest();
         

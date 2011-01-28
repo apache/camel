@@ -35,8 +35,8 @@ public class XPathAnotherRouteConcurrentTest extends ContextTestSupport {
     private void doSendMessages(int files, int poolSize) throws Exception {
         getMockEndpoint("mock:claus").expectedMessageCount(files / 2);
         getMockEndpoint("mock:james").expectedMessageCount(files / 2);
-        getMockEndpoint("mock:claus").assertNoDuplicates(body());
-        getMockEndpoint("mock:james").assertNoDuplicates(body());
+        getMockEndpoint("mock:claus").expectsNoDuplicates(body());
+        getMockEndpoint("mock:james").expectsNoDuplicates(body());
         getMockEndpoint("mock:other").expectedMessageCount(0);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);

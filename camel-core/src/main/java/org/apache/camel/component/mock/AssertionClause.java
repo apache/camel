@@ -17,6 +17,7 @@
 package org.apache.camel.component.mock;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -35,9 +36,12 @@ import org.apache.camel.util.PredicateAssertHelper;
 public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuilder> implements Runnable {
 
     private List<Predicate> predicates = new ArrayList<Predicate>();
+    protected final MockEndpoint mock;
+    protected volatile int currentIndex;
 
-    public AssertionClause() {
+    public AssertionClause(MockEndpoint mock) {
         super(null);
+        this.mock = mock;
     }
 
     // Builder methods
@@ -55,9 +59,50 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
         return this;
     }
 
+    /**
+     * Adds the given predicate to this assertion clause
+     */
     public ExpressionClause<AssertionClause> predicate() {
         ExpressionClause<AssertionClause> clause = new ExpressionClause<AssertionClause>(this);
         addPredicate(clause);
+        return clause;
+    }
+
+    /**
+     * Adds a {@link TimeClause} predicate for message arriving.
+     */
+    public TimeClause arrives() {
+        Expression next = new Expression() {
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
+                Date answer = null;
+                if (currentIndex < mock.getReceivedCounter() - 1) {
+                    answer = mock.getReceivedExchanges().get(currentIndex + 1).getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
+                }
+                return (T) answer;
+            }
+        };
+
+        Expression previous = new Expression() {
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
+                Date answer = null;
+                if (currentIndex > 0 && mock.getReceivedCounter() > 0) {
+                    answer = mock.getReceivedExchanges().get(currentIndex - 1).getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
+                }
+                return (T) answer;
+            }
+        };
+
+        final TimeClause clause = new TimeClause(previous, next);
+        addPredicate(new Predicate() {
+            public boolean matches(Exchange exchange) {
+                return clause.matches(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "arrives " + clause.toString() + " exchange";
+            }
+        });
         return clause;
     }
 
@@ -66,6 +111,7 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
      */
     protected void applyAssertionOn(MockEndpoint endpoint, int index, Exchange exchange) {
         for (Predicate predicate : predicates) {
+            currentIndex = index;
             PredicateAssertHelper.assertMatches(predicate, "Assertion error at index " + index + " on mock " + endpoint.getEndpointUri() + " with predicate: ", exchange);
         }
     }

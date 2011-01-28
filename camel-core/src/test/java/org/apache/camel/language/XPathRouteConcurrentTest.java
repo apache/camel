@@ -66,7 +66,7 @@ public class XPathRouteConcurrentTest extends ContextTestSupport {
 
     private void doSendMessages(int files) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(files);
-        getMockEndpoint("mock:result").assertNoDuplicates(body());
+        getMockEndpoint("mock:result").expectsNoDuplicates(body());
         getMockEndpoint("mock:other").expectedMessageCount(0);
 
         for (int i = 0; i < files; i++) {

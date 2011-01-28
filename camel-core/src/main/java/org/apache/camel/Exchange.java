@@ -143,6 +143,7 @@ public interface Exchange {
 
     String ON_COMPLETION = "CamelOnCompletion";
 
+    String RECEIVED_TIMESTAMP      = "CamelReceivedTimestamp";
     String REDELIVERED             = "CamelRedelivered";
     String REDELIVERY_COUNTER      = "CamelRedeliveryCounter";
     String REDELIVERY_MAX_COUNTER  = "CamelRedeliveryMaxCounter";
