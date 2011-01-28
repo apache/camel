@@ -354,6 +354,10 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             }
             
             answer = client.getEndpoint().getEndpointInfo().getBinding().getOperation(qname);
+            if (answer == null) {
+                throw new IllegalArgumentException("Can't find the BindingOperationInfo with operation name " + qname
+                                                   + ". Please check the message headers of operationName and operationNamespace."); 
+            }
         }
         return answer;
     }
