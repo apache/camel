@@ -215,7 +215,7 @@ public class RouteService extends ServiceSupport {
     protected void doShutdown() throws Exception {
         for (Route route : routes) {
             // endpoints should only be stopped when Camel is shutting down
-            // so comments in warmUp method
+            // see more details in the warmUp method
             ServiceHelper.stopAndShutdownServices(route.getEndpoint());
         }
 
