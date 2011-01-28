@@ -65,6 +65,7 @@ import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExecutorServiceStrategy;
@@ -234,6 +235,16 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
                 }
             }
         }
+        // set endpoint strategies if defined
+        Map<String, EndpointStrategy> endpointStrategies = getContext().getRegistry().lookupByType(EndpointStrategy.class);
+        if (endpointStrategies != null && !endpointStrategies.isEmpty()) {
+            for (String id : endpointStrategies.keySet()) {
+                EndpointStrategy strategy = endpointStrategies.get(id);
+                LOG.info("Using custom EndpointStrategy with id: " + id + " and implementation: " + strategy);
+                getContext().addRegisterEndpointCallback(strategy);
+            }
+        }
+        // shutdown
         ShutdownStrategy shutdownStrategy = getBeanForType(ShutdownStrategy.class);
         if (shutdownStrategy != null) {
             LOG.info("Using custom ShutdownStrategy: " + shutdownStrategy);

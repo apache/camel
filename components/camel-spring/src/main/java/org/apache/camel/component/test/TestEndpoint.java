@@ -23,7 +23,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.commons.logging.Log;
@@ -36,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class TestEndpoint extends MockEndpoint implements Service {
+public class TestEndpoint extends MockEndpoint {
     private static final transient Log LOG = LogFactory.getLog(TestEndpoint.class);
     private final Endpoint expectedMessageEndpoint;
     private long timeout = 2000L;
@@ -46,12 +45,12 @@ public class TestEndpoint extends MockEndpoint implements Service {
         this.expectedMessageEndpoint = expectedMessageEndpoint;
     }
 
-    @SuppressWarnings("unchecked")
-    public void start() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Consuming expected messages from: " + expectedMessageEndpoint);
         }
-        final List expectedBodies = new ArrayList();
+        final List<Object> expectedBodies = new ArrayList<Object>();
         EndpointHelper.pollEndpoint(expectedMessageEndpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Object body = getInBody(exchange);
@@ -63,9 +62,6 @@ public class TestEndpoint extends MockEndpoint implements Service {
             LOG.debug("Received: " + expectedBodies.size() + " expected message(s) from: " + expectedMessageEndpoint);
         }
         expectedBodiesReceived(expectedBodies);
-    }
-
-    public void stop() throws Exception {
     }
 
     /**
