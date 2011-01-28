@@ -45,8 +45,7 @@ public class TestEndpoint extends MockEndpoint {
         this.expectedMessageEndpoint = expectedMessageEndpoint;
     }
 
-    @Override
-    protected void doStart() throws Exception {
+    public void start() throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Consuming expected messages from: " + expectedMessageEndpoint);
         }
@@ -62,6 +61,9 @@ public class TestEndpoint extends MockEndpoint {
             LOG.debug("Received: " + expectedBodies.size() + " expected message(s) from: " + expectedMessageEndpoint);
         }
         expectedBodiesReceived(expectedBodies);
+    }
+    
+    public void stop() throws Exception {
     }
 
     /**
