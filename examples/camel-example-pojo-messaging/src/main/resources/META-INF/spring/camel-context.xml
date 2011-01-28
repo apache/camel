@@ -27,9 +27,9 @@
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
   <!-- This creates an embedded ActiveMQ Broker -->
-  <broker xmlns="http://activemq.apache.org/schema/core" useJmx="false" persistent="false">
+  <broker xmlns="http://activemq.apache.org/schema/core" useJmx="false" persistent="false" brokerName="myBroker" id="broker">
     <transportConnectors>
-      <transportConnector uri="vm://localhost" />
+      <transportConnector uri="vm://myBroker" />
     </transportConnectors>
   </broker>
 
@@ -37,7 +37,7 @@
        See http://camel.apache.org/activemq.html for more information.
   -->
   <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-    <property name="brokerURL" value="failover:vm://localhost"/>
+    <property name="brokerURL" value="vm://myBroker"/>
   </bean>
   
   <!-- END SNIPPET: activemq -->
@@ -45,8 +45,9 @@
   <!-- START SNIPPET: ex -->  
   <bean class="org.apache.camel.example.pojo_messaging.SendFileRecordsToQueueBean"/>
   <bean class="org.apache.camel.example.pojo_messaging.DistributeRecordsBean"/>
- 
-  <camelContext xmlns="http://camel.apache.org/schema/spring"/>
+
+  <!-- depend on the broker so Spring will shutdown the embedded broker after Camel -->
+  <camelContext xmlns="http://camel.apache.org/schema/spring" depends-on="broker"/>
   <!-- END SNIPPET: ex -->
 
 </beans>
