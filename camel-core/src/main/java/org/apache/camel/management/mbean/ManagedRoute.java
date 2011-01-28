@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -107,13 +108,17 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         route.getRouteContext().setTracing(tracing);
     }
 
-    @ManagedAttribute(description = "Route Policy")
-    public String getRoutePolicy() {
-        RoutePolicy policy = route.getRouteContext().getRoutePolicy();
-        if (policy != null) {
+    @ManagedAttribute(description = "Route Policy List")
+    public String getRoutePolicyList() {
+        List<RoutePolicy> policyList = route.getRouteContext().getRoutePolicyList();
+        if (policyList != null) {
             StringBuilder sb = new StringBuilder();
-            sb.append(policy.getClass().getSimpleName());
-            sb.append("(").append(ObjectHelper.getIdentityHashCode(policy)).append(")");
+            for (RoutePolicy policy : policyList) {
+                sb.append(policy.getClass().getSimpleName());
+                sb.append("(").append(ObjectHelper.getIdentityHashCode(policy)).append(")");
+                sb.append(", ");
+            }
+            sb = sb.delete(sb.lastIndexOf(", "), sb.length() - 1);
             return sb.toString();
         }
         return null;

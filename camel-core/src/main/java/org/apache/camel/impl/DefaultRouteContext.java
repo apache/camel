@@ -63,7 +63,7 @@ public class DefaultRouteContext implements RouteContext {
     private Boolean handleFault;
     private Long delay;
     private Boolean autoStartup = Boolean.TRUE;
-    private RoutePolicy routePolicy;
+    private List<RoutePolicy> routePolicyList = new ArrayList<RoutePolicy>();
     private ShutdownRoute shutdownRoute;
     private ShutdownRunningTask shutdownRunningTask;
 
@@ -154,15 +154,24 @@ public class DefaultRouteContext implements RouteContext {
 
             // and then optionally add route policy processor if a custom policy is set
             RoutePolicyProcessor routePolicyProcessor = null;
-            RoutePolicy policy = getRoutePolicy();
-            if (policy != null) {
-                routePolicyProcessor = new RoutePolicyProcessor(unitOfWorkProcessor, policy);
-                // add it as service if we have not already done that (eg possible if two routes have the same service)
-                if (!camelContext.hasService(policy)) {
-                    try {
-                        camelContext.addService(policy);
-                    } catch (Exception e) {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+            List<RoutePolicy> policyList = getRoutePolicyList();
+            if (!policyList.isEmpty()) {
+                boolean firstPolicy = true;
+                for (RoutePolicy policy : policyList) {
+                    if (firstPolicy) {
+                        routePolicyProcessor = new RoutePolicyProcessor(unitOfWorkProcessor, policy);
+                        firstPolicy = false;
+                    } else {
+                        routePolicyProcessor = new RoutePolicyProcessor(routePolicyProcessor, policy);
+                    }
+                    
+                    // add it as service if we have not already done that (eg possible if two routes have the same service)
+                    if (!camelContext.hasService(policy)) {
+                        try {
+                            camelContext.addService(policy);
+                        } catch (Exception e) {
+                            throw ObjectHelper.wrapRuntimeCamelException(e);
+                        }
                     }
                 }
                 target = routePolicyProcessor;
@@ -190,8 +199,10 @@ public class DefaultRouteContext implements RouteContext {
             }
 
             // invoke init on route policy
-            if (policy != null) {
-                policy.onInit(edcr);
+            if (!policyList.isEmpty()) {
+                for (RoutePolicy policy : policyList) { 
+                    policy.onInit(edcr);
+                }
             }
 
             routes.add(edcr);
@@ -319,15 +330,7 @@ public class DefaultRouteContext implements RouteContext {
             return getCamelContext().getShutdownRunningTask();
         }
     }
-
-    public RoutePolicy getRoutePolicy() {
-        return routePolicy;
-    }
-
-    public void setRoutePolicy(RoutePolicy routePolicy) {
-        this.routePolicy = routePolicy;
-    }
-
+    
     public int getAndIncrement(ProcessorDefinition<?> node) {
         AtomicInteger count = nodeIndex.get(node);
         if (count == null) {
@@ -335,5 +338,13 @@ public class DefaultRouteContext implements RouteContext {
             nodeIndex.put(node, count);
         }
         return count.getAndIncrement();
+    }
+
+    public void setRoutePolicyList(List<RoutePolicy> routePolicyList) {
+        this.routePolicyList = routePolicyList;
+    }
+
+    public List<RoutePolicy> getRoutePolicyList() {
+        return routePolicyList;
     }
 }

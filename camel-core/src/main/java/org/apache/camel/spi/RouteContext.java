@@ -173,18 +173,18 @@ public interface RouteContext extends RuntimeConfiguration {
     boolean isRouteAdded();
     
     /**
-     * Gets the route policy
+     * Gets the route policy List
      *
-     * @return the route policy if any
+     * @return the route policy list if any
      */
-    RoutePolicy getRoutePolicy();
+    List<RoutePolicy> getRoutePolicyList();
 
     /**
-     * Sets a custom route policy
+     * Sets a custom route policy List
      *
-     * @param routePolicy the custom route policy
+     * @param routePolicyList the custom route policy list
      */
-    void setRoutePolicy(RoutePolicy routePolicy);
+    void setRoutePolicyList(List<RoutePolicy> routePolicyList);
 
     /**
      * A private counter that increments, is used to as book keeping

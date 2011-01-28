@@ -117,7 +117,7 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
         context.start();
         return context;
     }
-
+    
     public ClassPathXmlApplicationContext getApplicationContext() {
         return applicationContext;
     }

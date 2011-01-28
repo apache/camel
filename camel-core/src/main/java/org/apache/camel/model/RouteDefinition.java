@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -699,13 +700,16 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             if (log.isDebugEnabled()) {
                 log.debug("RoutePolicy is enabled: " + routePolicy + " on route: " + this);
             }
-            routeContext.setRoutePolicy(getRoutePolicy());
+            routeContext.getRoutePolicyList().add(getRoutePolicy());
         } else if (routePolicyRef != null) {
-            RoutePolicy policy = CamelContextHelper.mandatoryLookup(camelContext, routePolicyRef, RoutePolicy.class);
-            if (log.isDebugEnabled()) {
-                log.debug("RoutePolicy is enabled: " + policy + " on route: " + this);
+            StringTokenizer policyTokens = new StringTokenizer(routePolicyRef, ",");
+            while (policyTokens.hasMoreTokens()) {
+                RoutePolicy policy = CamelContextHelper.mandatoryLookup(camelContext, policyTokens.nextToken().trim(), RoutePolicy.class);
+                if (log.isDebugEnabled()) {
+                    log.debug("RoutePolicy is enabled: " + policy + " on route: " + this);
+                }
+                routeContext.getRoutePolicyList().add(policy);
             }
-            routeContext.setRoutePolicy(policy);
         }
 
         // configure auto startup

@@ -17,8 +17,10 @@
 package org.apache.camel.routepolicy.quartz;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.camel.Route;
+import org.apache.camel.spi.RoutePolicy;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -45,11 +47,15 @@ public class ScheduledJob implements Job, Serializable, ScheduledRoutePolicyCons
         Action storedAction = state.getAction(); 
         storedRoute = state.getRoute();
         
-        ScheduledRoutePolicy policy = (ScheduledRoutePolicy) storedRoute.getRouteContext().getRoutePolicy();
-        try {
-            policy.onJobExecute(storedAction, storedRoute);
-        } catch (Exception e) {
-            throw new JobExecutionException("Failed to execute Scheduled Job for route " + storedRoute.getId() + " with trigger name: " + jobExecutionContext.getTrigger().getFullName());
+        List<RoutePolicy> policyList = storedRoute.getRouteContext().getRoutePolicyList();
+        for (RoutePolicy policy : policyList) {
+            try {
+                if (policy instanceof ScheduledRoutePolicy) {
+                    ((ScheduledRoutePolicy)policy).onJobExecute(storedAction, storedRoute);
+                }
+            } catch (Exception e) {
+                throw new JobExecutionException("Failed to execute Scheduled Job for route " + storedRoute.getId() + " with trigger name: " + jobExecutionContext.getTrigger().getFullName());
+            }
         }
     }
 
