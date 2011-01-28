@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjEndpoint.class);
     
     private SessionID sessionID;
-    private List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<QuickfixjConsumer>();
+    private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<QuickfixjConsumer>();
     
     public QuickfixjEndpoint(String uri, CamelContext context) {
         super(uri, context);
@@ -59,8 +60,6 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     public Consumer createConsumer(Processor processor) throws Exception {
         LOG.info("Creating QuickFIX/J consumer: " + (sessionID != null ? sessionID : "No Session"));
         QuickfixjConsumer consumer = new QuickfixjConsumer(this, processor);
-        // TODO The lifecycle mgmt requirements aren't clear to me
-        consumer.start();
         consumers.add(consumer);
         return consumer;
     }
@@ -71,7 +70,6 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     }
 
     public boolean isSingleton() {
-        // TODO This seems to be incorrect. There can be multiple consumers for a session endpoint.
         return true;
     }
 
@@ -89,5 +87,11 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     
     public boolean isMultipleConsumersSupported() {
         return true;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // clear list of consumers
+        consumers.clear();
     }
 }

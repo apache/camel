@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAware {
+public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
     //Match any key-value pair in the URI query string whose key contains "passphrase" or "password" (case-insensitive).
     //First capture group is the key, second is the value.
@@ -232,11 +232,13 @@ public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAw
         return false;
     }
 
-    public void start() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
         // noop
     }
 
-    public void stop() throws Exception {
+    @Override
+    protected void doStop() throws Exception {
         // noop
     }
 

@@ -80,8 +80,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         LOG.info("Found " + packageNames.length + " packages with " + classes.size() + " @Converter classes to load");
 
         for (Class type : classes) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Loading converter class: " + ObjectHelper.name(type));
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Loading converter class: " + ObjectHelper.name(type));
             }
             loadConverterMethods(registry, type);
         }

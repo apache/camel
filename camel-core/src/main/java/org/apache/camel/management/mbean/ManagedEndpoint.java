@@ -17,6 +17,8 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.ServiceStatus;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ManagementStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -50,6 +52,22 @@ public class ManagedEndpoint implements ManagedInstance {
     @ManagedAttribute(description = "Singleton")
     public boolean isSingleton() {
         return endpoint.isSingleton();
+    }
+
+    @ManagedAttribute(description = "Service State")
+    public String getState() {
+        // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
+        if (endpoint instanceof ServiceSupport) {
+            ServiceStatus status = ((ServiceSupport) endpoint).getStatus();
+            // if no status exists then its stopped
+            if (status == null) {
+                status = ServiceStatus.Stopped;
+            }
+            return status.name();
+        }
+
+        // assume started if not a ServiceSupport instance
+        return ServiceStatus.Started.name();
     }
 
     public Object getInstance() {

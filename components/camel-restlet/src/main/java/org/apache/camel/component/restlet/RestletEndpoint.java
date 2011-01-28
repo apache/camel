@@ -23,7 +23,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -34,7 +33,7 @@ import org.restlet.data.Method;
  *
  * @version $Revision$
  */
-public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
+public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_PROTOCOL = "http";
@@ -179,7 +178,16 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return restletUriPatterns;
     }
 
-    public void start() throws Exception {
+    public boolean isThrowExceptionOnFailure() {
+        return throwExceptionOnFailure;
+    }
+
+    public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
+        this.throwExceptionOnFailure = throwExceptionOnFailure;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new RestletHeaderFilterStrategy();
         }
@@ -191,15 +199,9 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         }
     }
 
-    public void stop() throws Exception {
+    @Override
+    protected void doStop() throws Exception {
         // noop
     }
 
-    public boolean isThrowExceptionOnFailure() {
-        return throwExceptionOnFailure;
-    }
-
-    public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
-        this.throwExceptionOnFailure = throwExceptionOnFailure;
-    }
 }

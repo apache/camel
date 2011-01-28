@@ -44,6 +44,9 @@ public class ManagedRegisterEndpointTest extends ManagementTestSupport {
         String id = (String) mbeanServer.getAttribute(name, "CamelId");
         assertEquals("camel-1", id);
 
+        String state = (String) mbeanServer.getAttribute(name, "State");
+        assertEquals("Started", state);
+
         Boolean singleton = (Boolean) mbeanServer.getAttribute(name, "Singleton");
         assertEquals(Boolean.TRUE, singleton);
     }

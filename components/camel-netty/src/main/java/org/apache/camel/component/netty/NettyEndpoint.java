@@ -79,8 +79,7 @@ public class NettyEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public void start() throws Exception {
-        super.start();
+    protected void doStart() throws Exception {
         ObjectHelper.notNull(timer, "timer");
     }
 

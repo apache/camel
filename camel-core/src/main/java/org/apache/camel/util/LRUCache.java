@@ -73,4 +73,9 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> implements Service {
             clear();
         }
     }
+
+    @Override
+    public String toString() {
+        return "LRUCache@" + ObjectHelper.getIdentityHashCode(this);
+    }
 }

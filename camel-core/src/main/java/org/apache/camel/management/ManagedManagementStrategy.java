@@ -121,6 +121,10 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
         } else if (managedObject instanceof ManagedService) {
             // check for managed service should be last
             ManagedService ms = (ManagedService) managedObject;
+            // skip endpoints as they are already managed
+            if (ms.getService() instanceof Endpoint) {
+                return null;
+            }
             objectName = getManagementNamingStrategy().getObjectNameForService(ms.getContext(), ms.getService());
         }
 

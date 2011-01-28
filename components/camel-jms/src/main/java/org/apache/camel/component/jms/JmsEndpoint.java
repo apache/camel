@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
@@ -72,6 +73,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private ReplyManager replyManager;
     // scheduled executor to check for timeout (reply not received)
     private ScheduledExecutorService replyManagerExecutorService;
+    private final AtomicBoolean running = new AtomicBoolean();
 
     public JmsEndpoint() {
         this(null, null);
@@ -373,10 +375,22 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return replyManagerExecutorService;
     }
 
-    public void start() throws Exception {
+    /**
+     * State whether this endpoint is running (eg started)
+     */
+    protected boolean isRunning() {
+        return running.get();
     }
 
-    public void stop() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
+        running.set(true);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        running.set(false);
+
         if (replyManager != null) {
             ServiceHelper.stopService(replyManager);
             replyManager = null;

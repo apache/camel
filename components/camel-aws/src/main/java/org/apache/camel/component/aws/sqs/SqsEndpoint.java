@@ -67,11 +67,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     public boolean isSingleton() {
         return true;
     }
-    
+
     @Override
-    public void start() throws Exception {
-        super.start();
-        
+    protected void doStart() throws Exception {
         client = getConfiguration().getAmazonSQSClient() != null
                 ? getConfiguration().getAmazonSQSClient() : getClient();
         
@@ -92,12 +90,10 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
-    public void stop() throws Exception {
+    protected void doStop() throws Exception {
         client = null;
-        
-        super.stop();
     }
-    
+
     public Exchange createExchange(com.amazonaws.services.sqs.model.Message msg) {
         return createExchange(getExchangePattern(), msg);
     }

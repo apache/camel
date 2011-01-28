@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.camel.Service;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.SuspendableService;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -44,6 +45,13 @@ public final class ServiceHelper {
      * Starts all of the given services
      */
     public static void startService(Object value) throws Exception {
+        if (isStarted(value)) {
+            // only start service if not already started
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Service already started: " + value);
+            }
+            return;
+        }
         if (value instanceof Service) {
             Service service = (Service)value;
             if (LOG.isTraceEnabled()) {
@@ -75,13 +83,7 @@ public final class ServiceHelper {
             return;
         }
         for (Object value : services) {
-            if (value instanceof Service) {
-                Service service = (Service)value;
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Starting service: " + service);
-                }
-                service.start();
-            }
+            startService(value);
         }
     }
 
@@ -100,6 +102,13 @@ public final class ServiceHelper {
      * Stops all of the given services, throwing the first exception caught
      */
     public static void stopService(Object value) throws Exception {
+        if (isStopped(value)) {
+            // only stop service if not already stopped
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Service already stopped: " + value);
+            }
+            return;
+        }
         if (value instanceof Service) {
             Service service = (Service)value;
             if (LOG.isTraceEnabled()) {
@@ -120,20 +129,14 @@ public final class ServiceHelper {
         }
         Exception firstException = null;
         for (Object value : services) {
-            if (value instanceof Service) {
-                Service service = (Service)value;
-                try {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Stopping service: " + service);
-                    }
-                    service.stop();
-                } catch (Exception e) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Caught exception stopping service: " + service, e);
-                    }
-                    if (firstException == null) {
-                        firstException = e;
-                    }
+            try {
+                stopService(value);
+            } catch (Exception e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Caught exception stopping service: " + value, e);
+                }
+                if (firstException == null) {
+                    firstException = e;
                 }
             }
         }
@@ -221,10 +224,6 @@ public final class ServiceHelper {
                 Service service = (Service)value;
                 try {
                     resumeService(service);
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Resumed service: " + service);
-                    }
-                    service.stop();
                 } catch (Exception e) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Caught exception resuming service: " + service, e);
@@ -260,8 +259,8 @@ public final class ServiceHelper {
         if (service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (ss.isSuspended()) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Resuming service " + service);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Resuming service " + service);
                 }
                 ss.resume();
                 return true;
@@ -284,10 +283,6 @@ public final class ServiceHelper {
                 Service service = (Service)value;
                 try {
                     suspendService(service);
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Suspending service: " + service);
-                    }
-                    service.stop();
                 } catch (Exception e) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Caught exception suspending service: " + service, e);
@@ -335,6 +330,36 @@ public final class ServiceHelper {
             stopService(service);
             return true;
         }
+    }
+
+    /**
+     * Is the given service stopping or stopped?
+     *
+     * @return <tt>true</tt> if already stopped, otherwise <tt>false</tt>
+     */
+    public static boolean isStopped(Object value) {
+        if (value instanceof ServiceSupport) {
+            ServiceSupport service = (ServiceSupport) value;
+            if (service.isStopping() || service.isStopped()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Is the given service starting or started?
+     *
+     * @return <tt>true</tt> if already started, otherwise <tt>false</tt>
+     */
+    public static boolean isStarted(Object value) {
+        if (value instanceof ServiceSupport) {
+            ServiceSupport service = (ServiceSupport) value;
+            if (service.isStarting() || service.isStarted()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

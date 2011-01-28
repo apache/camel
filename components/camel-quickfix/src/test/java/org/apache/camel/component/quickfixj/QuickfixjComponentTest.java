@@ -37,6 +37,7 @@ import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.StaticMethodTypeConverter;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.mina.common.TransportType;
 import org.junit.After;
 import org.junit.Before;
@@ -224,7 +225,8 @@ public class QuickfixjComponentTest {
                 }
             }
         });
-        
+        ServiceHelper.startService(consumer);
+
         // Endpoint automatically starts the consumer
         assertThat(((ServiceSupport)consumer).isStarted(), is(true));
         
@@ -268,7 +270,7 @@ public class QuickfixjComponentTest {
         final CountDownLatch logonLatch = new CountDownLatch(2);
         final CountDownLatch messageLatch = new CountDownLatch(2);
                 
-        endpoint.createConsumer(new Processor() {
+        Consumer consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 QuickfixjEventCategory eventCategory = 
                     (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY);
@@ -279,7 +281,8 @@ public class QuickfixjComponentTest {
                 }
             }
         });
-        
+        ServiceHelper.startService(consumer);
+
         component.start();
         
         assertTrue("Session not created", logonLatch.await(5000, TimeUnit.MILLISECONDS));

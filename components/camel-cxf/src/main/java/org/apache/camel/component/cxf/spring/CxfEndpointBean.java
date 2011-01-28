@@ -17,15 +17,11 @@
 package org.apache.camel.component.cxf.spring;
 
 import java.util.List;
-
 import javax.xml.ws.handler.Handler;
 
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.AbstractServiceFactory;
-import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
-import org.apache.cxf.wsdl11.WSDLEndpointFactory;
-
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.NamedBean;
@@ -57,7 +53,6 @@ public class CxfEndpointBean extends AbstractServiceFactory
         // Clean up the BusFactory's defaultBus
         BusFactory.setDefaultBus(null);
         BusFactory.setThreadDefaultBus(null);
-        
     }
 
     public void setBeanName(String name) {

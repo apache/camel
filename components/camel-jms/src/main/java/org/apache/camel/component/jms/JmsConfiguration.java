@@ -47,7 +47,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
 
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
 /**
  * @version $Revision$
@@ -356,7 +355,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) throws Exception {
-        AbstractMessageListenerContainer container = chooseMessageListenerContainerImplementation();
+        AbstractMessageListenerContainer container = chooseMessageListenerContainerImplementation(endpoint);
         configureMessageListenerContainer(container, endpoint);
         return container;
     }
@@ -960,12 +959,13 @@ public class JmsConfiguration implements Cloneable {
         }
     }
 
-    public AbstractMessageListenerContainer chooseMessageListenerContainerImplementation() {
+    public AbstractMessageListenerContainer chooseMessageListenerContainerImplementation(JmsEndpoint endpoint) {
         switch (consumerType) {
         case Simple:
+            // TODO: simple is @deprecated and should be removed in Camel 2.7 when we upgrade to Spring 3
             return new SimpleMessageListenerContainer();
         case Default:
-            return new DefaultMessageListenerContainer();
+            return new JmsMessageListenerContainer(endpoint);
         default:
             throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
         }
@@ -985,6 +985,7 @@ public class JmsConfiguration implements Cloneable {
      * @return the cache level
      */
     protected int defaultCacheLevel(JmsEndpoint endpoint) {
+        // TODO: upgrade to Spring 3
         // if we are on a new enough spring version we can assume CACHE_CONSUMER
         if (PackageHelper.isValidVersion("org.springframework.jms", 2.51D)) {
             return DefaultMessageListenerContainer.CACHE_CONSUMER;

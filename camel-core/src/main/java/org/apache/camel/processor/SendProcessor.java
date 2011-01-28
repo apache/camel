@@ -141,6 +141,8 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             destination = lookup;
         }
         // warm up the producer by starting it so we can fail fast if there was a problem
+        // however must start endpoint first
+        ServiceHelper.startService(destination);
         producerCache.startProducer(destination);
     }
 

@@ -90,6 +90,7 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
     }
 
     protected void doStart() throws Exception {
+        // noop
     }
 
     protected void doStop() throws Exception {

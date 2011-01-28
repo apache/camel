@@ -240,17 +240,21 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
         return new JobDetail();
     }
 
-    public void start() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
         ObjectHelper.notNull(getComponent(), "QuartzComponent", this);
         ServiceHelper.startService(loadBalancer);
     }
 
-    public void stop() throws Exception {
+    @Override
+    protected void doStop() throws Exception {
         ServiceHelper.stopService(loadBalancer);
     }
 
-    public void shutdown() throws Exception {
+    @Override
+    protected void doShutdown() throws Exception {
         ObjectHelper.notNull(trigger, "trigger");
         deleteTrigger(getTrigger());
     }
+
 }

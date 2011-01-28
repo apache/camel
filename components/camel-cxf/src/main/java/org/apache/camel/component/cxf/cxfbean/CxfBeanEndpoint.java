@@ -56,13 +56,15 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
     public CxfBeanEndpoint(String remaining, CxfBeanComponent component) {
         super(remaining, component);
     }
-    
-    public void stop() {
-        server.stop();
-    }
-    
-    public void start() {
+
+    @Override
+    protected void doStart() throws Exception {
         server.start();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        server.stop();
     }
 
     @SuppressWarnings("unchecked")
