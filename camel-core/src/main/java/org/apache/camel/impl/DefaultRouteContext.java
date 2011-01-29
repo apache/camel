@@ -146,35 +146,28 @@ public class DefaultRouteContext implements RouteContext {
     public void commit() {
         // now lets turn all of the event driven consumer processors into a single route
         if (!eventDrivenProcessors.isEmpty()) {
-            Processor processor = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
+            Processor target = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-            UnitOfWorkProcessor unitOfWorkProcessor = new UnitOfWorkProcessor(this, processor);
-            Processor target = unitOfWorkProcessor;
+            UnitOfWorkProcessor unitOfWorkProcessor = new UnitOfWorkProcessor(this, target);
 
             // and then optionally add route policy processor if a custom policy is set
             RoutePolicyProcessor routePolicyProcessor = null;
-            List<RoutePolicy> policyList = getRoutePolicyList();
-            if (!policyList.isEmpty()) {
-                boolean firstPolicy = true;
-                for (RoutePolicy policy : policyList) {
-                    if (firstPolicy) {
-                        routePolicyProcessor = new RoutePolicyProcessor(unitOfWorkProcessor, policy);
-                        firstPolicy = false;
-                    } else {
-                        routePolicyProcessor = new RoutePolicyProcessor(routePolicyProcessor, policy);
-                    }
-                    
-                    // add it as service if we have not already done that (eg possible if two routes have the same service)
-                    if (!camelContext.hasService(policy)) {
-                        try {
-                            camelContext.addService(policy);
-                        } catch (Exception e) {
-                            throw ObjectHelper.wrapRuntimeCamelException(e);
-                        }
+            List<RoutePolicy> routePolicyList = getRoutePolicyList();
+            if (routePolicyList != null && !routePolicyList.isEmpty()) {
+                routePolicyProcessor = new RoutePolicyProcessor(unitOfWorkProcessor, routePolicyList);
+
+                // add it as service if we have not already done that (eg possible if two routes have the same service)
+                if (!camelContext.hasService(routePolicyProcessor)) {
+                    try {
+                        camelContext.addService(routePolicyProcessor);
+                    } catch (Exception e) {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
                     }
                 }
                 target = routePolicyProcessor;
+            } else {
+                target = unitOfWorkProcessor;
             }
 
             // and wrap it by a instrumentation processor that is to be used for performance stats
@@ -199,8 +192,8 @@ public class DefaultRouteContext implements RouteContext {
             }
 
             // invoke init on route policy
-            if (!policyList.isEmpty()) {
-                for (RoutePolicy policy : policyList) { 
+            if (routePolicyList != null && !routePolicyList.isEmpty()) {
+                for (RoutePolicy policy : routePolicyList) {
                     policy.onInit(edcr);
                 }
             }

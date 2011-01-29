@@ -56,7 +56,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 @XmlRootElement(name = "route")
-@XmlType(propOrder = {"inputs", "outputs" })
+@XmlType(propOrder = {"inputs", "outputs"})
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private final AtomicBoolean prepared = new AtomicBoolean(false);
@@ -69,7 +69,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private String delayer;
     private String autoStartup;
     private Integer startupOrder;
-    private RoutePolicy routePolicy;
+    private List<RoutePolicy> routePolicies;
     private String routePolicyRef;
     private ShutdownRoute shutdownRoute;
     private ShutdownRunningTask shutdownRunningTask;
@@ -146,7 +146,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             return status.isStoppable();
         }
     }
-    
+
     public List<RouteContext> addRoutes(CamelContext camelContext, Collection<Route> routes) throws Exception {
         List<RouteContext> answer = new ArrayList<RouteContext>();
 
@@ -186,8 +186,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * <p/>
      * Will stop and remove the old route from camel context and add and start this new advised route.
      *
-     * @param camelContext  the camel context
-     * @param builder       the route builder
+     * @param camelContext the camel context
+     * @param builder      the route builder
      * @return a new route which is this route merged with the route builder
      * @throws Exception can be thrown from the route builder
      */
@@ -224,7 +224,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Creates an input to the route
      *
-     * @param uri  the from uri
+     * @param uri the from uri
      * @return the builder
      */
     public RouteDefinition from(String uri) {
@@ -235,7 +235,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Creates an input to the route
      *
-     * @param endpoint  the from endpoint
+     * @param endpoint the from endpoint
      * @return the builder
      */
     public RouteDefinition from(Endpoint endpoint) {
@@ -246,7 +246,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Creates inputs to the route
      *
-     * @param uris  the from uris
+     * @param uris the from uris
      * @return the builder
      */
     public RouteDefinition from(String... uris) {
@@ -259,7 +259,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Creates inputs to the route
      *
-     * @param endpoints  the from endpoints
+     * @param endpoints the from endpoints
      * @return the builder
      */
     public RouteDefinition from(Endpoint... endpoints) {
@@ -272,7 +272,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Set the group name for this route
      *
-     * @param name  the group name
+     * @param name the group name
      * @return the builder
      */
     public RouteDefinition group(String name) {
@@ -283,7 +283,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Set the route id for this route
      *
-     * @param id  the route id
+     * @param id the route id
      * @return the builder
      */
     public RouteDefinition routeId(String id) {
@@ -293,7 +293,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Disable stream caching for this route.
-     * 
+     *
      * @return the builder
      */
     public RouteDefinition noStreamCaching() {
@@ -304,7 +304,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Enable stream caching for this route.
-     * 
+     *
      * @return the builder
      */
     public RouteDefinition streamCaching() {
@@ -320,7 +320,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Disable tracing for this route.
-     * 
+     *
      * @return the builder
      */
     public RouteDefinition noTracing() {
@@ -330,7 +330,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Enable tracing for this route.
-     * 
+     *
      * @return the builder
      */
     public RouteDefinition tracing() {
@@ -340,7 +340,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Disable handle fault for this route.
-     * 
+     *
      * @return the builder
      */
     public RouteDefinition noHandleFault() {
@@ -350,7 +350,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Enable handle fault for this route.
-     * 
+     *
      * @return the builder
      */
     public RouteDefinition handleFault() {
@@ -360,7 +360,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Disable delayer for this route.
-     * 
+     *
      * @return the builder
      */
     public RouteDefinition noDelayer() {
@@ -392,7 +392,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Disables this route from being auto started when Camel starts.
-     * 
+     *
      * @return the builder
      */
     public RouteDefinition noAutoStartup() {
@@ -415,13 +415,18 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
-     * Configures a route policy for this route
+     * Configures route policies for this route
      *
-     * @param routePolicy the route policy
+     * @param policies the route policies
      * @return the builder
-     */ 
-    public RouteDefinition routePolicy(RoutePolicy routePolicy) {
-        setRoutePolicy(routePolicy);
+     */
+    public RouteDefinition routePolicy(RoutePolicy... policies) {
+        if (routePolicies == null) {
+            routePolicies = new ArrayList<RoutePolicy>();
+        }
+        for (RoutePolicy policy : policies) {
+            routePolicies.add(policy);
+        }
         return this;
     }
 
@@ -429,6 +434,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * Configures a route policy for this route
      *
      * @param routePolicyRef reference to a {@link RoutePolicy} to lookup and use.
+     *                       You can specify multiple references by separating using comma.
      * @return the builder
      */
     public RouteDefinition routePolicyRef(String routePolicyRef) {
@@ -488,7 +494,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * The group that this route belongs to; could be the name of the RouteBuilder class
      * or be explicitly configured in the XML.
-     *
+     * <p/>
      * May be null.
      */
     public String getGroup() {
@@ -596,13 +602,13 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return routePolicyRef;
     }
 
-    @XmlTransient
-    public void setRoutePolicy(RoutePolicy routePolicy) {
-        this.routePolicy = routePolicy;
+    public List<RoutePolicy> getRoutePolicies() {
+        return routePolicies;
     }
 
-    public RoutePolicy getRoutePolicy() {
-        return routePolicy;
+    @XmlTransient
+    public void setRoutePolicies(List<RoutePolicy> routePolicies) {
+        this.routePolicies = routePolicies;
     }
 
     public ShutdownRoute getShutdownRoute() {
@@ -636,7 +642,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 routeContext.setTracing(isTrace);
                 if (isTrace) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Tracing is enabled on route: " + this);
+                        log.debug("Tracing is enabled on route: " + getId());
                     }
                     // tracing is added in the DefaultChannel so we can enable it on the fly
                 }
@@ -650,7 +656,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 routeContext.setStreamCaching(isStreamCache);
                 if (isStreamCache) {
                     if (log.isDebugEnabled()) {
-                        log.debug("StreamCaching is enabled on route: " + this);
+                        log.debug("StreamCaching is enabled on route: " + getId());
                     }
                     // only add a new stream cache if not already a global configured on camel context
                     if (StreamCaching.getStreamCaching(camelContext) == null) {
@@ -667,7 +673,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 routeContext.setHandleFault(isHandleFault);
                 if (isHandleFault) {
                     if (log.isDebugEnabled()) {
-                        log.debug("HandleFault is enabled on route: " + this);
+                        log.debug("HandleFault is enabled on route: " + getId());
                     }
                     // only add a new handle fault if not already a global configured on camel context
                     if (HandleFault.getHandleFault(camelContext) == null) {
@@ -684,29 +690,33 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 routeContext.setDelayer(delayer);
                 if (delayer > 0) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Delayer is enabled with: " + delayer + " ms. on route: " + this);
+                        log.debug("Delayer is enabled with: " + delayer + " ms. on route: " + getId());
                     }
                     addInterceptStrategy(new Delayer(delayer));
                 } else {
                     if (log.isDebugEnabled()) {
-                        log.debug("Delayer is disabled on route: " + this);
+                        log.debug("Delayer is disabled on route: " + getId());
                     }
                 }
             }
         }
 
         // configure route policy
-        if (routePolicy != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("RoutePolicy is enabled: " + routePolicy + " on route: " + this);
+        if (routePolicies != null && !routePolicies.isEmpty()) {
+            for (RoutePolicy policy : routePolicies) {
+                if (log.isDebugEnabled()) {
+                    log.debug("RoutePolicy is enabled: " + policy + " on route: " + getId());
+                }
+                routeContext.getRoutePolicyList().add(policy);
             }
-            routeContext.getRoutePolicyList().add(getRoutePolicy());
-        } else if (routePolicyRef != null) {
+        }
+        if (routePolicyRef != null) {
             StringTokenizer policyTokens = new StringTokenizer(routePolicyRef, ",");
             while (policyTokens.hasMoreTokens()) {
-                RoutePolicy policy = CamelContextHelper.mandatoryLookup(camelContext, policyTokens.nextToken().trim(), RoutePolicy.class);
+                String ref = policyTokens.nextToken().trim();
+                RoutePolicy policy = CamelContextHelper.mandatoryLookup(camelContext, ref, RoutePolicy.class);
                 if (log.isDebugEnabled()) {
-                    log.debug("RoutePolicy is enabled: " + policy + " on route: " + this);
+                    log.debug("RoutePolicy is enabled: " + policy + " on route: " + getId());
                 }
                 routeContext.getRoutePolicyList().add(policy);
             }
@@ -716,7 +726,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         Boolean isAutoStartup = CamelContextHelper.parseBoolean(camelContext, getAutoStartup());
         if (isAutoStartup != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Using AutoStartup " + isAutoStartup + " on route: " + this);
+                log.debug("Using AutoStartup " + isAutoStartup + " on route: " + getId());
             }
             routeContext.setAutoStartup(isAutoStartup);
         }
@@ -724,13 +734,13 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         // configure shutdown
         if (shutdownRoute != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Using ShutdownRoute " + getShutdownRoute() + " on route: " + this);
+                log.debug("Using ShutdownRoute " + getShutdownRoute() + " on route: " + getId());
             }
             routeContext.setShutdownRoute(getShutdownRoute());
         }
         if (shutdownRunningTask != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Using ShutdownRunningTask " + getShutdownRunningTask() + " on route: " + this);
+                log.debug("Using ShutdownRunningTask " + getShutdownRunningTask() + " on route: " + getId());
             }
             routeContext.setShutdownRunningTask(getShutdownRunningTask());
         }

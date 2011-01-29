@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.List;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -24,59 +26,99 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
+ * {@link Processor} which instruments the {@link RoutePolicy}.
+ *
  * @version $Revision$
  */
 public class RoutePolicyProcessor extends DelegateAsyncProcessor {
 
-    private final RoutePolicy routePolicy;
+    private final Log LOG = LogFactory.getLog(RoutePolicyProcessor.class);
+    private final List<RoutePolicy> routePolicies;
     private Route route;
 
-    public RoutePolicyProcessor(Processor processor, RoutePolicy routePolicy) {
+    public RoutePolicyProcessor(Processor processor, List<RoutePolicy> routePolicies) {
         super(processor);
-        this.routePolicy = routePolicy;
+        this.routePolicies = routePolicies;
     }
 
     @Override
     public String toString() {
-        return "RoutePolicy[" + routePolicy + "]";
+        return "RoutePolicy[" + routePolicies + "]";
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // check whether the policy is enabled
-        if (isRoutePolicyRunAllowed()) {
 
-            // invoke begin
-            routePolicy.onExchangeBegin(route, exchange);
-
-            // add on completion that invokes the policy callback on complete
-            // as the Exchange can be routed async and thus we need the callback to
-            // invoke when the route is completed
-            exchange.addOnCompletion(new SynchronizationAdapter() {
-                @Override
-                public void onDone(Exchange exchange) {
-                    // do not invoke it if Camel is stopping as we don't want
-                    // the policy to start a consumer during Camel is stopping
-                    if (isCamelStopping(exchange.getContext())) {
-                        return;
-                    }
-                    routePolicy.onExchangeDone(route, exchange);
+        // invoke begin
+        for (RoutePolicy policy : routePolicies) {
+            try {
+                if (isRoutePolicyRunAllowed(policy)) {
+                    policy.onExchangeBegin(route, exchange);
                 }
-
-                @Override
-                public String toString() {
-                    return "RoutePolicy";
-                }
-            });
+            } catch (Exception e) {
+                LOG.warn("Error occurred during onExchangeBegin on RoutePolicy: " + policy
+                        + ". This exception will be ignored", e);
+            }
         }
+
+        // add on completion that invokes the policy callback on complete
+        // as the Exchange can be routed async and thus we need the callback to
+        // invoke when the route is completed
+        exchange.addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                // do not invoke it if Camel is stopping as we don't want
+                // the policy to start a consumer during Camel is stopping
+                if (isCamelStopping(exchange.getContext())) {
+                    return;
+                }
+
+                for (RoutePolicy policy : routePolicies) {
+                    try {
+                        if (isRoutePolicyRunAllowed(policy)) {
+                            policy.onExchangeDone(route, exchange);
+                        }
+                    } catch (Exception e) {
+                        LOG.warn("Error occurred during onExchangeDone on RoutePolicy: " + policy
+                                + ". This exception will be ignored", e);
+                    }
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "RoutePolicyOnCompletion";
+            }
+        });
 
         return super.process(exchange, callback);
     }
 
+    /**
+     * Sets the route this policy applies.
+     *
+     * @param route the route
+     */
     public void setRoute(Route route) {
         this.route = route;
+    }
+
+    /**
+     * Strategy to determine if this policy is allowed to run
+     *
+     * @param policy the policy
+     * @return <tt>true</tt> to run
+     */
+    protected boolean isRoutePolicyRunAllowed(RoutePolicy policy) {
+        if (policy instanceof ServiceSupport) {
+            ServiceSupport ss = (ServiceSupport) policy;
+            return ss.isRunAllowed();
+        }
+        return true;
     }
 
     private static boolean isCamelStopping(CamelContext context) {
@@ -85,14 +127,6 @@ public class RoutePolicyProcessor extends DelegateAsyncProcessor {
             return ss.isStopping() || ss.isStopped();
         }
         return false;
-    }
-
-    private boolean isRoutePolicyRunAllowed() {
-        if (routePolicy instanceof ServiceSupport) {
-            ServiceSupport ss = (ServiceSupport) routePolicy;
-            return ss.isRunAllowed();
-        }
-        return true;
     }
 
 }
