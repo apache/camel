@@ -528,7 +528,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 return false;
             }
             for (String existing : names) {
-                if (existing.equals(onlyName)) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Existing file: " + existing + ", target file: " + name);
+                }
+                existing = FileUtil.stripPath(existing);
+                if (existing != null && existing.equals(onlyName)) {
                     return true;
                 }
             }

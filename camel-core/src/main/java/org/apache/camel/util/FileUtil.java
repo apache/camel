@@ -141,10 +141,10 @@ public final class FileUtil {
         if (name == null) {
             return null;
         }
-        int pos = name.lastIndexOf('/');
-        if (pos == -1) {
-            pos = name.lastIndexOf(File.separator);
-        }
+        int posUnix = name.lastIndexOf('/');
+        int posWin = name.lastIndexOf('\\');
+        int pos = Math.max(posUnix, posWin);
+
         if (pos != -1) {
             return name.substring(pos + 1);
         }
@@ -169,10 +169,11 @@ public final class FileUtil {
         if (name == null) {
             return null;
         }
-        int pos = name.lastIndexOf('/');
-        if (pos == -1) {
-            pos = name.lastIndexOf(File.separator);
-        }
+
+        int posUnix = name.lastIndexOf('/');
+        int posWin = name.lastIndexOf('\\');
+        int pos = Math.max(posUnix, posWin);
+
         if (pos > 0) {
             return name.substring(0, pos);
         } else if (pos == 0) {

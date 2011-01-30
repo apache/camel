@@ -706,7 +706,12 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             }
             for (Object file : files) {
                 ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) file;
-                if (entry.getFilename().equals(onlyName)) {
+                String existing = entry.getFilename();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Existing file: " + existing + ", target file: " + name);
+                }
+                existing = FileUtil.stripPath(existing);
+                if (existing != null && existing.equals(onlyName)) {
                     return true;
                 }
             }
