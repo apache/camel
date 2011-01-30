@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class RoutePolicyProcessor extends DelegateAsyncProcessor {
 
-    private final Log LOG = LogFactory.getLog(RoutePolicyProcessor.class);
+    private static final Log LOG = LogFactory.getLog(RoutePolicyProcessor.class);
     private final List<RoutePolicy> routePolicies;
     private Route route;
 

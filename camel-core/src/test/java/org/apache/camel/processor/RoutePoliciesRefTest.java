@@ -40,7 +40,7 @@ public class RoutePoliciesRefTest extends ContextTestSupport {
         return jndi;
     }
 
-    private class MyCustomRoutePolicy extends RoutePolicySupport {
+    private final class MyCustomRoutePolicy extends RoutePolicySupport {
 
         private final String name;
 

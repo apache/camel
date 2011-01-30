@@ -31,7 +31,7 @@ public class RoutePoliciesTest extends ContextTestSupport {
     private final MyCustomRoutePolicy policyA = new MyCustomRoutePolicy("A");
     private final MyCustomRoutePolicy policyB = new MyCustomRoutePolicy("B");
 
-    private class MyCustomRoutePolicy extends RoutePolicySupport {
+    private final class MyCustomRoutePolicy extends RoutePolicySupport {
 
         private final String name;
 
