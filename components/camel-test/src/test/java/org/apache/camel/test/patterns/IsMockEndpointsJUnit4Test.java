@@ -23,15 +23,19 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
+// START SNIPPET: e1
 public class IsMockEndpointsJUnit4Test extends CamelTestSupport {
 
     @Override
     public String isMockEndpoints() {
+        // override this method and return the pattern for which endpoints to mock.
+        // use * to indicate all
         return "*";
     }
 
     @Test
     public void testMockAllEndpoints() throws Exception {
+        // notice we have automatic mocked all endpoints and the name of the endpoints is "mock:uri"
         getMockEndpoint("mock:direct:start").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:direct:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:log:foo").expectedBodiesReceived("Bye World");
@@ -64,3 +68,4 @@ public class IsMockEndpointsJUnit4Test extends CamelTestSupport {
         };
     }
 }
+// END SNIPPET: e1
