@@ -19,6 +19,8 @@ package org.apache.camel.component.http4;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.junit.Test;
 
 /**
@@ -27,11 +29,19 @@ import org.junit.Test;
  */
 public class HttpsGetTest extends BaseHttpsTest {
 
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("x509HostnameVerifier", new AllowAllHostnameVerifier());
+
+        return registry;
+    }
+
     @Test
     public void httpsGet() throws Exception {
         localServer.register("/mail/", new BasicValidationHandler("GET", null, null, getExpectedContent()));
 
-        Exchange exchange = template.request("https4://127.0.0.1:" + getPort() + "/mail/", new Processor() {
+        Exchange exchange = template.request("https4://127.0.0.1:" + getPort() + "/mail/?x509HostnameVerifier=x509HostnameVerifier", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });

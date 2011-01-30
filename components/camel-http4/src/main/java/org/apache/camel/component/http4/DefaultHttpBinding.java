@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Map;
+
 import javax.activation.DataHandler;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -69,8 +70,8 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
     }
 
+    @SuppressWarnings("rawtypes")
     public void readRequest(HttpServletRequest request, HttpMessage message) {
-
         // lets force a parse of the body and headers
         message.getBody();
         // populate the headers from the request
@@ -132,6 +133,7 @@ public class DefaultHttpBinding implements HttpBinding {
         populateAttachments(request, message);
     }
 
+    @SuppressWarnings("rawtypes")
     protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws UnsupportedEncodingException {
         //we populate the http request parameters without checking the request method
         Map<String, Object> headers = message.getHeaders();
@@ -164,6 +166,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
         // check if there is multipart files, if so will put it into DataHandler
         Enumeration names = request.getAttributeNames();

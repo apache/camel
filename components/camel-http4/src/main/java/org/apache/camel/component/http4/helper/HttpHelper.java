@@ -65,7 +65,6 @@ public final class HttpHelper {
      */
     public static void writeObjectToServletResponse(ServletResponse response, Object target) throws IOException {
         response.setContentType(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
-        ObjectOutputStream oos = new ObjectOutputStream(response.getOutputStream());
         writeObjectToStream(response.getOutputStream(), target);
     }
 

@@ -196,6 +196,22 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     public void setBinding(HttpBinding binding) {
         this.binding = binding;
     }
+    
+    /**
+     * Used from the IntrospectionSupport in HttpComponent.
+     * @param binding
+     */
+    public void setHttpBinding(HttpBinding binding) {
+        this.binding = binding;
+    }
+    
+    /**
+     * Used from the IntrospectionSupport in HttpComponent.
+     * @param binding
+     */
+    public void setHttpBindingRef(HttpBinding binding) {
+        this.binding = binding;
+    }
 
     public String getPath() {
         return httpUri.getPath();

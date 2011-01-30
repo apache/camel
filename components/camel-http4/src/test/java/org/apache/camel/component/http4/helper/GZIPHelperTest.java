@@ -23,15 +23,15 @@ import java.io.InputStream;
 import org.apache.camel.Message;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultMessage;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class GZIPHelperTest extends Assert {
+public class GZIPHelperTest {
 
     private static byte[] sampleBytes = new byte[]{1, 2, 3, 1, 2, 3};
     private static String sampleString = "<Hello>World</Hello>";

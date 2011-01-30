@@ -17,6 +17,7 @@
 package org.apache.camel.component.http4;
 
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,13 +33,13 @@ import org.apache.http.auth.params.AuthParamBean;
 import org.apache.http.client.params.ClientParamBean;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnConnectionParamBean;
-import org.apache.http.conn.params.ConnManagerParamBean;
-import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.params.ConnRouteParamBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.cookie.params.CookieSpecParamBean;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
@@ -58,6 +59,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected HttpClientConfigurer httpClientConfigurer;
     protected ClientConnectionManager clientConnectionManager;
     protected HttpBinding httpBinding;
+    protected X509HostnameVerifier x509HostnameVerifier = new BrowserCompatHostnameVerifier();
 
     // options to the default created http connection manager
     protected int maxTotalConnections = 200;
@@ -93,40 +95,54 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (configurer == null) {
             // try without ref
             configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
-        }
-        if (configurer == null) {
-            // fallback to component configured
-            configurer = getHttpClientConfigurer();
+            
+            if (configurer == null) {
+                // fallback to component configured
+                configurer = getHttpClientConfigurer();
+            }
         }
 
-        // check the user name and password for basic authentication
+        configurer = configureBasicAuthentication(parameters, configurer);
+        configurer = configureHttpProxy(parameters, configurer);
+
+        return configurer;
+    }
+
+    private HttpClientConfigurer configureBasicAuthentication(Map<String, Object> parameters, HttpClientConfigurer configurer) {
         String username = getAndRemoveParameter(parameters, "username", String.class);
         String password = getAndRemoveParameter(parameters, "password", String.class);
-        String domain = getAndRemoveParameter(parameters, "domain", String.class);
-        String host = getAndRemoveParameter(parameters, "host", String.class);
+
         if (username != null && password != null) {
-            configurer = CompositeHttpConfigurer.combineConfigurers(
+            String domain = getAndRemoveParameter(parameters, "domain", String.class);
+            String host = getAndRemoveParameter(parameters, "host", String.class);
+            
+            return CompositeHttpConfigurer.combineConfigurers(
                     configurer,
                     new BasicAuthenticationHttpClientConfigurer(username, password, domain, host));
         }
+        
+        return configurer;
+    }
 
-        // check the proxy details for proxy configuration
+    private HttpClientConfigurer configureHttpProxy(Map<String, Object> parameters, HttpClientConfigurer configurer) {
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
+        
         if (proxyHost != null && proxyPort != null) {
             String proxyUsername = getAndRemoveParameter(parameters, "proxyUsername", String.class);
             String proxyPassword = getAndRemoveParameter(parameters, "proxyPassword", String.class);
             String proxyDomain = getAndRemoveParameter(parameters, "proxyDomain", String.class);
             String proxyNtHost = getAndRemoveParameter(parameters, "proxyNtHost", String.class);
+            
             if (proxyUsername != null && proxyPassword != null) {
-                configurer = CompositeHttpConfigurer.combineConfigurers(
+                return CompositeHttpConfigurer.combineConfigurers(
                         configurer, new ProxyHttpClientConfigurer(proxyHost, proxyPort, proxyUsername, proxyPassword, proxyDomain, proxyNtHost));
             } else {
-                configurer = CompositeHttpConfigurer.combineConfigurers(
+                return CompositeHttpConfigurer.combineConfigurers(
                         configurer, new ProxyHttpClientConfigurer(proxyHost, proxyPort));
             }
         }
-
+        
         return configurer;
     }
 
@@ -139,21 +155,21 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
         // http client can be configured from URI options
         HttpParams clientParams = configureHttpParams(parameters);
-
-        // must extract well known parameters before we create the endpoint
-        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
-        if (binding == null) {
-            // try without ref
-            binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
-        }
-        Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
-        Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
-        Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
-        Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
-        Boolean disableStreamCache = getAndRemoveParameter(parameters, "disableStreamCache", Boolean.class);
-
         // validate that we could resolve all httpClient. parameters as this component is lenient
         validateParameters(uri, parameters, "httpClient.");
+        
+        HttpBinding httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
+        if (httpBinding == null) {
+            httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
+        }
+        
+        HttpClientConfigurer httpClientConfigurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
+        if (httpClientConfigurer == null) {
+            httpClientConfigurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
+        }
+        
+        x509HostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", X509HostnameVerifier.class);
+        
         // create the configurer to use for this endpoint
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters);
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
@@ -173,39 +189,20 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // register port on schema registry
         boolean secure = isSecureConnection(uri);
         int port = getPort(httpUri);
-        registerPort(secure, port);
-
+        registerPort(secure, x509HostnameVerifier, port);
+        
         // create the endpoint
         HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, httpUri, clientParams, clientConnectionManager, configurer);
-        setEndpointHeaderFilterStrategy(endpoint);
-
-        // prefer to use endpoint configured over component configured
-        if (binding == null) {
-            // fallback to component configured
-            binding = getHttpBinding();
-        }
-        if (binding != null) {
-            endpoint.setBinding(binding);
-        }
-        // should we use an exception for failed error codes?
-        if (throwExceptionOnFailure != null) {
-            endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
-        }
-        // should we transfer exception as serialized object
-        if (transferException != null) {
-            endpoint.setTransferException(transferException);
-        }
-        if (bridgeEndpoint != null) {
-            endpoint.setBridgeEndpoint(bridgeEndpoint);
-        }
-        if (matchOnUriPrefix != null) {
-            endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
-        }
-        if (disableStreamCache != null) {
-            endpoint.setDisableStreamCache(disableStreamCache);
-        }
-
         setProperties(endpoint, parameters);
+        setEndpointHeaderFilterStrategy(endpoint);
+        endpoint.setBinding(getHttpBinding());
+        if (httpBinding != null) {
+            endpoint.setHttpBinding(httpBinding);
+        }
+        if (httpClientConfigurer != null) {
+            endpoint.setHttpClientConfigurer(httpClientConfigurer);
+        }
+
         return endpoint;
     }
 
@@ -223,19 +220,25 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return port;
     }
 
-    protected void registerPort(boolean secure, int port) {
+    protected void registerPort(boolean secure, X509HostnameVerifier x509HostnameVerifier, int port) throws NoSuchAlgorithmException {
         SchemeRegistry registry = clientConnectionManager.getSchemeRegistry();
         if (secure) {
             // must register both https and https4
-            registry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), port));
+            SSLSocketFactory socketFactory = SSLSocketFactory.getSocketFactory();
+            socketFactory.setHostnameVerifier(x509HostnameVerifier);
+            registry.register(new Scheme("https4", port, socketFactory));
+            registry.register(new Scheme("https", port, SSLSocketFactory.getSocketFactory()));
             LOG.info("Registering SSL scheme https on port " + port);
-            registry.register(new Scheme("https4", SSLSocketFactory.getSocketFactory(), port));
+            
+            socketFactory = SSLSocketFactory.getSocketFactory();
+            socketFactory.setHostnameVerifier(x509HostnameVerifier);
+            registry.register(new Scheme("https4", port, socketFactory));
             LOG.info("Registering SSL scheme https4 on port " + port);
         } else {
             // must register both http and http4
-            registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), port));
+            registry.register(new Scheme("http", port, new PlainSocketFactory()));
             LOG.info("Registering PLAIN scheme http on port " + port);
-            registry.register(new Scheme("http4", PlainSocketFactory.getSocketFactory(), port));
+            registry.register(new Scheme("http4", port, new PlainSocketFactory()));
             LOG.info("Registering PLAIN scheme http4 on port " + port);
         }
     }
@@ -243,17 +246,13 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected ClientConnectionManager createConnectionManager() {
         SchemeRegistry schemeRegistry = new SchemeRegistry();
 
-        // configure additional configurations
-        HttpParams params = new BasicHttpParams();
-        ConnManagerParamBean param = new ConnManagerParamBean(params);
+        ThreadSafeClientConnManager answer = new ThreadSafeClientConnManager(schemeRegistry);
         if (getMaxTotalConnections() > 0) {
-            param.setMaxTotalConnections(getMaxTotalConnections());
+            answer.setMaxTotal(getMaxTotalConnections());
         }
         if (getConnectionsPerRoute() > 0) {
-            param.setConnectionsPerRoute(new ConnPerRouteBean(getConnectionsPerRoute()));
+            answer.setDefaultMaxPerRoute(getConnectionsPerRoute());
         }
-
-        ThreadSafeClientConnManager answer = new ThreadSafeClientConnManager(params, schemeRegistry);
         LOG.info("Created ClientConnectionManager " + answer);
 
         return answer;
@@ -270,9 +269,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
         ConnConnectionParamBean connConnectionParamBean = new ConnConnectionParamBean(clientParams);
         IntrospectionSupport.setProperties(connConnectionParamBean, parameters, "httpClient.");
-
-        ConnManagerParamBean connManagerParamBean = new ConnManagerParamBean(clientParams);
-        IntrospectionSupport.setProperties(connManagerParamBean, parameters, "httpClient.");
 
         ConnRouteParamBean connRouteParamBean = new ConnRouteParamBean(clientParams);
         IntrospectionSupport.setProperties(connRouteParamBean, parameters, "httpClient.");
@@ -339,21 +335,21 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     }
 
     @Override
-    public void start() throws Exception {
-        super.start();
+    public void doStart() throws Exception {
+        super.doStart();
         if (clientConnectionManager == null) {
             clientConnectionManager = createConnectionManager();
         }
     }
 
     @Override
-    public void stop() throws Exception {
+    public void doStop() throws Exception {
         // shutdown connection manager
         if (clientConnectionManager != null) {
             LOG.info("Shutting down ClientConnectionManager: " + clientConnectionManager);
             clientConnectionManager.shutdown();
             clientConnectionManager = null;
         }
-        super.stop();
+        super.doStop();
     }
 }

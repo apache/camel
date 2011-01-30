@@ -184,11 +184,11 @@ public class HttpProxyServerTest extends BaseHttpTest {
     }
 
     private String getProxyHost() {
-        return proxy.getServiceHostName();
+        return proxy.getServiceAddress().getHostName();
     }
 
     private int getProxyPort() {
-        return proxy.getServicePort();
+        return proxy.getServiceAddress().getPort();
     }
 
     class RequestProxyBasicAuth implements HttpRequestInterceptor {

@@ -71,10 +71,10 @@ public class HttpConcurrentTest extends BaseHttpTest {
 
     private void doSendMessages(int files, int poolSize) throws Exception {
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future> responses = new ConcurrentHashMap<Integer, Future>();
+        Map<Integer, Future<Object>> responses = new ConcurrentHashMap<Integer, Future<Object>>();
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future out = executor.submit(new Callable<Object>() {
+            Future<Object> out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     return template.requestBody("http4://" + getHostName() + ":" + getPort(), null, String.class);
                 }
@@ -86,7 +86,7 @@ public class HttpConcurrentTest extends BaseHttpTest {
 
         // get all responses
         Set<Object> unique = new HashSet<Object>();
-        for (Future future : responses.values()) {
+        for (Future<Object> future : responses.values()) {
             unique.add(future.get());
         }
 

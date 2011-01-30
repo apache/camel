@@ -72,5 +72,4 @@ public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport 
 
     private class MyOtherBinding extends DefaultHttpBinding {
     }
-
 }

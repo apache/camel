@@ -31,6 +31,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.util.EntityUtils;
 
 /**
  * A polling HTTP consumer which by default performs a GET
@@ -102,7 +103,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
         } finally {
             if (responeEntity != null) {
                 try {
-                    responeEntity.consumeContent();
+                    EntityUtils.consume(responeEntity);
                 } catch (IOException e) {
                     // nothing what we can do
                 }

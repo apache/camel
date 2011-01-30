@@ -29,7 +29,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.http4.helper.GZIPHelper;
@@ -54,6 +53,7 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.util.EntityUtils;
 
 /**
  * @version $Revision$
@@ -110,9 +110,9 @@ public class HttpProducer extends DefaultProducer {
                 populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
             }
         } finally {
-            if (httpResponse != null && httpResponse.getEntity() != null) {
+            if (httpResponse != null) {
                 try {
-                    httpResponse.getEntity().consumeContent();
+                    EntityUtils.consume(httpResponse.getEntity());
                 } catch (IOException e) {
                     // nothing we could do
                 }

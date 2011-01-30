@@ -20,9 +20,11 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.HttpResponseFactory;
 import org.apache.http.localserver.LocalTestServer;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpProcessor;
+import org.apache.http.protocol.HttpExpectationVerifier;
 import org.junit.After;
 import org.junit.Before;
 
@@ -43,6 +45,8 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
         localServer = new LocalTestServer(
                 getBasicHttpProcessor(),
                 getConnectionReuseStrategy(),
+                getHttpResponseFactory(),
+                getHttpExpectationVerifier(),
                 getHttpParams(),
                 getSSLContext());
         registerHandler(localServer);
@@ -78,6 +82,26 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
      * @return connectionReuseStrategy
      */
     protected ConnectionReuseStrategy getConnectionReuseStrategy() {
+        return null;
+    }
+    
+    /**
+     * Returns the org.apache.http.HttpResponseFactory which should be used
+     * by the server.
+     *
+     * @return httpResponseFactory
+     */
+    protected HttpResponseFactory getHttpResponseFactory() {
+        return null;
+    }
+    
+    /**
+     * Returns the org.apache.http.protocol.HttpExpectationVerifier which should be used
+     * by the server.
+     *
+     * @return httpExpectationVerifier
+     */
+    protected HttpExpectationVerifier getHttpExpectationVerifier() {
         return null;
     }
 
@@ -116,7 +140,7 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
      * @return hostName
      */
     protected String getHostName() {
-        return localServer.getServiceHostName();
+        return localServer.getServiceAddress().getHostName();
     }
 
     /**
@@ -125,6 +149,6 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
      * @return port
      */
     protected int getPort() {
-        return localServer.getServicePort();
+        return localServer.getServiceAddress().getPort();
     }
 }
