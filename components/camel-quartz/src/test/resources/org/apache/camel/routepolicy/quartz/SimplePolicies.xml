@@ -51,7 +51,7 @@
  	</bean> 
  	
     <routeContext id="testRouteContext" xmlns="http://camel.apache.org/schema/spring">
-        <route id="testRoute" routePolicyRef="policy">
+        <route id="testRoute">
             <from uri="direct:start"/>
             <to uri="mock:success"/>
         </route>

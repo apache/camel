@@ -25,6 +25,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -107,12 +108,12 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
     @SuppressWarnings("unchecked")
     private CamelContext startRouteWithPolicy(String policyBeanName) throws Exception {
         CamelContext context = new DefaultCamelContext();
-        ArrayList<RouteDefinition> routes = (ArrayList<RouteDefinition>) applicationContext.getBean("testRouteContext");
-        if (getTestType() == TestType.SIMPLE) {
-            routes.get(0).setRoutePolicy((SimpleScheduledRoutePolicy) applicationContext.getBean(policyBeanName));            
-        } else {
-            routes.get(0).setRoutePolicy((CronScheduledRoutePolicy) applicationContext.getBean(policyBeanName));
-        }
+        ArrayList<RouteDefinition> routes = (ArrayList<RouteDefinition>)applicationContext.getBean("testRouteContext");
+        RoutePolicy policy = (RoutePolicy)applicationContext.getBean(policyBeanName);
+        assertTrue(getTestType() == TestType.SIMPLE 
+            ? policy instanceof SimpleScheduledRoutePolicy 
+            : policy instanceof CronScheduledRoutePolicy);
+        routes.get(0).routePolicy(policy);
         context.addRouteDefinitions(routes);
         context.start();
         return context;
