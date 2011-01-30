@@ -84,15 +84,12 @@ public class DataFormatDefinition extends IdentifiedType {
     public DataFormat getDataFormat(RouteContext routeContext) {
         if (dataFormat == null) {
             dataFormat = createDataFormat(routeContext);
-            if (dataFormat == null) {
-                if (dataFormatName != null) {
-                    throw new IllegalArgumentException("Data format '" + dataFormatName + "' could not be created."
-                        + "Ensure that the dataformat is valid and the associated Camel component is present on the classpath");
-                } else {
-                    throw new IllegalArgumentException("Data format could not be created. Ensure that the dataformat is valid and the associated Camel component is present on the classpath");
-                }
-            } else {
+            if (dataFormat != null) {
                 configureDataFormat(dataFormat);
+            } else {
+                throw new IllegalArgumentException(
+                    "Data format '" + (dataFormatName != null ? dataFormatName : "<null>") + "' could not be created. "
+                    + "Ensure that the dataformat is valid and the associated Camel component is present on the classpath");
             }
         }
         return dataFormat;
