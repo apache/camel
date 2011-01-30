@@ -19,6 +19,7 @@ package org.apache.camel.core.osgi;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -53,7 +54,9 @@ public class OsgiComponentResolver implements ComponentResolver {
     }
 
     protected Component getComponent(String name, CamelContext context) throws Exception {
-        LOG.trace("Finding Component: " + name);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Finding Component: " + name);
+        }
         try {
             ServiceReference[] refs = bundleContext.getServiceReferences(ComponentResolver.class.getName(), "(component=" + name + ")");
             if (refs != null && refs.length > 0) {
@@ -62,7 +65,7 @@ public class OsgiComponentResolver implements ComponentResolver {
             }
             return null;
         } catch (InvalidSyntaxException e) {
-            throw new RuntimeException(e); // Should never happen
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 

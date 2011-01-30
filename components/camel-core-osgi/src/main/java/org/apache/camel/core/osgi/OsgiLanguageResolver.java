@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -63,7 +64,9 @@ public class OsgiLanguageResolver implements LanguageResolver {
     }
 
     protected Language getLanguage(String name, CamelContext context) {
-        LOG.trace("Finding Language: " + name);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Finding Language: " + name);
+        }
         try {
             ServiceReference[] refs = bundleContext.getServiceReferences(LanguageResolver.class.getName(), "(language=" + name + ")");
             if (refs != null && refs.length > 0) {
@@ -72,12 +75,14 @@ public class OsgiLanguageResolver implements LanguageResolver {
             }
             return null;
         } catch (InvalidSyntaxException e) {
-            throw new RuntimeException(e); // Should never happen
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 
     protected LanguageResolver getLanguageResolver(String name, CamelContext context) {
-        LOG.trace("Finding LanguageResolver: " + name);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Finding LanguageResolver: " + name);
+        }
         try {
             ServiceReference[] refs = bundleContext.getServiceReferences(LanguageResolver.class.getName(), "(resolver=" + name + ")");
             if (refs != null && refs.length > 0) {
@@ -86,7 +91,7 @@ public class OsgiLanguageResolver implements LanguageResolver {
             }
             return null;
         } catch (InvalidSyntaxException e) {
-            throw new RuntimeException(e); // Should never happen
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 

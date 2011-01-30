@@ -59,7 +59,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
             try {
                 answer = url.openStream();
             } catch (IOException ex) {
-                LOG.error("Cannot load resource: " + uri, ex);
+                throw new RuntimeException("Cannot load resource: " + uri, ex);
             }
         } 
         return answer;
@@ -79,7 +79,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
                 answer = loader.loadClass(name);
             } catch (ClassNotFoundException e) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Cannot load class: " + name + " using classloader: " + loader, e);
+                    LOG.trace("Cannot load class: " + name + " using classloader: " + loader + ". This exception will be ignored.", e);
                 }
             }
         }

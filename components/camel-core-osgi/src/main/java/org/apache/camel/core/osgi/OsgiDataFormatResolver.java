@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -73,7 +74,9 @@ public class OsgiDataFormatResolver implements DataFormatResolver {
     }
 
     protected DataFormat getDataFormat(String name, CamelContext context) {
-        LOG.trace("Finding DataFormat: " + name);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Finding DataFormat: " + name);
+        }
         try {
             ServiceReference[] refs = bundleContext.getServiceReferences(DataFormatResolver.class.getName(), "(dataformat=" + name + ")");
             if (refs != null && refs.length > 0) {
@@ -82,7 +85,7 @@ public class OsgiDataFormatResolver implements DataFormatResolver {
             }
             return null;
         } catch (InvalidSyntaxException e) {
-            throw new RuntimeException(e); // Should never happen
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 

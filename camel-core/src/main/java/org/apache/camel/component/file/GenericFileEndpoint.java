@@ -139,6 +139,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         Class<?> factory = null;
         try {
             FactoryFinder finder = getCamelContext().getFactoryFinder("META-INF/services/org/apache/camel/component/");
+            if (log.isTraceEnabled()) {
+                log.trace("Using FactoryFinder: " + finder);
+            }
             factory = finder.findClass(getScheme(), "strategy.factory.");
         } catch (ClassNotFoundException e) {
             if (log.isTraceEnabled()) {
@@ -152,7 +155,28 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
         if (factory == null) {
             // use default
-            factory = this.getCamelContext().getClassResolver().resolveClass(DEFAULT_STRATEGYFACTORY_CLASS);
+            try {
+                if (log.isTraceEnabled()) {
+                    log.trace("Using ClassResolver to resolve class: " + DEFAULT_STRATEGYFACTORY_CLASS);
+                }
+                factory = this.getCamelContext().getClassResolver().resolveClass(DEFAULT_STRATEGYFACTORY_CLASS);
+            } catch (Exception e) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Cannot load class: " + DEFAULT_STRATEGYFACTORY_CLASS, e);
+                }
+            }
+            // fallback and us this class loader
+            try {
+                if (log.isTraceEnabled()) {
+                    log.trace("Using classloader: " + this.getClass().getClassLoader() + " to resolve class: " + DEFAULT_STRATEGYFACTORY_CLASS);
+                }
+                factory = this.getCamelContext().getClassResolver().resolveClass(DEFAULT_STRATEGYFACTORY_CLASS, this.getClass().getClassLoader());
+            } catch (Exception e) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Cannot load class: " + DEFAULT_STRATEGYFACTORY_CLASS + " using classloader: " + this.getClass().getClassLoader(), e);
+                }
+            }
+
             if (factory == null) {
                 throw new TypeNotPresentException(DEFAULT_STRATEGYFACTORY_CLASS + " class not found", null);
             }

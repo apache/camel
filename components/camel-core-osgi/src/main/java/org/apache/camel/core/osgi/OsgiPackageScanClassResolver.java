@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
@@ -90,21 +91,21 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
 
     @SuppressWarnings("unchecked")
     private Set<String> getImplementationsInBundle(PackageScanFilter test, String packageName) {
-        try {
-            Bundle[] bundles;
-            if (bundle.getBundleContext() != null) {
-                bundles = bundle.getBundleContext().getBundles();
-            } else {
-                bundles = new Bundle[]{bundle};
+        Bundle[] bundles;
+        if (bundle.getBundleContext() != null) {
+            bundles = bundle.getBundleContext().getBundles();
+        } else {
+            bundles = new Bundle[]{bundle};
+        }
+        Set<String> urls = new LinkedHashSet<String>();
+        for (Bundle bd : bundles) {
+            if (log.isTraceEnabled()) {
+                log.trace("Searching in bundle:" + bd);
             }
-            Set<String> urls = new HashSet<String>();
-            for (Bundle bd : bundles) {            
-                if (log.isTraceEnabled()) {
-                    log.trace("Searching in bundle:" + bd);
-                }            
+            try {
                 Enumeration<URL> paths = bd.findEntries("/" + packageName, "*.class", true);
                 while (paths != null && paths.hasMoreElements()) {
-                    URL path = paths.nextElement();                
+                    URL path = paths.nextElement();
                     String pathString = path.getPath();
                     String urlString = pathString.substring(pathString.indexOf(packageName));
                     urls.add(urlString);
@@ -112,13 +113,12 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
                         log.trace("Added url: " + urlString);
                     }
                 }
+            } catch (Throwable t) {
+                log.warn("Cannot search in bundle: " + bundle + " for classes matching criteria: " + test + " due: "
+                        + t.getMessage() + ". This exception will be ignored.", t);
             }
-            return urls;
-        } catch (Throwable t) {
-            log.warn("Cannot search bundles for classes matching criteria: " + test + " due: "
-                    + t.getMessage() + ". This exception will be ignored.", t);
-            return null;
         }
+        return urls;
     }
 
 }

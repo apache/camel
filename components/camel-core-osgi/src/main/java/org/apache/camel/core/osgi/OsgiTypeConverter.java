@@ -28,6 +28,7 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -50,11 +51,16 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     }
 
     public Object addingService(ServiceReference serviceReference) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("AddingService: " + serviceReference);
+        }
         TypeConverterLoader loader = (TypeConverterLoader) bundleContext.getService(serviceReference);
-        try {
-            loader.load(getDelegate());
-        } catch (Throwable t) {
-            LOG.debug("Error while loading type converter", t);
+        if (loader != null) {
+            try {
+                loader.load(getDelegate());
+            } catch (Throwable t) {
+                throw ObjectHelper.wrapRuntimeCamelException(t);
+            }
         }
         return loader;
     }
@@ -63,6 +69,9 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     }
 
     public void removedService(ServiceReference serviceReference, Object o) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("RemovedService: " + serviceReference);
+        }
         this.delegate = null;
     }
 
@@ -128,6 +137,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
 
     protected DefaultTypeConverter createRegistry() {
         // base the osgi type converter on the default type converter
+        // TODO: Why is it based on the DefaultPackageScanClassResolver and not OsgiPackageScanClassResolver?
         DefaultTypeConverter reg = new DefaultTypeConverter(new DefaultPackageScanClassResolver() {
             @Override
             public Set<ClassLoader> getClassLoaders() {
@@ -140,11 +150,17 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
                 try {
                     ((TypeConverterLoader) o).load(reg);
                 } catch (Throwable t) {
-                    LOG.debug("Error while loading type converter", t);
+                    throw ObjectHelper.wrapRuntimeCamelException(t);
                 }
             }
         }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Created TypeConverter: " + reg);
+        }
         return reg;
     }
+
+
 
 }
