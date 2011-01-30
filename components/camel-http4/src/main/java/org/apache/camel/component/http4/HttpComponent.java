@@ -168,7 +168,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             httpClientConfigurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
         }
         
-        x509HostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", X509HostnameVerifier.class);
+        X509HostnameVerifier x509HostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", X509HostnameVerifier.class);
+        if (x509HostnameVerifier == null) {
+            x509HostnameVerifier = this.x509HostnameVerifier;
+        }
         
         // create the configurer to use for this endpoint
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters);
@@ -226,8 +229,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             // must register both https and https4
             SSLSocketFactory socketFactory = SSLSocketFactory.getSocketFactory();
             socketFactory.setHostnameVerifier(x509HostnameVerifier);
-            registry.register(new Scheme("https4", port, socketFactory));
-            registry.register(new Scheme("https", port, SSLSocketFactory.getSocketFactory()));
+            registry.register(new Scheme("https", port, socketFactory));
             LOG.info("Registering SSL scheme https on port " + port);
             
             socketFactory = SSLSocketFactory.getSocketFactory();
