@@ -124,6 +124,24 @@ public class ManagedThreadPool {
         return threadPool.getCompletedTaskCount();
     }
 
+    @ManagedAttribute(description = "Task queue size")
+    public long getTaskQueueSize() {
+        if (threadPool.getQueue() != null) {
+            return threadPool.getQueue().size();
+        } else {
+            return 0;
+        }
+    }
+
+    @ManagedAttribute(description = "Is task queue empty")
+    public boolean isTaskQueueEmpty() {
+        if (threadPool.getQueue() != null) {
+            return threadPool.getQueue().isEmpty();
+        } else {
+            return true;
+        }
+    }
+
     @ManagedAttribute(description = "Keep alive time in seconds")
     public long getKeepAliveTime() {
         return threadPool.getKeepAliveTime(TimeUnit.SECONDS);

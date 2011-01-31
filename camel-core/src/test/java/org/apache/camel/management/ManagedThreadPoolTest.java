@@ -61,6 +61,12 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
 
         Long completed = (Long) mbeanServer.getAttribute(on, "CompletedTaskCount");
         assertEquals(1, completed.intValue());
+
+        Long size = (Long) mbeanServer.getAttribute(on, "TaskQueueSize");
+        assertEquals(0, size.intValue());
+
+        Boolean empty = (Boolean) mbeanServer.getAttribute(on, "TaskQueueEmpty");
+        assertEquals(true, empty.booleanValue());
     }
 
     @Override
