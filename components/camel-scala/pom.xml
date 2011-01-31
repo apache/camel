@@ -79,6 +79,7 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala-version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- JMX management of EIPs using Spring JMX annotations -->
         <dependency>
