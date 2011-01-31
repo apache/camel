@@ -40,6 +40,33 @@ lengths, if/try depths, etc...
     <module name="Translation"/>
 
     <!--<module name="StrictDuplicateCode"/>-->
+    
+    <!-- Header checks -->
+    <module name="Header">
+    	<property name="header"
+        	value="/**\n * Licensed to the Apache Software Foundation (ASF) under one or more\n * contributor license agreements.  See the NOTICE file distributed with\n * this work for additional information regarding copyright ownership.\n * The ASF licenses this file to You under the Apache License, Version 2.0\n * (the &quot;License&quot;); you may not use this file except in compliance with\n * the License.  You may obtain a copy of the License at\n *\n *      http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\n"/>
+    </module>
+    
+    <module name="RegexpMultiline">
+        <property name="format" value="(\bgpl\b)|(\bgplv2\b)|(\bgnu\sgeneral\spublic\s*license\b)|(\bwww\.gnu\.org\/licenses\/gpl\.txt\b)"/>
+        <property name="ignoreCase"  value="true"/>
+    </module>
+    
+    <module name="FileLength">
+        <property name="max" value="3000"/>
+    </module>
+    
+    <module name="FileTabCharacter">
+        <property name="fileExtensions" value="java"/>
+    </module>
+    
+    <!-- 
+	<module name="RegexpSingleline">
+		<property name="format" value="\s+$"/>
+		<property name="minimum" value="0"/>
+		<property name="maximum" value="0"/>
+	</module>
+	 -->
 
     <module name="TreeWalker">
 
@@ -66,11 +93,6 @@ lengths, if/try depths, etc...
         <module name="StaticVariableName"/>
         <module name="TypeName"/>
 
-        <!-- Header checks -->
-        <module name="Header">
-            <property name="header"
-                value="/**\n * Licensed to the Apache Software Foundation (ASF) under one or more\n * contributor license agreements.  See the NOTICE file distributed with\n * this work for additional information regarding copyright ownership.\n * The ASF licenses this file to You under the Apache License, Version 2.0\n * (the &quot;License&quot;); you may not use this file except in compliance with\n * the License.  You may obtain a copy of the License at\n *\n *      http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\n"/>
-        </module>
         <!-- <module name="RegexpHeader"/> -->
 
 
@@ -79,6 +101,9 @@ lengths, if/try depths, etc...
         <module name="AvoidStarImport">
             <property name="excludes" value="java.io,java.util,java.net,java.nio,java.nio.channels,java.lang.reflect,org.w3c.dom,org.xml.sax,java.awt,javax.swing,junit.framework"/>
         </module>
+        <!-- 
+        <module name="ConstantName"/>
+         -->
         <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
         <module name="RedundantImport"/>
         <!-- When you javadoc {@link } an import is added that checkstyle thinks is unused import.
@@ -93,11 +118,6 @@ lengths, if/try depths, etc...
             <property name="file" value="etc/import-control.xml"/>
         </module>
         -->
-        <module name="GenericIllegalRegexp">
-          <property name="format" value="(\bgpl\b)|(\bgplv2\b)|(\bgnu\sgeneral\spublic\s*license\b)|(\bwww\.gnu\.org\/licenses\/gpl\.txt\b)"/>
-          <property name="ignoreComments" value="false"/>
-          <property name="ignoreCase"  value="true"/>
-        </module>
 
         <!-- Checks for Size Violations.                    -->
         <!-- See http://checkstyle.sf.net/config_sizes.html -->
@@ -105,11 +125,8 @@ lengths, if/try depths, etc...
             <property name="max" value="200"/>
         </module>
         <module name="ExecutableStatementCount">
-            <property name="max" value="75"/>
+            <property name="max" value="100"/>
         </module>
-        <module name="FileLength">
-            <property name="max" value="3000"/>
-    	</module>
         <module name="LineLength">
             <property name="max" value="200"/>
         </module>
@@ -135,7 +152,6 @@ lengths, if/try depths, etc...
         <module name="OperatorWrap"/>
         <module name="ParenPad"/>
         <module name="TypecastParenPad"/>
-        <module name="TabCharacter"/>
         <module name="WhitespaceAfter">
             <property name="tokens" value="COMMA, SEMI"/>
         </module>
@@ -144,6 +160,9 @@ lengths, if/try depths, etc...
             <!-- <property name="tokens" value="ASSIGN, BAND, BAND_ASSIGN, BOR, BOR_ASSIGN, BSR, BSR_ASSIGN, BXOR, BXOR_ASSIGN, COLON, DIV, DIV_ASSIGN, EQUAL, GE, GT, LAND, LCURLY, LE, LITERAL_ASSERT, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_RETURN, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, LOR, LT, MINUS, MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, PLUS_ASSIGN, QUESTION, RCURLY, SL, SLIST, SL_ASSIGN, SR, SR_ASSIGN, STAR, STAR_ASSIGN,TYPE_EXTENSION_AND"/>-->
         </module>
 
+		<!-- 
+		<module name="GenericWhitespace"/>
+		 -->
 
         <!-- Modifier Checks                                    -->
         <!-- See http://checkstyle.sf.net/config_modifiers.html -->
@@ -166,6 +185,10 @@ lengths, if/try depths, etc...
         <module name="LeftCurly"/>
         <module name="NeedBraces"/>
         <module name="RightCurly"/>
+        
+        <!-- 
+        <module name="OuterTypeNumber"/>
+         -->
 
 
         <!-- Checks for common coding problems               -->
@@ -183,6 +206,9 @@ lengths, if/try depths, etc...
             <property name="ignoreSetter" value="true"/>
         </module>
         -->
+        <!-- 
+        <module name="EqualsAvoidNull"/>
+         -->
         <module name="IllegalInstantiation"/>
         <!--<module name="IllegalToken"/>-->
         <!--<module name="IllegalTokenText"/>-->
@@ -223,6 +249,15 @@ lengths, if/try depths, etc...
         <module name="DeclarationOrder"/>
         <!--<module name="ParameterAssignment"/>-->
         <module name="ExplicitInitialization"/>
+        <!-- <module name="AnnotationUseStyle"/> -->
+        <!-- <module name="MissingDeprecated"/> -->
+        <!-- 
+		<module name="MissingOverride">
+			<property name="javaFiveCompatibility" value="true"/>
+		</module>
+         -->
+         <!-- <module name="PackageAnnotation"/> -->
+         <!-- <module name="SuppressWarnings"/> -->
         <module name="DefaultComesLast"/>
         <!--<module name="MissingCtor"/>-->
         <module name="FallThrough"/>
