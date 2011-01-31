@@ -24,15 +24,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit test to verify exclusive read option using *none*
  */
 public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
 
-    private static final Log LOG = LogFactory.getLog(FileExclusiveReadNoneStrategyTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileExclusiveReadNoneStrategyTest.class);
     private String fileUrl = "file://target/exclusiveread/slowfile?noop=true&consumer.delay=500&readLock=none";
 
     @Override

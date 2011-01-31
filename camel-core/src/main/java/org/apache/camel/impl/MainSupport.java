@@ -37,14 +37,14 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
 import org.apache.camel.view.RouteDotGenerator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public abstract class MainSupport extends ServiceSupport {
-    protected static final Log LOG = LogFactory.getLog(MainSupport.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(MainSupport.class);
     protected String dotOutputDir;
     protected final List<Option> options = new ArrayList<Option>();
     protected final CountDownLatch latch = new CountDownLatch(1);
@@ -62,7 +62,7 @@ public abstract class MainSupport extends ServiceSupport {
      * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
      */
     private final class HangupInterceptor extends Thread {
-        Log log = LogFactory.getLog(this.getClass());
+        Logger log = LoggerFactory.getLogger(this.getClass());
         MainSupport mainInstance;
 
         public HangupInterceptor(MainSupport main) {
@@ -75,7 +75,7 @@ public abstract class MainSupport extends ServiceSupport {
             try {
                 mainInstance.stop();
             } catch (Exception ex) {
-                log.warn(ex);
+                log.warn("Error during stopping the main instance.", ex);
             }
         }
     }

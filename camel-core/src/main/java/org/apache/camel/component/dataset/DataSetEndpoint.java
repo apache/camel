@@ -28,8 +28,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Endpoint for DataSet.
@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DataSetEndpoint extends MockEndpoint implements Service {
-    private final transient Log log;
+    private final transient Logger log;
     private DataSet dataSet;
     private AtomicInteger receivedCounter = new AtomicInteger();
     private int minRate;
@@ -48,19 +48,19 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private Processor reporter;
 
     public DataSetEndpoint() {
-        this.log = LogFactory.getLog(DataSetEndpoint.class);
+        this.log = LoggerFactory.getLogger(DataSetEndpoint.class);
     }
 
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
         super(endpointUri, component);
         this.dataSet = dataSet;
-        this.log = LogFactory.getLog(endpointUri);
+        this.log = LoggerFactory.getLogger(endpointUri);
     }
 
     public DataSetEndpoint(String endpointUri, DataSet dataSet) {
         super(endpointUri);
         this.dataSet = dataSet;
-        this.log = LogFactory.getLog(endpointUri);
+        this.log = LoggerFactory.getLogger(endpointUri);
     }
 
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {

@@ -31,8 +31,8 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Processor for forwarding exchanges to an endpoint destination.
@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected final CamelContext camelContext;
     protected ProducerCache producerCache;
     protected Endpoint destination;

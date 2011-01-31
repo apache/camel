@@ -24,8 +24,8 @@ import javax.xml.xpath.XPathVariableResolver;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.builder.xml.Namespaces.ENVIRONMENT_VARIABLES;
 import static org.apache.camel.builder.xml.Namespaces.EXCHANGE_PROPERTY;
@@ -43,7 +43,7 @@ import static org.apache.camel.builder.xml.Namespaces.SYSTEM_PROPERTIES_NAMESPAC
  * @version $Revision$
  */
 public class MessageVariableResolver implements XPathVariableResolver {
-    private static final transient Log LOG = LogFactory.getLog(MessageVariableResolver.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MessageVariableResolver.class);
 
     private Map<String, Object> variables = new HashMap<String, Object>();
     private final ThreadLocal<Exchange> exchange;

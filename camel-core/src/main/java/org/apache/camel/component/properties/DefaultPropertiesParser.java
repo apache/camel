@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A parser to parse a string which contains property placeholders
@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DefaultPropertiesParser implements PropertiesParser {
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     
     public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
         String answer = text;

@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <code>SamplingThrottler</code> is a special kind of throttler. It also
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SamplingThrottler extends DelegateAsyncProcessor {
 
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     private long messageFrequency;
     private long currentMessageCount;
     private long samplePeriod;

@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.processor.LogProcessor;
-import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -83,7 +83,7 @@ public class LogDefinition extends ProcessorDefinition {
         }
         // should be INFO by default
         LoggingLevel level = getLoggingLevel() != null ? getLoggingLevel() : LoggingLevel.INFO;
-        Logger logger = new Logger(name, level);
+        CamelLogger logger = new CamelLogger(name, level);
 
         return new LogProcessor(exp, logger);
     }

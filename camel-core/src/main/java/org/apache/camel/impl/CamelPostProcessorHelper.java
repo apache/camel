@@ -38,8 +38,8 @@ import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A helper class for Camel based injector or post processing hooks which can be reused by
@@ -50,7 +50,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class CamelPostProcessorHelper implements CamelContextAware {
-    private static final transient Log LOG = LogFactory.getLog(CamelPostProcessorHelper.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelPostProcessorHelper.class);
 
     @XmlTransient
     private CamelContext camelContext;

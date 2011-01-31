@@ -28,8 +28,8 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -45,7 +45,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  */
 @ManagedResource("FileIdempotentRepository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
-    private static final transient Log LOG = LogFactory.getLog(FileIdempotentRepository.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(FileIdempotentRepository.class);
     private static final String STORE_DELIMITER = "\n";
     private Map<String, Object> cache;
     private File fileStore;

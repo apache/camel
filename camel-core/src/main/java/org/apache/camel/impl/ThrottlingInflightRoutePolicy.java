@@ -24,8 +24,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Route;
-import org.apache.camel.processor.Logger;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.processor.CamelLogger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A throttle based {@link org.apache.camel.spi.RoutePolicy} which is capable of dynamic
@@ -45,7 +45,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport {
     private int resumePercentOfMax = 70;
     private int resumeInflightExchanges = 700;
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
-    private Logger logger;
+    private CamelLogger logger;
 
     public ThrottlingInflightRoutePolicy() {
     }
@@ -142,7 +142,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport {
         return loggingLevel;
     }
 
-    public Logger getLogger() {
+    public CamelLogger getLogger() {
         if (logger == null) {
             logger = createLogger();
         }
@@ -154,7 +154,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport {
      *
      * @param logger the logger
      */
-    public void setLogger(Logger logger) {
+    public void setLogger(CamelLogger logger) {
         this.logger = logger;
     }
 
@@ -169,8 +169,8 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport {
         this.loggingLevel = loggingLevel;
     }
 
-    protected Logger createLogger() {
-        return new Logger(LogFactory.getLog(ThrottlingInflightRoutePolicy.class), getLoggingLevel());
+    protected CamelLogger createLogger() {
+        return new CamelLogger(LoggerFactory.getLogger(ThrottlingInflightRoutePolicy.class), getLoggingLevel());
     }
 
     private int getSize(Consumer consumer, Exchange exchange) {

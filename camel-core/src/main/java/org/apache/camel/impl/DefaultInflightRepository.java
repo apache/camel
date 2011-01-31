@@ -22,8 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.InflightRepository;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implement which just uses a counter
@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultInflightRepository extends ServiceSupport implements InflightRepository  {
 
-    private static final transient Log LOG = LogFactory.getLog(DefaultInflightRepository.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
     private final AtomicInteger totalCount = new AtomicInteger();
     // use endpoint key as key so endpoints with lenient properties is registered using the same key (eg dynamic http endpoints)
     private final ConcurrentHashMap<String, AtomicInteger> endpointCount = new ConcurrentHashMap<String, AtomicInteger>();

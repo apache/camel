@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Synchronization;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 /**
  * @version $Revision$
@@ -33,7 +33,7 @@ public final class UnitOfWorkHelper {
     }
 
     @SuppressWarnings("unchecked")
-    public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Log log) {
+    public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {
         boolean failed = exchange.isFailed();
 
         if (synchronizations != null && !synchronizations.isEmpty()) {

@@ -30,8 +30,8 @@ import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.Ordered;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -40,7 +40,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class OnCompletionProcessor extends ServiceSupport implements Processor, Traceable {
 
-    private static final transient Log LOG = LogFactory.getLog(OnCompletionProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(OnCompletionProcessor.class);
     private final CamelContext camelContext;
     private final Processor processor;
     private final ExecutorService executorService;

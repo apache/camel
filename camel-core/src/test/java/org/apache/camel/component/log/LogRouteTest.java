@@ -17,14 +17,14 @@
 package org.apache.camel.component.log;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class LogRouteTest extends ContextTestSupport {
-    private static final Log LOG = LogFactory.getLog(LogRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LogRouteTest.class);
 
     public void testSendMessageToLog() throws Exception {
         template.sendBody("log:org.apache.camel.TEST", "<level>default</level>");

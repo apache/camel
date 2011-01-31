@@ -47,8 +47,8 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Some core java.io based <a
@@ -58,7 +58,7 @@ import org.apache.commons.logging.LogFactory;
  */
 @Converter
 public final class IOConverter {
-    private static final transient Log LOG = LogFactory.getLog(IOConverter.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(IOConverter.class);
 
     /**
      * Utility classes should not have a public constructor.

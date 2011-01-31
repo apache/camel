@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.BinaryPredicateSupport;
 import org.apache.camel.util.Time;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents time based clauses for setting expectations on the mocks.
@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class TimeClause extends BinaryPredicateSupport {
 
-    private static final Log LOG = LogFactory.getLog(TimeClause.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TimeClause.class);
 
     private Time timeFrom;
     private Time timeTo;

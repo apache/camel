@@ -24,14 +24,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.Simple;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(BeanRouteTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
     protected MyOtherBean myOtherBean = new MyOtherBean();
 

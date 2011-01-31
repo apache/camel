@@ -20,15 +20,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class TracingWithDelayTest extends ContextTestSupport {
 
-    private static final Log LOG = LogFactory.getLog(TracingWithDelayTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TracingWithDelayTest.class);
 
     public void testTracingWithDelay() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");

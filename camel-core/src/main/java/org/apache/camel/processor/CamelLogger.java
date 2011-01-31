@@ -22,42 +22,43 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchangeFormatter;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExchangeFormatter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A {@link Processor} which just logs to a {@link Log} object which can be used
+ * A {@link Processor} which just logs to a {@link CamelLogger} object which can be used
  * as an exception handler instead of using a dead letter queue.
  *
  * @version $Revision$
  */
-public class Logger extends ServiceSupport implements Processor {
-    private Log log;
+public class CamelLogger extends ServiceSupport implements Processor {
+    // TODO: Rename CamelLogger to a better name
+    private Logger log;
     private LoggingLevel level;
     private ExchangeFormatter formatter = DefaultExchangeFormatter.getInstance();
 
-    public Logger() {
-        this(LogFactory.getLog(Logger.class));
+    public CamelLogger() {
+        this(LoggerFactory.getLogger(CamelLogger.class));
     }
 
-    public Logger(Log log) {
+    public CamelLogger(Logger log) {
         this(log, LoggingLevel.INFO);
     }
 
-    public Logger(Log log, LoggingLevel level) {
+    public CamelLogger(Logger log, LoggingLevel level) {
         this.log = log;
         this.level = level;
     }
 
-    public Logger(String logName) {
-        this(LogFactory.getLog(logName));
+    public CamelLogger(String logName) {
+        this(LoggerFactory.getLogger(logName));
     }
 
-    public Logger(String logName, LoggingLevel level) {
-        this(LogFactory.getLog(logName), level);
+    public CamelLogger(String logName, LoggingLevel level) {
+        this(LoggerFactory.getLogger(logName), level);
     }
 
-    public Logger(Log log, ExchangeFormatter formatter) {
+    public CamelLogger(Logger log, ExchangeFormatter formatter) {
         this(log);
         this.formatter = formatter;
     }
@@ -77,11 +78,6 @@ public class Logger extends ServiceSupport implements Processor {
         case ERROR:
             if (log.isErrorEnabled()) {
                 log.error(logMessage(exchange));
-            }
-            break;
-        case FATAL:
-            if (log.isFatalEnabled()) {
-                log.fatal(logMessage(exchange));
             }
             break;
         case INFO:
@@ -118,11 +114,6 @@ public class Logger extends ServiceSupport implements Processor {
                 log.error(logMessage(exchange), exception);
             }
             break;
-        case FATAL:
-            if (log.isFatalEnabled()) {
-                log.fatal(logMessage(exchange), exception);
-            }
-            break;
         case INFO:
             if (log.isInfoEnabled()) {
                 log.info(logMessage(exchange), exception);
@@ -155,11 +146,6 @@ public class Logger extends ServiceSupport implements Processor {
         case ERROR:
             if (log.isErrorEnabled()) {
                 log.error(logMessage(exchange, message));
-            }
-            break;
-        case FATAL:
-            if (log.isFatalEnabled()) {
-                log.fatal(logMessage(exchange, message));
             }
             break;
         case INFO:
@@ -203,11 +189,6 @@ public class Logger extends ServiceSupport implements Processor {
                 log.error(message);
             }
             break;
-        case FATAL:
-            if (log.isFatalEnabled()) {
-                log.fatal(message);
-            }
-            break;
         case INFO:
             if (log.isInfoEnabled()) {
                 log.info(message);
@@ -249,11 +230,6 @@ public class Logger extends ServiceSupport implements Processor {
                 log.error(message, exception);
             }
             break;
-        case FATAL:
-            if (log.isFatalEnabled()) {
-                log.fatal(message, exception);
-            }
-            break;
         case INFO:
             if (log.isInfoEnabled()) {
                 log.info(message, exception);
@@ -276,19 +252,19 @@ public class Logger extends ServiceSupport implements Processor {
         }
     }
 
-    protected Object logMessage(Exchange exchange) {
+    protected String logMessage(Exchange exchange) {
         return formatter.format(exchange);
     }
 
-    protected Object logMessage(Exchange exchange, String message) {
+    protected String logMessage(Exchange exchange, String message) {
         return formatter.format(exchange) + message;
     }
 
-    public Log getLog() {
+    public Logger getLog() {
         return log;
     }
 
-    public void setLog(Log log) {
+    public void setLog(Logger log) {
         this.log = log;
     }
 
@@ -305,7 +281,7 @@ public class Logger extends ServiceSupport implements Processor {
     }
 
     public void setLogName(String logName) {
-        this.log = LogFactory.getLog(logName);
+        this.log = LoggerFactory.getLogger(logName);
     }
 
     @Override

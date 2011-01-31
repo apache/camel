@@ -20,12 +20,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Converter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Converter
 public final class TimePatternConverter {   
-    private static final transient Log LOG = LogFactory.getLog(TimePatternConverter.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(TimePatternConverter.class);
     private static final String NUMBERS_ONLY_STRING_PATTERN = "^[-]?(\\d)+$";
     private static final String REPLACEMENT_PATTERN = "[our|inute|econd](s)?";
     private static final String HOUR_REGEX_PATTERN = "((\\d)*(\\d))[h|H]";

@@ -22,15 +22,15 @@ import java.util.Date;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic File. Specific implementations of a file based endpoint need to
  * provide a File for transfer.
  */
 public class GenericFile<T>  {
-    private static final transient Log LOG = LogFactory.getLog(GenericFile.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(GenericFile.class);
 
     private String endpointPath;
     private String fileName;

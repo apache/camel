@@ -40,7 +40,7 @@ public class TracerConfigurationTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 Tracer tracer = new Tracer();
-                tracer.setLogLevel(LoggingLevel.FATAL);
+                tracer.setLogLevel(LoggingLevel.ERROR);
                 tracer.setLogName("com.mycompany");
 
                 getContext().addInterceptStrategy(tracer);

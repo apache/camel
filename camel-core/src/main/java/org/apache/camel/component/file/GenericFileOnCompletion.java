@@ -21,8 +21,8 @@ import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * On completion strategy that performs the required work after the {@link Exchange} has been processed.
@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class GenericFileOnCompletion<T> implements Synchronization {
 
-    private final transient Log log = LogFactory.getLog(GenericFileOnCompletion.class);
+    private final transient Logger log = LoggerFactory.getLogger(GenericFileOnCompletion.class);
     private GenericFileEndpoint<T> endpoint;
     private GenericFileOperations<T> operations;
     private ExceptionHandler exceptionHandler;

@@ -52,8 +52,8 @@ import org.apache.camel.util.ExpressionComparator;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Mock endpoint which provides a literate, fluent API for testing routes
@@ -72,7 +72,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
-    private static final transient Log LOG = LogFactory.getLog(MockEndpoint.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
     private int expectedCount;
     private int counter;
     private Processor defaultProcessor;

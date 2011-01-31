@@ -18,11 +18,11 @@ package org.apache.camel.builder;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.Logger;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.spi.RouteContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Uses the {@link Logger} as an error handler, will log at <tt>ERROR</tt> level by default.
@@ -30,17 +30,17 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
-    private Log log = LogFactory.getLog(Logger.class);
+    private Logger log = LoggerFactory.getLogger(Logger.class);
     private LoggingLevel level = LoggingLevel.ERROR;
 
     public LoggingErrorHandlerBuilder() {
     }
 
-    public LoggingErrorHandlerBuilder(final Log log) {
+    public LoggingErrorHandlerBuilder(final Logger log) {
         this.log = log;
     }
 
-    public LoggingErrorHandlerBuilder(final Log log, final LoggingLevel level) {
+    public LoggingErrorHandlerBuilder(final Logger log, final LoggingLevel level) {
         this.log = log;
         this.level = level;
     }
@@ -50,7 +50,7 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     public Processor createErrorHandler(final RouteContext routeContext, final Processor processor) {
-        Logger logger = new Logger(log, level);
+        CamelLogger logger = new CamelLogger(log, level);
 
         LoggingErrorHandler handler = new LoggingErrorHandler(routeContext.getCamelContext(), processor, logger, getExceptionPolicyStrategy());
         configure(handler);
@@ -65,11 +65,11 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         this.level = level;
     }
 
-    public Log getLog() {
+    public Logger getLog() {
         return log;
     }
 
-    public void setLog(final Log log) {
+    public void setLog(final Logger log) {
         this.log = log;
     }
 
@@ -78,7 +78,7 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
-    public LoggingErrorHandlerBuilder log(final Log log) {
+    public LoggingErrorHandlerBuilder log(final Logger log) {
         this.log = log;
         return this;
     }

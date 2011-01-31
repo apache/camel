@@ -31,14 +31,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(BeanWithHeadersAndBodyInject2Test.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BeanWithHeadersAndBodyInject2Test.class);
     private MyBean myBean = new MyBean();
     private Map<String, User> users = new HashMap<String, User>();
 

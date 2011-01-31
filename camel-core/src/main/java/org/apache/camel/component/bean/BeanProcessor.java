@@ -30,8 +30,8 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Processor} which converts the inbound exchange to a method
@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
-    private static final transient Log LOG = LogFactory.getLog(BeanProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BeanProcessor.class);
 
     private boolean multiParameterArray;
     private Method methodObject;

@@ -27,14 +27,14 @@ import java.util.Arrays;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Invocation of beans that can handle being serialized.
  */
 public class BeanInvocation implements Externalizable {
-    private static final transient Log LOG = LogFactory.getLog(BeanInvocation.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BeanInvocation.class);
     private Object[] args;
     private MethodBean methodBean;
     private transient Method method;

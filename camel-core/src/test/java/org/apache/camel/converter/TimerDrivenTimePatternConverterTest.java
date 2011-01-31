@@ -20,11 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(TimerDrivenTimePatternConverterTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(TimerDrivenTimePatternConverterTest.class);
     
     public void testTimerInvocation() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result"); 

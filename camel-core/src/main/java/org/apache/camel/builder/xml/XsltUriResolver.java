@@ -26,8 +26,8 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Camel specific {@link javax.xml.transform.URIResolver} which is capable of loading files
@@ -43,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class XsltUriResolver implements URIResolver {
 
-    private static final transient Log LOG = LogFactory.getLog(XsltUriResolver.class); 
+    private static final transient Logger LOG = LoggerFactory.getLogger(XsltUriResolver.class); 
 
     private final ClassResolver resolver;
     private final String location;

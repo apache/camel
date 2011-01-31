@@ -41,7 +41,7 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
      * @param exceptionPolicyStrategy   strategy for onException handling
      * @param retryWhile                retry while
      */
-    public DefaultErrorHandler(CamelContext camelContext, Processor output, Logger logger, Processor redeliveryProcessor,
+    public DefaultErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor,
                                RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy,
                                ExceptionPolicyStrategy exceptionPolicyStrategy, Predicate retryWhile) {
         super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false, retryWhile);

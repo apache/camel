@@ -26,8 +26,8 @@ import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Uses the {@link java.beans.PropertyEditor} conversion system to convert Objects to
@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PropertyEditorTypeConverter implements TypeConverter, Service {
 
-    private static final Log LOG = LogFactory.getLog(PropertyEditorTypeConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PropertyEditorTypeConverter.class);
     // use a bound cache to avoid using too much memory in case a lot of different classes
     // is being converted to string
     private final Map<Class, Class> misses = new LRUCache<Class, Class>(1000);

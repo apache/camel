@@ -19,12 +19,12 @@ package org.apache.camel.impl;
 import junit.framework.TestCase;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ActiveMQUuidGeneratorTest extends TestCase {
     
-    private static final Log LOG = LogFactory.getLog(ActiveMQUuidGeneratorTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ActiveMQUuidGeneratorTest.class);
 
     public void testGenerateUUID() {
         ActiveMQUuidGenerator uuidGenerator = new ActiveMQUuidGenerator();

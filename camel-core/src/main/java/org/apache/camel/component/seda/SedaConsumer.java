@@ -35,8 +35,8 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Consumer for the SEDA component.
@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, ShutdownAware {
-    private static final transient Log LOG = LogFactory.getLog(SedaConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);
 
     private CountDownLatch latch;
     private volatile boolean shutdownPending;

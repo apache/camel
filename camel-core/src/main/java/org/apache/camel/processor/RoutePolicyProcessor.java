@@ -26,8 +26,8 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.spi.RoutePolicy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link Processor} which instruments the {@link RoutePolicy}.
@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class RoutePolicyProcessor extends DelegateAsyncProcessor {
 
-    private static final Log LOG = LogFactory.getLog(RoutePolicyProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RoutePolicyProcessor.class);
     private final List<RoutePolicy> routePolicies;
     private Route route;
 

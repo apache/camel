@@ -47,7 +47,7 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
      * @param useOriginalBodyPolicy     should the original IN body be moved to the dead letter queue or the current exchange IN body?
      * @param retryWhile                retry while
      */
-    public DeadLetterChannel(CamelContext camelContext, Processor output, Logger logger, Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
+    public DeadLetterChannel(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
                              Predicate handledPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy, Processor deadLetter,
                              String deadLetterUri, boolean useOriginalBodyPolicy, Predicate retryWhile) {
         super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, deadLetter, deadLetterUri, useOriginalBodyPolicy, retryWhile);

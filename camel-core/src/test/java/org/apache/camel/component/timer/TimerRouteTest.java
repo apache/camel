@@ -23,14 +23,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class TimerRouteTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(TimerRouteTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(TimerRouteTest.class);
     private MyBean bean = new MyBean();
 
     public void testTimerInvokesBeanMethod() throws Exception {

@@ -18,11 +18,11 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MyProcessor implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(MyProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MyProcessor.class);
     
     public void process(Exchange exchange) {
         LOG.debug("Called with exchange: " + exchange);

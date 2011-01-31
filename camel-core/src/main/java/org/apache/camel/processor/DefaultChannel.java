@@ -41,8 +41,8 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.OrderedComparator;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DefaultChannel is the default {@link Channel}.
@@ -58,7 +58,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultChannel extends ServiceSupport implements Channel {
 
-    private static final transient Log LOG = LogFactory.getLog(DefaultChannel.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultChannel.class);
 
     private final List<InterceptStrategy> interceptors = new ArrayList<InterceptStrategy>();
     private Processor errorHandler;

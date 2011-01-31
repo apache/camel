@@ -20,8 +20,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default implementation of {@link Producer} for implementation inheritance.
@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class DefaultProducer extends ServiceSupport implements Producer {
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     private final Endpoint endpoint;
 
     public DefaultProducer(Endpoint endpoint) {

@@ -32,8 +32,8 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Some helper methods for working with {@link Endpoint} instances
@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class EndpointHelper {
 
-    private static final transient Log LOG = LogFactory.getLog(EndpointHelper.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(EndpointHelper.class);
     private static final AtomicLong ENDPOINT_COUNTER = new AtomicLong(0);
 
     private EndpointHelper() {

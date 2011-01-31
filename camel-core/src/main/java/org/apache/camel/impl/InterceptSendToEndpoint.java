@@ -27,8 +27,8 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
@@ -39,7 +39,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  */
 public class InterceptSendToEndpoint implements Endpoint {
 
-    private static final transient Log LOG = LogFactory.getLog(InterceptSendToEndpoint.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(InterceptSendToEndpoint.class);
 
     private final Endpoint delegate;
     private Producer producer;

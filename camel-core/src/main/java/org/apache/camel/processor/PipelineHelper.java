@@ -17,7 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
 
@@ -40,7 +40,7 @@ public final class PipelineHelper {
      * @param log a logger
      * @return <tt>true</tt> to continue processing, <tt>false</tt> to break out, for example if an exception occurred.
      */
-    public static boolean continueProcessing(Exchange exchange, String message, Log log) {
+    public static boolean continueProcessing(Exchange exchange, String message, Logger log) {
         // check for error if so we should break out
         boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(exchange);
         if (exchange.isFailed() || exchange.isRollbackOnly() || exceptionHandled) {

@@ -23,13 +23,13 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
 public class DefaultTransformErrorHandler implements ErrorHandler, ErrorListener {
-    private static final transient Log LOG = LogFactory.getLog(DefaultTransformErrorHandler.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultTransformErrorHandler.class);
 
     public void error(SAXParseException exception) throws SAXException {
         throw exception;

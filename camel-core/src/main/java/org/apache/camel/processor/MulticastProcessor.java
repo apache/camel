@@ -63,8 +63,8 @@ import org.apache.camel.util.concurrent.AtomicException;
 import org.apache.camel.util.concurrent.AtomicExchange;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.camel.util.concurrent.SubmitOrderedCompletionService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -77,7 +77,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class MulticastProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
 
-    private static final transient Log LOG = LogFactory.getLog(MulticastProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MulticastProcessor.class);
 
     /**
      * Class that represent each step in the multicast route to do

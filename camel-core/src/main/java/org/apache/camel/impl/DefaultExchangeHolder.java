@@ -21,8 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Holder object for sending an exchange over a remote wire as a serialized object.
@@ -48,7 +48,7 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultExchangeHolder implements Serializable {
 
     private static final long serialVersionUID = 2L;
-    private static final transient Log LOG = LogFactory.getLog(DefaultExchangeHolder.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultExchangeHolder.class);
 
     private String exchangeId;
     private Object inBody;

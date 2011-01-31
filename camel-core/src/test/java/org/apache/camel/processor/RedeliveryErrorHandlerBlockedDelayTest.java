@@ -21,15 +21,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class RedeliveryErrorHandlerBlockedDelayTest extends ContextTestSupport {
 
-    private static final Log LOG = LogFactory.getLog(RedeliveryErrorHandlerBlockedDelayTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RedeliveryErrorHandlerBlockedDelayTest.class);
 
     private static volatile int attempt;
 

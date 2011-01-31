@@ -20,8 +20,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.processor.DelegateAsyncProcessor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JMX enabled processor that uses the {@link org.apache.camel.management.mbean.ManagedCounter} for instrumenting
@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class InstrumentationProcessor extends DelegateAsyncProcessor {
 
-    private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(InstrumentationProcessor.class);
     private PerformanceCounter counter;
     private String type;
 

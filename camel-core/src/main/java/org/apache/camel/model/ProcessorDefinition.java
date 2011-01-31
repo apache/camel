@@ -68,8 +68,8 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.builder.Builder.body;
 
@@ -80,7 +80,7 @@ import static org.apache.camel.builder.Builder.body;
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition implements Block {
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected ErrorHandlerBuilder errorHandlerBuilder;
     protected String errorHandlerRef;
     protected Boolean inheritErrorHandler;

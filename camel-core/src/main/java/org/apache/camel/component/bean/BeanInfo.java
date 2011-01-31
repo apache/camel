@@ -49,8 +49,8 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ExchangeHelper.convertToType;
 
@@ -61,7 +61,7 @@ import static org.apache.camel.util.ExchangeHelper.convertToType;
  * @version $Revision$
  */
 public class BeanInfo {
-    private static final transient Log LOG = LogFactory.getLog(BeanInfo.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BeanInfo.class);
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
     private final CamelContext camelContext;

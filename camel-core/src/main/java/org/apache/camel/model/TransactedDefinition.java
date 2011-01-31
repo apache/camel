@@ -33,8 +33,8 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents an XML &lt;transacted/&gt; element
@@ -52,7 +52,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     @XmlTransient
     public static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
 
-    private static final transient Log LOG = LogFactory.getLog(TransactedDefinition.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(TransactedDefinition.class);
 
     @XmlTransient
     protected Class<? extends Policy> type = TransactedPolicy.class;

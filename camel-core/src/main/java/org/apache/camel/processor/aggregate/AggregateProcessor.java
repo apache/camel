@@ -55,8 +55,8 @@ import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.TimeoutMap;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the <a
@@ -77,7 +77,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class AggregateProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
 
-    private static final Log LOG = LogFactory.getLog(AggregateProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AggregateProcessor.class);
 
     private final Lock lock = new ReentrantLock();
     private final CamelContext camelContext;

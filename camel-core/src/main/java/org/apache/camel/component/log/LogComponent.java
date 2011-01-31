@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.processor.Logger;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.IntrospectionSupport;
 
@@ -38,7 +38,7 @@ public class LogComponent extends DefaultComponent {
         Integer groupSize = getAndRemoveParameter(parameters, "groupSize", Integer.class);
         Long groupInterval = getAndRemoveParameter(parameters, "groupInterval", Long.class);
 
-        Logger logger;
+        CamelLogger logger;
         if (groupSize != null) {
             logger = new ThroughputLogger(remaining, level, groupSize);
         } else if (groupInterval != null) {
@@ -49,7 +49,7 @@ public class LogComponent extends DefaultComponent {
             LogFormatter formatter = new LogFormatter();
             IntrospectionSupport.setProperties(formatter, parameters);
 
-            logger = new Logger(remaining);
+            logger = new CamelLogger(remaining);
             logger.setLevel(level);
             logger.setFormatter(formatter);
         }

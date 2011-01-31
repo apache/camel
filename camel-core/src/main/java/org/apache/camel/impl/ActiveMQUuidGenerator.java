@@ -21,8 +21,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.InetAddressUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link org.apache.camel.spi.UuidGenerator} which is a fast implementation based on
@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ActiveMQUuidGenerator implements UuidGenerator {
 
-    private static final transient Log LOG = LogFactory.getLog(ActiveMQUuidGenerator.class); 
+    private static final transient Logger LOG = LoggerFactory.getLogger(ActiveMQUuidGenerator.class); 
     private static final String UNIQUE_STUB;
     private static int instanceCount;
     private static String hostName;

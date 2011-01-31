@@ -24,8 +24,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The processor which sends messages in a loop.
@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class LoopProcessor extends DelegateAsyncProcessor implements Traceable {
-    private static final Log LOG = LogFactory.getLog(LoopProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoopProcessor.class);
 
     private final Expression expression;
 

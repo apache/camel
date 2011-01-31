@@ -25,8 +25,8 @@ import javax.management.modelmbean.RequiredModelMBean;
 
 import org.apache.camel.management.mbean.ManagedInstance;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
@@ -39,7 +39,7 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
  * @version $Revision$
  */
 public class JmxMBeanAssembler {
-    private static final Log LOG = LogFactory.getLog(JmxMBeanAssembler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JmxMBeanAssembler.class);
     private final MetadataMBeanInfoAssembler assembler;
     private final MBeanServer server;
 

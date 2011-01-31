@@ -55,8 +55,8 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.builder.xml.Namespaces.DEFAULT_NAMESPACE;
 import static org.apache.camel.builder.xml.Namespaces.FUNCTION_NAMESPACE;
@@ -79,7 +79,7 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
  * @version $Revision$
  */
 public class XPathBuilder implements Expression, Predicate, NamespaceAware, Service {
-    private static final transient Log LOG = LogFactory.getLog(XPathBuilder.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
     private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<XPathExpression>();
     private final String text;
     private final ThreadLocal<MessageVariableResolver> variableResolver = new ThreadLocal<MessageVariableResolver>();

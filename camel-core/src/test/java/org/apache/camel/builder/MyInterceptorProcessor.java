@@ -18,11 +18,11 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.DelegateProcessor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MyInterceptorProcessor extends DelegateProcessor {
-    private static final transient Log LOG = LogFactory.getLog(MyInterceptorProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MyInterceptorProcessor.class);
 
     public void process(Exchange exchange) throws Exception {
         LOG.debug("START of onExchange: " + exchange);

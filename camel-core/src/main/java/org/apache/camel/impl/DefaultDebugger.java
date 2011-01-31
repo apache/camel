@@ -41,8 +41,8 @@ import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The default implementation of the {@link Debugger}.
@@ -51,7 +51,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultDebugger implements Debugger, CamelContextAware {
 
-    private static final Log LOG = LogFactory.getLog(DefaultDebugger.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultDebugger.class);
     private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<BreakpointConditions>();
     private final int maxConcurrentSingleSteps = 1;
     private final Map<String, Breakpoint> singleSteps = new HashMap<String, Breakpoint>(maxConcurrentSingleSteps);

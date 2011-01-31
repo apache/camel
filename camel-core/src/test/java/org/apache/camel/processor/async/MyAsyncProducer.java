@@ -25,15 +25,15 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class MyAsyncProducer extends DefaultAsyncProducer {
 
-    private static final Log LOG = LogFactory.getLog(MyAsyncProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyAsyncProducer.class);
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final AtomicInteger counter = new AtomicInteger();
 

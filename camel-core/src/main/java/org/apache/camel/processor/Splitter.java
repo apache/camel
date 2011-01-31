@@ -38,8 +38,8 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -52,7 +52,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public class Splitter extends MulticastProcessor implements AsyncProcessor, Traceable {
-    private static final transient Log LOG = LogFactory.getLog(Splitter.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(Splitter.class);
 
     private final Expression expression;
 

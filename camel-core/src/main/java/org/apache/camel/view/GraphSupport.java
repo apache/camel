@@ -30,8 +30,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A base class for Graph processing code of Camel EIPs containing a number of helper methods
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class GraphSupport {
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected final Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
     private String imagePrefix = "http://camel.apache.org/images/eip/";
 

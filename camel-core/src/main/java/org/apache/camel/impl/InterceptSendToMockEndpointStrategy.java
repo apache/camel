@@ -21,8 +21,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.util.EndpointHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
@@ -36,7 +36,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
 
-    private static final Log LOG = LogFactory.getLog(InterceptSendToMockEndpointStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InterceptSendToMockEndpointStrategy.class);
     private final String pattern;
 
     /**

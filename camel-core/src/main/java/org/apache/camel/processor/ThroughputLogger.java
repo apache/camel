@@ -25,16 +25,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A logger for logging message throughput.
  *
  * @version $Revision$
  */
-public class ThroughputLogger extends Logger {
-    private static final Log LOG = LogFactory.getLog(ThroughputLogger.class);
+public class ThroughputLogger extends CamelLogger {
+    private static final Logger LOG = LoggerFactory.getLogger(ThroughputLogger.class);
 
     private final AtomicInteger receivedCounter = new AtomicInteger();
     private NumberFormat numberFormat = NumberFormat.getNumberInstance();
@@ -53,11 +53,11 @@ public class ThroughputLogger extends Logger {
     public ThroughputLogger() {
     }
 
-    public ThroughputLogger(Log log) {
+    public ThroughputLogger(Logger log) {
         super(log);
     }
 
-    public ThroughputLogger(Log log, LoggingLevel level) {
+    public ThroughputLogger(Logger log, LoggingLevel level) {
         super(log, level);
     }
 
@@ -166,7 +166,7 @@ public class ThroughputLogger extends Logger {
     }
 
     @Override
-    protected Object logMessage(Exchange exchange) {
+    protected String logMessage(Exchange exchange) {
         return logMessage;
     }
 
@@ -178,7 +178,7 @@ public class ThroughputLogger extends Logger {
 
             logSchedulerService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "ThroughputLogger", 1);
             Runnable scheduledLogTask = new ScheduledLogTask();
-            LOG.info("scheduling throughput log to run every " + groupInterval + " millis.");
+            LOG.info("Scheduling throughput log to run every " + groupInterval + " millis.");
             // must use fixed rate to have it trigger at every X interval
             logSchedulerService.scheduleAtFixedRate(scheduledLogTask, groupDelay, groupInterval, TimeUnit.MILLISECONDS);
         }

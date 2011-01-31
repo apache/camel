@@ -31,7 +31,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
         return INSTANCE;
     }
 
-    public Object format(Exchange exchange) {
+    public String format(Exchange exchange) {
         return exchange.toString();
     }
 }

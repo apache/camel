@@ -38,8 +38,8 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A base class for any kind of {@link Processor} which implements some kind of batch processing.
@@ -53,7 +53,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
 
-    private static final Log LOG = LogFactory.getLog(BatchProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BatchProcessor.class);
 
     private long batchTimeout = DEFAULT_BATCH_TIMEOUT;
     private int batchSize = DEFAULT_BATCH_SIZE;

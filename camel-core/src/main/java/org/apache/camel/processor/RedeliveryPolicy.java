@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The policy used to decide how many times to redeliver and the time between
@@ -76,7 +76,7 @@ import org.apache.commons.logging.LogFactory;
 public class RedeliveryPolicy implements Cloneable, Serializable {
     protected static transient Random randomNumberGenerator;
     private static final long serialVersionUID = -338222777701473252L;
-    private static final transient Log LOG = LogFactory.getLog(RedeliveryPolicy.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(RedeliveryPolicy.class);
 
     protected long redeliveryDelay = 1000L;
     protected int maximumRedeliveries;

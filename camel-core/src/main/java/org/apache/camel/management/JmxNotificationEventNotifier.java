@@ -22,8 +22,8 @@ import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
 
 import org.apache.camel.spi.EventNotifier;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A JMX based {@link EventNotifier} which broadcasts JMX {@link Notification}s.
@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class JmxNotificationEventNotifier extends EventNotifierSupport implements JmxNotificationBroadcasterAware {
-    private static final transient Log LOG = LogFactory.getLog(JmxNotificationEventNotifier.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JmxNotificationEventNotifier.class);
     private final AtomicLong counter = new AtomicLong();
     private NotificationBroadcasterSupport notificationBroadcaster;
     private String source = "Camel";

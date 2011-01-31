@@ -18,15 +18,15 @@ package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class XPathRouteConcurrentBigTest extends ContextTestSupport {
 
-    private static final transient Log LOG = LogFactory.getLog(XPathRouteConcurrentBigTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(XPathRouteConcurrentBigTest.class);
 
     private static final String XMLTEST1 =
             "<message><messageType>AAA</messageType><sender>0123456789101112131415</sender>"

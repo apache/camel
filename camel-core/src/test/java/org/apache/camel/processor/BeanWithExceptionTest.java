@@ -27,8 +27,8 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
@@ -98,7 +98,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     }
 
     public static class ValidationBean {
-        private static final transient Log LOG = LogFactory.getLog(ValidationBean.class);
+        private static final transient Logger LOG = LoggerFactory.getLogger(ValidationBean.class);
 
         public void someMethod(String body, @Header("foo")
                                String header, @Property("cheese") String cheese) throws ValidationException {

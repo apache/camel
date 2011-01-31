@@ -27,7 +27,7 @@ import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Log formatter to format the logging output.
+ * Logger formatter to format the logging output.
  */
 public class LogFormatter implements ExchangeFormatter {
 
@@ -46,7 +46,7 @@ public class LogFormatter implements ExchangeFormatter {
     private boolean showFuture;
     private int maxChars;
 
-    public Object format(Exchange exchange) {
+    public String format(Exchange exchange) {
         Message in = exchange.getIn();
 
         StringBuilder sb = new StringBuilder("");

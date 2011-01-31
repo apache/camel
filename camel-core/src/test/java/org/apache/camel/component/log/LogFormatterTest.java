@@ -26,7 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 
 /**
- * Log formatter test.
+ * Logger formatter test.
  */
 public class LogFormatterTest extends ContextTestSupport {
 

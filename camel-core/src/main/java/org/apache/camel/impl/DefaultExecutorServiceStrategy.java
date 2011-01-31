@@ -38,15 +38,15 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class DefaultExecutorServiceStrategy extends ServiceSupport implements ExecutorServiceStrategy {
 
-    private static final Log LOG = LogFactory.getLog(DefaultExecutorServiceStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultExecutorServiceStrategy.class);
     private final List<ExecutorService> executorServices = new ArrayList<ExecutorService>();
     private final CamelContext camelContext;
     private String threadNamePattern;

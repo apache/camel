@@ -16,29 +16,28 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RollbackExchangeException;
-import org.apache.camel.processor.Logger;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.LoggerFactory;
 
 /**
- * A default implementation of {@link ExceptionHandler} which uses a {@link Logger} to
- * log to an arbitrary {@link org.apache.commons.logging.Log Log} with some {@link LoggingLevel}
+ * A default implementation of {@link ExceptionHandler} which uses a {@link org.apache.camel.processor.CamelLogger} to
+ * log to an arbitrary {@link org.apache.commons.logging.Log Logger} with some {@link LoggingLevel}
  *
  * @version $Revision$
  */
 public class LoggingExceptionHandler implements ExceptionHandler {
-    private final Logger logger;
+    private final CamelLogger logger;
 
     public LoggingExceptionHandler(Class<?> ownerType) {
-        this(new Logger(LogFactory.getLog(ownerType), LoggingLevel.ERROR));
+        this(new CamelLogger(LoggerFactory.getLogger(ownerType), LoggingLevel.ERROR));
     }
 
-    public LoggingExceptionHandler(Logger logger) {
+    public LoggingExceptionHandler(CamelLogger logger) {
         this.logger = logger;
     }
 

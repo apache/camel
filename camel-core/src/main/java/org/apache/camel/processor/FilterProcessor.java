@@ -21,8 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The processor which implements the
@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class FilterProcessor extends DelegateAsyncProcessor implements Traceable {
-    private static final Log LOG = LogFactory.getLog(FilterProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FilterProcessor.class);
     private final Predicate predicate;
 
     public FilterProcessor(Predicate predicate, Processor processor) {

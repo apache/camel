@@ -40,8 +40,8 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic FileEndpoint
@@ -51,7 +51,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected static final transient String DEFAULT_STRATEGYFACTORY_CLASS = "org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory";
     protected static final transient int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
 
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
 
     protected GenericFileProcessStrategy<T> processStrategy;
     protected GenericFileConfiguration configuration;

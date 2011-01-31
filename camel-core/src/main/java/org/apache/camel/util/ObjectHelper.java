@@ -48,8 +48,8 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A number of useful helper methods for working with Objects
@@ -57,7 +57,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public final class ObjectHelper {
-    private static final transient Log LOG = LogFactory.getLog(ObjectHelper.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -1023,7 +1023,7 @@ public final class ObjectHelper {
      * @deprecated use {@link org.apache.camel.util.IOHelper#close(java.io.Closeable, String, org.apache.commons.logging.Log)}
      */
     @Deprecated
-    public static void close(Closeable closeable, String name, Log log) {
+    public static void close(Closeable closeable, String name, Logger log) {
         IOHelper.close(closeable, name, log);
     }
 

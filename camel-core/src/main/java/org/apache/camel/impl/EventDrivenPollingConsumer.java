@@ -26,8 +26,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default implementation of the {@link org.apache.camel.PollingConsumer} which uses the normal
@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(EventDrivenPollingConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(EventDrivenPollingConsumer.class);
     private final BlockingQueue<Exchange> queue;
     private ExceptionHandler interruptedExceptionHandler = new LoggingExceptionHandler(EventDrivenPollingConsumer.class);
     private Consumer consumer;

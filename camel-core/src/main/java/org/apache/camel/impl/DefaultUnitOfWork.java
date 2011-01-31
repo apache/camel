@@ -35,8 +35,8 @@ import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.UnitOfWorkHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The default implementation of {@link org.apache.camel.spi.UnitOfWork}
@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DefaultUnitOfWork implements UnitOfWork, Service {
-    private static final transient Log LOG = LogFactory.getLog(DefaultUnitOfWork.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultUnitOfWork.class);
 
     private String id;
     private CamelContext context;

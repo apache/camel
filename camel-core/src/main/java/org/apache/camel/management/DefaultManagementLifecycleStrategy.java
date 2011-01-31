@@ -92,8 +92,8 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default JMX managed lifecycle strategy that registered objects using the configured
@@ -105,7 +105,7 @@ import org.apache.commons.logging.LogFactory;
 @SuppressWarnings("deprecation")
 public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Service, CamelContextAware {
 
-    private static final Log LOG = LogFactory.getLog(DefaultManagementLifecycleStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementLifecycleStrategy.class);
     private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
     private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors =
             new HashMap<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>>();

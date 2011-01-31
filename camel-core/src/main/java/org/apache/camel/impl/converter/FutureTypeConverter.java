@@ -25,8 +25,8 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Future type converter.
@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
 @Converter
 public final class FutureTypeConverter implements TypeConverter {
 
-    private static final Log LOG = LogFactory.getLog(FutureTypeConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FutureTypeConverter.class);
 
     private final TypeConverter converter;
 

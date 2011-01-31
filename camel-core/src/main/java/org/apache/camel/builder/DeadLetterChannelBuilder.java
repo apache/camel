@@ -22,13 +22,13 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.LoggerFactory;
 
 /**
  * A builder of a <a
@@ -97,8 +97,8 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
         return new RedeliveryPolicy();
     }
 
-    protected Logger createLogger() {
-        return new Logger(LogFactory.getLog(DeadLetterChannel.class), LoggingLevel.ERROR);
+    protected CamelLogger createLogger() {
+        return new CamelLogger(LoggerFactory.getLogger(DeadLetterChannel.class), LoggingLevel.ERROR);
     }
 
     @Override

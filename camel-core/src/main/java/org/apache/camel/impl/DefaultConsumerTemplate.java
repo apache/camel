@@ -26,8 +26,8 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.UnitOfWorkHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
@@ -40,7 +40,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerTemplate {
 
-    private static final transient Log LOG = LogFactory.getLog(DefaultConsumerTemplate.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultConsumerTemplate.class);
     private final CamelContext context;
     private ConsumerCache consumerCache;
     private int maximumCacheSize;

@@ -23,8 +23,8 @@ import java.util.TimerTask;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The timer consumer.
@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class TimerConsumer extends DefaultConsumer {
-    private static final transient Log LOG = LogFactory.getLog(TimerConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(TimerConsumer.class);
     private final TimerEndpoint endpoint;
     private volatile TimerTask task;
 

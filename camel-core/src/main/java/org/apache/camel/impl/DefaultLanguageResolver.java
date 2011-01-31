@@ -22,8 +22,8 @@ import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default language resolver that looks for language factories in <b>META-INF/services/org/apache/camel/language/</b> and
@@ -35,7 +35,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
     public static final String LANGUAGE_RESOURCE_PATH = "META-INF/services/org/apache/camel/language/";
     public static final String LANGUAGE_RESOLVER_RESOURCE_PATH = LANGUAGE_RESOURCE_PATH + "resolver/";
 
-    private static final transient Log LOG = LogFactory.getLog(DefaultLanguageResolver.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultLanguageResolver.class);
 
     protected FactoryFinder languageFactory;
     protected FactoryFinder languageResolver;
@@ -117,7 +117,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
         return languageResolver.findClass(name);
     }
 
-    protected Log getLog() {
+    protected Logger getLog() {
         return LOG;
     }
 }

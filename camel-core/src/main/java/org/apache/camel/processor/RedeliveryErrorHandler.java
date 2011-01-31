@@ -59,7 +59,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final RedeliveryPolicy redeliveryPolicy;
     protected final Predicate handledPolicy;
     protected final Predicate retryWhilePolicy;
-    protected final Logger logger;
+    protected final CamelLogger logger;
     protected final boolean useOriginalMessagePolicy;
 
     /**
@@ -173,7 +173,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
     }
 
-    public RedeliveryErrorHandler(CamelContext camelContext, Processor output, Logger logger, Processor redeliveryProcessor,
+    public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor,
                                   RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy, Processor deadLetter,
                                   String deadLetterUri, boolean useOriginalMessagePolicy, Predicate retryWhile) {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
@@ -468,7 +468,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return redeliveryPolicy;
     }
 
-    public Logger getLogger() {
+    public CamelLogger getLogger() {
         return logger;
     }
 
@@ -741,8 +741,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             if (exchange.getException() != null) {
                 msg = msg + " due: " + exchange.getException().getMessage();
             }
-            if (newLogLevel == LoggingLevel.ERROR || newLogLevel == LoggingLevel.FATAL) {
-                // log intended rollback on maximum WARN level (no ERROR or FATAL)
+            if (newLogLevel == LoggingLevel.ERROR) {
+                // log intended rollback on maximum WARN level (no ERROR)
                 logger.log(msg, LoggingLevel.WARN);
             } else {
                 // otherwise use the desired logging level

@@ -122,8 +122,8 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -131,7 +131,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DefaultCamelContext extends ServiceSupport implements CamelContext, SuspendableService {
-    private final transient Log log = LogFactory.getLog(getClass());
+    private final transient Logger log = LoggerFactory.getLogger(getClass());
     private JAXBContext jaxbContext;
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
     private String managementName;

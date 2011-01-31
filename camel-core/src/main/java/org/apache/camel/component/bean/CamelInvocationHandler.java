@@ -26,8 +26,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link java.lang.reflect.InvocationHandler} which invokes a
@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class CamelInvocationHandler implements InvocationHandler {
-    private static final transient Log LOG = LogFactory.getLog(CamelInvocationHandler.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelInvocationHandler.class);
 
     private final Endpoint endpoint;
     private final Producer producer;

@@ -42,8 +42,8 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.asString;
 
@@ -53,7 +53,7 @@ import static org.apache.camel.util.ObjectHelper.asString;
  * @version $Revision$
  */
 public class MethodInfo {
-    private static final transient Log LOG = LogFactory.getLog(MethodInfo.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MethodInfo.class);
 
     private CamelContext camelContext;
     private Class<?> type;

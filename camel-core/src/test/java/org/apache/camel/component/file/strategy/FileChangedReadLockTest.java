@@ -22,15 +22,15 @@ import java.io.FileOutputStream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class FileChangedReadLockTest extends ContextTestSupport {
 
-    private static final transient Log LOG = LogFactory.getLog(FileChangedReadLockTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(FileChangedReadLockTest.class);
 
     public void testChangedReadLock() throws Exception {
         deleteDirectory("target/changed/");

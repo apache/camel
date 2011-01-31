@@ -26,14 +26,14 @@ import org.apache.camel.InOnly;
 import org.apache.camel.InOut;
 import org.apache.camel.Pattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class BeanInfoTest extends TestCase {
-    private static final transient Log LOG = LogFactory.getLog(BeanInfoTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BeanInfoTest.class);
 
     protected CamelContext camelContext = new DefaultCamelContext();
 

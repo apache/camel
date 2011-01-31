@@ -41,15 +41,15 @@ import org.apache.camel.impl.scan.CompositePackageScanFilter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.util.IOHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implement of {@link org.apache.camel.spi.PackageScanClassResolver}
  */
 public class DefaultPackageScanClassResolver implements PackageScanClassResolver {
 
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();
     private Set<PackageScanFilter> scanFilters;
     private String[] acceptableSchemes = {};

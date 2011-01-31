@@ -60,11 +60,17 @@
 
       <!-- required dependencies by camel-core -->
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging-api</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
 
-    <!-- required dependencies by camel-core -->
+      <!-- TODO: remove me later, but keep for backwards comp. until fully migrated to sfl4j -->
+      <dependency>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging-api</artifactId>
+      </dependency>
+
+      <!-- required dependencies by camel-core -->
     <dependency>
       <groupId>org.fusesource.commonman</groupId>
       <artifactId>commons-management</artifactId>
@@ -110,8 +116,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

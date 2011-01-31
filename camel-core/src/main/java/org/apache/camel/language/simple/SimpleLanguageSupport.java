@@ -32,8 +32,8 @@ import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.apache.camel.language.simple.SimpleLanguageOperator.*;
 
 /**
@@ -54,7 +54,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
 
     // this is special for the range operator where you define the range as from..to (where from and to are numbers)
     protected static final Pattern RANGE_PATTERN = Pattern.compile("^(\\d+)(\\.\\.)(\\d+)$");
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * A holder class to hold an operator and the expression.

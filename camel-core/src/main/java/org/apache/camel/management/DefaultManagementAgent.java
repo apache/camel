@@ -41,8 +41,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of the Camel JMX service agent
@@ -54,7 +54,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     public static final int DEFAULT_REGISTRY_PORT = 1099;
     public static final int DEFAULT_CONNECTION_PORT = -1;
     public static final String DEFAULT_SERVICE_URL_PATH = "/jmxrmi/camel";
-    private static final transient Log LOG = LogFactory.getLog(DefaultManagementAgent.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultManagementAgent.class);
 
     private CamelContext camelContext;
     private ExecutorService executorService;

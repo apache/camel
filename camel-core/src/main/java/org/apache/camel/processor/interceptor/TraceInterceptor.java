@@ -40,8 +40,8 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.processor.DelegateAsyncProcessor;
-import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -49,8 +49,8 @@ import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An interceptor for debugging and tracing routes
@@ -58,9 +58,9 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class TraceInterceptor extends DelegateAsyncProcessor implements ExchangeFormatter {
-    private static final transient Log LOG = LogFactory.getLog(TraceInterceptor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(TraceInterceptor.class);
 
-    private Logger logger;
+    private CamelLogger logger;
     private Producer traceEventProducer;
     private final ProcessorDefinition node;
     private final Tracer tracer;
@@ -253,8 +253,13 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
         }
     }
 
-    public Object format(Exchange exchange) {
-        return formatter.format(this, this.getNode(), exchange);
+    public String format(Exchange exchange) {
+        Object msg = formatter.format(this, this.getNode(), exchange);
+        if (msg != null) {
+            return msg.toString();
+        } else {
+            return null;
+        }
     }
 
     // Properties
@@ -263,7 +268,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
         return node;
     }
 
-    public Logger getLogger() {
+    public CamelLogger getLogger() {
         return logger;
     }
 

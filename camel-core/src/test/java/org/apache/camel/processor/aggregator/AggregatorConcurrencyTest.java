@@ -28,15 +28,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class AggregatorConcurrencyTest extends ContextTestSupport {
 
-    private static final transient Log LOG = LogFactory.getLog(AggregatorConcurrencyTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(AggregatorConcurrencyTest.class);
 
     private static final AtomicInteger COUNTER = new AtomicInteger(0);
     private static final AtomicInteger SUM = new AtomicInteger(0);

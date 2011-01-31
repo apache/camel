@@ -33,14 +33,14 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * File operations for {@link java.io.File}.
  */
 public class FileOperations implements GenericFileOperations<File> {
-    private static final transient Log LOG = LogFactory.getLog(FileOperations.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(FileOperations.class);
     private FileEndpoint endpoint;
 
     public FileOperations() {

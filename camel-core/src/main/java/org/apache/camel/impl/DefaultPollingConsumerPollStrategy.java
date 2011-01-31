@@ -19,8 +19,8 @@ package org.apache.camel.impl;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default implementation that just logs a <tt>WARN</tt> level log in case of rollback.
@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollStrategy {
 
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
 
     public boolean begin(Consumer consumer, Endpoint endpoint) {
         return true;

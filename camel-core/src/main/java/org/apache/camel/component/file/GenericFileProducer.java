@@ -28,14 +28,14 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic file producer
  */
 public class GenericFileProducer<T> extends DefaultProducer {
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected final GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
     

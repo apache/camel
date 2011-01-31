@@ -37,8 +37,8 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -53,7 +53,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * pipeline to ensure it works the same and the async routing engine is flawless.
  */
 public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Traceable {
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected ProducerCache producerCache;
     protected boolean ignoreInvalidEndpoints;
     protected String header;

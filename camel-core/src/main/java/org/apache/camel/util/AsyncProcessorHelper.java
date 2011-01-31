@@ -25,15 +25,15 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper methods for {@link AsyncProcessor} objects.
  */
 public final class AsyncProcessorHelper {
 
-    private static final transient Log LOG = LogFactory.getLog(AsyncProcessorHelper.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(AsyncProcessorHelper.class);
 
     private AsyncProcessorHelper() {
         // utility class

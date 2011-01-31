@@ -21,15 +21,15 @@ import java.io.OutputStream;
 import java.io.StringReader;
 
 import org.apache.camel.StreamCache;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link org.apache.camel.StreamCache} implementation for Cache the Reader {@link java.io.Reader}s
  */
 public class ReaderCache extends StringReader implements StreamCache {
 
-    private static final transient Log LOG = LogFactory.getLog(ReaderCache.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ReaderCache.class);
 
     private String data;
 

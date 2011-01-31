@@ -22,17 +22,15 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.language.bean.BeanExpression;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.processor.DefaultErrorHandler;
 import org.apache.camel.processor.ErrorHandlerSupport;
-import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.LoggerFactory;
+
 import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
 /**
@@ -42,7 +40,7 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
  */
 public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
-    protected Logger logger;
+    protected CamelLogger logger;
     protected ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
     protected RedeliveryPolicy redeliveryPolicy;
     protected Processor onRedelivery;
@@ -208,7 +206,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      * @param logger the logger
      * @return the builder
      */
-    public DefaultErrorHandlerBuilder logger(Logger logger) {
+    public DefaultErrorHandlerBuilder logger(CamelLogger logger) {
         setLogger(logger);
         return this;
     }
@@ -230,7 +228,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      * @param log the logger
      * @return the builder
      */
-    public DefaultErrorHandlerBuilder log(Log log) {
+    public DefaultErrorHandlerBuilder log(org.slf4j.Logger log) {
         getLogger().setLog(log);
         return this;
     }
@@ -242,7 +240,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      * @return the builder
      */
     public DefaultErrorHandlerBuilder log(String log) {
-        return log(LogFactory.getLog(log));
+        return log(LoggerFactory.getLogger(log));
     }
 
     /**
@@ -252,7 +250,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      * @return the builder
      */
     public DefaultErrorHandlerBuilder log(Class<?> log) {
-        return log(LogFactory.getLog(log));
+        return log(LoggerFactory.getLogger(log));
     }
 
     /**
@@ -340,14 +338,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         this.redeliveryPolicy = redeliveryPolicy;
     }
 
-    public Logger getLogger() {
+    public CamelLogger getLogger() {
         if (logger == null) {
             logger = createLogger();
         }
         return logger;
     }
 
-    public void setLogger(Logger logger) {
+    public void setLogger(CamelLogger logger) {
         this.logger = logger;
     }
 
@@ -466,8 +464,8 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return policy;
     }
 
-    protected Logger createLogger() {
-        return new Logger(LogFactory.getLog(DefaultErrorHandler.class), LoggingLevel.ERROR);
+    protected CamelLogger createLogger() {
+        return new CamelLogger(LoggerFactory.getLogger(DefaultErrorHandler.class), LoggingLevel.ERROR);
     }
 
     @Override

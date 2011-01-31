@@ -18,7 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
@@ -35,10 +35,10 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 LoggingErrorHandlerBuilder eh = loggingErrorHandler();
-                eh.setLevel(LoggingLevel.FATAL);
-                eh.setLog(LogFactory.getLog("foo"));
+                eh.setLevel(LoggingLevel.ERROR);
+                eh.setLog(LoggerFactory.getLogger("foo"));
 
-                assertEquals(LoggingLevel.FATAL, eh.getLevel());
+                assertEquals(LoggingLevel.ERROR, eh.getLevel());
                 assertNotNull(eh.getLog());
                 assertFalse(eh.supportTransacted());
 
@@ -60,7 +60,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(loggingErrorHandler().level(LoggingLevel.FATAL).log(LogFactory.getLog("foo")));
+                errorHandler(loggingErrorHandler().level(LoggingLevel.ERROR).log(LoggerFactory.getLogger("foo")));
 
                 from("direct:start").to("mock:foo").throwException(new IllegalArgumentException("Damn"));
             }
@@ -78,10 +78,10 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                LoggingErrorHandlerBuilder eh = loggingErrorHandler(LogFactory.getLog("foo"));
-                eh.setLevel(LoggingLevel.FATAL);
+                LoggingErrorHandlerBuilder eh = loggingErrorHandler(LoggerFactory.getLogger("foo"));
+                eh.setLevel(LoggingLevel.ERROR);
 
-                assertEquals(LoggingLevel.FATAL, eh.getLevel());
+                assertEquals(LoggingLevel.ERROR, eh.getLevel());
                 assertNotNull(eh.getLog());
                 assertFalse(eh.supportTransacted());
 
@@ -103,9 +103,9 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                LoggingErrorHandlerBuilder eh = loggingErrorHandler(LogFactory.getLog("foo"), LoggingLevel.FATAL);
+                LoggingErrorHandlerBuilder eh = loggingErrorHandler(LoggerFactory.getLogger("foo"), LoggingLevel.ERROR);
 
-                assertEquals(LoggingLevel.FATAL, eh.getLevel());
+                assertEquals(LoggingLevel.ERROR, eh.getLevel());
                 assertNotNull(eh.getLog());
                 assertFalse(eh.supportTransacted());
 

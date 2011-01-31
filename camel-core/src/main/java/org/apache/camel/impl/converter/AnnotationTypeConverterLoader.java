@@ -41,8 +41,8 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class which will auto-discover converter objects and methods to pre-load
@@ -52,7 +52,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
-    private static final transient Log LOG = LogFactory.getLog(AnnotationTypeConverterLoader.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(AnnotationTypeConverterLoader.class);
     protected PackageScanClassResolver resolver;
     protected Set<Class<?>> visitedClasses = new HashSet<Class<?>>();
     protected Set<URL> visitedURLs = new HashSet<URL>();

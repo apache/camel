@@ -24,8 +24,8 @@ import org.apache.camel.Service;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A collection of helper methods for working with {@link Service} objects
@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public final class ServiceHelper {
-    private static final transient Log LOG = LogFactory.getLog(ServiceHelper.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ServiceHelper.class);
 
     /**
      * Utility classes should not have a public constructor.

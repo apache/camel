@@ -31,8 +31,8 @@ import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements try/catch/finally type processing
@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
-    private static final transient Log LOG = LogFactory.getLog(TryProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(TryProcessor.class);
 
     protected final AsyncProcessor tryProcessor;
     protected final DoCatchProcessor catchProcessor;

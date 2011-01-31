@@ -24,14 +24,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class RomeksExceptionTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(RomeksExceptionTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(RomeksExceptionTest.class);
 
     public void testRouteA() throws Exception {
         assertErrorHandlingWorks("a");

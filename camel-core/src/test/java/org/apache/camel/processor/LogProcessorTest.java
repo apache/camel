@@ -58,7 +58,7 @@ public class LogProcessorTest extends ContextTestSupport {
 
                 from("direct:bar").routeId("bar").log(LoggingLevel.WARN, "Also got ${body}").to("mock:bar");
 
-                from("direct:baz").routeId("baz").log(LoggingLevel.FATAL, "cool", "Me got ${body}").to("mock:baz");
+                from("direct:baz").routeId("baz").log(LoggingLevel.ERROR, "cool", "Me got ${body}").to("mock:baz");
             }
         };
     }

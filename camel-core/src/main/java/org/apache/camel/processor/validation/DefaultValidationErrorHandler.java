@@ -26,8 +26,8 @@ import org.xml.sax.SAXParseException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default error handler which just stores all the errors so they can be reported or transformed.
@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
-    private static final transient Log LOG = LogFactory.getLog(DefaultValidationErrorHandler.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultValidationErrorHandler.class);
     private List<SAXParseException> warnings = new ArrayList<SAXParseException>();
     private List<SAXParseException> errors = new ArrayList<SAXParseException>();
     private List<SAXParseException> fatalErrors = new ArrayList<SAXParseException>();

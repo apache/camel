@@ -22,11 +22,11 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.management.DefaultManagementAgent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class TestSupportJmxCleanup {
-    private static final transient Log LOG = LogFactory.getLog(TestSupportJmxCleanup.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(TestSupportJmxCleanup.class);
 
     private TestSupportJmxCleanup() {
         // no instances

@@ -25,10 +25,10 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.Logger;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.LoggerFactory;
 
 /**
  * An interceptor strategy for tracing routes
@@ -50,7 +50,7 @@ public class Tracer implements InterceptStrategy, Service {
     private String destinationUri;
     private Endpoint destination;
     private boolean useJpa;
-    private Logger logger;
+    private CamelLogger logger;
     private TraceInterceptorFactory traceInterceptorFactory = new DefaultTraceInterceptorFactory();
     private TraceEventHandler traceHandler;
     private String jpaTraceEventMessageClassName = JPA_TRACE_EVENT_MESSAGE;
@@ -92,9 +92,9 @@ public class Tracer implements InterceptStrategy, Service {
      * @param formatter the exchange formatter
      * @return the logger to use
      */
-    public synchronized Logger getLogger(ExchangeFormatter formatter) {
+    public synchronized CamelLogger getLogger(ExchangeFormatter formatter) {
         if (logger == null) {
-            logger = new Logger(LogFactory.getLog(getLogName()), formatter);
+            logger = new CamelLogger(LoggerFactory.getLogger(getLogName()), formatter);
             logger.setLevel(getLogLevel());
         }
         return logger;

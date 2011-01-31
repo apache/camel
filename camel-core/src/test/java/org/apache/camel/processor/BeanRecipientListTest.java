@@ -23,14 +23,14 @@ import javax.naming.Context;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class BeanRecipientListTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(BeanRecipientListTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BeanRecipientListTest.class);
     protected MyBean myBean = new MyBean();
 
     public void testSendMessage() throws Exception {

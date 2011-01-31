@@ -28,9 +28,9 @@ import org.apache.camel.Processor;
 public class LogProcessor implements Processor, Traceable {
 
     private final Expression expression;
-    private final Logger logger;
+    private final CamelLogger logger;
 
-    public LogProcessor(Expression expression, Logger logger) {
+    public LogProcessor(Expression expression, CamelLogger logger) {
         this.expression = expression;
         this.logger = logger;
     }

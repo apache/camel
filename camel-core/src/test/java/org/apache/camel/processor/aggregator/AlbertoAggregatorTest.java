@@ -28,8 +28,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
@@ -38,7 +38,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
     private static final String SURNAME_HEADER = "surname";
     private static final String TYPE_HEADER = "type";
     private static final String BROTHERS_TYPE = "brothers";
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void testAggregator() throws Exception {
 

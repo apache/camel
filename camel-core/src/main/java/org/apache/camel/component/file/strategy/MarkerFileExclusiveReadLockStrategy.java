@@ -25,15 +25,15 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.FileUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Acquires read lock to the given file using a marker file so other Camel consumers wont acquire the same file.
  * This is the default behavior in Camel 1.x.
  */
 public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
-    private static final transient Log LOG = LogFactory.getLog(MarkerFileExclusiveReadLockStrategy.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategy.class);
     private File lock;
     private String lockFileName;
 

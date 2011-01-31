@@ -37,15 +37,15 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper for introspections of beans.
  */
 public final class IntrospectionSupport {
 
-    private static final transient Log LOG = LogFactory.getLog(IntrospectionSupport.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(IntrospectionSupport.class);
     private static final Pattern GETTER_PATTERN = Pattern.compile("(get|is)[A-Z].*");
     private static final Pattern SETTER_PATTERN = Pattern.compile("set[A-Z].*");
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();

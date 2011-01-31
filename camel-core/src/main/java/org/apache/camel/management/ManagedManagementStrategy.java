@@ -34,10 +34,12 @@ import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ManagementAgent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.fusesource.commons.management.Statistic;
 import org.fusesource.commons.management.basic.StatisticImpl;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A JMX capable {@link org.apache.camel.spi.ManagementStrategy} that Camel by default uses if possible.
@@ -51,7 +53,7 @@ import org.fusesource.commons.management.basic.StatisticImpl;
  */
 public class ManagedManagementStrategy extends DefaultManagementStrategy {
 
-    private static final transient Log LOG = LogFactory.getLog(ManagedManagementStrategy.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ManagedManagementStrategy.class);
 
     public ManagedManagementStrategy() {
     }

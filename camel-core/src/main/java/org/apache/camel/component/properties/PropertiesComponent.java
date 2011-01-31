@@ -23,8 +23,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/properties">properties</a> component.
@@ -36,7 +36,7 @@ public class PropertiesComponent extends DefaultComponent {
     public static final String PREFIX_TOKEN = "{{";
     public static final String SUFFIX_TOKEN = "}}";
 
-    private static final transient Log LOG = LogFactory.getLog(PropertiesComponent.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
     private final Map<String[], Properties> cacheMap = new LRUCache<String[], Properties>(1000);
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser();

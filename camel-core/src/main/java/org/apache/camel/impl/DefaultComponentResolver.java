@@ -23,8 +23,8 @@ import org.apache.camel.Component;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The default implementation of {@link ComponentResolver} which tries to find
@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultComponentResolver implements ComponentResolver {
 
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/component/";
-    private static final transient Log LOG = LogFactory.getLog(DefaultComponentResolver.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultComponentResolver.class);
     private FactoryFinder factoryFinder;
 
     @SuppressWarnings("unchecked")
@@ -92,7 +92,7 @@ public class DefaultComponentResolver implements ComponentResolver {
         return factoryFinder.findClass(name);
     }
 
-    protected Log getLog() {
+    protected Logger getLog() {
         return LOG;
     }
 

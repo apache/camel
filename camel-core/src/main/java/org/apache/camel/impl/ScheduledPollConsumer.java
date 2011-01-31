@@ -25,8 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A useful base class for any consumer which is polling based
@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService {
-    private static final transient Log LOG = LogFactory.getLog(ScheduledPollConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
 
     private final ScheduledExecutorService executor;
     private ScheduledFuture<?> future;

@@ -57,13 +57,14 @@ import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.ServiceRegistration;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
@@ -74,7 +75,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public static final String META_INF_TYPE_CONVERTER = "META-INF/services/org/apache/camel/TypeConverter";
     public static final String META_INF_FALLBACK_TYPE_CONVERTER = "META-INF/services/org/apache/camel/FallbackTypeConverter";
 
-    private static final transient Log LOG = LogFactory.getLog(Activator.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(Activator.class);
 
     private BundleTracker tracker;
     private Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<Long, List<BaseService>>();

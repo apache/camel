@@ -22,15 +22,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class SplitAggregateInOutTest extends ContextTestSupport {
 
-    private static final Log LOG = LogFactory.getLog(SplitAggregateInOutTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SplitAggregateInOutTest.class);
 
     private String expectedBody = "Response[(id=1,item=A);(id=2,item=B);(id=3,item=C)]";
 

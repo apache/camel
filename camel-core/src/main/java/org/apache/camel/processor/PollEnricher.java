@@ -23,8 +23,8 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
 
@@ -42,7 +42,7 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  */
 public class PollEnricher extends ServiceSupport implements Processor {
 
-    private static final transient Log LOG = LogFactory.getLog(PollEnricher.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
     private AggregationStrategy aggregationStrategy;
     private PollingConsumer consumer;
     private long timeout;

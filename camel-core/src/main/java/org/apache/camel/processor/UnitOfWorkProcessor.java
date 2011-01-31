@@ -22,8 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultUnitOfWork;
 import org.apache.camel.spi.RouteContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
@@ -35,7 +35,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
 
-    private static final transient Log LOG = LogFactory.getLog(UnitOfWorkProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(UnitOfWorkProcessor.class);
     private final RouteContext routeContext;
     private final String routeId;
 

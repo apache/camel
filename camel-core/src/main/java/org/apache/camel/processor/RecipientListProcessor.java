@@ -31,8 +31,8 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements a dynamic <a
@@ -51,7 +51,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class RecipientListProcessor extends MulticastProcessor {
 
-    private static final transient Log LOG = LogFactory.getLog(RecipientListProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(RecipientListProcessor.class);
     private final Iterator<Object> iter;
     private boolean ignoreInvalidEndpoints;
     private ProducerCache producerCache;

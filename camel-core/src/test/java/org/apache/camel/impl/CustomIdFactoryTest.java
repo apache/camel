@@ -26,8 +26,8 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Demonstrates how you can use a custom id factory to assign ids to Camel Java routes
@@ -38,7 +38,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CustomIdFactoryTest extends ContextTestSupport {
 
-    private static final Log LOG = LogFactory.getLog(CustomIdFactoryTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CustomIdFactoryTest.class);
 
     private static int counter;
     private static String ids;

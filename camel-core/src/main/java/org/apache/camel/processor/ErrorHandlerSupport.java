@@ -29,8 +29,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyKey;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Support class for {@link ErrorHandler} implementations.
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class ErrorHandlerSupport extends ServiceSupport implements ErrorHandler {
 
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
 
     private final Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies = new LinkedHashMap<ExceptionPolicyKey, OnExceptionDefinition>();
     private ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();

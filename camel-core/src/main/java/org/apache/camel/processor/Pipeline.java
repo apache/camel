@@ -29,8 +29,8 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
@@ -41,7 +41,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * @version $Revision$
  */
 public class Pipeline extends MulticastProcessor implements AsyncProcessor, Traceable {
-    private static final transient Log LOG = LogFactory.getLog(Pipeline.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(Pipeline.class);
 
     public Pipeline(CamelContext camelContext, Collection<Processor> processors) {
         super(camelContext, processors);

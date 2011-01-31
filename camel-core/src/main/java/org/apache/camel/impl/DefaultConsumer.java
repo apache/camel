@@ -23,8 +23,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default consumer useful for implementation inheritance.
@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DefaultConsumer extends ServiceSupport implements Consumer {
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     private final Endpoint endpoint;
     private final Processor processor;
     private volatile AsyncProcessor asyncProcessor;

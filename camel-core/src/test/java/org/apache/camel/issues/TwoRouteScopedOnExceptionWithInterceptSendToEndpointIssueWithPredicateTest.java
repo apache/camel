@@ -93,7 +93,7 @@ public class TwoRouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredic
                 from("direct:start2")
                         // no redelivery delay for faster unit tests
                         .onException(ConnectException.class).maximumRedeliveries(3).redeliveryDelay(0)
-                            .logRetryAttempted(true).retryAttemptedLogLevel(LoggingLevel.FATAL)
+                            .logRetryAttempted(true).retryAttemptedLogLevel(LoggingLevel.ERROR)
                             // send to mock when we are exhausted
                             .to("mock:exhausted2")
                         .end()

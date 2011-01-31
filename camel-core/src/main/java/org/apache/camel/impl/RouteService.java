@@ -35,8 +35,8 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the runtime objects for a given {@link RouteDefinition} so that it can be stopped independently
@@ -46,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class RouteService extends ServiceSupport {
 
-    private static final Log LOG = LogFactory.getLog(RouteService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RouteService.class);
 
     private final DefaultCamelContext camelContext;
     private final RouteDefinition routeDefinition;

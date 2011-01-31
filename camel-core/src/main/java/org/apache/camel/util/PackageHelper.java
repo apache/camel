@@ -16,8 +16,8 @@
  */
 package org.apache.camel.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Some helper methods for working with Java packages and versioning.
@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public final class PackageHelper {
-    private static final transient Log LOG = LogFactory.getLog(PackageHelper.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(PackageHelper.class);
 
     private PackageHelper() {
         // Utility Class

@@ -23,14 +23,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class BrowseTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(BrowseTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BrowseTest.class);
 
     protected Object body1 = "one";
     protected Object body2 = "two";

@@ -40,8 +40,8 @@ import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link org.apache.camel.spi.ShutdownStrategy} which uses graceful shutdown.
@@ -64,7 +64,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownStrategy, CamelContextAware {
-    private static final transient Log LOG = LogFactory.getLog(DefaultShutdownStrategy.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultShutdownStrategy.class);
 
     private CamelContext camelContext;
     private ExecutorService executor;

@@ -32,5 +32,5 @@ public interface ExchangeFormatter {
      * @param exchange the exchange
      * @return a string representation of the exchange
      */
-    Object format(Exchange exchange);
+    String format(Exchange exchange);
 }

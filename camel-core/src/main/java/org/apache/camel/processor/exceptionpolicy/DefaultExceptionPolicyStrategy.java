@@ -27,8 +27,8 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The default strategy used in Camel to resolve the {@link org.apache.camel.model.OnExceptionDefinition} that should
@@ -56,7 +56,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
-    private static final transient Log LOG = LogFactory.getLog(DefaultExceptionPolicyStrategy.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultExceptionPolicyStrategy.class);
 
     public OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies,
                                                     Exchange exchange, Throwable exception) {

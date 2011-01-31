@@ -31,8 +31,8 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This output stream will store the content into a File if the stream context size is exceed the
@@ -46,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
 public class CachedOutputStream extends OutputStream {
     public static final String THRESHOLD = "CamelCachedOutputStreamThreshold";
     public static final String TEMP_DIR = "CamelCachedOutputStreamOutputDirectory";
-    private static final transient Log LOG = LogFactory.getLog(CachedOutputStream.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CachedOutputStream.class);
     
     private OutputStream currentStream = new ByteArrayOutputStream(2048);
     private boolean inMemory = true;

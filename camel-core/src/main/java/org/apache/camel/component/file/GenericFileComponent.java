@@ -26,8 +26,8 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
@@ -35,7 +35,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 public abstract class GenericFileComponent<T> extends DefaultComponent {
 
-    protected Log log = LogFactory.getLog(getClass());
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     public GenericFileComponent() {
     }

@@ -24,15 +24,15 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.StopWatch;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Acquires exclusive read lock to the given file by checking whether the file is being
  * changed by scanning the file at different intervals (to detect changes).
  */
 public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveReadLockStrategy {
-    private static final transient Log LOG = LogFactory.getLog(FileChangedExclusiveReadLockStrategy.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(FileChangedExclusiveReadLockStrategy.class);
     private long timeout;
     private long checkInterval = 1000;
 
