@@ -28,7 +28,7 @@
     <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
         <property name="traceExceptions" value="false"/>
         <property name="traceInterceptors" value="true"/>
-        <property name="logLevel" value="FATAL"/>
+        <property name="logLevel" value="ERROR"/>
         <property name="logName" value="com.mycompany.messages"/>
     </bean>
 
