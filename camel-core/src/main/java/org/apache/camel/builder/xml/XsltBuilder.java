@@ -86,6 +86,7 @@ public class XsltBuilder implements Processor {
 
         Transformer transformer = getTemplate().newTransformer();
         configureTransformer(transformer, exchange);
+        transformer.setErrorListener(new DefaultTransformErrorHandler());
         Source source = getSource(exchange);
         ResultHandler resultHandler = resultHandlerFactory.createResult(exchange);
         Result result = resultHandler.getResult();
