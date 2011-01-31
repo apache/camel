@@ -519,11 +519,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 return requestBody(endpoint, body);
             }
         };
-
-        if (executor == null) {
-            throw new IllegalStateException("ProducerTemplate has not been started");
-        }
-        return executor.submit(task);
+        return getExecutorService().submit(task);
     }
 
     public <T> Future<T> asyncRequestBody(final Endpoint endpoint, final Object body, final Class<T> type) {
@@ -532,11 +528,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 return requestBody(endpoint, body, type);
             }
         };
-
-        if (executor == null) {
-            throw new IllegalStateException("ProducerTemplate has not been started");
-        }
-        return executor.submit(task);
+        return getExecutorService().submit(task);
     }
 
     public Future<Object> asyncRequestBodyAndHeader(final Endpoint endpoint, final Object body, final String header,
@@ -546,11 +538,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 return requestBodyAndHeader(endpoint, body, header, headerValue);
             }
         };
-
-        if (executor == null) {
-            throw new IllegalStateException("ProducerTemplate has not been started");
-        }
-        return executor.submit(task);
+        return getExecutorService().submit(task);
     }
 
     public <T> Future<T> asyncRequestBodyAndHeader(final Endpoint endpoint, final Object body, final String header,
@@ -560,11 +548,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 return requestBodyAndHeader(endpoint, body, header, headerValue, type);
             }
         };
-
-        if (executor == null) {
-            throw new IllegalStateException("ProducerTemplate has not been started");
-        }
-        return executor.submit(task);
+        return getExecutorService().submit(task);
     }
 
     public Future<Object> asyncRequestBodyAndHeaders(final Endpoint endpoint, final Object body,
@@ -574,11 +558,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 return requestBodyAndHeaders(endpoint, body, headers);
             }
         };
-
-        if (executor == null) {
-            throw new IllegalStateException("ProducerTemplate has not been started");
-        }
-        return executor.submit(task);
+        return getExecutorService().submit(task);
     }
 
     public <T> Future<T> asyncRequestBodyAndHeaders(final Endpoint endpoint, final Object body,
@@ -588,11 +568,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 return requestBodyAndHeaders(endpoint, body, headers, type);
             }
         };
-
-        if (executor == null) {
-            throw new IllegalStateException("ProducerTemplate has not been started");
-        }
-        return executor.submit(task);
+        return getExecutorService().submit(task);
     }
 
     public Future<Exchange> asyncSend(final Endpoint endpoint, final Exchange exchange) {
@@ -601,11 +577,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 return send(endpoint, exchange);
             }
         };
-
-        if (executor == null) {
-            throw new IllegalStateException("ProducerTemplate has not been started");
-        }
-        return executor.submit(task);
+        return getExecutorService().submit(task);
     }
 
     public Future<Exchange> asyncSend(final Endpoint endpoint, final Processor processor) {
@@ -614,11 +586,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 return send(endpoint, processor);
             }
         };
-
-        if (executor == null) {
-            throw new IllegalStateException("ProducerTemplate has not been started");
-        }
-        return executor.submit(task);
+        return getExecutorService().submit(task);
     }
 
     public Future<Object> asyncSendBody(final Endpoint endpoint, final Object body) {
@@ -629,11 +597,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 return null;
             }
         };
-
-        if (executor == null) {
-            throw new IllegalStateException("ProducerTemplate has not been started");
-        }
-        return executor.submit(task);
+        return getExecutorService().submit(task);
     }
 
     private Future<Object> asyncCallback(final Endpoint endpoint, final ExchangePattern pattern, final Object body, final Synchronization onCompletion) {
@@ -660,11 +624,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 }
             }
         };
-
-        if (executor == null) {
-            throw new IllegalStateException("ProducerTemplate has not been started");
-        }
-        return executor.submit(task);
+        return getExecutorService().submit(task);
     }
 
     public Future<Exchange> asyncCallback(final Endpoint endpoint, final Exchange exchange, final Synchronization onCompletion) {
@@ -685,11 +645,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 return exchange;
             }
         };
-
-        if (executor == null) {
-            throw new IllegalStateException("ProducerTemplate has not been started");
-        }
-        return executor.submit(task);
+        return getExecutorService().submit(task);
     }
 
     public Future<Exchange> asyncCallback(final Endpoint endpoint, final Processor processor, final Synchronization onCompletion) {
@@ -710,11 +666,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 return answer;
             }
         };
-
-        if (executor == null) {
-            throw new IllegalStateException("ProducerTemplate has not been started");
-        }
-        return executor.submit(task);
+        return getExecutorService().submit(task);
     }
 
     private ProducerCache getProducerCache() {
@@ -722,6 +674,27 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             throw new IllegalStateException("ProducerTemplate has not been started");
         }
         return producerCache;
+    }
+
+    private ExecutorService getExecutorService() {
+        if (!isStarted()) {
+            throw new IllegalStateException("ProducerTemplate has not been started");
+        }
+
+        if (executor != null) {
+            return executor;
+        }
+
+        // create a default executor which must be synchronized
+        synchronized (this) {
+            if (executor != null) {
+                return executor;
+            }
+            executor = context.getExecutorServiceStrategy().newDefaultThreadPool(this, "ProducerTemplate");
+        }
+
+        ObjectHelper.notNull(executor, "ExecutorService");
+        return executor;
     }
 
     protected void doStart() throws Exception {
@@ -733,9 +706,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             }
         }
         ServiceHelper.startService(producerCache);
-        if (executor == null) {
-            executor = context.getExecutorServiceStrategy().newDefaultThreadPool(this, "ProducerTemplate");
-        }
     }
 
     protected void doStop() throws Exception {
