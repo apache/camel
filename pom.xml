@@ -44,6 +44,7 @@
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
     <felix-version>2.0.1</felix-version>
     <jdk.version>1.6</jdk.version>
+    <camel-buildtools.version>2.6.0</camel-buildtools.version>
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.1.13</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
@@ -162,7 +163,7 @@
             <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-buildtools</artifactId>
-              <version>${project.version}</version>
+              <version>${camel-buildtools.version}</version>
             </dependency>
           </dependencies>
           <configuration>
@@ -385,7 +386,7 @@
             <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-buildtools</artifactId>
-              <version>${project.version}</version>
+              <version>${camel-buildtoools.version}</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -603,7 +604,7 @@
               <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-buildtools</artifactId>
-                <version>${project.version}</version>
+                <version>${camel-buildtools.version}</version>
               </dependency>
               <dependency>
                 <groupId>ant-contrib</groupId>

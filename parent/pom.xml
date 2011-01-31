@@ -1521,7 +1521,7 @@
             <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-buildtools</artifactId>
-              <version>${project.version}</version>
+              <version>${camel-buildtools.version}</version>
             </dependency>
           </dependencies>
           <executions>
