@@ -40,8 +40,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.io.ByteArrayBuffer;
 
@@ -49,7 +49,7 @@ import org.eclipse.jetty.io.ByteArrayBuffer;
  * @version $Revision$
  */
 public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor {
-    private static final transient Log LOG = LogFactory.getLog(JettyHttpProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JettyHttpProducer.class);
     private final HttpClient client;
     private JettyHttpBinding binding;
 

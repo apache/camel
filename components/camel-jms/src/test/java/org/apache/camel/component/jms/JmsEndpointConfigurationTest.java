@@ -21,13 +21,12 @@ import javax.jms.DeliveryMode;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.processor.Logger;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
@@ -153,7 +152,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     public void testInvalidMaxConcurrentConsumers() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=5&maxConcurrentConsumers=2");
         try {
-            endpoint.createConsumer(new Logger());
+            endpoint.createConsumer(new CamelLogger());
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertEquals("Property maxConcurrentConsumers: 2 must be higher than concurrentConsumers: 5", e.getMessage());

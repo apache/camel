@@ -19,8 +19,8 @@ package org.apache.camel.spring.config;
 import javax.annotation.Resource;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
@@ -29,7 +29,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
  */
 @ContextConfiguration
 public class EndpointUriSetFromSpringTest extends AbstractJUnit38SpringContextTests {
-    private static final transient Log LOG = LogFactory.getLog(EndpointUriSetFromSpringTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(EndpointUriSetFromSpringTest.class);
 
     @Resource(name = "foo:bar")
     MockEndpoint endpoint;

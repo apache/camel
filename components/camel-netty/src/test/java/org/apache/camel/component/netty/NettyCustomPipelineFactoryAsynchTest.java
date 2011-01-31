@@ -28,8 +28,8 @@ import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
@@ -43,7 +43,7 @@ import org.jboss.netty.util.CharsetUtil;
 import org.junit.Test;
 
 public class NettyCustomPipelineFactoryAsynchTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(NettyCustomPipelineFactoryAsynchTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(NettyCustomPipelineFactoryAsynchTest.class);
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate producerTemplate;

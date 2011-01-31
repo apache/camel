@@ -38,7 +38,7 @@
 
         <route id="baz">
             <from uri="direct:baz"/>
-            <log message="Me Got ${body}" loggingLevel="FATAL" logName="cool"/>
+            <log message="Me Got ${body}" loggingLevel="ERROR" logName="cool"/>
             <to uri="mock:baz"/>
         </route>
 

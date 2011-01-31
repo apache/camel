@@ -29,15 +29,15 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterRegistry, ServiceTrackerCustomizer {
-    private static final Log LOG = LogFactory.getLog(OsgiTypeConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OsgiTypeConverter.class);
 
     private final BundleContext bundleContext;
     private final Injector injector;

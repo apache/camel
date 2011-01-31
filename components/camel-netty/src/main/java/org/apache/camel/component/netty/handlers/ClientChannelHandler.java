@@ -25,8 +25,8 @@ import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.NettyPayloadHelper;
 import org.apache.camel.component.netty.NettyProducer;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -37,7 +37,7 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
  * Client handler which cannot be shared
  */
 public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
-    private static final transient Log LOG = LogFactory.getLog(ClientChannelHandler.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ClientChannelHandler.class);
     private final NettyProducer producer;
     private final Exchange exchange;
     private final AsyncCallback callback;

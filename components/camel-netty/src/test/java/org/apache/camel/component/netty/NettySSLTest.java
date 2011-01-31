@@ -26,12 +26,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 
 public class NettySSLTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(NettySSLTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(NettySSLTest.class);
   
     @Produce(uri = "direct:start")
     protected ProducerTemplate producerTemplate;

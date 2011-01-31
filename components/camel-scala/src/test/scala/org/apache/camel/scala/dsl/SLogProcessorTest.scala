@@ -31,7 +31,7 @@ class SLogProcessorTest extends LogProcessorTest with RouteBuilderSupport {
     "bar" :: "direct:bar" log(LoggingLevel.WARN, "Also got ${body}") to("mock:bar")
 
     "baz" :: "direct:baz" ==> {
-      log(LoggingLevel.FATAL, "cool", "Me got ${body}")
+      log(LoggingLevel.ERROR, "cool", "Me got ${body}")
       to("mock:baz")
     }
   }

@@ -78,10 +78,6 @@
           <groupId>javax.xml.bind</groupId>
           <artifactId>jaxb-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-        </dependency>
 
         <!-- for testing -->
         <dependency>
@@ -94,6 +90,11 @@
             <artifactId>camel-core</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+          <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>

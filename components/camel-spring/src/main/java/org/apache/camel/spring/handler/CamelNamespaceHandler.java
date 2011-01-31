@@ -50,8 +50,8 @@ import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -66,7 +66,7 @@ import org.springframework.beans.factory.xml.ParserContext;
  */
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
-    private static final Log LOG = LogFactory.getLog(CamelNamespaceHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelNamespaceHandler.class);
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(CamelEndpointFactoryBean.class, false);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class, false);
     protected Set<String> parserElementNames = new HashSet<String>();

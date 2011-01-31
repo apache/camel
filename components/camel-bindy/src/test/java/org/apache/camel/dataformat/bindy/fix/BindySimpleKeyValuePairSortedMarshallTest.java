@@ -27,8 +27,8 @@ import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.header.Header;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.trailer.Trailer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,7 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
 
-    private static final transient Log LOG = LogFactory.getLog(BindySimpleKeyValuePairSortedMarshallTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BindySimpleKeyValuePairSortedMarshallTest.class);
 
     @Test
     @DirtiesContext

@@ -23,10 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.processor.Logger;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
@@ -38,19 +38,19 @@ import org.apache.mina.common.IoSession;
  * @version $Revision$
  */
 public class MinaConsumer extends DefaultConsumer {
-    private static final transient Log LOG = LogFactory.getLog(MinaConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MinaConsumer.class);
 
     private final SocketAddress address;
     private final IoAcceptor acceptor;
     private boolean sync;
-    private Logger noReplyLogger;
+    private CamelLogger noReplyLogger;
 
     public MinaConsumer(final MinaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.address = endpoint.getAddress();
         this.acceptor = endpoint.getAcceptor();
         this.sync = endpoint.getConfiguration().isSync();
-        this.noReplyLogger = new Logger(LOG, endpoint.getConfiguration().getNoReplyLogLevel());
+        this.noReplyLogger = new CamelLogger(LOG, endpoint.getConfiguration().getNoReplyLogLevel());
     }
 
     @Override

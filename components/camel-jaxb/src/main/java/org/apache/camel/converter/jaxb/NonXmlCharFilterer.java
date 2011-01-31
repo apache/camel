@@ -16,8 +16,8 @@
  */
 package org.apache.camel.converter.jaxb;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides filtering of characters that do fall into <a
@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  */
 class NonXmlCharFilterer {
-    private static final transient Log LOG = LogFactory.getLog(FilteringXmlStreamWriter.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(FilteringXmlStreamWriter.class);
     private static final char REPLACEMENT_CHAR = ' ';
 
     /**

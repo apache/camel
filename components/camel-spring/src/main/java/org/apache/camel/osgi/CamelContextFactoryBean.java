@@ -24,15 +24,15 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiEventAdminNotifier;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
 
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContextFactoryBean implements BundleContextAware {
-    private static final transient Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBean.class);
     
     @XmlTransient
     private BundleContext bundleContext;

@@ -25,8 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.EndpointHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/test.html">Test Endpoint</a> is a
@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class TestEndpoint extends MockEndpoint {
-    private static final transient Log LOG = LogFactory.getLog(TestEndpoint.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);
     private final Endpoint expectedMessageEndpoint;
     private long timeout = 2000L;
 

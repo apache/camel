@@ -37,11 +37,11 @@ import org.apache.camel.component.routebox.RouteboxEndpoint;
 import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RouteboxDispatcher {
-    private static final transient Log LOG = LogFactory.getLog(RouteboxDispatcher.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(RouteboxDispatcher.class);
     private ProducerTemplate producer;
     
     public RouteboxDispatcher(ProducerTemplate producer) {

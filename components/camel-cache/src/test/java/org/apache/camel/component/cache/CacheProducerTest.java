@@ -30,8 +30,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 
 public class CacheProducerTest extends CamelTestSupport {
@@ -40,7 +40,7 @@ public class CacheProducerTest extends CamelTestSupport {
 
     private static final String FILEPATH_TEST_TXT = "./src/test/resources/test.txt";
 
-    private static final transient Log LOG = LogFactory.getLog(CacheProducerTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CacheProducerTest.class);
 
     @EndpointInject(uri = "mock:CacheProducerTest.result")
     protected MockEndpoint resultEndpoint;

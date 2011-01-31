@@ -19,8 +19,8 @@ package org.apache.camel.spring.produce;
 import java.util.Map;
 
 import org.apache.camel.Consume;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MyListenerService implements MyListener {
 
-    private static final Log LOG = LogFactory.getLog(MyListenerService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyListenerService.class);
 
     public MyListenerService() {
         LOG.debug("Instantiated service: " + this);

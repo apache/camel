@@ -28,15 +28,15 @@ import org.apache.camel.component.http.HttpHeaderFilterStrategy;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
-    private static final transient Log LOG = LogFactory.getLog(DefaultJettyHttpBinding.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultJettyHttpBinding.class);
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private boolean throwExceptionOnFailure;
     private boolean transferException;

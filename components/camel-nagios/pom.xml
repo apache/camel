@@ -15,7 +15,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -33,15 +34,15 @@
 
     <properties>
         <camel.osgi.export.pkg>
-	        org.apache.camel.component.nagios.*
-	    </camel.osgi.export.pkg>
+            org.apache.camel.component.nagios.*
+        </camel.osgi.export.pkg>
     </properties>
 
     <repositories>
         <repository>
-           <id>fusesource.m2</id>
-          <name>Fusesource Dependency Repository</name>
-           <url>http://repo.fusesource.com/maven2-all</url>
+            <id>fusesource.m2</id>
+            <name>Fusesource Dependency Repository</name>
+            <url>http://repo.fusesource.com/maven2-all</url>
         </repository>
     </repositories>
 
@@ -67,7 +68,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>            
+            <artifactId>camel-test</artifactId>
             <optional>true</optional>
             <scope>test</scope>
         </dependency>
@@ -79,6 +80,11 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

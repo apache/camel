@@ -19,8 +19,8 @@ package org.apache.camel.spring.util;
 import java.io.File;
 import java.io.FileFilter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 
@@ -30,7 +30,7 @@ import org.springframework.util.StringUtils;
  * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
  */
 public class SpringAntPathMatcherFileFilter implements FileFilter {
-    private static final transient Log LOG = LogFactory.getLog(SpringAntPathMatcherFileFilter.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SpringAntPathMatcherFileFilter.class);
 
     private AntPathMatcher matcher = new AntPathMatcher();
     private String[] excludes;

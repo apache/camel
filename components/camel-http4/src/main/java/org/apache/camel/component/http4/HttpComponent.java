@@ -27,8 +27,8 @@ import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.auth.params.AuthParamBean;
 import org.apache.http.client.params.ClientParamBean;
 import org.apache.http.conn.ClientConnectionManager;
@@ -54,7 +54,7 @@ import org.apache.http.params.HttpProtocolParamBean;
  * @version $Revision$
  */
 public class HttpComponent extends HeaderFilterStrategyComponent {
-    private static final transient Log LOG = LogFactory.getLog(HttpComponent.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
     protected HttpClientConfigurer httpClientConfigurer;
     protected ClientConnectionManager clientConnectionManager;

@@ -24,15 +24,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * To test InOut exchange for the UDP protocol.
  */
 public class MinaUdpWithInOutUsingPlainSocketTest extends ContextTestSupport {
 
-    private static final transient Log LOG = LogFactory.getLog(MinaUdpWithInOutUsingPlainSocketTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MinaUdpWithInOutUsingPlainSocketTest.class);
     private static final int PORT = 4445;
 
     public void testSendAndReceiveOnce() throws Exception {

@@ -20,15 +20,15 @@ import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class MyCamel1Consumer {
 
-    private static final Log LOG = LogFactory.getLog(MyCamel1Consumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyCamel1Consumer.class);
 
     @EndpointInject(uri = "mock:result", context = "camel-1")
     private ProducerTemplate destination;

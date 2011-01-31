@@ -23,14 +23,14 @@ import java.net.URL;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /* Using the bundle of CamelContext to load the class */
 public class OsgiClassResolver extends DefaultClassResolver {
-    private static final transient Log LOG = LogFactory.getLog(OsgiClassResolver.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(OsgiClassResolver.class);
 
     public BundleContext bundleContext;
     

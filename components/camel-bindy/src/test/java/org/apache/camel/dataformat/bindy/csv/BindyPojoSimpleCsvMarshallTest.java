@@ -91,7 +91,7 @@ public class BindyPojoSimpleCsvMarshallTest extends AbstractJUnit4SpringContextT
             BindyCsvDataFormat camelDataFormat = 
                 new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
             Tracer tracer = new Tracer();
-            tracer.setLogLevel(LoggingLevel.FATAL);
+            tracer.setLogLevel(LoggingLevel.ERROR);
             tracer.setLogName("org.apache.camel.bindy");
 
             getContext().addInterceptStrategy(tracer);

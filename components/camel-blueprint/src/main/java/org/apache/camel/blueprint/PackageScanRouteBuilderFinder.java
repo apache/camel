@@ -22,8 +22,8 @@ import java.util.Set;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.reflect.BeanMetadata;
 
@@ -33,7 +33,7 @@ import org.osgi.service.blueprint.reflect.BeanMetadata;
  * @version $Revision$
  */
 public class PackageScanRouteBuilderFinder {
-    private static final transient Log LOG = LogFactory.getLog(PackageScanRouteBuilderFinder.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(PackageScanRouteBuilderFinder.class);
     private final BlueprintCamelContext camelContext;
     private final String[] packages;
     private final PackageScanClassResolver resolver;

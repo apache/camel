@@ -23,10 +23,10 @@ import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.NettyPayloadHelper;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.processor.Logger;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
@@ -39,14 +39,14 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
  */
 @ChannelHandler.Sharable
 public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
-    private static final transient Log LOG = LogFactory.getLog(ServerChannelHandler.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ServerChannelHandler.class);
     private NettyConsumer consumer;
-    private Logger noReplyLogger;
+    private CamelLogger noReplyLogger;
 
     public ServerChannelHandler(NettyConsumer consumer) {
         super();
         this.consumer = consumer;    
-        this.noReplyLogger = new Logger(LOG, consumer.getConfiguration().getNoReplyLogLevel());
+        this.noReplyLogger = new CamelLogger(LOG, consumer.getConfiguration().getNoReplyLogLevel());
     }
 
     @Override

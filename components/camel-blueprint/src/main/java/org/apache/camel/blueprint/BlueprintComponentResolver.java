@@ -20,13 +20,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.core.osgi.OsgiComponentResolver;
 import org.apache.camel.spi.ComponentResolver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.framework.BundleContext;
 
 public class BlueprintComponentResolver extends OsgiComponentResolver {
 
-    private static final transient Log LOG = LogFactory.getLog(BlueprintComponentResolver.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BlueprintComponentResolver.class);
 
     public BlueprintComponentResolver(BundleContext bundleContext) {
         super(bundleContext);

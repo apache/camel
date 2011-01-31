@@ -77,8 +77,8 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
@@ -97,7 +97,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final String BLUEPRINT_NS = "http://camel.apache.org/schema/blueprint";
 
-    private static final transient Log LOG = LogFactory.getLog(CamelNamespaceHandler.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelNamespaceHandler.class);
 
     private JAXBContext jaxbContext;
 

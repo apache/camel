@@ -24,14 +24,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.example.MyProcessor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class MainTest extends TestCase {
-    private static final transient Log LOG = LogFactory.getLog(MainTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MainTest.class);
 
     public void testMain() throws Exception {
         // lets make a simple route

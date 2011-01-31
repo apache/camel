@@ -28,8 +28,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
 public class CamelServlet extends HttpServlet {
 
     private static final long serialVersionUID = -7061982839117697829L;
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
 
     private ConcurrentHashMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
    

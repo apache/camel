@@ -33,15 +33,15 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
  * {@link DataFormat}) using Bindy to marshal to and from Fixed Length
  */
 public class BindyFixedLengthDataFormat implements DataFormat {
-    private static final transient Log LOG = LogFactory.getLog(BindyFixedLengthDataFormat.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BindyFixedLengthDataFormat.class);
 
     private String[] packages;
     private BindyFixedLengthFactory modelFactory;

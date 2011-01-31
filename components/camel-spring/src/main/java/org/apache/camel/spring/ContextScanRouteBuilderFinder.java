@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spi.PackageScanFilter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -32,7 +32,7 @@ import org.springframework.context.ApplicationContext;
  * @version $Revision$
  */
 public class ContextScanRouteBuilderFinder {
-    private static final transient Log LOG = LogFactory.getLog(ContextScanRouteBuilderFinder.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ContextScanRouteBuilderFinder.class);
     private final ApplicationContext applicationContext;
     private final PackageScanFilter filter;
 

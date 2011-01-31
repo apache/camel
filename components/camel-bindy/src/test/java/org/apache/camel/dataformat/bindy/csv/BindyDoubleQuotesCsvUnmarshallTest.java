@@ -26,8 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,7 +36,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration
 public class BindyDoubleQuotesCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {
 
-    private static final transient Log LOG = LogFactory.getLog(BindyDoubleQuotesCsvUnmarshallTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BindyDoubleQuotesCsvUnmarshallTest.class);
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";

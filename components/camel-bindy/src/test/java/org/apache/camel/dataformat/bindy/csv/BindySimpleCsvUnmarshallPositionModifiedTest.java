@@ -26,8 +26,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.test.junit4.TestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration
 public class BindySimpleCsvUnmarshallPositionModifiedTest extends AbstractJUnit4SpringContextTests {
 
-    private static final transient Log LOG = LogFactory.getLog(BindySimpleCsvUnmarshallPositionModifiedTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BindySimpleCsvUnmarshallPositionModifiedTest.class);
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";
@@ -98,7 +98,7 @@ public class BindySimpleCsvUnmarshallPositionModifiedTest extends AbstractJUnit4
         public void configure() {
 
             Tracer tracer = new Tracer();
-            tracer.setLogLevel(LoggingLevel.FATAL);
+            tracer.setLogLevel(LoggingLevel.ERROR);
             tracer.setLogName("org.apache.camel.bindy");
 
             getContext().addInterceptStrategy(tracer);

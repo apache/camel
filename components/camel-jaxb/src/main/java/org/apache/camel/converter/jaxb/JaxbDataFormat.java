@@ -42,8 +42,8 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
@@ -53,7 +53,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
-    private static final transient Log LOG = LogFactory.getLog(JaxbDataFormat.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
     private CamelContext camelContext;
     private JAXBContext context;
     private String contextPath;

@@ -23,8 +23,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
@@ -32,7 +32,7 @@ import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.ssl.SslHandler;
 
 public class DefaultClientPipelineFactory extends ClientPipelineFactory {
-    private static final transient Log LOG = LogFactory.getLog(ClientPipelineFactory.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ClientPipelineFactory.class);
 
     public DefaultClientPipelineFactory(NettyProducer producer, Exchange exchange, AsyncCallback callback) {
         super(producer, exchange, callback);

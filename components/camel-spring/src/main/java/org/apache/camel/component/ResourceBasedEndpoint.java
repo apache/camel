@@ -24,8 +24,8 @@ import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -37,7 +37,7 @@ import org.springframework.core.io.ResourceLoader;
  * @version $Revision$
  */
 public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     private String resourceUri;
     private ResourceLoader resourceLoader = new DefaultResourceLoader();
     private Resource resource;

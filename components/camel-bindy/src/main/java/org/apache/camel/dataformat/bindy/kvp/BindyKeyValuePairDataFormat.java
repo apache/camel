@@ -34,8 +34,8 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
@@ -43,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
-    private static final transient Log LOG = LogFactory.getLog(BindyKeyValuePairDataFormat.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BindyKeyValuePairDataFormat.class);
 
     public BindyKeyValuePairDataFormat() {
     }

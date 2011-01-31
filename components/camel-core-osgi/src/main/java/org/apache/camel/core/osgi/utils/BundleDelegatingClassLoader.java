@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.framework.Bundle;
 
 /**
@@ -30,7 +30,7 @@ import org.osgi.framework.Bundle;
  * @version $Rev: 896324 $, $Date: 2010-01-06 07:05:04 +0100 (Wed, 06 Jan 2010) $
  */
 public class BundleDelegatingClassLoader extends ClassLoader {
-    private static final transient Log LOG = LogFactory.getLog(BundleDelegatingClassLoader.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BundleDelegatingClassLoader.class);
     private final Bundle bundle;
     private final ClassLoader classLoader;
 

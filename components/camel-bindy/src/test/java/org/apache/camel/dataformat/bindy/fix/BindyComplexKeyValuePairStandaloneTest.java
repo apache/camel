@@ -32,14 +32,14 @@ import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Trailer;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 public class BindyComplexKeyValuePairStandaloneTest {
 
-    private static final transient Log LOG = LogFactory.getLog(BindyComplexKeyValuePairStandaloneTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BindyComplexKeyValuePairStandaloneTest.class);
 
     protected Map<String, Object> model = new HashMap<String, Object>();
     protected Set<Class> models = new HashSet<Class>();

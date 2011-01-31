@@ -20,13 +20,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.core.osgi.OsgiLanguageResolver;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.framework.BundleContext;
 
 public class BlueprintLanguageResolver extends OsgiLanguageResolver {
 
-    private static final transient Log LOG = LogFactory.getLog(BlueprintLanguageResolver.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BlueprintLanguageResolver.class);
 
     public BlueprintLanguageResolver(BundleContext bundleContext) {
         super(bundleContext);

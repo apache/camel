@@ -26,8 +26,8 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.camel.spring.spi.SpringInjector;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -54,7 +54,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean,
         ApplicationContextAware {
 
-    private static final transient Log LOG = LogFactory.getLog(SpringCamelContext.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
 

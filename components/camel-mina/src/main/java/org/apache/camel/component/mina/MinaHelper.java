@@ -18,8 +18,8 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.WriteFuture;
 
@@ -28,7 +28,7 @@ import org.apache.mina.common.WriteFuture;
  */
 public final class MinaHelper {
 
-    private static final transient Log LOG = LogFactory.getLog(MinaHelper.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MinaHelper.class);
 
     private MinaHelper() {
         //Utility Class

@@ -17,8 +17,8 @@
 package org.apache.camel.component;
 
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
@@ -31,7 +31,7 @@ import org.springframework.core.io.ResourceLoader;
  * @version $Revision$
  */
 public abstract class ResourceBasedComponent extends DefaultComponent {
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
     private ResourceLoader resourceLoader = new DefaultResourceLoader();
 
     public ResourceLoader getResourceLoader() {

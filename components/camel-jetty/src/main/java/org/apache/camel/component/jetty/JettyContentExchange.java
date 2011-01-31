@@ -29,8 +29,8 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.util.IOHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpExchange;
@@ -44,7 +44,7 @@ import org.eclipse.jetty.io.Buffer;
  */
 public class JettyContentExchange extends ContentExchange {
 
-    private static final transient Log LOG = LogFactory.getLog(JettyContentExchange.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JettyContentExchange.class);
 
     private final Map<String, String> headers = new LinkedHashMap<String, String>();
     private volatile Exchange exchange;

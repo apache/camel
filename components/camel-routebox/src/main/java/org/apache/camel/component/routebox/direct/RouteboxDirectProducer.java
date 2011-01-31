@@ -28,11 +28,11 @@ import org.apache.camel.component.routebox.RouteboxServiceSupport;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatcher;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RouteboxDirectProducer extends RouteboxServiceSupport implements Producer, AsyncProcessor {
-    private static final transient Log LOG = LogFactory.getLog(RouteboxDirectProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(RouteboxDirectProducer.class);
     protected ProducerTemplate producer;
 
     public RouteboxDirectProducer(RouteboxDirectEndpoint endpoint) {

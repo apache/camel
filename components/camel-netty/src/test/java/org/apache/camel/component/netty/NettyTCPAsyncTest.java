@@ -30,12 +30,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 
 public class NettyTCPAsyncTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(NettyTCPAsyncTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(NettyTCPAsyncTest.class);
     
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;

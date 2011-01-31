@@ -24,11 +24,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExceptionHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class RouteboxServiceSupport extends ServiceSupport {
-    private final transient Log log = LogFactory.getLog(getClass());
+    private final transient Logger log = LoggerFactory.getLogger(getClass());
     private ExceptionHandler exceptionHandler;
     private RouteboxEndpoint endpoint;
     private ExecutorService executor;

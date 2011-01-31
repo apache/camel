@@ -19,8 +19,8 @@ package org.apache.camel.osgi;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
 
@@ -29,7 +29,7 @@ import org.springframework.osgi.context.BundleContextAware;
  * any spring application context involved.
  */
 public class CamelContextFactory implements BundleContextAware {
-    private static final transient Log LOG = LogFactory.getLog(CamelContextFactory.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelContextFactory.class);
     private BundleContext bundleContext;
     private Registry registry;
 

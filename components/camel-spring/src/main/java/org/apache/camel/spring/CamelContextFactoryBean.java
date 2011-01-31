@@ -53,8 +53,8 @@ import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -80,7 +80,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 @SuppressWarnings("unused")
 public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<SpringCamelContext>
         implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
-    private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBean.class);
 
     @XmlAttribute(name = "depends-on", required = false)
     private String dependsOn;

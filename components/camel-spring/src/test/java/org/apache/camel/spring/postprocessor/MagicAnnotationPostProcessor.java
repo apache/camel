@@ -18,8 +18,8 @@ package org.apache.camel.spring.postprocessor;
 
 import java.lang.reflect.Field;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.stereotype.Component;
@@ -31,7 +31,7 @@ import org.springframework.util.ReflectionUtils;
 @Component
 public class MagicAnnotationPostProcessor extends InstantiationAwareBeanPostProcessorAdapter {
 
-    protected Log log = LogFactory.getLog(getClass());
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     public boolean postProcessAfterInstantiation(final Object bean, final String beanName) throws BeansException {

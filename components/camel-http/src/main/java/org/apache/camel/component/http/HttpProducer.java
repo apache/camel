@@ -50,14 +50,14 @@ import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class HttpProducer extends DefaultProducer {
-    private static final transient Log LOG = LogFactory.getLog(HttpProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
     private HttpClient httpClient;
     private boolean throwException;
     private boolean transferException;

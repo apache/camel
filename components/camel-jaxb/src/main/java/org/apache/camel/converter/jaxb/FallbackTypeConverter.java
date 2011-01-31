@@ -46,14 +46,14 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class FallbackTypeConverter implements TypeConverter, TypeConverterAware {
-    private static final transient Log LOG = LogFactory.getLog(FallbackTypeConverter.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
     private Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
     private TypeConverter parentTypeConverter;
     private boolean prettyPrint = true;

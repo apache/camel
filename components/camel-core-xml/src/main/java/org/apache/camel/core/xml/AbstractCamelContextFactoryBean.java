@@ -84,8 +84,8 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A factory to create and initialize a
@@ -97,7 +97,7 @@ import org.apache.commons.logging.LogFactory;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> extends IdentifiedType implements RouteContainer {
-    private static final Log LOG = LogFactory.getLog(AbstractCamelContextFactoryBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContextFactoryBean.class);
 
     @XmlTransient
     private List<RoutesBuilder> builders = new ArrayList<RoutesBuilder>();

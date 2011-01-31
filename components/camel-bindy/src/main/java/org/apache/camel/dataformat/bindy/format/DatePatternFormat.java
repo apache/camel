@@ -23,8 +23,8 @@ import java.util.Locale;
 
 import org.apache.camel.dataformat.bindy.PatternFormat;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DatePatternFormat implements PatternFormat<Date> {
 

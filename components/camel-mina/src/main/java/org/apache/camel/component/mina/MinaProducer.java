@@ -26,16 +26,16 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.processor.Logger;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IoConnector;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.transport.socket.nio.SocketConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Producer} implementation for MINA
@@ -43,21 +43,21 @@ import org.apache.mina.transport.socket.nio.SocketConnector;
  * @version $Revision$
  */
 public class MinaProducer extends DefaultProducer implements ServicePoolAware {
-    private static final transient Log LOG = LogFactory.getLog(MinaProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MinaProducer.class);
     private IoSession session;
     private CountDownLatch latch;
     private boolean lazySessionCreation;
     private long timeout;
     private IoConnector connector;
     private boolean sync;
-    private Logger noReplyLogger;
+    private CamelLogger noReplyLogger;
 
     public MinaProducer(MinaEndpoint endpoint) {
         super(endpoint);
         this.lazySessionCreation = endpoint.getConfiguration().isLazySessionCreation();
         this.timeout = endpoint.getConfiguration().getTimeout();
         this.sync = endpoint.getConfiguration().isSync();
-        this.noReplyLogger = new Logger(LOG, endpoint.getConfiguration().getNoReplyLogLevel());
+        this.noReplyLogger = new CamelLogger(LOG, endpoint.getConfiguration().getNoReplyLogLevel());
     }
     
     @Override

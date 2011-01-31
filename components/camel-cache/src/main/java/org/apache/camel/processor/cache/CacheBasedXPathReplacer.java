@@ -36,11 +36,11 @@ import org.apache.camel.component.cache.CacheManagerFactory;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.util.IOHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CacheBasedXPathReplacer extends CacheValidate implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(CacheBasedXPathReplacer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CacheBasedXPathReplacer.class);
     private String cacheName;
     private String key;
     private String xpath;

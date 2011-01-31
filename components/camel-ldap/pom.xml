@@ -73,24 +73,16 @@
             <version>${apacheds-version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Apache DS uses Nina 2.0.0 for testing -->
+        <!-- Apache DS uses Mina 2.0.0 for testing -->
         <dependency>
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
             <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- Apache DS uses slf4j 1.5.x -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.5.10</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.10</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

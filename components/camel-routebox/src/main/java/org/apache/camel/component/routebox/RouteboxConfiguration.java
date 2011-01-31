@@ -28,11 +28,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatchStrategy;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RouteboxConfiguration {
-    private static final transient Log LOG = LogFactory.getLog(RouteboxConfiguration.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(RouteboxConfiguration.class);
     private URI uri;
     private String authority;
     private String endpointName;

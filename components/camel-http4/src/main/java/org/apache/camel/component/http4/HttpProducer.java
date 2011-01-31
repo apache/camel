@@ -39,8 +39,8 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -59,7 +59,7 @@ import org.apache.http.util.EntityUtils;
  * @version $Revision$
  */
 public class HttpProducer extends DefaultProducer {
-    private static final transient Log LOG = LogFactory.getLog(HttpProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
     private HttpClient httpClient;
     private boolean throwException;
     private boolean transferException;

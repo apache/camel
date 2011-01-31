@@ -23,8 +23,8 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -34,7 +34,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version $Revision$
  */
 public class SpringTransactionPolicy implements TransactedPolicy {
-    private static final transient Log LOG = LogFactory.getLog(SpringTransactionPolicy.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SpringTransactionPolicy.class);
     private TransactionTemplate template;
     private String propagationBehaviorName;
     private PlatformTransactionManager transactionManager;

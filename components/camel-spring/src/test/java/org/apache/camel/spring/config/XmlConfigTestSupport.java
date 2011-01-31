@@ -23,14 +23,14 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class XmlConfigTestSupport extends TestSupport {
-    protected static final transient Log LOG = LogFactory.getLog(CamelContextFactoryBeanTest.class);
+    protected static final transient Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBeanTest.class);
 
     protected void assertValidContext(CamelContext context) {
         assertNotNull("No context found!", context);

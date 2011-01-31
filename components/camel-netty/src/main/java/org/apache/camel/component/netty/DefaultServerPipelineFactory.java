@@ -21,8 +21,8 @@ import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
@@ -31,7 +31,7 @@ import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.ssl.SslHandler;
 
 public class DefaultServerPipelineFactory implements ChannelPipelineFactory {
-    private static final transient Log LOG = LogFactory.getLog(DefaultServerPipelineFactory.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultServerPipelineFactory.class);
     private NettyConsumer consumer;
         
     public DefaultServerPipelineFactory(NettyConsumer consumer) {

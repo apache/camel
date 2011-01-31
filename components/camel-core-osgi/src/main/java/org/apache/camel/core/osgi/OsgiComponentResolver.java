@@ -20,14 +20,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 public class OsgiComponentResolver implements ComponentResolver {
-    private static final transient Log LOG = LogFactory.getLog(OsgiComponentResolver.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(OsgiComponentResolver.class);
 
     private final BundleContext bundleContext;
 

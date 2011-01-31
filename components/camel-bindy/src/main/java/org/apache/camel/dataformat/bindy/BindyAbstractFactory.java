@@ -27,15 +27,15 @@ import java.util.Set;
 import org.apache.camel.dataformat.bindy.util.AnnotationModelLoader;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link BindyAbstractFactory} implements what its common to all the formats
  * supported by Camel Bindy
  */
 public abstract class BindyAbstractFactory implements BindyFactory {
-    private static final transient Log LOG = LogFactory.getLog(BindyAbstractFactory.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BindyAbstractFactory.class);
     protected final Map<String, List<Field>> annotatedLinkFields = new LinkedHashMap<String, List<Field>>();
     protected Set<Class<?>> models;
     protected String crlf;

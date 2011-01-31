@@ -21,12 +21,12 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
 import org.apache.camel.Exchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CacheEventListener implements net.sf.ehcache.event.CacheEventListener {
 
-    private static final transient Log LOG = LogFactory.getLog(CacheEventListener.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CacheEventListener.class);
     CacheConsumer cacheConsumer;
 
     public CacheEventListener() {

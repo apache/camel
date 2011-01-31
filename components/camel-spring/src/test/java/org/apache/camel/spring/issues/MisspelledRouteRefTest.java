@@ -18,15 +18,15 @@ package org.apache.camel.spring.issues;
 
 import junit.framework.TestCase;
 import org.apache.camel.spring.Main;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class MisspelledRouteRefTest extends TestCase {
 
-    private static final transient Log LOG = LogFactory.getLog(MisspelledRouteRefTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MisspelledRouteRefTest.class);
 
     public void testApplicationContextFailed() {
         try {

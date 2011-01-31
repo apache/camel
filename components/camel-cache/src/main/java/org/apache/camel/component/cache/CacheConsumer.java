@@ -23,12 +23,12 @@ import net.sf.ehcache.Ehcache;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CacheConsumer extends DefaultConsumer {
 
-    private static final transient Log LOG = LogFactory.getLog(CacheConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CacheConsumer.class);
     private CacheConfiguration config;
     private Ehcache cache;
     private CacheManager cacheManager;

@@ -21,12 +21,12 @@ import java.util.Map;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.processor.Logger;
+import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -37,7 +37,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
-    private static final transient Log LOG = LogFactory.getLog(TransactionErrorHandlerBuilder.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerBuilder.class);
     private static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
     private TransactionTemplate transactionTemplate;
 
@@ -133,8 +133,8 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
     // Builder methods
     // -------------------------------------------------------------------------
 
-    protected Logger createLogger() {
-        return new Logger(LogFactory.getLog(TransactionErrorHandler.class), LoggingLevel.ERROR);
+    protected CamelLogger createLogger() {
+        return new CamelLogger(LoggerFactory.getLogger(TransactionErrorHandler.class), LoggingLevel.ERROR);
     }
 
     @Override

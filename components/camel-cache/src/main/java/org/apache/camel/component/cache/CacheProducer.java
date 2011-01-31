@@ -27,11 +27,11 @@ import net.sf.ehcache.Element;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CacheProducer extends DefaultProducer {
-    private static final transient Log LOG = LogFactory.getLog(CacheProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CacheProducer.class);
     private CacheConfiguration config;
     private CacheManager cacheManager;
     private Ehcache cache;

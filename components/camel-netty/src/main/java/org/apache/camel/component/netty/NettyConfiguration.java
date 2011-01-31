@@ -26,8 +26,8 @@ import java.util.Map;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.EndpointHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
@@ -41,7 +41,7 @@ import org.jboss.netty.util.CharsetUtil;
 
 @SuppressWarnings("unchecked")
 public class NettyConfiguration implements Cloneable {
-    private static final transient Log LOG = LogFactory.getLog(NettyConfiguration.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(NettyConfiguration.class);
 
     private String protocol;
     private String host;

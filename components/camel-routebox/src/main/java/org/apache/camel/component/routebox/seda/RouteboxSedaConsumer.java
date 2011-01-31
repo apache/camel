@@ -34,11 +34,11 @@ import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RouteboxSedaConsumer extends RouteboxServiceSupport implements RouteboxConsumer, Runnable, ShutdownAware {
-    private static final transient Log LOG = LogFactory.getLog(RouteboxSedaConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(RouteboxSedaConsumer.class);
     protected AsyncProcessor processor;
     protected ProducerTemplate producer;
 

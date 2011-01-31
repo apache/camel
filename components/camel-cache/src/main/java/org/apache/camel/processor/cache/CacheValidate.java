@@ -19,11 +19,11 @@ package org.apache.camel.processor.cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CacheValidate {
-    private static final transient Log LOG = LogFactory.getLog(CacheValidate.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CacheValidate.class);
 
     public boolean isValid(CacheManager cacheManager, String cacheName, String key) {
         if (LOG.isTraceEnabled()) {

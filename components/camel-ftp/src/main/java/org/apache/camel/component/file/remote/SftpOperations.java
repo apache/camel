@@ -43,8 +43,8 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
@@ -52,7 +52,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * SFTP remote file operations
  */
 public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
-    private static final transient Log LOG = LogFactory.getLog(SftpOperations.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
     private RemoteFileEndpoint endpoint;
     private ChannelSftp channel;
     private Session session;
@@ -196,7 +196,8 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         public boolean isEnabled(int level) {
             switch (level) {
             case FATAL:
-                return LOG.isFatalEnabled();
+                // use ERROR as FATAL
+                return LOG.isErrorEnabled();
             case ERROR:
                 return LOG.isErrorEnabled();
             case WARN:
@@ -211,7 +212,8 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         public void log(int level, String message) {
             switch (level) {
             case FATAL:
-                LOG.fatal("JSCH -> " + message);
+                // use ERROR as FATAL
+                LOG.error("JSCH -> " + message);
                 break;
             case ERROR:
                 LOG.error("JSCH -> " + message);

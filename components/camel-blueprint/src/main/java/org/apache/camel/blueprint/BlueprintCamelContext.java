@@ -25,14 +25,14 @@ import org.apache.camel.core.osgi.OsgiPackageScanClassResolver;
 import org.apache.camel.core.osgi.OsgiTypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
 public class BlueprintCamelContext extends DefaultCamelContext {
 
-    private static final transient Log LOG = LogFactory.getLog(BlueprintCamelContext.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BlueprintCamelContext.class);
 
     private BundleContext bundleContext;
     private BlueprintContainer blueprintContainer;

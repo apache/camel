@@ -38,8 +38,8 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spring.util.ReflectionUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -66,7 +66,7 @@ import org.springframework.context.ApplicationContextAware;
 @XmlRootElement(name = "beanPostProcessor")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
-    private static final transient Log LOG = LogFactory.getLog(CamelBeanPostProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelBeanPostProcessor.class);
     @XmlTransient
     Set<String> prototypeBeans = new LinkedHashSet<String>();
     @XmlTransient

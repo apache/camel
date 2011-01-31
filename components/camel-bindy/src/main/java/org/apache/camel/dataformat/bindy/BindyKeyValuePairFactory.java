@@ -34,8 +34,8 @@ import org.apache.camel.dataformat.bindy.annotation.Section;
 import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The BindyKeyValuePairFactory is the class who allows to bind data of type key
@@ -46,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BindyKeyValuePairFactory extends BindyAbstractFactory implements BindyFactory {
 
-    private static final transient Log LOG = LogFactory.getLog(BindyKeyValuePairFactory.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BindyKeyValuePairFactory.class);
 
     private Map<Integer, KeyValuePairField> keyValuePairFields = new LinkedHashMap<Integer, KeyValuePairField>();
     private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();

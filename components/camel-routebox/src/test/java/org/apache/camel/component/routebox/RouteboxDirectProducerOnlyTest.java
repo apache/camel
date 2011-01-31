@@ -26,12 +26,12 @@ import org.apache.camel.component.routebox.demo.SimpleRouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 
 public class RouteboxDirectProducerOnlyTest extends RouteboxDemoTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(RouteboxDirectProducerOnlyTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(RouteboxDirectProducerOnlyTest.class);
     
     private ProducerTemplate template;
     private String routeboxUri = "routebox:multipleRoutes?sendToConsumer=false&innerContext=#ctx&dispatchStrategy=#strategy"; 

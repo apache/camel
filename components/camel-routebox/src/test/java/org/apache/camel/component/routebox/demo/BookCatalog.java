@@ -19,11 +19,11 @@ package org.apache.camel.component.routebox.demo;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BookCatalog {
-    private static final transient Log LOG = LogFactory.getLog(BookCatalog.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BookCatalog.class);
     private HashMap<String, Book> map;
 
     public BookCatalog() {

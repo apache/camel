@@ -20,8 +20,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 public class CommonBindyTest extends AbstractJUnit4SpringContextTests {
@@ -33,7 +33,7 @@ public class CommonBindyTest extends AbstractJUnit4SpringContextTests {
     public static final String URI_FILE_FIX_SIMPLE = "file://src/test/data/fix_simple?noop=true";
     public static final String URI_FILE_FIX_TAB = "file://src/test/data/fix_tab?noop=true";
 
-    protected static final transient Log LOG = LogFactory.getLog(CommonBindyTest.class);
+    protected static final transient Logger LOG = LoggerFactory.getLogger(CommonBindyTest.class);
 
     @Produce(uri = URI_DIRECT_START)
     public ProducerTemplate template;
