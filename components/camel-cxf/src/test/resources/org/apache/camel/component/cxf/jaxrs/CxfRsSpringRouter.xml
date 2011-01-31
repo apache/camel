@@ -35,7 +35,7 @@
     </jaxrs:serviceBeans>       
   </jaxrs:server>
   
-  <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider"/>
+  <!--  bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider"/-->
 
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
    
