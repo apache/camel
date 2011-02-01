@@ -22,8 +22,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,9 +32,7 @@ import static org.junit.Assert.fail;
 
 @ContextConfiguration
 public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4SpringContextTests {
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(BindySimpleCsvMandatoryFieldsUnmarshallTest.class);
-
+    
     @EndpointInject(uri = "mock:result1")
     protected MockEndpoint resultEndpoint1;
 

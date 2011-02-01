@@ -21,9 +21,9 @@ import java.util.Map;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spi.PackageScanFilter;
+import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.osgi.service.blueprint.container.BlueprintContainer;
 
 /**
  * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} instances in the

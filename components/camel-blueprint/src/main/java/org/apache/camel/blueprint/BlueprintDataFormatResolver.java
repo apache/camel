@@ -20,9 +20,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.core.osgi.OsgiDataFormatResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.osgi.framework.BundleContext;
 
 public class BlueprintDataFormatResolver extends OsgiDataFormatResolver {
 

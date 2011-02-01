@@ -36,9 +36,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ObjectHelper;
+import org.jdom.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jdom.JDOMException;
 import org.springframework.core.io.Resource;
 
 /**

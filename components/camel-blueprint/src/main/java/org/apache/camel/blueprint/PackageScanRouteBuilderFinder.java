@@ -22,10 +22,10 @@ import java.util.Set;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spi.PackageScanClassResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.reflect.BeanMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} instances on the classpath

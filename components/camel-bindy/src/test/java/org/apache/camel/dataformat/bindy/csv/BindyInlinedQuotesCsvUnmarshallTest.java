@@ -24,8 +24,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
@@ -34,11 +32,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
 public class BindyInlinedQuotesCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(BindyInlinedQuotesCsvUnmarshallTest.class);
-
+    
     private static final String URI_MOCK_RESULT = "mock:result";
-    private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
 
     @Produce(uri = URI_DIRECT_START)
@@ -46,9 +41,6 @@ public class BindyInlinedQuotesCsvUnmarshallTest extends AbstractJUnit4SpringCon
 
     @EndpointInject(uri = URI_MOCK_RESULT)
     private MockEndpoint result;
-
-    @EndpointInject(uri = URI_MOCK_ERROR)
-    private MockEndpoint error;
 
     private String expected;
 
