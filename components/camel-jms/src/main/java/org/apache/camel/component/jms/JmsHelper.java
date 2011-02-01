@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -34,9 +35,15 @@ public final class JmsHelper {
      *
      * @return <tt>true</tt> if 2.0.x or <tt>false</tt> if newer such as 2.5.x
      */
-    public static boolean isSpring20x() {
+    public static boolean isSpring20x(CamelContext context) {
         // this class is only possible to instantiate in 2.5.x or newer
-        Class<?> type = ObjectHelper.loadClass(DEFAULT_QUEUE_BROWSE_STRATEGY, JmsComponent.class.getClassLoader());
+        Class<?> type = null;
+        if (context != null) {
+            type = context.getClassResolver().resolveClass(DEFAULT_QUEUE_BROWSE_STRATEGY, JmsComponent.class.getClassLoader());
+        } else {
+            type = ObjectHelper.loadClass(DEFAULT_QUEUE_BROWSE_STRATEGY, JmsComponent.class.getClassLoader());
+        }
+        
         if (type != null) {
             try {
                 ObjectHelper.newInstance(type);
@@ -48,5 +55,4 @@ public final class JmsHelper {
             return true;
         }
     }
-
 }

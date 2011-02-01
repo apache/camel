@@ -35,7 +35,7 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
         super(endpoint);
         this.jmsEndpoint = endpoint;
         this.template = template;
-        this.spring20x = JmsHelper.isSpring20x();
+        this.spring20x = JmsHelper.isSpring20x(endpoint != null ? endpoint.getCamelContext() : null);
     }
 
     @Override
