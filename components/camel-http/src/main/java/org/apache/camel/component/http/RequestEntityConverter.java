@@ -61,7 +61,12 @@ public class RequestEntityConverter {
                 .getHeader(Exchange.CONTENT_ENCODING, String.class), in), ExchangeHelper
                 .getContentType(exchange));
         } else {
-            return new InputStreamRequestEntity(in);
+            // should set the content type here
+            if (exchange != null) {
+                return new InputStreamRequestEntity(in, ExchangeHelper.getContentType(exchange));
+            } else {
+                return new InputStreamRequestEntity(in);
+            }
         }
     }
 
@@ -72,7 +77,12 @@ public class RequestEntityConverter {
                 .getHeader(Exchange.CONTENT_ENCODING, String.class), data), ExchangeHelper
                 .getContentType(exchange));
         } else {
-            return new InputStreamRequestEntity(new ByteArrayInputStream(data));
+            // should set the content type here
+            if (exchange != null) {
+                return new InputStreamRequestEntity(new ByteArrayInputStream(data), ExchangeHelper.getContentType(exchange));
+            } else {
+                return new InputStreamRequestEntity(new ByteArrayInputStream(data));
+            }
         }
     }
 }

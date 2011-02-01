@@ -51,7 +51,7 @@ public final class HttpHelper {
             }
         }
     }
-
+    
     /**
      * Writes the given object as response body to the servlet response
      * <p/>
