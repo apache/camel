@@ -28,11 +28,13 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link Processor} which just logs to a {@link CamelLogger} object which can be used
  * as an exception handler instead of using a dead letter queue.
+ * <p/>
+ * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
+ * which has a <tt>Logger</tt> class.
  *
  * @version $Revision$
  */
 public class CamelLogger extends ServiceSupport implements Processor {
-    // TODO: Rename CamelLogger to a better name
     private Logger log;
     private LoggingLevel level;
     private ExchangeFormatter formatter = DefaultExchangeFormatter.getInstance();
