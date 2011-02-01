@@ -17,9 +17,9 @@
 package org.apache.camel.component.jms.temp;
 
 import org.apache.activemq.command.ActiveMQTempTopic;
+import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.junit.Before;
 
 /**
  * @version $Revision$

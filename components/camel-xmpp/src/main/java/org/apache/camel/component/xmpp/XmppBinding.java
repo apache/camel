@@ -24,11 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
-
+import org.jivesoftware.smack.packet.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.jivesoftware.smack.packet.Message;
 
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link XmppMessage} to and from a

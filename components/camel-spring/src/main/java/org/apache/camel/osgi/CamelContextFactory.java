@@ -19,9 +19,9 @@ package org.apache.camel.osgi;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
 
 /**

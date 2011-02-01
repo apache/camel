@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.irc;
 
-import org.slf4j.Logger;
 import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
+import org.slf4j.Logger;
 
 /**
  * A helper class which logs errors

@@ -45,7 +45,7 @@ public class SpringRoutePoliciesTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public static class MyCustomRoutePolicy extends RoutePolicySupport {
+    public static final class MyCustomRoutePolicy extends RoutePolicySupport {
 
         private final String name;
 

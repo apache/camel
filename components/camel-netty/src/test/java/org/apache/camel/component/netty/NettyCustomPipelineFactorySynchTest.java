@@ -25,8 +25,6 @@ import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.CamelTestSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
@@ -35,6 +33,8 @@ import org.jboss.netty.handler.codec.string.StringDecoder;
 import org.jboss.netty.handler.codec.string.StringEncoder;
 import org.jboss.netty.util.CharsetUtil;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NettyCustomPipelineFactorySynchTest extends CamelTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyCustomPipelineFactorySynchTest.class);

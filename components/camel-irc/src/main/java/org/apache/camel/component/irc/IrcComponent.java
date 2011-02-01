@@ -19,14 +19,13 @@ package org.apache.camel.component.irc;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventListener;
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Component</a>

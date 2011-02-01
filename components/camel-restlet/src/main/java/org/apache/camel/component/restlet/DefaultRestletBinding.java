@@ -24,22 +24,20 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.CharacterSet;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
-import org.restlet.data.Parameter;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default Restlet binding implementation

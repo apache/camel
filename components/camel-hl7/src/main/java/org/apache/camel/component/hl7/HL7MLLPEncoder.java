@@ -17,15 +17,13 @@
 package org.apache.camel.component.hl7;
 
 import java.nio.charset.CharsetEncoder;
-
 import ca.uhn.hl7v2.model.Message;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HL7 MLLP encoder

@@ -21,9 +21,9 @@ import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.osgi.framework.BundleContext;
 
 public final class OsgiCamelContextHelper {
     private static final transient Logger LOG = LoggerFactory.getLogger(OsgiCamelContextHelper.class);

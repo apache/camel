@@ -39,9 +39,9 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.PredicateAssertHelper;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.junit.Assert;
 
 /**
  * A bunch of useful testing methods

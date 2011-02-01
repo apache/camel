@@ -28,8 +28,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.dozer.classmap.ClassMap;
@@ -39,6 +37,8 @@ import org.dozer.loader.api.BeanMappingBuilder;
 import org.dozer.loader.xml.MappingFileReader;
 import org.dozer.loader.xml.XMLParserFactory;
 import org.dozer.util.DozerClassLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <code>DozerTypeConverterLoader</code> provides the mechanism for registering

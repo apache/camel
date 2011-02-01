@@ -26,8 +26,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.restlet.Component;
 import org.restlet.Guard;
 import org.restlet.Restlet;
@@ -35,6 +33,8 @@ import org.restlet.Server;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Method;
 import org.restlet.data.Protocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Camel component embedded Restlet that produces and consumes exchanges.

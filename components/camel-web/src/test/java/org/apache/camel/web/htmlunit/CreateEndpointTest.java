@@ -20,9 +20,10 @@ import java.util.List;
 
 import org.apache.camel.web.htmlunit.pages.EndpointsPage;
 import org.apache.camel.web.htmlunit.pages.SendMessagePage;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.openqa.selenium.WebElement;
+
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;

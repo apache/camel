@@ -21,8 +21,6 @@ import java.io.IOException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.SynchronizedPDUSender;
@@ -44,6 +42,8 @@ import org.jsmpp.util.DefaultComposer;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.MessageId;
 import org.jsmpp.util.RandomMessageIDGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of @{link Consumer} which use the SMPP protocol

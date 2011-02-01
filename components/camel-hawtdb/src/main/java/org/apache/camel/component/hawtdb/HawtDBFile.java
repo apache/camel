@@ -17,8 +17,6 @@
 package org.apache.camel.component.hawtdb;
 
 import org.apache.camel.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.codec.BufferCodec;
 import org.fusesource.hawtbuf.codec.IntegerCodec;
@@ -29,6 +27,8 @@ import org.fusesource.hawtdb.api.SortedIndex;
 import org.fusesource.hawtdb.api.Transaction;
 import org.fusesource.hawtdb.api.TxPageFile;
 import org.fusesource.hawtdb.api.TxPageFileFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages access to a shared <a href="http://hawtdb.fusesource.org/">HawtDB</a> file.

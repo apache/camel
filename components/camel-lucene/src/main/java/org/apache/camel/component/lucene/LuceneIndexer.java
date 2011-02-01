@@ -23,13 +23,13 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.NIOFSDirectory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LuceneIndexer {
     private static final transient Logger LOG = LoggerFactory.getLogger(LuceneIndexer.class);

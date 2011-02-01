@@ -27,8 +27,6 @@ import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.http.auth.params.AuthParamBean;
 import org.apache.http.client.params.ClientParamBean;
 import org.apache.http.conn.ClientConnectionManager;
@@ -46,6 +44,8 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParamBean;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParamBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/http.html">HTTP

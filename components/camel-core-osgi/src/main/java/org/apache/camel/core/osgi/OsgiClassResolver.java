@@ -23,10 +23,10 @@ import java.net.URL;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /* Using the bundle of CamelContext to load the class */
 public class OsgiClassResolver extends DefaultClassResolver {

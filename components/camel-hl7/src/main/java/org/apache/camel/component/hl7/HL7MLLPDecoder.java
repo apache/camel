@@ -19,12 +19,12 @@ package org.apache.camel.component.hl7;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetDecoder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HL7MLLPDecoder that is aware that a HL7 message can span several TCP packets.

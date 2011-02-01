@@ -19,12 +19,11 @@ package org.apache.camel.component.irc;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
-import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IrcProducer extends DefaultProducer {
 

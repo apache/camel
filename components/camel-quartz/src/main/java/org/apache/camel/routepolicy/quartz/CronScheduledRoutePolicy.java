@@ -20,10 +20,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
 import org.apache.camel.component.quartz.QuartzComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.quartz.CronTrigger;
 import org.quartz.Trigger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements ScheduledRoutePolicyConstants {
     private static final transient Logger LOG = LoggerFactory.getLogger(CronScheduledRoutePolicy.class);

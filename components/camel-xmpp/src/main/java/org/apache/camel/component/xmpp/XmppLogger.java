@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.xmpp;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XmppLogger implements PacketListener {
 

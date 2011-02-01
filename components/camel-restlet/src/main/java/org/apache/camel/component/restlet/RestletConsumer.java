@@ -21,11 +21,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.restlet.Restlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Restlet consumer acts as a server to listen client requests.

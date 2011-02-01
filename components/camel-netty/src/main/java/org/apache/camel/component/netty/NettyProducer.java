@@ -31,8 +31,6 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -46,6 +44,8 @@ import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.DatagramChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyProducer.class);

@@ -21,8 +21,6 @@ import java.io.IOException;
 
 import org.apache.camel.processor.lucene.support.Hit;
 import org.apache.camel.processor.lucene.support.Hits;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
@@ -33,6 +31,8 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.util.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LuceneSearcher {
     private static final transient Logger LOG = LoggerFactory.getLogger(LuceneSearcher.class);

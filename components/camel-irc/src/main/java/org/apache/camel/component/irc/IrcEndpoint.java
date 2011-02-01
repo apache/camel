@@ -24,14 +24,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Endpoint</a>

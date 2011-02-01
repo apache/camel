@@ -31,11 +31,11 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtdb.api.SortedIndex;
 import org.fusesource.hawtdb.api.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An instance of AggregationRepository which is backed by a HawtDB.

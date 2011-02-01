@@ -19,12 +19,12 @@ package org.apache.camel.component.irc;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IrcConsumer extends DefaultConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(IrcConsumer.class);

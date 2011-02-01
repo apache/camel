@@ -25,14 +25,14 @@ import org.apache.camel.component.netty.NettyPayloadHelper;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Server handler which is shared

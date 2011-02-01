@@ -28,9 +28,9 @@ import org.apache.camel.component.routebox.demo.RouteboxDemoTestSupport;
 import org.apache.camel.component.routebox.demo.SimpleRouteBuilder;
 import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.junit.Test;
 
 public class RouteboxDispatchMapTest extends RouteboxDemoTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(RouteboxSedaTest.class);

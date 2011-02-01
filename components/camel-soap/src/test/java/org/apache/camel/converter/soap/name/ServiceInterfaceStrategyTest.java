@@ -26,9 +26,9 @@ import com.example.customerservice.GetCustomersByNameResponse;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.junit.Test;
 
 public class ServiceInterfaceStrategyTest {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceInterfaceStrategyTest.class);

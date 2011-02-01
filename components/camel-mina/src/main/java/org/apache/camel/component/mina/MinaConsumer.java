@@ -25,12 +25,12 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} implementation for Apache MINA.

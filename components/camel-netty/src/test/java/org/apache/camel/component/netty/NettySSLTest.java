@@ -26,9 +26,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.CamelTestSupport;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.junit.Test;
 
 public class NettySSLTest extends CamelTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(NettySSLTest.class);

@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
+import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.osgi.framework.Bundle;
 
 /**
  * A ClassLoader delegating to a given OSGi bundle.

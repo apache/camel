@@ -22,9 +22,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xquery.XQuery;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.junit.Test;
 
 /**
  * @version $Revision$

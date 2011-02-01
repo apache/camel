@@ -21,10 +21,10 @@ import java.util.Collection;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.cometd.Client;
 import org.cometd.server.AbstractBayeux;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Producer to send messages using Cometd and Bayeux protocol.

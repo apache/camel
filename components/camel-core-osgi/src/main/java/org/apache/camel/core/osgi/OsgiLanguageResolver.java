@@ -21,11 +21,11 @@ import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OsgiLanguageResolver implements LanguageResolver {
     private static final transient Logger LOG = LoggerFactory.getLogger(OsgiLanguageResolver.class);
