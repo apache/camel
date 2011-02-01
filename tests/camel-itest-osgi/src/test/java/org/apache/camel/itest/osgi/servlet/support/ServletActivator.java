@@ -22,13 +22,13 @@ import java.util.Hashtable;
 import javax.servlet.Servlet;
 
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.osgi.context.BundleContextAware;
 
 public final class ServletActivator implements BundleActivator, BundleContextAware {
