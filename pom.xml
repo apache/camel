@@ -385,7 +385,7 @@
             <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-buildtools</artifactId>
-              <version>${camel-buildtoools.version}</version>
+              <version>${project.version}</version>
             </dependency>
           </dependencies>
         </plugin>
