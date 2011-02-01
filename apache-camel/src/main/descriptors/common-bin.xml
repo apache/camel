@@ -127,7 +127,7 @@
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xstream</include>
         <!-- these two jars is mandatory -->
-        <include>commons-logging:commons-logging</include>
+        <include>org.slf4j:slf4j-api</include>
         <include>org.fusesource.commonman:commons-management</include>
       </includes>
     </dependencySet>
@@ -137,6 +137,7 @@
       <scope>runtime</scope>
       <includes>
         <!-- spring is used by several camel components -->
+        <include>commons-logging:commons-logging</include>
         <include>aopalliance:aopalliance</include>
         <include>org.springframework:spring-aop</include>
         <include>org.springframework:spring-asm</include>
@@ -170,7 +171,6 @@
       <scope>runtime</scope>
       <includes>
         <include>log4j:log4j</include>
-        <include>org.slf4j:slf4j-api</include>
         <include>org.slf4j:slf4j-log4j12</include>
         <!-- commons-XXX is needed when running examples using ANT or camel-jasypt tooling -->
         <include>commons-beanutils:commons-beanutils</include>

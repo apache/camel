@@ -58,19 +58,13 @@
 
   <dependencies>
 
-      <!-- required dependencies by camel-core -->
+    <!-- required dependencies by camel-core -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
-      <!-- TODO: remove me later, but keep for backwards comp. until fully migrated to sfl4j -->
-      <dependency>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging-api</artifactId>
-      </dependency>
-
-      <!-- required dependencies by camel-core -->
+    <!-- required dependencies by camel-core -->
     <dependency>
       <groupId>org.fusesource.commonman</groupId>
       <artifactId>commons-management</artifactId>
@@ -108,13 +102,16 @@
         <optional>true</optional>
     </dependency>
 
-      <!-- testing -->
+    <!-- testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <!-- we had some issues testing with junit 4.x. so we stuck with 3.8.x -->
       <version>3.8.2</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -125,11 +122,14 @@
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- needed for jmx testing -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
 
