@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -73,6 +74,7 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
         return ProcessorBuilder.setProperty(getPropertyName(), expr);
     }
 
+    @Required
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
     }

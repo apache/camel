@@ -36,6 +36,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IntrospectionSupport;
@@ -179,6 +180,7 @@ public class ExpressionDefinition implements Expression, Predicate {
         return expression;
     }
 
+    @Required
     public void setExpression(String expression) {
         this.expression = expression;
     }

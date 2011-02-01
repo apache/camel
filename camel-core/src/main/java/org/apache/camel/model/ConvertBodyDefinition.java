@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.processor.ConvertBodyProcessor;
+import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -99,6 +100,7 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ConvertBodyDefini
         return type;
     }
 
+    @Required
     public void setType(String type) {
         this.type = type;
     }

@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -78,6 +79,7 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
         return ProcessorBuilder.setHeader(getHeaderName(), expr);
     }
 
+    @Required
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
