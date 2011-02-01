@@ -19,10 +19,10 @@ package org.apache.camel.component.cxf.cxfbean;
 import java.io.IOException;
 
 import org.apache.camel.component.cxf.transport.CamelTransportFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Destination;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CXF Bean TransportFactory that overrides CamelTransportFactory to create

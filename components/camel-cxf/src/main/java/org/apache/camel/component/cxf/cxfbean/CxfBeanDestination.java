@@ -22,13 +22,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.transport.CamelDestination;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.cxf.Bus;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.ConduitInitiator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A CXF transport {@link org.apache.cxf.transport.Destination} that listens 

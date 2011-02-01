@@ -20,10 +20,10 @@ import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.cxf.endpoint.ClientCallback;
 import org.apache.cxf.service.model.BindingOperationInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CxfClientCallback extends ClientCallback {
     private static final Logger LOG = LoggerFactory.getLogger(CxfClientCallback.class);

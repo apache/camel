@@ -27,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ServerFactoryBean;
@@ -36,6 +34,8 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.MessageContentsList;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CxfProducerRouterTest extends CamelTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(CxfProducerRouterTest.class);

@@ -30,11 +30,11 @@ import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.apache.cxf.jaxrs.model.OperationResourceInfoStack;
 import org.apache.cxf.message.MessageContentsList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default strategy  to bind between Camel and CXF exchange for RESTful resources.
