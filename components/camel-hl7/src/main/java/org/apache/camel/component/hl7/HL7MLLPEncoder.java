@@ -20,8 +20,8 @@ import java.nio.charset.CharsetEncoder;
 
 import ca.uhn.hl7v2.model.Message;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.ProtocolEncoder;
@@ -32,7 +32,7 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
  */
 class HL7MLLPEncoder implements ProtocolEncoder {
 
-    private static final transient Log LOG = LogFactory.getLog(HL7MLLPEncoder.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(HL7MLLPEncoder.class);
 
     private static final String CHARSET_ENCODER = HL7MLLPCodec.class.getName() + ".charsetencoder";
 

@@ -33,8 +33,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.ObjectConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -46,7 +46,7 @@ import org.springframework.core.io.UrlResource;
  * @version $Revision$
  */
 public class ScriptBuilder implements Expression, Predicate, Processor {
-    private static final transient Log LOG = LogFactory.getLog(ScriptBuilder.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ScriptBuilder.class);
 
     private String scriptEngineName;
     private Resource scriptResource;

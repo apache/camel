@@ -40,8 +40,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @{link Consumer} implementation for Javaspaces
@@ -54,7 +54,7 @@ public class JavaSpaceConsumer extends DefaultConsumer {
     public static final int TAKE = 0;
     
     @SuppressWarnings("unused")
-    private static final transient Log LOG = LogFactory.getLog(JavaSpaceConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JavaSpaceConsumer.class);
     
     private final int concurrentConsumers;
     private final boolean transactional;

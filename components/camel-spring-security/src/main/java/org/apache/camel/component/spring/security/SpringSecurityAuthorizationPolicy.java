@@ -29,8 +29,8 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -47,7 +47,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Assert;
 
 public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements AuthorizationPolicy, InitializingBean, ApplicationEventPublisherAware {
-    private static final transient Log LOG = LogFactory.getLog(SpringSecurityAuthorizationPolicy.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SpringSecurityAuthorizationPolicy.class);
     private AccessDecisionManager accessDecisionManager;
     private AuthenticationManager authenticationManager;
     private AuthenticationAdapter authenticationAdapter;

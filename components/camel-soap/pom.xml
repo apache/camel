@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-    <!--
-        Licensed to the Apache Software Foundation (ASF) under one or
-        more contributor license agreements. See the NOTICE file
-        distributed with this work for additional information regarding
-        copyright ownership. The ASF licenses this file to You under the
-        Apache License, Version 2.0 (the "License"); you may not use
-        this file except in compliance with the License. You may obtain
-        a copy of the License at
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or
+    more contributor license agreements. See the NOTICE file
+    distributed with this work for additional information regarding
+    copyright ownership. The ASF licenses this file to You under the
+    Apache License, Version 2.0 (the "License"); you may not use
+    this file except in compliance with the License. You may obtain
+    a copy of the License at
 
-        http://www.apache.org/licenses/LICENSE-2.0 Unless required by
-        applicable law or agreed to in writing, software distributed
-        under the License is distributed on an "AS IS" BASIS, WITHOUT
-        WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions
-        and limitations under the License.
-    -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+    applicable law or agreed to in writing, software distributed
+    under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions
+    and limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -33,7 +34,8 @@
 
     <properties>
         <camel.osgi.import.before.defaults>javax.xml.ws;version="[0.0,3)"</camel.osgi.import.before.defaults>
-        <camel.osgi.export.pkg>org.apache.camel.dataformat.soap.*, org.xmlsoap.schemas.soap.envelope.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.dataformat.soap.*, org.xmlsoap.schemas.soap.envelope.*
+        </camel.osgi.export.pkg>
     </properties>
 
     <dependencies>
@@ -42,15 +44,9 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jaxb</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging-api</artifactId>
         </dependency>
 
         <dependency>
@@ -62,8 +58,8 @@
             <artifactId>jaxb-impl</artifactId>
         </dependency>
 
-	<!-- JAXWS api jars -->
-	<dependency>
+        <!-- JAXWS api jars -->
+        <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
             <version>1.1.2</version>
@@ -102,8 +98,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -123,9 +119,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.springframework</groupId>
-        	<artifactId>spring-test</artifactId>
-        	<scope>test</scope>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -180,13 +176,19 @@
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/test/resources/org/apache/camel/dataformat/soap/CustomerService.wsdl</wsdl>
+                                    <wsdl>
+                                        ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/CustomerService.wsdl
+                                    </wsdl>
                                     <bindingFiles>
-                                        <bindingFile>${basedir}/src/test/resources/org/apache/camel/dataformat/soap/binding.xml</bindingFile>
+                                        <bindingFile>
+                                            ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/binding.xml
+                                        </bindingFile>
                                     </bindingFiles>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/test/resources/org/apache/camel/dataformat/soap/CustomerService2.wsdl</wsdl>
+                                    <wsdl>
+                                        ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/CustomerService2.wsdl
+                                    </wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>

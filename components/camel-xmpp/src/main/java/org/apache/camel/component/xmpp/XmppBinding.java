@@ -25,8 +25,8 @@ import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jivesoftware.smack.packet.Message;
 
@@ -38,7 +38,7 @@ import org.jivesoftware.smack.packet.Message;
  */
 public class XmppBinding {
 
-    private static final transient Log LOG = LogFactory.getLog(XmppBinding.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(XmppBinding.class);
     private HeaderFilterStrategy headerFilterStrategy;
 
     public XmppBinding() {

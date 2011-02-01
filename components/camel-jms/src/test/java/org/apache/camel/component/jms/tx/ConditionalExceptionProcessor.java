@@ -18,15 +18,15 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Conditionally throws exception causing a rollback
  */
 public class ConditionalExceptionProcessor implements Processor {
 
-    private static final transient Log LOG = LogFactory.getLog(ConditionalExceptionProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ConditionalExceptionProcessor.class);
     private int count;
     private int maxCalls;
     private String errorMsg;

@@ -20,8 +20,8 @@ package org.apache.camel.spring.javaconfig.test;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -57,7 +57,7 @@ import org.springframework.test.context.ContextLoader;
  */
 public class JavaConfigContextLoader implements ContextLoader {
 
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Simply returns the supplied <var>locations</var> unchanged.

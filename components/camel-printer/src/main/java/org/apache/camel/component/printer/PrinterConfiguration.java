@@ -24,11 +24,11 @@ import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.Sides;
 
 import org.apache.camel.util.URISupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PrinterConfiguration {
-    private static final transient Log LOG = LogFactory.getLog(PrinterConfiguration.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(PrinterConfiguration.class);
     private URI uri;
     private String hostname;
     private int port;

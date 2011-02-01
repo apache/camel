@@ -25,8 +25,8 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
@@ -39,7 +39,7 @@ import org.schwering.irc.lib.IRCUser;
  * @version $Revision$
  */
 public class IrcEndpoint extends DefaultEndpoint {
-    private static final transient Log LOG = LogFactory.getLog(IrcEndpoint.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
     
     private IrcBinding binding;
     private IrcConfiguration configuration;

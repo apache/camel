@@ -27,12 +27,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Converter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Rfc3164SyslogConverter {
 
-    private static final transient Log LOG = LogFactory.getLog(Rfc3164SyslogConverter.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(Rfc3164SyslogConverter.class);
 
     private static enum MONTHS {
         jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec

@@ -22,8 +22,8 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.CastUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration
 public class NoSplitRowsTest extends AbstractJUnit4SpringContextTests {
     
-    private static final transient Log LOG = LogFactory.getLog(NoSplitRowsTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(NoSplitRowsTest.class);
 
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint results;

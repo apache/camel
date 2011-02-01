@@ -38,8 +38,8 @@ import org.apache.camel.component.cxf.spring.CxfEndpointBeanDefinitionParser.Cxf
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.EndpointHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
@@ -52,7 +52,7 @@ import org.apache.cxf.message.MessageContentsList;
  */
 @Converter
 public final class CxfConverter {
-    private static final Log LOG = LogFactory.getLog(CxfConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfConverter.class);
 
     private CxfConverter() {
         // Helper class

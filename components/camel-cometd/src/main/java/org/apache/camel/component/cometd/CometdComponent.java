@@ -22,8 +22,8 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.cometd.server.AbstractBayeux;
 import org.cometd.server.continuation.ContinuationCometdServlet;
 import org.eclipse.jetty.server.Connector;
@@ -41,7 +41,7 @@ import org.eclipse.jetty.util.resource.Resource;
  * @version $Revision:520964 $
  */
 public class CometdComponent extends DefaultComponent {
-    private static final transient Log LOG = LogFactory.getLog(CometdComponent.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CometdComponent.class);
 
     private final Map<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
 

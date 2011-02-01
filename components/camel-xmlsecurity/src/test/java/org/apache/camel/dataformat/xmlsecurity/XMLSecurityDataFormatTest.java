@@ -64,7 +64,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
                 in.setBody(XML_FRAGMENT);
-                System.out.println("xmlFragment: " + XML_FRAGMENT);
+                log.info("xmlFragment: " + XML_FRAGMENT);
             }
 
         });
@@ -75,7 +75,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
      */
     @Test
     public void testFullPayloadXMLEncryption() throws Exception {
-        System.out.println("\n***--------- Test: testFullPayloadXMLEncryption ----------***\n");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().secureXML().process(new EncryptedXMLMessageProcessor());
@@ -88,7 +87,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testPartialPayloadXMLContentEncryption() throws Exception {
-        System.out.println("\n***--------- Test: testPartialPayloadXMLContentEncryption ----------***\n");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().secureXML("//cheesesites/italy/cheese", true).process(new EncryptedXMLMessageProcessor());
@@ -101,7 +99,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testPartialPayloadMultiNodeXMLContentEncryption() throws Exception {
-        System.out.println("\n***--------- Test: testPartialPayloadMultiNodeXMLContentEncryption ----------***\n");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().secureXML("//cheesesites/*/cheese", true).process(new EncryptedXMLMessageProcessor());
@@ -114,7 +111,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testPartialPayloadXMLElementEncryptionWithKey() throws Exception {
-        System.out.println("\n***--------- Test: testPartialPayloadXMLElementEncryptionWithKey ----------***\n");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().secureXML("//cheesesites/france/cheese", false, "Just another 24 Byte key").process(new EncryptedXMLMessageProcessor());
@@ -134,7 +130,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
             (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17};
 
         final String passCode = new String(bits128);
-        System.out.println("\n***--------- Test: testPartialPayloadXMLElementEncryptionWithKeyAndAlgorithm ----------***\n");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().secureXML("//cheesesites/netherlands", false, passCode, XMLCipher.AES_128).process(new EncryptedXMLMessageProcessor());
@@ -150,7 +145,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     */
     @Test
     public void testFullPayloadXMLDecryption() throws Exception {
-        System.out.println("\n***--------- Test: testFullPayloadXMLDecryption ----------***\n");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().secureXML().unmarshal().secureXML().process(new DecryptedXMLMessageProcessor());
@@ -163,7 +157,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     
     @Test
     public void testPartialPayloadXMLContentDecryption() throws Exception {
-        System.out.println("\n***--------- Test: testPartialPayloadXMLContentDecryption ----------***\n");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().secureXML("//cheesesites/italy/cheese", true).
@@ -177,7 +170,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     
     @Test
     public void testPartialPayloadMultiNodeXMLContentDecryption() throws Exception {
-        System.out.println("\n***--------- Test: testPartialPayloadMultiNodeXMLContentDecryption ----------***\n");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().secureXML("//cheesesites/*/cheese", true).
@@ -191,7 +183,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testPartialPayloadXMLElementDecryptionWithKey() throws Exception {
-        System.out.println("\n***--------- Test: testPartialPayloadXMLElementDecryptionWithKey ----------***\n");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().secureXML("//cheesesites/france/cheese", false, "Just another 24 Byte key").
@@ -211,7 +202,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
             (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
             (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17};
         final String passCode = new String(bits128);
-        System.out.println("\n***--------- Test: testPartialPayloadXMLContentDecryptionWithKeyAndAlgorithm ----------***\n");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().secureXML("cheese", true, passCode, XMLCipher.AES_128).
@@ -234,7 +224,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
             // write to a string
             XmlConverter converter = new XmlConverter();
             String xmlStr = converter.toString(d, exchange);
-            System.out.println("\n\nIn EncryptedXMLMessageProcessor:" + xmlStr);
 
             NodeList nodeList = d.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
             if (nodeList.getLength() >= 0) {
@@ -255,8 +244,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
             // write to a string
             XmlConverter converter = new XmlConverter();
             String xmlStr = converter.toString(d, exchange);
-            
-            System.out.println("\n\nIn DecryptedXMLMessageProcessor:" + xmlStr);
 
             NodeList nodeList = d.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
             if (nodeList.getLength() == 0) {

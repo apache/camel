@@ -23,8 +23,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.spring.integration.SpringIntegrationBinding;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.integration.channel.DirectChannel;
@@ -40,7 +40,7 @@ import org.springframework.integration.message.MessageHandler;
  * @version $Revision$
  */
 public class CamelSourceAdapter extends AbstractCamelAdapter implements InitializingBean, DisposableBean {
-    private static final Log LOG = LogFactory.getLog(CamelSourceAdapter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelSourceAdapter.class);
 
     private Consumer consumer;
     private Endpoint camelEndpoint;

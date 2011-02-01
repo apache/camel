@@ -34,8 +34,8 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ValueHolder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 
@@ -45,7 +45,7 @@ import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinati
  * @version $Revision$
  */
 public class JmsProducer extends DefaultAsyncProducer {
-    private static final transient Log LOG = LogFactory.getLog(JmsProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JmsProducer.class);
     private final JmsEndpoint endpoint;
     private final AtomicBoolean started = new AtomicBoolean(false);
     private JmsOperations inOnlyTemplate;

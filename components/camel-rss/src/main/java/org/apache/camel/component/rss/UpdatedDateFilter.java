@@ -22,8 +22,8 @@ import com.sun.syndication.feed.synd.SyndEntry;
 
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Filters out all entries which occur before the last time of the entry we saw (assuming
@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class UpdatedDateFilter implements EntryFilter {
 
-    private static final transient Log LOG = LogFactory.getLog(UpdatedDateFilter.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(UpdatedDateFilter.class);
     private Date lastUpdate;
 
     public UpdatedDateFilter(Date lastUpdate) {

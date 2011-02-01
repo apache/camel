@@ -22,8 +22,8 @@ import java.util.concurrent.Executor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
@@ -31,7 +31,7 @@ import org.osgi.service.event.EventHandler;
 
 public class EventAdminConsumer extends DefaultConsumer implements EventHandler {
 
-    private static final transient Log LOG = LogFactory.getLog(EventAdminConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(EventAdminConsumer.class);
     private final EventAdminEndpoint endpoint;
     private ServiceRegistration registration;
     private Executor executor;

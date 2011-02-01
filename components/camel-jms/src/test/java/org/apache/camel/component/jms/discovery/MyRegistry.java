@@ -19,8 +19,8 @@ package org.apache.camel.component.jms.discovery;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A simple POJO showing how to create a simple registry
@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class MyRegistry {
-    private static final transient Log LOG = LogFactory.getLog(MyRegistry.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MyRegistry.class);
 
     private Map<String, Map> services = new HashMap<String, Map>();
 

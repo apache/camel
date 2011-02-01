@@ -20,13 +20,13 @@ import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.endpoint.ClientCallback;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
 public class CxfClientCallback extends ClientCallback {
-    private static final Log LOG = LogFactory.getLog(CxfClientCallback.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfClientCallback.class);
 
     private final AsyncCallback camelAsyncCallback;
     private final Exchange camelExchange;

@@ -29,8 +29,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spi.ShutdownAware;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Camel consumer that polls a kestrel queue.

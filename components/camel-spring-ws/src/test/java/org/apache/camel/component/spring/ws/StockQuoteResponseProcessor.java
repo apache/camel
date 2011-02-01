@@ -24,15 +24,15 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generates static response on StockQuote webservice requests
  */
 public class StockQuoteResponseProcessor implements Processor {
 
-    private static final Log LOG = LogFactory.getLog(StockQuoteResponseProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StockQuoteResponseProcessor.class);
 
     public void process(Exchange exchange) throws Exception {
         LOG.info("Crafting standard response in StockQuoteResponseProcessor");

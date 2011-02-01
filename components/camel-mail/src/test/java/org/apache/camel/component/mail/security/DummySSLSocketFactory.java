@@ -25,8 +25,8 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DummySSLSocketFactory for testing with SSL - <b>NOT SECURE</b>.
@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DummySSLSocketFactory extends SSLSocketFactory {
 
-    private static final transient Log LOG = LogFactory.getLog(DummySSLSocketFactory.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DummySSLSocketFactory.class);
     private SSLSocketFactory factory;
 
     public DummySSLSocketFactory() {

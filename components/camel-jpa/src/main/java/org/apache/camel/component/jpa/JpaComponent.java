@@ -21,8 +21,8 @@ import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -32,7 +32,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version $Revision$
  */
 public class JpaComponent extends DefaultComponent {
-    private static final Log LOG = LogFactory.getLog(JpaComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JpaComponent.class);
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
 

@@ -21,15 +21,15 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.RoutePolicySupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 
 public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements ScheduledRoutePolicyConstants {
-    private static final transient Log LOG = LogFactory.getLog(ScheduledRoutePolicy.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledRoutePolicy.class);
     protected ScheduledRouteDetails scheduledRouteDetails;
     private Scheduler scheduler;
     private int routeStopGracePeriod;

@@ -19,8 +19,8 @@ package org.apache.camel.component.cxf.cxfbean;
 import java.io.IOException;
 
 import org.apache.camel.component.cxf.transport.CamelTransportFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Destination;
 
@@ -32,7 +32,7 @@ import org.apache.cxf.transport.Destination;
  */
 public class CxfBeanTransportFactory extends CamelTransportFactory  {
     public static final String TRANSPORT_ID = "http://cxf.apache.org/transports/camel/cxfbean";
-    private static final Log LOG = LogFactory.getLog(CxfBeanTransportFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfBeanTransportFactory.class);
     private CxfBeanComponent cxfBeanComponent;
  
     @Override

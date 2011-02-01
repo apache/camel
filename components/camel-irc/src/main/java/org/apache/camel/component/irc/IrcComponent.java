@@ -22,8 +22,8 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventListener;
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
@@ -34,7 +34,7 @@ import org.schwering.irc.lib.ssl.SSLIRCConnection;
  * @version $Revision$
  */
 public class IrcComponent extends DefaultComponent {
-    private static final transient Log LOG = LogFactory.getLog(IrcComponent.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(IrcComponent.class);
     private final Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
 
     public IrcEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

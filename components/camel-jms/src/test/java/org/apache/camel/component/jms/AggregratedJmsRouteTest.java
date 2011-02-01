@@ -27,14 +27,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 public class AggregratedJmsRouteTest extends CamelTestSupport {
 
-    private static final transient Log LOG = LogFactory.getLog(AggregratedJmsRouteTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(AggregratedJmsRouteTest.class);
     private String timeOutEndpointUri = "jms:queue:test.a";
     private String multicastEndpointUri = "jms:queue:multicast";
 

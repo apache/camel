@@ -61,8 +61,8 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates an XQuery builder
@@ -70,7 +70,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class XQueryBuilder implements Expression, Predicate, NamespaceAware, Processor {
-    private static final transient Log LOG = LogFactory.getLog(XQueryBuilder.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(XQueryBuilder.class);
     private Configuration configuration;
     private XQueryExpression expression;
     private StaticQueryContext staticQueryContext;

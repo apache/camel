@@ -38,11 +38,11 @@ import javax.sip.message.Request;
 import javax.sip.message.Response;
 
 import org.apache.camel.component.sip.SipPresenceAgent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
-    private static final transient Log LOG = LogFactory.getLog(SipPresenceAgentListener.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SipPresenceAgentListener.class);
     protected Dialog dialog;
     protected int notifyCount;
     private SipPresenceAgent sipPresenceAgent;

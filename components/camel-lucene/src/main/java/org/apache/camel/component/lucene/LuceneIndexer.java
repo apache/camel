@@ -23,8 +23,8 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -32,7 +32,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.NIOFSDirectory;
 
 public class LuceneIndexer {
-    private static final transient Log LOG = LogFactory.getLog(LuceneIndexer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(LuceneIndexer.class);
     private File sourceDirectory;
     private Analyzer analyzer;
     private NIOFSDirectory niofsDirectory;
@@ -140,7 +140,7 @@ public class LuceneIndexer {
                 }
             }
         } else {
-            LOG.warn("Directory/File " + file.getAbsolutePath() + "could not be read."
+            LOG.warn("Directory/File " + file.getAbsolutePath() + " could not be read."
                 + " This directory will not be indexed. Please check permissions and rebuild indexes.");
         }
     }

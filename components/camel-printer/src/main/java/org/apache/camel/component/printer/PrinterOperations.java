@@ -33,11 +33,11 @@ import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.Sides;
 
 import org.apache.camel.util.IOHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PrinterOperations implements PrinterOperationsInterface {
-    private static final transient Log LOG = LogFactory.getLog(PrinterOperations.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(PrinterOperations.class);
     private PrintService printService;
     private DocPrintJob job;
     private DocFlavor flavor;

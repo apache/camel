@@ -21,15 +21,15 @@ import java.security.cert.X509Certificate;
 
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  DummyTrustManager that accepts any given certificate - <b>NOT SECURE</b>.
  */
 public class DummyTrustManager implements X509TrustManager {
 
-    private static final transient Log LOG = LogFactory.getLog(DummyTrustManager.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DummyTrustManager.class);
 
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
         // everything is trusted

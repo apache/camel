@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.restlet.Client;
 import org.restlet.Context;
 import org.restlet.data.Request;
@@ -37,7 +37,7 @@ import org.restlet.data.Response;
  * @version $Revision$
  */
 public class RestletProducer extends DefaultProducer {
-    private static final Log LOG = LogFactory.getLog(RestletProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RestletProducer.class);
     private static final Pattern PATTERN = Pattern.compile("\\{([\\w\\.]*)\\}");
     private Client client;
     private boolean throwException;
@@ -76,7 +76,7 @@ public class RestletProducer extends DefaultProducer {
 
         Response response = client.handle(request);
         if (throwException) {
-            if (response instanceof Response) {
+            if (response != null) {
                 Integer respCode = response.getStatus().getCode();
                 if (respCode > 207) {
                     throw populateRestletProducerException(exchange, response, respCode);
@@ -124,7 +124,6 @@ public class RestletProducer extends DefaultProducer {
         String statusText = response.getStatus().getDescription();
         Map<String, String> headers = parseResponseHeaders(response, exchange);
         String copy = response.toString();
-        LOG.warn(headers);
         if (responseCode >= 300 && responseCode < 400) {
             String redirectLocation;
             if (response.getStatus().isRedirection()) {
@@ -151,7 +150,6 @@ public class RestletProducer extends DefaultProducer {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Parse external header " + entry.getKey() + "=" + entry.getValue());
                 }
-                LOG.info("Parse external header " + entry.getKey() + "=" + entry.getValue());
                 answer.put(entry.getKey(), entry.getValue().toString());
             }
         }

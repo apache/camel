@@ -28,8 +28,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.dozer.classmap.ClassMap;
@@ -53,7 +53,7 @@ import org.dozer.util.DozerClassLoader;
  */
 public class DozerTypeConverterLoader implements CamelContextAware {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private CamelContext camelContext;
     private DozerBeanMapper mapper;
 

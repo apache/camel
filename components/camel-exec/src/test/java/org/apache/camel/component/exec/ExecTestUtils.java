@@ -19,14 +19,14 @@ package org.apache.camel.component.exec;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 public final class ExecTestUtils {
 
-    private static final Log LOG = LogFactory.getLog(ExecTestUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ExecTestUtils.class);
 
     private ExecTestUtils() {
     }

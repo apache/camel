@@ -19,8 +19,8 @@ package org.apache.camel.component.xmpp;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
@@ -43,7 +43,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
  * @version $Revision$
  */
 public class XmppConsumer extends DefaultConsumer implements PacketListener, MessageListener, ChatManagerListener {
-    private static final transient Log LOG = LogFactory.getLog(XmppConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(XmppConsumer.class);
     private final XmppEndpoint endpoint;
     private MultiUserChat muc;
     private Chat privateChat;

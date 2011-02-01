@@ -74,7 +74,7 @@ public class TradeExecutorExample {
 
                 from("trade-executor:market").to("quickfix:examples/inprocess.cfg");
                 
-                // Log app messages as JSON
+                // Logger app messages as JSON
                 from("quickfix:examples/inprocess.cfg").
                     filter(PredicateBuilder.or(
                         header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived),

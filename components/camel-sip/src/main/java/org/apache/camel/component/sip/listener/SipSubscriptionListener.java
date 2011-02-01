@@ -35,11 +35,11 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.sip.SipSubscriber;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SipSubscriptionListener implements SipListener {
-    private static final transient Log LOG = LogFactory.getLog(SipSubscriptionListener.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SipSubscriptionListener.class);
     private SipSubscriber sipSubscriber;
     private Dialog subscriberDialog;
     private Dialog forkedDialog;

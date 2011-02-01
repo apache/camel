@@ -24,14 +24,14 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class IBatisProducer extends DefaultProducer {
-    private static final Log LOG = LogFactory.getLog(IBatisProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IBatisProducer.class);
     private String statement;
     private IBatisEndpoint endpoint;
 

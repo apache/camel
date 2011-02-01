@@ -22,8 +22,8 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.message.Message;
@@ -36,7 +36,7 @@ import org.apache.cxf.service.model.BindingOperationInfo;
  * @version $Revision$
  */
 public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
-    private static final Log LOG = LogFactory.getLog(CxfHeaderFilterStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfHeaderFilterStrategy.class);
     private Map<String, MessageHeaderFilter> messageHeaderFiltersMap;
  
     private List<MessageHeaderFilter> messageHeaderFilters;

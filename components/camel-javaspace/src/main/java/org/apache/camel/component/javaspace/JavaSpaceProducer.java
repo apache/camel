@@ -33,8 +33,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Producer} implementation for JavaSpaces
@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class JavaSpaceProducer extends DefaultProducer {
-    private static final transient Log LOG = LogFactory.getLog(JavaSpaceProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JavaSpaceProducer.class);
 
     private final boolean transactional;
     private final long transactionTimeout;

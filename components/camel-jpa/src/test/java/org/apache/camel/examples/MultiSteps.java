@@ -22,8 +22,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
 import org.apache.camel.component.jpa.Consumed;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a task which has multiple steps so that it can move from stage to stage
@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 @Entity
 @NamedQuery(name = "step1", query = "select x from MultiSteps x where x.step = 1")
 public class MultiSteps {
-    private static final transient Log LOG = LogFactory.getLog(MultiSteps.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MultiSteps.class);
     private Long id;
     private String address;
     private int step;

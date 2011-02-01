@@ -21,8 +21,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provide some helper methods for building routes from scripting languages
@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class ScriptRouteBuilder extends RouteBuilder {
-    private static final transient Log LOG = LogFactory.getLog(ScriptRouteBuilder.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ScriptRouteBuilder.class);
     protected ProcessorDefinition node;
 
     public ScriptRouteBuilder() {

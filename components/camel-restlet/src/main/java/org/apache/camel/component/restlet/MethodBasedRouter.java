@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
 import org.restlet.data.Request;
@@ -34,7 +34,7 @@ import org.restlet.data.Status;
  * @version $Revision$
  */
 class MethodBasedRouter extends Restlet {
-    private static final Log LOG = LogFactory.getLog(MethodBasedRouter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MethodBasedRouter.class);
     private String uriPattern;
     
     private Map<Method, Restlet> routes = new ConcurrentHashMap<Method, Restlet>();

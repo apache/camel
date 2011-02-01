@@ -24,11 +24,11 @@ import javax.sip.SipListener;
 import javax.sip.TransactionTerminatedEvent;
 
 import org.apache.camel.component.sip.SipPublisher;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SipPublishListener implements SipListener {
-    private static final transient Log LOG = LogFactory.getLog(SipPublishListener.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SipPublishListener.class);
     private SipPublisher sipPublisher;
 
     public SipPublishListener(SipPublisher sipPublisher) {

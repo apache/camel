@@ -32,8 +32,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -53,7 +53,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class JdbcAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
-    private static final transient Log LOG = LogFactory.getLog(JdbcAggregationRepository.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JdbcAggregationRepository.class);
     private static final String ID = "id";
     private static final String EXCHANGE = "exchange";
     private PlatformTransactionManager transactionManager;

@@ -34,8 +34,8 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.binding.soap.model.SoapHeaderInfo;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
@@ -52,7 +52,7 @@ import org.apache.cxf.service.model.BindingOperationInfo;
  * @version $Revision$
  */
 public class CxfProducer extends DefaultProducer implements AsyncProcessor {
-    private static final Log LOG = LogFactory.getLog(CxfProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfProducer.class);
     private Client client;
     private CxfEndpoint endpoint;
 

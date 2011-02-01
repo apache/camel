@@ -25,14 +25,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedPollingConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An <a href="http://camel.apache.org/rss.html">RSS Endpoint</a>.
  */
 public class RssEndpoint extends FeedEndpoint {
-    protected static final transient Log LOG = LogFactory.getLog(RssEndpoint.class);
+    protected static final transient Logger LOG = LoggerFactory.getLogger(RssEndpoint.class);
 
     public RssEndpoint() {
     }

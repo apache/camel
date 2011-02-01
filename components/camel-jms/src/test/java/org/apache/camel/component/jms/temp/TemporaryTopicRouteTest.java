@@ -17,15 +17,15 @@
 package org.apache.camel.component.jms.temp;
 
 import org.apache.activemq.command.ActiveMQTempTopic;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Before;
 
 /**
  * @version $Revision$
  */
 public class TemporaryTopicRouteTest extends TemporaryQueueRouteTest {
-    private static final transient Log LOG = LogFactory.getLog(TemporaryQueueRouteTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(TemporaryQueueRouteTest.class);
 
     @Override
     @Before

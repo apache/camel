@@ -48,12 +48,12 @@ import javax.sip.message.Request;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unchecked")
 public class SipConfiguration {    
-    private static final transient Log LOG = LogFactory.getLog(SipConfiguration.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SipConfiguration.class);
     private static final String IMPLEMENTATION = "gov.nist";
     private URI uri;
     private Map<String, Object> parameters;

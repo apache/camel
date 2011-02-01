@@ -36,8 +36,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.web.model.EndpointLink;
 import org.apache.camel.web.model.Endpoints;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The active endpoints in Camel
@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class EndpointsResource extends CamelChildResourceSupport {
-    private static final transient Log LOG = LogFactory.getLog(EndpointsResource.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(EndpointsResource.class);
     
     private String error = "";
     private String newUri = "mock:someName";

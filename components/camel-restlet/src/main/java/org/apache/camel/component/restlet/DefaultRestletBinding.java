@@ -28,8 +28,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.CharacterSet;
@@ -47,7 +47,7 @@ import org.restlet.data.Status;
  * @version $Revision$
  */
 public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrategyAware {
-    private static final Log LOG = LogFactory.getLog(DefaultRestletBinding.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultRestletBinding.class);
     private HeaderFilterStrategy headerFilterStrategy;
 
     public void populateExchangeFromRestletRequest(Request request, Exchange exchange) throws Exception {

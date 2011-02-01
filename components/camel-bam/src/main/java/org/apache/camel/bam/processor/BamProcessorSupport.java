@@ -22,8 +22,8 @@ import java.lang.reflect.Type;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -38,7 +38,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * @version $Revision$
  */
 public abstract class BamProcessorSupport<T> implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(BamProcessorSupport.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BamProcessorSupport.class);
     private Class<T> entityType;
     private Expression correlationKeyExpression;
     private TransactionTemplate transactionTemplate;

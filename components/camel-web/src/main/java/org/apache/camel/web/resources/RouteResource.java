@@ -48,8 +48,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.RouteDotGenerator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A single Camel Route which is used to implement one or more
@@ -59,7 +59,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class RouteResource extends CamelChildResourceSupport {
     public static final String LANGUAGE_XML = "Xml";
-    private static final transient Log LOG = LogFactory.getLog(RouteResource.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(RouteResource.class);
 
     private RouteDefinition route;
     private String error = "";

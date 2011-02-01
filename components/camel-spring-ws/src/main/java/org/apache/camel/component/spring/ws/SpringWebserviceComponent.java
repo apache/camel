@@ -32,8 +32,8 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ws.WebServiceMessageFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.transport.WebServiceMessageSender;
@@ -44,7 +44,7 @@ import org.springframework.xml.xpath.XPathExpressionFactory;
  * Apache Camel component for working with Spring Web Services (a.k.a Spring-WS).
  */
 public class SpringWebserviceComponent extends DefaultComponent {
-    private static final Log LOG = LogFactory.getLog(SpringWebserviceComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
 
     public SpringWebserviceComponent() {
         super();

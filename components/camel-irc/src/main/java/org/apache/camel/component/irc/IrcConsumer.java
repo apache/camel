@@ -19,15 +19,15 @@ package org.apache.camel.component.irc;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
 
 public class IrcConsumer extends DefaultConsumer {
-    private static final transient Log LOG = LogFactory.getLog(IrcConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(IrcConsumer.class);
 
     private final IrcConfiguration configuration;
     private final IrcEndpoint endpoint;

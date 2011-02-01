@@ -31,14 +31,14 @@ import org.apache.camel.component.cxf.spring.CxfRsServerFactoryBeanDefinitionPar
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
-    private static final Log LOG = LogFactory.getLog(CxfRsEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
 
     private Map<String, String> parameters;
     private List<Class<?>> resourceClasses;

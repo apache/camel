@@ -21,8 +21,8 @@ import java.util.Collection;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.cometd.Client;
 import org.cometd.server.AbstractBayeux;
 
@@ -32,7 +32,7 @@ import org.cometd.server.AbstractBayeux;
  * @version $Revision$
  */
 public class CometdProducer extends DefaultProducer implements CometdProducerConsumer {
-    private static final transient Log LOG = LogFactory.getLog(CometdProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CometdProducer.class);
     
     private AbstractBayeux bayeux;
     private final CometdEndpoint endpoint;

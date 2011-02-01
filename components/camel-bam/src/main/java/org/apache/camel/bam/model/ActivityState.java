@@ -32,8 +32,8 @@ import javax.persistence.Transient;
 import org.apache.camel.bam.processor.ProcessContext;
 import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The default state for a specific activity within a process
@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
     name = "CAMEL_ACTIVITYSTATE"
 )
 public class ActivityState extends TemporalEntity {
-    private static final transient Log LOG = LogFactory.getLog(ActivityState.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ActivityState.class);
     private ProcessInstance processInstance;
     private Integer receivedMessageCount = 0;
     private ActivityDefinition activityDefinition;

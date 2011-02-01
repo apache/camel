@@ -32,8 +32,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SqsEndpoint extends ScheduledPollEndpoint {
     
-    private static final transient Log LOG = LogFactory.getLog(SqsEndpoint.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
     
     private AmazonSQSClient client;
     private String queueUrl;

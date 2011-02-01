@@ -21,11 +21,11 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JbiServiceProcessor implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(JbiServiceProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JbiServiceProcessor.class);
     
     private static final String ECHO_RESPONSE = "<jbi:message xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"" 
         + " xmlns:msg=\"http://cxf.component.camel.apache.org\" type=\"msg:echoResponse\"><jbi:part>"

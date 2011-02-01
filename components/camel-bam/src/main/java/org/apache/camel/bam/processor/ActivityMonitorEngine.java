@@ -29,8 +29,8 @@ import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.CastUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.TransactionStatus;
@@ -45,7 +45,7 @@ import org.springframework.util.ClassUtils;
  * @version $Revision$
  */
 public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
-    private static final Log LOG = LogFactory.getLog(ActivityMonitorEngine.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ActivityMonitorEngine.class);
     private JpaTemplate template;
     private TransactionTemplate transactionTemplate;
     private ProcessRules rules;

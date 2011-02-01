@@ -24,8 +24,8 @@ import javax.ws.rs.core.Response;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.continuations.Continuation;
 import org.apache.cxf.continuations.ContinuationProvider;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
@@ -40,7 +40,7 @@ import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.version.Version;
 
 public class CxfRsInvoker extends JAXRSInvoker {
-    private static final Log LOG = LogFactory.getLog(CxfRsInvoker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfRsInvoker.class);
     private static final String SUSPENED = "org.apache.camel.component.cxf.jaxrs.suspend";
     private static final String SERVICE_OBJECT_SCOPE = "org.apache.cxf.service.scope";
     private static final String REQUEST_SCOPE = "request";

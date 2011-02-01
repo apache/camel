@@ -21,11 +21,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.HelloService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProxyProcessor implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(ProxyProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ProxyProcessor.class);
     
     private HelloService proxy;
     

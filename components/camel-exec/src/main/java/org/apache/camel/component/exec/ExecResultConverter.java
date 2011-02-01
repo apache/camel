@@ -27,8 +27,8 @@ import org.w3c.dom.Document;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default converters for {@link ExecResult}. For details how to extend the
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 @Converter
 public final class ExecResultConverter {
 
-    private static final Log LOG = LogFactory.getLog(ExecResultConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ExecResultConverter.class);
 
     private ExecResultConverter() {
     }

@@ -27,8 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.URISupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ServerFactoryBean;
@@ -38,7 +38,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CxfProducerRouterTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(CxfProducerRouterTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CxfProducerRouterTest.class);
     private static final String SIMPLE_SERVER_ADDRESS = "http://localhost:28080/test";
     private static final String REQUEST_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<soap:Body><ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"

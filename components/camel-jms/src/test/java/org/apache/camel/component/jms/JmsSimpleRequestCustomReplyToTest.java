@@ -28,8 +28,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -39,7 +39,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsSimpleRequestCustomReplyToTest extends CamelTestSupport {
 
-    private static final Log LOG = LogFactory.getLog(JmsSimpleRequestCustomReplyToTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JmsSimpleRequestCustomReplyToTest.class);
     private static String myReplyTo;
     protected String componentName = "activemq";
     private CountDownLatch latch = new CountDownLatch(1);

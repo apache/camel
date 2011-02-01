@@ -20,8 +20,8 @@ import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.SynchronizedPDUSender;
@@ -48,7 +48,7 @@ import org.jsmpp.util.DefaultComposer;
  */
 public class SmppProducer extends DefaultProducer {
 
-    private static final transient Log LOG = LogFactory.getLog(SmppProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SmppProducer.class);
 
     private SmppConfiguration configuration;
     private SMPPSession session;

@@ -29,15 +29,15 @@ import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 
 /**
  * @version $Revision: 882486 $
  */
 public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(MultiplePoliciesOnRouteTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MultiplePoliciesOnRouteTest.class);
     private String url = "seda:foo?concurrentConsumers=20";
     private int size = 100;
     

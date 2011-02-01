@@ -23,11 +23,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StreamEndpoint extends DefaultEndpoint {
-    private static final transient Log LOG = LogFactory.getLog(StreamEndpoint.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
 
     private String fileName;
     private boolean scanStream;

@@ -31,8 +31,8 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtdb.api.SortedIndex;
 import org.fusesource.hawtdb.api.Transaction;
@@ -42,7 +42,7 @@ import org.fusesource.hawtdb.api.Transaction;
  */
 public class HawtDBAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
-    private static final transient Log LOG = LogFactory.getLog(HawtDBAggregationRepository.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(HawtDBAggregationRepository.class);
     private HawtDBFile hawtDBFile;
     private String persistentFileName;
     private String repositoryName;

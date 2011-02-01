@@ -59,7 +59,7 @@ public class JdbcGrowIssueTest extends CamelTestSupport {
 
         // get the last
         Exchange data = repo.get(context, key);
-        log.info(data);
+        log.info(data.toString());
 
         assertTrue("Should start with 'XXX'", data.getIn().getBody(String.class).startsWith("XXX"));
         int length = data.getIn().getBody(String.class).length();

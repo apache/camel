@@ -41,8 +41,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.validation.DefaultValidationErrorHandler;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.core.io.Resource;
 
@@ -54,7 +54,7 @@ import org.springframework.core.io.Resource;
  * @version $Revision$
  */
 public class JingValidator implements Processor {
-    //private static final transient Log LOG = LogFactory.getLog(JingValidator.class);
+    //private static final transient Logger LOG = LoggerFactory.getLogger(JingValidator.class);
     private Schema schema;
     private SchemaFactory schemaFactory;
     private String schemaNamespace = XMLConstants.RELAXNG_NS_URI;

@@ -26,15 +26,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 
 /**
  * @version $Revision: 882486 $
  */
 public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(SimpleScheduledRoutePolicyTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SimpleScheduledRoutePolicyTest.class);
     
     /* (non-Javadoc)
      * @see org.apache.camel.test.junit4.CamelTestSupport#s;etUp()

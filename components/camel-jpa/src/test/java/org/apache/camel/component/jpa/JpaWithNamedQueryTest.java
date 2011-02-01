@@ -32,8 +32,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.examples.MultiSteps;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -46,7 +46,7 @@ import org.springframework.orm.jpa.JpaTemplate;
  */
 public class JpaWithNamedQueryTest extends Assert {
     
-    protected static final transient Log LOG = LogFactory.getLog(JpaWithNamedQueryTest.class);
+    protected static final transient Logger LOG = LoggerFactory.getLogger(JpaWithNamedQueryTest.class);
     
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template;

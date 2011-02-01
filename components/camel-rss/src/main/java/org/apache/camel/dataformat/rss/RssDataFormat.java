@@ -23,8 +23,8 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * RSS DataFormat
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
  * <p/>
  */
 public class RssDataFormat implements DataFormat {
-    protected static final transient Log LOG = LogFactory.getLog(RssDataFormat.class);
+    protected static final transient Logger LOG = LoggerFactory.getLogger(RssDataFormat.class);
     
     public void marshal(Exchange exchange, Object body, OutputStream out) throws Exception {
         SyndFeed feed = ExchangeHelper.convertToMandatoryType(exchange, SyndFeed.class, body);        

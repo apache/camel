@@ -19,8 +19,8 @@ package org.apache.camel.component.jms.issues;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -30,7 +30,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
  */
 public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelSpringTestSupport {
 
-    private static final transient Log LOG = LogFactory.getLog(JmsSendToAlotOfDestinationWithSameEndpointTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JmsSendToAlotOfDestinationWithSameEndpointTest.class);
     private static final String URI = "activemq:queue:foo?autoStartup=false";
 
     public int getExpectedRouteCount() {

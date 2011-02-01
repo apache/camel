@@ -23,8 +23,8 @@ import javax.jms.Queue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.BrowsableEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -37,7 +37,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  */
 @ManagedResource(description = "Managed JMS Queue Endpoint")
 public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
-    private static final transient Log LOG = LogFactory.getLog(JmsQueueEndpoint.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JmsQueueEndpoint.class);
 
     private int maximumBrowseSize = -1;
     private final QueueBrowseStrategy queueBrowseStrategy;

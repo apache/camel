@@ -26,8 +26,8 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.management.ManagedManagementStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Gathers {@link RouteStatistics} from JMX.
@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class JMXRouteStatistics implements RouteStatistics {
 
-    private static final Log LOG = LogFactory.getLog(JMXRouteStatistics.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JMXRouteStatistics.class);
 
     @SuppressWarnings("unchecked")
     public Object getRouteStatistic(CamelContext camelContext, String routeID, String attribute) {

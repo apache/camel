@@ -27,8 +27,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.lucene.support.Hits;
 import org.apache.camel.test.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -36,7 +36,7 @@ import org.apache.lucene.util.Version;
 import org.junit.Test;
 
 public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(LuceneIndexAndQueryProducerTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(LuceneIndexAndQueryProducerTest.class);
     private String[] humorousQuotes = {
         "I think, therefore I am. I think - George Carlin",
         "I have as much authority as the Pope. I just don’t have as many people who believe it. - George Carlin",

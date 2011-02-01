@@ -21,14 +21,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 public class HawtDBAggregateLoadTest extends CamelTestSupport {
 
-    private static final Log LOG = LogFactory.getLog(HawtDBAggregateLoadTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HawtDBAggregateLoadTest.class);
     private static final int SIZE = 500;
     private HawtDBAggregationRepository repo;
 

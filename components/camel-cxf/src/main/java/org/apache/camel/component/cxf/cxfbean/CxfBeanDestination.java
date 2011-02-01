@@ -22,8 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.transport.CamelDestination;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.Bus;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
@@ -37,7 +37,7 @@ import org.apache.cxf.transport.ConduitInitiator;
  * @version $Revision$
  */
 public class CxfBeanDestination extends CamelDestination implements Processor {
-    private static final Log LOG = LogFactory.getLog(CxfBeanDestination.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfBeanDestination.class);
     private CxfBeanComponent cxfBeanComponent;
     private CxfBeanEndpoint endpoint;
 

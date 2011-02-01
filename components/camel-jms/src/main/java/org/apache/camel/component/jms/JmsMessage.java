@@ -27,8 +27,8 @@ import javax.jms.Topic;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS
@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision:520964 $
  */
 public class JmsMessage extends DefaultMessage {
-    private static final transient Log LOG = LogFactory.getLog(JmsMessage.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JmsMessage.class);
     private Message jmsMessage;
     private JmsBinding binding;
 

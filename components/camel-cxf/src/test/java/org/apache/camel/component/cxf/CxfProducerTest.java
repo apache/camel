@@ -26,8 +26,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ServerFactoryBean;
@@ -50,7 +50,7 @@ public class CxfProducerTest extends Assert {
     protected static final String JAXWS_SERVER_ADDRESS = "http://localhost:28081/test";
     protected static final String WRONG_SERVER_ADDRESS = "http://localhost:9999/test";
 
-    private static final transient Log LOG = LogFactory.getLog(CxfProducerTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CxfProducerTest.class);
 
     protected CamelContext camelContext;
     protected ProducerTemplate template;

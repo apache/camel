@@ -66,7 +66,7 @@ public class DynamicRoutingExample {
                     filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived)).
                     recipientList(bean(new FixMessageRouter("quickfix:examples/gateway.cfg")));
 
-                // Log app messages as JSON
+                // Logger app messages as JSON
                 from("quickfix:examples/gateway.cfg").
                     filter(PredicateBuilder.or(
                             header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived),

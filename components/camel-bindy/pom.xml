@@ -75,16 +75,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-        	<groupId>commons-collections</groupId>
-        	<artifactId>commons-collections</artifactId>
-        	<scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <scope>test</scope>
@@ -102,9 +92,6 @@
                     <forkMode>once</forkMode>
                     <excludes>
                         <exclude>**/CommonBindyTest.*</exclude>
-                        <!-- <exclude>**/*Csv*Test.*</exclude>
-                        <exclude>**/*Tab*Test.*</exclude>
-                        <exclude>**/*UnmarshallTest.*</exclude> -->
                     </excludes>
                 </configuration>
             </plugin>

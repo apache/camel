@@ -28,8 +28,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PackageHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.connection.JmsTransactionManager;
@@ -58,7 +58,7 @@ public class JmsConfiguration implements Cloneable {
     public static final String TEMP_QUEUE_PREFIX = "temp:queue:";
     public static final String TEMP_TOPIC_PREFIX = "temp:topic:";
 
-    private static final transient Log LOG = LogFactory.getLog(JmsConfiguration.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JmsConfiguration.class);
     private JmsOperations jmsOperations;
     private DestinationResolver destinationResolver;
     private ConnectionFactory connectionFactory;

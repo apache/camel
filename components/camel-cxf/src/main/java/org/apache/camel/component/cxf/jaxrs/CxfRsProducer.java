@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.Response;
 
-import org.apache.camel.CamelException;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CxfConstants;
@@ -34,8 +34,8 @@ import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.LRUCache;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
@@ -48,7 +48,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
  */
 public class CxfRsProducer extends DefaultProducer {
 
-    private static final Log LOG = LogFactory.getLog(CxfRsProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfRsProducer.class);
 
     private boolean throwException;
     
@@ -63,10 +63,6 @@ public class CxfRsProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Process exchange: " + exchange);
-        }
-
         Message inMessage = exchange.getIn();
         Boolean httpClientAPI = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.class);
         // set the value with endpoint's option
@@ -141,7 +137,7 @@ public class CxfRsProducer extends DefaultProducer {
                     Type[] actualTypeArguments = ((ParameterizedType) genericType).getActualTypeArguments();
                     response = client.invokeAndGetCollection(httpMethod, body, (Class) actualTypeArguments[0]);
                 } else {
-                    throw new CamelException("Can't find the Collection member type");
+                    throw new CamelExchangeException("Header " + CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE + " not found in message", exchange);
                 }
             } else {
                 response = client.invoke(httpMethod, body, responseClass);
@@ -218,7 +214,7 @@ public class CxfRsProducer extends DefaultProducer {
                 return answer;
             }
         }
-        throw new NoSuchMethodException("Can find the method " + methodName + "withe these parameter " + arrayToString(parameterTypes));
+        throw new NoSuchMethodException("Cannot find method with name: " + methodName + " having parameters: " + arrayToString(parameterTypes));
     }
 
     private Class<?>[] getParameterTypes(Object[] objects) {
@@ -249,7 +245,6 @@ public class CxfRsProducer extends DefaultProducer {
         String statusText = Response.Status.fromStatusCode(responseCode).toString();
         Map<String, String> headers = parseResponseHeaders(response, exchange);
         String copy = response.toString();
-        LOG.warn(headers);
         if (responseCode >= 300 && responseCode < 400) {
             String redirectLocation;
             if (response.getMetadata().getFirst("Location") != null) {
@@ -276,7 +271,6 @@ public class CxfRsProducer extends DefaultProducer {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Parse external header " + entry.getKey() + "=" + entry.getValue());
                 }
-                LOG.info("Parse external header " + entry.getKey() + "=" + entry.getValue());
                 answer.put(entry.getKey(), entry.getValue().get(0).toString());
             }
         }

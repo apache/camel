@@ -29,15 +29,15 @@ import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 
 public final class CxfEndpointUtils {
-    private static final Log LOG = LogFactory.getLog(CxfEndpointUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfEndpointUtils.class);
 
     private CxfEndpointUtils() {
         // not constructed

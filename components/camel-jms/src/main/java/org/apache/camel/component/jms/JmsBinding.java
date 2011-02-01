@@ -51,8 +51,8 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 import static org.apache.camel.component.jms.JmsMessageType.Bytes;
@@ -67,7 +67,7 @@ import static org.apache.camel.component.jms.JmsMessageType.Text;
  * @version $Revision$
  */
 public class JmsBinding {
-    private static final transient Log LOG = LogFactory.getLog(JmsBinding.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JmsBinding.class);
     private final JmsEndpoint endpoint;
     private final HeaderFilterStrategy headerFilterStrategy;
     private final JmsKeyFormatStrategy jmsKeyFormatStrategy;

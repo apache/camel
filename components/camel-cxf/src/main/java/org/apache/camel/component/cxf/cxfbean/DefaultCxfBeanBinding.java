@@ -22,8 +22,8 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.util.CxfMessageHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
 
@@ -32,7 +32,7 @@ import org.apache.cxf.message.Message;
  * @version $Revision$
  */
 public class DefaultCxfBeanBinding implements CxfBeanBinding {
-    private static final Log LOG = LogFactory.getLog(DefaultCxfBeanBinding.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfBeanBinding.class);
 
     public Message createCxfMessageFromCamelExchange(Exchange camelExchange, 
             HeaderFilterStrategy headerFilterStrategy) {

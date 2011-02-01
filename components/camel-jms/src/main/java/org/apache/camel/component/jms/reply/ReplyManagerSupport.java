@@ -32,8 +32,8 @@ import org.apache.camel.component.jms.JmsMessageHelper;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 /**
@@ -43,7 +43,7 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
  */
 public abstract class ReplyManagerSupport extends ServiceSupport implements ReplyManager {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected ScheduledExecutorService executorService;
     protected JmsEndpoint endpoint;
     protected Destination replyTo;

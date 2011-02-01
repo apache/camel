@@ -20,14 +20,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
 // START SNIPPET: personProcessor
 public class PersonProcessor implements Processor {
 
-    private static final transient Log LOG = LogFactory.getLog(PersonProcessor.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(PersonProcessor.class);
 
     public void process(Exchange exchange) throws Exception {
         LOG.info("processing exchange in camel");

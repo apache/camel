@@ -30,8 +30,8 @@ import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.apache.cxf.jaxrs.model.OperationResourceInfoStack;
 import org.apache.cxf.message.MessageContentsList;
@@ -43,7 +43,7 @@ import org.apache.cxf.message.MessageContentsList;
  * @version $Revision$
  */
 public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAware {
-    private static final Log LOG = LogFactory.getLog(DefaultCxfRsBinding.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfRsBinding.class);
 
     protected Map<String, String> camelToCxfHeaderMap = new HashMap<String, String>();
     protected Map<String, String> cxfToCamelHeaderMap = new HashMap<String, String>();

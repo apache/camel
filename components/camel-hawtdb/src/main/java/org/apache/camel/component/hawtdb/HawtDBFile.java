@@ -17,8 +17,8 @@
 package org.apache.camel.component.hawtdb;
 
 import org.apache.camel.Service;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.codec.BufferCodec;
 import org.fusesource.hawtbuf.codec.IntegerCodec;
@@ -38,7 +38,7 @@ import org.fusesource.hawtdb.api.TxPageFileFactory;
  */
 public class HawtDBFile extends TxPageFileFactory implements Service {
 
-    private static final transient Log LOG = LogFactory.getLog(HawtDBFile.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(HawtDBFile.class);
 
     // the root which contains an index with name -> page for the real indexes
     private static final BTreeIndexFactory<String, Integer> ROOT_INDEXES_FACTORY = new BTreeIndexFactory<String, Integer>();

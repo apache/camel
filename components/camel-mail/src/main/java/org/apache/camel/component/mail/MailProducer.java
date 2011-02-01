@@ -20,8 +20,8 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -32,7 +32,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
  * @version $Revision$
  */
 public class MailProducer extends DefaultProducer {
-    private static final transient Log LOG = LogFactory.getLog(MailProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MailProducer.class);
     private final JavaMailSender sender;
 
     public MailProducer(MailEndpoint endpoint, JavaMailSender sender) {

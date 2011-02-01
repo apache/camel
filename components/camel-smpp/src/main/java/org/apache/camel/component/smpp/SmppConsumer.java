@@ -21,8 +21,8 @@ import java.io.IOException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.SynchronizedPDUSender;
@@ -53,7 +53,7 @@ import org.jsmpp.util.RandomMessageIDGenerator;
  */
 public class SmppConsumer extends DefaultConsumer {
 
-    private static final transient Log LOG = LogFactory.getLog(SmppConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SmppConsumer.class);
 
     private SmppConfiguration configuration;
     private SMPPSession session;

@@ -22,15 +22,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xquery.XQuery;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class BeanWithXQueryInjectionTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(BeanWithXQueryInjectionTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BeanWithXQueryInjectionTest.class);
     protected MyBean myBean = new MyBean();
 
     @Test

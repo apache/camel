@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.spi.HeaderFilterStrategy.Direction;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.binding.soap.SoapBindingFactory;
 import org.apache.cxf.binding.soap.SoapHeader;
@@ -36,7 +36,7 @@ import org.apache.cxf.headers.Header;
  * @version $Revision$
  */
 public class SoapMessageHeaderFilter implements MessageHeaderFilter {
-    private static final Log LOG = LogFactory.getLog(SoapMessageHeaderFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SoapMessageHeaderFilter.class);
 
     private static final List<String> ACTIVATION_NS = 
         Arrays.asList(SoapBindingConstants.SOAP11_BINDING_ID, 

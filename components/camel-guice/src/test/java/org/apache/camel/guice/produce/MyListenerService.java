@@ -17,15 +17,15 @@
 package org.apache.camel.guice.produce;
 
 import org.apache.camel.Consume;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class MyListenerService implements MyListener {
 
-    private static final Log LOG = LogFactory.getLog(MyListenerService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyListenerService.class);
 
     public MyListenerService() {
     }

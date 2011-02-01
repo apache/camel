@@ -26,8 +26,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.restlet.Component;
 import org.restlet.Guard;
 import org.restlet.Restlet;
@@ -42,7 +42,7 @@ import org.restlet.data.Protocol;
  * @version $Revision$
  */
 public class RestletComponent extends HeaderFilterStrategyComponent {
-    private static final Log LOG = LogFactory.getLog(RestletComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
 
     private final Map<String, Server> servers = new HashMap<String, Server>();
     private final Map<String, MethodBasedRouter> routers = new HashMap<String, MethodBasedRouter>();

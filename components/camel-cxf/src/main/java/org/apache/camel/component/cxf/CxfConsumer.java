@@ -27,8 +27,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.continuations.Continuation;
 import org.apache.cxf.continuations.ContinuationProvider;
 import org.apache.cxf.endpoint.Server;
@@ -49,7 +49,7 @@ import org.apache.cxf.version.Version;
  * @version $Revision$
  */
 public class CxfConsumer extends DefaultConsumer {
-    private static final Log LOG = LogFactory.getLog(CxfConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfConsumer.class);
     private Server server;
 
     public CxfConsumer(final CxfEndpoint endpoint, Processor processor) throws Exception {

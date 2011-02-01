@@ -26,8 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -35,7 +35,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JdbcAggregateLoadAndRecoverTest extends CamelTestSupport {
 
-    private static final Log LOG = LogFactory.getLog(JdbcAggregateLoadAndRecoverTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcAggregateLoadAndRecoverTest.class);
     private static final int SIZE = 200;
     private static AtomicInteger counter = new AtomicInteger();
 

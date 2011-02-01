@@ -30,14 +30,14 @@ import javax.sql.DataSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
  */
 public class JdbcProducer extends DefaultProducer {
-    private static final transient Log LOG = LogFactory.getLog(JdbcProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JdbcProducer.class);
     private DataSource dataSource;
     private int readSize;
     private Map<String, Object> parameters;

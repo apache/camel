@@ -19,8 +19,8 @@ package org.apache.camel.component.irc;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCModeParser;
@@ -31,7 +31,7 @@ public class IrcProducer extends DefaultProducer {
     public static final String[] COMMANDS = new String[]{"AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES",
         "PRIVMSG", "MODE", "NICK", "NOTICE", "PART", "PONG", "QUIT", "TOPIC", "WHO", "WHOIS", "WHOWAS", "USERHOST"};
 
-    private static final transient Log LOG = LogFactory.getLog(IrcProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(IrcProducer.class);
 
     private IRCConnection connection;
     private IrcEndpoint endpoint;

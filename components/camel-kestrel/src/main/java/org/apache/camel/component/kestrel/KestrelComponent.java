@@ -28,15 +28,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Camel component which offers queueing over the Memcached protocol
  * as supported by Kestrel.
  */
 public class KestrelComponent extends DefaultComponent {
-    private static final transient Log LOG = LogFactory.getLog(KestrelComponent.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(KestrelComponent.class);
 
     private KestrelConfiguration configuration;
     private ConnectionFactory memcachedConnectionFactory;

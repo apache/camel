@@ -30,8 +30,8 @@ import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <pre>
@@ -100,7 +100,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class IBatisPollingConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
 
-    private static final Log LOG = LogFactory.getLog(IBatisPollingConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IBatisPollingConsumer.class);
 
     private final class DataHolder {
         private Exchange exchange;

@@ -31,8 +31,8 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 
@@ -47,7 +47,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * @version $Revision$
  */
 public class EndpointMessageListener implements MessageListener {
-    private static final transient Log LOG = LogFactory.getLog(EndpointMessageListener.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
     private ExceptionHandler exceptionHandler;
     private JmsEndpoint endpoint;
     private Processor processor;

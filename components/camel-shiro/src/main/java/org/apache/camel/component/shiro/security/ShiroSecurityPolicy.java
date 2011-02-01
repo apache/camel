@@ -31,8 +31,8 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -50,7 +50,7 @@ import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.Factory;
 
 public class ShiroSecurityPolicy implements AuthorizationPolicy {
-    private static final transient Log LOG = LogFactory.getLog(ShiroSecurityPolicy.class);  
+    private static final transient Logger LOG = LoggerFactory.getLogger(ShiroSecurityPolicy.class);  
     private final byte[] bits128 = {
         (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
         (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,

@@ -36,8 +36,8 @@ import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
@@ -48,7 +48,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  */
 public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
-    private static final transient Log LOG = LogFactory.getLog(MailConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MailConsumer.class);
 
     private final JavaMailSenderImpl sender;
     private Folder folder;

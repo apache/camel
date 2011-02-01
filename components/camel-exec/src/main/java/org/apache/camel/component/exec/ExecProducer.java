@@ -19,8 +19,8 @@ package org.apache.camel.component.exec;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Exec producer.
@@ -29,14 +29,14 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ExecProducer extends DefaultProducer {
 
-    private final Log log;
+    private final Logger log;
 
     private final ExecEndpoint endpoint;
 
     public ExecProducer(ExecEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.log = LogFactory.getLog(ExecProducer.class);
+        this.log = LoggerFactory.getLogger(ExecProducer.class);
     }
 
     public void process(Exchange exchange) throws Exception {

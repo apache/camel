@@ -32,8 +32,8 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -52,7 +52,7 @@ import org.quartz.impl.StdSchedulerFactory;
  * @version $Revision:520964 $
  */
 public class QuartzComponent extends DefaultComponent implements StartupListener {
-    private static final transient Log LOG = LogFactory.getLog(QuartzComponent.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
     private static final AtomicInteger JOBS = new AtomicInteger();
     private static Scheduler scheduler;
     private final List<JobToAdd> jobsToAdd = new ArrayList<JobToAdd>();

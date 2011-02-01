@@ -21,8 +21,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A useful base class for any sub resource of the root {@link org.apache.camel.web.resources.CamelContextResource}
@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  */
 @ImplicitProduces(Constants.HTML_MIME_TYPES)
 public class CamelChildResourceSupport {
-    private static final transient Log LOG = LogFactory.getLog(CamelChildResourceSupport.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelChildResourceSupport.class);
 
     private final CamelContext camelContext;
     private final ProducerTemplate template;

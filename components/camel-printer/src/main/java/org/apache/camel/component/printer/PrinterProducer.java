@@ -31,11 +31,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PrinterProducer extends DefaultProducer {
-    private static final transient Log LOG = LogFactory.getLog(PrinterProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(PrinterProducer.class);
     private final PrinterConfiguration config;
     private PrinterOperations printerOperations;
     private PrintService printService;

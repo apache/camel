@@ -27,8 +27,8 @@ import org.apache.camel.component.exec.ExecCommand;
 import org.apache.camel.component.exec.ExecEndpoint;
 import org.apache.camel.component.exec.ExecResult;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.exec.impl.ExecParseUtils.splitToWhiteSpaceSeparatedTokens;
 
@@ -39,7 +39,7 @@ import static org.apache.camel.component.exec.impl.ExecParseUtils.splitToWhiteSp
  */
 public class DefaultExecBinding implements ExecBinding {
 
-    private static final Log LOG = LogFactory.getLog(DefaultExecBinding.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultExecBinding.class);
 
     @SuppressWarnings("unchecked")
     public ExecCommand readInput(Exchange exchange, ExecEndpoint endpoint) {

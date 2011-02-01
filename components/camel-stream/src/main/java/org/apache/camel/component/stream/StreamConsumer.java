@@ -37,15 +37,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Consumer that can read from streams
  */
 public class StreamConsumer extends DefaultConsumer implements Runnable {
 
-    private static final transient Log LOG = LogFactory.getLog(StreamConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(StreamConsumer.class);
     private static final String TYPES = "in,file,url";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));

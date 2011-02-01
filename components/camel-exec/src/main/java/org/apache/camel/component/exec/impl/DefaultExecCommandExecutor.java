@@ -35,8 +35,8 @@ import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.exec.ShutdownHookProcessDestroyer;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -47,7 +47,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class DefaultExecCommandExecutor implements ExecCommandExecutor {
 
-    private static final Log LOG = LogFactory.getLog(DefaultExecCommandExecutor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultExecCommandExecutor.class);
 
     public ExecResult execute(ExecCommand command) {
         notNull(command, "command");

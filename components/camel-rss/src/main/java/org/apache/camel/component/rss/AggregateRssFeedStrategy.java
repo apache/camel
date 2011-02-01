@@ -25,11 +25,11 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CastUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AggregateRssFeedStrategy implements AggregationStrategy {
-    protected final transient Log log = LogFactory.getLog(AggregateRssFeedStrategy.class);    
+    protected final transient Logger log = LoggerFactory.getLogger(AggregateRssFeedStrategy.class);    
     
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange == null) {

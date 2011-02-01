@@ -36,8 +36,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/el.html">EL Language from JSP and JSF</a>
@@ -47,7 +47,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class JuelExpression extends ExpressionSupport {
     public static final String DEFAULT_EXPRESSION_FACTORY_IMPL_CLASS = "de.odysseus.el.ExpressionFactoryImpl";
-    private static final Log LOG = LogFactory.getLog(JuelExpression.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JuelExpression.class);
 
     private final String expression;
     private final Class<?> type;

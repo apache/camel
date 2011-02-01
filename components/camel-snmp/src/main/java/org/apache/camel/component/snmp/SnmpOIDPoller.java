@@ -19,8 +19,8 @@ package org.apache.camel.component.snmp;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
 import org.snmp4j.Snmp;
@@ -41,7 +41,7 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseListener {
 
-    private static final transient Log LOG = LogFactory.getLog(SnmpOIDPoller.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SnmpOIDPoller.class);
 
     private Address targetAddress;
     private TransportMapping transport;

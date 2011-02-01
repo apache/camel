@@ -24,8 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultPollingEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
 
@@ -36,7 +36,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     public static final int DEFAULT_SNMP_RETRIES = 2;
     public static final int DEFAULT_SNMP_TIMEOUT = 1500;
 
-    private static final Log LOG = LogFactory.getLog(SnmpEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SnmpEndpoint.class);
 
     private OIDList oids = new OIDList();
     private String address;

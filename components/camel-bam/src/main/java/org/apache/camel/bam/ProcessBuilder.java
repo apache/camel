@@ -35,8 +35,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -51,7 +51,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public abstract class ProcessBuilder extends RouteBuilder {
-    private static final transient Log LOG = LogFactory.getLog(ProcessBuilder.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ProcessBuilder.class);
     private static int processCounter;
     private JpaTemplate jpaTemplate;
     private TransactionTemplate transactionTemplate;

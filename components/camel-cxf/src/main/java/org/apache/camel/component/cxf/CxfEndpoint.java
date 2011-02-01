@@ -40,8 +40,8 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
@@ -75,7 +75,7 @@ import org.springframework.context.ApplicationContext;
  */
 public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
     
-    private static final Log LOG = LogFactory.getLog(CxfEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
 
     private String wsdlURL;
     private String serviceClass;

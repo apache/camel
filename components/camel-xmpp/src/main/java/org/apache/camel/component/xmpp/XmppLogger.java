@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.xmpp;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
 
 public class XmppLogger implements PacketListener {
 
-    private static final transient Log LOG = LogFactory.getLog(XmppLogger.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(XmppLogger.class);
     private String direction;
 
     public XmppLogger(String direction) {

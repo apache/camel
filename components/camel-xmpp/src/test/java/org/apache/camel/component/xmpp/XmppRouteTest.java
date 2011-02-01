@@ -31,8 +31,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ProducerCache;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jivesoftware.smack.packet.Message;
 
@@ -46,7 +46,7 @@ import org.jivesoftware.smack.packet.Message;
 public class XmppRouteTest extends TestCase {
     protected static boolean enabled;
     protected static String xmppUrl;
-    private static final transient Log LOG = LogFactory.getLog(XmppRouteTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(XmppRouteTest.class);
     protected Exchange receivedExchange;
     protected CamelContext container = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);

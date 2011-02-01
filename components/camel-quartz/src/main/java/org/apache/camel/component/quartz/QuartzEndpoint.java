@@ -29,8 +29,8 @@ import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -43,7 +43,7 @@ import org.quartz.Trigger;
  * @version $Revision:520964 $
  */
 public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableService {
-    private static final transient Log LOG = LogFactory.getLog(QuartzEndpoint.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
 
     private LoadBalancer loadBalancer;
     private Trigger trigger;

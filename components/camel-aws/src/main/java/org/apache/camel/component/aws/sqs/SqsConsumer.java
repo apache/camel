@@ -37,8 +37,8 @@ import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -49,7 +49,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SqsConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
     
-    private static final transient Log LOG = LogFactory.getLog(SqsConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(SqsConsumer.class);
     
     private volatile ShutdownRunningTask shutdownRunningTask;
     private volatile int pendingExchanges;

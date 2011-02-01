@@ -21,13 +21,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
 import org.apache.camel.component.quartz.QuartzComponent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 
 public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
-    private static final transient Log LOG = LogFactory.getLog(CronScheduledRoutePolicy.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CronScheduledRoutePolicy.class);
     private Date routeStartDate;
     private int routeStartRepeatCount;
     private long routeStartRepeatInterval;

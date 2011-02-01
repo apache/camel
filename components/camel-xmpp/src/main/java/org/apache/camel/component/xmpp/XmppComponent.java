@@ -22,14 +22,14 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision:520964 $
  */
 public class XmppComponent extends DefaultComponent {
-    private static final transient Log LOG = LogFactory.getLog(XmppComponent.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(XmppComponent.class);
 
     //keep a cache of endpoints so they can be properly cleaned up
     Map<String, XmppEndpoint> endpointCache = new HashMap<String, XmppEndpoint>();

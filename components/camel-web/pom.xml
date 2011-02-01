@@ -83,10 +83,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
@@ -146,62 +142,29 @@
               <version>${logback-version}</version>
             </dependency>
         -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+
+        <!-- log4j needed by mvn jetty:run -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
-
-        <!-- log4j needed by mvn jetty:run -->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
 
-
         <!-- testing web framework -->
-        <!--
-              <dependency> <groupId>com.google</groupId>
-              <artifactId>jetty</artifactId>
-              <version>${webdriver-version}</version> <scope>test</scope>
-              </dependency>
-          -->
-        <!--
-              <dependency> <groupId>net.sourceforge.htmlunit</groupId>
-              <artifactId>htmlunit</artifactId> <version>2.4</version>
-              </dependency> <dependency>
-              <groupId>net.sourceforge.htmlunit</groupId>
-              <artifactId>htmlunit-core-js</artifactId> <version>2.4</version>
-              </dependency>
-          -->
         <dependency>
-            <!--
-                        <groupId>org.openqa.selenium.webdriver</groupId>
-            -->
             <groupId>org.seleniumhq.webdriver</groupId>
             <artifactId>webdriver-htmlunit</artifactId>
             <version>${webdriver-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!--
-                        <groupId>org.openqa.selenium.webdriver</groupId>
-            -->
             <groupId>org.seleniumhq.webdriver</groupId>
             <artifactId>webdriver-support</artifactId>
             <version>${webdriver-version}</version>
             <scope>test</scope>
-            <!--
-                  <exclusions>
-                    <exclusion>
-                      <groupId>org.hamcrest</groupId>
-                      <artifactId>hamcrest-all</artifactId>
-                    </exclusion>
-                  </exclusions>
-            -->
         </dependency>
 
         <!-- testing web container -->
@@ -644,15 +607,15 @@
                     javax.xml.bind.util;resolution:=optional,
                     javax.xml.namespace;resolution:=optional,
                     javax.xml.parsers;resolution:=optional,
-                    org.apache.camel;version="[2.5, 3.0)",
-                    org.apache.camel.builder;version="[2.5, 3.0)",
-                    org.apache.camel.impl;version="[2.5, 3.0)",
-                    org.apache.camel.impl.converter;version="[2.5, 3.0)",
-                    org.apache.camel.model;version="[2.5, 3.0)",
-                    org.apache.camel.spi;version="[2.5, 3.0)",
-                    org.apache.camel.spring;version="[2.5, 3.0)",
-                    org.apache.camel.osgi;version="[2.5, 3.0)",
-                    org.apache.camel.util;version="[2.5, 3.0)",
+                    org.apache.camel;version="[2.6, 3.0)",
+                    org.apache.camel.builder;version="[2.6, 3.0)",
+                    org.apache.camel.impl;version="[2.6, 3.0)",
+                    org.apache.camel.impl.converter;version="[2.6, 3.0)",
+                    org.apache.camel.model;version="[2.6, 3.0)",
+                    org.apache.camel.spi;version="[2.6, 3.0)",
+                    org.apache.camel.spring;version="[2.6, 3.0)",
+                    org.apache.camel.osgi;version="[2.6, 3.0)",
+                    org.apache.camel.util;version="[2.6, 3.0)",
                     org.apache.camel.web.resources;resolution:=optional,
                     org.apache.commons.logging;resolution:=optional,
                     org.osgi.service.http;version="[1.0.0,2.0.0)",

@@ -36,8 +36,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jdom.JDOMException;
 import org.springframework.core.io.Resource;
 
@@ -54,7 +54,7 @@ import org.springframework.core.io.Resource;
  * @version $Revision$
  */
 public class FlatpackDataFormat implements DataFormat {
-    private static final transient Log LOG = LogFactory.getLog(FlatpackDataFormat.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(FlatpackDataFormat.class);
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();
     private char delimiter = ',';
     private char textQualifier = '"';
