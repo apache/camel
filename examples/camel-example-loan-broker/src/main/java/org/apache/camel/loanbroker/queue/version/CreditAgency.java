@@ -18,12 +18,12 @@ package org.apache.camel.loanbroker.queue.version;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //START SNIPPET: creditAgency
 public class CreditAgency implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(CreditAgency.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CreditAgency.class);
 
     public void process(Exchange exchange) throws Exception {
         LOG.info("Receiving credit agency request");

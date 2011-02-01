@@ -36,24 +36,28 @@
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-		</dependency>
-		<!-- for testing -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
+
+        <!-- used for mvn camel:run -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j-version}</version>
+        </dependency>
 
 	</dependencies>
 
 	<build>
+
+        <!-- to include the features.xml in the artifact -->
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -95,6 +99,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<!-- Allows the routes to be run via 'mvn camel:run' -->
 			<plugin>
 				<groupId>org.apache.camel</groupId>
@@ -105,14 +110,4 @@
 
 	</build>
 
-	<reporting>
-		<plugins>
-			<!-- lets generate nice PNG / SVG diagrams from our routes -->
-			<plugin>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-maven-plugin</artifactId>
-				<version>${project.version}</version>
-			</plugin>
-		</plugins>
-	</reporting>
 </project>

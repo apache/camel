@@ -31,6 +31,10 @@
   <description>Camel Maven Plugins</description>
   <packaging>pom</packaging>
 
+  <properties>
+    <maven-plugin-version>2.2.1</maven-plugin-version>
+  </properties>
+
   <modules>
     <module>camel-maven-plugin</module>
     <module>guice-maven-plugin</module>
@@ -38,19 +42,26 @@
   </modules>
 
   <dependencies>
+
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.9</version>
+      <version>${maven-plugin-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <version>${maven-plugin-version}</version>
     </dependency>
   </dependencies>
 
   <reporting>
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.0.9</version>
+        <version>${maven-plugin-version}</version>
       </plugin>
 
       <plugin>

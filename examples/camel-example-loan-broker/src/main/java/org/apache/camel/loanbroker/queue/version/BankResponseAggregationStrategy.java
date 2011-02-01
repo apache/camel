@@ -19,12 +19,12 @@ package org.apache.camel.loanbroker.queue.version;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //START SNIPPET: aggregation
 public class BankResponseAggregationStrategy implements AggregationStrategy {    
-    private static final transient Log LOG = LogFactory.getLog(BankResponseAggregationStrategy.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(BankResponseAggregationStrategy.class);
     
     // Here we put the bank response together
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

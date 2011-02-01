@@ -19,14 +19,14 @@ package ${packageName};
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The HelloWorld producer.
  */
 public class HelloWorldProducer extends DefaultProducer {
-    private static final transient Log LOG = LogFactory.getLog(HelloWorldProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(HelloWorldProducer.class);
     private HelloWorldEndpoint endpoint;
 
     public HelloWorldProducer(HelloWorldEndpoint endpoint) {

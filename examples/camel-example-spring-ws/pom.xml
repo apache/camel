@@ -30,8 +30,8 @@
 	<name>Camel :: Example :: Spring Web Services</name>
 	<description>An example showing how to work with Camel and Spring Web Services</description>
 
-
 	<dependencies>
+
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-ws</artifactId>
@@ -51,6 +51,12 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
+
+        <!-- logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
@@ -62,6 +68,7 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -114,4 +121,5 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
 </project>

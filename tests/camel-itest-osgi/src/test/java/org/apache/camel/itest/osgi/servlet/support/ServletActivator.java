@@ -22,8 +22,8 @@ import java.util.Hashtable;
 import javax.servlet.Servlet;
 
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -32,7 +32,7 @@ import org.osgi.service.http.HttpService;
 import org.springframework.osgi.context.BundleContextAware;
 
 public final class ServletActivator implements BundleActivator, BundleContextAware {
-    private static final transient Log LOG = LogFactory.getLog(ServletActivator.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ServletActivator.class);
     private static boolean registerService;
     
     /**

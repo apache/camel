@@ -25,8 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,7 +40,7 @@ import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration
 public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
-    private static final transient Log LOG = LogFactory.getLog(CamelGreeterTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelGreeterTest.class);
     
     private static Endpoint endpoint;
     @Autowired

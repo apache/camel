@@ -20,8 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.osgi.CamelContextFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.ops4j.pax.exam.Inject;
@@ -40,7 +40,7 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory
 
 public abstract class AbstractFeatureTest {
 
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
 
     @Inject
     protected BundleContext bundleContext;

@@ -45,9 +45,7 @@
 			org.apache.hello_world_soap_http.types
      </camel.osgi.private.pkg>
 		<!-- to avoid us import bunch of cxf package -->
-		<camel.osgi.dynamic>
-			*
-     </camel.osgi.dynamic>
+		<camel.osgi.dynamic>*</camel.osgi.dynamic>
 	</properties>
 
 	<dependencies>
@@ -60,7 +58,6 @@
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring</artifactId>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -102,11 +99,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
 			<artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
 			<version>2.0.0</version>
@@ -129,13 +121,22 @@
 			<artifactId>xercesImpl</artifactId>
 		</dependency>
 
+        <!-- logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+
 		<!-- testing -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test</artifactId>
@@ -321,6 +322,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
 
 </project>

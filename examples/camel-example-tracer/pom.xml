@@ -35,7 +35,9 @@
     <properties>
       <camel.osgi.export.pkg>org.apache.camel.example.tracer</camel.osgi.export.pkg>
     </properties>
+
     <dependencies>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jpa</artifactId>
@@ -47,8 +49,8 @@
 
         <!-- lets use log4j -->
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -79,6 +81,7 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -155,4 +158,5 @@
             </plugin>
         </plugins>
     </reporting>
+
 </project>

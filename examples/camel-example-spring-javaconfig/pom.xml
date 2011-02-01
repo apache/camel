@@ -41,7 +41,7 @@
                 </camel.osgi.import>
 		<!-- avoid to import the bunch of spring related package -->
 		<camel.osgi.dynamic>*</camel.osgi.dynamic>
-		<spring-version>3.0.3.RELEASE</spring-version>
+		<spring-version>3.0.5.RELEASE</spring-version>
 		<junit-version>4.8.1</junit-version>
 	</properties>
 
@@ -104,6 +104,11 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
@@ -118,6 +123,7 @@
 		</dependency>
 
 	</dependencies>
+
 	<build>
 		<resources>
 			<resource>
@@ -192,4 +198,5 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
 </project>

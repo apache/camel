@@ -21,8 +21,8 @@ import java.util.List;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.CastUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.util.ClassUtils;
 
@@ -35,7 +35,7 @@ import org.springframework.util.ClassUtils;
 @Converter
 public class CustomerTransformer {
 
-    private static final transient Log LOG = LogFactory.getLog(CustomerTransformer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CustomerTransformer.class);
 
     /**
      * A transformation method to convert a person document into a customer

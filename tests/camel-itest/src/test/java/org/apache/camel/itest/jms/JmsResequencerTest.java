@@ -32,14 +32,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 public class JmsResequencerTest extends CamelTestSupport  {
     
-    private static final transient Log LOG = LogFactory.getLog(JmsResequencerTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JmsResequencerTest.class);
     private ReusableBean b1 = new ReusableBean("myBean1");
     private ReusableBean b2 = new ReusableBean("myBean2");
     private ReusableBean b3 = new ReusableBean("myBean3");

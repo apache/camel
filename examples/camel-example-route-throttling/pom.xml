@@ -62,6 +62,10 @@
 
         <!-- for logging using log4j.properties in src/main/resources -->
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
@@ -70,6 +74,11 @@
         <dependency>
           <groupId>org.apache.camel</groupId>
           <artifactId>camel-test</artifactId>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
           <scope>test</scope>
         </dependency>
 

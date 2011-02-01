@@ -41,9 +41,7 @@
 			org.apache.camel.example.reportincident
      </camel.osgi.private.pkg>
 		<!-- to avoid us import bunch of cxf package -->
-		<camel.osgi.dynamic>
-			*
-     </camel.osgi.dynamic>
+		<camel.osgi.dynamic>*</camel.osgi.dynamic>
 	</properties>
 
     <dependencies>

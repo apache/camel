@@ -17,22 +17,23 @@
 	limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-parent</artifactId>
-            <version>2.7-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-parent</artifactId>
+        <version>2.7-SNAPSHOT</version>
+    </parent>
 
-	<artifactId>camel-itest-activemq-highvolume</artifactId>
-	<packaging>bundle</packaging>
-	<name>Camel :: ITest :: ActiveMq :: High Volume</name>
-	<description>Integration Test using ActiveMq with Camel to generate high volume messages</description>
-	
-	<properties>
+    <artifactId>camel-itest-activemq-highvolume</artifactId>
+    <packaging>bundle</packaging>
+    <name>Camel :: ITest :: ActiveMq :: High Volume</name>
+    <description>Integration Test using ActiveMq with Camel to generate high volume messages</description>
+
+    <properties>
         <camel.osgi.import.pkg>
             org.apache.activemq.broker,
             org.apache.activemq.broker.region.policy,
@@ -40,95 +41,95 @@
             org.apache.activemq.usage,
             org.apache.activemq.util,
             org.apache.activemq.xbean,
-            org.springframework.jms.connection;version="3.0.3.RELEASE",
+            org.springframework.jms.connection;version="3.0.5.RELEASE",
             *
         </camel.osgi.import.pkg>
         <camel.osgi.private.pkg>
-        	org.apache.camel.itest.highvolume
+            org.apache.camel.itest.highvolume
         </camel.osgi.private.pkg>
         <camel.osgi.dynamic>
             *
         </camel.osgi.dynamic>
     </properties>
 
-	<dependencies>
-		<!-- Camel -->
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core-xml</artifactId>
-		</dependency>
+    <dependencies>
+        <!-- Camel -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jms</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jms</artifactId>
-		</dependency>
-		
-		<!-- Spring -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-		</dependency>
-		
-		<!--  ActiveMq & activemq - camel -->
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-core</artifactId>
-	      <!-- <version>5.4.0</version> -->
-		</dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-core</artifactId>
-	      <!-- <version>5.4.0</version> -->
-		</dependency>
-	    <dependency>
-	      <groupId>org.apache.activemq</groupId>
-	      <artifactId>activemq-pool</artifactId>
-	      <version>5.3.2</version>
-	    </dependency>
-	    <dependency>
-	      <groupId>org.apache.xbean</groupId>
-	      <artifactId>xbean-spring</artifactId>
-	    </dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-camel</artifactId>
-		</dependency>
-	</dependencies>
-	
-   <build>
-    <plugins>
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
 
-      <!-- Allows the example to be run via 'mvn compile exec:java' -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <configuration>
-          <includePluginDependencies>false</includePluginDependencies>
-        </configuration>
-      </plugin>
+        <!--  ActiveMq & activemq - camel -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
+            <version>5.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-camel</artifactId>
+        </dependency>
 
-      <!-- Allows the routes to be run via 'mvn camel:run' -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
-	
+        <!-- logging -->
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- Allows the example to be run via 'mvn compile exec:java' -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <includePluginDependencies>false</includePluginDependencies>
+                </configuration>
+            </plugin>
+
+            <!-- Allows the routes to be run via 'mvn camel:run' -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

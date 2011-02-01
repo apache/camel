@@ -23,8 +23,8 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,7 +33,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
     
-    private static final transient Log LOG = LogFactory.getLog(CamelGreeterTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(CamelGreeterTest.class);
     
     private static Endpoint endpoint;
     private static GreeterImpl greeterImpl;

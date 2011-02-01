@@ -19,12 +19,12 @@ package org.apache.camel.loanbroker.queue.version;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //START SNIPPET: bank
 public class Bank implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(Bank.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(Bank.class);
     private String bankName;
     private double primeRate;
 

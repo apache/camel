@@ -33,6 +33,7 @@
 	<description>An example that show loadbalancing messaging with mina servers (TCP/IP)</description>
 
 	<dependencies>
+
 	    <dependency>
 	      <groupId>org.apache.camel</groupId>
 	      <artifactId>camel-core</artifactId>
@@ -45,18 +46,17 @@
 	      <groupId>org.apache.camel</groupId>
 	      <artifactId>camel-mina</artifactId>
 	    </dependency>
+
+        <!-- logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
 	    <dependency>
 	      <groupId>log4j</groupId> 
 	      <artifactId>log4j</artifactId> 
 	    </dependency>
-		<dependency>
-		  <groupId>org.slf4j</groupId>
-		  <artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-		  <groupId>org.slf4j</groupId>
-		  <artifactId>slf4j-simple</artifactId>
-		</dependency>
+
 	</dependencies>
   
   	<profiles>
@@ -107,4 +107,5 @@
 	    </plugin>
     </plugins>
   </build>
+
 </project>

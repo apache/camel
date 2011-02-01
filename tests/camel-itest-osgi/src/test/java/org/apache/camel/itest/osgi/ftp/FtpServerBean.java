@@ -19,8 +19,8 @@ package org.apache.camel.itest.osgi.ftp;
 import java.net.URL;
 
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
@@ -32,7 +32,7 @@ import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 public final class FtpServerBean {
 
     public static final String FTP_ROOT_DIR = "./res/home/";
-    private static final transient Log LOG = LogFactory.getLog(FtpServerBean.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(FtpServerBean.class);
 
     private static FtpServer ftpServer;
     private static int port;

@@ -22,11 +22,11 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PrepareRequest implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(PrepareRequest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(PrepareRequest.class);
 
     public void process(Exchange exchange) throws Exception {
         List<String> params = new ArrayList<String>();

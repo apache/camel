@@ -26,8 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +37,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision:520964 $
  */
 public class JmsPerformanceTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(JmsPerformanceTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(JmsPerformanceTest.class);
     protected MyBean myBean = new MyBean();
     protected int messageCount = 1000;
     protected CountDownLatch receivedCountDown = new CountDownLatch(messageCount);

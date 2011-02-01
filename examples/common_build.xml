@@ -117,7 +117,7 @@
   <path id="camel.core.classpath">
     <fileset dir="${camel.lib}">
       <include name="**/camel-core-*.jar"/>
-      <include name="**/commons-logging-*.jar"/>
+      <include name="**/slf4j-*.jar"/>
       <include name="**/commons-management-*.jar"/>
       <include name="**/spring/spring-*.jar"/>
       <include name="**/jdk15/*.jar"/>
