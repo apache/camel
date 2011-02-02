@@ -32,7 +32,10 @@
   <description>Camel JoSQL support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.builder.sql.*</camel.osgi.export.pkg>
+	<camel.osgi.export.pkg>
+        org.apache.camel.builder.sql.*,
+        org.apache.camel.language.sql.*
+    </camel.osgi.export.pkg>
   </properties>
 
   <repositories>
