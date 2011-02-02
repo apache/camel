@@ -36,7 +36,12 @@ public class OsgiSpringCamelContext extends SpringCamelContext {
     
     @Override    
     protected TypeConverter createTypeConverter() {
-        return new OsgiTypeConverter(bundleContext, getInjector());
+		// CAMEL-3614: make sure we use a bundle context which imports org.apache.camel.impl.converter package
+        BundleContext ctx = BundleContextUtils.getBundleContext(getClass());
+        if (ctx == null) {
+            ctx = bundleContext;
+        }
+        return new OsgiTypeConverter(ctx, getInjector());
     }
 
     @Override

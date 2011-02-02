@@ -23,6 +23,7 @@ import org.apache.camel.core.osgi.OsgiClassResolver;
 import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
 import org.apache.camel.core.osgi.OsgiPackageScanClassResolver;
 import org.apache.camel.core.osgi.OsgiTypeConverter;
+import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.osgi.framework.BundleContext;
@@ -87,7 +88,12 @@ public class BlueprintCamelContext extends DefaultCamelContext {
 
     @Override
     protected TypeConverter createTypeConverter() {
-        return new OsgiTypeConverter(bundleContext, getInjector());
+		// CAMEL-3614: make sure we use a bundle context which imports org.apache.camel.impl.converter package
+        BundleContext ctx = BundleContextUtils.getBundleContext(getClass());
+        if (ctx == null) {
+            ctx = bundleContext;
+        }
+        return new OsgiTypeConverter(ctx, getInjector());
     }
 
     @Override
