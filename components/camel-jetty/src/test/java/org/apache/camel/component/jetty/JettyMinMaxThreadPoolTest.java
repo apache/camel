@@ -53,6 +53,7 @@ public class JettyMinMaxThreadPoolTest extends BaseJettyTest {
                 @Override
                 public void onDone(Exchange exchange) {
                     String body = exchange.getOut().getBody(String.class);
+                    log.info("Got reply " + body);
                     replies.add(body);
                     latch.countDown();
                 }
@@ -65,6 +66,8 @@ public class JettyMinMaxThreadPoolTest extends BaseJettyTest {
 
         // sort replies
         Collections.sort(replies);
+
+        log.info("Sorted replies: " + replies.toArray());
 
         for (int i = 0; i < 10; i++) {
             assertEquals("Bye " + i, replies.get(i));

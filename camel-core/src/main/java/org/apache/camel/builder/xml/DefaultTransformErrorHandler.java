@@ -19,15 +19,16 @@ package org.apache.camel.builder.xml;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
-
+/**
+ * {@link ErrorHandler} and {@link ErrorListener} which will log warnings,
+ * and throws error and fatal as exception, which ensures those can be caught by Camel and dealt-with.
+ */
 public class DefaultTransformErrorHandler implements ErrorHandler, ErrorListener {
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultTransformErrorHandler.class);
 
@@ -41,7 +42,6 @@ public class DefaultTransformErrorHandler implements ErrorHandler, ErrorListener
 
     public void warning(SAXParseException exception) throws SAXException {
         LOG.warn("parser warning", exception);
-        
     }
 
     public void error(TransformerException exception) throws TransformerException {
@@ -54,7 +54,6 @@ public class DefaultTransformErrorHandler implements ErrorHandler, ErrorListener
 
     public void warning(TransformerException exception) throws TransformerException {
         LOG.warn("parser warning", exception);
-        
     }
 
 }

@@ -155,12 +155,12 @@ public interface UnitOfWork extends Service {
      * @param processor the processor to be executed
      * @param exchange  the current exchange
      * @param callback the callback
-     * @return the callback to be used (can be wrapped)
+     * @return the callback to be used (can return a wrapped callback)
      */
     AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback);
 
     /**
-     * Strategy for optional work to be executed after the callback has been processed.
+     * Strategy for optional work to be executed after the processing
      *
      * @param processor the processor executed
      * @param exchange  the current exchange

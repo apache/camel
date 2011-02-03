@@ -32,6 +32,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     public static final String MDC_EXCHANGE_ID = "exchangeId";
     public static final String MDC_CORRELATION_ID = "correlationId";
     public static final String MDC_ROUTE_ID = "routeId";
+    public static final String MDC_TRANSACTION_KEY = "transactionKey";
 
     public MDCUnitOfWork(Exchange exchange) {
         super(exchange);
@@ -53,14 +54,26 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
     @Override
     public void pushRouteContext(RouteContext routeContext) {
-        super.pushRouteContext(routeContext);
         MDC.put(MDC_ROUTE_ID, routeContext.getRoute().getId());
+        super.pushRouteContext(routeContext);
     }
 
     @Override
     public RouteContext popRouteContext() {
         MDC.remove(MDC_ROUTE_ID);
         return super.popRouteContext();
+    }
+
+    @Override
+    public void beginTransactedBy(Object key) {
+        MDC.put(MDC_TRANSACTION_KEY, key.toString());
+        super.beginTransactedBy(key);
+    }
+
+    @Override
+    public void endTransactedBy(Object key) {
+        MDC.remove(MDC_TRANSACTION_KEY);
+        super.endTransactedBy(key);
     }
 
     @Override
