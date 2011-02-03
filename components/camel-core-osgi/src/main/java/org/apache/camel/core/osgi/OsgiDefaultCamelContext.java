@@ -49,7 +49,7 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
 
     @Override
     protected TypeConverter createTypeConverter() {
-		// CAMEL-3614: make sure we use a bundle context which imports org.apache.camel.impl.converter package
+        // CAMEL-3614: make sure we use a bundle context which imports org.apache.camel.impl.converter package
         BundleContext ctx = BundleContextUtils.getBundleContext(getClass());
         if (ctx == null) {
             ctx = bundleContext;

@@ -24,7 +24,10 @@ import org.osgi.framework.BundleContext;
 /**
  * Helper class
  */
-public class BundleContextUtils {
+public final class BundleContextUtils {
+
+    private BundleContextUtils() {
+    }
 
     /**
      * Retrieve the BundleContext that the given class has been loaded from.
@@ -32,13 +35,12 @@ public class BundleContextUtils {
      * @param clazz the class to find the bundle context from
      * @return the bundle context or <code>null</code> if it can't be found
      */
-    public static final BundleContext getBundleContext(Class clazz) {
-        //
+    public static BundleContext getBundleContext(Class clazz) {
+
         // Ideally we should use FrameworkUtil.getBundle(clazz).getBundleContext()
         // but that does not exist in OSGi 4.1, so until we upgrade, we keep that one
-        //
-        try
-        {
+
+        try {
             ClassLoader cl = clazz.getClassLoader();
             Class clClazz = cl.getClass();
             Method mth = null;
@@ -55,11 +57,11 @@ public class BundleContextUtils {
                 mth.setAccessible(true);
                 return ((Bundle) mth.invoke(cl)).getBundleContext();
             }
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             // Ignore
         }
+
         return null;
     }
+
 }
