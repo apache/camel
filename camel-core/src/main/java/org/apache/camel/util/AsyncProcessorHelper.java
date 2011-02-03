@@ -66,8 +66,20 @@ public final class AsyncProcessorHelper {
             callback.done(true);
             sync = true;
         } else {
+            // allow unit of work to wrap callback in case it need to do some special work
+            // for example the MDCUnitOfWork
+            AsyncCallback async = callback;
+            if (exchange.getUnitOfWork() != null) {
+                async = exchange.getUnitOfWork().beforeProcess(processor, exchange, callback);
+            }
+
             // we support asynchronous routing so invoke it
-            sync = processor.process(exchange, callback);
+            sync = processor.process(exchange, async);
+
+            // execute any after processor work
+            if (exchange.getUnitOfWork() != null) {
+                exchange.getUnitOfWork().afterProcess(processor, exchange, callback, sync);
+            }
         }
 
         if (LOG.isTraceEnabled()) {

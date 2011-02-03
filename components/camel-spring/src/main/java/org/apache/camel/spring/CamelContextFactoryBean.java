@@ -36,7 +36,6 @@ import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
-import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -52,7 +51,6 @@ import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -96,6 +94,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String errorHandlerRef;
     @XmlAttribute(required = false)
     private String autoStartup;
+    @XmlAttribute(required = false)
+    private String useMDCLogging;
     @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
     @XmlAttribute(required = false)
@@ -441,6 +441,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
+    }
+
+    public String getUseMDCLogging() {
+        return useMDCLogging;
+    }
+
+    public void setUseMDCLogging(String useMDCLogging) {
+        this.useMDCLogging = useMDCLogging;
     }
 
     public Boolean getLazyLoadTypeConverters() {

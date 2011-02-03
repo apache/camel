@@ -166,6 +166,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private Boolean handleFault = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean lazyLoadTypeConverters = Boolean.FALSE;
+    private Boolean useMDCLogging = Boolean.FALSE;
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
@@ -1341,6 +1342,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             log.info("Tracing is enabled on CamelContext: " + getName());
         }
 
+        if (isUseMDCLogging()) {
+            // log if MDC has been enabled
+            log.info("MDC logging is enabled on CamelContext: " + getName());
+        }
+
         if (isHandleFault()) {
             // only add a new handle fault if not already configured
             if (HandleFault.getHandleFault(this) == null) {
@@ -2142,6 +2148,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
+    }
+
+    public Boolean isUseMDCLogging() {
+        return useMDCLogging != null && useMDCLogging;
+    }
+
+    public void setUseMDCLogging(Boolean useMDCLogging) {
+        this.useMDCLogging = useMDCLogging;
     }
 
     public ClassLoader getApplicationContextClassLoader() {

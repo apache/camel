@@ -33,6 +33,8 @@ import org.apache.camel.model.ExecutorServiceAwareDefinition;
 import org.apache.camel.spi.ExecutorServiceStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper for {@link java.util.concurrent.ExecutorService} to construct executors using a thread factory that
@@ -49,6 +51,7 @@ import org.apache.camel.util.ObjectHelper;
 public final class ExecutorServiceHelper {
 
     public static final String DEFAULT_PATTERN = "Camel Thread ${counter} - ${name}";
+    private static final Logger LOG = LoggerFactory.getLogger(ExecutorServiceHelper.class);
     private static AtomicLong threadCounter = new AtomicLong();
 
     private ExecutorServiceHelper() {
@@ -103,13 +106,7 @@ public final class ExecutorServiceHelper {
      * @return the created pool
      */
     public static ScheduledExecutorService newScheduledThreadPool(final int poolSize, final String pattern, final String name, final boolean daemon) {
-        return Executors.newScheduledThreadPool(poolSize, new ThreadFactory() {
-            public Thread newThread(Runnable r) {
-                Thread answer = new Thread(r, getThreadName(pattern, name));
-                answer.setDaemon(daemon);
-                return answer;
-            }
-        });
+        return Executors.newScheduledThreadPool(poolSize, new CamelThreadFactory(pattern, name, daemon));
     }
 
     /**
@@ -124,13 +121,7 @@ public final class ExecutorServiceHelper {
      * @return the created pool
      */
     public static ExecutorService newFixedThreadPool(final int poolSize, final String pattern, final String name, final boolean daemon) {
-        return Executors.newFixedThreadPool(poolSize, new ThreadFactory() {
-            public Thread newThread(Runnable r) {
-                Thread answer = new Thread(r, getThreadName(pattern, name));
-                answer.setDaemon(daemon);
-                return answer;
-            }
-        });
+        return Executors.newFixedThreadPool(poolSize, new CamelThreadFactory(pattern, name, daemon));
     }
 
     /**
@@ -142,13 +133,7 @@ public final class ExecutorServiceHelper {
      * @return the created pool
      */
     public static ExecutorService newSingleThreadExecutor(final String pattern, final String name, final boolean daemon) {
-        return Executors.newSingleThreadExecutor(new ThreadFactory() {
-            public Thread newThread(Runnable r) {
-                Thread answer = new Thread(r, getThreadName(pattern, name));
-                answer.setDaemon(daemon);
-                return answer;
-            }
-        });
+        return Executors.newSingleThreadExecutor(new CamelThreadFactory(pattern, name, daemon));
     }
 
     /**
@@ -162,13 +147,7 @@ public final class ExecutorServiceHelper {
      * @return the created pool
      */
     public static ExecutorService newCachedThreadPool(final String pattern, final String name, final boolean daemon) {
-        return Executors.newCachedThreadPool(new ThreadFactory() {
-            public Thread newThread(Runnable r) {
-                Thread answer = new Thread(r, getThreadName(pattern, name));
-                answer.setDaemon(daemon);
-                return answer;
-            }
-        });
+        return Executors.newCachedThreadPool(new CamelThreadFactory(pattern, name, daemon));
     }
 
     /**
@@ -251,13 +230,7 @@ public final class ExecutorServiceHelper {
             queue = new LinkedBlockingQueue<Runnable>(maxQueueSize);
         }
         ThreadPoolExecutor answer = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, queue);
-        answer.setThreadFactory(new ThreadFactory() {
-            public Thread newThread(Runnable r) {
-                Thread answer = new Thread(r, getThreadName(pattern, name));
-                answer.setDaemon(daemon);
-                return answer;
-            }
-        });
+        answer.setThreadFactory(new CamelThreadFactory(pattern, name, daemon));
         if (rejectedExecutionHandler == null) {
             rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
         }
@@ -359,6 +332,33 @@ public final class ExecutorServiceHelper {
     public static void timeoutTask(CompletionService completionService) {
         if (completionService instanceof SubmitOrderedCompletionService) {
             ((SubmitOrderedCompletionService) completionService).timeoutTask();
+        }
+    }
+
+    /**
+     * Thread factory which creates threads supporting a naming pattern.
+     */
+    private static final class CamelThreadFactory implements ThreadFactory {
+
+        private final String pattern;
+        private final String name;
+        private final boolean daemon;
+
+        private CamelThreadFactory(String pattern, String name, boolean daemon) {
+            this.pattern = pattern;
+            this.name = name;
+            this.daemon = daemon;
+        }
+
+        public Thread newThread(Runnable runnable) {
+            String threadName = getThreadName(pattern, name);
+            Thread answer = new Thread(runnable, threadName);
+            answer.setDaemon(daemon);
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Created thread[" + name + "]: " + answer);
+            }
+            return answer;
         }
     }
 

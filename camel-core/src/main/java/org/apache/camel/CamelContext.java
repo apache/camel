@@ -968,4 +968,18 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters);
 
+    /**
+     * Whether or not <a href="http://www.slf4j.org/api/org/slf4j/MDC.html">MDC</a> logging is being enabled.
+     *
+     * @return <tt>true</tt> if MDC logging is enabled
+     */
+    Boolean isUseMDCLogging();
+
+    /**
+     * Set whether <a href="http://www.slf4j.org/api/org/slf4j/MDC.html">MDC</a> is enabled.
+     *
+     * @param useMDCLogging <tt>true</tt> to enable MDC logging, <tt>false</tt> to disable
+     */
+    void setUseMDCLogging(Boolean useMDCLogging);
+
 }

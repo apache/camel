@@ -32,7 +32,8 @@ public class DefaultUnitOfWorkTest extends TestCase {
     }
 
     public void testGetId() {
-        assertEquals("2", unitOfWork.getId());
-        assertEquals("2", unitOfWork.getId());
+        String id = unitOfWork.getId();
+        assertNotNull(id);
+        assertEquals(id, unitOfWork.getId());
     }
 }

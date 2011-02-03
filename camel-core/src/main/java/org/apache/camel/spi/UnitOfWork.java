@@ -16,8 +16,11 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.Service;
 
 /**
  * An object representing the unit of work processing an {@link Exchange}
@@ -26,7 +29,7 @@ import org.apache.camel.Message;
  *
  * @version $Revision$
  */
-public interface UnitOfWork {
+public interface UnitOfWork extends Service {
 
     /**
      * Adds a synchronization hook
@@ -89,34 +92,28 @@ public interface UnitOfWork {
     boolean isTransacted();
 
     /**
-     * Are we already transacted by the given transaction definition
-     * <p/>
-     * The definition will most likely be a Spring TransactionTemplate when using Spring Transaction
+     * Are we already transacted by the given transaction key?
      *
-     * @param transactionDefinition the transaction definition
+     * @param key the transaction key
      * @return <tt>true</tt> if already, <tt>false</tt> otherwise
      */
-    boolean isTransactedBy(Object transactionDefinition);
+    boolean isTransactedBy(Object key);
 
     /**
-     * Mark this UnitOfWork as being transacted by the given transaction definition.
+     * Mark this UnitOfWork as being transacted by the given transaction key.
      * <p/>
-     * The definition will most likely be a Spring TransactionTemplate when using Spring Transaction
-     * <p/>
-     * When the transaction is completed then invoke the {@link #endTransactedBy(Object)} method.
+     * When the transaction is completed then invoke the {@link #endTransactedBy(Object)} method using the same key.
      *
-     * @param transactionDefinition the transaction definition
+     * @param key the transaction key
      */
-    void beginTransactedBy(Object transactionDefinition);
+    void beginTransactedBy(Object key);
 
     /**
      * Mark this UnitOfWork as not transacted anymore by the given transaction definition.
-     * <p/>
-     * The definition will most likely be a Spring TransactionTemplate when using Spring Transaction
      *
-     * @param transactionDefinition the transaction definition
+     * @param key the transaction key
      */
-    void endTransactedBy(Object transactionDefinition);
+    void endTransactedBy(Object key);
 
     /**
      * Gets the {@link RouteContext} that this {@link UnitOfWork} currently is being routed through.
@@ -147,4 +144,28 @@ public interface UnitOfWork {
      * @return the route context or <tt>null</tt> if none existed
      */
     RouteContext popRouteContext();
+
+    /**
+     * Strategy for optional work to be execute before processing
+     * <p/>
+     * For example the {@link org.apache.camel.impl.MDCUnitOfWork} leverages this
+     * to ensure MDC is handled correctly during routing exchanges using the
+     * asynchronous routing engine.
+     *
+     * @param processor the processor to be executed
+     * @param exchange  the current exchange
+     * @param callback the callback
+     * @return the callback to be used (can be wrapped)
+     */
+    AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback);
+
+    /**
+     * Strategy for optional work to be executed after the callback has been processed.
+     *
+     * @param processor the processor executed
+     * @param exchange  the current exchange
+     * @param callback  the callback used
+     * @param doneSync  whether the process was done synchronously or asynchronously
+     */
+    void afterProcess(Processor processor, Exchange exchange, AsyncCallback callback, boolean doneSync);
 }

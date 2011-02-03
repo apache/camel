@@ -88,6 +88,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute(required = false)
     private String autoStartup = "true";
     @XmlAttribute(required = false)
+    private String useMDCLogging;
+    @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
     @XmlAttribute(required = false)
     private ShutdownRunningTask shutdownRunningTask;
@@ -246,6 +248,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
+    }
+
+    public String getUseMDCLogging() {
+        return useMDCLogging;
+    }
+
+    public void setUseMDCLogging(String useMDCLogging) {
+        this.useMDCLogging = useMDCLogging;
     }
 
     public Boolean getLazyLoadTypeConverters() {

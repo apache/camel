@@ -41,7 +41,6 @@ import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.ContextScanDefinition;
-import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -49,14 +48,12 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
-import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.processor.interceptor.Delayer;
@@ -82,7 +79,6 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -442,6 +438,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
 
     public abstract String getAutoStartup();
 
+    public abstract String getUseMDCLogging();
+
     public abstract Boolean getLazyLoadTypeConverters();
 
     public abstract CamelJMXAgentDefinition getCamelJMXAgent();
@@ -493,6 +491,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         }
         if (getAutoStartup() != null) {
             ctx.setAutoStartup(CamelContextHelper.parseBoolean(getContext(), getAutoStartup()));
+        }
+        if (getUseMDCLogging() != null) {
+            ctx.setUseMDCLogging(CamelContextHelper.parseBoolean(getContext(), getUseMDCLogging()));
         }
         if (getShutdownRoute() != null) {
             ctx.setShutdownRoute(getShutdownRoute());

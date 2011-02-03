@@ -21,11 +21,11 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultUnitOfWork;
+import org.apache.camel.impl.MDCUnitOfWork;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * Ensures the {@link Exchange} is routed under the boundaries of an {@link org.apache.camel.spi.UnitOfWork}.
@@ -85,9 +85,16 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
         }
 
         if (exchange.getUnitOfWork() == null) {
+            UnitOfWork unitOfWork;
             // If there is no existing UoW, then we should start one and
             // terminate it once processing is completed for the exchange.
-            final DefaultUnitOfWork uow = new DefaultUnitOfWork(exchange);
+            if (exchange.getContext().isUseMDCLogging()) {
+                unitOfWork = new MDCUnitOfWork(exchange);
+            } else {
+                unitOfWork = new DefaultUnitOfWork(exchange);
+            }
+            final UnitOfWork uow = unitOfWork;
+
             exchange.setUnitOfWork(uow);
             try {
                 uow.start();
@@ -133,7 +140,7 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
         }
     }
 
-    private void doneUow(DefaultUnitOfWork uow, Exchange exchange) {
+    private void doneUow(UnitOfWork uow, Exchange exchange) {
         // unit of work is done
         try {
             if (exchange.getUnitOfWork() != null) {

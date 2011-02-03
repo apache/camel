@@ -34,11 +34,12 @@ import org.slf4j.LoggerFactory;
 public class MyAsyncProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyAsyncProducer.class);
-    private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final ExecutorService executor;
     private final AtomicInteger counter = new AtomicInteger();
 
     public MyAsyncProducer(MyAsyncEndpoint endpoint) {
         super(endpoint);
+        this.executor = endpoint.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "MyProducer");
     }
 
     public MyAsyncEndpoint getEndpoint() {
@@ -48,6 +49,7 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         executor.submit(new Callable<Object>() {
             public Object call() throws Exception {
+
                 LOG.info("Simulating a task which takes " + getEndpoint().getDelay() + " millis to reply");
                 Thread.sleep(getEndpoint().getDelay());
 

@@ -40,6 +40,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
     private final TransactionTemplate transactionTemplate;
+    private final String transactionKey;
 
     /**
      * Creates the transaction error handler.
@@ -60,6 +61,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false, retryWhile);
         setExceptionPolicy(exceptionPolicyStrategy);
         this.transactionTemplate = transactionTemplate;
+        this.transactionKey = ObjectHelper.getIdentityHashCode(transactionTemplate);
     }
 
     public boolean supportTransacted() {
@@ -81,7 +83,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     public void process(Exchange exchange) throws Exception {
         // we have to run this synchronously as Spring Transaction does *not* support
         // using multiple threads to span a transaction
-        if (exchange.getUnitOfWork().isTransactedBy(transactionTemplate)) {
+        if (exchange.getUnitOfWork().isTransactedBy(transactionKey)) {
             // already transacted by this transaction template
             // so lets just let the error handler process it
             processByErrorHandler(exchange);
@@ -108,31 +110,30 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     }
 
     protected void processInTransaction(final Exchange exchange) throws Exception {
-        String id = ObjectHelper.getIdentityHashCode(transactionTemplate);
         try {
             // mark the beginning of this transaction boundary
-            exchange.getUnitOfWork().beginTransactedBy(transactionTemplate);
+            exchange.getUnitOfWork().beginTransactedBy(transactionKey);
 
             if (log.isDebugEnabled()) {
-                log.debug("Transaction begin (" + id + ") for ExchangeId: " + exchange.getExchangeId());
+                log.debug("Transaction begin (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId());
             }
 
             doInTransactionTemplate(exchange);
 
             if (log.isDebugEnabled()) {
-                log.debug("Transaction commit (" + id + ") for ExchangeId: " + exchange.getExchangeId());
+                log.debug("Transaction commit (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId());
             }
         } catch (TransactionRollbackException e) {
             // ignore as its just a dummy exception to force spring TX to rollback
             if (log.isDebugEnabled()) {
-                log.debug("Transaction rollback (" + id + ") for ExchangeId: " + exchange.getExchangeId() + " due exchange was marked for rollbackOnly");
+                log.debug("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId() + " due exchange was marked for rollbackOnly");
             }
         } catch (Exception e) {
-            log.warn("Transaction rollback (" + id + ") for ExchangeId: " + exchange.getExchangeId() + " due exception: " + e.getMessage());
+            log.warn("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId() + " due exception: " + e.getMessage());
             exchange.setException(e);
         } finally {
             // mark the end of this transaction boundary
-            exchange.getUnitOfWork().endTransactedBy(transactionTemplate);
+            exchange.getUnitOfWork().endTransactedBy(transactionKey);
         }
 
         // if it was a local rollback only then remove its marker so outer transaction wont see the marker
@@ -142,10 +143,10 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 // log exception if there was a cause exception so we have the stacktrace
                 Exception cause = exchange.getException();
                 if (cause != null) {
-                    log.debug("Transaction rollback (" + id + ") for ExchangeId: " + exchange.getExchangeId()
+                    log.debug("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId()
                         + " due exchange was marked for rollbackOnlyLast and due exception: ", cause);
                 } else {
-                    log.debug("Transaction rollback (" + id + ") for ExchangeId: " + exchange.getExchangeId()
+                    log.debug("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId()
                         + " due exchange was marked for rollbackOnlyLast");
                 }
             }
