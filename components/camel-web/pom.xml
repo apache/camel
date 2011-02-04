@@ -146,6 +146,10 @@
         <!-- log4j needed by mvn jetty:run -->
         <dependency>
             <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
         <dependency>
@@ -251,7 +255,7 @@
                         </systemProperty>
                     </systemProperties>
                     <!--
-                                        <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
                     -->
                 </configuration>
             </plugin>
@@ -292,9 +296,6 @@
                             <goal>javadoc</goal>
                         </goals>
                         <phase>package</phase>
-                        <!--
-                                    <phase>compile</phase>
-                        -->
                     </execution>
                 </executions>
 
@@ -318,10 +319,10 @@
                             <version>${jersey-version}</version>
                         </docletArtifact>
                         <!--
-                                  Also specify jersey and xerces as doclet artifacts as the
-                                  ResourceDoclet uses classes provided by them to generate the
-                                  resourcedoc.
-                              -->
+                            Also specify jersey and xerces as doclet artifacts as the
+                            ResourceDoclet uses classes provided by them to generate the
+                            resourcedoc.
+                        -->
                         <docletArtifact>
                             <groupId>com.sun.jersey</groupId>
                             <artifactId>jersey-server</artifactId>
