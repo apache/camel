@@ -445,6 +445,7 @@
 	        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
 	        <Implementation-Title>Apache Camel</Implementation-Title>
 	        <Implementation-Version>${project.version}</Implementation-Version>
+            <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
             <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
             <_failok>${camel.osgi.failok}</_failok>
           </instructions>
