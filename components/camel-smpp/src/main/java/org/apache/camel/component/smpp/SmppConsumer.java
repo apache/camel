@@ -192,7 +192,7 @@ public class SmppConsumer extends DefaultConsumer {
     private void closeSession(SMPPSession session) {
         if (session != null) {
             session.removeSessionStateListener(this.sessionStateListener);
-            session.close();
+            session.unbindAndClose();
             session = null;
         }
     }

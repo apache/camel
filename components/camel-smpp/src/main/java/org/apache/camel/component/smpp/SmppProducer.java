@@ -179,7 +179,7 @@ public class SmppProducer extends DefaultProducer {
     private void closeSession(SMPPSession session) {
         if (session != null) {
             session.removeSessionStateListener(this.sessionStateListener);
-            session.close();
+            session.unbindAndClose();
             session = null;
         }
     }

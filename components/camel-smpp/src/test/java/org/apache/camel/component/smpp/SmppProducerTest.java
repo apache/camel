@@ -144,7 +144,7 @@ public class SmppProducerTest {
             .andReturn("smpp://smppclient@localhost:2775")
             .times(2);
         session.removeSessionStateListener(isA(SessionStateListener.class));
-        session.close();
+        session.unbindAndClose();
         expect(endpoint.getConnectionString())
             .andReturn("smpp://smppclient@localhost:2775");
         

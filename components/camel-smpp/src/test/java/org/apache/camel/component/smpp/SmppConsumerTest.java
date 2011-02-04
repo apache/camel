@@ -113,7 +113,7 @@ public class SmppConsumerTest {
             .andReturn("smpp://smppclient@localhost:2775")
             .times(3);
         session.removeSessionStateListener(isA(SessionStateListener.class));
-        session.close();
+        session.unbindAndClose();
         
         replay(session, endpoint);
         
