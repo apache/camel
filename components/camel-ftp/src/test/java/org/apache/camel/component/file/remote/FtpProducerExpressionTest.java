@@ -85,11 +85,14 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
 
     @Test
     public void testProducerComplexByExpression() throws Exception {
+        // need one extra subdirectory (=foo) to be able to start with .. in the fileName option
+        String url = "ftp://admin@localhost:" + getPort() + "/filelanguage/foo?password=admin";
+        
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
-        template.sendBody(getFtpUrl() + "&fileName=" + expression, "Hello World");
+        template.sendBody(url + "&fileName=" + expression, "Hello World");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        assertFileExists(FTP_ROOT_DIR + "filelanguageinbox/myfile-123-" + date + ".txt");
+        assertFileExists(FTP_ROOT_DIR + "filelanguage/filelanguageinbox/myfile-123-" + date + ".txt");
     }
 
     @Test
