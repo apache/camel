@@ -44,14 +44,14 @@ public class SoapRoundtripTest extends CamelTestSupport {
     public void testRoundTrip() throws IOException, InterruptedException {
         resultEndpoint.expectedMessageCount(1);
         GetCustomersByName request = new GetCustomersByName();
-        request.setName("Müller");
+        request.setName("Mueller");
         producer.sendBody(request);
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getExchanges().get(0);
         GetCustomersByName received = exchange.getIn().getBody(
                 GetCustomersByName.class);
         Assert.assertNotNull(received);
-        Assert.assertEquals("Müller", received.getName());
+        Assert.assertEquals("Mueller", received.getName());
     }
 
     @Override

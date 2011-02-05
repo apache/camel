@@ -175,14 +175,14 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-            <link>http://java.sun.com/javaee/5/docs/api/</link>
-            <link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
+            <link>http://download.oracle.com/javase/6/docs/api/</link>
+            <link>http://download.oracle.com/javaee/6/api/</link>
+            <link>http://static.springsource.org/spring/docs/3.0.5.RELEASE/api/</link>
           </links>
           <stylesheetfile>${basedir}/../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
           <maxmemory>256m</maxmemory>
-          <source>1.5</source>
+          <source>1.6</source>
 
           <groups>
             <group>
@@ -233,39 +233,6 @@
 
 
   <profiles>
-    <!--profile>
-      <id>jdk1.5-maven-2.2.x</id>
-      <activation>
-        <jdk>[1.5,)</jdk>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>javax.xml.bind</groupId>
-          <artifactId>jaxb-api</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>com.sun.xml.bind</groupId>
-          <artifactId>jaxb-impl</artifactId>
-        </dependency>
-      </dependencies>
-    </profile-->
-    <profile>
-      <id>jdk1.5-maven-2.0.x</id>
-      <activation>
-        <!-- for maven 2.0.x syntax -->
-        <jdk>1.5</jdk>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>javax.xml.bind</groupId>
-          <artifactId>jaxb-api</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>com.sun.xml.bind</groupId>
-          <artifactId>jaxb-impl</artifactId>
-        </dependency>
-      </dependencies>
-    </profile>
     <profile>
       <id>release</id>
       <build>
@@ -284,14 +251,14 @@
             </executions>
             <configuration>
               <links>
-                <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-                <link>http://java.sun.com/javaee/5/docs/api/</link>
-                <link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
+                <link>http://download.oracle.com/javase/6/docs/api/</link>
+                <link>http://download.oracle.com/javaee/6/api/</link>
+                <link>http://static.springsource.org/spring/docs/3.0.5.RELEASE/api/</link>
               </links>
               <stylesheetfile>${basedir}/../etc/css/stylesheet.css</stylesheetfile>
               <linksource>true</linksource>
               <maxmemory>256m</maxmemory>
-              <source>1.5</source>
+              <source>1.6</source>
 
               <groups>
                 <group>

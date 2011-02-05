@@ -39,12 +39,12 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(LuceneIndexAndQueryProducerTest.class);
     private String[] humorousQuotes = {
         "I think, therefore I am. I think - George Carlin",
-        "I have as much authority as the Pope. I just don’t have as many people who believe it. - George Carlin",
+        "I have as much authority as the Pope. I just don't have as many people who believe it. - George Carlin",
         "There`s no present. There`s only the immediate future and the recent past - George Carlin",
         "Politics doesn't make strange bedfellows - marriage does. - Groucho Marx",
         "I refuse to join any club that would have me as a member. - Groucho Marx",
         "I tell ya when I was a kid, all I knew was rejection. My yo-yo, it never came back. - Rodney Dangerfield",
-        "I worked in a pet store and people kept asking how big I’d get. - Rodney Dangerfield"
+        "I worked in a pet store and people kept asking how big I'd get. - Rodney Dangerfield"
     };
     
     @Override

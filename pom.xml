@@ -44,6 +44,7 @@
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
     <felix-version>2.0.1</felix-version>
     <jdk.version>1.6</jdk.version>
+    <compiler.fork>1.6</compiler.fork>
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.1.13</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
@@ -147,8 +148,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.3.2</version>
           <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
+            <source>1.6</source>
+            <target>1.6</target>
             <maxmem>256M</maxmem>
             <fork>${compiler.fork}</fork>
           </configuration>
@@ -187,10 +188,10 @@
           <version>2.7</version>
           <configuration>
             <attach>true</attach>
-            <source>1.5</source>
+            <source>1.6</source>
             <quiet>true</quiet>
             <bottom>Apache CAMEL</bottom>
-            <javadocVersion>1.5</javadocVersion>
+            <!--javadocVersion>1.5</javadocVersion-->
             <encoding>UTF-8</encoding>
           </configuration>
         </plugin>
@@ -511,14 +512,14 @@
         <version>2.7</version>
         <configuration>
           <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-            <link>http://java.sun.com/javaee/5/docs/api/</link>
-            <link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
+            <link>http://download.oracle.com/javase/6/docs/api/</link>
+            <link>http://download.oracle.com/javaee/6/api/</link>
+            <link>http://static.springsource.org/spring/docs/3.0.5.RELEASE/api/</link>
           </links>
           <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
           <maxmemory>500m</maxmemory>
-          <source>1.5</source>
+          <source>1.6</source>
 
           <!-- TODO we can't aggregate as it won't find the CSS file :( -->
           <!--<aggregate>true</aggregate>-->
@@ -533,18 +534,6 @@
   </reporting>
 
   <profiles>
-    <profile>
-      <!-- really just used for the eclipse setup as eclipse will stick JSE-15 as the compliance
-      level if we don't reconfigure the compiler plugin with 1.6.  When it does that, things 
-      like JAXB and other built in JDK things won't be found -->
-      <id>jdk15</id>
-      <activation>
-        <jdk>1.5</jdk>
-      </activation>
-      <properties>
-        <jdk.version>1.5</jdk.version>
-      </properties>
-    </profile>
     <profile>
       <id>setup.eclipse</id>
       <!--
@@ -563,6 +552,8 @@
               <configuration>
                 <source>${jdk.version}</source>
                 <target>${jdk.version}</target>
+                <maxmem>512M</maxmem>
+                <fork>${compiler.fork}</fork>
               </configuration>
             </plugin>
           </plugins>

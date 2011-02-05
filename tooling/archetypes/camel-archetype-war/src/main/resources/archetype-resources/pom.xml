@@ -82,8 +82,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>$MAVEN_COMPILER_PLUGIN_VERSION_REPLACEME$</version>
         <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
+          <source>1.6</source>
+          <target>1.6</target>
         </configuration>
       </plugin>
 

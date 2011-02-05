@@ -23,7 +23,7 @@ public class CustomerServiceV1Impl implements CustomerServiceV1 {
         if ("12345".equals(customerNumber)) {
             Person maxMueller = new Person();
             maxMueller.setFirstname("Max");
-            maxMueller.setLastname("Müller");
+            maxMueller.setLastname("Mueller");
             maxMueller.setGender(Gender.MALE);
             Address maxMuellerAddress = new Address();
             maxMuellerAddress.setLine1("Mussterstr. 10");

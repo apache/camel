@@ -126,7 +126,6 @@
     </dependency>
 
     <!-- to allow Spring annotations (jmx) to be tested -->
-    <!-- The scope should be test, and set this scope to fix the camel-ftp build with JDK1.5 -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
