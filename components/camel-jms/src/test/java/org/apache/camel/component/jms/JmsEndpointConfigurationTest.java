@@ -169,7 +169,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     public void testIdleTaskExecutionLimit() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?idleTaskExecutionLimit=50");
         assertEquals(50, endpoint.getIdleTaskExecutionLimit());
-        assertEquals(ConsumerType.Default, endpoint.getConsumerType());
         assertEquals(true, endpoint.isAutoStartup());
     }
 
@@ -196,7 +195,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(null, endpoint.getClientId());
         assertNotNull(endpoint.getConnectionFactory());
         assertEquals(1, endpoint.getConcurrentConsumers());
-        assertEquals(ConsumerType.Default, endpoint.getConsumerType());
         assertNull(endpoint.getDestination());
         assertEquals("Foo", endpoint.getDestinationName());
         assertNull(endpoint.getDestinationResolver());
@@ -277,9 +275,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
         endpoint.setConcurrentConsumers(5);
         assertEquals(5, endpoint.getConcurrentConsumers());
-
-        endpoint.setConsumerType(ConsumerType.Default);
-        assertEquals(ConsumerType.Default, endpoint.getConsumerType());
 
         endpoint.setDeliveryPersistent(true);
         assertEquals(true, endpoint.isDeliveryPersistent());

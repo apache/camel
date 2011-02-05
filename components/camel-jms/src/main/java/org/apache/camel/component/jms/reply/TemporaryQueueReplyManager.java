@@ -122,9 +122,6 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         }
         if (endpoint.getTaskExecutor() != null) {
             answer.setTaskExecutor(endpoint.getTaskExecutor());
-        } else if (endpoint.getTaskExecutorSpring2() != null) {
-            // use reflection to invoke to support spring 2 when JAR is compiled with Spring 3.0
-            IntrospectionSupport.setProperty(answer, "taskExecutor", endpoint.getTaskExecutorSpring2());
         }
 
         return answer;

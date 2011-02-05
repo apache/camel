@@ -45,7 +45,6 @@ public class JmsComponentTest extends CamelTestSupport {
         assertEquals(1, endpoint.getCacheLevel());
         assertEquals("foo", endpoint.getClientId());
         assertEquals(2, endpoint.getConcurrentConsumers());
-        assertEquals(ConsumerType.Simple, endpoint.getConsumerType());
         assertEquals(true, endpoint.isDeliveryPersistent());
         assertEquals(true, endpoint.isExplicitQosEnabled());
         assertEquals(20, endpoint.getIdleTaskExecutionLimit());
@@ -72,7 +71,6 @@ public class JmsComponentTest extends CamelTestSupport {
         comp.setCacheLevel(1);
         comp.setClientId("foo");
         comp.setConcurrentConsumers(2);
-        comp.setConsumerType(ConsumerType.Simple);
         comp.setDeliveryPersistent(true);
         comp.setExplicitQosEnabled(true);
         comp.setIdleTaskExecutionLimit(20);

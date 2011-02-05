@@ -50,13 +50,6 @@
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-ws-core</artifactId>
             <version>${spring-ws-version}</version>
-            <!-- spring-webmvc is only used by Spring 2.5 -->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-webmvc</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.ws</groupId>
@@ -116,19 +109,5 @@
         </dependency>
 
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>spring-2.x</id>
-            <dependencies>
-                <!-- need spring-webmvc when using Spring 2.x -->
-                <dependency>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-webmvc</artifactId>
-                    <version>${spring-version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 
 </project>

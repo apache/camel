@@ -25,9 +25,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.PackageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -68,7 +66,6 @@ public class JmsConfiguration implements Cloneable {
     private String acknowledgementModeName;
     // Used to configure the spring Container
     private ExceptionListener exceptionListener;
-    private ConsumerType consumerType = ConsumerType.Default;
     private boolean autoStartup = true;
     private boolean acceptMessagesWhileStopping;
     private String clientId;
@@ -76,8 +73,6 @@ public class JmsConfiguration implements Cloneable {
     private boolean subscriptionDurable;
     private boolean exposeListenerSession = true;
     private TaskExecutor taskExecutor;
-    // TODO: remove in Camel 3.0 when Spring 3.0+ is required
-    private Object taskExecutorSpring2;
     private boolean pubSubNoLocal;
     private int concurrentConsumers = 1;
     private int maxMessagesPerTask = -1;
@@ -493,14 +488,6 @@ public class JmsConfiguration implements Cloneable {
         this.taskExecutor = taskExecutor;
     }
 
-    public Object getTaskExecutorSpring2() {
-        return taskExecutorSpring2;
-    }
-
-    public void setTaskExecutorSpring2(Object taskExecutorSpring2) {
-        this.taskExecutorSpring2 = taskExecutorSpring2;
-    }
-
     public boolean isPubSubNoLocal() {
         return pubSubNoLocal;
     }
@@ -673,14 +660,6 @@ public class JmsConfiguration implements Cloneable {
     public void setPriority(int priority) {
         this.priority = priority;
         configuredQoS();
-    }
-
-    public ConsumerType getConsumerType() {
-        return consumerType;
-    }
-
-    public void setConsumerType(ConsumerType consumerType) {
-        this.consumerType = consumerType;
     }
 
     public int getAcknowledgementMode() {
@@ -917,9 +896,6 @@ public class JmsConfiguration implements Cloneable {
             }
             if (taskExecutor != null) {
                 listenerContainer.setTaskExecutor(taskExecutor);
-            } else if (taskExecutorSpring2 != null) {
-                // use reflection to invoke to support spring 2 when JAR is compiled with Spring 3.0
-                IntrospectionSupport.setProperty(listenerContainer, "taskExecutor", endpoint.getTaskExecutorSpring2());
             }
         } else if (container instanceof SimpleMessageListenerContainer) {
             // this includes SimpleMessageListenerContainer102
@@ -930,9 +906,6 @@ public class JmsConfiguration implements Cloneable {
             listenerContainer.setPubSubNoLocal(pubSubNoLocal);
             if (taskExecutor != null) {
                 listenerContainer.setTaskExecutor(taskExecutor);
-            } else if (taskExecutorSpring2 != null) {
-                // use reflection to invoke to support spring 2 when JAR is compiled with Spring 3.0
-                IntrospectionSupport.setProperty(listenerContainer, "taskExecutor", endpoint.getTaskExecutorSpring2());
             }
         }
     }
@@ -960,48 +933,19 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public AbstractMessageListenerContainer chooseMessageListenerContainerImplementation(JmsEndpoint endpoint) {
-        switch (consumerType) {
-        case Simple:
-            // TODO: simple is @deprecated and should be removed in Camel 2.7 when we upgrade to Spring 3
-            return new SimpleMessageListenerContainer();
-        case Default:
-            return new JmsMessageListenerContainer(endpoint);
-        default:
-            throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
-        }
+        return new JmsMessageListenerContainer(endpoint);
     }
 
     /**
-     * Defaults the JMS cache level if none is explicitly specified. Note that
-     * due to this <a
-     * href="http://opensource.atlassian.com/projects/spring/browse/SPR-3890">Spring
-     * Bug</a> we cannot use CACHE_CONSUMER by default (which we should do as
-     * its most efficient) unless the spring version is 2.5.1 or later. Instead
-     * we use CACHE_CONNECTION - part from for non-durable topics which must use
-     * CACHE_CONSUMER to avoid missing messages (due to the consumer being
-     * created and destroyed per message).
+     * Defaults the JMS cache level if none is explicitly specified.
+     * <p/>
+     * Will by default use <tt>CACHE_CONSUMER</tt> which is the most efficient.
      *
      * @param endpoint the endpoint
      * @return the cache level
      */
     protected int defaultCacheLevel(JmsEndpoint endpoint) {
-        // TODO: upgrade to Spring 3
-        // if we are on a new enough spring version we can assume CACHE_CONSUMER
-        if (PackageHelper.isValidVersion("org.springframework.jms", 2.51D)) {
-            return DefaultMessageListenerContainer.CACHE_CONSUMER;
-        } else {
-            if (endpoint.isPubSubDomain() && !isSubscriptionDurable()) {
-                // we must cache the consumer or we will miss messages
-                // see https://issues.apache.org/activemq/browse/CAMEL-253
-                return DefaultMessageListenerContainer.CACHE_CONSUMER;
-            } else {
-                // to enable consuming and sending with a single JMS session (to
-                // avoid XA) we can only use CACHE_CONNECTION
-                // due to this bug :
-                // http://opensource.atlassian.com/projects/spring/browse/SPR-3890
-                return DefaultMessageListenerContainer.CACHE_CONNECTION;
-            }
-        }
+        return DefaultMessageListenerContainer.CACHE_CONSUMER;
     }
 
     /**

@@ -44,7 +44,7 @@
         org.osgi.framework;version="[1.3,2)",
         org.osgi.service.event;resolution:=optional,
         org.springframework.osgi.*;version="[1.2,2)",
-        org.springframework.*;version="[2.5,4)",
+        org.springframework.*;version="[3,4)",
         *
       </camel.osgi.import>
       <camel.osgi.export>
@@ -526,7 +526,7 @@
               <packages>org.apache.camel.spring.spi</packages>
             </group>
             <group>
-              <title>Spring 2.x Namespace Handling Code</title>
+              <title>Spring Namespace Handling Code</title>
               <packages>org.apache.camel.spring.handler</packages>
             </group>
             <group>

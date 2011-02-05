@@ -23,8 +23,6 @@ import javax.jms.Queue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.BrowsableEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -37,8 +35,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  */
 @ManagedResource(description = "Managed JMS Queue Endpoint")
 public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JmsQueueEndpoint.class);
-
     private int maximumBrowseSize = -1;
     private final QueueBrowseStrategy queueBrowseStrategy;
 
@@ -115,17 +111,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
     }
 
     protected QueueBrowseStrategy createQueueBrowseStrategy() {
-        QueueBrowseStrategy answer = null;
-        try {
-            answer = JmsComponent.tryCreateDefaultQueueBrowseStrategy(getCamelContext());
-        } catch (Throwable e) {
-            LOG.debug("Caught exception trying to create default QueueBrowseStrategy. "
-                      + "This could be due to spring 2.0.x on classpath? Cause: " + e, e);
-        }
-        if (answer == null) {
-            LOG.warn("Cannot browse queues as no QueueBrowseStrategy specified. Are you using Spring 2.0.x by any chance? If you upgrade to 2.5.x or later then queue browsing is supported");
-        }
-        return answer;
+        return new DefaultQueueBrowseStrategy();
     }
 
 }

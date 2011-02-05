@@ -365,7 +365,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             try {
                 BeanDefinition definition = parserContext.getRegistry().getBeanDefinition(routeBuilderName);
                 Method getDependsOn = definition.getClass().getMethod("getDependsOn", new Class[]{});
-                String[] dependsOn = (String[])getDependsOn.invoke(definition, new Object[]{});
+                String[] dependsOn = (String[])getDependsOn.invoke(definition);
                 if (dependsOn == null || dependsOn.length == 0) {
                     dependsOn = new String[]{contextId};
                 } else {

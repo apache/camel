@@ -440,10 +440,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getConnectionFactory();
     }
 
-    public ConsumerType getConsumerType() {
-        return getConfiguration().getConsumerType();
-    }
-
     public DestinationResolver getDestinationResolver() {
         return getConfiguration().getDestinationResolver();
     }
@@ -520,10 +516,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public TaskExecutor getTaskExecutor() {
         return getConfiguration().getTaskExecutor();
-    }
-
-    public Object getTaskExecutorSpring2() {
-        return getConfiguration().getTaskExecutorSpring2();
     }
 
     public ConnectionFactory getTemplateConnectionFactory() {
@@ -683,10 +675,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setConnectionFactory(connectionFactory);
     }
 
-    public void setConsumerType(ConsumerType consumerType) {
-        getConfiguration().setConsumerType(consumerType);
-    }
-
     @ManagedAttribute
     public void setDeliveryPersistent(boolean deliveryPersistent) {
         getConfiguration().setDeliveryPersistent(deliveryPersistent);
@@ -822,10 +810,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setTaskExecutor(TaskExecutor taskExecutor) {
         getConfiguration().setTaskExecutor(taskExecutor);
-    }
-
-    public void setTaskExecutorSpring2(Object taskExecutor) {
-        getConfiguration().setTaskExecutorSpring2(taskExecutor);
     }
 
     public void setTemplateConnectionFactory(ConnectionFactory templateConnectionFactory) {

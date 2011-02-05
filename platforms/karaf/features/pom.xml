@@ -115,7 +115,6 @@
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_2</serp-bundle-version>
       <smack-bundle-version>3.1.0_1</smack-bundle-version>      
-      <spring-version>2.5.6.SEC01</spring-version>
       <spring3-version>3.0.5.RELEASE</spring3-version>
       <spring-osgi-version>1.2.0</spring-osgi-version>
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
@@ -211,11 +210,6 @@
                        <type>xml</type>
                        <classifier>features</classifier>
                      </artifact>
-		     <artifact>
-                       <file>target/classes/features-spring2.xml</file>
-                       <type>xml</type>
-                       <classifier>features-spring2</classifier>
-                     </artifact>
                    </artifacts>
                  </configuration>
                </execution>
@@ -224,44 +218,4 @@
       </plugins>
     </build>
 
-    <profiles>
-       <profile>
-         <id>spring-2.x</id>      
-         <properties>
-           <features.file>features-spring2.xml</features.file>
-         </properties>     
-       </profile>	 
-       <profile>
-          <id>validate</id>
-          <build>
-             <plugins>
-                <plugin>
-                   <groupId>org.apache.karaf.tooling</groupId>
-                   <artifactId>features-maven-plugin</artifactId>
-		   <version>${features-maven-plugin-version}</version>
-		   <configuration>
-		     <file>${project.build.directory}/classes/${features.file}</file>
-                     <karafConfig>${project.build.directory}/classes/config.properties</karafConfig> 
-		   </configuration>
-		   <executions>
-                     <execution>
-                       <id>validate</id>
-                       <phase>process-resources</phase>
-                       <goals>
-                         <goal>validate</goal>
-                       </goals>
-                     </execution>
-                   </executions>
-                   <dependencies>
-                    <dependency> 
-                     <groupId>org.slf4j</groupId>
-                     <artifactId>slf4j-simple</artifactId>
-                     <version>1.4.3</version>
-	            </dependency>
-                 </dependencies>
-               </plugin> 
-              </plugins>
-           </build>
-        </profile>
-     </profiles>
 </project>

@@ -1614,21 +1614,6 @@
       </build>
     </profile>
     <profile>
-      <id>spring-2.x</id>
-      <properties>
-         <spring-version>2.5.6</spring-version>
-         <!-- spring 2.5.x is only compatible with junit 4.4 or lower - see SPR-5145 -->
-         <junit-version>4.4</junit-version> 
-      </properties>
-    </profile>
-    <profile>
-      <id>cxf-2.2.x</id>
-      <properties>
-         <!-- NOTE you can't compile camel-cxf with cxf 2.2.x since camel 2.6.0, but the compiled jar can be used with cxf 2.2.x --> 
-         <cxf-version>2.2.11</cxf-version>
-      </properties>
-    </profile>
-    <profile>
       <id>on-sunjdk</id>
       <activation>
         <property>

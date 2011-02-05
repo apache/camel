@@ -29,13 +29,11 @@ import org.springframework.jms.core.JmsTemplate;
 public class JmsPollingConsumer extends PollingConsumerSupport {
     private JmsOperations template;
     private JmsEndpoint jmsEndpoint;
-    private final boolean spring20x;
 
     public JmsPollingConsumer(JmsEndpoint endpoint, JmsOperations template) {
         super(endpoint);
         this.jmsEndpoint = endpoint;
         this.template = template;
-        this.spring20x = JmsHelper.isSpring20x(endpoint != null ? endpoint.getCamelContext() : null);
     }
 
     @Override
@@ -44,28 +42,11 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
     }
 
     public Exchange receiveNoWait() {
-        // spring have changed the semantic of the receive timeout mode
-        // so we need to determine if running spring 2.0.x or 2.5.x or newer
-        if (spring20x) {
-            // spring 2.0.x
-            return receive(0L);
-        } else {
-            // spring 2.5.x
-            // no wait using -1L does not work properly so wait at most 1 millis to simulate no wait
-            return receive(1);
-        }
+        return receive(1);
     }
 
     public Exchange receive() {
-        // spring have changed the semantic of the receive timeout mode
-        // so we need to determine if running spring 2.0.x or 2.5.x or newer
-        if (spring20x) {
-            // spring 2.0.x
-            return receive(-1L);
-        } else {
-            // spring 2.5.x
-            return receive(0L);
-        }
+        return receive(0L);
     }
 
     public Exchange receive(long timeout) {
