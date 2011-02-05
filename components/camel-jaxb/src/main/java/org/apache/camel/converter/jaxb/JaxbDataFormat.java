@@ -246,8 +246,10 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
-        // create context and resolve partial class up front so they are ready to be used
-        context = createContext();
+        if (context == null) {
+            // if context not injected, create one and resolve partial class up front so they are ready to be used
+            context = createContext();
+        }
         if (partClass != null) {
             partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClass);
         }
