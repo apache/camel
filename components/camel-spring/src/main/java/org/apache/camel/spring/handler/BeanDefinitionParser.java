@@ -31,9 +31,6 @@ import org.springframework.util.StringUtils;
  *
  * @version $Revision$
  */
-// TODO cannot use AbstractSimpleBeanDefinitionParser
-// as doParse() is final and isEligableAttribute does not allow us to filter out attributes
-// with the name "xmlns:"
 public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
     private final Class type;
     private final boolean assignId;
@@ -54,40 +51,23 @@ public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
         return type;
     }
 
+    protected boolean isAssignId() {
+        return assignId;
+    }
+
     protected boolean isEligibleAttribute(String attributeName) {
         return attributeName != null && !ID_ATTRIBUTE.equals(attributeName)
                 && !attributeName.equals("xmlns") && !attributeName.startsWith("xmlns:");
     }
 
-    // TODO the following code is copied from AbstractSimpleBeanDefinitionParser
-    // it can be removed if ever the doParse() method is not final!
-    // or the Spring bug http://jira.springframework.org/browse/SPR-4599 is resolved
-
-    /**
-     * Parse the supplied {@link Element} and populate the supplied
-     * {@link BeanDefinitionBuilder} as required.
-     * <p>This implementation maps any attributes present on the
-     * supplied element to {@link org.springframework.beans.PropertyValue}
-     * instances, and
-     * {@link BeanDefinitionBuilder#addPropertyValue(String, Object) adds them}
-     * to the
-     * {@link org.springframework.beans.factory.config.BeanDefinition builder}.
-     * <p>The {@link #extractPropertyName(String)} method is used to
-     * reconcile the name of an attribute with the name of a JavaBean
-     * property.
-     *
-     * @param element the XML element being parsed
-     * @param builder used to define the <code>BeanDefinition</code>
-     * @see #extractPropertyName(String)
-     */
-    protected final void doParse(Element element, BeanDefinitionBuilder builder) {
+    protected void doParse(Element element, BeanDefinitionBuilder builder) {
         NamedNodeMap attributes = element.getAttributes();
         for (int x = 0; x < attributes.getLength(); x++) {
             Attr attribute = (Attr) attributes.item(x);
             String name = attribute.getLocalName();
             String fullName = attribute.getName();
             // assign id if we want them
-            if (fullName.equals("id") && assignId) {
+            if (fullName.equals("id") && isAssignId()) {
                 if (attribute.getValue() != null) {
                     builder.addPropertyValue("id", attribute.getValue());
                 }
