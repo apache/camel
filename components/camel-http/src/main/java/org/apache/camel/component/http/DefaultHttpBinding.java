@@ -269,7 +269,7 @@ public class DefaultHttpBinding implements HttpBinding {
                 // object is written so return
                 return;
             } catch (InvalidPayloadException e) {
-                throw IOHelper.createIOException(e);
+                throw new IOException(e);
             }
         }
 

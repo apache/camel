@@ -21,7 +21,6 @@ import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.util.IOHelper;
 
 /**
  * File binding with the {@link java.io.File} type.
@@ -57,7 +56,7 @@ public class FileBinding implements GenericFileBinding<File> {
             try {
                 content = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, file.getFile());
             } catch (NoTypeConversionAvailableException e) {
-                throw IOHelper.createIOException("Cannot load file content: " + file.getAbsoluteFilePath(), e);
+                throw new IOException("Cannot load file content: " + file.getAbsoluteFilePath(), e);
             }
         }
     }

@@ -96,9 +96,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             marshal(exchange, graph, stream, marshaller);
 
         } catch (JAXBException e) {
-            throw IOHelper.createIOException(e);
+            throw new IOException(e);
         } catch (XMLStreamException e) {
-            throw IOHelper.createIOException(e);
+            throw new IOException(e);
         }
     }
 
@@ -155,7 +155,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             }
             return answer;
         } catch (JAXBException e) {
-            throw IOHelper.createIOException(e);
+            throw new IOException(e);
         }
     }
 

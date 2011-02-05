@@ -67,7 +67,10 @@ public final class IOHelper {
     /**
      * A factory method which creates an {@link IOException} from the given
      * exception and message
+     *
+     * @deprecated IOException support nested exception in Java 1.6.
      */
+    @Deprecated
     public static IOException createIOException(Throwable cause) {
         return createIOException(cause.getMessage(), cause);
     }
@@ -75,7 +78,10 @@ public final class IOHelper {
     /**
      * A factory method which creates an {@link IOException} from the given
      * exception and message
+     *
+     * @deprecated IOException support nested exception in Java 1.6.
      */
+    @Deprecated
     public static IOException createIOException(String message, Throwable cause) {
         IOException answer = new IOException(message);
         answer.initCause(cause);

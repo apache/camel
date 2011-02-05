@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.camel.util.IOHelper;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
@@ -67,7 +66,7 @@ public class BasicValidationHandler implements HttpRequestHandler {
                 return;
             }
         } catch (URISyntaxException e) {
-            throw IOHelper.createIOException(e);
+            throw new IOException(e);
         }
 
         if (expectedContent != null) {

@@ -30,7 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,7 +154,7 @@ public class CachedOutputStream extends OutputStream {
                 }
                 return fileInputStreamCache;
             } catch (FileNotFoundException e) {
-                throw IOHelper.createIOException("Cached file " + tempFile + " not found", e);
+                throw new IOException("Cached file " + tempFile + " not found", e);
             }
         }
     }    
@@ -182,7 +181,7 @@ public class CachedOutputStream extends OutputStream {
                 }
                 return fileInputStreamCache;
             } catch (FileNotFoundException e) {
-                throw IOHelper.createIOException("Cached file " + tempFile + " not found", e);
+                throw new IOException("Cached file " + tempFile + " not found", e);
             }
         }
     }

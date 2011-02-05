@@ -186,7 +186,7 @@ public class CryptoDataFormat implements DataFormat {
                             + " '%d' bytes were retrieved", ivLength, read));
                 }
             } catch (IOException e) {
-                throw IOHelper.createIOException("Error Reading Initialization vector from encrypted stream", e);
+                throw new IOException("Error reading initialization vector from encrypted stream", e);
             }
         }
         return iv;

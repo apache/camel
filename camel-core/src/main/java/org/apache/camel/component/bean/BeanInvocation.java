@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +99,7 @@ public class BeanInvocation implements Externalizable {
         try {
             method = methodBean.getMethod();
         } catch (NoSuchMethodException e) {
-            throw IOHelper.createIOException(e);
+            throw new IOException(e);
         }
         args = ObjectHelper.cast(Object[].class, objectInput.readObject());
     }
