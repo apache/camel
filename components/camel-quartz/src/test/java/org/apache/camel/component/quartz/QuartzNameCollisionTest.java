@@ -56,6 +56,28 @@ public class QuartzNameCollisionTest {
 
 
     /**
+     * Don't check for a name collision if the job is stateful.
+     */
+    @Test
+    public void testNoStatefulCollisionError() throws Exception {
+        camel1 = new DefaultCamelContext();
+        camel1.setName("camel-1");
+        camel1.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("quartz://myGroup/myTimerName?stateful=true&cron=0/1+*+*+*+*+?").to("log:one", "mock:one");
+            }
+        });
+        camel1.start();
+
+        camel2 = new DefaultCamelContext();
+        QuartzComponent component2 = new QuartzComponent(camel2);
+
+        component2.createEndpoint("quartz://myGroup/myTimerName?stateful=true");
+        // if no exception is thrown then this test passed.
+    }
+
+    /**
      * Make sure a resume doesn't trigger a dupe name error.
      */
     @Test

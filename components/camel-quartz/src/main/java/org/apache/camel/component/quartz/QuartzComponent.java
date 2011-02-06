@@ -112,9 +112,10 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         Map<String, Object> jobParameters = IntrospectionSupport.extractProperties(parameters, "job.");
 
         Trigger trigger;
+        boolean stateful = "true".equals(parameters.get("stateful"));
 
-        // if we're starting up and not running in Quartz clustered mode then check for a name conflict.
-        if (!isClustered()) {
+        // if we're starting up and not running in Quartz clustered mode or not stateful then check for a name conflict.
+        if (!isClustered() && !stateful) {
             // check to see if this trigger already exists
             trigger = getScheduler().getTrigger(name, group);
             if (trigger != null) {
@@ -267,7 +268,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
                 LOG.debug("Cannot delete job using trigger: " + group + "/" + name + " as the JobStore is clustered.");
             }
         } else {
-            Trigger trigger  = getScheduler().getTrigger(name, group);
+            Trigger trigger = getScheduler().getTrigger(name, group);
             if (trigger != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Deleting job using trigger: " + group + "/" + name);
