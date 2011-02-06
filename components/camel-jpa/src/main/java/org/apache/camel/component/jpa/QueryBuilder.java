@@ -82,6 +82,22 @@ public abstract class QueryBuilder implements QueryFactory {
             }
         };
     }
+    
+    /**
+     * Creates a native SQL query with a provided resultClass
+     */
+    public static QueryBuilder nativeQuery(final String nativeQuery, final Class resultClass) {
+        return new QueryBuilder() {
+            protected Query makeQueryObject(EntityManager entityManager) {
+                return entityManager.createNativeQuery(nativeQuery, resultClass);
+            }
+
+            @Override
+            public String toString() {
+                return "NativeQuery: " + nativeQuery + " resultClass:" + resultClass + getParameterDescription();
+            }
+        };
+    }
 
     /**
      * Specifies the parameters to the query

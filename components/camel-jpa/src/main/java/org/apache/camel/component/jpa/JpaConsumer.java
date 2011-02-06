@@ -52,6 +52,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
     private String query;
     private String namedQuery;
     private String nativeQuery;
+    private Class resultClass;
     private int maxMessagesPerPoll;
     private volatile ShutdownRunningTask shutdownRunningTask;
     private volatile int pendingExchanges;
@@ -242,6 +243,14 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
     public void setQuery(String query) {
         this.query = query;
     }
+    
+    public Class getResultClass() {
+        return resultClass;
+    }
+
+    public void setResultClass(Class resultClass) {
+        this.resultClass = resultClass;
+    }    
 
     // Implementation methods
     // -------------------------------------------------------------------------
@@ -278,7 +287,11 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
         } else if (namedQuery != null) {
             return QueryBuilder.namedQuery(namedQuery);
         } else if (nativeQuery != null) {
-            return QueryBuilder.nativeQuery(nativeQuery);
+            if (resultClass != null) {
+                return QueryBuilder.nativeQuery(nativeQuery, resultClass);
+            } else {
+                return QueryBuilder.nativeQuery(nativeQuery);                
+            }
         } else {
             Class<?> entityType = endpoint.getEntityType();
             
