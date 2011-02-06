@@ -1,4 +1,4 @@
-package org.apache.camel.component.servlet;
+package org.apache.camel.component.servlet.osgi;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
