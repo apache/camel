@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.reply;
 
 import java.math.BigInteger;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -25,7 +26,6 @@ import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -206,6 +206,10 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         }
         if (endpoint.getTaskExecutor() != null) {
             answer.setTaskExecutor(endpoint.getTaskExecutor());
+        } else {
+            String name = "PersistentReplyManager[" + endpoint.getEndpointConfiguredDestinationName() + "]";
+            ExecutorService executor = endpoint.getCamelContext().getExecutorServiceStrategy().newSingleThreadExecutor(this, name);
+            answer.setTaskExecutor(executor);
         }
 
         return answer;

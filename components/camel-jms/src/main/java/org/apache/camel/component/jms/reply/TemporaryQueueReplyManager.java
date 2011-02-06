@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms.reply;
 
+import java.util.concurrent.ExecutorService;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
@@ -122,6 +123,10 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         }
         if (endpoint.getTaskExecutor() != null) {
             answer.setTaskExecutor(endpoint.getTaskExecutor());
+        } else {
+            String name = "TemporaryReplyManager[" + endpoint.getEndpointConfiguredDestinationName() + "]";
+            ExecutorService executor = endpoint.getCamelContext().getExecutorServiceStrategy().newSingleThreadExecutor(this, name);
+            answer.setTaskExecutor(executor);
         }
 
         return answer;
