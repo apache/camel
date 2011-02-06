@@ -19,25 +19,42 @@
   <properties>
       <camel.osgi.export.pkg>org.apache.camel.component.servlet.*</camel.osgi.export.pkg>
   </properties>
-    
+
   <dependencies>
     <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <version>1.2.0</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>javax.servlet</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>org.osgi.foundation</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>      
+      <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>      
+      <artifactId>camel-spring</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http</artifactId>      
+      <artifactId>camel-http</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-      <scope>test</scope>     
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -55,9 +72,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-	  <groupId>httpunit</groupId>
-	  <artifactId>httpunit</artifactId>
-	  <scope>test</scope>
+      <groupId>httpunit</groupId>
+      <artifactId>httpunit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   
