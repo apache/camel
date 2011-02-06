@@ -18,29 +18,30 @@ package org.apache.camel.component.cxf.feature;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Logger;
+
 
 import org.apache.camel.component.cxf.interceptors.ConfigureDocLitWrapperInterceptor;
 import org.apache.camel.component.cxf.interceptors.RemoveClassTypeInterceptor;
 import org.apache.cxf.Bus;
-import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.interceptor.ClientFaultConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This feature just setting up the CXF endpoint interceptor for handling the
  * Message in PAYLOAD data format
  */
 public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
-    private static final Logger LOG = LogUtils.getL7dLogger(PayLoadDataFormatFeature.class);    
+    private static final Logger LOG = LoggerFactory.getLogger(PayLoadDataFormatFeature.class);
     private static final Collection<Class> REMOVING_FAULT_IN_INTERCEPTORS;
 
     static {
         REMOVING_FAULT_IN_INTERCEPTORS = new ArrayList<Class>();
         REMOVING_FAULT_IN_INTERCEPTORS.add(ClientFaultConverter.class);
     }
-    
+
     @Override
     public void initialize(Client client, Bus bus) {
         removeFaultInInterceptorFromClient(client);
@@ -49,7 +50,7 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     }
 
     @Override
-    public void initialize(Server server, Bus bus) {               
+    public void initialize(Server server, Bus bus) {
         server.getEndpoint().getBinding().getInInterceptors().add(new ConfigureDocLitWrapperInterceptor(true));
         server.getEndpoint().getBinding().getInInterceptors().add(new RemoveClassTypeInterceptor());
     }
@@ -58,12 +59,12 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     protected Logger getLogger() {
         return LOG;
     }
-    
+
     private void removeFaultInInterceptorFromClient(Client client) {
         removeInterceptors(client.getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
         removeInterceptors(client.getEndpoint().getService().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
         removeInterceptors(client.getEndpoint().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
-        removeInterceptors(client.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);        
+        removeInterceptors(client.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
     }
 
 }

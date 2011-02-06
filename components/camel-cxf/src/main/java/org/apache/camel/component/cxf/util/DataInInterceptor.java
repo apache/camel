@@ -33,7 +33,8 @@ import org.apache.cxf.staxutils.DepthXMLStreamReader;
 import org.apache.cxf.staxutils.StaxUtils;
 
 public class DataInInterceptor extends AbstractInDatabindingInterceptor {
-    private static final Logger LOG = LogUtils.getL7dLogger(DataInInterceptor.class);
+    // CXF requires JUL for Message
+    private static final Logger JUL_LOG = LogUtils.getL7dLogger(DataInInterceptor.class);
 
     public DataInInterceptor() {
         super(Phase.UNMARSHAL);
@@ -46,7 +47,7 @@ public class DataInInterceptor extends AbstractInDatabindingInterceptor {
             Document doc = StaxUtils.read(xmlReader);
             message.setContent(Source.class, new DOMSource(doc));
         } catch (XMLStreamException e) {
-            throw new Fault(new org.apache.cxf.common.i18n.Message("XMLSTREAM_EXCEPTION", LOG), e);
+            throw new Fault(new org.apache.cxf.common.i18n.Message("XMLSTREAM_EXCEPTION", JUL_LOG), e);
         }
     }
 

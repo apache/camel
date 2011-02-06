@@ -31,7 +31,8 @@ import org.apache.cxf.phase.Phase;
 import org.apache.cxf.staxutils.StaxUtils;
 
 public class DataOutInterceptor extends AbstractOutDatabindingInterceptor {
-    private static final Logger LOG = LogUtils.getL7dLogger(DataOutInterceptor.class);
+    // CXF requires java.util.logging for Message
+    private static final Logger JUL_LOG = LogUtils.getL7dLogger(DataOutInterceptor.class);
 
     public DataOutInterceptor() {
         super(Phase.MARSHAL);
@@ -47,7 +48,7 @@ public class DataOutInterceptor extends AbstractOutDatabindingInterceptor {
                 StaxUtils.copy(xmlReader, xmlWriter);
             }
         } catch (XMLStreamException e) {
-            throw new Fault(new org.apache.cxf.common.i18n.Message("XMLSTREAM_EXCEPTION", LOG, e), e);
+            throw new Fault(new org.apache.cxf.common.i18n.Message("XMLSTREAM_EXCEPTION", JUL_LOG, e), e);
         }
     }
 

@@ -17,12 +17,13 @@
 package org.apache.camel.component.cxf;
 
 import java.util.List;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class HelloServiceImpl implements HelloService {
-    private static final Logger LOG = Logger.getLogger(HelloServiceImpl.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(HelloServiceImpl.class);
     private int invocationCount;
 
     public String echo(String text) {

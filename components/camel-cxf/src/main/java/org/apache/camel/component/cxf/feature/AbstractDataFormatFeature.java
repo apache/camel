@@ -19,12 +19,12 @@ package org.apache.camel.component.cxf.feature;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.PhaseInterceptor;
+import org.slf4j.Logger;
 
 /**
  * The abstract class for the data format feature
@@ -32,11 +32,11 @@ import org.apache.cxf.phase.PhaseInterceptor;
 public abstract class AbstractDataFormatFeature extends AbstractFeature {
 
     protected abstract Logger getLogger();
-    
+
     protected void removeInterceptorWhichIsInThePhases(List<Interceptor<? extends Message>> interceptors, String[] phaseNames) {
         for (Interceptor i : interceptors) {
             if (i instanceof PhaseInterceptor) {
-                PhaseInterceptor p = (PhaseInterceptor)i;
+                PhaseInterceptor p = (PhaseInterceptor) i;
                 for (String phaseName : phaseNames) {
                     if (p.getPhase().equals(phaseName)) {
                         getLogger().info("removing the interceptor " + p);
@@ -52,7 +52,7 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
         for (Interceptor i : interceptors) {
             boolean outside = false;
             if (i instanceof PhaseInterceptor) {
-                PhaseInterceptor p = (PhaseInterceptor)i;
+                PhaseInterceptor p = (PhaseInterceptor) i;
                 for (String phaseName : phaseNames) {
                     if (p.getPhase().equals(phaseName)) {
                         outside = true;
@@ -66,10 +66,8 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
             }
         }
     }
-    
-      
-    protected void removeInterceptors(List<Interceptor<? extends Message>> interceptors,
-                                      Collection<Class> toBeRemovedInterceptors) {
+
+    protected void removeInterceptors(List<Interceptor<? extends Message>> interceptors, Collection<Class> toBeRemovedInterceptors) {
         for (Interceptor interceptor : interceptors) {
             if (toBeRemovedInterceptors.contains(interceptor.getClass())) {
                 getLogger().info("removing the interceptor " + interceptor);
@@ -77,5 +75,4 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
             }
         }
     }
-
 }
