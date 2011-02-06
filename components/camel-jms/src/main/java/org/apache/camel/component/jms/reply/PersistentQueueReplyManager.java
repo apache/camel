@@ -18,7 +18,6 @@ package org.apache.camel.component.jms.reply;
 
 import java.math.BigInteger;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -204,13 +203,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getRecoveryInterval() >= 0) {
             answer.setRecoveryInterval(endpoint.getRecoveryInterval());
         }
-        if (endpoint.getTaskExecutor() != null) {
-            answer.setTaskExecutor(endpoint.getTaskExecutor());
-        } else {
-            String name = "PersistentReplyManager[" + endpoint.getEndpointConfiguredDestinationName() + "]";
-            ExecutorService executor = endpoint.getCamelContext().getExecutorServiceStrategy().newSingleThreadExecutor(this, name);
-            answer.setTaskExecutor(executor);
-        }
+        // do not use a task executor for reply as we are are always a single threaded task
 
         return answer;
     }

@@ -399,7 +399,8 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     protected synchronized ScheduledExecutorService getReplyManagerExecutorService() {
         if (replyManagerExecutorService == null) {
-            replyManagerExecutorService = getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this, "JmsReplyManagerTimeoutChecker", 1);
+            String name = "JmsReplyManagerTimeoutChecker[" + getEndpointConfiguredDestinationName() + "]";
+            replyManagerExecutorService = getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(name, name, 1);
         }
         return replyManagerExecutorService;
     }

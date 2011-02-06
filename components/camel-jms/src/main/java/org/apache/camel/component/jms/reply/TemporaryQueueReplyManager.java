@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.jms.reply;
 
-import java.util.concurrent.ExecutorService;
 import javax.jms.Destination;
-import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
@@ -26,7 +24,6 @@ import javax.jms.TemporaryQueue;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -121,13 +118,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getRecoveryInterval() >= 0) {
             answer.setRecoveryInterval(endpoint.getRecoveryInterval());
         }
-        if (endpoint.getTaskExecutor() != null) {
-            answer.setTaskExecutor(endpoint.getTaskExecutor());
-        } else {
-            String name = "TemporaryReplyManager[" + endpoint.getEndpointConfiguredDestinationName() + "]";
-            ExecutorService executor = endpoint.getCamelContext().getExecutorServiceStrategy().newSingleThreadExecutor(this, name);
-            answer.setTaskExecutor(executor);
-        }
+        // do not use a task executor for reply as we are are always a single threaded task
 
         return answer;
     }
