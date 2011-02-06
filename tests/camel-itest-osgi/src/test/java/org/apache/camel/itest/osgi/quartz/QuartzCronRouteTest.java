@@ -19,7 +19,6 @@ package org.apache.camel.itest.osgi.quartz;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -34,7 +33,6 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("TODO: Test hangs")
 public class QuartzCronRouteTest extends OSGiIntegrationTestSupport {
 
     @Test
@@ -61,7 +59,7 @@ public class QuartzCronRouteTest extends OSGiIntegrationTestSupport {
             // install the spring dm profile
             profile("spring.dm").version("1.2.0"),
             // this is how you set the default log level when using pax logging (logProfile)
-            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
+            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("DEBUG"),
 
             // using the features to install the camel components
             scanFeatures(getCamelKarafFeatureUrl(),
@@ -69,7 +67,8 @@ public class QuartzCronRouteTest extends OSGiIntegrationTestSupport {
 
             workingDirectory("target/paxrunner/"),
 
-            felix(), equinox());
+            // TODO: test hang on shutdown on equionox
+            felix());
 
         return options;
     }

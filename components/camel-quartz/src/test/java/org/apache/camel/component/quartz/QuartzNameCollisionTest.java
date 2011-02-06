@@ -43,9 +43,7 @@ public class QuartzNameCollisionTest {
         });
         camel1.start();
 
-        camel2 = new DefaultCamelContext();
-        QuartzComponent component2 = new QuartzComponent(camel2);
-
+        QuartzComponent component2 = new QuartzComponent(camel1);
         try {
             component2.createEndpoint("quartz://myGroup/myTimerName");
             Assert.fail("Should have thrown an exception");
@@ -54,6 +52,22 @@ public class QuartzNameCollisionTest {
         }
     }
 
+    @Test
+    public void testDupeNameMultiContext() throws Exception {
+        camel1 = new DefaultCamelContext();
+        camel1.setName("camel-1");
+        camel1.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").to("log:one", "mock:one");
+            }
+        });
+        camel1.start();
+
+        camel2 = new DefaultCamelContext();
+        QuartzComponent component2 = new QuartzComponent(camel2);
+        component2.createEndpoint("quartz://myGroup/myTimerName");
+    }
 
     /**
      * Don't check for a name collision if the job is stateful.
@@ -116,32 +130,29 @@ public class QuartzNameCollisionTest {
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").to("log:one", "mock:one");
+                from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").id("route-1").to("log:one", "mock:one");
             }
         });
-        camel1.start();
 
-        camel2 = new DefaultCamelContext();
-        camel2.setName("camel-2");
-        camel2.addRoutes(new RouteBuilder() {
+        camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("quartz://myGroup2/myTimerName?cron=0/1+*+*+*+*+?").to("log:one", "mock:one");
+                from("quartz://myGroup2/myTimerName?cron=0/1+*+*+*+*+?").id("route-2").to("log:one", "mock:one");
             }
         });
-        camel2.start();
+
+        camel1.start();
 
         QuartzComponent component = (QuartzComponent) camel1.getComponent("quartz");
         Scheduler scheduler = component.getScheduler();
         Trigger trigger = scheduler.getTrigger("myTimerName", "myGroup");
         Assert.assertNotNull(trigger);
+        
+        camel1.stopRoute("route-1");
 
-        camel1.stop();
-
-        trigger = scheduler.getTrigger("myTimerName", "myGroup");
-        Assert.assertNull(trigger);
-
-        camel2.stop();
+        int triggerState = component.getScheduler().getTriggerState("myTimerName", "myGroup");
+        Assert.assertNotNull(trigger);
+        Assert.assertEquals(Trigger.STATE_PAUSED, triggerState);
     }
 
     @After
