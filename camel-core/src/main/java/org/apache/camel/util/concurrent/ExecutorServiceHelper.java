@@ -360,6 +360,10 @@ public final class ExecutorServiceHelper {
             }
             return answer;
         }
+
+        public String toString() {
+            return "CamelThreadFactory[" + name + "]";
+        }
     }
 
 }

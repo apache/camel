@@ -17,17 +17,20 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +41,9 @@ public class GenericFileProducer<T> extends DefaultProducer {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected final GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
-    
+    // assume writing to 100 different files concurrently at most for the same file producer
+    private final LRUCache<String, Lock> locks = new LRUCache<String, Lock>(100);
+
     protected GenericFileProducer(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
         super(endpoint);
         this.endpoint = endpoint;
@@ -56,8 +61,29 @@ public class GenericFileProducer<T> extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Exchange fileExchange = endpoint.createExchange(exchange);
         endpoint.configureExchange(fileExchange);
-        processExchange(fileExchange);
-        ExchangeHelper.copyResults(exchange, fileExchange);
+
+        String target = createFileName(exchange);
+
+        // use lock for same file name to avoid concurrent writes to the same file
+        // for example when you concurrently append to the same file
+        Lock lock;
+        synchronized (locks) {
+            lock = locks.get(target);
+            if (lock == null) {
+                lock = new ReentrantLock();
+                locks.put(target, lock);
+            }
+        }
+
+        lock.lock();
+        try {
+            processExchange(fileExchange, target);
+            ExchangeHelper.copyResults(exchange, fileExchange);
+        } finally {
+            // do not remove as the locks cache has an upper bound
+            // this ensure the locks is appropriate reused
+            lock.unlock();
+        }
     }
 
     /**
@@ -75,16 +101,15 @@ public class GenericFileProducer<T> extends DefaultProducer {
      * Perform the work to process the fileExchange
      *
      * @param exchange fileExchange
+     * @param target   the target filename
      * @throws Exception is thrown if some error
      */
-    protected void processExchange(Exchange exchange) throws Exception {
+    protected void processExchange(Exchange exchange, String target) throws Exception {
         if (log.isTraceEnabled()) {
-            log.trace("Processing " + exchange);
+            log.trace("Processing file: " + target + " for exchange: " + exchange);
         }
 
         try {
-            String target = createFileName(exchange);
-
             preWriteCheck();
 
             // should we write to a temporary name and then afterwards rename to real target
@@ -335,4 +360,15 @@ public class GenericFileProducer<T> extends DefaultProducer {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ServiceHelper.startService(locks);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(locks);
+        super.doStop();
+    }
 }
