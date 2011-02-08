@@ -71,6 +71,13 @@ public class CamelHttpTransportServlet extends CamelServlet implements CamelServ
         }        
         return answer;
     }
+
+    @Override
+    public String getServletName() {
+        return servletName;
+    }
+    
+    
     
 }
 
