@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -55,7 +57,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     private static final transient Logger LOG = LoggerFactory.getLogger(AnnotationTypeConverterLoader.class);
     protected PackageScanClassResolver resolver;
     protected Set<Class<?>> visitedClasses = new HashSet<Class<?>>();
-    protected Set<URL> visitedURLs = new HashSet<URL>();
+    protected Set<URI> visitedURIs = new HashSet<URI>();
 
     public AnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
         this.resolver = resolver;
@@ -88,7 +90,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
         // now clear the maps so we do not hold references
         visitedClasses.clear();
-        visitedURLs.clear();
+        visitedURIs.clear();
     }
 
     /**
@@ -97,8 +99,9 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
      *
      * @return a collection of packages to search for
      * @throws IOException is thrown for IO related errors
+     * @throws URISyntaxException 
      */
-    protected String[] findPackageNames() throws IOException {
+    protected String[] findPackageNames() throws IOException, URISyntaxException {
         Set<String> packages = new HashSet<String>();
         ClassLoader ccl = Thread.currentThread().getContextClassLoader();
         if (ccl != null) {
@@ -108,13 +111,14 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         return packages.toArray(new String[packages.size()]);
     }
 
-    protected void findPackages(Set<String> packages, ClassLoader classLoader) throws IOException {
+    protected void findPackages(Set<String> packages, ClassLoader classLoader) throws IOException, URISyntaxException {
         Enumeration<URL> resources = classLoader.getResources(META_INF_SERVICES);
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
-            if (url != null && !visitedURLs.contains(url)) {
-                // remember we have visited this url so we wont read it twice
-                visitedURLs.add(url);
+            URI uri = url.toURI();
+            if (!visitedURIs.contains(uri)) {
+                // remember we have visited this uri so we wont read it twice
+                visitedURIs.add(uri);
                 if (LOG.isDebugEnabled()) {
                     LOG.info("Loading file " + META_INF_SERVICES + " to retrieve list of packages, from url: " + url);
                 }
