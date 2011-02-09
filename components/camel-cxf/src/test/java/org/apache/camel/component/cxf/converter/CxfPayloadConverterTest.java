@@ -73,7 +73,6 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
     public void testCxfPayloadToNodeList() {
         NodeList nodeList = CxfPayloadConverter.cxfPayloadToNodeList(payload, exchange);
         assertNotNull(nodeList);
-        System.out.println("The node list is " + nodeList.getLength());
         assertEquals("Get a worng size of nodeList", 1,  nodeList.getLength());
     }
    
