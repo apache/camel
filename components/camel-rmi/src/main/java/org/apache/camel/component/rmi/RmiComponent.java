@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.rmi;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.CastUtils;
 
 /**
  * @version $Revision:520964 $
@@ -36,6 +40,23 @@ public class RmiComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return new RmiEndpoint(uri, this);
+        RmiEndpoint rmi = new RmiEndpoint(uri, this);
+
+        // lookup remote interfaces
+        List<Class<?>> classes = new ArrayList<Class<?>>();
+        Iterator it = getAndRemoveParameter(parameters, "remoteInterfaces", Iterator.class);
+        while (it != null && it.hasNext()) {
+            Object next = it.next();
+            Class clazz = getCamelContext().getTypeConverter().mandatoryConvertTo(Class.class, next);
+            classes.add(clazz);
+        }
+
+        if (!classes.isEmpty()) {
+            List<Class<?>> interfaces = CastUtils.cast(classes);
+            rmi.setRemoteInterfaces(interfaces);
+        }
+
+        setProperties(rmi, parameters);
+        return rmi;
     }
 }
