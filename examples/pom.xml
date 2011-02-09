@@ -49,6 +49,7 @@
     <module>camel-example-loan-broker</module>
     <module>camel-example-management</module>
     <module>camel-example-osgi</module>
+    <module>camel-example-osgi-rmi</module>
     <module>camel-example-pojo-messaging</module>
     <module>camel-example-reportincident</module>
     <module>camel-example-reportincident-ws-security-osgi</module>
