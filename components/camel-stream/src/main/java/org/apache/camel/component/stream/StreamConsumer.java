@@ -124,7 +124,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 boolean eos = line == null;
                 if (!eos && isRunAllowed()) {
                     processLine(line);
-                } else if (eos && isRunAllowed()) {
+                } else if (eos && isRunAllowed() && endpoint.isRetry() ) {
                     //try and re-open stream
                     br = initializeStream();
                 }

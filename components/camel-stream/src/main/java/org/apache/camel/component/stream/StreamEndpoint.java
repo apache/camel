@@ -31,6 +31,7 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     private String fileName;
     private boolean scanStream;
+    private boolean retry;
     private long scanStreamDelay;
     private String url;
     private long delay;
@@ -125,6 +126,14 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     public void setScanStream(boolean scanStream) {
         this.scanStream = scanStream;
+    }
+
+    public boolean isRetry() {
+        return retry;
+    }
+
+    public void setRetry(boolean retry) {
+        this.retry = retry;
     }
 
     public long getScanStreamDelay() {

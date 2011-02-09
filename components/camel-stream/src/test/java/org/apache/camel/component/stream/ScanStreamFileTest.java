@@ -92,7 +92,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("stream:file?fileName=target/stream/scanstreamfile.txt&scanStream=true&scanStreamDelay=100").to("mock:result");
+                from("stream:file?fileName=target/stream/scanstreamfile.txt&scanStream=true&scanStreamDelay=100&retry=true").to("mock:result");
             }
         };
     }
