@@ -22,13 +22,16 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+	<!-- START SNIPPET: e1 -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
         <property name="url" value="jdbc:hsqldb:mem:camel_jdbc"/>
         <property name="username" value="sa"/>
         <property name="password" value=""/>
     </bean>
+    <!-- END SNIPPET: e1 -->
     
+    <!-- START SNIPPET: e2 -->
     <bean id="messageIdRepository" class="org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository">
     	<constructor-arg ref="dataSource" />
     	<constructor-arg value="myProcessorName" />
@@ -47,4 +50,5 @@
     		</camel:idempotentConsumer>
     	</camel:route>
     </camel:camelContext>
+    <!-- END SNIPPET: e2 -->
 </beans>
