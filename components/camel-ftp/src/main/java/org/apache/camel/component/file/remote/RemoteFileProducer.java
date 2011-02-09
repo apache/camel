@@ -46,7 +46,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
 
     public void process(Exchange exchange) throws Exception {
         Exchange remoteExchange = getEndpoint().createExchange(exchange);
-        processExchange(remoteExchange);
+        String target = createFileName(exchange);
+        processExchange(remoteExchange, target);
         ExchangeHelper.copyResults(exchange, remoteExchange);
     }
 
