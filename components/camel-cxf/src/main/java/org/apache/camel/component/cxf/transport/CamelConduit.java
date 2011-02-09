@@ -31,6 +31,7 @@ import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.component.cxf.util.CxfMessageHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.configuration.Configurable;
@@ -100,10 +101,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     }
 
     public CamelContext getCamelContext() {
-        if (camelContext == null) {
-            LOG.info("No CamelContext injected, create a default one");
-            camelContext = new DefaultCamelContext();
-        }
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
         return camelContext;
     }
 
