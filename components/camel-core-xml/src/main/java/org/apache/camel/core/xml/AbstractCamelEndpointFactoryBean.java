@@ -35,7 +35,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFactoryBean<Endpoint> {
     @XmlAttribute(required = false)
     @Deprecated
-    private Boolean singleton = Boolean.FALSE;
+    private Boolean singleton;
     @XmlAttribute
     private String uri;
     @XmlTransient
