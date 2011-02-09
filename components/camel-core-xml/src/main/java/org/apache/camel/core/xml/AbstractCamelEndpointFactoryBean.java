@@ -33,7 +33,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFactoryBean<Endpoint> {
-    @XmlAttribute
+    @XmlAttribute(required = false)
     @Deprecated
     private Boolean singleton = Boolean.FALSE;
     @XmlAttribute
