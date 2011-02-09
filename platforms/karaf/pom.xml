@@ -34,8 +34,7 @@
     <name>Camel :: Platforms :: Apache Karaf</name>
 
     <properties>
-      <karaf-version>2.1.0</karaf-version>
-      <features-maven-plugin-version>2.1.0</features-maven-plugin-version>
+      <karaf-version>2.1.4-SNAPSHOT</karaf-version>
     </properties>
 
     <modules>

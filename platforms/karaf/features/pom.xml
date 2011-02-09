@@ -140,12 +140,12 @@
     
     <!-- The validate plugin will export these provided dependencies bundles' export packages first -->  
     <dependencies>
-    	<dependency>
-    	    <groupId>org.osgi</groupId>
-    	    <artifactId>org.osgi.core</artifactId>
-    	    <version>4.2.0</version>
-    	    <scope>provided</scope>
-    	</dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.2.0</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.ops4j.pax.logging</groupId>
             <artifactId>pax-logging-api</artifactId>
@@ -217,5 +217,40 @@
          </plugin>
       </plugins>
     </build>
+
+    <profiles>
+       <profile>
+          <id>validate</id>
+          <build>
+             <plugins>
+                <plugin>
+                   <groupId>org.apache.karaf.tooling</groupId>
+                   <artifactId>features-maven-plugin</artifactId>
+                   <version>${karaf-version}</version>
+                   <configuration>
+                       <file>${project.build.directory}/classes/${features.file}</file>
+                       <karafConfig>${project.build.directory}/classes/config.properties</karafConfig>
+                   </configuration>
+                   <executions>
+                     <execution>
+                       <id>validate</id>
+                       <phase>process-resources</phase>
+                       <goals>
+                         <goal>validate</goal>
+                       </goals>
+                     </execution>
+                   </executions>
+                   <dependencies>
+                    <dependency>
+                     <groupId>org.slf4j</groupId>
+                     <artifactId>slf4j-simple</artifactId>
+                     <version>1.4.3</version>
+                </dependency>
+                 </dependencies>
+               </plugin>
+              </plugins>
+           </build>
+        </profile>
+     </profiles>
 
 </project>

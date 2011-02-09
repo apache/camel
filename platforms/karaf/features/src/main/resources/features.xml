@@ -107,7 +107,7 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/${antlr-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/${oro-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.velocity/${velocity-bundle-version}</bundle>
-    <bundle>mvn:javax.mail/mail/${javax-mail-version}</bundle>
+    <bundle>mvn:http://download.java.net/maven/2!javax.mail/mail/${javax-mail-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.neethi/${neethi-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.abdera/${abdera-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-${jaxws.api.version}/${servicemix-specs-version}</bundle>
@@ -330,7 +330,7 @@
     <bundle>mvn:org.fusesource.hawtdb/hawtdb/${hawtdb-version}</bundle>
     <bundle>mvn:org.fusesource.hawtbuf/hawtbuf/${hawtbuf-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hawtdb/${pom.version}</bundle>
-  </feature>	  
+  </feature>      
   <feature name='camel-ibatis' version='${pom.version}'>
     <feature version='${pom.version}'>camel-spring</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool/${commons-pool-bundle-version}</bundle>
@@ -455,7 +455,7 @@
   <feature name='camel-mail' version='${pom.version}'>
     <bundle>mvn:org.springframework/spring-context/${spring-version}</bundle>
     <bundle>mvn:org.springframework/spring-context-support/${spring-version}</bundle>
-    <bundle>mvn:javax.mail/mail/${javax-mail-version}</bundle>
+    <bundle>mvn:http://download.java.net/maven/2!javax.mail/mail/${javax-mail-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mail/${pom.version}</bundle>
   </feature>
@@ -473,7 +473,7 @@
     <bundle>mvn:org.apache.camel/camel-mvel/${pom.version}</bundle>
   </feature>
   <feature name='camel-nagios' version='${pom.version}'>
-    <feature version='${pom.version}'>camel-core</feature>	
+    <feature version='${pom.version}'>camel-core</feature>    
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsendnsca-core/${jsendnsca-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-nagios/${pom.version}</bundle>
   </feature>
@@ -481,7 +481,7 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.netty/${netty-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-netty/${pom.version}</bundle>
-  </feature>	  
+  </feature>      
   <feature name='camel-ognl' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-version}</bundle>
@@ -564,9 +564,9 @@
   </feature>
   <feature name='camel-shiro' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
-	<bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>    
-	<bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.shiro/${shiro-bundle-version}</bundle>
-	<bundle>mvn:org.apache.camel/camel-shiro/${pom.version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>    
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.shiro/${shiro-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-shiro/${pom.version}</bundle>
   </feature>
   <feature name='camel-smpp' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
@@ -604,7 +604,7 @@
   </feature>
   <feature name='camel-spring-ws' version='${pom.version}'>
     <feature version='${pom.version}'>camel-spring</feature>
-    <bundle>mvn:javax.mail/mail/${javax-mail-version}</bundle>
+    <bundle>mvn:http://download.java.net/maven/2!javax.mail/mail/${javax-mail-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
     <bundle>mvn:org.springframework/spring-jms/${spring-version}</bundle>
     <bundle>mvn:org.springframework/spring-web/${spring-version}</bundle>
