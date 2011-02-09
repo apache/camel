@@ -63,10 +63,10 @@ public class BatchResequencerConfig {
     private Long batchTimeout; // optional XML attribute requires wrapper object
 
     @XmlAttribute
-    private Boolean allowDuplicates = Boolean.FALSE;
+    private Boolean allowDuplicates;
 
     @XmlAttribute
-    private Boolean reverse = Boolean.FALSE;
+    private Boolean reverse;
 
     /**
      * Creates a new {@link BatchResequencerConfig} instance using default
@@ -118,12 +118,20 @@ public class BatchResequencerConfig {
         this.batchTimeout = batchTimeout;
     }
 
+    public boolean isAllowDuplicates() {
+        return allowDuplicates != null && allowDuplicates.booleanValue();
+    }
+
     public Boolean getAllowDuplicates() {
         return allowDuplicates;
     }
 
     public void setAllowDuplicates(Boolean allowDuplicates) {
         this.allowDuplicates = allowDuplicates;
+    }
+
+    public boolean isReverse() {
+        return reverse != null && reverse.booleanValue();
     }
 
     public Boolean getReverse() {

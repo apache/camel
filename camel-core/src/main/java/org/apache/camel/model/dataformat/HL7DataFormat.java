@@ -34,13 +34,18 @@ import org.apache.camel.spi.DataFormat;
 public class HL7DataFormat extends DataFormatDefinition {
 
     @XmlAttribute(required = false)
-    private Boolean validate = Boolean.TRUE;
+    private Boolean validate;
 
     public HL7DataFormat() {
         super("hl7");
     }
 
-    public Boolean isValidate() {
+    public boolean isValidate() {
+        // defaults to true if not configured
+        return validate == null || validate.booleanValue();
+    }
+
+    public Boolean getValidate() {
         return validate;
     }
 
@@ -50,9 +55,7 @@ public class HL7DataFormat extends DataFormatDefinition {
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
-        if (validate != null) {
-            setProperty(dataFormat, "validate", validate);
-        }
+        setProperty(dataFormat, "validate", isValidate());
     }
 
 

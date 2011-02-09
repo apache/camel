@@ -52,7 +52,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     @XmlAttribute(required = false)
     private String executorServiceRef;
     @XmlAttribute(required = false)
-    private Boolean streaming = false;
+    private Boolean streaming;
     @XmlAttribute(required = false)
     private Boolean stopOnException;
     @XmlAttribute(required = false)
@@ -235,7 +235,11 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         return streaming != null ? streaming : false;
     }
 
-    public void setStreaming(boolean streaming) {
+    public Boolean getStreaming() {
+        return streaming;
+    }
+
+    public void setStreaming(Boolean streaming) {
         this.streaming = streaming;
     }
 

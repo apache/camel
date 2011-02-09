@@ -46,9 +46,9 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
 
     @XmlAttribute(required = false)
-    private Boolean onCompleteOnly = Boolean.FALSE;
+    private Boolean onCompleteOnly;
     @XmlAttribute(required = false)
-    private Boolean onFailureOnly = Boolean.FALSE;
+    private Boolean onFailureOnly;
     @XmlElement(name = "onWhen", required = false)
     private WhenDefinition onWhen;
     @XmlElementRef
@@ -85,7 +85,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        if (onCompleteOnly && onFailureOnly) {
+        if (isOnCompleteOnly() && isOnFailureOnly()) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
 
@@ -106,7 +106,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         // should be false by default
         boolean original = getUseOriginalMessagePolicy() != null ? getUseOriginalMessagePolicy() : false;
         OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), childProcessor,
-                executorService, onCompleteOnly, onFailureOnly, when, original);
+                executorService, isOnCompleteOnly(), isOnFailureOnly(), when, original);
         return answer;
     }
 
@@ -141,7 +141,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition onCompleteOnly() {
-        if (onFailureOnly) {
+        if (isOnFailureOnly()) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
         // must define return type as OutputDefinition and not this type to avoid end user being able
@@ -157,7 +157,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition onFailureOnly() {
-        if (onCompleteOnly) {
+        if (isOnCompleteOnly()) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
         // must define return type as OutputDefinition and not this type to avoid end user being able
@@ -225,12 +225,20 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         this.outputs = outputs;
     }
 
+    public boolean isOnCompleteOnly() {
+        return onCompleteOnly != null && onCompleteOnly.booleanValue();
+    }
+
     public Boolean getOnCompleteOnly() {
         return onCompleteOnly;
     }
 
     public void setOnCompleteOnly(Boolean onCompleteOnly) {
         this.onCompleteOnly = onCompleteOnly;
+    }
+
+    public boolean isOnFailureOnly() {
+        return onFailureOnly != null && onFailureOnly.booleanValue();
     }
 
     public Boolean getOnFailureOnly() {

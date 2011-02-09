@@ -36,7 +36,7 @@ public class CastorDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = false)
     private String mappingFile;
     @XmlAttribute(required = false)
-    private Boolean validation = Boolean.TRUE;
+    private Boolean validation;
     @XmlAttribute(required = false)
     private String encoding;
     @XmlAttribute(required = false)
@@ -48,7 +48,12 @@ public class CastorDataFormat extends DataFormatDefinition {
         super("castor");
     }
 
-    public Boolean isValidation() {
+    public boolean isValidation() {
+        // defaults to true if not configured
+        return validation == null || validation.booleanValue();
+    }
+
+    public Boolean getValidation() {
         return validation;
     }
 
@@ -93,9 +98,8 @@ public class CastorDataFormat extends DataFormatDefinition {
         if (mappingFile != null) {
             setProperty(dataFormat, "mappingFile", mappingFile);
         }
-        if (validation != null) {
-            setProperty(dataFormat, "validation", validation);
-        }
+        setProperty(dataFormat, "validation", isValidation());
+
         if (encoding != null) {
             setProperty(dataFormat, "encoding", encoding);
         }

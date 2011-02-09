@@ -281,7 +281,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
 
         Processor processor = this.createChildProcessor(routeContext, true);
         Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), processor, resolveExpressionList(routeContext),
-                config.getAllowDuplicates(), config.getReverse());
+                config.isAllowDuplicates(), config.isReverse());
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
         return resequencer;

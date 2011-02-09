@@ -41,7 +41,7 @@ import org.apache.camel.spi.RouteContext;
 public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     
     @XmlAttribute(name = "roundRobin", required = false)
-    private Boolean roundRobin = Boolean.FALSE;
+    private Boolean roundRobin;
     
     @XmlAttribute(name = "distributionRatio", required = true)
     private String distributionRatio;
@@ -64,7 +64,7 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
                 distributionRatioList.add(new Integer(ratio.trim()));
             }
             
-            if (!roundRobin) {
+            if (!isRoundRobin()) {
                 loadBalancer = new WeightedRandomLoadBalancer(distributionRatioList);
             } else {
                 loadBalancer = new WeightedRoundRobinLoadBalancer(distributionRatioList);
@@ -75,7 +75,11 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         return loadBalancer;
     }
 
-    public Boolean isRoundRobin() {
+    public boolean isRoundRobin() {
+        return roundRobin != null && roundRobin.booleanValue();
+    }
+
+    public Boolean getRoundRobin() {
         return roundRobin;
     }
 
@@ -93,7 +97,7 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @Override
     public String toString() {
-        if (!roundRobin) { 
+        if (!isRoundRobin()) {
             return "WeightedRandomLoadBalancer[" + distributionRatio + "]";
         } else {
             return "WeightedRoundRobinLoadBalancer[" + distributionRatio + "]";
