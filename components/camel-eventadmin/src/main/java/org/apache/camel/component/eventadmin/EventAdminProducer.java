@@ -19,6 +19,7 @@ package org.apache.camel.component.eventadmin;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
@@ -99,10 +100,11 @@ public class EventAdminProducer extends DefaultProducer {
         CamelContext context = endpoint.getCamelContext();
         Map map = context.getTypeConverter().convertTo(Map.class, exchange, in.getBody());
         Dictionary dict = new Hashtable();
-        for (Object key : map.keySet()) {
-            String keyString = CamelContextHelper.convertTo(context, String.class, key);
+        for (Object object : map.entrySet()) {
+            Entry entry = (Entry) object;
+            String keyString = CamelContextHelper.convertTo(context, String.class, entry.getKey());
             if (keyString != null) {
-                Object val = map.get(key);
+                Object val = entry.getValue();
                 // TODO: convert to acceptable value
                 dict.put(keyString, val);
             }

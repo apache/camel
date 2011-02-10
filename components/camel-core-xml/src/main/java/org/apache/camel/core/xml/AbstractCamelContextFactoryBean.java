@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -222,11 +223,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // set the event notifier strategies if defined
         Map<String, EventNotifier> eventNotifiers = getContext().getRegistry().lookupByType(EventNotifier.class);
         if (eventNotifiers != null && !eventNotifiers.isEmpty()) {
-            for (String id : eventNotifiers.keySet()) {
-                EventNotifier notifier = eventNotifiers.get(id);
+            for (Entry<String, EventNotifier> entry : eventNotifiers.entrySet()) {
+                EventNotifier notifier = entry.getValue();
                 // do not add if already added, for instance a tracer that is also an InterceptStrategy class
                 if (!getContext().getManagementStrategy().getEventNotifiers().contains(notifier)) {
-                    LOG.info("Using custom EventNotifier with id: " + id + " and implementation: " + notifier);
+                    LOG.info("Using custom EventNotifier with id: " + entry.getKey() + " and implementation: " + notifier);
                     getContext().getManagementStrategy().addEventNotifier(notifier);
                 }
             }
@@ -234,9 +235,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // set endpoint strategies if defined
         Map<String, EndpointStrategy> endpointStrategies = getContext().getRegistry().lookupByType(EndpointStrategy.class);
         if (endpointStrategies != null && !endpointStrategies.isEmpty()) {
-            for (String id : endpointStrategies.keySet()) {
-                EndpointStrategy strategy = endpointStrategies.get(id);
-                LOG.info("Using custom EndpointStrategy with id: " + id + " and implementation: " + strategy);
+            for (Entry<String, EndpointStrategy> entry : endpointStrategies.entrySet()) {
+                EndpointStrategy strategy = entry.getValue();
+                LOG.info("Using custom EndpointStrategy with id: " + entry.getKey() + " and implementation: " + strategy);
                 getContext().addRegisterEndpointCallback(strategy);
             }
         }
@@ -249,11 +250,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // add global interceptors
         Map<String, InterceptStrategy> interceptStrategies = getContext().getRegistry().lookupByType(InterceptStrategy.class);
         if (interceptStrategies != null && !interceptStrategies.isEmpty()) {
-            for (String id : interceptStrategies.keySet()) {
-                InterceptStrategy strategy = interceptStrategies.get(id);
+            for (Entry<String, InterceptStrategy> entry : interceptStrategies.entrySet()) {
+                InterceptStrategy strategy = entry.getValue();
                 // do not add if already added, for instance a tracer that is also an InterceptStrategy class
                 if (!getContext().getInterceptStrategies().contains(strategy)) {
-                    LOG.info("Using custom InterceptStrategy with id: " + id + " and implementation: " + strategy);
+                    LOG.info("Using custom InterceptStrategy with id: " + entry.getKey() + " and implementation: " + strategy);
                     getContext().addInterceptStrategy(strategy);
                 }
             }
@@ -261,11 +262,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // set the lifecycle strategy if defined
         Map<String, LifecycleStrategy> lifecycleStrategies = getContext().getRegistry().lookupByType(LifecycleStrategy.class);
         if (lifecycleStrategies != null && !lifecycleStrategies.isEmpty()) {
-            for (String id : lifecycleStrategies.keySet()) {
-                LifecycleStrategy strategy = lifecycleStrategies.get(id);
+            for (Entry<String, LifecycleStrategy> entry : lifecycleStrategies.entrySet()) {
+                LifecycleStrategy strategy = entry.getValue();
                 // do not add if already added, for instance a tracer that is also an InterceptStrategy class
                 if (!getContext().getLifecycleStrategies().contains(strategy)) {
-                    LOG.info("Using custom LifecycleStrategy with id: " + id + " and implementation: " + strategy);
+                    LOG.info("Using custom LifecycleStrategy with id: " + entry.getKey() + " and implementation: " + strategy);
                     getContext().addLifecycleStrategy(strategy);
                 }
             }
@@ -514,13 +515,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // lookup and use custom profiles from the registry
         Map<String, ThreadPoolProfile> profiles = context.getRegistry().lookupByType(ThreadPoolProfile.class);
         if (profiles != null && !profiles.isEmpty()) {
-            for (String id : profiles.keySet()) {
-                ThreadPoolProfile profile = profiles.get(id);
+            for (Entry<String, ThreadPoolProfile> entry : profiles.entrySet()) {
+                ThreadPoolProfile profile = entry.getValue();
                 // do not add if already added, for instance a tracer that is also an InterceptStrategy class
                 if (profile.isDefaultProfile()) {
-                    LOG.info("Using custom default ThreadPoolProfile with id: " + id + " and implementation: " + profile);
+                    LOG.info("Using custom default ThreadPoolProfile with id: " + entry.getKey() + " and implementation: " + profile);
                     context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(profile);
-                    defaultIds.add(id);
+                    defaultIds.add(entry.getKey());
                 } else {
                     context.getExecutorServiceStrategy().registerThreadPoolProfile(profile);
                 }

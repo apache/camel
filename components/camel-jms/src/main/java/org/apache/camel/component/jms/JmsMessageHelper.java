@@ -19,6 +19,8 @@ package org.apache.camel.component.jms;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 
@@ -71,8 +73,8 @@ public final class JmsMessageHelper {
 
         // redo the properties to keep
         jmsMessage.clearProperties();
-        for (String key : map.keySet()) {
-            jmsMessage.setObjectProperty(key, map.get(key));
+        for (Entry<String, Object> entry : map.entrySet()) {
+            jmsMessage.setObjectProperty(entry.getKey(), entry.getValue());
         }
 
         return answer;

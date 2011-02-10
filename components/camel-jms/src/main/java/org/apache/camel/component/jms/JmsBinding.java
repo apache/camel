@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.jms.BytesMessage;
@@ -550,10 +551,10 @@ public class JmsBinding {
      */
     protected void populateMapMessage(MapMessage message, Map<?, ?> map, CamelContext context)
         throws JMSException {
-        for (Object key : map.keySet()) {
-            String keyString = CamelContextHelper.convertTo(context, String.class, key);
+        for (Entry<?, ?> entry : map.entrySet()) {
+            String keyString = CamelContextHelper.convertTo(context, String.class, entry.getKey());
             if (keyString != null) {
-                message.setObject(keyString, map.get(key));
+                message.setObject(keyString, entry.getValue());
             }
         }
     }

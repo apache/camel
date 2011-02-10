@@ -24,6 +24,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sf.flatpack.DataSet;
 import net.sf.flatpack.DefaultParserFactory;
@@ -83,8 +84,8 @@ public class FlatpackDataFormat implements DataFormat {
                     first = false;
                     continue;
                 }
-                for (String key : row.keySet()) {
-                    writer.addRecordEntry(key, row.get(key));
+                for (Entry<String, Object> entry : row.entrySet()) {
+                    writer.addRecordEntry(entry.getKey(), entry.getValue());
                 }
                 writer.nextRecord();
             }

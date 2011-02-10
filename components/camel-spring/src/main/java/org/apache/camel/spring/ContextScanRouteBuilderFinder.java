@@ -18,6 +18,7 @@ package org.apache.camel.spring;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spi.PackageScanFilter;
@@ -47,8 +48,10 @@ public class ContextScanRouteBuilderFinder {
     public void appendBuilders(List<RoutesBuilder> list) {
         Map beans = applicationContext.getBeansOfType(RoutesBuilder.class, true, true);
 
-        for (Object key : beans.keySet()) {
-            Object bean = beans.get(key);
+        for (Object object : beans.entrySet()) {
+            Entry entry = (Entry) object;
+            Object bean = entry.getValue();
+            Object key = entry.getKey();
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Found RouteBuilder with id: " + key + " -> " + bean);

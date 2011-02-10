@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.util;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -139,9 +140,9 @@ public final class CxfUtils {
         }
         
         if (namespaces != null && namespaces.size() > 0) {
-            for (String key : namespaces.keySet()) {
-                String namespaceURI = namespaces.get(key);
-                writer.writeNamespace(key, namespaceURI);
+            for (Entry<String, String> entry : namespaces.entrySet()) {
+                String namespaceURI = entry.getValue();
+                writer.writeNamespace(entry.getKey(), namespaceURI);
             }
         }
 

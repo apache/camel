@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
@@ -269,10 +270,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(results);
             List<String> temp = new ArrayList<String>();
 
-            for (Integer key : sortValues.keySet()) {
+            for (Entry<Integer, List> entry : sortValues.entrySet()) {
 
                 // Get list of values
-                List<String> val = sortValues.get(key);
+                List<String> val = entry.getValue();
 
                 // For one to one relation
                 // There is only one item in the list

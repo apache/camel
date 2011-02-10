@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.camel.dataformat.bindy.annotation.DataField;
@@ -278,10 +279,10 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
         // Convert Map<Integer, List> into List<List>
         TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(results);
-        for (Integer key : sortValues.keySet()) {
+        for (Entry<Integer, List> entry : sortValues.entrySet()) {
 
             // Get list of values
-            List<String> val = sortValues.get(key);
+            List<String> val = entry.getValue();
             String value = val.get(0);
             
             buffer.append(value);

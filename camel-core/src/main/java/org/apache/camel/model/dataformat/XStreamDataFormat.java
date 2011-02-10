@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -230,8 +231,8 @@ public class XStreamDataFormat extends DataFormatDefinition {
         @Override
         public ImplicitCollectionList marshal(Map<String, String[]> v) throws Exception {
             List<ImplicitCollectionEntry> list = new ArrayList<ImplicitCollectionEntry>();
-            for (String clsName : v.keySet()) {
-                ImplicitCollectionEntry entry = new ImplicitCollectionEntry(clsName, v.get(clsName));
+            for (Entry<String, String[]> e : v.entrySet()) {
+                ImplicitCollectionEntry entry = new ImplicitCollectionEntry(e.getKey(), e.getValue());
                 list.add(entry);
             }
 
@@ -392,8 +393,8 @@ public class XStreamDataFormat extends DataFormatDefinition {
         @Override
         public OmitFieldList marshal(Map<String, String[]> v) throws Exception {
             List<OmitFieldEntry> list = new ArrayList<OmitFieldEntry>();
-            for (String clsName : v.keySet()) {
-                OmitFieldEntry entry = new OmitFieldEntry(clsName, v.get(clsName));
+            for (Entry<String, String[]> e : v.entrySet()) {
+                OmitFieldEntry entry = new OmitFieldEntry(e.getKey(), e.getValue());
                 list.add(entry);
             }
 

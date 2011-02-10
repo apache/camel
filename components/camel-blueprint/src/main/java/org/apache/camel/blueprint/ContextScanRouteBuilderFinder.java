@@ -18,6 +18,7 @@ package org.apache.camel.blueprint;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spi.PackageScanFilter;
@@ -47,8 +48,9 @@ public class ContextScanRouteBuilderFinder {
     public void appendBuilders(List<RoutesBuilder> list) {
         Map<String, RoutesBuilder> beans = BlueprintContainerRegistry.lookupByType(blueprintContainer, RoutesBuilder.class);
 
-        for (Object key : beans.keySet()) {
-            Object bean = beans.get(key);
+        for (Entry<String, RoutesBuilder> entry : beans.entrySet()) {
+            String key = entry.getKey();
+            Object bean = entry.getValue();
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Found RouteBuilder with id: " + key + " -> " + bean);
