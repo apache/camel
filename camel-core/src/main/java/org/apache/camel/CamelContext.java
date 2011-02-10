@@ -527,6 +527,16 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     ServiceStatus getRouteStatus(String routeId);
 
+    /**
+     * Indicates whether current thread is starting route(s).
+     * <p/>
+     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case
+     * they need to react differently.
+     *
+     * @return <tt>true</tt> if current thread is starting route(s), or <tt>false</tt> if not.
+     */
+    boolean isStartingRoutes();
+
     // Properties
     //-----------------------------------------------------------------------
 

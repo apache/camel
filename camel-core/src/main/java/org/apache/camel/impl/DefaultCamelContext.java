@@ -160,6 +160,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
+    private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<Boolean>();
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
     private Boolean streamCache = Boolean.FALSE;
@@ -695,13 +696,26 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public void startRoute(RouteDefinition route) throws Exception {
-        // must ensure route is prepared, before we can start it
-        route.prepare();
+        // indicate we are staring the route using this thread so
+        // we are able to query this if needed
+        isStartingRoutes.set(true);
+        try {
+            // must ensure route is prepared, before we can start it
+            route.prepare();
 
-        List<Route> routes = new ArrayList<Route>();
-        List<RouteContext> routeContexts = route.addRoutes(this, routes);
-        RouteService routeService = new RouteService(this, route, routeContexts, routes);
-        startRouteService(routeService, true);
+            List<Route> routes = new ArrayList<Route>();
+            List<RouteContext> routeContexts = route.addRoutes(this, routes);
+            RouteService routeService = new RouteService(this, route, routeContexts, routes);
+            startRouteService(routeService, true);
+        } finally {
+            // we are done staring routes
+            isStartingRoutes.remove();
+        }
+    }
+
+    public boolean isStartingRoutes() {
+        Boolean answer = isStartingRoutes.get();
+        return answer != null && answer;
     }
 
     public void stopRoute(RouteDefinition route) throws Exception {
@@ -1635,21 +1649,33 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Starts the given route service
      */
     protected synchronized void startRouteService(RouteService routeService, boolean addingRoutes) throws Exception {
-        // the route service could have been suspended, and if so then resume it instead
-        if (routeService.getStatus().isSuspended()) {
-            resumeRouteService(routeService);
-        } else {
-            // start the route service
-            routeServices.put(routeService.getId(), routeService);
-            if (shouldStartRoutes()) {
-                // this method will log the routes being started
-                safelyStartRouteServices(true, true, true, false, addingRoutes, routeService);
-                // start route services if it was configured to auto startup and we are not adding routes
-                boolean autoStartup = routeService.getRouteDefinition().isAutoStartup(this);
-                if (!addingRoutes || autoStartup) {
-                    // start the route since auto start is enabled or we are starting a route (not adding new routes)
-                    routeService.start();
+        // we may already be starting routes so remember this, so we can unset accordingly in finally block
+        boolean alreadyStartingRoutes = isStartingRoutes();
+        if (!alreadyStartingRoutes) {
+            isStartingRoutes.set(true);
+        }
+
+        try {
+            // the route service could have been suspended, and if so then resume it instead
+            if (routeService.getStatus().isSuspended()) {
+                resumeRouteService(routeService);
+            } else {
+                // start the route service
+                routeServices.put(routeService.getId(), routeService);
+                if (shouldStartRoutes()) {
+                    // this method will log the routes being started
+                    safelyStartRouteServices(true, true, true, false, addingRoutes, routeService);
+                    // start route services if it was configured to auto startup and we are not adding routes
+                    boolean autoStartup = routeService.getRouteDefinition().isAutoStartup(this);
+                    if (!addingRoutes || autoStartup) {
+                        // start the route since auto start is enabled or we are starting a route (not adding new routes)
+                        routeService.start();
+                    }
                 }
+            }
+        } finally {
+            if (!alreadyStartingRoutes) {
+                isStartingRoutes.remove();
             }
         }
     }

@@ -20,31 +20,52 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Extended test to see if mbeans is removed and stats are correct
  *
- * @version $Revision$
+ * @version $Revision: 1058591 $
  */
-public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStartTest {
+public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
 
-    public void testStopAndStartRoute() throws Exception {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").noAutoStartup()
+                        .to("mock:result");
+            }
+        };
+    }
+
+    static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
+        assertEquals(1, set.size());
+
+        return set.iterator().next();
+    }
+
+    public void testRouteNoAutoStartup() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
+
+        // should be stopped
+        String state = (String) mbeanServer.getAttribute(on, "State");
+        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+
+        // start
+        mbeanServer.invoke(on, "start", null, null);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/managed", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
-
-        // should be started
-        String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
 
         // need a bit time to let JMX update
         Thread.sleep(1000);
@@ -61,9 +82,7 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         assertEquals("Should be 1 processor", 1, set.size());
 
         // stop
-        log.info(">>>>>>>>>>>>>>>>>> invoking stop <<<<<<<<<<<<<<<<<<<<<");
         mbeanServer.invoke(on, "stop", null, null);
-        log.info(">>>>>>>>>>>>>>>>>> invoking stop DONE <<<<<<<<<<<<<<<<<<<<<");
 
         state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
@@ -74,45 +93,6 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
 
         set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
         assertEquals("Should be 0 processor", 0, set.size());
-
-        mock.reset();
-        mock.expectedBodiesReceived("Bye World");
-        // wait 3 seconds while route is stopped to verify that file was not consumed
-        mock.setResultWaitTime(3000);
-
-        template.sendBodyAndHeader("file://target/managed", "Bye World", Exchange.FILE_NAME, "bye.txt");
-
-        // route is stopped so we do not get the file
-        mock.assertIsNotSatisfied();
-
-        // prepare mock for starting route
-        mock.reset();
-        mock.expectedBodiesReceived("Bye World");
-
-        // start
-        log.info(">>>>>>>>>>>>>>>>> invoking start <<<<<<<<<<<<<<<<<<");
-        mbeanServer.invoke(on, "start", null, null);
-        log.info(">>>>>>>>>>>>>>>>> invoking start DONE <<<<<<<<<<<<<<<<<<");
-
-        state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
-
-        // should be 1 consumer and 1 processor
-        set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
-        assertEquals("Should be 1 consumer", 1, set.size());
-
-        set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
-        assertEquals("Should be 1 processor", 1, set.size());
-
-        // this time the file is consumed
-        mock.assertIsSatisfied();
-
-        // need a bit time to let JMX update
-        Thread.sleep(1000);
-
-        // should have 2 completed exchange
-        completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
-        assertEquals(2, completed.longValue());
     }
 
 }

@@ -91,33 +91,155 @@ public interface ManagementAgent extends Service {
      */
     String getMBeanObjectDomainName();
 
-    void setRegistryPort(Integer value);
+    /**
+     * Sets the port used by {@link java.rmi.registry.LocateRegistry}.
+     *
+     * @param port the port
+     */
+    void setRegistryPort(Integer port);
 
+    /**
+     * Gets the port used by {@link java.rmi.registry.LocateRegistry}.
+     *
+     * @return the port
+     */
     Integer getRegistryPort();
 
-    void setConnectorPort(Integer value);
+    /**
+     * Sets the port clients must use to connect
+     *
+     * @param port the port
+     */
+    void setConnectorPort(Integer port);
 
+    /**
+     * Gets the port clients must use to connect
+     *
+     * @return the port
+     */
     Integer getConnectorPort();
 
-    void setMBeanServerDefaultDomain(String value);
+    /**
+     * Sets the default domain on the MBean server
+     *
+     * @param domain the domain
+     */
+    void setMBeanServerDefaultDomain(String domain);
 
+    /**
+     * Gets the default domain on the MBean server
+     *
+     * @return the domain
+     */
     String getMBeanServerDefaultDomain();
 
-    void setMBeanObjectDomainName(String value);
+    /**
+     * Sets the object domain name
+     *
+     * @param domainName the object domain name
+     */
+    void setMBeanObjectDomainName(String domainName);
 
-    void setServiceUrlPath(String value);
+    /**
+     * Sets the service url
+     *
+     * @param url the service url
+     */
+    void setServiceUrlPath(String url);
 
+    /**
+     * Gets the service url
+     *
+     * @return the url
+     */
     String getServiceUrlPath();
 
-    void setCreateConnector(Boolean flag);
+    /**
+     * Whether connector should be created, allowing clients to connect remotely
+     *
+     * @param createConnector <tt>true</tt> to create connector
+     */
+    void setCreateConnector(Boolean createConnector);
 
+    /**
+     * Whether connector is created, allowing clients to connect remotely
+     *
+     * @return <tt>true</tt> if connector is created
+     */
     Boolean getCreateConnector();
 
-    void setUsePlatformMBeanServer(Boolean flag);
+    /**
+     * Whether to use the platform MBean Server.
+     *
+     * @param usePlatformMBeanServer <tt>true</tt> to use platform MBean server
+     */
+    void setUsePlatformMBeanServer(Boolean usePlatformMBeanServer);
 
+    /**
+     * Whether to use the platform MBean Server.
+     *
+     * @return <tt>true</tt> if platform MBean server is to be used
+     */
     Boolean getUsePlatformMBeanServer();
 
+    /**
+     * Whether to only register processors which has a custom id assigned.
+     * <p/>
+     * This allows you to filter unwanted processors.
+     *
+     * @return <tt>true</tt> if only processors with custom id is registered
+     */
     Boolean getOnlyRegisterProcessorWithCustomId();
 
+    /**
+     * Whether to only register processors which has a custom id assigned.
+     * <p/>
+     * This allows you to filter unwanted processors.
+     *
+     * @param onlyRegisterProcessorWithCustomId <tt>true</tt> to only register if custom id has been assigned
+     */
     void setOnlyRegisterProcessorWithCustomId(Boolean onlyRegisterProcessorWithCustomId);
+
+    /**
+     * Whether to always register mbeans.
+     * <p/>
+     * This option is default <tt>false</tt>.
+     * <p/>
+     * <b>Important:</b> If this option is enabled then any service is registered as mbean. When using
+     * dynamic EIP patterns using unique endpoint urls, you may create excessive mbeans in the registry.
+     * This could lead to degraded performance as memory consumption will rise due the rising number
+     * of mbeans.
+     *
+     * @return <tt>true</tt> if always registering
+     */
+    Boolean getRegisterAlways();
+
+    /**
+     * Whether to always register mbeans.
+     * <p/>
+     * This option is default <tt>false</tt>.
+     * <p/>
+     * <b>Important:</b> If this option is enabled then any service is registered as mbean. When using
+     * dynamic EIP patterns using unique endpoint urls, you may create excessive mbeans in the registry.
+     * This could lead to degraded performance as memory consumption will rise due the rising number
+     * of mbeans.
+     *
+     * @param registerAlways <tt>true</tt> to always register
+     */
+    void setRegisterAlways(Boolean registerAlways);
+
+    /**
+     * Whether to register mbeans when starting a new route
+     *
+     * @return <tt>true</tt> to register when starting a new route
+     */
+    Boolean getRegisterNewRoutes();
+
+    /**
+     * Whether to register mbeans when starting a new route
+     *
+     * @param registerNewRoutes <tt>true</tt> to register when starting a new route
+     */
+    void setRegisterNewRoutes(Boolean registerNewRoutes);
+
 }

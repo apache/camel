@@ -38,6 +38,10 @@ public enum ServiceStatus implements Serializable {
         return this == Started;
     }
 
+    public boolean isStarting() {
+        return this == Starting;
+    }
+
     public boolean isStarted() {
         return this == Started;
     }

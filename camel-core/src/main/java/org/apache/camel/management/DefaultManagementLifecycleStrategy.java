@@ -18,10 +18,11 @@ package org.apache.camel.management;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicInteger;
 import javax.management.JMException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -86,6 +87,7 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementAware;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -106,11 +108,11 @@ import org.slf4j.LoggerFactory;
 public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Service, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementLifecycleStrategy.class);
-    private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
     private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors =
             new HashMap<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>>();
     private CamelContext camelContext;
-    private boolean initialized;
+    private volatile boolean initialized;
+    private final Set<String> knowRouteIds = new HashSet<String>();
 
     public DefaultManagementLifecycleStrategy() {
     }
@@ -143,7 +145,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
                 } else {
                     // okay there exists already a CamelContext with this name, we can try to fix it by finding a free name
                     boolean fixed = false;
-                        // if we use the default name strategy we can find a free name to use
+                    // if we use the default name strategy we can find a free name to use
                     String name = findFreeName(mc, context.getNameStrategy(), managementName);
                     if (name != null) {
                         // use this as the fixed name
@@ -234,7 +236,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     }
 
     public void onComponentAdd(String name, Component component) {
-        // the agent hasn't been started
+        // always register components as there are only a few of those
         if (!initialized) {
             return;
         }
@@ -278,8 +280,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
      * @param endpoint the Endpoint attempted to be added
      */
     public void onEndpointAdd(Endpoint endpoint) {
-        // the agent hasn't been started
-        if (!initialized) {
+        if (!shouldRegister(endpoint, null)) {
+            // avoid registering if not needed
             return;
         }
 
@@ -333,8 +335,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         // services can by any kind of misc type but also processors
         // so we have special logic when its a processor
 
-        // the agent hasn't been started
-        if (!initialized) {
+        if (!shouldRegister(service, route)) {
+            // avoid registering if not needed
             return;
         }
 
@@ -395,7 +397,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             // special for event notifier
             ManagedEventNotifier men = new ManagedEventNotifier(context, (EventNotifier) service);
             men.init(getManagementStrategy());
-            return men;            
+            return men;
         } else if (service instanceof Producer) {
             answer = new ManagedProducer(context, (Producer) service);
         } else if (service instanceof ScheduledPollConsumer) {
@@ -505,12 +507,22 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     }
 
     public void onRoutesAdd(Collection<Route> routes) {
-        // the agent hasn't been started
-        if (!initialized) {
-            return;
-        }
-
         for (Route route : routes) {
+
+            // if we are starting CamelContext or either of the two options has been
+            // enabled, then enlist the route as a known route
+            if (getCamelContext().getStatus().isStarting()
+                || getManagementStrategy().getManagementAgent().getRegisterAlways()
+                || getManagementStrategy().getManagementAgent().getRegisterNewRoutes()) {
+                // register as known route id
+                knowRouteIds.add(route.getId());
+            }
+
+            if (!shouldRegister(route, route)) {
+                // avoid registering if not needed, skip to next route
+                continue;
+            }
+
             ManagedRoute mr;
             if (route.supportsSuspension()) {
                 mr = new ManagedSuspendableRoute(camelContext, route);
@@ -554,7 +566,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
 
-        for (Route route : routes) {            
+        for (Route route : routes) {
             ManagedRoute mr = new ManagedRoute(camelContext, route);
             mr.init(getManagementStrategy());
 
@@ -575,8 +587,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     }
 
     public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder errorHandlerBuilder) {
-        // the agent hasn't been started
-        if (!initialized) {
+        if (!shouldRegister(errorHandler, null)) {
+            // avoid registering if not needed
             return;
         }
 
@@ -600,7 +612,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
     public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
                                 String sourceId, String routeId, String threadPoolProfileId) {
-        // the agent hasn't been started
+
+        // always register thread pools as there are only a few of those
         if (!initialized) {
             return;
         }
@@ -624,7 +637,6 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
-        // the agent hasn't been started
         if (!initialized) {
             return;
         }
@@ -722,6 +734,57 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
     public void stop() throws Exception {
         initialized = false;
+        knowRouteIds.clear();
     }
+
+    /**
+     * Whether or not to register the mbean.
+     * <p/>
+     * The {@link ManagementAgent} has options which controls when to register.
+     * This allows us to only register mbeans accordingly. For example by default any
+     * dynamic endpoints is not registered. This avoids to register excessive mbeans, which
+     * most often is not desired.
+     *
+     *
+     * @param service the object to register
+     * @param route   an optional route the mbean is associated with, can be <tt>null</tt>
+     * @return <tt>true</tt> to register, <tt>false</tt> to skip registering
+     */
+    protected boolean shouldRegister(Object service, Route route) {
+        // the agent hasn't been started
+        if (!initialized) {
+            return false;
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Checking whether to register " + service + " from route: " + route);
+        }
+
+        // always register if we are starting CamelContext
+        if (getCamelContext().getStatus().isStarting()) {
+            return true;
+        }
+
+        // register if always is enabled
+        ManagementAgent agent = getManagementStrategy().getManagementAgent();
+        if (agent.getRegisterAlways()) {
+            return true;
+        }
+
+        // is it a known route then always accept
+        if (route != null && knowRouteIds.contains(route.getId())) {
+            return true;
+        }
+
+        // only register if we are starting a new route, and current thread is in starting routes mode
+        if (agent.getRegisterNewRoutes()) {
+            // no specific route, then fallback to see if this thread is starting routes
+            // which is kept as state on the camel context
+            return getCamelContext().isStartingRoutes();
+        }
+
+        return false;
+    }
+
 }
 

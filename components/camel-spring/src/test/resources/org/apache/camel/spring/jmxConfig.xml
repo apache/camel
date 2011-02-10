@@ -22,18 +22,24 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <jmxAgent id="agent" registryPort="20008" 
-        usePlatformMBeanServer="true"
-        createConnector="true"
-     />
-      
-    <route id="foo" autoStartup="false">
-      <from uri="seda:start"/>
-      <to uri="mock:result"/>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
+    <bean id="naming" class="org.apache.camel.management.DefaultManagementNamingStrategy">
+        <property name="hostName" value="localhost"/>
+        <property name="domainName" value="org.apache.camel"/>
+    </bean>
+
+    <!-- START SNIPPET: example -->
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <!-- enable JMX -->
+        <jmxAgent id="agent" registryPort="20008"
+                  usePlatformMBeanServer="true"
+                  createConnector="true"/>
+
+        <route id="foo" autoStartup="false">
+            <from uri="seda:start"/>
+            <to uri="mock:result"/>
+        </route>
+
+    </camelContext>
+    <!-- END SNIPPET: example -->
 
 </beans>

@@ -22,6 +22,11 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <bean id="naming" class="org.apache.camel.management.DefaultManagementNamingStrategy">
+        <property name="hostName" value="localhost"/>
+        <property name="domainName" value="org.apache.camel"/>
+    </bean>
+
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties" location="org/apache/camel/spring/jmx.properties"/>
@@ -30,13 +35,13 @@
         <jmxAgent id="agent" registryPort="{{myjmx.port}}"
                   usePlatformMBeanServer="{{myjmx.usePlatform}}"
                   createConnector="true"
-                  statisticsLevel="RoutesOnly"
-                />
+                  statisticsLevel="RoutesOnly"/>
 
         <route id="foo" autoStartup="false">
             <from uri="seda:start"/>
             <to uri="mock:result"/>
         </route>
+
     </camelContext>
     <!-- END SNIPPET: e1 -->
 

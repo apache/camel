@@ -50,6 +50,12 @@ public final class JmxSystemPropertyKeys {
     // whether all processors or only processors with a custom id given should be registered
     public static final String ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID = "org.apache.camel.jmx.onlyRegisterProcessorWithCustomId";
 
+    // whether to register always
+    public static final String REGISTER_ALWAYS = "org.apache.camel.jmx.registerAlways";
+
+    // whether to register when starting new routes
+    public static final String REGISTER_NEW_ROUTES = "org.apache.camel.jmx.registerNewRoutes";
+
     private JmxSystemPropertyKeys() {
         // not instantiated
     }

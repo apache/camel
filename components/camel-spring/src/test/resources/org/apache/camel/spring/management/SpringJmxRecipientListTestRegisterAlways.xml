@@ -27,15 +27,20 @@
         <property name="domainName" value="org.apache.camel"/>
     </bean>
 
-    <!-- START SNIPPET: example -->
+    <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <!-- enable JMX, and always register mbeans -->
+        <jmxAgent id="agent" disabled="false" registerAlways="true"/>
 
-        <route id="foo" autoStartup="false">
-            <from uri="seda:start"/>
-            <to uri="mock:result"/>
+        <route>
+            <from uri="direct:a"/>
+            <!-- this is a dynamic EIP so we may register mbeans after the route has started
+                 such as new endpoints, and its associated producers -->
+            <recipientList>
+                <header>recipientListHeader</header>
+            </recipientList>
         </route>
-
     </camelContext>
-    <!-- END SNIPPET: example -->
+    <!-- END SNIPPET: e1 -->
 
 </beans>

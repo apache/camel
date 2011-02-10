@@ -88,6 +88,18 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     private String usePlatformMBeanServer = "true";
 
     /**
+     * A flag that indicates whether to register mbeans always
+     */
+    @XmlAttribute(required = false)
+    private String registerAlways;
+
+    /**
+     * A flag that indicates whether to register mbeans when starting new routes
+     */
+    @XmlAttribute(required = false)
+    private String registerNewRoutes = "true";
+
+    /**
      * Level of granularity for performance statistics enabled
      */
     @XmlAttribute(required = false)
@@ -177,6 +189,22 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         this.statisticsLevel = statisticsLevel;
     }
 
+    public String getRegisterAlways() {
+        return registerAlways;
+    }
+
+    public void setRegisterAlways(String registerAlways) {
+        this.registerAlways = registerAlways;
+    }
+
+    public String getRegisterNewRoutes() {
+        return registerNewRoutes;
+    }
+
+    public void setRegisterNewRoutes(String registerNewRoutes) {
+        this.registerNewRoutes = registerNewRoutes;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -202,6 +230,12 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         }
         if (statisticsLevel != null) {
             sb.append(", statisticsLevel=").append(statisticsLevel);
+        }
+        if (registerAlways != null) {
+            sb.append(", registerAlways=").append(registerAlways);
+        }
+        if (registerNewRoutes != null) {
+            sb.append(", registerNewRoutes=").append(registerNewRoutes);
         }
         sb.append("]");
         return sb.toString();

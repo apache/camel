@@ -71,6 +71,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean usePlatformMBeanServer = true;
     private Boolean createConnector;
     private Boolean onlyRegisterProcessorWithCustomId;
+    private Boolean registerAlways;
+    private Boolean registerNewRoutes = true;
 
     public DefaultManagementAgent() {
     }
@@ -80,74 +82,76 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     }
 
     protected void finalizeSettings() {
+        // TODO: System properties ought to take precedence, over configured options
+
         if (registryPort == null) {
             registryPort = Integer.getInteger(JmxSystemPropertyKeys.REGISTRY_PORT, DEFAULT_REGISTRY_PORT);
         }
-
         if (connectorPort == null) {
             connectorPort = Integer.getInteger(JmxSystemPropertyKeys.CONNECTOR_PORT, DEFAULT_CONNECTION_PORT);
         }
-
         if (mBeanServerDefaultDomain == null) {
             mBeanServerDefaultDomain = System.getProperty(JmxSystemPropertyKeys.DOMAIN, DEFAULT_DOMAIN);
         }
-
         if (mBeanObjectDomainName == null) {
             mBeanObjectDomainName = System.getProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN, DEFAULT_DOMAIN);
         }
-
         if (serviceUrlPath == null) {
             serviceUrlPath = System.getProperty(JmxSystemPropertyKeys.SERVICE_URL_PATH, DEFAULT_SERVICE_URL_PATH);
         }
-
         if (createConnector == null) {
             createConnector = Boolean.getBoolean(JmxSystemPropertyKeys.CREATE_CONNECTOR);
         }
-
+        if (onlyRegisterProcessorWithCustomId == null) {
+            onlyRegisterProcessorWithCustomId = Boolean.getBoolean(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
+        }
         // "Use platform mbean server" is true by default
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null) {
             usePlatformMBeanServer = Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
         }
 
-        if (onlyRegisterProcessorWithCustomId == null) {
-            onlyRegisterProcessorWithCustomId = Boolean.getBoolean(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
+        if (System.getProperty(JmxSystemPropertyKeys.REGISTER_ALWAYS) != null) {
+            registerAlways = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_ALWAYS);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES) != null) {
+            registerNewRoutes = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES);
         }
     }
 
-    public void setRegistryPort(Integer value) {
-        registryPort = value;
+    public void setRegistryPort(Integer port) {
+        registryPort = port;
     }
 
     public Integer getRegistryPort() {
         return registryPort;
     }
 
-    public void setConnectorPort(Integer value) {
-        connectorPort = value;
+    public void setConnectorPort(Integer port) {
+        connectorPort = port;
     }
 
     public Integer getConnectorPort() {
         return connectorPort;
     }
 
-    public void setMBeanServerDefaultDomain(String value) {
-        mBeanServerDefaultDomain = value;
+    public void setMBeanServerDefaultDomain(String domain) {
+        mBeanServerDefaultDomain = domain;
     }
 
     public String getMBeanServerDefaultDomain() {
         return mBeanServerDefaultDomain;
     }
 
-    public void setMBeanObjectDomainName(String value) {
-        mBeanObjectDomainName = value;
+    public void setMBeanObjectDomainName(String domainName) {
+        mBeanObjectDomainName = domainName;
     }
 
     public String getMBeanObjectDomainName() {
         return mBeanObjectDomainName;
     }
 
-    public void setServiceUrlPath(String value) {
-        serviceUrlPath = value;
+    public void setServiceUrlPath(String url) {
+        serviceUrlPath = url;
     }
 
     public String getServiceUrlPath() {
@@ -184,6 +188,22 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     public MBeanServer getMBeanServer() {
         return server;
+    }
+
+    public Boolean getRegisterAlways() {
+        return registerAlways != null && registerAlways;
+    }
+
+    public void setRegisterAlways(Boolean registerAlways) {
+        this.registerAlways = registerAlways;
+    }
+
+    public Boolean getRegisterNewRoutes() {
+        return registerNewRoutes != null && registerNewRoutes;
+    }
+
+    public void setRegisterNewRoutes(Boolean registerNewRoutes) {
+        this.registerNewRoutes = registerNewRoutes;
     }
 
     public ExecutorService getExecutorService() {
