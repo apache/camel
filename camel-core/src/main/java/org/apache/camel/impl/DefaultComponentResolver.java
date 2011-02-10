@@ -23,6 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.util.CamelContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,13 @@ public class DefaultComponentResolver implements ComponentResolver {
         if (bean != null) {
             if (bean instanceof Component) {
                 return (Component) bean;
+            } else {
+                // lets use Camel's type conversion mechanism to convert things like CamelContext
+                // and other types into a valid Component
+                Component component = CamelContextHelper.convertTo(context, Component.class, bean);
+                if (component != null) {
+                    return component;
+                }
             }
             // we do not throw the exception here and try to auto create a component
         }
