@@ -30,6 +30,7 @@ PropertyExpression
 PythonExpression
 RubyExpression
 SimpleExpression
+SpELExpression
 SqlExpression
 TokenizerExpression
 XPathExpression

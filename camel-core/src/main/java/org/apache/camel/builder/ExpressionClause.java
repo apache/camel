@@ -346,6 +346,17 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * Evaluates a <a href="http://camel.apache.org/spel.html">SpEL
+     * expression</a>
+     * 
+     * @param text the expression to be evaluated
+     * @return the builder to continue processing the DSL
+     */
+    public T spel(String text) {
+        return delegate.spel(text);
+    }
+    
+    /**
      * Evaluates a <a href="http://camel.apache.org/simple.html">Simple
      * expression</a>
      * 
