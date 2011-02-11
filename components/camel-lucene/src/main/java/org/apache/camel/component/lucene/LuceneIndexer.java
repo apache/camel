@@ -18,7 +18,6 @@ package org.apache.camel.component.lucene;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -69,7 +68,7 @@ public class LuceneIndexer {
         add("exchangeId", exchange.getExchangeId(), true);
         for (Entry<String, Object> entry : headers.entrySet()) {
             String field = entry.getKey();
-            String value = (String) entry.getValue();
+            String value = exchange.getContext().getTypeConverter().convertTo(String.class, entry.getValue());
             add(field, value, true);
         }
 
