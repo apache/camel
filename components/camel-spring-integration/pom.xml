@@ -34,8 +34,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.spring.integration.*</camel.osgi.export.pkg>
-        <camel.osgi.import.before.defaults>org.springframework.integration.*;version="[1,2)"
-        </camel.osgi.import.before.defaults>
+        <camel.osgi.import.before.defaults>org.springframework.integration.*;version="[2,3)"</camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>

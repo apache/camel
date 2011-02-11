@@ -23,13 +23,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.integration.Message;
+import org.springframework.integration.MessageChannel;
+import org.springframework.integration.MessageHeaders;
 import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.core.Message;
-import org.springframework.integration.core.MessageChannel;
-import org.springframework.integration.core.MessageHeaders;
+import org.springframework.integration.core.MessageHandler;
 import org.springframework.integration.message.GenericMessage;
-import org.springframework.integration.message.MessageHandler;
-import org.springframework.integration.message.StringMessage;
 
 public class CamelTargetAdapterTest extends CamelSpringTestSupport {
     private static final String MESSAGE_BODY = "hello world";
@@ -39,7 +38,7 @@ public class CamelTargetAdapterTest extends CamelSpringTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(MESSAGE_BODY);
         MessageChannel outputChannel = (MessageChannel) applicationContext.getBean("channelA");
-        outputChannel.send(new StringMessage(MESSAGE_BODY));
+        outputChannel.send(new GenericMessage<Object>(MESSAGE_BODY));
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -47,7 +46,7 @@ public class CamelTargetAdapterTest extends CamelSpringTestSupport {
     public void testSendingTwoWayMessage() throws Exception {
 
         MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("channelB");
-        Message message = new StringMessage(MESSAGE_BODY);
+        Message message = new GenericMessage(MESSAGE_BODY);
         //Need to subscribe the responseChannel first
         DirectChannel responseChannel = (DirectChannel) applicationContext.getBean("channelC");
         responseChannel.subscribe(new MessageHandler() {

@@ -20,9 +20,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.integration.Message;
 import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.core.Message;
-import org.springframework.integration.message.MessageHandler;
+import org.springframework.integration.core.MessageHandler;
 
 public class CamelSourceAdapterTest extends CamelSpringTestSupport {
     @Test

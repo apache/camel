@@ -21,11 +21,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.integration.channel.BeanFactoryChannelResolver;
-import org.springframework.integration.channel.ChannelResolver;
-import org.springframework.integration.channel.SubscribableChannel;
-import org.springframework.integration.core.MessageChannel;
-import org.springframework.integration.message.MessageHandler;
+import org.springframework.integration.MessageChannel;
+import org.springframework.integration.core.MessageHandler;
+import org.springframework.integration.core.SubscribableChannel;
+import org.springframework.integration.support.channel.BeanFactoryChannelResolver;
+import org.springframework.integration.support.channel.ChannelResolver;
 
 /**
  * A consumer of exchanges for the Spring Integration
@@ -90,7 +90,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
         inputChannel.subscribe(this);
     }
     
-    public void handleMessage(org.springframework.integration.core.Message<?> siInMessage) {
+    public void handleMessage(org.springframework.integration.Message<?> siInMessage) {
         // we received a message from spring integration
         // wrap that in a Camel Exchange and process it
         Exchange exchange = getEndpoint().createExchange();
@@ -130,7 +130,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
             }
 
             // put the message back the outputChannel if we need
-            org.springframework.integration.core.Message siOutMessage =
+            org.springframework.integration.Message siOutMessage =
                 SpringIntegrationBinding.storeToSpringIntegrationMessage(exchange.getOut());
 
             // send the message to spring integration

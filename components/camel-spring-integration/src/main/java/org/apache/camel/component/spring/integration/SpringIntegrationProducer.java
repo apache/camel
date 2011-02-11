@@ -21,13 +21,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.integration.channel.BeanFactoryChannelResolver;
-import org.springframework.integration.channel.ChannelResolver;
+import org.springframework.integration.Message;
+import org.springframework.integration.MessageChannel;
+import org.springframework.integration.MessageHeaders;
 import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.core.Message;
-import org.springframework.integration.core.MessageChannel;
-import org.springframework.integration.core.MessageHeaders;
-import org.springframework.integration.message.MessageHandler;
+import org.springframework.integration.core.MessageHandler;
+import org.springframework.integration.support.channel.BeanFactoryChannelResolver;
+import org.springframework.integration.support.channel.ChannelResolver;
 
 /**
  * A producer of exchanges for the Spring Integration
@@ -94,7 +94,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
 
             // subscribe so we can receive the reply from spring integration
             inputChannel.subscribe(new MessageHandler() {
-                public void handleMessage(Message<?> message) {                    
+                public void handleMessage(Message<?> message) {
                     if (log.isDebugEnabled()) {
                         log.debug("Received " + message + " from InputChannel: " + inputChannel);
                     }
@@ -102,7 +102,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
                 }
             });
         }
-        org.springframework.integration.core.Message siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
+        org.springframework.integration.Message siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
 
         // send the message to spring integration
         if (log.isDebugEnabled()) {

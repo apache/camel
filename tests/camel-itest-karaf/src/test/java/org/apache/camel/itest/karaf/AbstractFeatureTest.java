@@ -177,6 +177,4 @@ public abstract class AbstractFeatureTest {
         return options;
     }
 
-    
-
 }

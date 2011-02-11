@@ -586,7 +586,7 @@
     <bundle>mvn:org.apache.camel/camel-soap/${pom.version}</bundle>
   </feature>  
   <feature name='camel-spring-integration' version='${pom.version}'>
-    <bundle>mvn:http://repository.springsource.com/maven/bundles/release!org.springframework.integration/org.springframework.integration/${spring-integration-version}</bundle>
+    <bundle>mvn:org.springframework.integration/spring-integration-core/${spring-integration-version}</bundle>
     <feature version='${pom.version}'>camel-spring</feature>
     <bundle>mvn:org.apache.camel/camel-spring-integration/${pom.version}</bundle>
   </feature>
