@@ -17,6 +17,7 @@
 package org.apache.camel.component.smpp;
 
 import java.io.IOException;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
@@ -53,6 +54,7 @@ public class SmppProducer extends DefaultProducer {
     private SmppConfiguration configuration;
     private SMPPSession session;
     private SessionStateListener sessionStateListener;
+    private final ReentrantLock reconnectLock = new ReentrantLock();
 
     public SmppProducer(SmppEndpoint endpoint, SmppConfiguration config) {
         super(endpoint);
@@ -185,32 +187,38 @@ public class SmppProducer extends DefaultProducer {
     }
 
     private void reconnect(final long initialReconnectDelay) {
-        new Thread() {
-            @Override
-            public void run() {
-                LOG.info("Schedule reconnect after " + initialReconnectDelay + " millis");
-                try {
-                    Thread.sleep(initialReconnectDelay);
-                } catch (InterruptedException e) {
-                }
-
-                int attempt = 0;
-                while (!(isStopping() || isStopped()) && (session == null || session.getSessionState().equals(SessionState.CLOSED))) {
+        if (reconnectLock.tryLock()) {
+            new Thread() {
+                @Override
+                public void run() {
                     try {
-                        LOG.info("Trying to reconnect to " + getEndpoint().getConnectionString() + " - attempt #" + (++attempt) + "...");
-                        session = createSession();
-                    } catch (IOException e) {
-                        LOG.info("Failed to reconnect to " + getEndpoint().getConnectionString());
-                        closeSession(session);
+                        LOG.info("Schedule reconnect after " + initialReconnectDelay + " millis");
                         try {
-                            Thread.sleep(configuration.getReconnectDelay());
-                        } catch (InterruptedException ee) {
+                            Thread.sleep(initialReconnectDelay);
+                        } catch (InterruptedException e) {
                         }
+
+                        int attempt = 0;
+                        while (!(isStopping() || isStopped()) && (session == null || session.getSessionState().equals(SessionState.CLOSED))) {
+                            try {
+                                LOG.info("Trying to reconnect to " + getEndpoint().getConnectionString() + " - attempt #" + (++attempt) + "...");
+                                session = createSession();
+                            } catch (IOException e) {
+                                LOG.info("Failed to reconnect to " + getEndpoint().getConnectionString());
+                                closeSession(session);
+                                try {
+                                    Thread.sleep(configuration.getReconnectDelay());
+                                } catch (InterruptedException ee) {
+                                }
+                            }
+                        }
+                        LOG.info("Reconnected to " + getEndpoint().getConnectionString());                        
+                    } finally {
+                        reconnectLock.unlock();
                     }
                 }
-                LOG.info("Reconnected to " + getEndpoint().getConnectionString());
-            }
-        }.start();
+            }.start();            
+        }
     }
     
     @Override
