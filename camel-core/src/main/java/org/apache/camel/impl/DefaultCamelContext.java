@@ -1748,13 +1748,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         for (RouteService routeService : routeServices) {
             DefaultRouteStartupOrder order = doPrepareRouteToBeStarted(routeService);
             // check for clash before we add it as input
-            if (order != null) {
-                if (checkClash && doCheckStartupOrderClash(order, inputs)) {
-                    inputs.put(order.getStartupOrder(), order);
-                } else {
-                    inputs.put(order.getStartupOrder(), order);
-                }
+            if (checkClash) {
+                doCheckStartupOrderClash(order, inputs);
             }
+            inputs.put(order.getStartupOrder(), order);
         }
 
         // warm up routes before we start them
