@@ -60,7 +60,7 @@ public class BookStoreImpl implements BookStore {
     
     private void init() {
         Book book = new Book();
-        book.setId(new Long(123));
+        book.setId(123);
         book.setName("CXF in Action");
         books.put(book.getId(), book);
     }    

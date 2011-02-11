@@ -38,8 +38,8 @@ public class SmppConfiguration implements Cloneable {
     private String systemType = "cp";
     private byte dataCoding = (byte) 0;
     private String encoding = "ISO-8859-1";
-    private Integer enquireLinkTimer = new Integer(5000);
-    private Integer transactionTimer = new Integer(10000);
+    private Integer enquireLinkTimer = 5000;
+    private Integer transactionTimer = 10000;
     private byte registeredDelivery = SMSCDeliveryReceipt.SUCCESS_FAILURE
             .value();
     private String serviceType = "CMT";

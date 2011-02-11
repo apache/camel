@@ -30,8 +30,8 @@ public class CreditAgency implements Processor {
         String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
         int score = (int) (Math.random() * 600 + 300);
         int hlength = (int) (Math.random() * 19 + 1);
-        exchange.getOut().setHeader(Constants.PROPERTY_SCORE, new Integer(score));
-        exchange.getOut().setHeader(Constants.PROPERTY_HISTORYLENGTH, new Integer(hlength));
+        exchange.getOut().setHeader(Constants.PROPERTY_SCORE, score);
+        exchange.getOut().setHeader(Constants.PROPERTY_HISTORYLENGTH, hlength);
         exchange.getOut().setHeader(Constants.PROPERTY_SSN, ssn);
         exchange.getOut().setBody("CreditAgency processed the request.");
     }
