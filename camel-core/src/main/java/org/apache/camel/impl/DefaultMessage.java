@@ -62,7 +62,11 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public Object getHeader(String name) {
-        return getHeaders().get(name);
+        if (hasHeaders()) {
+            return getHeaders().get(name);
+        } else {
+            return null;
+        }
     }
 
     public Object getHeader(String name, Object defaultValue) {
@@ -149,15 +153,6 @@ public class DefaultMessage extends MessageSupport {
 
         }
         return matches;
-    }
-
-    private boolean isExcludePatternMatch(String key, String... excludePatterns) {
-        for (String pattern : excludePatterns) {
-            if (EndpointHelper.matchPattern(key, pattern)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public Map<String, Object> getHeaders() {
@@ -287,4 +282,14 @@ public class DefaultMessage extends MessageSupport {
     public String createExchangeId() {
         return null;
     }
+
+    private static boolean isExcludePatternMatch(String key, String... excludePatterns) {
+        for (String pattern : excludePatterns) {
+            if (EndpointHelper.matchPattern(key, pattern)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

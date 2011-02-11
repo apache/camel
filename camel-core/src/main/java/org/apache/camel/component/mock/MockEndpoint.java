@@ -73,28 +73,30 @@ import org.slf4j.LoggerFactory;
  */
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
-    private int expectedCount;
-    private int counter;
-    private Processor defaultProcessor;
-    private Map<Integer, Processor> processors;
-    private List<Exchange> receivedExchanges;
-    private List<Throwable> failures;
-    private List<Runnable> tests;
-    private CountDownLatch latch;
-    private long sleepForEmptyTest;
-    private long resultWaitTime;
-    private long resultMinimumWaitTime;
-    private long assertPeriod;
-    private int expectedMinimumCount;
-    private List<Object> expectedBodyValues;
-    private List<Object> actualBodyValues;
-    private String headerName;
-    private Object headerValue;
-    private Object actualHeader;
-    private String propertyName;
-    private Object propertyValue;
-    private Object actualProperty;
-    private Processor reporter;
+    // must be volatile so changes is visible between the thread which performs the assertions
+    // and the threads which process the exchanges when routing messages in Camel
+    private volatile int expectedCount;
+    private volatile int counter;
+    private volatile Processor defaultProcessor;
+    private volatile Map<Integer, Processor> processors;
+    private volatile List<Exchange> receivedExchanges;
+    private volatile List<Throwable> failures;
+    private volatile List<Runnable> tests;
+    private volatile CountDownLatch latch;
+    private volatile long sleepForEmptyTest;
+    private volatile long resultWaitTime;
+    private volatile long resultMinimumWaitTime;
+    private volatile long assertPeriod;
+    private volatile int expectedMinimumCount;
+    private volatile List<Object> expectedBodyValues;
+    private volatile List<Object> actualBodyValues;
+    private volatile String headerName;
+    private volatile Object headerValue;
+    private volatile Object actualHeader;
+    private volatile String propertyName;
+    private volatile Object propertyValue;
+    private volatile Object actualProperty;
+    private volatile Processor reporter;
 
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -1004,10 +1006,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             }
         }
 
-        ++counter;
+        // let counter be 0 index-based in the logs
         if (LOG.isDebugEnabled()) {
-            LOG.debug(getEndpointUri() + " >>>> " + counter + " : " + exchange + " with body: " + actualBody);
+            String msg = getEndpointUri() + " >>>> " + counter + " : " + exchange + " with body: " + actualBody;
+            if (exchange.getIn().hasHeaders()) {
+                msg += " and headers:" + exchange.getIn().getHeaders();
+            }
+            LOG.debug(msg);
         }
+        ++counter;
 
         // record timestamp when exchange was received
         exchange.setProperty(Exchange.RECEIVED_TIMESTAMP, new Date());

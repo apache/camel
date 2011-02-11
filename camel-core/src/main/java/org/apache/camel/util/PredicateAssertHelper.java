@@ -32,6 +32,9 @@ public final class PredicateAssertHelper {
     }
 
     public static void assertMatches(Predicate predicate, String text, Exchange exchange) {
+        ObjectHelper.notNull(predicate, "predicate");
+        ObjectHelper.notNull(exchange, "exchange");
+
         if (predicate instanceof BinaryPredicate) {
             // special for binary evaluable as we can get more detailed information
             BinaryPredicate eval = (BinaryPredicate) predicate;
