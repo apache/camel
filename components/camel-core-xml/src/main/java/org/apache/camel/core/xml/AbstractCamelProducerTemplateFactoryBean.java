@@ -20,14 +20,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultProducerTemplate;
-import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -78,6 +75,7 @@ public abstract class AbstractCamelProducerTemplateFactoryBean extends AbstractC
 
     // Properties
     // -------------------------------------------------------------------------
+
     public String getDefaultEndpoint() {
         return defaultEndpoint;
     }
@@ -96,6 +94,5 @@ public abstract class AbstractCamelProducerTemplateFactoryBean extends AbstractC
     public void setMaximumCacheSize(Integer maximumCacheSize) {
         this.maximumCacheSize = maximumCacheSize;
     }
-
 
 }

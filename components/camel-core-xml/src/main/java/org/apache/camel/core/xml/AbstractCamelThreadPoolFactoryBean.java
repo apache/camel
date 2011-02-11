@@ -22,18 +22,11 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
-import org.apache.camel.model.IdentifiedType;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A factory which instantiates {@link java.util.concurrent.ExecutorService} objects

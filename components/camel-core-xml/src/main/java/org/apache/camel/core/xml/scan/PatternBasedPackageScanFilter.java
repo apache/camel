@@ -23,14 +23,14 @@ import java.util.List;
 import org.apache.camel.spi.PackageScanFilter;
 
 /**
- * <code>PatternBasedPackageScanFilter</code> uses an underlying
+ * {@link PatternBasedPackageScanFilter} uses an underlying
  * {@link AntPathMatcher} to filter scanned files according to include and
  * exclude patterns.
  * 
  * @see AntPathMatcher
  */
 public class PatternBasedPackageScanFilter implements PackageScanFilter {
-    private AntPathMatcher matcher = new AntPathMatcher();
+    private final AntPathMatcher matcher = new AntPathMatcher();
 
     private List<String> excludePatterns;
     private List<String> includePatterns;
@@ -38,8 +38,6 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
     /**
      * add and exclude pattern to the filter. Classes matching this pattern will
      * not match the filter 
-     * 
-     * @param excludePattern
      */
     public void addExcludePattern(String excludePattern) {
         if (excludePatterns == null) {
@@ -51,8 +49,6 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
     /**
      * add and include pattern to the filter. Classes must match one of supplied
      * include patterns to match the filter 
-     * 
-     * @param includePattern
      */
     public void addIncludePattern(String includePattern) {
         if (includePatterns == null) {

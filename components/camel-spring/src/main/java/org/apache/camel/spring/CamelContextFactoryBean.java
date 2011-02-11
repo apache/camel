@@ -32,6 +32,7 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
+import org.apache.camel.core.xml.AbstractCamelEndpointFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
@@ -308,6 +309,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
+    }
+
+    public List<CamelEndpointFactoryBean> getEndpoints() {
+        return endpoints;
     }
 
     public List<InterceptDefinition> getIntercepts() {

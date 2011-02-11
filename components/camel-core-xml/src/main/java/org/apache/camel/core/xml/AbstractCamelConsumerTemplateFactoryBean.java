@@ -19,15 +19,10 @@ package org.apache.camel.core.xml;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.impl.DefaultConsumerTemplate;
-import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -38,6 +33,7 @@ import org.apache.camel.util.ServiceHelper;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelConsumerTemplateFactoryBean extends AbstractCamelFactoryBean<ConsumerTemplate> {
+
     @XmlTransient
     private ConsumerTemplate template;
     @XmlAttribute

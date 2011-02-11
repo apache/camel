@@ -20,16 +20,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.model.IdentifiedType;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
-
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFactoryBean<Endpoint> {

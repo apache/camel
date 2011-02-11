@@ -21,39 +21,38 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * PathMatcher implementation for Ant-style path patterns. Examples are provided
- * below.
+ * PathMatcher implementation for Ant-style path patterns. Examples are provided below.
  * <p>
- * Part of this mapping code has been kindly borrowed from <a
- * href="http://ant.apache.org">Apache Ant</a>.
+ * Part of this mapping code has been kindly borrowed from <a href="http://ant.apache.org">Apache Ant</a>
+ * and <a href="http://springframework.org">Spring Framework</a>.
  * <p>
  * The mapping matches URLs using the following rules:<br>
  * <ul>
- * <li>? matches one character</li>
- * <li>* matches zero or more characters</li>
- * <li>** matches zero or more 'directories' in a path</li>
+ *   <li>? matches one character</li>
+ *   <li>* matches zero or more characters</li>
+ *   <li>** matches zero or more 'directories' in a path</li>
  * </ul>
  * <p>
  * Some examples:<br>
  * <ul>
- * <li><code>com/t?st.jsp</code> - matches <code>com/test.jsp</code> but also
- * <code>com/tast.jsp</code> or <code>com/txst.jsp</code></li>
- * <li><code>com/*.jsp</code> - matches all <code>.jsp</code> files in the
- * <code>com</code> directory</li>
- * <li><code>com/&#42;&#42;/test.jsp</code> - matches all <code>test.jsp</code>
- * files underneath the <code>com</code> path</li>
- * <li><code>org/springframework/&#42;&#42;/*.jsp</code> - matches all
- * <code>.jsp</code> files underneath the <code>org/springframework</code> path</li>
- * <li><code>org/&#42;&#42;/servlet/bla.jsp</code> - matches
- * <code>org/springframework/servlet/bla.jsp</code> but also
- * <code>org/springframework/testing/servlet/bla.jsp</code> and
- * <code>org/servlet/bla.jsp</code></li>
+ *   <li><code>com/t?st.jsp</code> - matches <code>com/test.jsp</code> but also
+ *       <code>com/tast.jsp</code> or <code>com/txst.jsp</code>
+ *   </li>
+ *   <li><code>com/*.jsp</code> - matches all <code>.jsp</code> files in the
+ *       <code>com</code> directory
+ *   </li>
+ *   <li><code>com/&#42;&#42;/test.jsp</code> - matches all <code>test.jsp</code>
+ *       files underneath the <code>com</code> path
+ *   </li>
+ *   <li><code>org/springframework/&#42;&#42;/*.jsp</code> - matches all
+ *       <code>.jsp</code> files underneath the <code>org/springframework</code> path
+ *   </li>
+ *   <li><code>org/&#42;&#42;/servlet/bla.jsp</code> - matches
+ *       <code>org/springframework/servlet/bla.jsp</code> but also
+ *       <code>org/springframework/testing/servlet/bla.jsp</code> and
+ *       <code>org/servlet/bla.jsp</code>
+ *   </li>
  * </ul>
- * 
- * @author Alef Arendsen
- * @author Juergen Hoeller
- * @author Rob Harrop
- * @since 16.07.2003
  */
 public class AntPathMatcher {
 
@@ -190,8 +189,8 @@ public class AntPathMatcher {
         strLoop:
             for (int i = 0; i <= strLength - patLength; i++) {
                 for (int j = 0; j < patLength; j++) {
-                    String subPat = (String)pattDirs[pattIdxStart + j + 1];
-                    String subStr = (String)pathDirs[pathIdxStart + i + j];
+                    String subPat = pattDirs[pattIdxStart + j + 1];
+                    String subStr = pathDirs[pathIdxStart + i + j];
                     if (!matchStrings(subPat, subStr)) {
                         continue strLoop;
                     }
@@ -451,7 +450,7 @@ public class AntPathMatcher {
                 tokens.add(token);
             }
         }
-        return (String[])tokens.toArray(new String[tokens.size()]);
+        return tokens.toArray(new String[tokens.size()]);
     }
 
 }
