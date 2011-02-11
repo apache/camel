@@ -16,18 +16,17 @@
  */
 package org.apache.camel.component.context;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Camel Component which exposes a local {@link CamelContext} instance as a black box set of endpoints.
@@ -55,9 +54,6 @@ public class LocalContextComponent extends DefaultComponent {
     }
 
     public CamelContext getLocalCamelContext() {
-        if (localCamelContext == null) {
-
-        }
         return localCamelContext;
     }
 
@@ -94,7 +90,9 @@ public class LocalContextComponent extends DefaultComponent {
     }
 
     protected void logUsingEndpoint(String uri, Endpoint endpoint) {
-        LOG.debug("Mapping the URI " + uri + " to local endpoint " + endpoint);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Mapping the URI " + uri + " to local endpoint " + endpoint);
+        }
     }
 
 }
