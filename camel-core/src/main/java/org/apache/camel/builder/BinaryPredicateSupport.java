@@ -32,8 +32,6 @@ public abstract class BinaryPredicateSupport implements BinaryPredicate {
 
     private final Expression left;
     private final Expression right;
-    private Object lastLeftValue;
-    private Object lastRightValue;
 
     protected BinaryPredicateSupport(Expression left, Expression right) {
         notNull(left, "left");
@@ -49,36 +47,39 @@ public abstract class BinaryPredicateSupport implements BinaryPredicate {
     }
 
     public boolean matches(Exchange exchange) {
+        return matchesReturningFailureMessage(exchange) == null;
+    }
+
+    public String matchesReturningFailureMessage(Exchange exchange) {
+        // we must not store any state, so we can be thread safe
+        // and thus we offer this method which returns a failure message if
+        // we did not match
+        String answer = null;
+
         // must be thread safe and store result in local objects
         Object leftValue = left.evaluate(exchange, Object.class);
         Object rightValue = right.evaluate(exchange, Object.class);
-        // remember last result (may not be thread safe)
-        lastRightValue = rightValue;
-        lastLeftValue = leftValue;
-        return matches(exchange, leftValue, rightValue);
+        if (!matches(exchange, leftValue, rightValue)) {
+            answer = leftValue + " " + getOperator() + " " + rightValue;
+        }
+
+        return answer;
     }
 
     protected abstract boolean matches(Exchange exchange, Object leftValue, Object rightValue);
 
     protected abstract String getOperationText();
 
-    public Expression getRight() {
-        return right;
-    }
-
     public Expression getLeft() {
         return left;
+    }
+
+    public Expression getRight() {
+        return right;
     }
 
     public String getOperator() {
         return getOperationText();
     }
 
-    public Object getRightValue() {
-        return lastRightValue;
-    }
-
-    public Object getLeftValue() {
-        return lastLeftValue;
-    }
 }

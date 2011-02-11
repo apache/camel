@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;

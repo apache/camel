@@ -35,13 +35,9 @@ public final class PredicateAssertHelper {
         if (predicate instanceof BinaryPredicate) {
             // special for binary evaluable as we can get more detailed information
             BinaryPredicate eval = (BinaryPredicate) predicate;
-            if (!eval.matches(exchange)) {
-                String evalText = eval.getLeftValue() + " " + eval.getOperator() + " " + eval.getRightValue();
-                if (text == null) {
-                    throw new AssertionError(predicate + " evaluated as " + evalText + "  on " + exchange);
-                } else {
-                    throw new AssertionError(text + predicate + " evaluated as: " + evalText + " on " + exchange);
-                }
+            String evalText = eval.matchesReturningFailureMessage(exchange);
+            if (evalText != null) {
+                throw new AssertionError(text + predicate + " evaluated as: " + evalText + " on " + exchange);
             }
         } else {
             doAssertMatches(predicate, text, exchange);
