@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;redeliveryPolicy/&gt; element
@@ -34,42 +35,42 @@ import org.apache.camel.util.CamelContextHelper;
 @XmlRootElement(name = "redeliveryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RedeliveryPolicyDefinition {
-    @XmlAttribute()
+    @XmlAttribute
     private String ref;
     @XmlAttribute
-    private Integer maximumRedeliveries;
+    private String maximumRedeliveries;
     @XmlAttribute
-    private Long redeliveryDelay;
+    private String redeliveryDelay;
     @XmlAttribute
-    private Boolean asyncDelayedRedelivery;
+    private String asyncDelayedRedelivery;
     @XmlAttribute
-    private Double backOffMultiplier;
+    private String backOffMultiplier;
     @XmlAttribute
-    private Boolean useExponentialBackOff;
+    private String useExponentialBackOff;
     @XmlAttribute
-    private Double collisionAvoidanceFactor;
+    private String collisionAvoidanceFactor;
     @XmlAttribute
-    private Boolean useCollisionAvoidance;
+    private String useCollisionAvoidance;
     @XmlAttribute
-    private Long maximumRedeliveryDelay;
+    private String maximumRedeliveryDelay;
     @XmlAttribute
     private LoggingLevel retriesExhaustedLogLevel;
     @XmlAttribute
     private LoggingLevel retryAttemptedLogLevel;
     @XmlAttribute
-    private Boolean logRetryAttempted;
+    private String logRetryAttempted;
     @XmlAttribute
-    private Boolean logStackTrace;
+    private String logStackTrace;
     @XmlAttribute
-    private Boolean logRetryStackTrace;
+    private String logRetryStackTrace;
     @XmlAttribute
-    private Boolean logHandled;
+    private String logHandled;
     @XmlAttribute
-    private Boolean logContinued;
+    private String logContinued;
     @XmlAttribute
-    private Boolean logExhausted;
+    private String logExhausted;
     @XmlAttribute
-    private Boolean disableRedelivery;
+    private String disableRedelivery;
     @XmlAttribute
     private String delayPattern;
 
@@ -86,60 +87,69 @@ public class RedeliveryPolicyDefinition {
             answer = new RedeliveryPolicy();
         }
 
-        // copy across the properties - if they are set
-        if (maximumRedeliveries != null) {
-            answer.setMaximumRedeliveries(maximumRedeliveries);
-        }
-        if (redeliveryDelay != null) {
-            answer.setRedeliveryDelay(redeliveryDelay);
-        }
-        if (asyncDelayedRedelivery != null && asyncDelayedRedelivery) {
-            answer.asyncDelayedRedelivery();
-        }
-        if (retriesExhaustedLogLevel != null) {
-            answer.setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
-        }
-        if (retryAttemptedLogLevel != null) {
-            answer.setRetryAttemptedLogLevel(retryAttemptedLogLevel);
-        }
-        if (backOffMultiplier != null) {
-            answer.setBackOffMultiplier(backOffMultiplier);
-        }
-        if (useExponentialBackOff != null) {
-            answer.setUseExponentialBackOff(useExponentialBackOff);
-        }
-        if (collisionAvoidanceFactor != null) {
-            answer.setCollisionAvoidanceFactor(collisionAvoidanceFactor);
-        }
-        if (useCollisionAvoidance != null) {
-            answer.setUseCollisionAvoidance(useCollisionAvoidance);
-        }
-        if (maximumRedeliveryDelay != null) {
-            answer.setMaximumRedeliveryDelay(maximumRedeliveryDelay);
-        }
-        if (logStackTrace != null) {
-            answer.setLogStackTrace(logStackTrace);
-        }
-        if (logRetryStackTrace != null) {
-            answer.setLogRetryStackTrace(logRetryStackTrace);
-        }
-        if (logHandled != null) {
-            answer.setLogHandled(logHandled);
-        }
-        if (logContinued != null) {
-            answer.setLogContinued(logContinued);
-        }
-        if (logRetryAttempted != null) {
-            answer.setLogRetryAttempted(logRetryAttempted);
-        }
-        if (logExhausted != null) {
-            answer.setLogExhausted(logExhausted);
-        }
-        if (disableRedelivery != null && disableRedelivery) {
-            answer.setMaximumRedeliveries(0);
-        }
-        if (delayPattern != null) {
-            answer.setDelayPattern(delayPattern);
+        try {
+
+            // copy across the properties - if they are set
+            if (maximumRedeliveries != null) {
+                answer.setMaximumRedeliveries(CamelContextHelper.parseInteger(context, maximumRedeliveries));
+            }
+            if (redeliveryDelay != null) {
+                answer.setRedeliveryDelay(CamelContextHelper.parseLong(context, redeliveryDelay));
+            }
+            if (asyncDelayedRedelivery != null) {
+                if (CamelContextHelper.parseBoolean(context, asyncDelayedRedelivery)) {
+                    answer.asyncDelayedRedelivery();
+                }
+            }
+            if (retriesExhaustedLogLevel != null) {
+                answer.setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
+            }
+            if (retryAttemptedLogLevel != null) {
+                answer.setRetryAttemptedLogLevel(retryAttemptedLogLevel);
+            }
+            if (backOffMultiplier != null) {
+                answer.setBackOffMultiplier(CamelContextHelper.parseDouble(context, backOffMultiplier));
+            }
+            if (useExponentialBackOff != null) {
+                answer.setUseExponentialBackOff(CamelContextHelper.parseBoolean(context, useExponentialBackOff));
+            }
+            if (collisionAvoidanceFactor != null) {
+                answer.setCollisionAvoidanceFactor(CamelContextHelper.parseDouble(context, collisionAvoidanceFactor));
+            }
+            if (useCollisionAvoidance != null) {
+                answer.setUseCollisionAvoidance(CamelContextHelper.parseBoolean(context, useCollisionAvoidance));
+            }
+            if (maximumRedeliveryDelay != null) {
+                answer.setMaximumRedeliveryDelay(CamelContextHelper.parseLong(context, maximumRedeliveryDelay));
+            }
+            if (logStackTrace != null) {
+                answer.setLogStackTrace(CamelContextHelper.parseBoolean(context, logStackTrace));
+            }
+            if (logRetryStackTrace != null) {
+                answer.setLogRetryStackTrace(CamelContextHelper.parseBoolean(context, logRetryStackTrace));
+            }
+            if (logHandled != null) {
+                answer.setLogHandled(CamelContextHelper.parseBoolean(context, logHandled));
+            }
+            if (logContinued != null) {
+                answer.setLogContinued(CamelContextHelper.parseBoolean(context, logContinued));
+            }
+            if (logRetryAttempted != null) {
+                answer.setLogRetryAttempted(CamelContextHelper.parseBoolean(context, logRetryAttempted));
+            }
+            if (logExhausted != null) {
+                answer.setLogExhausted(CamelContextHelper.parseBoolean(context, logExhausted));
+            }
+            if (disableRedelivery != null) {
+                if (CamelContextHelper.parseBoolean(context, disableRedelivery)) {
+                    answer.setMaximumRedeliveries(0);
+                }
+            }
+            if (delayPattern != null) {
+                answer.setDelayPattern(delayPattern);
+            }
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
         return answer;
@@ -151,6 +161,15 @@ public class RedeliveryPolicyDefinition {
 
     // Fluent API
     //-------------------------------------------------------------------------
+
+    /**
+     * Allow synchronous delayed redelivery.
+     */
+    public RedeliveryPolicyDefinition asyncDelayedRedelivery() {
+        setAsyncDelayedRedelivery("true");
+        return this;
+    }
+
     /**
      * Sets the back off multiplier
      *
@@ -158,6 +177,16 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition backOffMultiplier(double backOffMultiplier) {
+        return backOffMultiplier(Double.toString(backOffMultiplier));
+    }
+
+    /**
+     * Sets the back off multiplier (supports property placeholders)
+     *
+     * @param backOffMultiplier  the back off multiplier
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition backOffMultiplier(String backOffMultiplier) {
         setBackOffMultiplier(backOffMultiplier);
         return this;
     }
@@ -169,7 +198,7 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition collisionAvoidancePercent(double collisionAvoidancePercent) {
-        setCollisionAvoidanceFactor(collisionAvoidancePercent * 0.01d);
+        setCollisionAvoidanceFactor(Double.toString(collisionAvoidancePercent * 0.01d));
         return this;
     }
 
@@ -180,6 +209,16 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition collisionAvoidanceFactor(double collisionAvoidanceFactor) {
+        return collisionAvoidanceFactor(Double.toString(collisionAvoidanceFactor));
+    }
+
+    /**
+     * Sets the collision avoidance factor (supports property placeholders)
+     *
+     * @param collisionAvoidanceFactor  the factor
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition collisionAvoidanceFactor(String collisionAvoidanceFactor) {
         setCollisionAvoidanceFactor(collisionAvoidanceFactor);
         return this;
     }
@@ -191,6 +230,16 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition redeliveryDelay(long delay) {
+        return redeliveryDelay(Long.toString(delay));
+    }
+
+    /**
+     * Sets the initial redelivery delay (supports property placeholders)
+     *
+     * @param delay  delay in millis
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition redeliveryDelay(String delay) {
         setRedeliveryDelay(delay);
         return this;
     }
@@ -225,6 +274,17 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition logStackTrace(boolean logStackTrace) {
+        return logStackTrace(Boolean.toString(logStackTrace));
+    }
+
+    /**
+     * Sets whether stack traces should be logged (supports property placeholders)
+     * Can be used to include or reduce verbose.
+     *
+     * @param logStackTrace  whether stack traces should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logStackTrace(String logStackTrace) {
         setLogStackTrace(logStackTrace);
         return this;
     }
@@ -237,54 +297,109 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition logRetryStackTrace(boolean logRetryStackTrace) {
+        return logRetryStackTrace(Boolean.toString(logRetryStackTrace));
+    }
+
+    /**
+     * Sets whether stack traces should be logged when an retry attempt failed (supports property placeholders).
+     * Can be used to include or reduce verbose.
+     *
+     * @param logRetryStackTrace  whether stack traces should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logRetryStackTrace(String logRetryStackTrace) {
         setLogRetryStackTrace(logRetryStackTrace);
         return this;
     }
 
     /**
-     * Sets whether retry attempts should be logged or not
+     * Sets whether retry attempts should be logged or not.
      * Can be used to include or reduce verbose.
      *
      * @param logRetryAttempted  whether retry attempts should be logged or not
      * @return the builder
      */
     public RedeliveryPolicyDefinition logRetryAttempted(boolean logRetryAttempted) {
+        return logRetryAttempted(Boolean.toString(logRetryAttempted));
+    }
+
+    /**
+     * Sets whether retry attempts should be logged or not (supports property placeholders).
+     * Can be used to include or reduce verbose.
+     *
+     * @param logRetryAttempted  whether retry attempts should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logRetryAttempted(String logRetryAttempted) {
         setLogRetryAttempted(logRetryAttempted);
         return this;
     }
 
     /**
-     * Sets whether handled exceptions should be logged or not
+     * Sets whether handled exceptions should be logged or not.
      * Can be used to include or reduce verbose.
      *
      * @param logHandled  whether handled exceptions should be logged or not
      * @return the builder
      */
     public RedeliveryPolicyDefinition logHandled(boolean logHandled) {
+        return logHandled(Boolean.toString(logHandled));
+    }
+
+    /**
+     * Sets whether handled exceptions should be logged or not (supports property placeholders).
+     * Can be used to include or reduce verbose.
+     *
+     * @param logHandled  whether handled exceptions should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logHandled(String logHandled) {
         setLogHandled(logHandled);
         return this;
     }
 
     /**
-     * Sets whether continued exceptions should be logged or not
+     * Sets whether continued exceptions should be logged or not.
      * Can be used to include or reduce verbose.
      *
      * @param logContinued  whether continued exceptions should be logged or not
      * @return the builder
      */
     public RedeliveryPolicyDefinition logContinued(boolean logContinued) {
+        return logContinued(Boolean.toString(logContinued));
+    }
+
+    /**
+     * Sets whether continued exceptions should be logged or not (supports property placeholders).
+     * Can be used to include or reduce verbose.
+     *
+     * @param logContinued  whether continued exceptions should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logContinued(String logContinued) {
         setLogContinued(logContinued);
         return this;
     }
 
     /**
-     * Sets whether exhausted exceptions should be logged or not
+     * Sets whether exhausted exceptions should be logged or not.
      * Can be used to include or reduce verbose.
      *
      * @param logExhausted  whether exhausted exceptions should be logged or not
      * @return the builder
      */
     public RedeliveryPolicyDefinition logExhausted(boolean logExhausted) {
+        return logExhausted(Boolean.toString(logExhausted));
+    }
+
+    /**
+     * Sets whether exhausted exceptions should be logged or not (supports property placeholders).
+     * Can be used to include or reduce verbose.
+     *
+     * @param logExhausted  whether exhausted exceptions should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logExhausted(String logExhausted) {
         setLogExhausted(logExhausted);
         return this;
     }
@@ -301,6 +416,21 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition maximumRedeliveries(int maximumRedeliveries) {
+        return maximumRedeliveries(Integer.toString(maximumRedeliveries));
+    }
+
+    /**
+     * Sets the maximum redeliveries (supports property placeholders)
+     * <ul>
+     *   <li>x = redeliver at most x times</li>
+     *   <li>0 = no redeliveries</li>
+     *   <li>-1 = redeliver forever</li>
+     * </ul>
+     *
+     * @param maximumRedeliveries  the value
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition maximumRedeliveries(String maximumRedeliveries) {
         setMaximumRedeliveries(maximumRedeliveries);
         return this;
     }
@@ -311,7 +441,7 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition useCollisionAvoidance() {
-        setUseCollisionAvoidance(Boolean.TRUE);
+        setUseCollisionAvoidance("true");
         return this;
     }
 
@@ -321,7 +451,7 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition useExponentialBackOff() {
-        setUseExponentialBackOff(Boolean.TRUE);
+        setUseExponentialBackOff("true");
         return this;
     }
 
@@ -332,6 +462,16 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition maximumRedeliveryDelay(long maximumRedeliveryDelay) {
+        return maximumRedeliveryDelay(Long.toString(maximumRedeliveryDelay));
+    }
+
+    /**
+     * Sets the maximum delay between redelivery (supports property placeholders)
+     *
+     * @param maximumRedeliveryDelay  the delay in millis
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition maximumRedeliveryDelay(String maximumRedeliveryDelay) {
         setMaximumRedeliveryDelay(maximumRedeliveryDelay);
         return this;
     }
@@ -361,86 +501,6 @@ public class RedeliveryPolicyDefinition {
     // Properties
     //-------------------------------------------------------------------------
 
-    public Double getBackOffMultiplier() {
-        return backOffMultiplier;
-    }
-
-    public void setBackOffMultiplier(Double backOffMultiplier) {
-        this.backOffMultiplier = backOffMultiplier;
-    }
-
-    public Double getCollisionAvoidanceFactor() {
-        return collisionAvoidanceFactor;
-    }
-
-    public void setCollisionAvoidanceFactor(Double collisionAvoidanceFactor) {
-        this.collisionAvoidanceFactor = collisionAvoidanceFactor;
-    }
-
-    public Long getRedeliveryDelay() {
-        return redeliveryDelay;
-    }
-
-    public void setRedeliveryDelay(Long delay) {
-        this.redeliveryDelay = delay;
-    }
-
-    public Boolean getAsyncDelayedRedelivery() {
-        return asyncDelayedRedelivery;
-    }
-
-    public void setAsyncDelayedRedelivery(Boolean asyncDelayedRedelivery) {
-        this.asyncDelayedRedelivery = asyncDelayedRedelivery;
-    }
-
-    public Integer getMaximumRedeliveries() {
-        return maximumRedeliveries;
-    }
-
-    public void setMaximumRedeliveries(Integer maximumRedeliveries) {
-        this.maximumRedeliveries = maximumRedeliveries;
-    }
-
-    public Boolean getUseCollisionAvoidance() {
-        return useCollisionAvoidance;
-    }
-
-    public void setUseCollisionAvoidance(Boolean useCollisionAvoidance) {
-        this.useCollisionAvoidance = useCollisionAvoidance;
-    }
-
-    public Boolean getUseExponentialBackOff() {
-        return useExponentialBackOff;
-    }
-
-    public void setUseExponentialBackOff(Boolean useExponentialBackOff) {
-        this.useExponentialBackOff = useExponentialBackOff;
-    }
-
-    public Long getMaximumRedeliveryDelay() {
-        return maximumRedeliveryDelay;
-    }
-
-    public void setMaximumRedeliveryDelay(Long maximumRedeliveryDelay) {
-        this.maximumRedeliveryDelay = maximumRedeliveryDelay;
-    }
-
-    public void setRetriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
-        this.retriesExhaustedLogLevel = retriesExhaustedLogLevel;
-    }
-
-    public LoggingLevel getRetriesExhaustedLogLevel() {
-        return retriesExhaustedLogLevel;
-    } 
-
-    public void setRetryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
-        this.retryAttemptedLogLevel = retryAttemptedLogLevel;
-    }
-
-    public LoggingLevel getRetryAttemptedLogLevel() {
-        return retryAttemptedLogLevel;
-    }
-
     public String getRef() {
         return ref;
     }
@@ -449,60 +509,152 @@ public class RedeliveryPolicyDefinition {
         this.ref = ref;
     }
 
-    public Boolean getLogStackTrace() {
-        return logStackTrace;
+    public String getMaximumRedeliveries() {
+        return maximumRedeliveries;
     }
 
-    public void setLogStackTrace(Boolean logStackTrace) {
-        this.logStackTrace = logStackTrace;
+    public void setMaximumRedeliveries(String maximumRedeliveries) {
+        this.maximumRedeliveries = maximumRedeliveries;
     }
 
-    public Boolean getDisableRedelivery() {
-        return disableRedelivery;
+    public String getRedeliveryDelay() {
+        return redeliveryDelay;
     }
 
-    public void setDisableRedelivery(Boolean disableRedelivery) {
-        this.disableRedelivery = disableRedelivery;
+    public void setRedeliveryDelay(String redeliveryDelay) {
+        this.redeliveryDelay = redeliveryDelay;
     }
 
-    public Boolean isLogRetryStackTrace() {
-        return logRetryStackTrace;
+    public String getAsyncDelayedRedelivery() {
+        return asyncDelayedRedelivery;
     }
 
-    public void setLogRetryStackTrace(Boolean logRetryStackTrace) {
-        this.logRetryStackTrace = logRetryStackTrace;
+    public boolean isAsyncDelayedRedelivery(CamelContext context) {
+        if (getAsyncDelayedRedelivery() == null) {
+            return false;
+        }
+
+        try {
+            return CamelContextHelper.parseBoolean(context, getAsyncDelayedRedelivery());
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
-    public Boolean isLogHandled() {
-        return logHandled;
+    public void setAsyncDelayedRedelivery(String asyncDelayedRedelivery) {
+        this.asyncDelayedRedelivery = asyncDelayedRedelivery;
     }
 
-    public void setLogHandled(Boolean logHandled) {
-        this.logHandled = logHandled;
+    public String getBackOffMultiplier() {
+        return backOffMultiplier;
     }
 
-    public Boolean getLogContinued() {
-        return logContinued;
+    public void setBackOffMultiplier(String backOffMultiplier) {
+        this.backOffMultiplier = backOffMultiplier;
     }
 
-    public void setLogContinued(Boolean logContinued) {
-        this.logContinued = logContinued;
+    public String getUseExponentialBackOff() {
+        return useExponentialBackOff;
     }
 
-    public Boolean isLogRetryAttempted() {
+    public void setUseExponentialBackOff(String useExponentialBackOff) {
+        this.useExponentialBackOff = useExponentialBackOff;
+    }
+
+    public String getCollisionAvoidanceFactor() {
+        return collisionAvoidanceFactor;
+    }
+
+    public void setCollisionAvoidanceFactor(String collisionAvoidanceFactor) {
+        this.collisionAvoidanceFactor = collisionAvoidanceFactor;
+    }
+
+    public String getUseCollisionAvoidance() {
+        return useCollisionAvoidance;
+    }
+
+    public void setUseCollisionAvoidance(String useCollisionAvoidance) {
+        this.useCollisionAvoidance = useCollisionAvoidance;
+    }
+
+    public String getMaximumRedeliveryDelay() {
+        return maximumRedeliveryDelay;
+    }
+
+    public void setMaximumRedeliveryDelay(String maximumRedeliveryDelay) {
+        this.maximumRedeliveryDelay = maximumRedeliveryDelay;
+    }
+
+    public LoggingLevel getRetriesExhaustedLogLevel() {
+        return retriesExhaustedLogLevel;
+    }
+
+    public void setRetriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+        this.retriesExhaustedLogLevel = retriesExhaustedLogLevel;
+    }
+
+    public LoggingLevel getRetryAttemptedLogLevel() {
+        return retryAttemptedLogLevel;
+    }
+
+    public void setRetryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+        this.retryAttemptedLogLevel = retryAttemptedLogLevel;
+    }
+
+    public String getLogRetryAttempted() {
         return logRetryAttempted;
     }
 
-    public void setLogRetryAttempted(Boolean logRetryAttempted) {
+    public void setLogRetryAttempted(String logRetryAttempted) {
         this.logRetryAttempted = logRetryAttempted;
     }
 
-    public Boolean isLogExhausted() {
+    public String getLogStackTrace() {
+        return logStackTrace;
+    }
+
+    public void setLogStackTrace(String logStackTrace) {
+        this.logStackTrace = logStackTrace;
+    }
+
+    public String getLogRetryStackTrace() {
+        return logRetryStackTrace;
+    }
+
+    public void setLogRetryStackTrace(String logRetryStackTrace) {
+        this.logRetryStackTrace = logRetryStackTrace;
+    }
+
+    public String getLogHandled() {
+        return logHandled;
+    }
+
+    public void setLogHandled(String logHandled) {
+        this.logHandled = logHandled;
+    }
+
+    public String getLogContinued() {
+        return logContinued;
+    }
+
+    public void setLogContinued(String logContinued) {
+        this.logContinued = logContinued;
+    }
+
+    public String getLogExhausted() {
         return logExhausted;
     }
 
-    public void setLogExhausted(Boolean logExhausted) {
+    public void setLogExhausted(String logExhausted) {
         this.logExhausted = logExhausted;
+    }
+
+    public String getDisableRedelivery() {
+        return disableRedelivery;
+    }
+
+    public void setDisableRedelivery(String disableRedelivery) {
+        this.disableRedelivery = disableRedelivery;
     }
 
     public String getDelayPattern() {

@@ -339,12 +339,34 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
+     * Sets the back off multiplier (supports property placeholders)
+     *
+     * @param backOffMultiplier the back off multiplier
+     * @return the builder
+     */
+    public OnExceptionDefinition backOffMultiplier(String backOffMultiplier) {
+        getOrCreateRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
+        return this;
+    }
+
+    /**
      * Sets the collision avoidance factor
      *
      * @param collisionAvoidanceFactor the factor
      * @return the builder
      */
     public OnExceptionDefinition collisionAvoidanceFactor(double collisionAvoidanceFactor) {
+        getOrCreateRedeliveryPolicy().collisionAvoidanceFactor(collisionAvoidanceFactor);
+        return this;
+    }
+
+    /**
+     * Sets the collision avoidance factor (supports property placeholders)
+     *
+     * @param collisionAvoidanceFactor the factor
+     * @return the builder
+     */
+    public OnExceptionDefinition collisionAvoidanceFactor(String collisionAvoidanceFactor) {
         getOrCreateRedeliveryPolicy().collisionAvoidanceFactor(collisionAvoidanceFactor);
         return this;
     }
@@ -372,13 +394,24 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
+     * Sets the initial redelivery delay (supports property placeholders)
+     *
+     * @param delay delay in millis
+     * @return the builder
+     */
+    public OnExceptionDefinition redeliveryDelay(String delay) {
+        getOrCreateRedeliveryPolicy().redeliveryDelay(delay);
+        return this;
+    }
+
+    /**
      * Allow synchronous delayed redelivery.
      *
      * @see org.apache.camel.processor.RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
      * @return the builder
      */
     public OnExceptionDefinition asyncDelayedRedelivery() {
-        getOrCreateRedeliveryPolicy().setAsyncDelayedRedelivery(true);
+        getOrCreateRedeliveryPolicy().asyncDelayedRedelivery();
         return this;
     }
 
@@ -408,7 +441,15 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * Sets whether to log stacktrace for failed messages.
      */
     public OnExceptionDefinition logStackTrace(boolean logStackTrace) {
-        getOrCreateRedeliveryPolicy().setLogStackTrace(logStackTrace);
+        getOrCreateRedeliveryPolicy().logStackTrace(logStackTrace);
+        return this;
+    }
+
+    /**
+     * Sets whether to log stacktrace for failed messages (supports property placeholders)
+     */
+    public OnExceptionDefinition logStackTrace(String logStackTrace) {
+        getOrCreateRedeliveryPolicy().logStackTrace(logStackTrace);
         return this;
     }
 
@@ -416,7 +457,15 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * Sets whether to log stacktrace for failed redelivery attempts
      */
     public OnExceptionDefinition logRetryStackTrace(boolean logRetryStackTrace) {
-        getOrCreateRedeliveryPolicy().setLogRetryStackTrace(logRetryStackTrace);
+        getOrCreateRedeliveryPolicy().logRetryStackTrace(logRetryStackTrace);
+        return this;
+    }
+
+    /**
+     * Sets whether to log stacktrace for failed redelivery attempts (supports property placeholders)
+     */
+    public OnExceptionDefinition logRetryStackTrace(String logRetryStackTrace) {
+        getOrCreateRedeliveryPolicy().logRetryStackTrace(logRetryStackTrace);
         return this;
     }
 
@@ -424,7 +473,15 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * Sets whether to log errors even if its handled
      */
     public OnExceptionDefinition logHandled(boolean logHandled) {
-        getOrCreateRedeliveryPolicy().setLogHandled(logHandled);
+        getOrCreateRedeliveryPolicy().logHandled(logHandled);
+        return this;
+    }
+
+    /**
+     * Sets whether to log errors even if its handled (supports property placeholders)
+     */
+    public OnExceptionDefinition logHandled(String logHandled) {
+        getOrCreateRedeliveryPolicy().logHandled(logHandled);
         return this;
     }
 
@@ -432,7 +489,15 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * Sets whether to log errors even if its continued
      */
     public OnExceptionDefinition logContinued(boolean logContinued) {
-        getOrCreateRedeliveryPolicy().setLogContinued(logContinued);
+        getOrCreateRedeliveryPolicy().logContinued(logContinued);
+        return this;
+    }
+
+    /**
+     * Sets whether to log errors even if its continued (supports property placeholders)
+     */
+    public OnExceptionDefinition logContinued(String logContinued) {
+        getOrCreateRedeliveryPolicy().logContinued(logContinued);
         return this;
     }
 
@@ -440,7 +505,15 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * Sets whether to log retry attempts
      */
     public OnExceptionDefinition logRetryAttempted(boolean logRetryAttempted) {
-        getOrCreateRedeliveryPolicy().setLogRetryAttempted(logRetryAttempted);
+        getOrCreateRedeliveryPolicy().logRetryAttempted(logRetryAttempted);
+        return this;
+    }
+
+    /**
+     * Sets whether to log retry attempts (supports property placeholders)
+     */
+    public OnExceptionDefinition logRetryAttempted(String logRetryAttempted) {
+        getOrCreateRedeliveryPolicy().logRetryAttempted(logRetryAttempted);
         return this;
     }
 
@@ -448,7 +521,15 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * Sets whether to log exhausted exceptions
      */
     public OnExceptionDefinition logExhausted(boolean logExhausted) {
-        getOrCreateRedeliveryPolicy().setLogExhausted(logExhausted);
+        getOrCreateRedeliveryPolicy().logExhausted(logExhausted);
+        return this;
+    }
+
+    /**
+     * Sets whether to log exhausted exceptions (supports property placeholders)
+     */
+    public OnExceptionDefinition logExhausted(String logExhausted) {
+        getOrCreateRedeliveryPolicy().logExhausted(logExhausted);
         return this;
     }
 
@@ -464,6 +545,22 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @return the builder
      */
     public OnExceptionDefinition maximumRedeliveries(int maximumRedeliveries) {
+        getOrCreateRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
+        return this;
+    }
+
+    /**
+     * Sets the maximum redeliveries (supports property placeholders)
+     * <ul>
+     * <li>5 = default value</li>
+     * <li>0 = no redeliveries</li>
+     * <li>-1 = redeliver forever</li>
+     * </ul>
+     *
+     * @param maximumRedeliveries the value
+     * @return the builder
+     */
+    public OnExceptionDefinition maximumRedeliveries(String maximumRedeliveries) {
         getOrCreateRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
         return this;
     }
@@ -495,6 +592,17 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @return the builder
      */
     public OnExceptionDefinition maximumRedeliveryDelay(long maximumRedeliveryDelay) {
+        getOrCreateRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
+        return this;
+    }
+
+    /**
+     * Sets the maximum delay between redelivery (supports property placeholders)
+     *
+     * @param maximumRedeliveryDelay the delay in millis
+     * @return the builder
+     */
+    public OnExceptionDefinition maximumRedeliveryDelay(String maximumRedeliveryDelay) {
         getOrCreateRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
         return this;
     }
@@ -689,9 +797,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
     }
 
-    public boolean isAsyncDelayedRedelivery() {
-        if (getRedeliveryPolicy() != null) {
-            return getRedeliveryPolicy().getAsyncDelayedRedelivery() != null && getRedeliveryPolicy().getAsyncDelayedRedelivery();
+    public boolean isAsyncDelayedRedelivery(CamelContext context) {
+        if (getRedeliveryPolicy() != null ) {
+            return getRedeliveryPolicy().isAsyncDelayedRedelivery(context);
         }
         return false;
     }
