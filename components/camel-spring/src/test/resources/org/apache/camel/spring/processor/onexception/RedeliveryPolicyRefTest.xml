@@ -42,13 +42,12 @@
     <!-- define our error handler as a global error handler -->
     <camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
 
-      <onException>
+      <onException redeliveryPolicyRef="myRedeliveryPolicy">
+        <!-- here we reference our redelivery policy -->
         <!-- the exception is full qualified names as plain strings -->
         <!-- there can be more just add a 2nd, 3rd exception element (unbounded) -->
         <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>
         <exception>java.lang.IllegalArgumentException</exception>
-        <!-- here we reference our redelivy policy -->
-        <redeliveryPolicy ref="myRedeliveryPolicy" />
         <!-- mark this as handled -->
         <handled>
           <constant>true</constant>

@@ -62,6 +62,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     private ExpressionSubElementDefinition retryWhile;
     @XmlElement(name = "redeliveryPolicy")
     private RedeliveryPolicyDefinition redeliveryPolicy;
+    @XmlAttribute(name = "redeliveryPolicyRef")
+    private String redeliveryPolicyRef;
     @XmlElement(name = "handled")
     private ExpressionSubElementDefinition handled;
     @XmlElement(name = "continued")
@@ -121,6 +123,10 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      *         for this exception handler.
      */
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
+        if (redeliveryPolicyRef != null) {
+            parentPolicy = CamelContextHelper.mandatoryLookup(context, redeliveryPolicyRef, RedeliveryPolicy.class);
+        }
+
         if (redeliveryPolicy != null) {
             return redeliveryPolicy.createRedeliveryPolicy(context, parentPolicy);
         } else if (errorHandler != null) {
@@ -614,7 +620,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @return the builder
      */
     public OnExceptionDefinition redeliveryPolicyRef(String redeliveryPolicyRef) {
-        getOrCreateRedeliveryPolicy().setRef(redeliveryPolicyRef);
+        setRedeliveryPolicyRef(redeliveryPolicyRef);
         return this;
     }
 
@@ -709,6 +715,14 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     public void setRedeliveryPolicy(RedeliveryPolicyDefinition redeliveryPolicy) {
         this.redeliveryPolicy = redeliveryPolicy;
+    }
+
+    public String getRedeliveryPolicyRef() {
+        return redeliveryPolicyRef;
+    }
+
+    public void setRedeliveryPolicyRef(String redeliveryPolicyRef) {
+        this.redeliveryPolicyRef = redeliveryPolicyRef;
     }
 
     public Predicate getHandledPolicy() {

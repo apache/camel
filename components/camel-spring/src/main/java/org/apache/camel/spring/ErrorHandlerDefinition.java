@@ -51,6 +51,8 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     private String onRedeliveryRef;
     @XmlAttribute
     private String retryWhileRef;
+    @XmlAttribute
+    private String redeliveryPolicyRef;
     @XmlElement
     private RedeliveryPolicyDefinition redeliveryPolicy;
    

@@ -32,7 +32,6 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
-import org.apache.camel.core.xml.AbstractCamelEndpointFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
@@ -135,6 +134,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private List<CamelEndpointFactoryBean> endpoints;
     @XmlElement(name = "dataFormats", required = false)
     private DataFormatsDefinition dataFormats;
+    @XmlElement(name = "redeliveryPolicyProfile", required = false)
+    private List<CamelRedeliveryPolicyFactoryBean> redeliveryPolicies;
     @XmlElement(name = "onException", required = false)
     private List<OnExceptionDefinition> onExceptions = new ArrayList<OnExceptionDefinition>();
     @XmlElement(name = "onCompletion", required = false)
@@ -313,6 +314,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public List<CamelEndpointFactoryBean> getEndpoints() {
         return endpoints;
+    }
+
+    public List<CamelRedeliveryPolicyFactoryBean> getRedeliveryPolicies() {
+        return redeliveryPolicies;
     }
 
     public List<InterceptDefinition> getIntercepts() {

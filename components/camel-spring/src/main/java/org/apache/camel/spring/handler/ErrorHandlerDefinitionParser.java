@@ -59,6 +59,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
                 && !attributeName.equals("type")
                 && !attributeName.equals("onRedeliveryRef")
                 && !attributeName.equals("onRetryWhileRef")
+                && !attributeName.equals("redeliveryPolicyRef")
                 && !attributeName.equals("transactionTemplateRef")
                 && !attributeName.equals("transactionManagerRef");
     }
@@ -66,15 +67,14 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
+
+        String id = element.getAttribute("id");
+
         ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
         if (ObjectHelper.isNotEmpty(element.getAttribute("type"))) {
             type = ErrorHandlerType.valueOf(element.getAttribute("type"));
         }
-        if (type.equals(ErrorHandlerType.NoErrorHandler) || type.equals(ErrorHandlerType.LoggingErrorHandler)) {
-            // don't need to parser other stuff
-            return;
-        }
-        if (type.equals(ErrorHandlerType.DefaultErrorHandler) 
+        if (type.equals(ErrorHandlerType.DefaultErrorHandler)
             || type.equals(ErrorHandlerType.DeadLetterChannel) 
             || type.equals(ErrorHandlerType.TransactionErrorHandler)) {
             NodeList list = element.getChildNodes();
@@ -86,17 +86,62 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
                     String localName = child.getLocalName();
                     // set the redeliveryPolicy
                     if (localName.equals("redeliveryPolicy")) {
+                        // cannot have redeliveryPolicyRef attribute as well, only one is allowed
+                        if (ObjectHelper.isNotEmpty(element.getAttribute("redeliveryPolicyRef"))) {
+                            throw new IllegalArgumentException("Cannot set both redeliveryPolicyRef and redeliveryPolicy,"
+                                    + " only one allowed, in error handler with id: " + id);
+                        }
                         BeanDefinition redeliveryPolicyDefinition = redeliveryPolicyParser.parse(childElement, parserContext);
                         builder.addPropertyValue(localName, redeliveryPolicyDefinition);
                     }
                 }
             }
             parserRefAttribute(element, "onRedeliveryRef", "onRedelivery", builder);
+            parserRefAttribute(element, "onRetryWhileRef", "onRetryWhile", builder);
+            parserRefAttribute(element, "redeliveryPolicyRef", "redeliveryPolicy", builder);
+            if (type.equals(ErrorHandlerType.TransactionErrorHandler)) {
+                // deal with transactionTemplateRef
+                parserRefAttribute(element, "transactionTemplateRef", "transactionTemplate", builder);
+                parserRefAttribute(element, "transactionManagerRef", "transactionManager", builder);
+            }
         }
-        if (type.equals(ErrorHandlerType.TransactionErrorHandler)) {
-            // deal with transactionTemplateRef
-            parserRefAttribute(element, "transactionTemplateRef", "transactionTemplate", builder);
-            parserRefAttribute(element, "transactionManagerRef", "transactionManager", builder);
+
+        // validate attributes according to type
+
+        String deadLetterUri = element.getAttribute("deadLetterUri");
+        if (ObjectHelper.isNotEmpty(deadLetterUri) && !type.equals(ErrorHandlerType.DeadLetterChannel)) {
+            throw new IllegalArgumentException("Attribute deadLetterUri can only be used if type is "
+                    + ErrorHandlerType.DeadLetterChannel.name() + ", in error handler with id: " + id);
+        }
+        String transactionTemplateRef = element.getAttribute("transactionTemplateRef");
+        if (ObjectHelper.isNotEmpty(transactionTemplateRef) && !type.equals(ErrorHandlerType.TransactionErrorHandler)) {
+            throw new IllegalArgumentException("Attribute transactionTemplateRef can only be used if type is "
+                    + ErrorHandlerType.TransactionErrorHandler.name() + ", in error handler with id: " + id);
+        }
+        String transactionManagerRef = element.getAttribute("transactionManagerRef");
+        if (ObjectHelper.isNotEmpty(transactionManagerRef) && !type.equals(ErrorHandlerType.TransactionErrorHandler)) {
+            throw new IllegalArgumentException("Attribute transactionManagerRef can only be used if type is "
+                    + ErrorHandlerType.TransactionErrorHandler.name() + ", in error handler with id: " + id);
+        }
+        String useOriginalMessage = element.getAttribute("useOriginalMessage");
+        if (ObjectHelper.isNotEmpty(useOriginalMessage) && (type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
+            throw new IllegalArgumentException("Attribute useOriginalMessage is not supported by error handler type: "
+                    + type.name() + ", in error handler with id: " + id);
+        }
+        String onRedeliveryRef = element.getAttribute("onRedeliveryRef");
+        if (ObjectHelper.isNotEmpty(onRedeliveryRef) && (type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
+            throw new IllegalArgumentException("Attribute onRedeliveryRef is not supported by error handler type: "
+                    + type.name() + ", in error handler with id: " + id);
+        }
+        String retryWhileRef = element.getAttribute("retryWhileRef");
+        if (ObjectHelper.isNotEmpty(retryWhileRef) && (type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
+            throw new IllegalArgumentException("Attribute retryWhileRef is not supported by error handler type: "
+                    + type.name() + ", in error handler with id: " + id);
+        }
+        String redeliveryPolicyRef = element.getAttribute("redeliveryPolicyRef");
+        if (ObjectHelper.isNotEmpty(redeliveryPolicyRef) && (type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
+            throw new IllegalArgumentException("Attribute redeliveryPolicyRef is not supported by error handler type: "
+                    + type.name() + ", in error handler with id: " + id);
         }
     }
 

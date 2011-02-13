@@ -36,8 +36,6 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RedeliveryPolicyDefinition {
     @XmlAttribute
-    private String ref;
-    @XmlAttribute
     private String maximumRedeliveries;
     @XmlAttribute
     private String redeliveryDelay;
@@ -75,10 +73,6 @@ public class RedeliveryPolicyDefinition {
     private String delayPattern;
 
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
-        if (ref != null) {
-            // lookup in registry if ref provided
-            return CamelContextHelper.mandatoryLookup(context, ref, RedeliveryPolicy.class);
-        }
 
         RedeliveryPolicy answer;
         if (parentPolicy != null) {
@@ -477,17 +471,6 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Use redelivery policy looked up in the registry
-     *
-     * @param ref  reference to the redelivery policy to lookup and use
-     * @return the builder
-     */
-    public RedeliveryPolicyDefinition ref(String ref) {
-        setRef(ref);
-        return this;
-    }
-
-    /**
      * Sets the delay pattern with delay intervals.
      *
      * @param delayPattern the delay pattern
@@ -500,14 +483,6 @@ public class RedeliveryPolicyDefinition {
 
     // Properties
     //-------------------------------------------------------------------------
-
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
 
     public String getMaximumRedeliveries() {
         return maximumRedeliveries;
