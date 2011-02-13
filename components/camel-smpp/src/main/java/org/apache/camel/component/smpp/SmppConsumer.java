@@ -153,7 +153,6 @@ public class SmppConsumer extends DefaultConsumer {
 
     private SMPPSession createSession() throws IOException {
         SMPPSession session = createSMPPSession();
-        session = createSMPPSession();
         session.setEnquireLinkTimer(configuration.getEnquireLinkTimer());
         session.setTransactionTimer(configuration.getTransactionTimer());
         session.addSessionStateListener(sessionStateListener);
