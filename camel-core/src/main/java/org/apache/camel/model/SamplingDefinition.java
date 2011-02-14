@@ -39,13 +39,13 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
 
     // use Long to let it be optional in JAXB so when using XML the default is 1 second
     
-    @XmlAttribute()
+    @XmlAttribute
     private Long samplePeriod;
 
-    @XmlAttribute()
+    @XmlAttribute
     private Long messageFrequency;
 
-    @XmlAttribute()
+    @XmlAttribute
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     private TimeUnit units;
 
@@ -66,7 +66,8 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
         if (messageFrequency != null) {
             return "Sample[1 Exchange per " + getMessageFrequency() + " messages received -> " + getOutputs() + "]";
         } else {
-            return "Sample[1 Exchange per " + getSamplePeriod() + " " + getUnits().toString().toLowerCase() + " -> " + getOutputs() + "]";
+            TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
+            return "Sample[1 Exchange per " + getSamplePeriod() + " " + tu.toString().toLowerCase() + " -> " + getOutputs() + "]";
         }
     }
 
@@ -80,7 +81,8 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
         if (messageFrequency != null) {
             return "sample[1 Exchange per " + getMessageFrequency() + " messages received]";
         } else {
-            return "sample[1 Exchange per " + getSamplePeriod() + " " + getUnits().toString().toLowerCase() + "]";
+            TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
+            return "sample[1 Exchange per " + getSamplePeriod() + " " + tu.name().toLowerCase() + "]";
         }
     }
 
