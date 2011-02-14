@@ -74,7 +74,11 @@ public class InterceptFromDefinition extends InterceptDefinition {
         // this allows us to use the same header for both the interceptFrom and interceptSendToEndpoint
         SetHeaderDefinition headerDefinition = new SetHeaderDefinition(Exchange.INTERCEPTED_ENDPOINT, new ExpressionAdapter() {
             public Object evaluate(Exchange exchange, Class type) {
-                return exchange.getFromEndpoint().getEndpointUri();
+                if (exchange.getFromEndpoint() != null) {
+                    return exchange.getFromEndpoint().getEndpointUri();
+                } else {
+                    return null;
+                }
             }
 
             public String toString() {
