@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.ThrowExceptionProcessor;
+import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -35,7 +36,9 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "throwException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrowExceptionDefinition extends ProcessorDefinition<ThrowExceptionDefinition> {
-    @XmlAttribute(name = "ref", required = false)
+    @Required
+    @XmlAttribute(name = "ref", required = true)
+    // the ref is required from tooling and XML DSL
     private String ref;
     @XmlTransient
     private Exception exception;
