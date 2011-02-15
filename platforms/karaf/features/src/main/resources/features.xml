@@ -472,6 +472,15 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mvel/${pom.version}</bundle>
   </feature>
+  <feature name='camel-mybatis' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-spring</feature>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool/${commons-pool-bundle-version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
+    <bundle>mvn:commons-dbcp/commons-dbcp/${commons-dbcp-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/${cglib-version}</bundle>    
+    <bundle>mvn:org.mybatis/mybatis/${mybatis-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-mybatis/${pom.version}</bundle>
+  </feature>
   <feature name='camel-nagios' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>    
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsendnsca-core/${jsendnsca-bundle-version}</bundle>
