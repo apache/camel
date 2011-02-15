@@ -188,10 +188,11 @@ public class SmppProducer extends DefaultProducer {
 
     private void reconnect(final long initialReconnectDelay) {
         if (reconnectLock.tryLock()) {
-            new Thread() {
-                @Override
-                public void run() {
-                    try {
+            try {
+                Runnable r = new Runnable() {
+                    public void run() {
+                        boolean reconnected = false;
+                        
                         LOG.info("Schedule reconnect after " + initialReconnectDelay + " millis");
                         try {
                             Thread.sleep(initialReconnectDelay);
@@ -203,6 +204,7 @@ public class SmppProducer extends DefaultProducer {
                             try {
                                 LOG.info("Trying to reconnect to " + getEndpoint().getConnectionString() + " - attempt #" + (++attempt) + "...");
                                 session = createSession();
+                                reconnected = true;
                             } catch (IOException e) {
                                 LOG.info("Failed to reconnect to " + getEndpoint().getConnectionString());
                                 closeSession(session);
@@ -212,12 +214,21 @@ public class SmppProducer extends DefaultProducer {
                                 }
                             }
                         }
-                        LOG.info("Reconnected to " + getEndpoint().getConnectionString());                        
-                    } finally {
-                        reconnectLock.unlock();
+                        
+                        if (reconnected) {
+                            LOG.info("Reconnected to " + getEndpoint().getConnectionString());                        
+                        }
                     }
-                }
-            }.start();            
+                };
+                
+                Thread t = new Thread(r);
+                t.start(); 
+                t.join();
+            } catch (InterruptedException e) {
+                // noop
+            }  finally {
+                reconnectLock.unlock();
+            }
         }
     }
     

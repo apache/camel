@@ -200,10 +200,9 @@ public class SmppConsumer extends DefaultConsumer {
 
     private void reconnect(final long initialReconnectDelay) {
         if (reconnectLock.tryLock()) {
-            new Thread() {
-                @Override
-                public void run() {
-                    try {
+            try {
+                Runnable r = new Runnable() {
+                    public void run() {
                         boolean reconnected = false;
                         
                         LOG.info("Schedule reconnect after " + initialReconnectDelay + " millis");
@@ -231,11 +230,17 @@ public class SmppConsumer extends DefaultConsumer {
                         if (reconnected) {
                             LOG.info("Reconnected to " + getEndpoint().getConnectionString());                        
                         }
-                    } finally {
-                        reconnectLock.unlock();
                     }
-                }
-            }.start();            
+                };
+                
+                Thread t = new Thread(r);
+                t.start(); 
+                t.join();
+            } catch (InterruptedException e) {
+                // noop
+            }  finally {
+                reconnectLock.unlock();
+            }
         }
     }
 
