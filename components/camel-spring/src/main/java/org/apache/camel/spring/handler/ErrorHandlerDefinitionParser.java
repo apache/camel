@@ -55,8 +55,10 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         if (attributeName == null || ID_ATTRIBUTE.equals(attributeName)) {
             return false;
         }
-        return !attributeName.equals("xmlns") && !attributeName.startsWith("xmlns:")
-                && !attributeName.equals("type")
+        if (attributeName.equals("xmlns") || attributeName.startsWith("xmlns:")) {
+            return false;
+        }
+        return  !attributeName.equals("type")
                 && !attributeName.equals("onRedeliveryRef")
                 && !attributeName.equals("onRetryWhileRef")
                 && !attributeName.equals("redeliveryPolicyRef")

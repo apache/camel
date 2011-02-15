@@ -812,7 +812,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     public boolean isAsyncDelayedRedelivery(CamelContext context) {
-        if (getRedeliveryPolicy() != null ) {
+        if (getRedeliveryPolicy() != null) {
             return getRedeliveryPolicy().isAsyncDelayedRedelivery(context);
         }
         return false;
