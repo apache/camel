@@ -17,6 +17,7 @@
 package org.apache.camel.itest.greeter;
 
 import java.util.List;
+
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.CamelContext;
@@ -25,18 +26,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration
 public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {

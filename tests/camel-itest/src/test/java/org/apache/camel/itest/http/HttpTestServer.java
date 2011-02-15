@@ -69,7 +69,7 @@ public class HttpTestServer {
      * on hosts that map "localhost" to an IPv6 address or something else.
      * The port is 0 to let the system pick one.
      */
-    public final static InetSocketAddress TEST_SERVER_ADDR =
+    public static final InetSocketAddress TEST_SERVER_ADDR =
         new InetSocketAddress("localhost", 18080);
 
     /** The request handler registry. */
@@ -120,8 +120,8 @@ public class HttpTestServer {
         this.workers = Collections.synchronizedSet(new HashSet<Worker>());
         this.httpservice = new HttpService(
             proc != null ? proc : newProcessor(),
-            reuseStrat != null ? reuseStrat: newConnectionReuseStrategy(),
-            responseFactory != null ? responseFactory: newHttpResponseFactory(),
+            reuseStrat != null ? reuseStrat : newConnectionReuseStrategy(),
+            responseFactory != null ? responseFactory : newHttpResponseFactory(),
             handlerRegistry,
             expectationVerifier,
             params != null ? params : newDefaultParams());
@@ -159,13 +159,10 @@ public class HttpTestServer {
      * @return  a protocol processor for server-side use
      */
     protected HttpProcessor newProcessor() {
-        return new ImmutableHttpProcessor(
-                new HttpResponseInterceptor[] {
-                        new ResponseDate(),
-                        new ResponseServer(),
-                        new ResponseContent(),
-                        new ResponseConnControl()
-                });
+        return new ImmutableHttpProcessor(new HttpResponseInterceptor[] {new ResponseDate(),
+                                                                         new ResponseServer(),
+                                                                         new ResponseContent(),
+                                                                         new ResponseConnControl()});
     }
 
 
@@ -273,7 +270,7 @@ public class HttpTestServer {
             t.shutdown();
         }
         synchronized (workers) {
-            for (Iterator<Worker> it = workers.iterator(); it.hasNext(); ) {
+            for (Iterator<Worker> it = workers.iterator(); it.hasNext();) {
                 Worker worker = it.next();
                 worker.shutdown();
             }
@@ -291,10 +288,11 @@ public class HttpTestServer {
         ServerSocket ssock = servicedSocket; // avoid synchronization
         StringBuilder sb = new StringBuilder(80);
         sb.append("LocalTestServer/");
-        if (ssock == null)
+        if (ssock == null) {
             sb.append("stopped");
-        else
+        } else {
             sb.append(ssock.getLocalSocketAddress());
+        }
         return sb.toString();
     }
 
