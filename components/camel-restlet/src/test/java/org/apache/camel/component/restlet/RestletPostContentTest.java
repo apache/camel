@@ -42,9 +42,7 @@ public class RestletPostContentTest extends RestletTestSupport {
             public void configure() throws Exception {
                 from("restlet:http://localhost:9080/users/{username}?restletMethod=POST")
                     .process(new SetUserProcessor());
-                
             }
-            
         };
     }
     

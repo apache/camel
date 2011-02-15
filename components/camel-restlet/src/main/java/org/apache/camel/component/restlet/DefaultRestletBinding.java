@@ -79,7 +79,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
 
         // only deal with the form if the content type is "application/x-www-form-urlencoded"
-        if (request.getEntity().getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {
+        if (request.getEntity().getMediaType() != null && request.getEntity().getMediaType().equals(MediaType.APPLICATION_WWW_FORM)) {
             Form form = new Form(request.getEntity());
             for (Map.Entry<String, String> entry : form.getValuesMap().entrySet()) {
                 if (entry.getValue() == null) {

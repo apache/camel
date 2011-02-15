@@ -62,7 +62,7 @@ public class RestletProducerConcurrentTest extends CamelTestSupport {
                     headers.put("username", "davsclaus");
                     headers.put("id", index);
                     return template
-                        .requestBodyAndHeaders("restlet:http://localhost:9080/users/davsclaus/" + index + "?restletMethod=POST",
+                        .requestBodyAndHeaders("restlet:http://localhost:9080/users/davsclaus/" + index + "?restletMethod=GET",
                                                null, headers, String.class);
                 }
             });
@@ -87,7 +87,7 @@ public class RestletProducerConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("restlet:http://localhost:9080/users/{username}/{id}?restletMethod=POST")
+                from("restlet:http://localhost:9080/users/{username}/{id}?restletMethod=GET")
                     .to("log:inbox").process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String index = exchange.getIn().getHeader("id", String.class);
