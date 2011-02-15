@@ -122,6 +122,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mybatis</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>ca.uhn.hapi</groupId>
       <artifactId>hapi-structures-v24</artifactId>
       <version>1.0</version>
@@ -359,7 +364,7 @@
                             <include>**/*Test.*</include>
                         </includes>
                         <excludes>
-			    <!-- TODO: temporary disable unit test to let TC not hang -->
+			            <!-- TODO: temporary disable unit test to let TC not hang -->
 	                    <exclude>**/*Test.*</exclude>
                             <!--There are some conflicts of the JAXB OSGi bundle and Hudson System jar
                                 so I comment out these JAXB related tests -->

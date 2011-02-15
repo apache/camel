@@ -88,6 +88,7 @@
         <include>org.apache.camel:camel-mina</include>
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mvel</include>
+        <include>org.apache.camel:camel-mybatis</include>
         <include>org.apache.camel:camel-nagios</include>
         <include>org.apache.camel:camel-netty</include>
         <include>org.apache.camel:camel-ognl</include>
