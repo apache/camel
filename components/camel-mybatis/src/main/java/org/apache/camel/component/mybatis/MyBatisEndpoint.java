@@ -22,17 +22,19 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 /**
  * @version $Revision$
  */
-public class MyBatisEndpoint extends DefaultEndpoint {
+public class MyBatisEndpoint extends DefaultPollingEndpoint {
 
+    private MyBatisProcessingStrategy processingStrategy;
     private String statement;
     private StatementType statementType;
+    private int maxMessagesPerPoll;
 
     public MyBatisEndpoint() {
     }
@@ -49,7 +51,11 @@ public class MyBatisEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Consumer not supported by MyBatis component: " + getEndpointUri());
+        ObjectHelper.notNull(statement, "statement", this);
+        MyBatisConsumer consumer = new MyBatisConsumer(this, processor);
+        consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public boolean isSingleton() {
@@ -80,4 +86,24 @@ public class MyBatisEndpoint extends DefaultEndpoint {
     public void setStatementType(StatementType statementType) {
         this.statementType = statementType;
     }
+
+    public synchronized MyBatisProcessingStrategy getProcessingStrategy() {
+        if (processingStrategy == null) {
+            processingStrategy = new DefaultMyBatisProcessingStrategy();
+        }
+        return processingStrategy;
+    }
+
+    public void setProcessingStrategy(MyBatisProcessingStrategy processingStrategy) {
+        this.processingStrategy = processingStrategy;
+    }
+
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
 }

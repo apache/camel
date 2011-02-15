@@ -23,7 +23,7 @@
 <configuration>
 
     <settings>
-        <setting name="cacheEnabled" value="false"/>
+        <setting name="useGeneratedKeys" value="false"/>
     </settings>
 
     <!-- Use type aliases to avoid typing the full classname every time. -->

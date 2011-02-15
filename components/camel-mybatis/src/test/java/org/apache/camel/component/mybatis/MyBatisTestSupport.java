@@ -28,6 +28,10 @@ import org.junit.Before;
  */
 public abstract class MyBatisTestSupport extends CamelTestSupport {
 
+    protected boolean createTestData() {
+        return true;
+    }
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -39,19 +43,21 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
         statement.execute("create table ACCOUNT ( ACC_ID INTEGER , ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255)  )");
         connection.close();
 
-        Account account = new Account();
-        account.setId(123);
-        account.setFirstName("James");
-        account.setLastName("Strachan");
-        account.setEmailAddress("TryGuessing@gmail.com");
-        template.sendBody("mybatis:insertAccount?statementType=Insert", account);
+        if (createTestData()) {
+            Account account = new Account();
+            account.setId(123);
+            account.setFirstName("James");
+            account.setLastName("Strachan");
+            account.setEmailAddress("TryGuessing@gmail.com");
+            template.sendBody("mybatis:insertAccount?statementType=Insert", account);
 
-        account = new Account();
-        account.setId(456);
-        account.setFirstName("Claus");
-        account.setLastName("Ibsen");
-        account.setEmailAddress("Noname@gmail.com");
-        template.sendBody("mybatis:insertAccount?statementType=Insert", account);
+            account = new Account();
+            account.setId(456);
+            account.setFirstName("Claus");
+            account.setLastName("Ibsen");
+            account.setEmailAddress("Noname@gmail.com");
+            template.sendBody("mybatis:insertAccount?statementType=Insert", account);
+        }
     }
 
     @Override

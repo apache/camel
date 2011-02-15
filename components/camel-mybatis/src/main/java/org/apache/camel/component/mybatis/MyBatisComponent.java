@@ -17,11 +17,13 @@
 package org.apache.camel.component.mybatis;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -33,7 +35,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 public class MyBatisComponent extends DefaultComponent {
 
     private SqlSessionFactory sqlSessionFactory;
-    private String configurationUri = "Configuration.xml";
+    private String configurationUri = "SqlMapConfig.xml";
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -44,8 +46,12 @@ public class MyBatisComponent extends DefaultComponent {
 
     private SqlSessionFactory createSqlSessionFactory() throws IOException {
         ObjectHelper.notNull(configurationUri, "configurationUri", this);
-        Reader reader = Resources.getResourceAsReader(configurationUri);
-        return new SqlSessionFactoryBuilder().build(reader);
+        InputStream is = getCamelContext().getClassResolver().loadResourceAsStream(configurationUri);
+        try {
+            return new SqlSessionFactoryBuilder().build(is);
+        } finally {
+            IOHelper.close(is);
+        }
     }
 
     public synchronized SqlSessionFactory getSqlSessionFactory() throws IOException {
