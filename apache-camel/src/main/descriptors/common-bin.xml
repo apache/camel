@@ -156,17 +156,6 @@
       </includes>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>/lib/jdk15</outputDirectory>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-      <includes>
-        <include>javax.xml.bind:jaxb-api</include>
-        <include>javax.activation:activation</include>
-        <include>javax.xml.stream:stax-api</include>
-        <include>com.sun.xml.bind:jaxb-impl</include>
-      </includes>
-    </dependencySet>
-    <dependencySet>
       <outputDirectory>/lib/optional</outputDirectory>
       <unpack>false</unpack>
       <scope>runtime</scope>
