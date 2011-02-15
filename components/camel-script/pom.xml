@@ -36,7 +36,6 @@
     </properties>
 
     <repositories>
-        <!-- SMX Repository is more up to date than LogicBlaze repo -->
         <repository>
             <id>servicemix</id>
             <name>ServiceMix Repository</name>
@@ -55,17 +54,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.script</groupId>
-            <artifactId>script-api</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
         </dependency>
 
         <!-- ServiceMix Repo Script Engines -->
