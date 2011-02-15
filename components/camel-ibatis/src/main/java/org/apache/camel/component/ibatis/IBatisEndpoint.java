@@ -63,8 +63,8 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
     }
 
     @Override
-    public IBatisPollingConsumer createConsumer(Processor processor) throws Exception {
-        IBatisPollingConsumer consumer = new IBatisPollingConsumer(this, processor);
+    public IBatisConsumer createConsumer(Processor processor) throws Exception {
+        IBatisConsumer consumer = new IBatisConsumer(this, processor);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         configureConsumer(consumer);
         return consumer;

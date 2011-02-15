@@ -26,6 +26,10 @@ import org.junit.Before;
 
 public class IBatisTestSupport extends CamelTestSupport {
 
+    protected boolean createTestData() {
+        return true;
+    }
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -37,20 +41,22 @@ public class IBatisTestSupport extends CamelTestSupport {
         statement.execute("create table ACCOUNT ( ACC_ID INTEGER , ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255)  )");
         connection.close();
 
-        Account account = new Account();
-        account.setId(123);
-        account.setFirstName("James");
-        account.setLastName("Strachan");
-        account.setEmailAddress("TryGuessing@gmail.com");
-        template.sendBody("ibatis:insertAccount?statementType=Insert", account);
+        if (createTestData()) {
+            Account account = new Account();
+            account.setId(123);
+            account.setFirstName("James");
+            account.setLastName("Strachan");
+            account.setEmailAddress("TryGuessing@gmail.com");
+            template.sendBody("ibatis:insertAccount?statementType=Insert", account);
 
-        account = new Account();
-        account.setId(456);
-        account.setFirstName("Claus");
-        account.setLastName("Ibsen");
-        account.setEmailAddress("Noname@gmail.com");
+            account = new Account();
+            account.setId(456);
+            account.setFirstName("Claus");
+            account.setLastName("Ibsen");
+            account.setEmailAddress("Noname@gmail.com");
 
-        template.sendBody("ibatis:insertAccount?statementType=Insert", account);
+            template.sendBody("ibatis:insertAccount?statementType=Insert", account);
+        }
     }
 
     @Override

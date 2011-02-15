@@ -20,10 +20,9 @@ import java.sql.Connection;
 import java.util.List;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
-
 import org.apache.camel.Exchange;
+import org.apache.camel.component.ibatis.IBatisConsumer;
 import org.apache.camel.component.ibatis.IBatisEndpoint;
-import org.apache.camel.component.ibatis.IBatisPollingConsumer;
 
 /**
  * Default strategy for consuming messages for a route
@@ -51,7 +50,7 @@ public class DefaultIBatisProcessingStategy implements IBatisProcessingStrategy 
         }
     }
 
-    public List poll(IBatisPollingConsumer consumer, IBatisEndpoint endpoint) throws Exception {
+    public List poll(IBatisConsumer consumer, IBatisEndpoint endpoint) throws Exception {
         SqlMapClient client = endpoint.getSqlMapClient();
         return client.queryForList(endpoint.getStatement(), null);
     }

@@ -24,8 +24,6 @@ import java.util.Map;
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 import org.apache.camel.component.ResourceBasedComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 /**
@@ -48,7 +46,7 @@ import org.springframework.core.io.Resource;
  *
  * Using Ibatis as a source of data (&lt;from&gt;) you can use this component
  * to treat a database table as a logical queue.
- * Details are available in the {@link IBatisPollingConsumer}
+ * Details are available in the {@link IBatisConsumer}
  *
  * Using Ibatis as a destination for data (&lt;to&gt;) you can use this
  * component to run an insert statement either on a single message or if the
@@ -58,7 +56,7 @@ import org.springframework.core.io.Resource;
  * </pre>
  *
  * @see IBatisProducer
- * @see IBatisPollingConsumer
+ * @see IBatisConsumer
  */
 public class IBatisComponent extends ResourceBasedComponent {
     private static final String DEFAULT_CONFIG_URI = "classpath:SqlMapConfig.xml";

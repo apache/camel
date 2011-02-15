@@ -19,30 +19,30 @@ package org.apache.camel.component.ibatis.strategy;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.ibatis.IBatisConsumer;
 import org.apache.camel.component.ibatis.IBatisEndpoint;
-import org.apache.camel.component.ibatis.IBatisPollingConsumer;
 
 /**
- * Processing strategy for dealing with IBatis.
+ * Processing strategy for dealing with IBatis when consuming.
  */
 public interface IBatisProcessingStrategy {
 
     /**
      * Called when record is being queried.
-     * 
-     * @param consumer The Ibatis Polling Consumer
-     * @param endpoint The Ibatis Endpoint
-     * @return Results of the query as a java.util.List
+     *
+     * @param consumer the consumer
+     * @param endpoint the endpoint
+     * @return Results of the query as a {@link List}
      * @throws Exception can be thrown in case of error
      */
-    List poll(IBatisPollingConsumer consumer, IBatisEndpoint endpoint) throws Exception;
+    List poll(IBatisConsumer consumer, IBatisEndpoint endpoint) throws Exception;
 
     /**
      * Commit callback if there are a statements to be run after processing.
-     * 
-     * @param endpoint The Ibatis Enpoint
-     * @param exchange The exchange after it has been processed
-     * @param data The original data delivered to the route
+     *
+     * @param endpoint          the endpoint
+     * @param exchange          The exchange after it has been processed
+     * @param data              The original data delivered to the route
      * @param consumeStatements Name of the statement(s) to run, will use SQL update. Use comma to provide multiple statements to run.
      * @throws Exception can be thrown in case of error
      */

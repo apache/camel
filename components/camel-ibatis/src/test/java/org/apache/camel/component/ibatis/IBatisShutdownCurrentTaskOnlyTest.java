@@ -103,7 +103,7 @@ public class IBatisShutdownCurrentTaskOnlyTest extends IBatisTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ibatis:selectAllAccounts?statementType=QueryForList").routeId("route1")
+                from("ibatis:selectAllAccounts").routeId("route1")
                      // let it complete only current task so we shutdown faster
                      .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
                      .delay(1000).to("seda:foo");

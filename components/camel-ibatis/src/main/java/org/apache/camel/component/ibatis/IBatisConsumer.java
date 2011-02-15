@@ -34,73 +34,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <pre>
- *  Ibatis Camel Component used to read data from a database.
- * 
- *  Example Configuration :
- *  &lt;route&gt;
- *   &lt;from uri=&quot;ibatis:selectRecords&quot; /&gt;
- *   &lt;to uri=&quot;jms:destinationQueue&quot; /&gt;
- *  &lt;/route&gt;
- * 
- * 
- *  This also can be configured to treat a table as a logical queue by defining
- *  an &quot;onConsume&quot; statement.
- * 
- *  Example Configuration :
- *  &lt;route&gt;
- *   &lt;from uri=&quot;ibatis:selectRecords?consumer.onConsume=updateRecord&quot; /&gt;
- *   &lt;to uri=&quot;jms:destinationQueue&quot; /&gt;
- *  &lt;/route&gt;
- * 
- *  By default, if the select statement contains multiple rows, it will
- *  iterate over the set and deliver each row to the route.  If this is not the
- *  desired behavior then set &quot;useIterator=false&quot;.  This will deliver the entire
- *  set to the route as a list.
- * </pre>
- *
- * <b>URI Options</b>
- * <table border="1">
- * <thead>
- * <th>Name</th>
- * <th>Default Value</th>
- * <th>description</th>
- * </thead>
- * <tbody>
- * <tr>
- * <td>initialDelay</td>
- * <td>1000 ms</td>
- * <td>time before polling starts</td>
- * </tr>
- * <tr>
- * <td>delay</td>
- * <td>500 ms</td>
- * <td>time before the next poll</td>
- * </tr>
- * <tr>
- * <td>timeUnit</td>
- * <td>MILLISECONDS</td>
- * <td>Time unit to use for delay properties (NANOSECONDS, MICROSECONDS,
- * MILLISECONDS, SECONDS)</td>
- * </tr>
- * <tr>
- * <td>useIterator</td>
- * <td>true</td>
- * <td>If true, processes one exchange per row. If false processes one exchange
- * for all rows</td>
- * </tr>
- * <tr>
- * <td>onConsume</td>
- * <td>null</td>
- * <td>statement to run after data has been processed</td>
- * </tr>
- * <tbody> </table>
+ * Consumer to read data from databaase.
  *
  * @see org.apache.camel.component.ibatis.strategy.IBatisProcessingStrategy
  */
-public class IBatisPollingConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
+public class IBatisConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IBatisPollingConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IBatisConsumer.class);
 
     private final class DataHolder {
         private Exchange exchange;
@@ -130,7 +70,7 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
     private int maxMessagesPerPoll;
     
 
-    public IBatisPollingConsumer(IBatisEndpoint endpoint, Processor processor) throws Exception {
+    public IBatisConsumer(IBatisEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
     }
 
