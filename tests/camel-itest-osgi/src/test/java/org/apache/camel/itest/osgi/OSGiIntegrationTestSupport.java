@@ -73,16 +73,14 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     public static UrlReference getCamelKarafFeatureUrl() {
         String springVersion = System.getProperty("springVersion");
         System.out.println("*** The spring version is " + springVersion + " ***");
-        String type = "xml/features"; 
-        if (springVersion != null && springVersion.startsWith("2")) {
-            type = "xml/features-spring2";
-        }
+
+        String type = "xml/features";
         return mavenBundle().groupId("org.apache.camel.karaf").
             artifactId("apache-camel").versionAsInProject().type(type);
     }
     
     public static UrlReference getKarafFeatureUrl() {
-        String karafVersion = "2.1.3";
+        String karafVersion = "2.1.4";
         System.out.println("*** The karaf version is " + karafVersion + " ***");
 
         String type = "xml/features";
