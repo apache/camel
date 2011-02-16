@@ -25,10 +25,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Attachments;
 import org.apache.camel.Body;
@@ -67,13 +67,13 @@ public class BeanInfo {
     private final CamelContext camelContext;
     private final Class<?> type;
     private final ParameterMappingStrategy strategy;
-    private final Map<String, List<MethodInfo>> operations = new ConcurrentHashMap<String, List<MethodInfo>>();
-    private final List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
-    private final List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
-    private final List<MethodInfo> operationsWithHandlerAnnotation = new ArrayList<MethodInfo>();
-    private final Map<Method, MethodInfo> methodMap = new ConcurrentHashMap<Method, MethodInfo>();
-    private MethodInfo defaultMethod;
-    private BeanInfo superBeanInfo;
+    private final MethodInfo defaultMethod;
+    // shared state with details of operations introspected from the bean, created during the constructor
+    private Map<String, List<MethodInfo>> operations = new HashMap<String, List<MethodInfo>>();
+    private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
+    private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
+    private List<MethodInfo> operationsWithHandlerAnnotation = new ArrayList<MethodInfo>();
+    private Map<Method, MethodInfo> methodMap = new HashMap<Method, MethodInfo>();
 
     static {
         // exclude all java.lang.Object methods as we dont want to invoke them
@@ -92,13 +92,24 @@ public class BeanInfo {
         this.strategy = strategy;
 
         introspect(getType());
+
         // if there are only 1 method with 1 operation then select it as a default/fallback method
+        MethodInfo method = null;
         if (operations.size() == 1) {
             List<MethodInfo> methods = operations.values().iterator().next();
             if (methods.size() == 1) {
-                defaultMethod = methods.get(0);
+                method = methods.get(0);
             }
         }
+        defaultMethod = method;
+
+        // mark the operations lists as unmodifiable, as they should not change during runtime
+        // to keep this code thread safe
+        operations = Collections.unmodifiableMap(operations);
+        operationsWithBody = Collections.unmodifiableList(operationsWithBody);
+        operationsWithCustomAnnotation = Collections.unmodifiableList(operationsWithCustomAnnotation);
+        operationsWithHandlerAnnotation = Collections.unmodifiableList(operationsWithHandlerAnnotation);
+        methodMap = Collections.unmodifiableMap(methodMap);
     }
 
     public Class<?> getType() {
@@ -270,10 +281,10 @@ public class BeanInfo {
         MethodInfo answer = methodMap.get(method);
         if (answer == null) {
             // maybe the method is defined on a base class?
-            if (superBeanInfo == null && type != Object.class) {
+            if (type != Object.class) {
                 Class<?> superclass = type.getSuperclass();
                 if (superclass != null && superclass != Object.class) {
-                    superBeanInfo = new BeanInfo(camelContext, superclass, strategy);
+                    BeanInfo superBeanInfo = new BeanInfo(camelContext, superclass, strategy);
                     return superBeanInfo.getMethodInfo(method);
                 }
             }
@@ -359,41 +370,47 @@ public class BeanInfo {
         // or any single method that has a match parameter type that matches the Exchange payload
         // and last then try to select the best among the rest
 
+        // must use defensive copy, to avoid altering the shared lists
+        // and we want to remove unwanted operations from these local lists
+        final List<MethodInfo> localOperationsWithBody = new ArrayList<MethodInfo>(operationsWithBody);
+        final List<MethodInfo> localOperationsWithCustomAnnotation = new ArrayList<MethodInfo>(operationsWithCustomAnnotation);
+        final List<MethodInfo> localOperationsWithHandlerAnnotation = new ArrayList<MethodInfo>(operationsWithHandlerAnnotation);
+
         if (name != null) {
             // filter all lists to only include methods with this name
-            removeNonMatchingMethods(operationsWithHandlerAnnotation, name);
-            removeNonMatchingMethods(operationsWithCustomAnnotation, name);
-            removeNonMatchingMethods(operationsWithBody, name);
+            removeNonMatchingMethods(localOperationsWithHandlerAnnotation, name);
+            removeNonMatchingMethods(localOperationsWithCustomAnnotation, name);
+            removeNonMatchingMethods(localOperationsWithBody, name);
         } else {
             // remove all getter/setter as we do not want to consider these methods
-            removeAllSetterOrGetterMethods(operationsWithHandlerAnnotation);
-            removeAllSetterOrGetterMethods(operationsWithCustomAnnotation);
-            removeAllSetterOrGetterMethods(operationsWithBody);
+            removeAllSetterOrGetterMethods(localOperationsWithHandlerAnnotation);
+            removeAllSetterOrGetterMethods(localOperationsWithCustomAnnotation);
+            removeAllSetterOrGetterMethods(localOperationsWithBody);
         }
 
-        if (operationsWithHandlerAnnotation.size() > 1) {
+        if (localOperationsWithHandlerAnnotation.size() > 1) {
             // if we have more than 1 @Handler then its ambiguous
-            throw new AmbiguousMethodCallException(exchange, operationsWithHandlerAnnotation);
+            throw new AmbiguousMethodCallException(exchange, localOperationsWithHandlerAnnotation);
         }
 
-        if (operationsWithHandlerAnnotation.size() == 1) {
+        if (localOperationsWithHandlerAnnotation.size() == 1) {
             // methods with handler should be preferred
-            return operationsWithHandlerAnnotation.get(0);
-        } else if (operationsWithCustomAnnotation.size() == 1) {
+            return localOperationsWithHandlerAnnotation.get(0);
+        } else if (localOperationsWithCustomAnnotation.size() == 1) {
             // if there is one method with an annotation then use that one
-            return operationsWithCustomAnnotation.get(0);
-        } else if (operationsWithBody.size() == 1) {
+            return localOperationsWithCustomAnnotation.get(0);
+        } else if (localOperationsWithBody.size() == 1) {
             // if there is one method with body then use that one
-            return operationsWithBody.get(0);
+            return localOperationsWithBody.get(0);
         }
 
         Collection<MethodInfo> possibleOperations = new ArrayList<MethodInfo>();
-        possibleOperations.addAll(operationsWithBody);
-        possibleOperations.addAll(operationsWithCustomAnnotation);
+        possibleOperations.addAll(localOperationsWithBody);
+        possibleOperations.addAll(localOperationsWithCustomAnnotation);
 
         if (!possibleOperations.isEmpty()) {
              // multiple possible operations so find the best suited if possible
-            MethodInfo answer = chooseMethodWithMatchingBody(exchange, possibleOperations);
+            MethodInfo answer = chooseMethodWithMatchingBody(exchange, possibleOperations, localOperationsWithCustomAnnotation);
             if (answer == null) {
                 throw new AmbiguousMethodCallException(exchange, possibleOperations);
             } else {
@@ -405,7 +422,8 @@ public class BeanInfo {
         return null;
     }
     
-    private MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList)
+    private MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList,
+                                                    List<MethodInfo> operationsWithCustomAnnotation)
         throws AmbiguousMethodCallException {
         // lets see if we can find a method who's body param type matches the message body
         Message in = exchange.getIn();
@@ -442,7 +460,7 @@ public class BeanInfo {
             }
 
             // find best suited method to use
-            return chooseBestPossibleMethodInfo(exchange, operationList, body, possibles, possiblesWithException);
+            return chooseBestPossibleMethodInfo(exchange, operationList, body, possibles, possiblesWithException, operationsWithCustomAnnotation);
         }
 
         // no match so return null
@@ -450,7 +468,8 @@ public class BeanInfo {
     }
 
     private MethodInfo chooseBestPossibleMethodInfo(Exchange exchange, Collection<MethodInfo> operationList, Object body,
-                                                    List<MethodInfo> possibles, List<MethodInfo> possiblesWithException)
+                                                    List<MethodInfo> possibles, List<MethodInfo> possiblesWithException,
+                                                    List<MethodInfo> possibleWithCustomAnnotation)
         throws AmbiguousMethodCallException {
 
         Exception exception = ExpressionBuilder.exchangeExceptionExpression().evaluate(exchange, Exception.class);
@@ -500,8 +519,8 @@ public class BeanInfo {
             }
         } else {
             // if we only have a single method with custom annotations, lets use that one
-            if (operationsWithCustomAnnotation.size() == 1) {
-                MethodInfo answer = operationsWithCustomAnnotation.get(0);
+            if (possibleWithCustomAnnotation.size() == 1) {
+                MethodInfo answer = possibleWithCustomAnnotation.get(0);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("There are only one method with annotations so we choose it: " + answer);
                 }

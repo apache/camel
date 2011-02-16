@@ -24,8 +24,8 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.LRUCache;
 
 /**
- * Represents a cache of MethodInfo objects to avoid the expense of introspection for each invocation of a method
- * via a proxy
+ * Represents a cache of {@link MethodInfo} objects to avoid the expense of introspection for each
+ * invocation of a method via a proxy,
  *
  * @version $Revision$
  */
@@ -57,7 +57,7 @@ public class MethodInfoCache {
         return answer;
     }
 
-    protected  MethodInfo createMethodInfo(Method method) {
+    protected MethodInfo createMethodInfo(Method method) {
         Class<?> declaringClass = method.getDeclaringClass();
         BeanInfo info = getBeanInfo(declaringClass);
         return info.getMethodInfo(method);
