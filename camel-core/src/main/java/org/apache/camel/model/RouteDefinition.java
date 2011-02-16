@@ -591,7 +591,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Sets the error handler if one is not already set
      */
-    protected void setErrorHandlerBuilderIfNull(ErrorHandlerBuilder errorHandlerBuilder) {
+    public void setErrorHandlerBuilderIfNull(ErrorHandlerBuilder errorHandlerBuilder) {
         if (this.errorHandlerBuilder == null) {
             setErrorHandlerBuilder(errorHandlerBuilder);
         }

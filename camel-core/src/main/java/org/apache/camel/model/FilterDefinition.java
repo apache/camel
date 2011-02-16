@@ -68,7 +68,7 @@ public class FilterDefinition extends ExpressionNode {
      * Set the expression that this FilterType will use
      * @return the builder
      */
-    public ExpressionClause<FilterDefinition> expression() {
+    public ExpressionClause<? extends FilterDefinition> expression() {
         return ExpressionClause.createAndSetExpression(this);
     }
 }

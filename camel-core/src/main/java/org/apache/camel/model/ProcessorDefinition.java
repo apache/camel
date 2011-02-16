@@ -1103,7 +1103,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the clause used to create the filter expression
      */
-    public ExpressionClause<FilterDefinition> filter() {
+    public ExpressionClause<? extends FilterDefinition> filter() {
         FilterDefinition filter = new FilterDefinition();
         addOutput(filter);
         return ExpressionClause.createAndSetExpression(filter);
