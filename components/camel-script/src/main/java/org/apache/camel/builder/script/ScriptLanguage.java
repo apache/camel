@@ -40,6 +40,6 @@ public class ScriptLanguage implements Language, IsSingleton {
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 }

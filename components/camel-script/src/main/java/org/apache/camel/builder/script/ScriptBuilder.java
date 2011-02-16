@@ -489,7 +489,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             }
         } catch (ScriptException e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Script compile failed: " + e, e);
+                LOG.debug("Script compile failed: " + e.getMessage(), e);
             }
             throw createScriptCompileException(e);
         } catch (IOException e) {
@@ -508,7 +508,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             return result;
         } catch (ScriptException e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Script evaluation failed: " + e, e);
+                LOG.debug("Script evaluation failed: " + e.getMessage(), e);
             }
             throw createScriptEvaluationException(e.getCause());
         } catch (IOException e) {
@@ -518,7 +518,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
 
     protected Object runScript() throws ScriptException, IOException {
         checkInitialised();
-        Object result = null;
+        Object result;
         if (compiledScript != null) {
             result = compiledScript.eval();
         } else {
