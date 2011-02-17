@@ -25,7 +25,7 @@ package org.apache.camel.component.mail;
  * is thus only needed to work around mail providers having bugs or when you a new mime type is unknown by the
  * mail provider allowing you to determine it.
  *
- * @version $Revision$
+ * @version 
  */
 public interface ContentTypeResolver {
 

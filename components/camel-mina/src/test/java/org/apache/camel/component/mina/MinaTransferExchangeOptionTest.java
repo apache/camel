@@ -32,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Unit test for the <tt>transferExchange=true</tt> option.
  *
- * @version $Revision$
+ * @version 
  */
 public class MinaTransferExchangeOptionTest extends ContextTestSupport {
 

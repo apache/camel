@@ -28,7 +28,7 @@ import org.junit.Test;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class RestletPostContentTest extends RestletTestSupport {
 

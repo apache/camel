@@ -23,7 +23,7 @@ import javax.persistence.MappedSuperclass;
 /**
  * A base class for persistent entities
  *
- * @version $Revision$
+ * @version 
  */
 @MappedSuperclass
 public class EntitySupport {

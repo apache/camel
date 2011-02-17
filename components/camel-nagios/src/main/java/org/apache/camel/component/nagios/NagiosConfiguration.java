@@ -23,7 +23,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class NagiosConfiguration implements Cloneable {
 

@@ -38,7 +38,7 @@ import org.jsmpp.util.TimeFormatter;
  * A Strategy used to convert between a Camel {@link Exchange} and
  * {@link SmppMessage} to and from a SMPP {@link Command}
  * 
- * @version $Revision$
+ * @version 
  * @author muellerc
  */
 public class SmppBinding {

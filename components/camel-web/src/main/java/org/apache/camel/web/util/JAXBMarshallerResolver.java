@@ -25,7 +25,7 @@ import javax.xml.bind.Marshaller;
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 /**
- * @version $Revision: 1.1 $
+ * @version 
  */
 @Provider
 public class JAXBMarshallerResolver implements ContextResolver<Marshaller> {

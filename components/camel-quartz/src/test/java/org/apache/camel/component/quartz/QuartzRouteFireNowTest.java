@@ -19,7 +19,7 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class QuartzRouteFireNowTest extends QuartzRouteTest {
     

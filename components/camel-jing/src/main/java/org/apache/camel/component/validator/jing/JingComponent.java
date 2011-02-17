@@ -27,7 +27,7 @@ import org.springframework.core.io.Resource;
  * A component for validating XML payloads using the
  * <a href="http://www.thaiopensource.com/relaxng/jing.html">Jing library</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class JingComponent extends ResourceBasedComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

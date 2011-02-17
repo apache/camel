@@ -25,7 +25,7 @@ import org.junit.Test;
 /**
  * Unit test for resolving reference parameters.
  *
- * @version $Revision: $
+ * @version 
  */
 public class HttpReferenceParameterTest extends CamelTestSupport {
 

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.Consumer Consumer} implementation for Apache MINA.
  *
- * @version $Revision$
+ * @version 
  */
 public class MinaConsumer extends DefaultConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(MinaConsumer.class);

@@ -20,7 +20,7 @@ import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 import org.apache.camel.Converter;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Converter
 public final class CacheConverter {

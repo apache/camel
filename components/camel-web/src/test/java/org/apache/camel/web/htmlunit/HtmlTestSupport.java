@@ -28,7 +28,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.lift.HamcrestWebDriverTestCase;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public abstract class HtmlTestSupport extends HamcrestWebDriverTestCase {
     protected WebDriver webDriver;

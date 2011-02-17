@@ -51,7 +51,7 @@ import org.springframework.core.io.Resource;
  * href="http://www.thaiopensource.com/relaxng/jing.html">Jing</a> library to
  * validate XML against RelaxNG
  * 
- * @version $Revision$
+ * @version 
  */
 public class JingValidator implements Processor {
     //private static final transient Logger LOG = LoggerFactory.getLogger(JingValidator.class);

@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Creates an XQuery builder
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class XQueryBuilder implements Expression, Predicate, NamespaceAware, Processor {
     private static final transient Logger LOG = LoggerFactory.getLogger(XQueryBuilder.class);

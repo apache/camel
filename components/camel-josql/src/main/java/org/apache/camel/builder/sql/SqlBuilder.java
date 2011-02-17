@@ -37,7 +37,7 @@ import org.josql.QueryParseException;
  * A builder of SQL {@link org.apache.camel.Expression} and
  * {@link org.apache.camel.Predicate} implementations
  * 
- * @version $Revision$
+ * @version 
  */
 public class SqlBuilder implements Expression, Predicate {
 

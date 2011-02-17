@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Component for JavaMail.
  *
- * @version $Revision:520964 $
+ * @version 
  */
 public class MailComponent extends DefaultComponent {
     private MailConfiguration configuration;

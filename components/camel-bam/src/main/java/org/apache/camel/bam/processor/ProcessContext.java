@@ -23,7 +23,7 @@ import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.bam.rules.ProcessRules;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ProcessContext {
     private Exchange exchange;

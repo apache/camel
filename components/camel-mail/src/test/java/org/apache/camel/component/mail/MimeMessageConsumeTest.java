@@ -43,7 +43,7 @@ import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MimeMessageConsumeTest extends CamelTestSupport {
     private String body = "hello world!";

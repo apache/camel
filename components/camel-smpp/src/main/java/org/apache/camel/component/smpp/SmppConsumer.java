@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An implementation of @{link Consumer} which use the SMPP protocol
  * 
- * @version $Revision$
+ * @version 
  * @author muellerc
  */
 public class SmppConsumer extends DefaultConsumer {

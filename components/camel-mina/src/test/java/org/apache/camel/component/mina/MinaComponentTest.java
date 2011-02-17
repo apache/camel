@@ -22,7 +22,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 /**
  * For testing various minor holes that hasn't been covered by other unit tests.
  *
- * @version $Revision$
+ * @version 
  */
 public class MinaComponentTest extends ContextTestSupport {
 

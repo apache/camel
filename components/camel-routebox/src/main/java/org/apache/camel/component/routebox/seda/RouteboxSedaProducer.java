@@ -31,7 +31,7 @@ import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * @version $Revision: 955924 $
+ * @version 
  */
 public class RouteboxSedaProducer extends DefaultAsyncProducer implements RouteboxProducer {
     protected final Collection<Exchange> queue;

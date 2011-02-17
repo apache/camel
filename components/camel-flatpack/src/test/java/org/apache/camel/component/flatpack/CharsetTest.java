@@ -36,7 +36,7 @@ import static org.junit.Assert.assertNotNull;
 
 
 /**
- * @version $Revision: 834787 $
+ * @version 
  */
 @ContextConfiguration
 public class CharsetTest extends AbstractJUnit4SpringContextTests {

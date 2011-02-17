@@ -36,7 +36,7 @@ import org.apache.camel.web.model.Camel;
  * The root Camel resource from which all other resources can be navigated such as for <code>endpoints</code>
  * or <code>routes</code>
  *
- * @version $Revision$
+ * @version 
  */
 @Path("/")
 @ImplicitProduces(Constants.HTML_MIME_TYPES)

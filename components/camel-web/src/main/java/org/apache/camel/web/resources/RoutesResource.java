@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * href="http://camel.apache.org/enterprise-integration-patterns.html"
  * >Enterprise Integration Patterns</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class RoutesResource extends CamelChildResourceSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(RoutesResource.class);

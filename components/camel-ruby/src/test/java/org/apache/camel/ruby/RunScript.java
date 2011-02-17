@@ -19,7 +19,7 @@ package org.apache.camel.ruby;
 import org.jruby.Main;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public final class RunScript {
     private RunScript() {

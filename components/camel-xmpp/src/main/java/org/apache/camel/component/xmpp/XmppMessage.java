@@ -25,7 +25,7 @@ import org.jivesoftware.smack.packet.Message;
 /**
  * Represents a {@link org.apache.camel.Message} for working with XMPP
  *
- * @version $Revision:520964 $
+ * @version 
  */
 public class XmppMessage extends DefaultMessage {
     private Message xmppMessage;

@@ -26,7 +26,7 @@ import javax.ws.rs.PathParam;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ConvertersResource extends CamelChildResourceSupport {
     public ConvertersResource(CamelContextResource contextResource) {

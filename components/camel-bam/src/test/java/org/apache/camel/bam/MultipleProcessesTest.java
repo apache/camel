@@ -22,7 +22,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MultipleProcessesTest extends BamRouteTest {
     

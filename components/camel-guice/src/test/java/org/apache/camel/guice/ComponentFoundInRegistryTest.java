@@ -39,7 +39,7 @@ import static org.hamcrest.Matchers.is;
 /**
  * Lets use a custom CamelModule to perform explicit binding of route builders
  *
- * @version $Revision$
+ * @version 
  */
 public class ComponentFoundInRegistryTest extends Assert {
 

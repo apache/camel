@@ -52,7 +52,7 @@ import org.springframework.core.io.Resource;
  * </ul>
  * <b>Notice:</b> The Flatpack library does currently not support header and trailers for the marshal operation.
  *
- * @version $Revision$
+ * @version 
  */
 public class FlatpackDataFormat implements DataFormat {
     private static final transient Logger LOG = LoggerFactory.getLogger(FlatpackDataFormat.class);

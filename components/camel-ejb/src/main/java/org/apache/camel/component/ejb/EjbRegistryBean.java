@@ -24,7 +24,7 @@ import org.apache.camel.spi.Registry;
  * An implementation of a {@link org.apache.camel.component.bean.BeanHolder} which will look up
  * an EJB bean from the JNDI {@link javax.naming.Context}
  *
- * @version $Revision$
+ * @version 
  */
 public class EjbRegistryBean extends RegistryBean {
 

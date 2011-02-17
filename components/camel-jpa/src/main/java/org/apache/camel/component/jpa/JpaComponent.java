@@ -29,7 +29,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * A JPA Component
  *
- * @version $Revision$
+ * @version 
  */
 public class JpaComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(JpaComponent.class);

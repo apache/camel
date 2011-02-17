@@ -42,7 +42,7 @@ import org.guiceyfruit.jsr250.Jsr250Module;
  * Otherwise if you wish to list all of the classes of the {@link org.apache.camel.RoutesBuilder} implementations then use the
  * {@link org.apache.camel.guice.CamelModuleWithRouteTypes} module instead.
  *
- * @version $Revision$
+ * @version 
  */
 public class CamelModule extends Jsr250Module {
     

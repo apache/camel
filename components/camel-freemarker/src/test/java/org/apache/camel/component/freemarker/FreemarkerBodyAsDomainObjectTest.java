@@ -24,7 +24,7 @@ import org.junit.Test;
 /**
  * Unit test with the body as a Domain object.
  *
- * @version $Revision$
+ * @version 
  */
 public class FreemarkerBodyAsDomainObjectTest extends CamelTestSupport {
 

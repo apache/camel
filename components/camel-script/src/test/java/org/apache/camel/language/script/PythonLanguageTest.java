@@ -21,7 +21,7 @@ import org.apache.camel.ScriptTestHelper;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class PythonLanguageTest extends LanguageTestSupport {
 

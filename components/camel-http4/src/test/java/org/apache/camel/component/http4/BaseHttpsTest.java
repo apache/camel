@@ -24,7 +24,7 @@ import org.apache.http.HttpStatus;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class BaseHttpsTest extends HttpsServerTestSupport {
 

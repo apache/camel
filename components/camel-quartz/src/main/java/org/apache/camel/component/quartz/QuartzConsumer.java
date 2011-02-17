@@ -20,7 +20,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class QuartzConsumer extends DefaultConsumer {
 

@@ -28,7 +28,7 @@ import org.apache.camel.language.LanguageAnnotation;
  * An annotation for injection of JavaScript expressions
  *  into method parameters, fields or properties
  *
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

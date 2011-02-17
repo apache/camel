@@ -33,7 +33,7 @@ import org.junit.Before;
  * The setUp method starts the server before the camel context is started and
  * the tearDown method stops the server after the camel context is stopped.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class HttpServerTestSupport extends CamelTestSupport {
 

@@ -22,7 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class StringTemplateComponent extends DefaultComponent {
 

@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * A single Camel Route which is used to implement one or more
  * <a href="http://camel.apache.org/enterprise-integration-patterns.html">Enterprise Integration Patterns</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class RouteResource extends CamelChildResourceSupport {
     public static final String LANGUAGE_XML = "Xml";

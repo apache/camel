@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} instances in the
  *  {@link org.osgi.service.blueprint.container.BlueprintContainer}.
  *
- * @version $Revision$
+ * @version 
  */
 public class ContextScanRouteBuilderFinder {
     private static final transient Logger LOG = LoggerFactory.getLogger(ContextScanRouteBuilderFinder.class);

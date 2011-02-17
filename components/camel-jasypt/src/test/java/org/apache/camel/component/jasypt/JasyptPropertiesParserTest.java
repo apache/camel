@@ -19,7 +19,7 @@ package org.apache.camel.component.jasypt;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JasyptPropertiesParserTest extends TestCase {
 

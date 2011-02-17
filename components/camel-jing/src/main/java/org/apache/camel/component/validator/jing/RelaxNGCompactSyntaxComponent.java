@@ -23,7 +23,7 @@ import java.util.Map;
  * <a href="http://www.oasis-open.org/committees/relax-ng/compact-20021121.html">RelaxNG Compact Syntax</a> using the
  * <a href="http://www.thaiopensource.com/relaxng/jing.html">Jing library</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class RelaxNGCompactSyntaxComponent extends JingComponent {
     protected void configureValidator(JingValidator validator, String uri, String remaining, Map<String, Object> parameters) throws Exception {

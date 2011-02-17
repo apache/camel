@@ -22,7 +22,7 @@ import org.apache.camel.component.spring.integration.adapter.CamelSourceAdapter;
 /**
  * Parser for the &lt;camelSource/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 public class CamelSourceAdapterParser extends AbstractCamelContextBeanDefinitionParaser {
 

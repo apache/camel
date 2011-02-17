@@ -33,7 +33,7 @@ import static org.junit.Assert.assertSame;
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConsumer</code>
  * 
- * @version $Revision$
+ * @version 
  * @author muellerc
  */
 public class SmppConsumerTest {

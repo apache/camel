@@ -35,7 +35,7 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 
 /**
  * As we have the JAXB FallbackTypeConverter, so we don't need to register this converter
- * @version $Revision$
+ * @version 
  */
 public final class JaxbConverter {
     private XmlConverter xmlConverter = new XmlConverter();

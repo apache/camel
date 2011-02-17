@@ -22,7 +22,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ScriptLanguage implements Language, IsSingleton {
     private final String language;

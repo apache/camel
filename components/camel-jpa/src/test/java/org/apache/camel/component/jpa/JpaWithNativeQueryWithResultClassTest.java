@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.examples.MultiSteps;
 
 /**
- * @version $Revision: $
+ * @version 
  */
 public class JpaWithNativeQueryWithResultClassTest extends JpaWithNamedQueryTest {
     

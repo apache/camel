@@ -17,7 +17,7 @@
 package org.apache.camel.component.ejb;
 
 /**
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: e1
 public interface GreaterLocal {

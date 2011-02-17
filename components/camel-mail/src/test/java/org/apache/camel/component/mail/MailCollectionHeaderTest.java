@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MailCollectionHeaderTest extends CamelTestSupport {
 

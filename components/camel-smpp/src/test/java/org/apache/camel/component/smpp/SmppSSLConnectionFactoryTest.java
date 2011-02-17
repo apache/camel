@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppSSLConnectionFactory</code>
  * 
- * @version $Revision: $
+ * @version 
  * @author cmueller
  */
 public class SmppSSLConnectionFactoryTest {

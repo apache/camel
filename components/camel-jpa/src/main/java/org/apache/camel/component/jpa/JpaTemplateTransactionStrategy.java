@@ -31,7 +31,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * Delegates the strategy to the {@link JpaTemplate} and {@link TransactionTemplate} for transaction handling
  *
- * @version $Revision$
+ * @version 
  */
 public class JpaTemplateTransactionStrategy implements TransactionStrategy {
     private final JpaTemplate jpaTemplate;

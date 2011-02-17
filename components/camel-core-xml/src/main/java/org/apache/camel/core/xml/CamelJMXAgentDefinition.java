@@ -27,7 +27,7 @@ import org.apache.camel.model.IdentifiedType;
 /**
  * The JAXB type class for the configuration of jmxAgent
  *
- * @version $Revision: 911871 $
+ * @version 
  */
 @XmlRootElement(name = "jmxAgent")
 @XmlAccessorType(XmlAccessType.FIELD)

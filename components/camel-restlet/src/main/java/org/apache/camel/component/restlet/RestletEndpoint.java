@@ -31,7 +31,7 @@ import org.restlet.data.Method;
 /**
  * Represents a <a href="http://www.restlet.org/"> endpoint</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 

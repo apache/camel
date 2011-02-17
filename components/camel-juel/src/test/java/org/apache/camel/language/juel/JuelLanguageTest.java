@@ -19,7 +19,7 @@ package org.apache.camel.language.juel;
 import org.apache.camel.LanguageTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JuelLanguageTest extends LanguageTestSupport {
     public void testElExpressions() throws Exception {

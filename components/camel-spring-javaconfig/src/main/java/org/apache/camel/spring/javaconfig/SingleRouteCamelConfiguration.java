@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Bean;
  * <a href="http://www.springsource.org/javaconfig">Spring JavaConfig</a>
  * configurations to configure a CamelContext with a single {@link RouteBuilder} instance
 
- * @version $Revision$
+ * @version 
  */
 public abstract class SingleRouteCamelConfiguration extends CamelConfiguration {
 

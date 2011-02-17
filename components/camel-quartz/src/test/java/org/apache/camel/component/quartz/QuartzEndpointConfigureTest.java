@@ -24,7 +24,7 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class QuartzEndpointConfigureTest extends CamelTestSupport {
 

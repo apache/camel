@@ -38,7 +38,7 @@ import org.apache.http.protocol.HttpRequestHandler;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HttpConcurrentTest extends BaseHttpTest {
 

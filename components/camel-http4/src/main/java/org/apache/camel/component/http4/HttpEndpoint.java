@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents a <a href="http://camel.apache.org/http.html">HTTP endpoint</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilterStrategyAware {
 

@@ -41,7 +41,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * @version $Revision: 938311 $
+ * @version 
  */
 public class CsvRouteCharsetTest extends CamelTestSupport {
     

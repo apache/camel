@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MinaVmTest extends ContextTestSupport {
     protected String uri = "mina:vm://localhost:8080?sync=false&minaLogger=true";

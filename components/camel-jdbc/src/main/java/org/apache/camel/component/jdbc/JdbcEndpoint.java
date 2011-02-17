@@ -26,7 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
- * @version $Revision:520964 $
+ * @version 
  */
 public class JdbcEndpoint extends DefaultEndpoint {
     private int readSize;

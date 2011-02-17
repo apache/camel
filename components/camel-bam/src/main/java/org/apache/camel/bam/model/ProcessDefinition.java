@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Entity
 @Table(name = "CAMEL_PROCESSDEFINITION")

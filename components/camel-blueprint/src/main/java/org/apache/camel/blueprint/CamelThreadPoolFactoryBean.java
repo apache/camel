@@ -28,7 +28,7 @@ import org.osgi.service.blueprint.container.BlueprintContainer;
 /**
  * A factory which instantiates {@link java.util.concurrent.ExecutorService} objects
  *
- * @version $Revision: 925208 $
+ * @version 
  */
 @XmlRootElement(name = "threadPool")
 @XmlAccessorType(XmlAccessType.FIELD)

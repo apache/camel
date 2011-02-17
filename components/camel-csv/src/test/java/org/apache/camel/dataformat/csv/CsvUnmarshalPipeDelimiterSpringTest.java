@@ -26,7 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Spring based integration test for the <code>CsvDataFormat</code>
- * @version $Revision: $
+ * @version 
  * @author cmueller
  */
 public class CsvUnmarshalPipeDelimiterSpringTest extends CamelSpringTestSupport {

@@ -24,7 +24,7 @@ import org.apache.camel.model.IdentifiedType;
 /**
  * The &lt;export&gt; tag element.
  *
- * @version $Revision: 938746 $
+ * @version 
 */
 @XmlRootElement(name = "export")
 @SuppressWarnings("unused")

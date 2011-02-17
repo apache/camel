@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
  *
- * @version $Revision: $
+ * @version 
  */
 public class SqsEndpoint extends ScheduledPollEndpoint {
     

@@ -35,7 +35,7 @@ import static org.openqa.selenium.lift.Matchers.atLeast;
 import static org.openqa.selenium.lift.Matchers.text;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CreateEndpointTest extends HtmlTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(CreateEndpointTest.class);

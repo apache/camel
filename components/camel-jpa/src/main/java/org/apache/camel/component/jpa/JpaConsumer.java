@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaCallback;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
 

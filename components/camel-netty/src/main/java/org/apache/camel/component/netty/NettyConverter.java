@@ -31,7 +31,7 @@ import org.jboss.netty.buffer.DynamicChannelBuffer;
 /**
  * A set of converter methods for working with Netty types
  *
- * @version $Revision$
+ * @version 
  */
 @Converter
 public final class NettyConverter {

@@ -33,7 +33,7 @@ import org.apache.camel.model.RouteDefinition;
  * Represents the status of a single single Camel Route which is used to implement one or more
  * <a href="http://camel.apache.org/enterprise-integration-patterns.html">Enterprise Integration Paterns</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class RouteStatusResource {
     private RouteResource routeResource;

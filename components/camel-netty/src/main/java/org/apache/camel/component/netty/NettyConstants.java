@@ -19,7 +19,7 @@ package org.apache.camel.component.netty;
 /**
  * Netty constants
  *
- * @version $Revision$
+ * @version 
  */
 public final class NettyConstants {
 

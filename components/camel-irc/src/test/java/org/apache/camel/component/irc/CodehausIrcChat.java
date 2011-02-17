@@ -26,7 +26,7 @@ import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public final class CodehausIrcChat {
 

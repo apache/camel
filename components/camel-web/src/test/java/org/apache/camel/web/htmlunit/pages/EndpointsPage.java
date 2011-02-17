@@ -22,7 +22,7 @@ import static org.openqa.selenium.By.name;
 import static org.openqa.selenium.By.xpath;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class EndpointsPage {
     private final WebDriver webDriver;

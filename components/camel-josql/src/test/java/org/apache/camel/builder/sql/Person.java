@@ -17,7 +17,7 @@
 package org.apache.camel.builder.sql;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class Person {
     private String name;

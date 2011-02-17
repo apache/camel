@@ -36,7 +36,7 @@ import org.apache.camel.bam.rules.ActivityRules;
 /**
  * Represents a single business process
  * 
- * @version $Revision$
+ * @version 
  */
 @Entity
 @Table(name = "CAMEL_PROCESSINSTANCE")

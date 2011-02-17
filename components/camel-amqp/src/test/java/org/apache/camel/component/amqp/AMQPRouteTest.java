@@ -31,7 +31,7 @@ import org.junit.Test;
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Ignore("AMQP testing is a bit unstable")
 public class AMQPRouteTest extends CamelTestSupport {

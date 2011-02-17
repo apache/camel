@@ -41,7 +41,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JpaProducerConcurrentTest extends CamelTestSupport {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";

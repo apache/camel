@@ -17,7 +17,7 @@
 package org.apache.camel.language.jxpath;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringJXPathFilterNotMatchingTest extends SpringJXPathFilterTest {
     

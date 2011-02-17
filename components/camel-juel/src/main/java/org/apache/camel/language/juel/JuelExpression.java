@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * The <a href="http://camel.apache.org/el.html">EL Language from JSP and JSF</a>
  * using the <a href="http://camel.apache.org/juel.html">JUEL library</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class JuelExpression extends ExpressionSupport {
     public static final String DEFAULT_EXPRESSION_FACTORY_IMPL_CLASS = "de.odysseus.el.ExpressionFactoryImpl";

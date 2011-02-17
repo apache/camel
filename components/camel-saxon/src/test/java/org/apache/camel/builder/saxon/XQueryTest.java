@@ -28,7 +28,7 @@ import static org.apache.camel.component.xquery.XQueryBuilder.xquery;
 import static org.apache.camel.util.ObjectHelper.className;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XQueryTest extends Assert {
     @Test

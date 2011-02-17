@@ -33,7 +33,7 @@ import org.apache.camel.component.http4.helper.GZIPHelper;
  * Some converter methods making it easy to convert the body of a message to servlet types or to switch between
  * the underlying {@link ServletInputStream} or {@link BufferedReader} payloads etc.
  *
- * @version $Revision$
+ * @version 
  */
 @Converter
 public final class HttpConverter {

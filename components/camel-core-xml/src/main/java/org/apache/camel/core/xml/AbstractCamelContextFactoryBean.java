@@ -90,7 +90,7 @@ import org.slf4j.LoggerFactory;
  * or found by searching the classpath for Java classes which extend
  * {@link org.apache.camel.builder.RouteBuilder}.
  *
- * @version $Revision: 938746 $
+ * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> extends IdentifiedType implements RouteContainer {

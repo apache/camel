@@ -29,7 +29,7 @@ import org.apache.camel.language.LanguageAnnotation;
  * expression into a method parameter when using
  * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
  *
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

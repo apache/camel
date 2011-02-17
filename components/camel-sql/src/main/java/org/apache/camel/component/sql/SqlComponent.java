@@ -27,7 +27,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * @version $Revision:520964 $
+ * @version 
  */
 public class SqlComponent extends DefaultComponent {
     private DataSource dataSource;

@@ -26,7 +26,7 @@ import org.jsmpp.bean.TypeOfNumber;
 /**
  * Contains the SMPP component configuration properties</a>
  * 
- * @version $Revision$
+ * @version 
  * @author muellerc
  */
 public class SmppConfiguration implements Cloneable {

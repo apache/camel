@@ -22,7 +22,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SoapPayloadBean {
 

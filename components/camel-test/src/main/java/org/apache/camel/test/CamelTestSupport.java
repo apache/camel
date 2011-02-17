@@ -50,7 +50,7 @@ import org.apache.camel.spring.CamelBeanPostProcessor;
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes
  * along with a {@link org.apache.camel.ProducerTemplate} for use in the test case
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class CamelTestSupport extends TestSupport {
     

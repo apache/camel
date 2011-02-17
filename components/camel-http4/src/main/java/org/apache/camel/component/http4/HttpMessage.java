@@ -26,7 +26,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HttpMessage extends DefaultMessage {
 

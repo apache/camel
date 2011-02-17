@@ -29,7 +29,7 @@ import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.language.NamespacePrefix;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 

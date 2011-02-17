@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JavaSpaceEndpoint extends DefaultEndpoint {
 

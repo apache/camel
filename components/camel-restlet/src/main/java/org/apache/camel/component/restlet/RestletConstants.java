@@ -19,7 +19,7 @@ package org.apache.camel.component.restlet;
 /**
  * Constants for Restlet component
  * 
- * @version $Revision$
+ * @version 
  */
 public final class RestletConstants {
     

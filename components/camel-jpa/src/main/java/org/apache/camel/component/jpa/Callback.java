@@ -17,7 +17,7 @@
 package org.apache.camel.component.jpa;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public interface Callback<R, P> {
     R callback(P parameter);

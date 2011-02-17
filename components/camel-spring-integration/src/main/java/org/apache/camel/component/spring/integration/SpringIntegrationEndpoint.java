@@ -27,7 +27,7 @@ import org.springframework.integration.MessageChannel;
 /**
  * Defines the <a href="http://camel.apache.org/springIntergration.html">Spring Integration Endpoint</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class SpringIntegrationEndpoint extends DefaultEndpoint {
     private String inputChannel;

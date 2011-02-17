@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * with the method annotated with {@link @Consumed} being invoked when the Camel consumer
  * has processed the entity bean
  *
- * @version $Revision$
+ * @version 
  */
 @Entity
 @NamedQuery(name = "step1", query = "select x from MultiSteps x where x.step = 1")

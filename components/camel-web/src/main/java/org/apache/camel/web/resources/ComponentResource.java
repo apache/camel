@@ -17,7 +17,7 @@
 package org.apache.camel.web.resources;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ComponentResource extends CamelChildResourceSupport {
     private String id;

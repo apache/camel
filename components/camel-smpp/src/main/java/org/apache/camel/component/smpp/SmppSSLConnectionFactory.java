@@ -29,7 +29,7 @@ import org.jsmpp.session.connection.socket.SocketConnection;
 /**
  * A Jsmpp ConnectionFactory that creates SSL Sockets.
  * 
- * @version $Revision$
+ * @version 
  */
 public final class SmppSSLConnectionFactory implements ConnectionFactory {
 

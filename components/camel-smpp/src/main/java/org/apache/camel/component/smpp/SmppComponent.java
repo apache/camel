@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
- * @version $Revision$
+ * @version 
  * @author muellerc
  */
 public class SmppComponent extends DefaultComponent {

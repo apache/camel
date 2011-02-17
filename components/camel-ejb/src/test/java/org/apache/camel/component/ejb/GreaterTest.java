@@ -23,7 +23,7 @@ import javax.naming.InitialContext;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class GreaterTest extends TestCase {
 

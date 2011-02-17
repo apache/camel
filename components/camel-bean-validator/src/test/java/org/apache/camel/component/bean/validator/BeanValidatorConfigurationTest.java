@@ -36,7 +36,7 @@ import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpo
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanValidatorConfigurationTest extends CamelTestSupport {
     

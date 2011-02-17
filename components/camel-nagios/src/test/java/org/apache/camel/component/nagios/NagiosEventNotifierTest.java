@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class NagiosEventNotifierTest extends CamelTestSupport {
     protected boolean canRun;

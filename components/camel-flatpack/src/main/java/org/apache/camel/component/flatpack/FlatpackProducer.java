@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
- * @version $Revision$
+ * @version 
  */
 class FlatpackProducer extends DefaultProducer {
     private FixedLengthEndpoint endpoint;

@@ -23,7 +23,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XmlBeansConverterTest extends CamelTestSupport {
     @Test

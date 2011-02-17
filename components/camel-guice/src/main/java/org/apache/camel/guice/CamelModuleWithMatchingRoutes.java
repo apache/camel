@@ -38,7 +38,7 @@ import org.guiceyfruit.Injectors;
  * }
  * </pre></code>
  *
- * @version $Revision$
+ * @version 
  */
 public class CamelModuleWithMatchingRoutes extends CamelModule {
     private final Matcher<Class> matcher;

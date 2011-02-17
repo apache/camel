@@ -19,7 +19,7 @@ package org.apache.camel.component.mina;
 /**
  * Unit test for the <tt>transferExchange=true</tt> option.
  *
- * @version $Revision$
+ * @version 
  */
 public class MinaVMTransferExchangeOptionTest extends MinaTransferExchangeOptionTest {
 

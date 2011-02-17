@@ -30,7 +30,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyBatisComponent extends DefaultComponent {
 

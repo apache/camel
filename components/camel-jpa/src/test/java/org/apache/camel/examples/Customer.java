@@ -23,7 +23,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 /**
- * @version $Revision: $
+ * @version 
  */
 @Entity
 public class Customer {

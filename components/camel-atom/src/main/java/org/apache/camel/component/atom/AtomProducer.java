@@ -22,7 +22,7 @@ import org.apache.camel.impl.DefaultProducer;
 /**
  * AtomProducer is currently not implemented
  *
- * @version $Revision$
+ * @version 
  */
 public class AtomProducer extends DefaultProducer {
 

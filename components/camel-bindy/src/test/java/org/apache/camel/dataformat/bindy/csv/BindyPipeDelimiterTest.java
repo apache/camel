@@ -27,7 +27,7 @@ import org.apache.camel.test.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BindyPipeDelimiterTest extends CamelTestSupport {
 

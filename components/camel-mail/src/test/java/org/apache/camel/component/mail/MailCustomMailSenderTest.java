@@ -28,7 +28,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MailCustomMailSenderTest extends CamelTestSupport {
 

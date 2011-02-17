@@ -35,7 +35,7 @@ import org.junit.Test;
 /**
  * Restlet producer concurrent test
  * 
- * @version $Revision$
+ * @version 
  */
 public class RestletProducerConcurrentTest extends CamelTestSupport {
 

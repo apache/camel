@@ -24,7 +24,7 @@ import org.junit.Test;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class HttpSOTimeoutTest extends BaseHttpTest {
 

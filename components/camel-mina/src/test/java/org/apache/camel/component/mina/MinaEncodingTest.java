@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit testing using different encodings with the TCP protocol.
  *
- * @version $Revision$
+ * @version 
  */
 public class MinaEncodingTest extends ContextTestSupport {
 

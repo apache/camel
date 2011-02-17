@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Component for Jetty Cometd
  * 
- * @version $Revision:520964 $
+ * @version 
  */
 public class CometdComponent extends DefaultComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(CometdComponent.class);

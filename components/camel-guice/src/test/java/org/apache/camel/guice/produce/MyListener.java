@@ -17,7 +17,7 @@
 package org.apache.camel.guice.produce;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public interface MyListener {
 

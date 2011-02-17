@@ -26,7 +26,7 @@ import org.apache.camel.test.CamelTestSupport;
 /**
  * Tests filtering using Camel Test
  * 
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: example
 public class FilterTest extends CamelTestSupport {

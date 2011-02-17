@@ -35,7 +35,7 @@ import org.apache.camel.util.CastUtils;
 /**
  * Represents a JAXB2 representation of a Camel {@link Message} - <b>Important</b>: work in progress!
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "message")
 @XmlAccessorType(value = XmlAccessType.FIELD)

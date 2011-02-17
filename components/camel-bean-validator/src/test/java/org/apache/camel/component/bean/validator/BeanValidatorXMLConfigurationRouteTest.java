@@ -17,7 +17,7 @@
 package org.apache.camel.component.bean.validator;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanValidatorXMLConfigurationRouteTest extends BeanValidatorRouteTest {
     

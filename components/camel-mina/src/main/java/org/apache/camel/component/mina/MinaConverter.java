@@ -28,7 +28,7 @@ import org.apache.mina.common.ByteBuffer;
 /**
  * A set of converter methods for working with MINA types
  *
- * @version $Revision$
+ * @version 
  */
 @Converter
 public final class MinaConverter {

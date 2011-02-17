@@ -35,7 +35,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * href="http://camel.apache.org/bam.html">BAM</a> which a derived
  * class would do the actual persistence such as the {@link JpaBamProcessor}
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class BamProcessorSupport<T> implements Processor {
     private static final transient Logger LOG = LoggerFactory.getLogger(BamProcessorSupport.class);

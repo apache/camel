@@ -25,7 +25,7 @@ import org.junit.Test;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class RestletQueryTest extends RestletTestSupport {
     private static final String QUERY_STRING = "foo=bar&test=123";

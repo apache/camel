@@ -35,7 +35,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JdbcProducerConcurrenctTest extends CamelTestSupport {
 

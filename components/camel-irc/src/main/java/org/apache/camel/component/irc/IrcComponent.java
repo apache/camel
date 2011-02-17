@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Component</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class IrcComponent extends DefaultComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(IrcComponent.class);

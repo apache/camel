@@ -23,7 +23,7 @@ import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class QuartzComponentTest extends CamelTestSupport {
 

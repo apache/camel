@@ -25,7 +25,7 @@ import org.apache.camel.spi.Language;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SqlLanguageTest extends SqlTest {
 

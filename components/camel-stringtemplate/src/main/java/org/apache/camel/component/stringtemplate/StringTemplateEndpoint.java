@@ -30,7 +30,7 @@ import org.apache.camel.component.ResourceBasedEndpoint;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class StringTemplateEndpoint extends ResourceBasedEndpoint {
 

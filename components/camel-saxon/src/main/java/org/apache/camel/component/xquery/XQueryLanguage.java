@@ -21,7 +21,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XQueryLanguage implements Language {
 

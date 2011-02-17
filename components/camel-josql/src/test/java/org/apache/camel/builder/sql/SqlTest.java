@@ -32,7 +32,7 @@ import org.junit.Test;
 import static org.apache.camel.builder.sql.SqlBuilder.sql;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SqlTest extends CamelTestSupport {
 

@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @RunWith(GuiceyJUnit4.class)
 @UseModule(ProduceTest.TestModule.class)

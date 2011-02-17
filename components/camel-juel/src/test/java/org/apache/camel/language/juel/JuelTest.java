@@ -26,7 +26,7 @@ import de.odysseus.el.ExpressionFactoryImpl;
 import de.odysseus.el.util.SimpleContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JuelTest extends TestCase {
 

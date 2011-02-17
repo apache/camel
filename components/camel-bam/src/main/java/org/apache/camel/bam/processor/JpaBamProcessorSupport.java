@@ -40,7 +40,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * instance information which allows derived classes to specialise the process
  * instance entity.
  *
- * @version $Revision$
+ * @version 
  */
 public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private static final transient Logger LOG = LoggerFactory.getLogger(JpaBamProcessorSupport.class);

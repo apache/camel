@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
  * exchange preventing any particular orchestration or
  * <a href="http://camel.apache.org/bam.html">BAM</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class NoCorrelationKeyException extends CamelExchangeException {
     private static final long serialVersionUID = 4511220911189364989L;

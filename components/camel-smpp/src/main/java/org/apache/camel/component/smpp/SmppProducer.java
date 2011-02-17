@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An implementation of @{link Producer} which use the SMPP protocol
  * 
- * @version $Revision$
+ * @version 
  * @author muellerc
  */
 public class SmppProducer extends DefaultProducer {

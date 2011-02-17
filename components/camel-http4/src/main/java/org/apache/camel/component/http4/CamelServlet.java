@@ -30,7 +30,7 @@ import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CamelServlet extends HttpServlet {
 

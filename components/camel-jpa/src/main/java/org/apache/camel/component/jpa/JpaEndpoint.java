@@ -38,7 +38,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JpaEndpoint extends ScheduledPollEndpoint {
     private EntityManagerFactory entityManagerFactory;

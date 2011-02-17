@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.language.groovy.GroovyLanguage.groovy;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class GroovySetFixedHeaderTest extends ContextTestSupport {
 

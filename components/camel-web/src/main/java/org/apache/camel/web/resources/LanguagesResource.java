@@ -27,7 +27,7 @@ import javax.ws.rs.PathParam;
  * Represents the list of the currently active <a href="http://camel.apache.org/languages.html">languages</a>
  * in the current camel context
  *
- * @version $Revision$
+ * @version 
  */
 public class LanguagesResource extends CamelChildResourceSupport {
 

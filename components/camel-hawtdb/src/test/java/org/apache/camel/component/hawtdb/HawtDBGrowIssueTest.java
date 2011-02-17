@@ -25,7 +25,7 @@ import org.fusesource.hawtdb.api.Transaction;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HawtDBGrowIssueTest extends CamelTestSupport {
 

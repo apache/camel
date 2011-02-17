@@ -32,7 +32,7 @@ import org.apache.camel.spi.Registry;
 /**
  * EJB component to invoke EJBs like the {@link org.apache.camel.component.bean.BeanComponent}.
  *
- * @version $Revision$
+ * @version 
  */
 public class EjbComponent extends BeanComponent {
 

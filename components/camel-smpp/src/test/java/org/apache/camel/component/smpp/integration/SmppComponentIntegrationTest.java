@@ -36,7 +36,7 @@ import org.junit.Test;
  * <br/>
  * A SMSC for test is available here: http://www.seleniumsoftware.com/downloads.html
  * 
- * @version $Revision$
+ * @version 
  * @author muellerc
  */
 public class SmppComponentIntegrationTest extends CamelTestSupport {

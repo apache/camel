@@ -19,7 +19,7 @@ package org.apache.camel.component.http4;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     

@@ -32,7 +32,7 @@ import org.junit.Test;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class HttpAuthenticationTest extends BaseHttpTest {
 

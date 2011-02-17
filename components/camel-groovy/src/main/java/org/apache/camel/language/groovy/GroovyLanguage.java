@@ -22,7 +22,7 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Language;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class GroovyLanguage implements Language, IsSingleton {
 

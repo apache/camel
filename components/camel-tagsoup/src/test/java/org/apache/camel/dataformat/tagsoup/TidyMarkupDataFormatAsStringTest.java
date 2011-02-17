@@ -30,7 +30,7 @@ import org.junit.Test;
 
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
    

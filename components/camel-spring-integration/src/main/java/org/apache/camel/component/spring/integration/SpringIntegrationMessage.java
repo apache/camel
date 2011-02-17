@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultMessage;
  * The Message {@link DefaultMessage} implementation
  * for accessing the SpringIntegrationMessage
  *
- * @version $Revision$
+ * @version 
  */
 public class SpringIntegrationMessage extends DefaultMessage {
     private org.springframework.integration.Message siMessage;

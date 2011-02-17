@@ -23,7 +23,7 @@ import org.exolab.castor.xml.XMLContext;
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using Castor to marshal to and from XML
  *
- * @version $Revision$
+ * @version 
  */
 public class CastorDataFormat extends AbstractCastorDataFormat {
 

@@ -28,7 +28,7 @@ import org.springframework.core.io.Resource;
  * An <a href="http://camel.apache.org/xquery.html">XQuery Component</a>
  * for performing transforming messages
  *
- * @version $Revision$
+ * @version 
  */
 public class XQueryComponent extends ResourceBasedComponent {
 

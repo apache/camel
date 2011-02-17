@@ -25,7 +25,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class QuartzMessage extends DefaultMessage {
     private final JobExecutionContext jobExecutionContext;

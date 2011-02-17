@@ -48,7 +48,7 @@ import org.guiceyfruit.Injectors;
  * It is recommended you use this implementation with the
  * <a href="http://code.google.com/p/guiceyfruit/wiki/GuiceyJndi">Guicey JNDI Provider</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class GuiceCamelContext extends DefaultCamelContext {
     private final com.google.inject.Injector injector;

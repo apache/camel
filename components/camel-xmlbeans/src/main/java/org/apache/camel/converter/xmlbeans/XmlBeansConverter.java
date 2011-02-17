@@ -43,7 +43,7 @@ import org.apache.xmlbeans.impl.piccolo.xml.XMLStreamReader;
  * A <a href="http://camel.apache.org/type-coverter.html">Type Converter</a>
  * of XMLBeans objects
  *
- * @version $Revision$
+ * @version 
  */
 @Converter
 public class XmlBeansConverter {

@@ -33,7 +33,7 @@ import org.springframework.integration.support.channel.ChannelResolver;
  * If the message pattern is inOut, the outputChannel property
  * should be set for the outgoing message.
  *
- * @version $Revision$
+ * @version 
  */
 public class SpringIntegrationConsumer  extends DefaultConsumer implements MessageHandler {
     private final SpringCamelContext context;

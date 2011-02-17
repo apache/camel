@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.ibatis.session.SqlSession;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultMyBatisProcessingStrategy implements MyBatisProcessingStrategy {
 

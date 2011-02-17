@@ -26,7 +26,7 @@ import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.rules.ActivityRules;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ActivityBuilder {
     private ProcessBuilder processBuilder;

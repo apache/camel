@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.CamelTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class IsMockEndpointsTest extends CamelTestSupport {
 

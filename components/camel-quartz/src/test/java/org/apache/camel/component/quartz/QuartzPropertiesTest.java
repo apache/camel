@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.quartz.SchedulerException;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class QuartzPropertiesTest extends CamelTestSupport {
 

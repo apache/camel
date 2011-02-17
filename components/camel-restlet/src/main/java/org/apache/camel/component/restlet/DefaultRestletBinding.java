@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default Restlet binding implementation
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRestletBinding.class);

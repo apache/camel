@@ -22,7 +22,7 @@ import org.apache.camel.spi.Injector;
 /**
  * An injector which uses Guice to perform the dependency injection of types
  *
- * @version $Revision$
+ * @version 
  */
 public class GuiceInjector implements Injector {
     private final com.google.inject.Injector injector;

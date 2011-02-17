@@ -27,7 +27,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CastUtils;
 
 /**
- * @version $Revision:520964 $
+ * @version 
  */
 public class RmiComponent extends DefaultComponent {
 

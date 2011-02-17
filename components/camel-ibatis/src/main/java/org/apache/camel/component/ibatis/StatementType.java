@@ -19,7 +19,7 @@ package org.apache.camel.component.ibatis;
 /**
  * Statement types to instruct which iBatis operation to use.
  *
- * @version $Revision$
+ * @version 
  */
 public enum StatementType {
 

@@ -28,7 +28,7 @@ import org.apache.camel.util.CamelContextHelper;
 /**
  * A factory which instantiates {@link RedeliveryPolicy} objects
  *
- * @version $Revision: 925208 $
+ * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractCamelFactoryBean<RedeliveryPolicy> {

@@ -34,7 +34,7 @@ import org.apache.mina.common.IoSession;
 /**
  * Endpoint for Camel MINA.
  *
- * @version $Revision$
+ * @version 
  */
 public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 

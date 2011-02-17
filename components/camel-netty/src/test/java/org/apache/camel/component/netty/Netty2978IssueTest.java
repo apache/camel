@@ -38,7 +38,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Ignore
 public class Netty2978IssueTest extends CamelTestSupport {

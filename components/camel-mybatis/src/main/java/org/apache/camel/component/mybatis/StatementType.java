@@ -19,7 +19,7 @@ package org.apache.camel.component.mybatis;
 /**
  * Statement types to instruct which MyBatis operation to use.
  *
- * @version $Revision$
+ * @version 
  */
 public enum StatementType {
 

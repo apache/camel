@@ -26,7 +26,7 @@ import org.apache.camel.model.IdentifiedType;
 /**
  * <code>PropertyPlaceholderDefinition</code> represents a &lt;propertyPlaceholder/&gt element.
  *
- * @version $Revision: 911816 $
+ * @version 
  */
 @XmlRootElement(name = "propertyPlaceholder")
 @XmlAccessorType(XmlAccessType.FIELD)

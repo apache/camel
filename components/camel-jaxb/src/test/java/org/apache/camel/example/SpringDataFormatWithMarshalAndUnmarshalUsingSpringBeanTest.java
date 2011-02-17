@@ -19,7 +19,7 @@ package org.apache.camel.example;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringDataFormatWithMarshalAndUnmarshalUsingSpringBeanTest extends SpringDataFormatTest {
 

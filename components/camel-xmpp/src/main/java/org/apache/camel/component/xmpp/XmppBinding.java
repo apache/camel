@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * A Strategy used to convert between a Camel {@link Exchange} and {@link XmppMessage} to and from a
  * XMPP {@link Message}
  *
- * @version $Revision$
+ * @version 
  */
 public class XmppBinding {
 

@@ -31,7 +31,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @ManagedResource("JdbcMessageIdRepository")
 public class JdbcMessageIdRepository extends ServiceSupport implements IdempotentRepository<String> {

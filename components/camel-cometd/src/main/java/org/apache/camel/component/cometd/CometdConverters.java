@@ -21,7 +21,7 @@ import org.apache.camel.Converter;
 /**
  * Cometd specific converters.
  *
- * @version $Revision$
+ * @version 
  */
 @Converter
 public final class CometdConverters {

@@ -31,7 +31,7 @@ import org.apache.camel.builder.xml.TimeUnitAdapter;
 /**
  * A factory which instantiates {@link java.util.concurrent.ExecutorService} objects
  *
- * @version $Revision: 925208 $
+ * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFactoryBean<ExecutorService> {

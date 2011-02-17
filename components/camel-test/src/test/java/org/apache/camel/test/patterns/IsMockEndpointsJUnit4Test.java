@@ -21,7 +21,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: e1
 public class IsMockEndpointsJUnit4Test extends CamelTestSupport {

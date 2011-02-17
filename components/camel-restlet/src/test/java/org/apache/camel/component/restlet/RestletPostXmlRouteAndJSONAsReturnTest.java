@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 /**
- * @version $Revision: 943352 $
+ * @version 
  */
 public class RestletPostXmlRouteAndJSONAsReturnTest extends RestletTestSupport {
     

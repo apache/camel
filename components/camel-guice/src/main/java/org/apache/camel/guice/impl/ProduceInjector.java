@@ -31,7 +31,7 @@ import org.guiceyfruit.support.AnnotationMemberProvider;
 /**
  * Injects values into the {@link Produce} injection point
  *
- * @version $Revision$
+ * @version 
  */
 public class ProduceInjector extends CamelPostProcessorHelper implements AnnotationMemberProvider<Produce> {
 

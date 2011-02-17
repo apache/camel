@@ -30,7 +30,7 @@ import static org.junit.Assert.assertEquals;
 
 
 /**
- * @version $Revision$
+ * @version 
  */
 @RunWith(GuiceyJUnit4.class)
 @UseModule(ConsumeTest.TestModule.class)

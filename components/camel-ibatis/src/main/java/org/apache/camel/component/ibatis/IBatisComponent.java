@@ -30,7 +30,7 @@ import org.springframework.core.io.Resource;
  * An <a href="http://camel.apache.org/ibatis.html>iBatis Component</a>
  * for performing SQL operations using an XML mapping file to abstract away the SQL
  *
- * @version $Revision$
+ * @version 
  * 
  * <pre>
  * Ibatis Component used to read/write to a database.

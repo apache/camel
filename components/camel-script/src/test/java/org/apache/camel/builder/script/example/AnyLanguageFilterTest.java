@@ -23,7 +23,7 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class AnyLanguageFilterTest extends XPathFilterTest {
 

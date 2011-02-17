@@ -28,7 +28,7 @@ import javax.mail.MessagingException;
  * <p>
  * Parts of the code copied from Apache ServiceMix.
  *
- * @version $Revision$
+ * @version 
  */
 public final class MailUtils {
 

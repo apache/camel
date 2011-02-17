@@ -23,7 +23,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.test.CamelTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DebugTest extends CamelTestSupport {
 

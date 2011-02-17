@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Represents a JAXB2 representation of a Camel {@link Message} header
  *
- * @version $Revision$
+ * @version 
  */
 @XmlType(name = "header")
 @XmlAccessorType(value = XmlAccessType.FIELD)

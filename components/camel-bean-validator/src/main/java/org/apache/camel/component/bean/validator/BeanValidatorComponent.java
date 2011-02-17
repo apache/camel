@@ -32,7 +32,7 @@ import org.apache.camel.impl.ProcessorEndpoint;
 /**
  * Bean Validator Component for validating java beans against JSR 303 Validator
  *
- * @version $Revision$
+ * @version 
  */
 public class BeanValidatorComponent extends DefaultComponent {
     

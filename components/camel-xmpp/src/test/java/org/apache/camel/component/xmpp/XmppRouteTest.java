@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * You can overload the <b>xmpp.url</b> system property to define the jabber connection URI
  * to something like <b>xmpp://camel@localhost/?login=false&room=</b>
- * @version $Revision$
+ * @version 
  */
 public class XmppRouteTest extends TestCase {
     protected static boolean enabled;

@@ -19,7 +19,7 @@ package org.apache.camel.language.groovy;
 import org.apache.camel.LanguageTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class GroovyLanguageTest extends LanguageTestSupport {
 

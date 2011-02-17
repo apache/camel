@@ -56,7 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HttpProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(HttpProducer.class);

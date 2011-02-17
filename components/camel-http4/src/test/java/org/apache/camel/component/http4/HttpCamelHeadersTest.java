@@ -33,7 +33,7 @@ import org.junit.Test;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class HttpCamelHeadersTest extends BaseHttpTest {
 

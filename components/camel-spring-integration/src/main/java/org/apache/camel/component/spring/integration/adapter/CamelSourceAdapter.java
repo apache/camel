@@ -37,7 +37,7 @@ import org.springframework.integration.core.MessageHandler;
  * A CamelContext will be injected into CameSourceAdapter which will
  * let Spring Integration channel talk to the CamelContext certain endpoint
  *
- * @version $Revision$
+ * @version 
  */
 public class CamelSourceAdapter extends AbstractCamelAdapter implements InitializingBean, DisposableBean {
     private static final Logger LOG = LoggerFactory.getLogger(CamelSourceAdapter.class);

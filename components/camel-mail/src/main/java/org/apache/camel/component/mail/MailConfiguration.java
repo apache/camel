@@ -32,7 +32,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 /**
  * Represents the configuration data for communicating over email
  *
- * @version $Revision$
+ * @version 
  */
 public class MailConfiguration implements Cloneable {   
 

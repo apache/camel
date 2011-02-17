@@ -21,7 +21,7 @@ import org.apache.http.client.HttpClient;
 /**
  * A pluggable strategy for configuring the HttpClient used by this component
  *
- * @version $Revision$
+ * @version 
  */
 public interface HttpClientConfigurer {
 

@@ -29,7 +29,7 @@ import org.apache.commons.csv.writer.CSVConfig;
 import org.junit.Test;
 
 /**
- * @version $Revision: $
+ * @version 
  */
 public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
 

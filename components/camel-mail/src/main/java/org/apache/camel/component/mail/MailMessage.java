@@ -28,7 +28,7 @@ import org.apache.camel.util.ExchangeHelper;
 /**
  * Represents a {@link org.apache.camel.Message} for working with Mail
  *
- * @version $Revision:520964 $
+ * @version 
  */
 public class MailMessage extends DefaultMessage {
     // we need a copy of the original message in case we need to workaround a charset issue when extracting

@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * A Strategy used to convert between a Camel {@link Exchange} and {@link Message} to and
  * from a Mail {@link MimeMessage}
  *
- * @version $Revision$
+ * @version 
  */
 public class MailBinding {
 

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link Producer} implementation for JavaSpaces
  * 
- * @version $Revision$
+ * @version 
  */
 public class JavaSpaceProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(JavaSpaceProducer.class);

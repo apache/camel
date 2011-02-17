@@ -38,7 +38,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
     protected AbstractApplicationContext applicationContext;

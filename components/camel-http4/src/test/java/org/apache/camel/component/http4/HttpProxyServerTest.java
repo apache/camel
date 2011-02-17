@@ -51,7 +51,7 @@ import org.junit.Test;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class HttpProxyServerTest extends BaseHttpTest {
 

@@ -42,7 +42,7 @@ import org.springframework.util.ClassUtils;
  * A timer engine to monitor for expired activities and perform whatever actions
  * are required.
  * 
- * @version $Revision$
+ * @version 
  */
 public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(ActivityMonitorEngine.class);

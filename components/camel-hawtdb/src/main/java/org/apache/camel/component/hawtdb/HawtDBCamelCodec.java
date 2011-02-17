@@ -32,7 +32,7 @@ import org.fusesource.hawtbuf.codec.ObjectCodec;
 import org.fusesource.hawtbuf.codec.StringCodec;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public final class HawtDBCamelCodec {
 

@@ -19,7 +19,7 @@ package org.apache.camel.component.xmpp;
 /**
  * Constants used in Camel XMPP module
  *
- * @version $Revision$
+ * @version 
  */
 public interface XmppConstants {
     String MESSAGE_TYPE = "CamelXmppMessageType";

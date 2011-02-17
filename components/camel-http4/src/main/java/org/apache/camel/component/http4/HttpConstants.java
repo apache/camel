@@ -17,7 +17,7 @@
 package org.apache.camel.component.http4;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public final class HttpConstants {
 

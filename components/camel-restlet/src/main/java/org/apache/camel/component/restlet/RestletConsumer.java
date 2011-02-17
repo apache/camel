@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A Restlet consumer acts as a server to listen client requests.
  *
- * @version $Revision$
+ * @version 
  */
 public class RestletConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(RestletConsumer.class);

@@ -25,7 +25,7 @@ import org.apache.camel.bam.rules.TemporalRule;
 import static org.apache.camel.util.ObjectHelper.equal;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public abstract class TimeExpression {
     private ActivityRules activityRules;

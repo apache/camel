@@ -29,7 +29,7 @@ import static org.apache.camel.component.http4.HttpMethods.POST;
 /**
  * Unit test of invalid configuration
  *
- * @version $Revision$
+ * @version 
  */
 public class HttpInvalidHttpClientConfigurationTest extends CamelTestSupport {
 

@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.springframework.orm.jpa.JpaCallback;
 
 /**
- * @version $Revision: $
+ * @version 
  */
 public class JpaUseMergeTest extends AbstractJpaMethodTest {
     

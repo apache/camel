@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * To test timeout.
  *
- * @version $Revision$
+ * @version 
  */
 public class MinaExchangeTimeOutTest extends ContextTestSupport {
 

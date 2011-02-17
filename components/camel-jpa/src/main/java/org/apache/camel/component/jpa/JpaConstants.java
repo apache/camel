@@ -19,7 +19,7 @@ package org.apache.camel.component.jpa;
 /**
  * JPA constants
  *
- * @version $Revision$
+ * @version 
  */
 public final class JpaConstants {
 

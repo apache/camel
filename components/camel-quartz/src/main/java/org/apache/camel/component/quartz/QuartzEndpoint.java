@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A <a href="http://activemq.apache.org/quartz.html">Quartz Endpoint</a>
  *
- * @version $Revision:520964 $
+ * @version 
  */
 public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableService {
     private static final transient Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);

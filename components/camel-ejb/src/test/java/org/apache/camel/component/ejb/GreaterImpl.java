@@ -19,7 +19,7 @@ package org.apache.camel.component.ejb;
 import javax.ejb.Stateless;
 
 /**
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: e1
 @Stateless

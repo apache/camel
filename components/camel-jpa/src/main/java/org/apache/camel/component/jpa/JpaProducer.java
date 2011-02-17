@@ -30,7 +30,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.springframework.orm.jpa.JpaCallback;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JpaProducer extends DefaultProducer {
     private final TransactionStrategy template;

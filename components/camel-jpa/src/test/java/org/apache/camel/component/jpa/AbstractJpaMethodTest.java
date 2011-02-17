@@ -43,7 +43,7 @@ import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
 
 /**
- * @version $Revision: $
+ * @version 
  */
 public abstract class AbstractJpaMethodTest extends Assert {
     

@@ -26,7 +26,7 @@ import org.apache.camel.component.feed.FeedPollingConsumer;
 /**
  * Consumer to poll atom feeds and return the full feed.
  *
- * @version $Revision$
+ * @version 
  */
 public class AtomPollingConsumer extends FeedPollingConsumer {
 

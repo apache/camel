@@ -29,7 +29,7 @@ import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MailConsumerUnsupportedCharsetTest extends CamelTestSupport {
 

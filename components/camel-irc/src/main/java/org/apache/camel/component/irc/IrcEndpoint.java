@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Endpoint</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class IrcEndpoint extends DefaultEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);

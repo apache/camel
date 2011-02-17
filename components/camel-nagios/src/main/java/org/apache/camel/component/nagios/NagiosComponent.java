@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class NagiosComponent extends DefaultComponent {
 

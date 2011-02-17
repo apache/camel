@@ -24,7 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public abstract class MyBatisTestSupport extends CamelTestSupport {
 

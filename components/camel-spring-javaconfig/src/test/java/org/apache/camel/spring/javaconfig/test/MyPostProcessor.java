@@ -22,7 +22,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 /**
  * A simple post processor
  *
- * @version $Revision$
+ * @version 
  */
 public class MyPostProcessor implements BeanPostProcessor {
     

@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Script test helper.
  *
- * @version $Revision$
+ * @version 
  */
 public final class ScriptTestHelper {
 

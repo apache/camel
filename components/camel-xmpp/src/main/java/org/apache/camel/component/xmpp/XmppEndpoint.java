@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A XMPP Endpoint
  *
- * @version $Revision:520964 $
+ * @version 
  */
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);

@@ -31,7 +31,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JAXBConvertTest extends Assert {
     protected CamelContext context = new DefaultCamelContext();

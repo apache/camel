@@ -17,7 +17,7 @@
 package org.apache.camel.component.nagios;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public final class NagiosConstants {
 

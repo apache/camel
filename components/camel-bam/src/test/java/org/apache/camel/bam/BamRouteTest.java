@@ -33,7 +33,7 @@ import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 import static org.apache.camel.util.Time.seconds;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BamRouteTest extends CamelSpringTestSupport {
     protected MockEndpoint overdueEndpoint;

@@ -29,7 +29,7 @@ import org.apache.http.protocol.HttpContext;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class HeaderValidationHandler extends BasicValidationHandler {
 

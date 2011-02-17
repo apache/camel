@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.Consumer Consumer} which listens to XMPP packets
  *
- * @version $Revision$
+ * @version 
  */
 public class XmppConsumer extends DefaultConsumer implements PacketListener, MessageListener, ChatManagerListener {
     private static final transient Logger LOG = LoggerFactory.getLogger(XmppConsumer.class);

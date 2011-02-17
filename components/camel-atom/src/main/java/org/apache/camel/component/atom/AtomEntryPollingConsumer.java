@@ -29,7 +29,7 @@ import org.apache.camel.component.feed.FeedEntryPollingConsumer;
 /**
  * Consumer to poll atom feeds and return each entry from the feed step by step.
  *
- * @version $Revision$
+ * @version 
  */
 public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
     private Document<Feed> document;

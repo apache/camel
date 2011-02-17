@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A Camel producer that acts as a client to Restlet server.
  *
- * @version $Revision$
+ * @version 
  */
 public class RestletProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(RestletProducer.class);

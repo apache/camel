@@ -31,7 +31,7 @@ import org.mortbay.jetty.runner.Runner;
 /**
  * A bootstrap class for starting Jetty Runner using an embedded war
  *
- * @version $Revision$
+ * @version 
  */
 public final class Main {
     private static final String WAR_POSTFIX = ".war";

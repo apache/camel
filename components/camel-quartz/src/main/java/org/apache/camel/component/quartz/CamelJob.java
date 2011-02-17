@@ -26,7 +26,7 @@ import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CamelJob implements Job, Serializable {
 

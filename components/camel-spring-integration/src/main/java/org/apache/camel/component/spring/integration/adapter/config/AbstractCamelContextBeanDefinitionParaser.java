@@ -32,7 +32,7 @@ import org.springframework.util.StringUtils;
 /**
  * This BeanDefinition parser help to inject the camel context into the beans
  *
- * @version $Revision$
+ * @version 
  */
 public class AbstractCamelContextBeanDefinitionParaser extends AbstractSingleBeanDefinitionParser {
     private static final String DEFAULT_CAMEL_CONTEXT_NAME = "camelContext";

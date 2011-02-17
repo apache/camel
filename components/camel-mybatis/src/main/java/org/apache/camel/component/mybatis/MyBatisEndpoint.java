@@ -27,7 +27,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyBatisEndpoint extends DefaultPollingEndpoint {
 

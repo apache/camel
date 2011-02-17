@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Unit test to verify that splitRows=false option.
  *
- * @version $Revision$
+ * @version 
  */
 @ContextConfiguration
 public class NoSplitRowsTest extends AbstractJUnit4SpringContextTests {

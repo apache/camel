@@ -30,7 +30,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  * <p/>
  * This is also used by the <tt>camel-jetty</tt> component in the <tt>JettyHttpConsumer</tt> class.
  *
- * @version $Revision$
+ * @version 
  */
 public interface HttpBinding {
 

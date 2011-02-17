@@ -24,7 +24,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DebugJUnit4Test extends CamelTestSupport {
 

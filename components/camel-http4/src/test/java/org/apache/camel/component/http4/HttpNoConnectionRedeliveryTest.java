@@ -26,7 +26,7 @@ import org.apache.http.localserver.LocalTestServer;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
 

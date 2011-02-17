@@ -29,7 +29,7 @@ import org.apache.http.util.EntityUtils;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class RestletTestSupport extends CamelTestSupport {
 

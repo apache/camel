@@ -27,7 +27,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class NagiosEndpoint extends DefaultEndpoint {
 

@@ -47,7 +47,7 @@ import org.junit.Test;
 
 /**
  * 
- * @version $Revision$
+ * @version 
  */
 public class HttpCompressionTest extends BaseHttpTest {
 

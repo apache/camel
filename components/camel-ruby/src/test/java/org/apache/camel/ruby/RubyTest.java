@@ -26,7 +26,7 @@ import org.jruby.Main;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class RubyTest extends CamelTestSupport {
     protected String expected = "<hello>world!</hello>";

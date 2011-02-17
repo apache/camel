@@ -19,7 +19,7 @@ package org.apache.camel.component.mina;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MinaComponentWithConfigurationTest extends ContextTestSupport {
 

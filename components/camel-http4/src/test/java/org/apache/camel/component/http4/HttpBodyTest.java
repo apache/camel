@@ -31,7 +31,7 @@ import org.junit.Test;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class HttpBodyTest extends BaseHttpTest {
     private String protocolString = "http4://";

@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
 
 /**
- * @version $Revision: 931444 $
+ * @version 
  */
 public class JpaUsePersistTest extends AbstractJpaMethodTest {
     

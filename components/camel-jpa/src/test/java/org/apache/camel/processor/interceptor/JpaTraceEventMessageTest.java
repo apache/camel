@@ -36,7 +36,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JpaTraceEventMessageTest extends CamelTestSupport {
     protected static final String SELECT_ALL_STRING = "select x from " + JpaTraceEventMessage.class.getName() + " x";

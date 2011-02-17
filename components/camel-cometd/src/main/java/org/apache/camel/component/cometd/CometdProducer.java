@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A Producer to send messages using Cometd and Bayeux protocol.
  * 
- * @version $Revision$
+ * @version 
  */
 public class CometdProducer extends DefaultProducer implements CometdProducerConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(CometdProducer.class);

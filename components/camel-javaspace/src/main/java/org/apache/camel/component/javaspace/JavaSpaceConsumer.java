@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @{link Consumer} implementation for Javaspaces
  * 
- * @version $Revision$
+ * @version 
  */
 public class JavaSpaceConsumer extends DefaultConsumer {
 

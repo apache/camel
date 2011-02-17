@@ -25,7 +25,7 @@ import org.junit.Test;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class HttpsGetTest extends BaseHttpsTest {
 

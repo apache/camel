@@ -23,7 +23,7 @@ import org.junit.Test;
 /**
  * Lets use a RouteBuilder to bind instances of routes to the CamelContext
  *
- * @version $Revision$
+ * @version 
  */
 public class ConciseGuiceRouteTest extends Assert {
 

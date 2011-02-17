@@ -48,7 +48,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A builder of a process definition
  * 
- * @version $Revision$
+ * @version 
  */
 public abstract class ProcessBuilder extends RouteBuilder {
     private static final transient Logger LOG = LoggerFactory.getLogger(ProcessBuilder.class);

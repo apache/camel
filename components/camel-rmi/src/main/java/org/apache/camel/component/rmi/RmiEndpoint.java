@@ -31,7 +31,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision:520964 $
+ * @version 
  */
 public class RmiEndpoint extends DefaultEndpoint {
 

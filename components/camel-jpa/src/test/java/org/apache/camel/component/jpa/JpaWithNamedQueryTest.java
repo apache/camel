@@ -42,7 +42,7 @@ import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JpaWithNamedQueryTest extends Assert {
     

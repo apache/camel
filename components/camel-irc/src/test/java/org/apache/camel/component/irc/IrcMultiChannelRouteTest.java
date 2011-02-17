@@ -27,7 +27,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class IrcMultiChannelRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;

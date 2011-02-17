@@ -29,7 +29,7 @@ import org.junit.Test;
 /**
  * Tests filtering using Camel Test
  *
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: example
 public class FilterJUnit4Test extends CamelTestSupport {

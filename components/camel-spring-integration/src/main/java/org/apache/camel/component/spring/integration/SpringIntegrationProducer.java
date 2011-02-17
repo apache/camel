@@ -34,7 +34,7 @@ import org.springframework.integration.support.channel.ChannelResolver;
  * Please specify the outputChannel in the endpoint url for this producer.
  * If the message pattern is inOut, the inputChannel property
  * should be set for receiving the response message.
- * @version $Revision$
+ * @version 
  */
 public class SpringIntegrationProducer extends DefaultProducer implements Processor {    
     private final ChannelResolver channelResolver;

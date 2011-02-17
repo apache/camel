@@ -23,7 +23,7 @@ import java.util.Map;
 import net.sf.flatpack.DataSet;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DataSetList extends AbstractList<Map<String, Object>> {
     private final DataSet dataSet;

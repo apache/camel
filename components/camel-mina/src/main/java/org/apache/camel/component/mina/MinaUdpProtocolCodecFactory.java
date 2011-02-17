@@ -31,7 +31,7 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MinaUdpProtocolCodecFactory implements ProtocolCodecFactory {
 

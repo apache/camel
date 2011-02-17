@@ -17,7 +17,7 @@
 package org.apache.camel.component.javaspace;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public interface ITestPojo {
 

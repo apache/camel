@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Endpoint for Camel Cometd.
  *
- * @version $Revision:520964 $
+ * @version 
  */
 public class CometdEndpoint extends DefaultEndpoint {
    

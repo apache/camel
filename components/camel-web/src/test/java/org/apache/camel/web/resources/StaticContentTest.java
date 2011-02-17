@@ -19,7 +19,7 @@ package org.apache.camel.web.resources;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class StaticContentTest  extends TestSupport {
 

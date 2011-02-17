@@ -25,7 +25,7 @@ import org.restlet.data.Method;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 @Converter
 public class RestletConverter {

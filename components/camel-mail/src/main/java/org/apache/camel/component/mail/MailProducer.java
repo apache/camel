@@ -29,7 +29,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 /**
  * A Producer to send messages using JavaMail.
  *  
- * @version $Revision$
+ * @version 
  */
 public class MailProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(MailProducer.class);

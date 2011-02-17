@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A Camel component embedded Restlet that produces and consumes exchanges.
  *
- * @version $Revision$
+ * @version 
  */
 public class RestletComponent extends HeaderFilterStrategyComponent {
     private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);

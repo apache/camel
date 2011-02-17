@@ -30,7 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * To test camel-mina component using a TCP client that communicates using TCP socket communication.
  *
- * @version $Revision$
+ * @version 
  */
 public class MinaTcpWithInOutUsingPlainSocketTest extends ContextTestSupport {
 

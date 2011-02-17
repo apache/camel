@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XQueryEndpointTest extends CamelSpringTestSupport {
 

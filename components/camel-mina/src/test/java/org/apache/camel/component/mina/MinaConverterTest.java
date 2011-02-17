@@ -27,7 +27,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.mina.common.ByteBuffer;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MinaConverterTest extends TestCase {
 

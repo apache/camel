@@ -24,7 +24,7 @@ import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public final class CamelGroovyMethods {
     private CamelGroovyMethods() {

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "property")
 @XmlAccessorType(value = XmlAccessType.FIELD)

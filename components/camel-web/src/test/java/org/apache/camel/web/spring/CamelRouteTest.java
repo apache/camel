@@ -35,7 +35,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CamelRouteTest extends Assert {
     protected AbstractXmlApplicationContext applicationContext;

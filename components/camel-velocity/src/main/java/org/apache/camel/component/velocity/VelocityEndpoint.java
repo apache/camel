@@ -39,7 +39,7 @@ import org.apache.velocity.runtime.log.CommonsLogLogChute;
 import org.springframework.core.io.Resource;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class VelocityEndpoint extends ResourceBasedEndpoint {
     private VelocityEngine velocityEngine;

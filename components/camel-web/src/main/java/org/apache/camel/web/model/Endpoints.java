@@ -30,7 +30,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)

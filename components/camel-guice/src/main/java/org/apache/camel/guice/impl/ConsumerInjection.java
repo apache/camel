@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.guiceyfruit.support.MethodHandler;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ConsumerInjection<I> extends CamelPostProcessorHelper implements MethodHandler<I, Consume> {
 

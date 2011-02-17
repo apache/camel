@@ -26,7 +26,7 @@ import org.junit.Test;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class RestletExceptionResponseTest extends RestletTestSupport {
 

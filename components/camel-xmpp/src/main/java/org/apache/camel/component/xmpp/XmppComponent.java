@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version $Revision:520964 $
+ * @version 
  */
 public class XmppComponent extends DefaultComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(XmppComponent.class);

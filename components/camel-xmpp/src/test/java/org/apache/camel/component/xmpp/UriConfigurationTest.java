@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class UriConfigurationTest extends Assert {
     protected CamelContext context = new DefaultCamelContext();

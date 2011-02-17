@@ -23,7 +23,7 @@ import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class QuartzStartDelayedTest extends CamelTestSupport {
 

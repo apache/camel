@@ -26,7 +26,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class GuiceTest extends Assert {
 

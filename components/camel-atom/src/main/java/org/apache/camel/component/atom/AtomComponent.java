@@ -30,7 +30,7 @@ import org.apache.camel.util.URISupport;
  * <p/>
  * Camel uses Apache Abdera as the Atom implementation.
  *
- * @version $Revision$
+ * @version 
  */
 public class AtomComponent extends FeedComponent {
 

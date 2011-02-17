@@ -27,7 +27,7 @@ import org.junit.Test;
 
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MessageTypeTest extends ExchangeTestSupport {
     protected JAXBContext jaxbContext;

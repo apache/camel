@@ -26,7 +26,7 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
  * <p/>
  * The values must be enclosed in the prefix and suffix token.
  *
- * @version $Revision$
+ * @version 
  */
 public class JasyptPropertiesParser extends DefaultPropertiesParser {
 

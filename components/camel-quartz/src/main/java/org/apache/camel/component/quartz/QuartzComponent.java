@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * For a brief tutorial on setting cron expression see
  * <a href="http://www.opensymphony.com/quartz/wikidocs/CronTriggers%20Tutorial.html">Quartz cron tutorial</a>.
  *
- * @version $Revision:520964 $
+ * @version 
  */
 public class QuartzComponent extends DefaultComponent implements StartupListener {
     private static final transient Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);

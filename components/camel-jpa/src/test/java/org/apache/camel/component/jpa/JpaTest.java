@@ -43,7 +43,7 @@ import org.springframework.orm.jpa.JpaTemplate;
 import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
 /**
- * @version $Revision$
+ * @version 
  */
 public class JpaTest extends Assert {
     private static final transient Logger LOG = LoggerFactory.getLogger(JpaTest.class);

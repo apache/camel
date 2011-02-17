@@ -24,7 +24,7 @@ import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringRouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JpaRouteEndpointTest extends JpaRouteTest {
 

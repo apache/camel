@@ -22,7 +22,7 @@ import javax.persistence.Query;
 /**
  * A Strategy to create a query to search for objects in a database
  *
- * @version $Revision$
+ * @version 
  */
 public interface QueryFactory {
     /**

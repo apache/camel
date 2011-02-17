@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The default state for a specific activity within a process
  *
- * @version $Revision$
+ * @version 
  */
 @Entity
 @Table(

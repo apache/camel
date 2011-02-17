@@ -19,7 +19,7 @@ package org.apache.camel.component.jpa;
 import org.apache.camel.examples.SendEmail;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JpaUsingCustomPersistenceUnitTest extends JpaTest {
     protected String getEndpointUri() {

@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Consumer to read data from a database.
  *
- * @version $Revision$
+ * @version 
  */
 public class MyBatisConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
 

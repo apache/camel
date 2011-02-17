@@ -23,7 +23,7 @@ import javax.persistence.Id;
 /**
  * Represents a task which is added to the database, then removed from the database when it is consumed
  *
- * @version $Revision$
+ * @version 
  */
 @Entity
 public class SendEmail {

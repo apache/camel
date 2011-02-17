@@ -33,7 +33,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 /**
  * Endpoint for Camel Mail.
  *
- * @version $Revision:520964 $
+ * @version 
  */
 public class MailEndpoint extends ScheduledPollEndpoint {
     private MailBinding binding;

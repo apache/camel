@@ -25,7 +25,7 @@ import org.junit.Test;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class HttpPollingConsumerTest extends BaseHttpTest {
 

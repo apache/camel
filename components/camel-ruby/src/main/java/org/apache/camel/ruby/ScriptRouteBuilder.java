@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * Provide some helper methods for building routes from scripting languages
  * with a minimum amount of noise using state for the current node in the DSL
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class ScriptRouteBuilder extends RouteBuilder {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScriptRouteBuilder.class);

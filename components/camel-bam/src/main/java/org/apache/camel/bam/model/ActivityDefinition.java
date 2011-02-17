@@ -27,7 +27,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Entity
 @Table(

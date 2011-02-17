@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Component for Apache MINA.
  *
- * @version $Revision$
+ * @version 
  */
 public class MinaComponent extends DefaultComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(MinaComponent.class);

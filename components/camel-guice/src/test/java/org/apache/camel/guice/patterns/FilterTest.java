@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: example
 @RunWith(GuiceyJUnit4.class)

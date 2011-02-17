@@ -36,7 +36,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JpaBatchConsumerTest extends CamelTestSupport {
 

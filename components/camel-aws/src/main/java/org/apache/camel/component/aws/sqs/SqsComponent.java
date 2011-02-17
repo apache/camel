@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultComponent;
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS Component</a> 
  * 
- * @version $Revision: $
+ * @version 
  */
 public class SqsComponent extends DefaultComponent {
     

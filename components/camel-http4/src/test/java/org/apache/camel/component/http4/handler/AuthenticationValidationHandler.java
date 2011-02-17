@@ -26,7 +26,7 @@ import org.apache.http.protocol.HttpContext;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class AuthenticationValidationHandler extends BasicValidationHandler {
 

@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MainTest extends TestCase {
 

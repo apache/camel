@@ -24,7 +24,7 @@ import java.util.List;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class Main {
 

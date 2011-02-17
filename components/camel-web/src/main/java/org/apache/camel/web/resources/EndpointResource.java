@@ -43,7 +43,7 @@ import org.apache.camel.web.model.EndpointLink;
 /**
  * A Camel <a href="http://camel.apache.org/endpoint.html">Endpoint</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class EndpointResource extends CamelChildResourceSupport {
     private final String key;

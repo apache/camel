@@ -26,7 +26,7 @@ import org.apache.camel.spi.HasId;
 import org.apache.camel.web.util.UriCharactersEncoder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)

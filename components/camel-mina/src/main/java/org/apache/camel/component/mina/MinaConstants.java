@@ -19,7 +19,7 @@ package org.apache.camel.component.mina;
 /**
  * Mina constants
  *
- * @version $Revision$
+ * @version 
  */
 public final class MinaConstants {
 

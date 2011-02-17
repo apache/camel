@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class NullBodyTest extends ContextTestSupport {
     public void testNullBody() throws Exception {

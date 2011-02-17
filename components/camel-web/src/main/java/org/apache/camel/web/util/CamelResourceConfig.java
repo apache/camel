@@ -29,7 +29,7 @@ import com.sun.jersey.server.wadl.generators.resourcedoc.WadlGeneratorResourceDo
 import org.apache.camel.web.resources.Constants;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CamelResourceConfig extends PackagesResourceConfig {
 

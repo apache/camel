@@ -46,7 +46,7 @@ import org.apache.commons.csv.writer.CSVWriter;
  * Autogeneration can be disabled. In this case, only the fields defined in
  * csvConfig are written on the output.
  *
- * @version $Revision$
+ * @version 
  */
 public class CsvDataFormat implements DataFormat {
     private CSVStrategy strategy = CSVStrategy.DEFAULT_STRATEGY;

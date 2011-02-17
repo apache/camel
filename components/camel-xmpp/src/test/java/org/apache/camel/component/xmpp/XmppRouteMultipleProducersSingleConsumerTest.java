@@ -23,7 +23,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSupport {
     protected MockEndpoint goodEndpoint;

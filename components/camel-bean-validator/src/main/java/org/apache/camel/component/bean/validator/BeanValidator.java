@@ -32,7 +32,7 @@ import org.apache.camel.Processor;
  * Bean validator that uses the JSR 303 reference implementation
  * (Hibernate Validator).
  *
- * @version $Revision$
+ * @version 
  */
 public class BeanValidator implements Processor {
     

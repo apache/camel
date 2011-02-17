@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.CamelTestSupport;
 /**
- * @version $Revision$
+ * @version 
  */
 public class FilterTest extends CamelTestSupport {
 

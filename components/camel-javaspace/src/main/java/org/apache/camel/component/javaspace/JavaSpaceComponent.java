@@ -26,7 +26,7 @@ import org.apache.camel.impl.DefaultComponent;
 /**
  * The component for using the JavaSpaces library
  * 
- * @version $Revision$
+ * @version 
  */
 public class JavaSpaceComponent extends DefaultComponent {
 

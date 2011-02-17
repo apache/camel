@@ -28,7 +28,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SqlEndpointTest extends CamelTestSupport {
     protected String driverClass = "org.hsqldb.jdbcDriver";

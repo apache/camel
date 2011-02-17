@@ -24,7 +24,7 @@ import org.apache.camel.model.IdentifiedType;
 /**
  * The &lt;proxy&gt; tag element.
  *
- * @version $Revision: 938746 $
+ * @version 
 */ // to fudge the XSD generation
 @XmlRootElement(name = "proxy")
 @SuppressWarnings("unused")

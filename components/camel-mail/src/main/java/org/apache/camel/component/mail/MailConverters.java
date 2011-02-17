@@ -31,7 +31,7 @@ import org.apache.camel.converter.IOConverter;
 /**
  * JavaMail specific converters.
  *
- * @version $Revision$
+ * @version 
  */
 @Converter
 public final class MailConverters {

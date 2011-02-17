@@ -30,7 +30,7 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * Represents a activity which is typically a system or could be an endpoint
  *
- * @version $Revision$
+ * @version 
  */
 public class ActivityRules extends ServiceSupport {
     private int expectedMessages = 1;

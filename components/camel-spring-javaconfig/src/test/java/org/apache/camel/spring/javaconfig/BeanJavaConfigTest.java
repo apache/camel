@@ -31,7 +31,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @ContextConfiguration(locations = "org.apache.camel.spring.javaconfig.BeanJavaConfigTest$ContextConfig", loader = JavaConfigContextLoader.class)
 public class BeanJavaConfigTest extends AbstractJUnit4SpringContextTests {

@@ -20,7 +20,7 @@ import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @CsvRecord(separator = "\t", crlf = "UNIX")
 public class PurchaseOrder {

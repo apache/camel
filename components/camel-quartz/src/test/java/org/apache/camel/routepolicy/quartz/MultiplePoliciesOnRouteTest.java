@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version $Revision: 882486 $
+ * @version 
  */
 public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(MultiplePoliciesOnRouteTest.class);

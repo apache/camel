@@ -23,7 +23,7 @@ import org.restlet.data.Response;
 /**
  * Interface for converting between Camel message and Restlet message.
  * 
- * @version $Revision$
+ * @version 
  */
 public interface RestletBinding {
     

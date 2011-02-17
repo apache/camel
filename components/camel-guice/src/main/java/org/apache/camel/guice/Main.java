@@ -44,7 +44,7 @@ import org.guiceyfruit.Injectors;
  * A command line tool for booting up a CamelContext using a Guice Injector via JNDI
  * assuming that a valid jndi.properties is on the classpath
  *
- * @version $Revision$
+ * @version 
  */
 public class Main extends MainSupport {
     private static Main instance;

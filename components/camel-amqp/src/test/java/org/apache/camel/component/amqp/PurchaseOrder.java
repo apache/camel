@@ -21,7 +21,7 @@ import java.io.Serializable;
 /**
  * A simple POJO for testing
  *
- * @version $Revision$
+ * @version 
  */
 public class PurchaseOrder implements Serializable {
     private static final long serialVersionUID = 1L;

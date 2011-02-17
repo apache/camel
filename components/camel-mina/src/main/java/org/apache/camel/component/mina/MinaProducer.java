@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.Producer} implementation for MINA
  *
- * @version $Revision$
+ * @version 
  */
 public class MinaProducer extends DefaultProducer implements ServicePoolAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(MinaProducer.class);

@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * Defines the <a href="http://camel.apache.org/http.html">HTTP
  * Component</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class HttpComponent extends HeaderFilterStrategyComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(HttpComponent.class);

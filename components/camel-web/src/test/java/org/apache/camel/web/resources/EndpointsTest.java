@@ -24,7 +24,7 @@ import org.apache.camel.web.model.Endpoints;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class EndpointsTest extends TestSupport {
 

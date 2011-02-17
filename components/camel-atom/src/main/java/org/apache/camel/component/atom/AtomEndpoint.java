@@ -28,7 +28,7 @@ import org.apache.camel.component.feed.FeedPollingConsumer;
 /**
  * An <a href="http://camel.apache.org/atom.html">Atom Endpoint</a>.
  *
- * @version $Revision$
+ * @version 
  */
 public class AtomEndpoint extends FeedEndpoint {
 

@@ -24,7 +24,7 @@ import org.apache.camel.spi.Language;
  * The <a href="http://camel.apache.org/el.html">EL Language from JSP and JSF</a>
  * using the <a href="http://camel.apache.org/juel.html">JUEL library</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class JuelLanguage implements Language {
     public Predicate createPredicate(String expression) {

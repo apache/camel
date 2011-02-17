@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Route builder for RestletRouteBuilderAuthTest
  * 
- * @version $Revision$
+ * @version 
  */
 public class TestRouteBuilder extends RouteBuilder {
 

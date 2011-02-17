@@ -30,7 +30,7 @@ import org.josql.QueryParseException;
 /**
  * XPath language.
  *
- * @version $Revision$
+ * @version 
  */
 public class SqlLanguage implements Language, IsSingleton {
    

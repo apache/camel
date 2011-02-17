@@ -44,7 +44,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  * A {@link org.apache.camel.Consumer Consumer} which consumes messages from JavaMail using a
  * {@link javax.mail.Transport Transport} and dispatches them to the {@link Processor}
  *
- * @version $Revision$
+ * @version 
  */
 public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;

@@ -43,7 +43,7 @@ import org.springframework.core.io.UrlResource;
  * A builder class for creating {@link Processor}, {@link Expression} and
  * {@link Predicate} objects using the JSR 223 scripting engine.
  *
- * @version $Revision$
+ * @version 
  */
 public class ScriptBuilder implements Expression, Predicate, Processor {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScriptBuilder.class);

@@ -38,7 +38,7 @@ import org.exolab.castor.xml.XMLContext;
  * interface which leverage the Castor library for XML marshaling and
  * unmarshaling
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class AbstractCastorDataFormat implements DataFormat {
 

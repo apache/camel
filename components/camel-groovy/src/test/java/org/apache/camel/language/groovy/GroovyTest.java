@@ -24,7 +24,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class GroovyTest extends CamelTestSupport {
     protected String expected = "<hello>world!</hello>";

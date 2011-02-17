@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * <p/>
  * For example a method may be marked to set an active flag to false or to update some status value to the next step in a workflow
  *
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

@@ -43,7 +43,7 @@ import org.springframework.context.annotation.Configuration;
  * <a href="http://www.springsource.org/javaconfig">Spring JavaConfig</a>
  * configurations for working with Camel
  *
- * @version $Revision$
+ * @version 
  */
 @Configuration
 public abstract class CamelConfiguration implements BeanFactoryAware, ApplicationContextAware {

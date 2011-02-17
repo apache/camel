@@ -33,7 +33,7 @@ import org.junit.Test;
 /**
  * Create a collection of routes via a provider method
  *
- * @version $Revision$
+ * @version 
  */
 public class EndpointInjectionTest extends Assert {
 

@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * A route which is reused multiple times with different configurations
  *
- * @version $Revision$
+ * @version 
  */
 public class MyConfigurableRoute2 extends RouteBuilder {
     protected String foo;

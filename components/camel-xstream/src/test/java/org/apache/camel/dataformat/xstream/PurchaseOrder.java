@@ -19,7 +19,7 @@ package org.apache.camel.dataformat.xstream;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class PurchaseOrder {
     private String name;

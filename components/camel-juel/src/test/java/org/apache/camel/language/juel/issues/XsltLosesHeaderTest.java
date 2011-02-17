@@ -29,7 +29,7 @@ import org.apache.camel.converter.jaxp.StringSource;
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XsltLosesHeaderTest extends ContextTestSupport {
     protected String xslt = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
