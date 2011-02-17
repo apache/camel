@@ -90,7 +90,10 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
 
     /**
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
+     *
+     * @deprecated
      */
+    @Deprecated
     public ToDefinition pattern(ExchangePattern pattern) {
         setPattern(pattern);
         return this;

@@ -1054,6 +1054,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Ends the current block and returns back to the {@link ChoiceDefinition choice()} DSL.
+     *
+     * @return the builder
+     */
+    public ChoiceDefinition endChoice() {
+        return (ChoiceDefinition) end();
+    }
+
+    /**
      * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a>
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
