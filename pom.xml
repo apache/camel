@@ -191,7 +191,8 @@
             <source>1.6</source>
             <quiet>true</quiet>
             <bottom>Apache CAMEL</bottom>
-            <!--javadocVersion>1.5</javadocVersion-->
+            <detectOfflineLinks>false</detectOfflineLinks>
+            <javadocVersion>1.6</javadocVersion>
             <encoding>UTF-8</encoding>
           </configuration>
         </plugin>
@@ -382,13 +383,13 @@
                </manifestEntries>
              </archive>
           </configuration>
-          <dependencies>
+          <!--dependencies>
             <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-buildtools</artifactId>
               <version>${project.version}</version>
             </dependency>
-          </dependencies>
+          </dependencies-->
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
