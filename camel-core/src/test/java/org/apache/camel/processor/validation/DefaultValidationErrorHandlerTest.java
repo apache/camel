@@ -29,7 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
 

@@ -27,7 +27,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HeaderFilterStrategyComponentTest extends TestCase {
 

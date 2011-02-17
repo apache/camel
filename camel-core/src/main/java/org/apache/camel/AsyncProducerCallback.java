@@ -22,7 +22,7 @@ package org.apache.camel;
  * Using this callback as a template pattern ensures that Camel handles the resource handling and will
  * start and stop the given producer, to avoid resource leaks.
  *
- * @version $Revision$
+ * @version 
  */
 public interface AsyncProducerCallback {
 

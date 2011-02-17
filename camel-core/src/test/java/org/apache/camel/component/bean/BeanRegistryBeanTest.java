@@ -22,7 +22,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanRegistryBeanTest extends ContextTestSupport {
 

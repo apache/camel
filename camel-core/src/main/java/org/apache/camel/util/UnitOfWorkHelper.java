@@ -25,7 +25,7 @@ import org.apache.camel.spi.Synchronization;
 import org.slf4j.Logger;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public final class UnitOfWorkHelper {
 

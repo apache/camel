@@ -22,7 +22,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
 

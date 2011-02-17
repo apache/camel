@@ -21,7 +21,7 @@ import org.apache.camel.model.OptionalIdentifiedDefinition;
 /**
  * Factory to generate unique ids for model nodes.
  *
- * @version $Revision$
+ * @version 
  */
 public interface NodeIdFactory {
 

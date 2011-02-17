@@ -33,7 +33,7 @@ import java.util.Set;
  * This map is <b>not</b> designed to be thread safe as concurrent access to it is not supposed to be performed
  * by the Camel routing engine.
  *
- * @version $Revision$
+ * @version 
  */
 public class CaseInsensitiveMap extends HashMap<String, Object> {
     private static final long serialVersionUID = -8538318195477618308L;

@@ -25,7 +25,7 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 /**
  * Default error handler
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultErrorHandler extends RedeliveryErrorHandler {
 

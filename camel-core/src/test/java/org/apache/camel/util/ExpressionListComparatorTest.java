@@ -25,7 +25,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ExpressionListComparatorTest extends ContextTestSupport {
 

@@ -22,7 +22,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.ProcessorEndpoint;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanComponentCustomCreateEndpointTest extends ContextTestSupport {
 

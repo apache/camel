@@ -20,7 +20,7 @@ package org.apache.camel.component.dataset;
  * A simple DataSet that allows a static payload to be used to create each message exchange
  * along with using a pluggable transformer to randomize the message.
  *
- * @version $Revision$
+ * @version 
  */
 public class SimpleDataSet extends DataSetSupport {
     private Object defaultBody = "<hello>world!</hello>";

@@ -23,7 +23,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class OrderedComparatorTest extends TestCase {
 

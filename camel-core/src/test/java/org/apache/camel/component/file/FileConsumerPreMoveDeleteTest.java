@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 895965 $
+ * @version 
  */
 public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
 

@@ -25,7 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 /**
  * Represents a <a href="http://camel.apache.org/flatpack.html">Flatpack</a> {@link org.apache.camel.spi.DataFormat}.
  * 
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "flatpack")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -19,7 +19,7 @@ package org.apache.camel.model;
 /**
  * Interface to add block featuring to the XML element type.
  *
- * @version $Revision$
+ * @version 
  */
 public interface Block {
 

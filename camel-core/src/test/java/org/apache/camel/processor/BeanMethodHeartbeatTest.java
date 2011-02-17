@@ -33,7 +33,7 @@ import org.apache.camel.util.CastUtils;
 /**
  * This test shows we can poll a bean for a method and send the POJO over some transport
  *
- * @version $Revision$
+ * @version 
  */
 public class BeanMethodHeartbeatTest extends ContextTestSupport {
 

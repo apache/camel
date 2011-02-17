@@ -23,7 +23,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.util.FileUtil;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class OrderServiceBean {
 

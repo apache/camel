@@ -24,7 +24,7 @@ import java.util.Locale;
 /**
  * Time utils.
  *
- * @version $Revision$
+ * @version 
  */
 public final class TimeUtils {
 

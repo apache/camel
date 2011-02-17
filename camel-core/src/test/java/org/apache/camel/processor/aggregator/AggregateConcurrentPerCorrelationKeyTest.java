@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class AggregateConcurrentPerCorrelationKeyTest extends ContextTestSupport {
 

@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BrowseRouteTest extends ContextTestSupport {
 

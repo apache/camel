@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
  * Processing will still occur synchronously but it will provide the required
  * notifications that the caller expects.
  *
- * @version $Revision$
+ * @version 
  */
 public class AsyncProcessorTypeConverter implements TypeConverter {
 

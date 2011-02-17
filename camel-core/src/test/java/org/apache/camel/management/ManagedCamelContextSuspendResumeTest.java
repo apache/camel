@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 980370 $
+ * @version 
  */
 public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport {
 

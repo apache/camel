@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This implementation <b>cannot</b> load files over http.
  *
- * @version $Revision$
+ * @version 
  */
 public class XsltUriResolver implements URIResolver {
 

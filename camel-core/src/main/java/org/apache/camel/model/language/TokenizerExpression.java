@@ -28,7 +28,7 @@ import org.apache.camel.language.tokenizer.TokenizeLanguage;
 /**
  * For expressions and predicates using a body or header tokenizer
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)

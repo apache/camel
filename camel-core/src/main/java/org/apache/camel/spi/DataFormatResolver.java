@@ -22,7 +22,7 @@ import org.apache.camel.model.DataFormatDefinition;
 /**
  * Represents a resolver of data formats.
  *
- * @version $Revision$
+ * @version 
  */
 public interface DataFormatResolver {
 

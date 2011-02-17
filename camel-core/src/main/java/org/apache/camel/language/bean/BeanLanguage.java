@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  * As of Camel 1.5 the bean language also supports invoking a provided bean by
  * its classname or the bean itself.
  *
- * @version $Revision$
+ * @version 
  */
 public class BeanLanguage implements Language, IsSingleton {
 

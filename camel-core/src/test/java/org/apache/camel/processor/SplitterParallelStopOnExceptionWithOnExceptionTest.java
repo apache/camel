@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 891253 $
+ * @version 
  */
 public class SplitterParallelStopOnExceptionWithOnExceptionTest extends ContextTestSupport {
 

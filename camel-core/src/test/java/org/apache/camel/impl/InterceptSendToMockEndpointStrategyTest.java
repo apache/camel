@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 938376 $
+ * @version 
  */
 public class InterceptSendToMockEndpointStrategyTest extends ContextTestSupport {
 

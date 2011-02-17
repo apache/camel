@@ -35,7 +35,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 /**
  * This is an endpoint when sending to it, is intercepted and is routed in a detour
  *
- * @version $Revision$
+ * @version 
  */
 public class InterceptSendToEndpoint implements Endpoint {
 

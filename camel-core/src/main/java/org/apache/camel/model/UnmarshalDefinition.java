@@ -51,7 +51,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Unmarshals the binary payload using the given {@link DataFormatDefinition}
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)

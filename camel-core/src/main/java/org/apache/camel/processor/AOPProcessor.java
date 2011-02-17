@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.camel.Processor;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class AOPProcessor extends TryProcessor {
 

@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents the base XML type for DataFormat.
  *
- * @version $Revision$
+ * @version 
  */
 @XmlType(name = "dataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)

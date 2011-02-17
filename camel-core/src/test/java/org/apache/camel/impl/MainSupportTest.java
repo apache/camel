@@ -25,7 +25,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.view.ModelFileGenerator;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MainSupportTest extends ContextTestSupport {
 

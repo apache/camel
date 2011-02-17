@@ -23,7 +23,7 @@ import org.apache.camel.RollbackExchangeException;
 /**
  * Processor for marking an {@link org.apache.camel.Exchange} to rollback.
  *
- * @version $Revision$
+ * @version 
  */
 public class RollbackProcessor implements Processor, Traceable {
 

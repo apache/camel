@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class AsyncEndpointFailedAfterTest extends ContextTestSupport {
 

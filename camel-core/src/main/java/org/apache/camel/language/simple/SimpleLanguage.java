@@ -86,7 +86,7 @@ import org.apache.camel.util.StringHelper;
  * <br/>
  * The <b>only</b> file is the filename only with all paths clipped.
  *
- * @version $Revision$
+ * @version 
  */
 public class SimpleLanguage extends SimpleLanguageSupport {
 

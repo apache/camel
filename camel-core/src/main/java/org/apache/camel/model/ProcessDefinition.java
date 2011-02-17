@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents an XML &lt;process/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "process")
 @XmlAccessorType(XmlAccessType.FIELD)

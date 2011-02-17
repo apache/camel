@@ -22,7 +22,7 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class StartupListenerTest extends ContextTestSupport {
 

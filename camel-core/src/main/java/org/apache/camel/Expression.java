@@ -24,7 +24,7 @@ package org.apache.camel;
  * or <a href="http://camel.apache.org/sql.html">SQL</a> as well
  * as any arbitrary Java expression.
  *
- * @version $Revision$
+ * @version 
  */
 public interface Expression {
 

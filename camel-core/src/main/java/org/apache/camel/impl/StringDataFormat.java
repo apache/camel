@@ -28,7 +28,7 @@ import org.apache.camel.util.ExchangeHelper;
  * The text based <a href="http://camel.apache.org/data-format.html">data format</a> supporting
  * charset encoding.
  *
- * @version $Revision$
+ * @version 
  */
 public class StringDataFormat implements DataFormat {
 

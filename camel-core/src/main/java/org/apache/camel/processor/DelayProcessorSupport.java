@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This implementation will block while waiting.
  * 
- * @version $Revision$
+ * @version 
  */
 public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());

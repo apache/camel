@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class OnCompletionProcessor extends ServiceSupport implements Processor, Traceable {
 

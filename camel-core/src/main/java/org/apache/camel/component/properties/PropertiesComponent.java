@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The <a href="http://camel.apache.org/properties">properties</a> component.
  *
- * @version $Revision$
+ * @version 
  */
 public class PropertiesComponent extends DefaultComponent {
 

@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class AsyncEndpointRoutingSlipBean2Test extends ContextTestSupport {
 

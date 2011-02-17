@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * A class which will auto-discover converter objects and methods to pre-load
  * the registry of converters on startup
  *
- * @version $Revision$
+ * @version 
  */
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";

@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * they are true their processors are used, with a default otherwise clause used
  * if none match.
  * 
- * @version $Revision$
+ * @version 
  */
 public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
     private static final transient Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);

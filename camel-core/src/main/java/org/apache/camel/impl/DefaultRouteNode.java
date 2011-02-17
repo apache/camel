@@ -27,7 +27,7 @@ import org.apache.camel.processor.Traceable;
 /**
  * A default implementation of the {@link org.apache.camel.RouteNode}
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultRouteNode implements RouteNode {
 

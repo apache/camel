@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This helper should only be used internally in Camel.
  *
- * @version $Revision$
+ * @version 
  */
 public final class ExecutorServiceHelper {
 

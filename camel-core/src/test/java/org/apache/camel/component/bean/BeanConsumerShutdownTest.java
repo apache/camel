@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BeanMethodHeartbeatTest;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanConsumerShutdownTest extends ContextTestSupport {
 

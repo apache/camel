@@ -25,7 +25,7 @@ import org.apache.camel.AsyncCallback;
 /**
  * Information used by Camel to perform method invocation.
  *
- * @version $Revision$
+ * @version 
  */
 public interface MethodInvocation {
 

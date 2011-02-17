@@ -19,7 +19,7 @@ package org.apache.camel.builder;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class RouteBuilderAddRoutesOnlyInterceptTest extends ContextTestSupport {
 

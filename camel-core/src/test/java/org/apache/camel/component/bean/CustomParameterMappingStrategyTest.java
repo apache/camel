@@ -24,7 +24,7 @@ import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CustomParameterMappingStrategyTest extends ContextTestSupport {
 

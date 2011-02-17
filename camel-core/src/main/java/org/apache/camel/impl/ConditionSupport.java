@@ -26,7 +26,7 @@ import org.apache.camel.spi.Condition;
 /**
  * A support class for {@link org.apache.camel.spi.Condition} implementations to use as base class.
  *
- * @version $Revision$
+ * @version 
  */
 public class ConditionSupport implements Condition {
 

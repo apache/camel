@@ -28,7 +28,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Represents the String (text based) {@link DataFormat}
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "string")
 @XmlAccessorType(XmlAccessType.FIELD)

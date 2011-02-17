@@ -27,7 +27,7 @@ import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class IdempotentConsumerEagerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;

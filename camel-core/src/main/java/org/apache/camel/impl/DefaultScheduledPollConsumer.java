@@ -28,7 +28,7 @@ import org.apache.camel.util.ServiceHelper;
  * A default implementation of an event driven {@link org.apache.camel.Consumer} which uses the
  * {@link PollingConsumer}
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
     private PollingConsumer pollingConsumer;

@@ -29,7 +29,7 @@ import org.apache.camel.impl.ExpressionAdapter;
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class NeilSplitterTest extends ContextTestSupport {
     protected Endpoint startEndpoint;

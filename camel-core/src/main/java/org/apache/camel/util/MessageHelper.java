@@ -31,7 +31,7 @@ import org.apache.camel.converter.jaxp.StringSource;
 /**
  * Some helper methods when working with {@link org.apache.camel.Message}.
  *
- * @version $Revision$
+ * @version 
  */
 public final class MessageHelper {
 

@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * <a href="http://camel.apache.org/guice.html">Guice</a> and
  * <a href="http://camel.apache.org/blueprint.html">Blueprint</a>support.
  *
- * @version $Revision$
+ * @version 
  */
 public class CamelPostProcessorHelper implements CamelContextAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelPostProcessorHelper.class);

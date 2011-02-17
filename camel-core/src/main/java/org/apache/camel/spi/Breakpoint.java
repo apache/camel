@@ -32,7 +32,7 @@ import org.apache.camel.model.ProcessorDefinition;
  * will catch and log those at <tt>WARN</tt> level and continue. This ensures Camel can continue to route
  * the message without having breakpoints causing issues.
  *
- * @version $Revision$
+ * @version 
  * @see org.apache.camel.spi.Debugger
  * @see org.apache.camel.spi.Condition
  */

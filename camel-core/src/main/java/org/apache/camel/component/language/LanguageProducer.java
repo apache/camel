@@ -24,7 +24,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Language producer.
  *
- * @version $Revision$
+ * @version 
  */
 public class LanguageProducer extends DefaultProducer {
 

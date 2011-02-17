@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 import org.apache.camel.util.jndi.JndiTest;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class RegistryTest extends TestCase {
     protected JndiRegistry registry;

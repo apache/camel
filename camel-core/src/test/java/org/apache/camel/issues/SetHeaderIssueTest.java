@@ -23,7 +23,7 @@ import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SetHeaderIssueTest extends ContextTestSupport {
     protected Endpoint startEndpoint;

@@ -17,7 +17,7 @@
 package org.apache.camel.management.mbean;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public interface ManagedInstance {
 

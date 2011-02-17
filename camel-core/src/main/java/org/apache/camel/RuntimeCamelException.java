@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Base class for all Camel unchecked exceptions.
  *
- * @version $Revision$
+ * @version 
  */
 public class RuntimeCamelException extends RuntimeException {
     private static final long serialVersionUID = 8046489554418284257L;

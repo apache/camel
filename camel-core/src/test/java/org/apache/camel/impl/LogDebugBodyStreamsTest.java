@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.StringSource;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class LogDebugBodyStreamsTest extends ContextTestSupport {
 

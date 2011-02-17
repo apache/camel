@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 /**
  * The correlation key has been closed and the Exchange cannot be aggregated.
  *
- * @version $Revision$
+ * @version 
  */
 public class ClosedCorrelationKeyException extends CamelExchangeException {
     private final String correlationKey;

@@ -27,7 +27,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A processor which catches exceptions.
  *
- * @version $Revision$
+ * @version 
  */
 public class CatchProcessor extends DelegateAsyncProcessor implements Traceable {
     private final List<Class> exceptions;

@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * An exception thrown if evaluation of the expression failed.
  *
- * @version $Revision$
+ * @version 
  */
 public class ExpressionEvaluationException extends RuntimeCamelException {
 

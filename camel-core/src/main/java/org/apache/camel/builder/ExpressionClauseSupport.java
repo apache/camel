@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A support class for building expression clauses.
  *
- * @version $Revision$
+ * @version 
  */
 public class ExpressionClauseSupport<T> {
 

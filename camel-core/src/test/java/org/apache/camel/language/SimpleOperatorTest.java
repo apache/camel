@@ -21,7 +21,7 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SimpleOperatorTest extends LanguageTestSupport {
 

@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 891253 $
+ * @version 
  */
 public class MulticastWithOnExceptionTest extends ContextTestSupport {
 

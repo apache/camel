@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlValue;
 /**
  * Represents a description element which can be used on any element in the EIP route
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "description")
 @XmlAccessorType(XmlAccessType.FIELD)

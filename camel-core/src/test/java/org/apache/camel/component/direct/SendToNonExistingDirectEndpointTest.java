@@ -21,7 +21,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SendToNonExistingDirectEndpointTest extends ContextTestSupport {
 

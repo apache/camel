@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Thrown if the body could not be converted to the required type
  * 
- * @version $Revision$
+ * @version 
  */
 public class ExpectedBodyTypeException extends RuntimeCamelException {
     private static final long serialVersionUID = -7121445152234363768L;

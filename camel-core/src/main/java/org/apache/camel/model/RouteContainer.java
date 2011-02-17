@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 /**
  * Container to hold {@link org.apache.camel.model.RouteDefinition Route}.
  *
- * @version $Revision$
+ * @version 
  */
 public interface RouteContainer {
 

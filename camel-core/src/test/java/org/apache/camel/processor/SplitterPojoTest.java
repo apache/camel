@@ -30,7 +30,7 @@ import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SplitterPojoTest extends ContextTestSupport {
 

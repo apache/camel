@@ -58,7 +58,7 @@ import static org.apache.camel.util.ExchangeHelper.convertToType;
  * Represents the metadata about a bean type created via a combination of
  * introspection and annotations together with some useful sensible defaults
  *
- * @version $Revision$
+ * @version 
  */
 public class BeanInfo {
     private static final transient Logger LOG = LoggerFactory.getLogger(BeanInfo.class);

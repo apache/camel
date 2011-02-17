@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents the JAXB2 XML {@link DataFormat}
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "jaxb")
 @XmlAccessorType(XmlAccessType.FIELD)

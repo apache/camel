@@ -27,7 +27,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Represents an XML &lt;when/&gt; element
  * 
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "when")
 public class WhenDefinition extends ExpressionNode {

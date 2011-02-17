@@ -22,7 +22,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @ManagedResource(description = "Managed Bean Processor")
 public class ManagedBeanProcessor extends ManagedProcessor {

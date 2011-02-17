@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XPathToFileTest extends ContextTestSupport {
 

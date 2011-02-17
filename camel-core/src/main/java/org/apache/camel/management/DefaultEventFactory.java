@@ -49,7 +49,7 @@ import org.apache.camel.spi.EventFactory;
 /**
  * Default implementation of the {@link org.apache.camel.spi.EventFactory}.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultEventFactory implements EventFactory {
 

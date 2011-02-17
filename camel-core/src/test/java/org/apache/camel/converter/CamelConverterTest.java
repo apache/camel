@@ -29,7 +29,7 @@ import static org.apache.camel.builder.Builder.constant;
 import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CamelConverterTest extends ContextTestSupport {
 

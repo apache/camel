@@ -23,7 +23,7 @@ import org.apache.camel.util.LRUCache;
  * Endpoint registry which is a based on a {@link org.apache.camel.util.LRUCache}
  * to keep the last 1000 in an internal cache.
  *
- * @version $Revision$
+ * @version 
  */
 public class EndpointRegistry extends LRUCache<EndpointKey, Endpoint> {
 

@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  * <p/>
  * Camel will by default use <tt>CallerRuns</tt>.
  *
- * @version $Revision$
+ * @version 
  */
 @XmlType
 @XmlEnum(String.class)

@@ -26,7 +26,7 @@ import org.apache.camel.converter.IOConverter;
  * <p/>
  * If the convertions fails an {@link org.apache.camel.InvalidPayloadException} is thrown.
  *
- * @version $Revision$
+ * @version 
  */
 public class ConvertBodyProcessor implements Processor {
     private final Class<?> type;

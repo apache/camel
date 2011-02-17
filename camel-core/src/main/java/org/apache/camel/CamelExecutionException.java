@@ -22,7 +22,7 @@ package org.apache.camel;
  * Is usually thrown to the caller when using the {@link org.apache.camel.ProducerTemplate}
  * to send messages to Camel.
  *
- * @version $Revision$
+ * @version 
  */
 public class CamelExecutionException extends RuntimeExchangeException {
     private static final long serialVersionUID = -5821095325248904305L;

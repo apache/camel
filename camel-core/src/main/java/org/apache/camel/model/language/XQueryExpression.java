@@ -31,7 +31,7 @@ import org.apache.camel.spi.ClassResolver;
 /**
  * For XQuery expressions and predicates
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "xquery")
 @XmlAccessorType(XmlAccessType.FIELD)

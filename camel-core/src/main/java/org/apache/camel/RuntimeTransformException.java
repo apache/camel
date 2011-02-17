@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Thrown if a message transformation fails
  * 
- * @version $Revision$
+ * @version 
  */
 public class RuntimeTransformException extends RuntimeCamelException {
 

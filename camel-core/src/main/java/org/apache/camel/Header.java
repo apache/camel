@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * Marks a parameter as being a header on an inbound {@link Message}
  *
  * @see Message#getHeader(String) 
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

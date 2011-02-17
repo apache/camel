@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * A useful base class for output types
  *
- * @version $Revision$
+ * @version 
  */
 @XmlType(name = "output")
 @XmlAccessorType(XmlAccessType.FIELD)

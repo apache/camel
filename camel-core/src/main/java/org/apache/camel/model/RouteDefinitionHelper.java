@@ -28,7 +28,7 @@ import org.apache.camel.util.EndpointHelper;
  * Utility methods to help preparing {@link RouteDefinition} before they are added to
  * {@link org.apache.camel.CamelContext}.
  *
- * @version $Revision$
+ * @version 
  */
 public final class RouteDefinitionHelper {
 

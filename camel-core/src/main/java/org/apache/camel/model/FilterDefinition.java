@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Represents an XML &lt;filter/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)

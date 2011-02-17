@@ -25,7 +25,7 @@ import org.apache.camel.impl.JndiRegistry;
  * Unit test for verifying that error handler is wrapped each individual node in a pipeline.
  * Based on CAMEL-1548.
  *
- * @version $Revision$
+ * @version 
  */
 public class ErrorHandlerWrappedEachNodeTest extends ContextTestSupport {
 

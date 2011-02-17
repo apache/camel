@@ -25,7 +25,7 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
 

@@ -22,7 +22,7 @@ import org.apache.camel.ShutdownableService;
  * A shared {@link org.apache.camel.impl.DefaultProducerServicePool} which is used by
  * {@link org.apache.camel.CamelContext} by default.
  *
- * @version $Revision$
+ * @version 
  */
 public class SharedProducerServicePool extends DefaultProducerServicePool implements ShutdownableService {
 

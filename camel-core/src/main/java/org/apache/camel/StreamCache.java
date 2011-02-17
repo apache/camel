@@ -26,7 +26,7 @@ import java.io.OutputStream;
  * This interface is mainly used by the {@link org.apache.camel.processor.interceptor.StreamCachingInterceptor}
  * for determining if/how to wrap a stream-based message.
  *
- * @version $Revision$
+ * @version 
  */
 public interface StreamCache {
 

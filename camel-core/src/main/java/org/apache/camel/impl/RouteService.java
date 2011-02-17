@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * Represents the runtime objects for a given {@link RouteDefinition} so that it can be stopped independently
  * of other routes
  *
- * @version $Revision$
+ * @version 
  */
 public class RouteService extends ServiceSupport {
 

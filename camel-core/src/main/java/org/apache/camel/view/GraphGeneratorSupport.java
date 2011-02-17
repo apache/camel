@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public abstract class GraphGeneratorSupport extends GraphSupport {
     protected String dir;

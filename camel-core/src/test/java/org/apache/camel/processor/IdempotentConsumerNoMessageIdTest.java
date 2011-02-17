@@ -23,7 +23,7 @@ import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.processor.idempotent.NoMessageIdException;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class IdempotentConsumerNoMessageIdTest extends ContextTestSupport {
 

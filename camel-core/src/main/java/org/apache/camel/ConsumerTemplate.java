@@ -42,7 +42,7 @@ package org.apache.camel;
  * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
  * before using, it applies to ConsumerTemplate as well.
  *
- * @version $Revision$
+ * @version 
  */
 public interface ConsumerTemplate extends Service {
 

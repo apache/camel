@@ -25,7 +25,7 @@ import java.util.TimerTask;
  * @see Timer
  * @see TimerTask
  * 
- * @version $Revision$
+ * @version 
  */
 public class Timeout extends TimerTask {
     

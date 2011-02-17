@@ -28,7 +28,7 @@ import org.apache.camel.util.CastUtils;
  * A factory of the Camel InitialContext which allows a Map to be used to create a
  * JNDI context.
  *
- * @version $Revision$
+ * @version 
  */
 public class CamelInitialContextFactory implements InitialContextFactory {
 

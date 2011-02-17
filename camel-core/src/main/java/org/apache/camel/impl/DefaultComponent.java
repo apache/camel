@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default component to use for base for components implementations.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class DefaultComponent extends ServiceSupport implements Component {
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultComponent.class);

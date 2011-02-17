@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.apache.camel.Service;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class LRUCacheTest extends TestCase {
 

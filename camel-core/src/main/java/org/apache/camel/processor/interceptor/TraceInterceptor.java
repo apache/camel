@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An interceptor for debugging and tracing routes
  *
- * @version $Revision$
+ * @version 
  */
 public class TraceInterceptor extends DelegateAsyncProcessor implements ExchangeFormatter {
     private static final transient Logger LOG = LoggerFactory.getLogger(TraceInterceptor.class);

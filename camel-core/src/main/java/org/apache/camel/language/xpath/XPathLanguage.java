@@ -27,7 +27,7 @@ import org.apache.camel.spi.Language;
 /**
  * XPath language.
  *
- * @version $Revision$
+ * @version 
  */
 public class XPathLanguage implements Language, IsSingleton {
     private QName resultType;

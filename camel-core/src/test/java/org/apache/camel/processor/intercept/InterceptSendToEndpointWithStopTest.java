@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Unit test for intercepting sending to endpoint
  * 
- * @version $Revision$
+ * @version 
  */
 public class InterceptSendToEndpointWithStopTest extends ContextTestSupport {
 

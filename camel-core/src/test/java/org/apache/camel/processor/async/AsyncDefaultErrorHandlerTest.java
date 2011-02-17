@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Unit test to verify that error handling using async() also works as expected.
  *
- * @version $Revision$
+ * @version 
  */
 public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
 

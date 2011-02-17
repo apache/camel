@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A default implementation of {@link Producer} for implementation inheritance.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class DefaultProducer extends ServiceSupport implements Producer {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());

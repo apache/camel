@@ -40,7 +40,7 @@ import org.apache.camel.util.ObjectHelper;
  * The <tt>synchronous</tt> option on the endpoint allows Camel end users to dictate whether they want the asynchronous model or not.
  * The option is default <tt>false</tt> which means asynchronous processing is allowed.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 

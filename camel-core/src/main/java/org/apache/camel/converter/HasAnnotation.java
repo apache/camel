@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * to be applicable. e.g. this annotation could be used on a JAXB converter which only applies to objects with a
  * JAXB annotation on them
  *
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

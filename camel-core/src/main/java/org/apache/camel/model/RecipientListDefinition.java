@@ -35,7 +35,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 /**
  * Represents an XML &lt;recipientList/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)

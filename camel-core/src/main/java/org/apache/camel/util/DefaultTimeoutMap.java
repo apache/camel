@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * to schedule a background task which check for old entries to purge. This implementation will shutdown the scheduler
  * if its being stopped.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMap<K, V>, Runnable {
 

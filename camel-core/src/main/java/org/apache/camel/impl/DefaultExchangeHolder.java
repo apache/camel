@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * Any object that is not serializable will be skipped and Camel will log this at WARN level.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultExchangeHolder implements Serializable {
 

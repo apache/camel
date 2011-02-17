@@ -20,7 +20,7 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.util.ReflectionInjector;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class InjectorDefaultsToReflectionTest extends ContextTestSupport {
 

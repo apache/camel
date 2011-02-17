@@ -33,7 +33,7 @@ import org.apache.camel.util.ServiceHelper;
  * Implementations can extend this base class and implement {@link org.apache.camel.SuspendableService}
  * in case they support suspend/resume.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class ServiceSupport implements Service, ShutdownableService {
 

@@ -30,7 +30,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ObjectHelperTest extends TestCase {
 

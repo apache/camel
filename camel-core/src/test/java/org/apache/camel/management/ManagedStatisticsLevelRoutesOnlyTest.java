@@ -25,7 +25,7 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ManagedStatisticsLevelRoutesOnlyTest extends ManagementTestSupport {
 

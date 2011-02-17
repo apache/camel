@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * An exception thrown if a value could not be converted to the required type
  *
- * @version $Revision$
+ * @version 
  */
 public class NoTypeConversionAvailableException extends CamelException {
     private static final long serialVersionUID = -8721487434390572636L;

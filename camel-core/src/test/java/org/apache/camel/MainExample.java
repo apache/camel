@@ -21,7 +21,7 @@ import java.util.Date;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 909028 $
+ * @version 
  */
 // START SNIPPET: e1
 public class MainExample {

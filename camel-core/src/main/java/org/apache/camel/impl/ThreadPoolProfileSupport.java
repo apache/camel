@@ -23,7 +23,7 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ThreadPoolProfileSupport implements ThreadPoolProfile {
 

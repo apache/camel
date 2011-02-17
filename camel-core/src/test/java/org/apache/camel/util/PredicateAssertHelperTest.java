@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultExchange;
 import static org.apache.camel.builder.Builder.constant;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class PredicateAssertHelperTest extends ContextTestSupport {
 

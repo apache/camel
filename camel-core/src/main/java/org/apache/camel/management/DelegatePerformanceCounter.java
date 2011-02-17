@@ -28,7 +28,7 @@ package org.apache.camel.management;
  * This delegation is needed as how Camel is designed to register services in the
  * {@link org.apache.camel.spi.LifecycleStrategy} in various stages.
  *
- * @version $Revision$
+ * @version 
  */
 public class DelegatePerformanceCounter implements PerformanceCounter {
 

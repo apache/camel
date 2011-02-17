@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * Base class for implementation inheritance for different clauses in the <a
  * href="http://camel.apache.org/dsl.html">Java DSL</a>
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class BuilderSupport {
     private CamelContext context;

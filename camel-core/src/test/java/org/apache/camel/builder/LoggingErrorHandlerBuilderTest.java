@@ -21,7 +21,7 @@ import org.apache.camel.LoggingLevel;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
 

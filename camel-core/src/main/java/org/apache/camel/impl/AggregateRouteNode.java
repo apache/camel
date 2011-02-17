@@ -23,7 +23,7 @@ import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class AggregateRouteNode implements RouteNode {
 

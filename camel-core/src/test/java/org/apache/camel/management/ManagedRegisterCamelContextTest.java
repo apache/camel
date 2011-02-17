@@ -23,7 +23,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ManagedRegisterCamelContextTest extends ManagementTestSupport {
 

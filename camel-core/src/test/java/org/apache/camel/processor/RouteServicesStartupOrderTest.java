@@ -28,7 +28,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class RouteServicesStartupOrderTest extends ContextTestSupport {
 

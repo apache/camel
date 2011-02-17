@@ -27,7 +27,7 @@ import org.apache.camel.util.ServiceHelper;
  * Represents the component that manages {@link DirectEndpoint}. It holds the
  * list of named direct endpoints.
  *
- * @version $Revision$
+ * @version 
  */
 public class DirectComponent extends DefaultComponent {
 

@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Base class for sending to an endpoint with an optional {@link ExchangePattern}
  *
- * @version $Revision$
+ * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {

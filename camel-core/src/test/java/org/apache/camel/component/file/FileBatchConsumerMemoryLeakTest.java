@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Unit test to test CAMEL-1652
  *
- * @version $Revision$
+ * @version 
  */
 public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
 

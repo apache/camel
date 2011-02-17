@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
  * which has a <tt>Logger</tt> class.
  *
- * @version $Revision$
+ * @version 
  */
 public class CamelLogger extends ServiceSupport implements Processor {
     private Logger log;

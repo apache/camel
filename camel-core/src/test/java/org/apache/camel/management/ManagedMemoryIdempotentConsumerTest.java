@@ -31,7 +31,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.CastUtils;
 
 /**
- * @version $Revision: 937951 $
+ * @version 
  */
 public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
     protected Endpoint startEndpoint;

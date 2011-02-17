@@ -22,7 +22,7 @@ import org.apache.camel.processor.interceptor.TraceEventMessage;
 import org.apache.camel.processor.interceptor.Tracer;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class InterceptSimpleRouteTraceTest extends ContextTestSupport {
 

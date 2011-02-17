@@ -26,7 +26,7 @@ import org.apache.camel.ExchangePattern;
 /**
  * Represents an XML &lt;inOut/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "inOut")
 @XmlAccessorType(XmlAccessType.FIELD)

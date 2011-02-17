@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
  * particularly for derived types of array component types and dealing with
  * primitive array types.
  *
- * @version $Revision$
+ * @version 
  */
 public class EnumTypeConverter implements TypeConverter {
 

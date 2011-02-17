@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A JMX based {@link EventNotifier} which broadcasts JMX {@link Notification}s.
  *
- * @version $Revision$
+ * @version 
  */
 public class JmxNotificationEventNotifier extends EventNotifierSupport implements JmxNotificationBroadcasterAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(JmxNotificationEventNotifier.class);

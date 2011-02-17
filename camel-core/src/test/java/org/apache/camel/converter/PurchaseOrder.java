@@ -19,7 +19,7 @@ package org.apache.camel.converter;
 import java.math.BigDecimal;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class PurchaseOrder {
 

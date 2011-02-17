@@ -45,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A useful base class for an expression
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement
 @XmlType(name = "expression")

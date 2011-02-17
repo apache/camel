@@ -27,7 +27,7 @@ import static org.apache.camel.builder.PredicateBuilder.in;
 import static org.apache.camel.builder.PredicateBuilder.not;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class PredicateBuilderTest extends TestSupport {
     protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());

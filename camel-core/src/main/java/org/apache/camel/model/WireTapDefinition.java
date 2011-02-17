@@ -35,7 +35,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 /**
  * Represents an XML &lt;wireTap/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)

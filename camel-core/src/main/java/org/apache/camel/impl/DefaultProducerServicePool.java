@@ -25,7 +25,7 @@ import org.apache.camel.Producer;
  * For instance camel-mina and camel-ftp leverages this to allow a pool of producers so we
  * can support concurrent producers in a thread safe manner.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultProducerServicePool extends DefaultServicePool<Endpoint, Producer> {
 

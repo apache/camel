@@ -23,7 +23,7 @@ import org.apache.camel.ContextTestSupport;
 
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XPathTransformTest extends ContextTestSupport {
 

@@ -19,7 +19,7 @@ package org.apache.camel.util;
 /**
  * Holder for a key and value.
  *
- * @version $Revision$
+ * @version 
  */
 public class KeyValueHolder<K, V> {
 

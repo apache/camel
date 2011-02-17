@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * asynchronous consumer mechanism along with a {@link BlockingQueue} to allow
  * the caller to pull messages on demand.
  *
- * @version $Revision$
+ * @version 
  */
 public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor {
     private static final transient Logger LOG = LoggerFactory.getLogger(EventDrivenPollingConsumer.class);

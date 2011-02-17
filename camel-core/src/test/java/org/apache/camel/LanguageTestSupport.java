@@ -20,7 +20,7 @@ import org.apache.camel.spi.Language;
 
 /**
  * A useful base class for testing the language plugins in Camel
- * @version $Revision$
+ * @version 
  */
 public abstract class LanguageTestSupport extends ExchangeTestSupport {
 

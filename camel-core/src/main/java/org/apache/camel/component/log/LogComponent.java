@@ -29,7 +29,7 @@ import org.apache.camel.util.IntrospectionSupport;
  * The <a href="http://camel.apache.org/log.html">Log Component</a>
  * to log message exchanges to the underlying logging mechanism.
  *
- * @version $Revision$
+ * @version 
  */
 public class LogComponent extends DefaultComponent {
 

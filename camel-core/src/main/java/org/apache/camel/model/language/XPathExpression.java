@@ -28,7 +28,7 @@ import org.apache.camel.Predicate;
 /**
  * For XPath expressions and predicates
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)

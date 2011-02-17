@@ -22,7 +22,7 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ValidationWithTryCatchTest extends ValidationTest {
 

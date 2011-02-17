@@ -26,7 +26,7 @@ import org.apache.camel.spi.ShutdownAware;
 /**
  * The direct consumer.
  *
- * @version $Revision$
+ * @version 
  */
 public class DirectConsumer extends DefaultConsumer implements ShutdownAware, SuspendableService {
 

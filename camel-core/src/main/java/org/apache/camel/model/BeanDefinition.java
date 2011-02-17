@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents an XML &lt;bean/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "bean")
 @XmlAccessorType(XmlAccessType.FIELD)

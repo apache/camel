@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CaseInsensitiveMapTest extends TestCase {
 

@@ -36,7 +36,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  * DefaultHeaderFilterStrategy are being extended and invoked in camel-jms 
  * and camel-cxf components.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     

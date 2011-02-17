@@ -25,7 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FileConfigureTest extends ContextTestSupport {
     private static final String EXPECT_PATH = "target" + File.separator + "foo" + File.separator + "bar";

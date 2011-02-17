@@ -22,7 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FileConsumerTemplateTest extends ContextTestSupport {
 

@@ -19,7 +19,7 @@ package org.apache.camel.management;
 /**
  * A counter that gathers performance metrics when {@link org.apache.camel.Exchange} are routed in Camel.
  *
- * @version $Revision$
+ * @version 
  */
 public interface PerformanceCounter {
 

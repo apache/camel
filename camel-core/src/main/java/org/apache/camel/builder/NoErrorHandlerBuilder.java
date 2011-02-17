@@ -26,7 +26,7 @@ import org.apache.camel.spi.RouteContext;
  * if you are unsure; however it can be useful sometimes to disable an error handler inside a complex route
  * so that exceptions bubble up to the parent {@link Processor}
  *
- * @version $Revision$
+ * @version 
  */
 public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 

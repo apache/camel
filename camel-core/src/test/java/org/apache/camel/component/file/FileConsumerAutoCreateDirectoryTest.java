@@ -26,7 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 

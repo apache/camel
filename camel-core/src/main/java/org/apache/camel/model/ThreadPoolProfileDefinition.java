@@ -31,7 +31,7 @@ import org.apache.camel.spi.ThreadPoolProfile;
 /**
  * Represents an XML &lt;threadPoolProfile/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "threadPoolProfile")
 @XmlAccessorType(XmlAccessType.FIELD)

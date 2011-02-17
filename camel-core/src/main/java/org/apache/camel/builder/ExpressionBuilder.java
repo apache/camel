@@ -50,7 +50,7 @@ import org.apache.camel.util.OgnlHelper;
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
  *
- * @version $Revision$
+ * @version 
  */
 public final class ExpressionBuilder {
 

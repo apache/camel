@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.Tracer;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ManagedRouteContextTracerTest extends ManagementTestSupport {
 

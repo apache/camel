@@ -22,7 +22,7 @@ import java.util.List;
  * Implementations support navigating a graph where you can traverse forward and each next
  * returns a {@link List} of outputs of type <tt>T</tt> that can contain <tt>0..n</tt> nodes.
  *
- * @version $Revision$
+ * @version 
  */
 public interface Navigate<T> {
 

@@ -27,7 +27,7 @@ import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanTest extends LanguageTestSupport {
 

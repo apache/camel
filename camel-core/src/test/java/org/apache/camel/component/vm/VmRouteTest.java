@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class VmRouteTest extends TestSupport {
     private CamelContext context1 = new DefaultCamelContext();

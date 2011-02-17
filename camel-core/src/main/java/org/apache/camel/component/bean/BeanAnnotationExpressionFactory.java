@@ -26,7 +26,7 @@ import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 

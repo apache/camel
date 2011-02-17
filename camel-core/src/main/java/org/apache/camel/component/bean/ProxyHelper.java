@@ -25,7 +25,7 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * A helper class for creating proxies which delegate to Camel
  *
- * @version $Revision$
+ * @version 
  */
 public final class ProxyHelper {
 

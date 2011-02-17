@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * Marks a parameter as being an injection point of a property of an {@link Exchange}
  *
  * @see Exchange#getProperty(String)  
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

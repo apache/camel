@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  *
  * Then for each endpoint or URI the message is forwarded a separate copy.
  *
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

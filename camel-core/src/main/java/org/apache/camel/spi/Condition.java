@@ -28,7 +28,7 @@ import org.apache.camel.model.ProcessorDefinition;
  * Is used by the {@link org.apache.camel.spi.Debugger} to apply {@link Condition}s
  * to {@link org.apache.camel.spi.Breakpoint}s to define rules when the breakpoints should match.
  *
- * @version $Revision$
+ * @version 
  */
 public interface Condition {
 

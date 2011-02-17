@@ -24,7 +24,7 @@ import org.apache.camel.impl.ProcessorEndpoint;
 /**
  * Endpoint for the bean component.
  *
- * @version $Revision$
+ * @version 
  */
 public class BeanEndpoint extends ProcessorEndpoint {
     private boolean cache;

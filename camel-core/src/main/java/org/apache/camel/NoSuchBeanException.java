@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * A runtime exception if a given bean could not be found in the {@link org.apache.camel.spi.Registry}
  *
- * @version $Revision$
+ * @version 
  */
 public class NoSuchBeanException extends RuntimeCamelException {
     private static final long serialVersionUID = -8721487431101572630L;

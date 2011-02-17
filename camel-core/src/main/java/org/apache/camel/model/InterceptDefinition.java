@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Represents an XML &lt;intercept/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)

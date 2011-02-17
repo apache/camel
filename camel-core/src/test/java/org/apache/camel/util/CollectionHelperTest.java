@@ -25,7 +25,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CollectionHelperTest extends TestCase {
 

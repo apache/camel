@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Default implementation of the {@link AnnotationExpressionFactory}.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultAnnotationExpressionFactory implements AnnotationExpressionFactory {
 

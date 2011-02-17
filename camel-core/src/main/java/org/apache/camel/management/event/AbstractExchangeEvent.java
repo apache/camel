@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 /**
  * Base class for {@link Exchange} events.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class AbstractExchangeEvent extends EventObject {
 

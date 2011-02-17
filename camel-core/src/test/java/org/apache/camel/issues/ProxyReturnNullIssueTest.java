@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.ProxyHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ProxyReturnNullIssueTest extends ContextTestSupport {
 

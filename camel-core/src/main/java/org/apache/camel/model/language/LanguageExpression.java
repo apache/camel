@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Represents a parameterised language expression which can support any language
  * at runtime using the language attribute.
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "language")
 @XmlAccessorType(XmlAccessType.FIELD)

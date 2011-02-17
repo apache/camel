@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A base class for Graph processing code of Camel EIPs containing a number of helper methods
  *
- * @version $Revision$
+ * @version 
  */
 public class GraphSupport {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());

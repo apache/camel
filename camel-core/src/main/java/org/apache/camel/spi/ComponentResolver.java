@@ -23,7 +23,7 @@ import org.apache.camel.Component;
  * Represents a resolver of components from a URI to be able to auto-load them using some
  * discovery mechanism like {@link org.apache.camel.impl.DefaultComponentResolver}
  *
- * @version $Revision$
+ * @version 
  */
 public interface ComponentResolver {
     

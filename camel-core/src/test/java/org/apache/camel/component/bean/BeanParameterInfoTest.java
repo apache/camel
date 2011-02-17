@@ -22,7 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanParameterInfoTest extends ContextTestSupport {
 

@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A number of useful helper methods for working with Objects
  *
- * @version $Revision$
+ * @version 
  */
 public final class ObjectHelper {
     private static final transient Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);

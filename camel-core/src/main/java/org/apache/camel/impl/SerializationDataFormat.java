@@ -30,7 +30,7 @@ import org.apache.camel.util.ExchangeHelper;
  * The <a href="http://camel.apache.org/data-format.html">data format</a>
  * using Java Serialiation.
  *
- * @version $Revision$
+ * @version 
  */
 public class SerializationDataFormat implements DataFormat {
 

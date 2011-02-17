@@ -22,7 +22,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ValueBuilderTest extends ContextTestSupport {
 

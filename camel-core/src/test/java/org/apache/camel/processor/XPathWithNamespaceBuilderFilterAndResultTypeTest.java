@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.Namespaces;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XPathWithNamespaceBuilderFilterAndResultTypeTest extends XPathWithNamespaceBuilderFilterTest {
 

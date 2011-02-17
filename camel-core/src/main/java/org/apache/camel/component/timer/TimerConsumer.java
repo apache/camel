@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The timer consumer.
  *
- * @version $Revision$
+ * @version 
  */
 public class TimerConsumer extends DefaultConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(TimerConsumer.class);

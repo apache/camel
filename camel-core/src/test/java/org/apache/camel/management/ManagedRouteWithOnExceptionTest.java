@@ -20,7 +20,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
 

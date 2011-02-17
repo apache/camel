@@ -25,7 +25,7 @@ import org.apache.camel.model.ProcessorDefinition;
  * Tracing information used by {@link org.apache.camel.processor.interceptor.TraceInterceptor}
  * so we can trace the exact route path a given {@link org.apache.camel.Exchange} has been processed.
  *
- * @version $Revision$
+ * @version 
  */
 public interface TracedRouteNodes {
 

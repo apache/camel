@@ -24,7 +24,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ManagedStatisticsDisabledTest extends ManagementTestSupport {
 

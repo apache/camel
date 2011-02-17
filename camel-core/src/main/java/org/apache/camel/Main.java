@@ -27,7 +27,7 @@ import org.apache.camel.view.ModelFileGenerator;
 /**
  * A command line tool for booting up a CamelContext
  *
- * @version $Revision: 1025866 $
+ * @version 
  */
 public class Main extends MainSupport {
     protected static Main instance;

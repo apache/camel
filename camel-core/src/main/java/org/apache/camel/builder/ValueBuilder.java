@@ -27,7 +27,7 @@ import org.apache.camel.Predicate;
 /**
  * A builder of expressions or predicates based on values.
  * 
- * @version $Revision$
+ * @version 
  */
 public class ValueBuilder implements Expression {
     private Expression expression;

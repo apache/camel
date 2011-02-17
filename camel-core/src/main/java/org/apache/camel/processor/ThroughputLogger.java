@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A logger for logging message throughput.
  *
- * @version $Revision$
+ * @version 
  */
 public class ThroughputLogger extends CamelLogger {
     private static final Logger LOG = LoggerFactory.getLogger(ThroughputLogger.class);

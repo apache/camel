@@ -27,7 +27,7 @@ import org.apache.camel.spi.RouteStartupOrder;
 /**
  * Default implementation of {@link org.apache.camel.spi.RouteStartupOrder}.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultRouteStartupOrder implements RouteStartupOrder {
 

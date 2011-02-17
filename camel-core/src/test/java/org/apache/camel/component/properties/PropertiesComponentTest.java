@@ -23,7 +23,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class PropertiesComponentTest extends ContextTestSupport {
 

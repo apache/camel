@@ -21,7 +21,7 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
 

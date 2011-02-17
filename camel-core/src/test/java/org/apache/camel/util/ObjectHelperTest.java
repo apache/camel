@@ -30,7 +30,7 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ObjectHelperTest extends TestCase {
 

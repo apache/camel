@@ -27,7 +27,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
  * Represents an expression clause within the DSL which when the expression is
  * complete the clause continues to another part of the DSL
  * 
- * @version $Revision$
+ * @version 
  */
 public class ExpressionClause<T> extends ExpressionDefinition {
     private ExpressionClauseSupport<T> delegate;

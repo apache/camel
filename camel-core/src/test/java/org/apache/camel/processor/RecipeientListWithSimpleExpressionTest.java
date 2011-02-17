@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class RecipeientListWithSimpleExpressionTest extends ContextTestSupport {
 

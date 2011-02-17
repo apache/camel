@@ -30,7 +30,7 @@ import org.apache.camel.management.event.CamelContextStoppingEvent;
 import org.apache.camel.management.event.ServiceStopFailureEvent;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupport {
 

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents an XML &lt;transacted/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "transacted")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * A runtime exception caused by a specific message {@link Exchange}
  *
- * @version $Revision$
+ * @version 
  */
 public class RuntimeExchangeException extends RuntimeCamelException {
     private static final long serialVersionUID = -8721487431101572630L;

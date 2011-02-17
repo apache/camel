@@ -19,7 +19,7 @@ package org.apache.camel.processor.onexception;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class OnCatchHandledTest extends OnExceptionHandledTest {
 

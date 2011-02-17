@@ -22,7 +22,7 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class InterceptFromWhenTest extends ContextTestSupport {
 

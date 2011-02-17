@@ -30,7 +30,7 @@ import org.apache.camel.Processor;
  * particular system to malfunction or to reduce its throughput you might want
  * to introduce some throttling.
  * 
- * @version $Revision$
+ * @version 
  */
 public class Throttler extends DelayProcessorSupport implements Traceable {
     private long maximumRequestsPerPeriod;

@@ -27,7 +27,7 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 /**
  * Base class for builders of error handling.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
     private List<OnExceptionDefinition> exceptions = new ArrayList<OnExceptionDefinition>();

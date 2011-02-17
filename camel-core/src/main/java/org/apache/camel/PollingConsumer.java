@@ -21,7 +21,7 @@ package org.apache.camel;
  * href="http://camel.apache.org/polling-consumer.html">Polling
  * Consumer</a> where the caller polls for messages when it is ready.
  * 
- * @version $Revision$
+ * @version 
  */
 public interface PollingConsumer extends Consumer {
 

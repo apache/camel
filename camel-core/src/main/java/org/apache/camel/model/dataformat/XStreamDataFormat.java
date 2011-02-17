@@ -41,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents the XStream XML {@link org.apache.camel.spi.DataFormat}
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "xstream")
 @XmlAccessorType(XmlAccessType.NONE)

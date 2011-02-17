@@ -29,7 +29,7 @@ import org.apache.camel.impl.DefaultEndpoint;
  * Represents a direct endpoint that synchronously invokes the consumer of the
  * endpoint when a producer sends a message to it.
  *
- * @version $Revision$
+ * @version 
  */
 public class DirectEndpoint extends DefaultEndpoint {
 

@@ -28,7 +28,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Represents the Bindy {@link org.apache.camel.spi.DataFormat}
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "bindy")
 @XmlAccessorType(XmlAccessType.FIELD)

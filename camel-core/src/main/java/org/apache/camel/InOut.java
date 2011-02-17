@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
  * @see InOnly
  * @see Pattern
  *
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

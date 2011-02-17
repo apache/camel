@@ -21,7 +21,7 @@ import java.util.Comparator;
 /**
  * A comparator to sort {@link Ordered}
  *
- * @version $Revision$
+ * @version 
  */
 public final class OrderedComparator implements Comparator {
 

@@ -36,7 +36,7 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
  * to register the object in JMX. The assembler is capable of using the Spring JMX annotations to
  * gather the list of JMX operations and attributes.
  *
- * @version $Revision$
+ * @version 
  */
 public class JmxMBeanAssembler {
     private static final Logger LOG = LoggerFactory.getLogger(JmxMBeanAssembler.class);

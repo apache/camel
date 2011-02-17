@@ -32,7 +32,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DummyLifecycleStrategy implements LifecycleStrategy {
 

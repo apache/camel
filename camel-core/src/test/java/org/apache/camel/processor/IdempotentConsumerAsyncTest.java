@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class IdempotentConsumerAsyncTest extends ContextTestSupport {
     protected Endpoint startEndpoint;

@@ -19,7 +19,7 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class PropertiesComponentLoadPropertiesFromFileTest extends PropertiesComponentTest {
 

@@ -25,7 +25,7 @@ package org.apache.camel;
  * For example this is use by the JmsConsumer which suspends the Spring JMS listener instead of stopping
  * the consumer totally.
  *
- * @version $Revision$
+ * @version 
  */
 public interface SuspendableService extends Service {
 

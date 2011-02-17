@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * Base annotation for language expressions.
  *
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

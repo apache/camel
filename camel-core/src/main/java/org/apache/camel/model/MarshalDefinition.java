@@ -50,7 +50,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Marshals to a binary payload using the given {@link DataFormatDefinition}
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)

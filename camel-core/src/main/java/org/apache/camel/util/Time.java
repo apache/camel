@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A helper class for working with times in various units
  * 
- * @version $Revision$
+ * @version 
  */
 public class Time {
     private long number;

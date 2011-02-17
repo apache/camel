@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
  * A plugin used to turn an {@link Exchange} into a String representation
  * usually to be used for logging or tracing purposes.
  *
- * @version $Revision$
+ * @version 
  */
 public interface ExchangeFormatter {
 

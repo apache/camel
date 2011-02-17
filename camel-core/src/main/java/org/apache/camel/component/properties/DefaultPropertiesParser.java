@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A parser to parse a string which contains property placeholders
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultPropertiesParser implements PropertiesParser {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());

@@ -22,7 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 926292 $
+ * @version 
  */
 public class ManagedStatisticsWithSplitterTest extends ManagementTestSupport {
 

@@ -27,7 +27,7 @@ import javax.naming.NamingException;
 import org.apache.camel.TestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JndiTest extends TestSupport {
     protected Context context;

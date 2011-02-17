@@ -35,7 +35,7 @@ import org.apache.camel.Service;
  * <p/>
  * Camel provides a default strategy which supports all that that can be used as inspiration for your own strategy.
  *
- * @version $Revision$
+ * @version 
  * @see org.apache.camel.spi.ShutdownAware
  */
 public interface ShutdownStrategy extends Service {

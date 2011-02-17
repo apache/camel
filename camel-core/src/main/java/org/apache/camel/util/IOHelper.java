@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * IO helper class.
  *
- * @version $Revision$
+ * @version 
  */
 public final class IOHelper {
     

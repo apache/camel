@@ -27,7 +27,7 @@ package org.apache.camel.spi;
  * <p/>
  * By default the capacity is set to 100.
  *
- * @version $Revision$
+ * @version 
  */
 public interface ServicePool<Key, Service> {
 

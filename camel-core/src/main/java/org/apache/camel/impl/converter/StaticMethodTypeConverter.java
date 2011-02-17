@@ -25,7 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A {@link TypeConverter} implementation which invokes a static method to convert from a type to another type
  *
- * @version $Revision$
+ * @version 
  */
 public class StaticMethodTypeConverter implements TypeConverter {
     private final Method method;

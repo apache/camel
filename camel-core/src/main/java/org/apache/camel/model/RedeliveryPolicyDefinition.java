@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents an XML &lt;redeliveryPolicy/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "redeliveryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -23,7 +23,7 @@ import org.apache.camel.Handler;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanHandlerMethodTest extends ContextTestSupport {
 

@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanWithXPathInjectionTest extends ContextTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);

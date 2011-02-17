@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 
 /**
- * @version $Revision: 777808 $
+ * @version 
  */
 public class MulticastParallelAllTimeoutAwareTest extends ContextTestSupport {
 

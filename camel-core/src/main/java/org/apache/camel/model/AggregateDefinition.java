@@ -43,7 +43,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 /**
  * Represents an XML &lt;aggregate/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)

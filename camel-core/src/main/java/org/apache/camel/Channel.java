@@ -27,7 +27,7 @@ import org.apache.camel.spi.RouteContext;
  * <p/>
  * The channel is responsible for routing the {@link Exchange} to the next {@link Processor} in the route graph.
  *
- * @version $Revision$
+ * @version 
  */
 public interface Channel extends AsyncProcessor, Navigate<Processor> {
 

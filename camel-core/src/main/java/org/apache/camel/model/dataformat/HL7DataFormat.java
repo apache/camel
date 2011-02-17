@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 /**
  * Represents a <a href="http://camel.apache.org/hl7.html">HL7</a> {@link org.apache.camel.spi.DataFormat}.
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)

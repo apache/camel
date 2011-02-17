@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * The latter is used after the test has been executed, to verify the expectations; or
  * other assertions which you can perform after the test has been completed.
  *
- * @version $Revision$
+ * @version 
  */
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);

@@ -21,7 +21,7 @@ import org.apache.camel.util.ExchangeHelper;
 /**
  * An exception caused by a specific message {@link Exchange}
  *
- * @version $Revision$
+ * @version 
  */
 public class CamelExchangeException extends CamelException {
     private static final long serialVersionUID = -8721487431101572630L;

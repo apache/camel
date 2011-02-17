@@ -30,7 +30,7 @@ import org.apache.camel.component.bean.XPathAnnotationExpressionFactory;
  * Used to inject an XPath expression into a field, property, method or parameter when using
  * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>.
  *
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

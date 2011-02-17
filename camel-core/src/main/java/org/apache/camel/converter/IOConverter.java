@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * Some core java.io based <a
  * href="http://camel.apache.org/type-converter.html">Type Converters</a>
  *
- * @version $Revision$
+ * @version 
  */
 @Converter
 public final class IOConverter {

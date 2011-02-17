@@ -19,7 +19,7 @@ package org.apache.camel.spi;
 /**
  * Strategy for assigning name to a {@link org.apache.camel.CamelContext}.
  *
- * @version $Revision$
+ * @version 
  */
 public interface CamelContextNameStrategy {
 

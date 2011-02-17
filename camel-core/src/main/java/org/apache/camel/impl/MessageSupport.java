@@ -29,7 +29,7 @@ import org.apache.camel.TypeConverter;
  * Unless a specific provider wishes to do something particularly clever with
  * headers you probably want to just derive from {@link DefaultMessage}
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class MessageSupport implements Message {
     private Exchange exchange;

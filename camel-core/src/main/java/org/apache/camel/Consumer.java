@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * A consumer of message exchanges from an {@link Endpoint}
  *
- * @version $Revision$
+ * @version 
  */
 public interface Consumer extends Service {
 

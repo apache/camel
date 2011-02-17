@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 955480 $
+ * @version 
  */
 public class AsyncEndpointSynchronousFalseTest extends ContextTestSupport {
 

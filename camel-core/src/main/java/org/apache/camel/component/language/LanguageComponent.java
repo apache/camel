@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
  * The <a href="http://camel.apache.org/language-component.html">language component</a> to send
  * {@link org.apache.camel.Exchange}s to a given language and have the script being executed.
  *
- * @version $Revision$
+ * @version 
  */
 public class LanguageComponent extends DefaultComponent {
 

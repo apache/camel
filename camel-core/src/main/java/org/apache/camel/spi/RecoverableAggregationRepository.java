@@ -26,7 +26,7 @@ import org.apache.camel.Exchange;
  * A specialized {@link org.apache.camel.spi.AggregationRepository} which also supports
  * recovery. This usually requires a repository which is persisted.
  *
- * @version $Revision$
+ * @version 
  */
 public interface RecoverableAggregationRepository extends AggregationRepository {
 

@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  *
  * @see org.apache.camel.spi.ManagementStrategy
  * @see org.apache.camel.management.DefaultManagementStrategy
- * @version $Revision$
+ * @version 
  */
 public class ManagedManagementStrategy extends DefaultManagementStrategy {
 

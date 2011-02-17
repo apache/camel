@@ -39,7 +39,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * Represents a node in the EIP diagram tree
  *
- * @version $Revision$
+ * @version 
  */
 public class NodeData {
     public String id;

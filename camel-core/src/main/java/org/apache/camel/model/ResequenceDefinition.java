@@ -37,7 +37,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Represents an XML &lt;resequence/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "resequence")
 public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {

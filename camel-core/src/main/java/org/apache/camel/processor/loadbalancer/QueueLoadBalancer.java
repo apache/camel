@@ -29,7 +29,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
  * A base class for {@link LoadBalancer} implementations which choose a single
  * destination for each exchange (rather like JMS Queues)
  * 
- * @version $Revision$
+ * @version 
  */
 public abstract class QueueLoadBalancer extends LoadBalancerSupport {
 

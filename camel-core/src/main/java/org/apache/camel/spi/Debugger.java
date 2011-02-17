@@ -29,7 +29,7 @@ import org.apache.camel.model.ProcessorDefinition;
  * A debugger which allows tooling to attach breakpoints which is is being invoked
  * when {@link Exchange}s is being routed.
  *
- * @version $Revision$
+ * @version 
  */
 public interface Debugger extends Service, CamelContextAware {
 

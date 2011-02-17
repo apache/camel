@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * A testcase for exception handler when management is enabled (by default).
  * 
- * @version $Revision$
+ * @version 
  */
 public class ExceptionWithManagementTest extends ContextTestSupport {
 

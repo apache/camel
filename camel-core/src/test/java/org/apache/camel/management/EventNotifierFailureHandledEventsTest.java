@@ -34,7 +34,7 @@ import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.processor.SendProcessor;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
 

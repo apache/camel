@@ -33,7 +33,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.FileUtil;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
     protected Endpoint startEndpoint;

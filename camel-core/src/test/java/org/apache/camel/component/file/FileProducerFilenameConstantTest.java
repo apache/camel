@@ -21,7 +21,7 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FileProducerFilenameConstantTest extends ContextTestSupport {
 

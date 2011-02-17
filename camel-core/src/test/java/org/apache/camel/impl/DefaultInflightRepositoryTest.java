@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.InflightRepository;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultInflightRepositoryTest extends ContextTestSupport {
 

@@ -21,7 +21,7 @@ import org.apache.camel.TypeConverter;
 /**
  * Registry for type converters.
  *
- * @version $Revision$
+ * @version 
  */
 public interface TypeConverterRegistry {
 

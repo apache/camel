@@ -22,7 +22,7 @@ import org.apache.camel.NoSuchLanguageException;
 /**
  * A pluggable strategy for resolving different languages in a loosely coupled manner
  * 
- * @version $Revision$
+ * @version 
  */
 public interface LanguageResolver {
 

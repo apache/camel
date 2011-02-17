@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Represents an XML &lt;interceptFrom/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "interceptFrom")
 @XmlAccessorType(XmlAccessType.FIELD)

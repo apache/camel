@@ -21,7 +21,7 @@ import java.net.UnknownHostException;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class InetAddressUtilTest extends TestCase {
 

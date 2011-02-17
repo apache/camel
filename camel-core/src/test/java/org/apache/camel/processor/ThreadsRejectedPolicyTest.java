@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.ThreadPoolRejectedPolicy.DiscardOldest;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ThreadsRejectedPolicyTest extends ContextTestSupport {
 

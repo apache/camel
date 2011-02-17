@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
  * A {@link DefaultRoute} which starts with an
  * <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class EventDrivenConsumerRoute extends DefaultRoute {
     private final Processor processor;

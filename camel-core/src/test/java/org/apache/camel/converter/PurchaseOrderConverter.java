@@ -23,7 +23,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterAware;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Converter
 public class PurchaseOrderConverter implements TypeConverterAware {

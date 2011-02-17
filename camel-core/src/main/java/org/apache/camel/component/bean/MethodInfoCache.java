@@ -27,7 +27,7 @@ import org.apache.camel.util.LRUCache;
  * Represents a cache of {@link MethodInfo} objects to avoid the expense of introspection for each
  * invocation of a method via a proxy,
  *
- * @version $Revision$
+ * @version 
  */
 public class MethodInfoCache {
     private final CamelContext camelContext;

@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
 

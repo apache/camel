@@ -30,7 +30,7 @@ import org.apache.camel.ExchangePattern;
 /**
  * Represents an XML &lt;to/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)

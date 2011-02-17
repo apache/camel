@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.builder.PredicateBuilder.not;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class InterceptCustomPredicateAsFilterTest extends ContextTestSupport {
 

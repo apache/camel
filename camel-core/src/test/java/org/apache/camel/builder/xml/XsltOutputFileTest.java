@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.builder.xml.XsltBuilder.xslt;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XsltOutputFileTest extends ContextTestSupport {
 

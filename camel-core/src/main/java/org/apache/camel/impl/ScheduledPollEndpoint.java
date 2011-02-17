@@ -29,7 +29,7 @@ import org.apache.camel.util.IntrospectionSupport;
 /**
  * A base class for {@link org.apache.camel.Endpoint} which creates a {@link ScheduledPollConsumer}
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     private Map<String, Object> consumerProperties;

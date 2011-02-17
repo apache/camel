@@ -25,7 +25,7 @@ import org.apache.camel.impl.ThreadPoolProfileSupport;
 import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
- * @version $Revision: 1005721 $
+ * @version 
  */
 public class DualManagedThreadPoolProfileTest extends ManagementTestSupport {
 

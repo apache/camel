@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A bunch of useful testing methods
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class TestSupport extends TestCase {    
     

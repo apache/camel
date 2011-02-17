@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanLookupUsingJndiRegistryIssueTest extends TestCase {
 

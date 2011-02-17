@@ -21,7 +21,7 @@ import java.util.EventObject;
 import org.apache.camel.CamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ServiceStopFailureEvent extends EventObject {
     private static final long serialVersionUID = 4139591666998762617L;

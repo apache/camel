@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * An expression which extracts the named exchange property
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "property")
 public class PropertyExpression extends ExpressionDefinition {

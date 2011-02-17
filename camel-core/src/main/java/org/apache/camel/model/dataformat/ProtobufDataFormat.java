@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents a protobuf DataFormat {@link org.apache.camel.spi.DataFormat}
  *
- * @version $Revision$
+ * @version 
  */
 
 @XmlRootElement(name = "protobuf")

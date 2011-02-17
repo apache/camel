@@ -28,7 +28,7 @@ import org.apache.camel.management.EventNotifierSupport;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class UnitOfWorkProducerTest extends ContextTestSupport {
 

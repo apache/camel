@@ -26,7 +26,7 @@ import org.apache.camel.spi.FactoryFinder;
 /**
  * Default data format resolver
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultDataFormatResolver implements DataFormatResolver {
 

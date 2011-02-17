@@ -26,7 +26,7 @@ import org.apache.camel.model.DataFormatDefinition;
 /**
  * Represents a <a href="http://camel.apache.org/syslog.html">Syslog</a> {@link org.apache.camel.spi.DataFormat}.
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "syslog")
 @XmlAccessorType(XmlAccessType.FIELD)

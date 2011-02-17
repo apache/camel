@@ -22,7 +22,7 @@ import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
  * A {@link RouteBuilder} which has extended features when using
  * {@link org.apache.camel.model.RouteDefinition#adviceWith(org.apache.camel.CamelContext, RouteBuilder) adviceWith}.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class AdviceWithRouteBuilder extends RouteBuilder {
 

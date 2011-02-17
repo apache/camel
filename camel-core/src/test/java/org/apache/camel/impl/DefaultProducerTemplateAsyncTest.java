@@ -38,7 +38,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CastUtils;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 

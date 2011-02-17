@@ -21,7 +21,7 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class LifecycleStrategyFailOnStartupTest extends TestSupport {
 

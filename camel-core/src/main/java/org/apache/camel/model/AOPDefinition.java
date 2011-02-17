@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
  * Represents an XML &lt;aop/&gt; element
  *
  * @deprecated will be removed in the future
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "aop")
 @XmlAccessorType(XmlAccessType.FIELD)

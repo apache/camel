@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
  * An exception thrown if an attempted method invocation resulted in an ambiguous method
  * such that multiple methods match the inbound message exchange
  *
- * @version $Revision$
+ * @version 
  */
 public class AmbiguousMethodCallException extends CamelExchangeException {
     private static final long serialVersionUID = -8867010485101806951L;

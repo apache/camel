@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * Used to denote fields which are required to be specified for validation purposes
  * particularly in tooling.
  *
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

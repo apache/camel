@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * For <a href="http://commons.apache.org/jxpath/">JXPath</a> expressions and predicates
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "jxpath")
 public class JXPathExpression extends ExpressionDefinition {

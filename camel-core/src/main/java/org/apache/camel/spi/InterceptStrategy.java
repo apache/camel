@@ -32,7 +32,7 @@ import org.apache.camel.model.ProcessorDefinition;
  * {@link org.apache.camel.AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} to
  * implement your interceptor logic. And just invoke the super method to <b>continue</b> routing.
  *
- * @version $Revision$
+ * @version 
  */
 public interface InterceptStrategy {
 

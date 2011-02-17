@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class TwoCamelContextDirectEndpointTest extends TestCase {
     private DefaultCamelContext camel1;

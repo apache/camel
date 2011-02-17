@@ -28,7 +28,7 @@ import org.apache.camel.component.file.GenericFile;
  * A simple converter that can convert any object to a String type by using the
  * toString() method of the object.
  *
- * @version $Revision$
+ * @version 
  */
 public class ToStringTypeConverter implements TypeConverter {
 

@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 /**
  * Factory for {@link StringResultHandler}
  *
- * @version $Revision$
+ * @version 
  */
 public class StringResultHandlerFactory implements ResultHandlerFactory {
 

@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Processor for forwarding exchanges to an endpoint destination.
  *
- * @version $Revision$
+ * @version 
  */
 public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());

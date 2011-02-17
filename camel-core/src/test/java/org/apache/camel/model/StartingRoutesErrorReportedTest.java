@@ -23,7 +23,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.DataFormat;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class StartingRoutesErrorReportedTest extends ContextTestSupport {
 

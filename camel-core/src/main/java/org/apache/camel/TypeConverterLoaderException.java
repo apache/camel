@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Exception when failing to load type converters.
  *
- * @version $Revision$
+ * @version 
  */
 public class TypeConverterLoaderException extends CamelException {
     private static final long serialVersionUID = -6118520819865759887L;

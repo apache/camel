@@ -25,7 +25,7 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SedaTimeoutTest extends ContextTestSupport {
 

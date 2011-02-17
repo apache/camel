@@ -19,7 +19,7 @@ package org.apache.camel.util;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class StopWatchTest extends TestCase {
 

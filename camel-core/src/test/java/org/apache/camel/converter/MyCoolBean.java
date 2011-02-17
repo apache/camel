@@ -17,7 +17,7 @@
 package org.apache.camel.converter;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyCoolBean {
 

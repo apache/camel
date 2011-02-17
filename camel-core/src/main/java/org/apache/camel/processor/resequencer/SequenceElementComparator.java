@@ -21,7 +21,7 @@ import java.util.Comparator;
 /**
  * A strategy for comparing elements of a sequence.
  * 
- * @version $Revision$
+ * @version 
  */
 public interface SequenceElementComparator<E> extends Comparator<E> {
 

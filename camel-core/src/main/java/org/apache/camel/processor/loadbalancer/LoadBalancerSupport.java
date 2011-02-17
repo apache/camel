@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * Consider using the {@link SimpleLoadBalancerSupport} if your load balancer does not by nature
  * support asynchronous routing.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class LoadBalancerSupport extends ServiceSupport implements LoadBalancer, Navigate<Processor> {
 

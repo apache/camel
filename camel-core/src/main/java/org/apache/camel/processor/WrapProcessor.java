@@ -22,7 +22,7 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * A processor which ensures wrapping processors is having lifecycle handled.
  *
- * @version $Revision$
+ * @version 
  */
 public class WrapProcessor extends DelegateAsyncProcessor {
     private final Processor wrapped;

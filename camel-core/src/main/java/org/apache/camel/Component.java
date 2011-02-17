@@ -20,7 +20,7 @@ package org.apache.camel;
  * A <a href="http://camel.apache.org/component.html">component</a> is
  * a factory of {@link Endpoint} objects.
  * 
- * @version $Revision$
+ * @version 
  */
 public interface Component extends CamelContextAware {
 

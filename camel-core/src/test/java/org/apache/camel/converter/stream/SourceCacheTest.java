@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SourceCacheTest extends ContextTestSupport {
 

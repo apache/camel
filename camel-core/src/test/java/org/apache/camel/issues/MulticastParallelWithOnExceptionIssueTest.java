@@ -19,7 +19,7 @@ package org.apache.camel.issues;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MulticastParallelWithOnExceptionIssueTest extends MulticastWithOnExceptionIssueTest {
 

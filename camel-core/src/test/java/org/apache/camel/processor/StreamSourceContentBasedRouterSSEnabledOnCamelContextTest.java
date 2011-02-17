@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Test for handling a StreamSource in a content-based router with XPath predicates
  *
- * @version $Revision$
+ * @version 
  */
 public class StreamSourceContentBasedRouterSSEnabledOnCamelContextTest extends StreamSourceContentBasedRouterTest {
 

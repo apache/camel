@@ -25,7 +25,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultExchangeTest extends ExchangeTestSupport {
 

@@ -28,7 +28,7 @@ import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 /**
  * Concurreny test for idempotent consumer
  *
- * @version $Revision$
+ * @version 
  */
 public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
     protected Endpoint startEndpoint;

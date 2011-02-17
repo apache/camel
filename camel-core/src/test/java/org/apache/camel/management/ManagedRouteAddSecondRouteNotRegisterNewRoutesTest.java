@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  * Tests mbeans is NOT registered when adding a 2nd route after CamelContext has been started,
  * because the registerNewRoutes is set to false
  *
- * @version $Revision: 1058591 $
+ * @version 
  */
 public class ManagedRouteAddSecondRouteNotRegisterNewRoutesTest extends ManagementTestSupport {
 

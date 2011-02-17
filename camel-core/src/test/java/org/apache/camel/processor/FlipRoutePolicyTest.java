@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.RoutePolicy;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FlipRoutePolicyTest extends ContextTestSupport {
 

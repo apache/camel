@@ -36,7 +36,7 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultCamelContextTest extends TestSupport {
 

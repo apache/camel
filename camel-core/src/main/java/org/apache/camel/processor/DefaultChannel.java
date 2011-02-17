@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * {@link Exchange} in the route graph, as we have a {@link Channel} between each and every node
  * in the graph.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultChannel extends ServiceSupport implements Channel {
 

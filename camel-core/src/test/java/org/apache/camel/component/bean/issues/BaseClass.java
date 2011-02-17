@@ -17,7 +17,7 @@
 package org.apache.camel.component.bean.issues;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BaseClass implements MyMessageListener {
 

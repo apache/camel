@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A Consumer for the SEDA component.
  *
- * @version $Revision$
+ * @version 
  */
 public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, ShutdownAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);

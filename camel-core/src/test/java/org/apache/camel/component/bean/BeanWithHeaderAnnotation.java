@@ -20,7 +20,7 @@ import org.w3c.dom.Document;
 import org.apache.camel.Header;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanWithHeaderAnnotation {
 

@@ -25,7 +25,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DotViewTest extends ContextTestSupport {
     protected String outputDirectory = "target/site/cameldoc";

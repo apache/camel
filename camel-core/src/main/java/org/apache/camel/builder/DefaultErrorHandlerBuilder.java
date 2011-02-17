@@ -36,7 +36,7 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 /**
  * The default error handler builder.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 

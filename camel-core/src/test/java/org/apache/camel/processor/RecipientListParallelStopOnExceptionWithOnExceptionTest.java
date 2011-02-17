@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 887262 $
+ * @version 
  */
 public class RecipientListParallelStopOnExceptionWithOnExceptionTest extends ContextTestSupport {
 

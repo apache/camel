@@ -25,7 +25,7 @@ import org.apache.camel.Processor;
  * The <a href="http://camel.apache.org/class.html">Class Component</a>
  * will create an instance of the class from the {@link org.apache.camel.spi.Registry} and use that to handle message dispatching.
  *
- * @version $Revision$
+ * @version 
  */
 public class ClassComponent extends BeanComponent {
 

@@ -33,7 +33,7 @@ import org.apache.camel.model.ProcessorDefinition;
  * Spring Transaction uses the current thread to store state of the transaction, and thus can't transfer this
  * state to other threads when routing continues asynchronously.
  *
- * @version $Revision$
+ * @version 
  */
 public interface Policy {
 

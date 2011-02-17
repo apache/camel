@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * An exception to veto starting {@link CamelContext}.
  *
- * @version $Revision$
+ * @version 
  */
 public class VetoCamelContextStartException extends Exception {
     private static final long serialVersionUID = 8046489554418284256L;

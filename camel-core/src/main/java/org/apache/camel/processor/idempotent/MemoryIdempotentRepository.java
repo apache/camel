@@ -31,7 +31,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * Care should be taken to use a suitable underlying {@link Map} to avoid this class being a
  * memory leak.
  *
- * @version $Revision$
+ * @version 
  */
 @ManagedResource("MemoryIdempotentRepository")
 public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {

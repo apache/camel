@@ -21,7 +21,7 @@ package org.apache.camel;
  * If the class is a Singleton, then a single instance will be shared. Because the class is shared, it
  * should be treated as an immutable and be thread safe.
  *
- * @version $Revision$
+ * @version 
  */
 public interface IsSingleton {
 

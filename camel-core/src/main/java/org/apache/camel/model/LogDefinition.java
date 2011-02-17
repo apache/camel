@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents an XML &lt;log/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)

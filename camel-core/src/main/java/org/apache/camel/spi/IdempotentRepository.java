@@ -24,7 +24,7 @@ import org.apache.camel.Service;
  * <p/>
  * The <tt>add</tt> and <tt>contains</tt> methods is operating according to the {@link java.util.Set} contract.
  *
- * @version $Revision$
+ * @version 
  */
 public interface IdempotentRepository<E> extends Service {
 

@@ -25,7 +25,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
 

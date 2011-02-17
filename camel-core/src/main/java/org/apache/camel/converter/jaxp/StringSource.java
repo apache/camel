@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  * A helper class which provides a JAXP {@link javax.xml.transform.Source Source} from a String which can
  * be read as many times as required. Encoding is default UTF-8.
  *
- * @version $Revision$
+ * @version 
  */
 public class StringSource extends StreamSource implements Externalizable {
     private String text;

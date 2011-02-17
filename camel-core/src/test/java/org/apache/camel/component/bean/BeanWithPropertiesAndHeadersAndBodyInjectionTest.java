@@ -30,7 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();

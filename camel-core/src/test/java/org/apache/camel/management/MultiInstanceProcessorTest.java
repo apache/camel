@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * A unit test to verify mbean registration of multi-instances of a processor
  *
- * @version $Revision$
+ * @version 
  */
 public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsTest {
 

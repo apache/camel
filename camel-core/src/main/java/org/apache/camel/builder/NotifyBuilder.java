@@ -50,7 +50,7 @@ import org.apache.camel.util.ServiceHelper;
  * The idea is that you can build an expression that explains when the test is done. For example when Camel
  * have finished routing 5 messages. You can then in your test await for this condition to occur.
  *
- * @version $Revision$
+ * @version 
  */
 public class NotifyBuilder {
 

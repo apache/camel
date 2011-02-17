@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanWithMethodHeaderTest extends ContextTestSupport {
 

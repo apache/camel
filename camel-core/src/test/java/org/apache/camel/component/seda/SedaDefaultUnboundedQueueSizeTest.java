@@ -19,7 +19,7 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SedaDefaultUnboundedQueueSizeTest extends ContextTestSupport {
 

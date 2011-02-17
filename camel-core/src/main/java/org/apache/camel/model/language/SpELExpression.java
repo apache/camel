@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * For Spring Expression Language (SpEL) expressions and predicates
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "spel")
 public class SpELExpression extends ExpressionDefinition {

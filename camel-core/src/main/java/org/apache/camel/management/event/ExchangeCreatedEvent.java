@@ -19,7 +19,7 @@ package org.apache.camel.management.event;
 import org.apache.camel.Exchange;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ExchangeCreatedEvent extends AbstractExchangeEvent {
     private static final long serialVersionUID = -19248832613958243L;

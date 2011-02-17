@@ -22,7 +22,7 @@ import org.apache.camel.FallbackConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Converter
 public class MyFallbackPromoteConverter {

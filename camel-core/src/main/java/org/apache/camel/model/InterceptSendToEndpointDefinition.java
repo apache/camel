@@ -34,7 +34,7 @@ import org.apache.camel.util.EndpointHelper;
 /**
  * Represents an XML &lt;interceptToEndpoint/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "interceptToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)

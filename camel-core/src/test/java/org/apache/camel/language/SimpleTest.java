@@ -37,7 +37,7 @@ import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Language;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SimpleTest extends LanguageTestSupport {
 

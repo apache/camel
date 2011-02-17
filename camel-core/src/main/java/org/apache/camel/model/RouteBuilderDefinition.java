@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents an XML &lt;routeBuilderRef/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "routeBuilder")
 @XmlAccessorType(XmlAccessType.FIELD)

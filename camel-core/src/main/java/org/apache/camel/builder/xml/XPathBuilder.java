@@ -76,7 +76,7 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
  *
  * @see XPathConstants#NODESET
  *
- * @version $Revision$
+ * @version 
  */
 public class XPathBuilder implements Expression, Predicate, NamespaceAware, Service {
     private static final transient Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);

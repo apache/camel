@@ -25,7 +25,7 @@ import org.apache.camel.Expression;
  * An implementation of {@link Comparator} which takes an {@link Expression} which is evaluated
  * on each exchange to compare
  *  
- * @version $Revision$
+ * @version 
  */
 public class ExpressionComparator implements Comparator<Exchange> {
     private final Expression expression;

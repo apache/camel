@@ -38,7 +38,7 @@ import org.apache.camel.ShutdownableService;
  * If you use the <tt>newXXX</tt> methods to create thread pools, then Camel will by default take care of
  * shutting down those created pools when {@link org.apache.camel.CamelContext} is shutting down.
  *
- * @version $Revision$
+ * @version 
  */
 public interface ExecutorServiceStrategy extends ShutdownableService {
 

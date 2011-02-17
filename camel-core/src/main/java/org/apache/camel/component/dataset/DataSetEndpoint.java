@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Endpoint for DataSet.
  *
- * @version $Revision$
+ * @version 
  */
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;

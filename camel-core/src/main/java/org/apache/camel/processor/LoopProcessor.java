@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The processor which sends messages in a loop.
  *
- * @version $Revision$
+ * @version 
  */
 public class LoopProcessor extends DelegateAsyncProcessor implements Traceable {
     private static final Logger LOG = LoggerFactory.getLogger(LoopProcessor.class);

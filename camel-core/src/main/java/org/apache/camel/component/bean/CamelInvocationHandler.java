@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * An {@link java.lang.reflect.InvocationHandler} which invokes a
  * message exchange on a camel {@link Endpoint}
  *
- * @version $Revision$
+ * @version 
  */
 public class CamelInvocationHandler implements InvocationHandler {
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelInvocationHandler.class);

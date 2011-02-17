@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * This strategy adds the message id to the idempotent repository in cast the exchange
  * was processed successfully. In case of failure the message id is <b>not</b> added.
  *
- * @version $Revision$
+ * @version 
  */
 public class IdempotentOnCompletion implements Synchronization {
     private static final transient Logger LOG = LoggerFactory.getLogger(IdempotentOnCompletion.class);

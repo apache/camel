@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FileInvalidStartingPathTest extends ContextTestSupport {
 

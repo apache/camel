@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents the Json {@link DataFormat}
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "json")
 @XmlAccessorType(XmlAccessType.FIELD)

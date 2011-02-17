@@ -32,7 +32,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 /**
  * Represents an XML &lt;throttle/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)

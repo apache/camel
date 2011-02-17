@@ -37,7 +37,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 /**
  * Represents an XML &lt;choice/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)

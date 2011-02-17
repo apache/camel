@@ -23,7 +23,7 @@ import org.apache.camel.RuntimeExpressionException;
 /**
  * An exception thrown if am XPath expression could not be parsed or evaluated
  *
- * @version $Revision$
+ * @version 
  */
 public class InvalidXPathExpression extends RuntimeExpressionException {
     private static final long serialVersionUID = 9171451033826915273L;

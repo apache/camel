@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Based on user forum request how to do failover with Camel 1.x
  *
- * @version $Revision$
+ * @version 
  */
 public class CustomFailveOverProcessor extends ContextTestSupport {
 

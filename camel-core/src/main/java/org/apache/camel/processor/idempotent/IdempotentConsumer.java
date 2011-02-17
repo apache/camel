@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * An implementation of the <a
  * href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
  * 
- * @version $Revision$
+ * @version 
  */
 public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor, Navigate<Processor> {
     private static final transient Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);

@@ -27,7 +27,7 @@ import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
 

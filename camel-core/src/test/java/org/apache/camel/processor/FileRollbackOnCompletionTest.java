@@ -27,7 +27,7 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.FileUtil;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FileRollbackOnCompletionTest extends ContextTestSupport {
 

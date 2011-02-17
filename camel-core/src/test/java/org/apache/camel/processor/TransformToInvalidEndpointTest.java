@@ -22,7 +22,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class TransformToInvalidEndpointTest extends ContextTestSupport {
 

@@ -17,7 +17,7 @@
 package org.apache.camel.view;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XmlGraphTest extends DotViewTest {
     @Override

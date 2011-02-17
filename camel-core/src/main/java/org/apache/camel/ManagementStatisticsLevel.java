@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlEnum;
 /**
  * Level of granularity for performance statistics enabled
  *
- * @version $Revision$
+ * @version 
  */
 @XmlEnum
 public enum ManagementStatisticsLevel {

@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultTimeoutMapTest extends TestCase {
 

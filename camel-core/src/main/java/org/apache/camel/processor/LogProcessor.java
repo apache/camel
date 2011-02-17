@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 /**
  * A processor which evaluates an Expression and logs it.
  *
- * @version $Revision$
+ * @version 
  */
 public class LogProcessor implements Processor, Traceable {
 

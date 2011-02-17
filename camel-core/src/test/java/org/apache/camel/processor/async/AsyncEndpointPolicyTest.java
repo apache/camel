@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class AsyncEndpointPolicyTest extends ContextTestSupport {
 

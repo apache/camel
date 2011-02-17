@@ -52,7 +52,7 @@ import org.apache.camel.spi.Synchronization;
  * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
  * before using.
  *
- * @version $Revision$
+ * @version 
  */
 public interface ProducerTemplate extends Service {
 

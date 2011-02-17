@@ -17,7 +17,7 @@
 package org.apache.camel.util.jndi;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ExampleBean {
     private String id;

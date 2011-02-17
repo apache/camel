@@ -25,7 +25,7 @@ package org.apache.camel;
  * routing {@link Exchange} when all the data has been gathered. This allows to build non blocking
  * request/reply communication.
  *
- * @version $Revision$
+ * @version 
  */
 public interface AsyncCallback {
 

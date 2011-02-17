@@ -21,7 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 930255 $
+ * @version 
  */
 public class PropertiesEnvironmentVariableOverrideTest extends ContextTestSupport {
 

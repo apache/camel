@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyMessageToProcessorConverter implements TypeConverter {
 

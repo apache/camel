@@ -27,7 +27,7 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
- * @version $Revision: 950375 $
+ * @version 
  */
 public class ManagedCustomProcessorTest extends ManagementTestSupport {
 

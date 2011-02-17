@@ -31,7 +31,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 /**
  * Represents a timer endpoint that can generate periodic inbound exchanges triggered by a timer.
  *
- * @version $Revision$
+ * @version 
  */
 @ManagedResource(description = "Managed Timer Endpoint")
 public class TimerEndpoint extends DefaultEndpoint implements Service {

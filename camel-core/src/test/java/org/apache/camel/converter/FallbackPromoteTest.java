@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TypeConverter;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FallbackPromoteTest extends ContextTestSupport {
 

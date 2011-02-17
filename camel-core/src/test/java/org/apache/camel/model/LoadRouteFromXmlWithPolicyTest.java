@@ -26,7 +26,7 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
 

@@ -24,7 +24,7 @@ package org.apache.camel;
  * <p/>
  * For example to shutdown thread pools on shutdown and <b>not</b> on stop.
  *
- * @version $Revision$
+ * @version 
  */
 public interface ShutdownableService extends Service {
 

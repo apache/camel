@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Support class for {@link ErrorHandler} implementations.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class ErrorHandlerSupport extends ServiceSupport implements ErrorHandler {
 

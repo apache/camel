@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A useful base class for any consumer which is polling based
  * 
- * @version $Revision$
+ * @version 
  */
 public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);

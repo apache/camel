@@ -32,7 +32,7 @@ import org.apache.camel.util.EndpointHelper;
 /**
  * Represents a collection of routes
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)

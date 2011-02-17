@@ -36,7 +36,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 /**
  * Represents an XML &lt;delay/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)

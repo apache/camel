@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Represents an XML &lt;sample/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "sample")
 @XmlAccessorType(XmlAccessType.FIELD)

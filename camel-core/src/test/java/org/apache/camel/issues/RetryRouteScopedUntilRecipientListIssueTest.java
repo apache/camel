@@ -35,7 +35,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupport {
 

@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Unit test for stop() DSL
  *
- * @version $Revision$
+ * @version 
  */
 public class RouteStopTest extends ContextTestSupport {
 

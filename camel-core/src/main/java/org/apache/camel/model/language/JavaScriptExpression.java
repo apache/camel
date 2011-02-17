@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * For JavaScript expressions and predicates
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "javaScript")
 public class JavaScriptExpression extends ExpressionDefinition {

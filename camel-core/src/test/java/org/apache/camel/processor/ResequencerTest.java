@@ -27,7 +27,7 @@ import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.interceptor.StreamCaching;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ResequencerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;

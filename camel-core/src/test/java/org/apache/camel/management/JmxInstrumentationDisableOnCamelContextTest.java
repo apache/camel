@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * A unit test which verifies disabling of JMX instrumentation.
  *
- * @version $Revision$
+ * @version 
  */
 public class JmxInstrumentationDisableOnCamelContextTest extends JmxInstrumentationUsingPropertiesTest {
 

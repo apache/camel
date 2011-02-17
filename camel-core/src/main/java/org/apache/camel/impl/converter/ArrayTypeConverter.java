@@ -30,7 +30,7 @@ import org.apache.camel.TypeConverter;
  * particularly for derived types of array component types and dealing with
  * primitive array types.
  *
- * @version $Revision$
+ * @version 
  */
 public class ArrayTypeConverter implements TypeConverter {
 

@@ -21,7 +21,7 @@ package org.apache.camel;
  * {@link org.apache.camel.processor.RecipientList RecipientList} is unable to resolve an
  * {@link Endpoint} from a URI.
  *
- * @version $Revision$
+ * @version 
  */
 public class NoSuchEndpointException extends RuntimeCamelException {
     private static final long serialVersionUID = -8721487431101572630L;

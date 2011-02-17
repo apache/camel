@@ -22,7 +22,7 @@ package org.apache.camel;
  * 
  * @see org.apache.camel.CamelContext#resolveLanguage(String)
  * 
- * @version $Revision$
+ * @version 
  */
 public class NoSuchLanguageException extends RuntimeCamelException {
     private static final long serialVersionUID = -8721487431101572630L;

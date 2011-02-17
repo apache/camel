@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Language endpoint.
  *
- * @version $Revision$
+ * @version 
  */
 public class LanguageEndpoint extends DefaultEndpoint {
     private Language language;

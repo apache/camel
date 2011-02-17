@@ -30,7 +30,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ServicePoolAware;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ServicePoolTest extends ContextTestSupport {
 

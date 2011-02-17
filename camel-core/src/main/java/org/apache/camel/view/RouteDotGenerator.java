@@ -33,7 +33,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * A <a href="http://www.graphviz.org/">DOT</a> file creator plugin which
  * creates a DOT file showing the current routes
  *
- * @version $Revision$
+ * @version 
  */
 public class RouteDotGenerator extends GraphGeneratorSupport {
 

@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Some helper methods for working with {@link Endpoint} instances
  *
- * @version $Revision$
+ * @version 
  */
 public final class EndpointHelper {
 

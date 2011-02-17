@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The implement will <b>not</b> log if the rollback occurred during shutdown.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollStrategy {
 

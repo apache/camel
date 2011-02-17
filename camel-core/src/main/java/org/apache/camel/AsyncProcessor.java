@@ -29,7 +29,7 @@ package org.apache.camel;
  * For example when using transactions all the invocations has to occur in synchronous manner to ensure the transaction
  * work is done in the same thread, which is required by Spring TransactionManager.
  *
- * @version $Revision$
+ * @version 
  */
 public interface AsyncProcessor extends Processor {
 

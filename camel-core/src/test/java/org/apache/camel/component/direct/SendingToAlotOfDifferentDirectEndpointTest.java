@@ -21,7 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SendingToAlotOfDifferentDirectEndpointTest extends ContextTestSupport {
 

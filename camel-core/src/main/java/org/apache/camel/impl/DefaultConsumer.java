@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A default consumer useful for implementation inheritance.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultConsumer extends ServiceSupport implements Consumer {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());

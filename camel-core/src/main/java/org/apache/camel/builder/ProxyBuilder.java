@@ -23,7 +23,7 @@ import org.apache.camel.component.bean.ProxyHelper;
 /**
  * A build to create Camel proxies.
  *
- * @version $Revision$
+ * @version 
  */
 public final class ProxyBuilder {
 

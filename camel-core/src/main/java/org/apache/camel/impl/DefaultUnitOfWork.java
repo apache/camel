@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The default implementation of {@link org.apache.camel.spi.UnitOfWork}
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultUnitOfWork implements UnitOfWork, Service {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());

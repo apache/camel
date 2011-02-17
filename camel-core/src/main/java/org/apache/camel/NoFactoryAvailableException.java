@@ -21,7 +21,7 @@ import java.io.IOException;
 /**
  * Thrown if no factory resource is available for the given URI
  *
- * @version $Revision$
+ * @version 
  */
 public class NoFactoryAvailableException extends IOException {
     private static final long serialVersionUID = -425141860196708627L;

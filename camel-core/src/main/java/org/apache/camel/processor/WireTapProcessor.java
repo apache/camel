@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Processor for wire tapping exchanges to an endpoint destination.
  *
- * @version $Revision$
+ * @version 
  */
 public class WireTapProcessor extends SendProcessor {
     private final ExecutorService executorService;

@@ -31,7 +31,7 @@ import org.apache.camel.component.seda.SedaComponent;
  * the camel-core.jar. i.e. to handle communicating across CamelContext instances and possibly across
  * web application contexts, providing that camel-core.jar is on the system classpath.
  *
- * @version $Revision$
+ * @version 
  */
 public class VmComponent extends SedaComponent {
     protected static final Map<String, BlockingQueue<Exchange>> QUEUES = new HashMap<String, BlockingQueue<Exchange>>();

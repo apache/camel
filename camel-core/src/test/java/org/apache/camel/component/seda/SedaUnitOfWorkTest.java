@@ -28,7 +28,7 @@ import org.apache.camel.spi.Synchronization;
  * Unit test to verify unit of work with seda. That the UnitOfWork is able to route using seda
  * but keeping the same UoW.
  *
- * @version $Revision$
+ * @version 
  */
 public class SedaUnitOfWorkTest extends ContextTestSupport {
 

@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Represents an XML &lt;setExchangePattern/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "setExchangePattern")
 @XmlAccessorType(XmlAccessType.FIELD)

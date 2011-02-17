@@ -127,7 +127,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the context used to configure routes and the policies to use.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultCamelContext extends ServiceSupport implements CamelContext, SuspendableService {
     private final transient Logger log = LoggerFactory.getLogger(getClass());

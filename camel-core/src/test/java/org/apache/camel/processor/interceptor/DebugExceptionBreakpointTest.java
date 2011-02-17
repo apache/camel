@@ -31,7 +31,7 @@ import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DebugExceptionBreakpointTest extends ContextTestSupport {
 

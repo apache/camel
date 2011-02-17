@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Thrown if Camel failed to create a producer for a given endpoint.
  *
- * @version $Revision$
+ * @version 
  */
 public class FailedToCreateProducerException extends RuntimeCamelException {
     private static final long serialVersionUID = 1341435621084082033L;

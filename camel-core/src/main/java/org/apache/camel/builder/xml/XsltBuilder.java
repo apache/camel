@@ -52,7 +52,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Will by defult output the result as a String. You can chose which kind of output
  * you want using the <tt>outputXXX</tt> methods.
  *
- * @version $Revision$
+ * @version 
  */
 public class XsltBuilder implements Processor {
     private Map<String, Object> parameters = new HashMap<String, Object>();

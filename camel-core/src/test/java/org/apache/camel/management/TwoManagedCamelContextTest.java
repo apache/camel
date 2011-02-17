@@ -24,7 +24,7 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class TwoManagedCamelContextTest extends TestSupport {
 

@@ -24,7 +24,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestSupport {
 

@@ -27,7 +27,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  * Unit test to verify that Splitter aggregator clear the filtered history in case
  * filter has been used <b>before</b> the splitter.
  *
- * @version $Revision$
+ * @version 
  */
 
 public class FilterBeforeSplitTest extends ContextTestSupport {

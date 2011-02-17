@@ -48,7 +48,7 @@ import java.util.Map;
  * implementation of the Tracker class.
  * 
  * @ThreadSafe
- * @version $Revision: 938753 $
+ * @version 
  * @since 1.4
  */
 abstract class AbstractTracked {

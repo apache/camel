@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 /**
  * Base class for JMX tests.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class ManagementTestSupport extends ContextTestSupport {
 

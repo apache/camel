@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Uses the {@link Logger} as an error handler, will log at <tt>ERROR</tt> level by default.
  *
- * @version $Revision$
+ * @version 
  */
 public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     private Logger log = LoggerFactory.getLogger(Logger.class);

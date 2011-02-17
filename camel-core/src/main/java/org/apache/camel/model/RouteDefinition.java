@@ -53,7 +53,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents an XML &lt;route/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "route")
 @XmlType(propOrder = {"inputs", "outputs"})

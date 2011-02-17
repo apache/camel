@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Runtime version of the {@link InvalidPayloadException}.
  *
- * @version $Revision$
+ * @version 
  */
 public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
     private static final long serialVersionUID = -155083097523464793L;

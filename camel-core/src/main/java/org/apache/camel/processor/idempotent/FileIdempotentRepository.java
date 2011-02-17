@@ -41,7 +41,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * Care should be taken to use a suitable underlying {@link java.util.Map} to avoid this class being a
  * memory leak.
  *
- * @version $Revision$
+ * @version 
  */
 @ManagedResource("FileIdempotentRepository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {

@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultComponent;
 /**
  * The <a href="http://camel.apache.org/browse.html">browse</a> component.
  *
- * @version $Revision$
+ * @version 
  */
 public class BrowseComponent extends DefaultComponent {
 

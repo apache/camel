@@ -27,7 +27,7 @@ import java.util.Map;
  *
  * @see Exchange
  * @see Message
- * @version $Revision$
+ * @version 
  */
 public interface Endpoint extends IsSingleton, Service {
 

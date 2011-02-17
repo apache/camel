@@ -29,7 +29,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.TracedRouteNodes;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultTracedRouteNodes implements TracedRouteNodes {
     private final Stack<List<RouteNode>> routeNodes = new Stack<List<RouteNode>>();

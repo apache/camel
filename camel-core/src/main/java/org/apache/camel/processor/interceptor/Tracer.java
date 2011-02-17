@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An interceptor strategy for tracing routes
  *
- * @version $Revision$
+ * @version 
  */
 public class Tracer implements InterceptStrategy, Service {
     private static final String JPA_TRACE_EVENT_MESSAGE = "org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage";

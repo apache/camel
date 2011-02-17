@@ -24,7 +24,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 /**
  * To be run manually when testing the timeout aggregator
  *
- * @version $Revision$
+ * @version 
  */
 public class AggregateTimeoutManualTest extends ContextTestSupport {
 

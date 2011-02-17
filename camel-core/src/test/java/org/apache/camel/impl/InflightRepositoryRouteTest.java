@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class InflightRepositoryRouteTest extends ContextTestSupport {
 

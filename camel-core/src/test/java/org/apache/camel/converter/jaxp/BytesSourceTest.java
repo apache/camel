@@ -19,7 +19,7 @@ package org.apache.camel.converter.jaxp;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BytesSourceTest extends ContextTestSupport {
 

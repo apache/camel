@@ -24,7 +24,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SplitWithCustomAggregationStrategyTest extends ContextTestSupport {
 

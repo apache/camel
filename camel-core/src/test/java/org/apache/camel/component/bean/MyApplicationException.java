@@ -17,7 +17,7 @@
 package org.apache.camel.component.bean;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyApplicationException extends Exception {
 

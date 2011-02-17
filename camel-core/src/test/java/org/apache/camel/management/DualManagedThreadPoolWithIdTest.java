@@ -22,7 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 1005721 $
+ * @version 
  */
 public class DualManagedThreadPoolWithIdTest extends ManagementTestSupport {
 

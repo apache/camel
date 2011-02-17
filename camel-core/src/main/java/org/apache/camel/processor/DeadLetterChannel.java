@@ -28,7 +28,7 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
  * Channel</a> after attempting to redeliver the message using the
  * {@link RedeliveryPolicy}
  *
- * @version $Revision$
+ * @version 
  */
 public class DeadLetterChannel extends RedeliveryErrorHandler {
 

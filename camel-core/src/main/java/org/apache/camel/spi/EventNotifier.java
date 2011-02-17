@@ -22,7 +22,7 @@ import java.util.EventObject;
  * Notifier to send {@link java.util.EventObject events}.
  *
  * @see org.apache.camel.spi.EventFactory
- * @version $Revision$
+ * @version 
  */
 public interface EventNotifier {
 

@@ -26,7 +26,7 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 /**
  * A simple {@link org.apache.camel.Producer} which just appends to a {@link Collection} the {@link Exchange} object.
  *
- * @version $Revision$
+ * @version 
  */
 public class CollectionProducer extends DefaultAsyncProducer {
     protected final Collection<Exchange> queue;

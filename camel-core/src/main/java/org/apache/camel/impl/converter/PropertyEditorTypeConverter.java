@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * Uses the {@link java.beans.PropertyEditor} conversion system to convert Objects to
  * and from String values.
  *
- * @version $Revision$
+ * @version 
  */
 public class PropertyEditorTypeConverter implements TypeConverter, Service {
 

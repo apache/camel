@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XPathFilterTest extends ContextTestSupport {
     protected String matchingBody = "<person name='James' city='London'/>";

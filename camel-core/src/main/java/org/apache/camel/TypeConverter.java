@@ -23,7 +23,7 @@ package org.apache.camel;
  * types</a> such as to and from String, InputStream/OutputStream,
  * Reader/Writer, Document, byte[], ByteBuffer etc
  * 
- * @version $Revision$
+ * @version 
  */
 public interface TypeConverter {
 

@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.Throttler.TimeSlot;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ThrottlerTest extends ContextTestSupport {
     private static final int INTERVAL = 500;

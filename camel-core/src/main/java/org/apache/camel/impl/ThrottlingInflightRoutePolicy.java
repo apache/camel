@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * A throttle based {@link org.apache.camel.spi.RoutePolicy} which is capable of dynamic
  * throttling a route based on number of current inflight exchanges.
  *
- * @version $Revision$
+ * @version 
  */
 public class ThrottlingInflightRoutePolicy extends RoutePolicySupport {
 

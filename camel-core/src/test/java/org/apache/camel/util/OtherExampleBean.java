@@ -17,7 +17,7 @@
 package org.apache.camel.util;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class OtherExampleBean {
 

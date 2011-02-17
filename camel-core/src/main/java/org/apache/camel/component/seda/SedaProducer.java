@@ -28,7 +28,7 @@ import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SedaProducer extends CollectionProducer {
     private final SedaEndpoint endpoint;

@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * For Ruby expressions and predicates
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "ruby")
 public class RubyExpression extends ExpressionDefinition {

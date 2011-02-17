@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *         new BatchResequencerConfig(300, 400L)).to(&quot;mock:result&quot;)
  * </pre>
  * 
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)

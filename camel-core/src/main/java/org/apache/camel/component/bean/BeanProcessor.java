@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * A {@link Processor} which converts the inbound exchange to a method
  * invocation on a POJO
  *
- * @version $Revision$
+ * @version 
  */
 public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     private static final transient Logger LOG = LoggerFactory.getLogger(BeanProcessor.class);

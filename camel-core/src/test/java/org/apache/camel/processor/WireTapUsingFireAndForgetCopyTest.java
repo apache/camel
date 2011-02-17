@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class WireTapUsingFireAndForgetCopyTest extends ContextTestSupport {
 

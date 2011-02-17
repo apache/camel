@@ -24,7 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
 

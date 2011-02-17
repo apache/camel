@@ -72,7 +72,7 @@ import org.apache.camel.spi.UuidGenerator;
  * End users is adviced to use suspend/resume. Using stop is for shutting down Camel and its not guaranteed that
  * when its being started again using the start method that everything works out of the box.
  *
- * @version $Revision$
+ * @version 
  */
 public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 

@@ -23,7 +23,7 @@ import org.apache.camel.Service;
 /**
  * A repository which tracks in flight {@link Exchange}s.
  *
- * @version $Revision$
+ * @version 
  */
 public interface InflightRepository extends Service {
 

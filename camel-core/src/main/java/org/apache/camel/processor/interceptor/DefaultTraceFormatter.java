@@ -26,7 +26,7 @@ import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.MessageHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultTraceFormatter implements TraceFormatter {
     private int breadCrumbLength;

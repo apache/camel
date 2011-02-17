@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * Some core java.nio based
  * <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  *
- * @version $Revision$
+ * @version 
  */
 @Converter
 public final class NIOConverter {

@@ -22,7 +22,7 @@ import java.io.Reader;
 import org.apache.camel.Handler;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyDummyBean {
 

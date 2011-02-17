@@ -19,7 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultEndpointTest extends ContextTestSupport {
 

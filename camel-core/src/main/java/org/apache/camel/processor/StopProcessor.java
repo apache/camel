@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 /**
  * Stops continue processing the route and marks it as complete.
  *
- * @version $Revision$
+ * @version 
  */
 public class StopProcessor implements Processor {
 

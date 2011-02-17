@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MulticastParallelStressTest extends ContextTestSupport {
 

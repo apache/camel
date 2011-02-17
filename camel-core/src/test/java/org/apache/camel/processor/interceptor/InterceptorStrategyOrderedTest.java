@@ -26,7 +26,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.util.Ordered;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class InterceptorStrategyOrderedTest extends ContextTestSupport {
 

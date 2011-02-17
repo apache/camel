@@ -40,7 +40,7 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 /**
  * Represents an XML &lt;catch/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "doCatch")
 @XmlAccessorType(XmlAccessType.FIELD)

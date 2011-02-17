@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link Processor} which instruments the {@link RoutePolicy}.
  *
- * @version $Revision$
+ * @version 
  */
 public class RoutePolicyProcessor extends DelegateAsyncProcessor {
 

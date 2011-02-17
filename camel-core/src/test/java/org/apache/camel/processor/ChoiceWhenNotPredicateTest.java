@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.builder.PredicateBuilder.not;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ChoiceWhenNotPredicateTest extends ContextTestSupport {
 

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * an exchange stream, rough consolidation of noisy and bursty exchange traffic
  * or where queuing of throttled exchanges is undesirable.
  *
- * @version $Revision$
+ * @version 
  */
 public class SamplingThrottler extends DelegateAsyncProcessor {
 

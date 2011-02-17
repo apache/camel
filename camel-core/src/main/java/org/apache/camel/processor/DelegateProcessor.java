@@ -33,7 +33,7 @@ import org.apache.camel.util.ServiceHelper;
  * If you are implementing a EIP pattern please use the {@link org.apache.camel.processor.DelegateAsyncProcessor}
  * instead.
  * 
- * @version $Revision$
+ * @version 
  * @see org.apache.camel.processor.DelegateAsyncProcessor
  */
 public class DelegateProcessor extends ServiceSupport implements Processor, Navigate<Processor> {

@@ -35,7 +35,7 @@ import org.apache.camel.util.MessageHelper;
  * as they do not have to be worried about using exact keys.
  * See more details at {@link org.apache.camel.util.CaseInsensitiveMap}.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultMessage extends MessageSupport {
     private boolean fault;

@@ -26,7 +26,7 @@ import org.apache.camel.spi.Synchronization;
 /**
  * Unit test to verify unit of work with multicast.
  *
- * @version $Revision$
+ * @version 
  */
 public class MulticastUnitOfWorkTest extends ContextTestSupport {
 

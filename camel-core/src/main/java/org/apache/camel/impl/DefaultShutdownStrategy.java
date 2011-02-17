@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * Routes will by default be shutdown in the reverse order of which they where started.
  * You can customize this using the {@link #setShutdownRoutesInReverseOrder(boolean)} method.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownStrategy, CamelContextAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultShutdownStrategy.class);

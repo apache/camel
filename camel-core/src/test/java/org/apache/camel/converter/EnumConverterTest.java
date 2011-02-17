@@ -23,7 +23,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class EnumConverterTest extends ContextTestSupport {
 

@@ -25,7 +25,7 @@ import org.apache.camel.processor.interceptor.Delayer;
 /**
  * Delay interceptor unit test.
  *
- * @version $Revision$
+ * @version 
  */
 public class DelayInterceptorTest extends ContextTestSupport {
 

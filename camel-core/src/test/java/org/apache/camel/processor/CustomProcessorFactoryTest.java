@@ -29,7 +29,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * @version $Revision: 937165 $
+ * @version 
  */
 public class CustomProcessorFactoryTest extends ContextTestSupport {
 

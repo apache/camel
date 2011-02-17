@@ -36,7 +36,7 @@ import org.apache.camel.Exchange;
  * together into an invoice or just using the newest exchange and removing old exchanges such as for state tracking or
  * market data prices; where old values are of little use.
  * 
- * @version $Revision$
+ * @version 
  */
 public interface AggregationStrategy {
 

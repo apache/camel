@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 1058591 $
+ * @version 
  */
 public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSupport {
 

@@ -28,7 +28,7 @@ import org.apache.camel.model.DescriptionDefinition;
  * Some useful converters for Camel APIs such as to convert a {@link Predicate} or {@link Expression}
  * to a {@link Processor}
  *
- * @version $Revision$
+ * @version 
  */
 @Converter
 public class CamelConverter {

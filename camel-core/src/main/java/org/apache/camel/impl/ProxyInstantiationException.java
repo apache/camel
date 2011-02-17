@@ -22,7 +22,7 @@ import org.apache.camel.RuntimeCamelException;
 /**
  * A proxy creation failed trying to create a proxy of a given type and on an given endpoint
  *
- * @version $Revision$
+ * @version 
  */
 public class ProxyInstantiationException extends RuntimeCamelException {
     private static final long serialVersionUID = -2050115486047385507L;

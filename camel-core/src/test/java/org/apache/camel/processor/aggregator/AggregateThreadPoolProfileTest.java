@@ -24,7 +24,7 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class AggregateThreadPoolProfileTest extends ContextTestSupport {
 

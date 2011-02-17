@@ -43,7 +43,7 @@ import org.fusesource.commons.management.Statistic;
  * provided by Camel extends this class as well.
  *
  * @see ManagedManagementStrategy
- * @version $Revision$
+ * @version 
  */
 public class DefaultManagementStrategy implements ManagementStrategy, CamelContextAware {
 

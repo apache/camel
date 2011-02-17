@@ -27,7 +27,7 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * This is used to ensure that Camel performs property placeholder resolution on every lookup.
  *
- * @version $Revision$
+ * @version 
  */
 public class PropertyPlaceholderDelegateRegistry implements Registry {
 

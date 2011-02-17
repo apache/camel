@@ -27,7 +27,7 @@ import org.apache.camel.processor.ThroughputLogger;
 /**
  * DataSet consumer.
  *
- * @version $Revision$
+ * @version 
  */
 public class DataSetConsumer extends DefaultConsumer {
     private final CamelContext camelContext;

@@ -21,7 +21,7 @@ import java.util.EventObject;
 import org.apache.camel.Route;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class RouteStoppedEvent extends EventObject {
     private static final long serialVersionUID = -4466503512787398888L;

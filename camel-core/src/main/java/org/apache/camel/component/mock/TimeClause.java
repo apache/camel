@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * Represents time based clauses for setting expectations on the mocks.
  * Such as time constrains for the received messages.
  *
- * @version $Revision$
+ * @version 
  */
 public class TimeClause extends BinaryPredicateSupport {
 

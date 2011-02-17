@@ -29,7 +29,7 @@ import org.apache.camel.spi.AggregationRepository;
 /**
  * A memory based {@link org.apache.camel.spi.AggregationRepository} which stores in memory only.
  *
- * @version $Revision$
+ * @version 
  */
 public class MemoryAggregationRepository extends ServiceSupport implements AggregationRepository {
     private final Map<String, Exchange> cache = new ConcurrentHashMap<String, Exchange>();

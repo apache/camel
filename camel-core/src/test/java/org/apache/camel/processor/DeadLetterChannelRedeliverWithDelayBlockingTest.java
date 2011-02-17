@@ -30,7 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * As threads comes cheap these days in the modern JVM its no biggie. And for transactions
  * you should use the same thread anyway.
  *
- * @version $Revision$
+ * @version 
  */
 public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTestSupport {
 

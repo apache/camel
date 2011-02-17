@@ -24,7 +24,7 @@ import org.apache.camel.Expression;
  * <a href="http://camel.apache.org/predicate.html">predicate</a> <a
  * href="http://camel.apache.org/dsl.html">Java DSL</a>
  *
- * @version $Revision$
+ * @version 
  */
 public final class Builder {
 

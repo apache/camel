@@ -35,7 +35,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * This test verifies JMX is enabled by default and it uses local mbean
  * server to conduct the test as connector server is not enabled by default.
  *
- * @version $Revision$
+ * @version 
  */
 public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 

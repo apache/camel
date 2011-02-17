@@ -25,7 +25,7 @@ import org.apache.camel.impl.SynchronizationAdapter;
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SedaInOutChainedWithOnCompletionTest extends ContextTestSupport {
 

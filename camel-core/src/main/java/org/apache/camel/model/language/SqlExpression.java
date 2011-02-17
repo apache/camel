@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * For SQL expressions and predicates
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "sql")
 public class SqlExpression extends ExpressionDefinition {

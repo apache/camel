@@ -29,7 +29,7 @@ import org.apache.camel.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FileIdempotentConsumerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;

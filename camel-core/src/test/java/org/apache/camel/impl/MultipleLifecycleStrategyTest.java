@@ -23,7 +23,7 @@ import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MultipleLifecycleStrategyTest extends TestSupport {
 

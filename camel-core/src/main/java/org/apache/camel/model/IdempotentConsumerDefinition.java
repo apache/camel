@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents an XML &lt;idempotentConsumer/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)

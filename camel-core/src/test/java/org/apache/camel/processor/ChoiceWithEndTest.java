@@ -25,7 +25,7 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ChoiceWithEndTest extends ContextTestSupport {
 

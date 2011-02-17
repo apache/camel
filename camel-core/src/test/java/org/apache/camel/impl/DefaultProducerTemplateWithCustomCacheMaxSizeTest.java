@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTestSupport {
 

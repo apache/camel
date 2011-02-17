@@ -21,7 +21,7 @@ import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class RouteStartupOrderClashTest extends ContextTestSupport {
 

@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class TypeConverterRegistryTest extends TestCase {
 

@@ -21,7 +21,7 @@ import java.util.Queue;
 /**
  * A consumer of a batch of message exchanges from an {@link Endpoint}
  *
- * @version $Revision$
+ * @version 
  */
 public interface BatchConsumer extends Consumer {
 

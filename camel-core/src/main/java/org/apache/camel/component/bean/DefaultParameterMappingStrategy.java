@@ -30,7 +30,7 @@ import org.apache.camel.spi.Registry;
 /**
  * Represents the strategy used to figure out how to map a message exchange to a POJO method invocation
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultParameterMappingStrategy implements ParameterMappingStrategy {
     private final Map<Class<?>, Expression> parameterTypeToExpressionMap = new ConcurrentHashMap<Class<?>, Expression>();

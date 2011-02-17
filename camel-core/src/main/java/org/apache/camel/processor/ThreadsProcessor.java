@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  * Threads processor that leverage a thread pool for continue processing the {@link Exchange}s
  * using the asynchronous routing engine.
  *
- * @version $Revision$
+ * @version 
  */
 public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
 

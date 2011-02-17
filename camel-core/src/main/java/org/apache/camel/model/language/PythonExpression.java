@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * For Python expressions and predicates
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "python")
 public class PythonExpression extends ExpressionDefinition {

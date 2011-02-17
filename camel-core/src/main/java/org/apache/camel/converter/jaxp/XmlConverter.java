@@ -59,7 +59,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A helper class to transform to and from various JAXB types such as {@link Source} and {@link Document}
  *
- * @version $Revision$
+ * @version 
  */
 @Converter
 public class XmlConverter {

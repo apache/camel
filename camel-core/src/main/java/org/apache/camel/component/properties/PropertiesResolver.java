@@ -25,7 +25,7 @@ import org.apache.camel.CamelContext;
  * <p/>
  * Implementations can also load properties from another source source as JNDI.
  *
- * @version $Revision$
+ * @version 
  */
 public interface PropertiesResolver {
 

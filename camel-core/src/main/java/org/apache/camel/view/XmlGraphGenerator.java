@@ -28,7 +28,7 @@ import org.apache.camel.model.RouteDefinition;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XmlGraphGenerator extends GraphGeneratorSupport {
     private boolean addUrl = true;

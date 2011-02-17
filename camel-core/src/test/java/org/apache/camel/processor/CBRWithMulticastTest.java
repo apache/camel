@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 926035 $
+ * @version 
  */
 public class CBRWithMulticastTest extends ContextTestSupport {
 

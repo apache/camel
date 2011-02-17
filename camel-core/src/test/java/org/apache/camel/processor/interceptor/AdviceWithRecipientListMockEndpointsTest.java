@@ -21,7 +21,7 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 938376 $
+ * @version 
  */
 public class AdviceWithRecipientListMockEndpointsTest extends ContextTestSupport {
 

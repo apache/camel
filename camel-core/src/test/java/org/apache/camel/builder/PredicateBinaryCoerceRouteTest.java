@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.WaitForTaskToComplete;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
 

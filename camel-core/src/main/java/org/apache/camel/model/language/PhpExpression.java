@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * For PHP expressions and predicates
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "php")
 public class PhpExpression extends ExpressionDefinition {

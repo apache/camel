@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 /**
  * Is used for easy configuration of {@link ExecutorService}.
  *
- * @version $Revision$
+ * @version 
  */
 public interface ExecutorServiceAware {
 

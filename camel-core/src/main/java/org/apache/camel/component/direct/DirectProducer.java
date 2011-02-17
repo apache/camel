@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The direct producer.
  *
- * @version $Revision$
+ * @version 
  */
 public class DirectProducer extends DefaultProducer implements AsyncProcessor {
     private static final transient Logger LOG = LoggerFactory.getLogger(DirectProducer.class);

@@ -76,7 +76,7 @@ import static org.apache.camel.builder.Builder.body;
 /**
  * Base class for processor types that most XML types extend.
  *
- * @version $Revision$
+ * @version 
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition implements Block {

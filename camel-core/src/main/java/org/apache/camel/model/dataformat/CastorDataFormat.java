@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 /**
  * Represents a <a href="http://camel.apache.org/castor.html">Castor</a> {@link org.apache.camel.spi.DataFormat}.
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "castor")
 @XmlAccessorType(XmlAccessType.FIELD)

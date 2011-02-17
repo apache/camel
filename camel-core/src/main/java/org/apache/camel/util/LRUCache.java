@@ -24,7 +24,7 @@ import org.apache.camel.Service;
 /**
  * A Least Recently Used Cache
  *
- * @version $Revision$
+ * @version 
  */
 public class LRUCache<K, V> extends LinkedHashMap<K, V> implements Service {
     private static final long serialVersionUID = -342098639681884413L;

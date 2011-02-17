@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.apache.camel.Message;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DefaultMessageHeaderTest extends TestCase {
 

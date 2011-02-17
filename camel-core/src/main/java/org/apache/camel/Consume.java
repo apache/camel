@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
  * mechanism is used to map the incoming {@link Message} to the method parameters.
  * 
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

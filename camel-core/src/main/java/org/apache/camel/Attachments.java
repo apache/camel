@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a parameter as being Map of attachments of an inbound {@link Message}
  * 
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

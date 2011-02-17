@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default implement which just uses a counter
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultInflightRepository extends ServiceSupport implements InflightRepository  {
 

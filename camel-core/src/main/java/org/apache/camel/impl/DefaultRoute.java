@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Default implementation of {@link Route}.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class DefaultRoute extends ServiceSupport implements Route {
 

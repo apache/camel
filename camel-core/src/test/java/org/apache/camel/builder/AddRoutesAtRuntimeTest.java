@@ -22,7 +22,7 @@ import org.apache.camel.ContextTestSupport;
 /**
  * Test how to add routes at runtime using a RouteBuilder
  *
- * @version $Revision$
+ * @version 
  */
 public class AddRoutesAtRuntimeTest extends ContextTestSupport {
 

@@ -28,7 +28,7 @@ import org.apache.camel.converter.jaxp.StringSource;
 /**
  * Test for handling a StreamSource in a content-based router with XPath predicates
  *
- * @version $Revision$
+ * @version 
  */
 public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     protected MockEndpoint x;

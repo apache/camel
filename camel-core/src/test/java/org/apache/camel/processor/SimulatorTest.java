@@ -30,7 +30,7 @@ import org.apache.camel.util.jndi.JndiContext;
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SimulatorTest extends ContextTestSupport {
 

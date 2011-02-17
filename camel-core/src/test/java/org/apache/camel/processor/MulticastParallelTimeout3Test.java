@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 /**
- * @version $Revision: 982655 $
+ * @version 
  */
 public class MulticastParallelTimeout3Test extends ContextTestSupport {
 

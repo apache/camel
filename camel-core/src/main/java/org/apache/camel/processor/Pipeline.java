@@ -38,7 +38,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * Creates a Pipeline pattern where the output of the previous step is sent as
  * input to the next step, reusing the same message exchanges
  *
- * @version $Revision$
+ * @version 
  */
 public class Pipeline extends MulticastProcessor implements AsyncProcessor, Traceable {
     private static final transient Logger LOG = LoggerFactory.getLogger(Pipeline.class);

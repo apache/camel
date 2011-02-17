@@ -29,7 +29,7 @@ import org.apache.camel.impl.EventDrivenConsumerRoute;
 /**
  * Default error handler test
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultErrorHandlerTest extends ContextTestSupport {
 

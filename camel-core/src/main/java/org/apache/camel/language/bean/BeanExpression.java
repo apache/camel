@@ -36,7 +36,7 @@ import org.apache.camel.util.OgnlHelper;
 /**
  * Evaluates an expression using a bean method invocation
  *
- * @version $Revision$
+ * @version 
  */
 public class BeanExpression implements Expression, Predicate {
     private String beanName;

@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * DeadLetterChannel now also have handled policy, like onException.
  *
- * @version $Revision$
+ * @version 
  */
 public class DeadLetterChannelHandledPolicyTest extends ContextTestSupport {
 

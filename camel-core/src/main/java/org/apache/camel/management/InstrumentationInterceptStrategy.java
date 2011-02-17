@@ -33,7 +33,7 @@ import org.apache.camel.util.KeyValueHolder;
  * This class looks up a map to determine which PerformanceCounter should go into the
  * InstrumentationProcessor for any particular target processor.
  *
- * @version $Revision$
+ * @version 
  */
 public class InstrumentationInterceptStrategy implements InterceptStrategy {
 

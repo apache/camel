@@ -50,7 +50,7 @@ import static org.apache.camel.util.ObjectHelper.asString;
 /**
  * Information about a method to be used for invocation.
  *
- * @version $Revision$
+ * @version 
  */
 public class MethodInfo {
     private static final transient Logger LOG = LoggerFactory.getLogger(MethodInfo.class);

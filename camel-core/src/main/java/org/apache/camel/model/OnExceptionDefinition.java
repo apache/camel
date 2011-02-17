@@ -48,7 +48,7 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 /**
  * Represents an XML &lt;onException/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)

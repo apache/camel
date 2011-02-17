@@ -23,7 +23,7 @@ import org.apache.camel.spi.CamelContextNameStrategy;
 /**
  * A default name strategy which auto assigns a name using a prefix-counter pattern.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultCamelContextNameStrategy implements CamelContextNameStrategy {
 

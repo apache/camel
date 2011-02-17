@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(BeanWithHeadersAndBodyInject2Test.class);

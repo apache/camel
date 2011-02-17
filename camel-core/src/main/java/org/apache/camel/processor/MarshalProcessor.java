@@ -32,7 +32,7 @@ import org.apache.camel.util.ServiceHelper;
  * Marshals the body of the incoming message using the given
  * <a href="http://camel.apache.org/data-format.html">data format</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class MarshalProcessor extends ServiceSupport implements Processor, Traceable, CamelContextAware {
     private CamelContext camelContext;

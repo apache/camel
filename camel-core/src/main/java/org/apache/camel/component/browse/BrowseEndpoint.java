@@ -37,7 +37,7 @@ import org.apache.camel.spi.BrowsableEndpoint;
  * An endpoint which maintains a {@link List} of {@link Exchange} instances
  * which can be useful for tooling, debugging and visualising routes.
  *
- * @version $Revision$
+ * @version 
  */
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint, Service {
     private List<Exchange> exchanges;

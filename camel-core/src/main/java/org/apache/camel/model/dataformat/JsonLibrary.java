@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Represents the concrete Json libraries Camel supports.
  *
- * @version $Revision$
+ * @version 
  */
 @XmlType
 @XmlEnum(String.class)

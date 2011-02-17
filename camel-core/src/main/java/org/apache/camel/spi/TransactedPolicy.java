@@ -19,7 +19,7 @@ package org.apache.camel.spi;
 /**
  * A marker for defining the policy to be used for applying transaction to routes.
  *
- * @version $Revision$
+ * @version 
  */
 public interface TransactedPolicy extends Policy {
 }

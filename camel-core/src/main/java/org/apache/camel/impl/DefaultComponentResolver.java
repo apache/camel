@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * scheme name in the <b>META-INF/services/org/apache/camel/component/</b>
  * directory on the classpath.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultComponentResolver implements ComponentResolver {
 

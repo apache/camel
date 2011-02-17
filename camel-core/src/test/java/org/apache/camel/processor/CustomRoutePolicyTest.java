@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.RoutePolicySupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CustomRoutePolicyTest extends ContextTestSupport {
 

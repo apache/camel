@@ -28,7 +28,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class EndpointHelperTest extends ContextTestSupport {
 

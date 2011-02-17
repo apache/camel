@@ -24,7 +24,7 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
 /**
  * A profile which defines thread pool settings.
  *
- * @version $Revision$
+ * @version 
  */
 public interface ThreadPoolProfile {
 

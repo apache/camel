@@ -38,7 +38,7 @@ import org.apache.camel.converter.IOConverter;
 /**
  * A converter of StAX objects
  *
- * @version $Revision$
+ * @version 
  */
 @Converter
 public class StaxConverter {

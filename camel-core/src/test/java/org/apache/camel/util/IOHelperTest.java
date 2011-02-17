@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class IOHelperTest extends TestCase {
 

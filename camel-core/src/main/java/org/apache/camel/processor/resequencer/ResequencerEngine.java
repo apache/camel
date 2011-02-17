@@ -56,7 +56,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  * <i>ready-for-delivery</i>.
  * <p>
  *
- * @version $Revision$
+ * @version 
  */
 public class ResequencerEngine<E> {
 

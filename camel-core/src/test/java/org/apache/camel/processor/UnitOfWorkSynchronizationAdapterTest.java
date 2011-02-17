@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.SynchronizationAdapter;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class UnitOfWorkSynchronizationAdapterTest extends UnitOfWorkTest {
 

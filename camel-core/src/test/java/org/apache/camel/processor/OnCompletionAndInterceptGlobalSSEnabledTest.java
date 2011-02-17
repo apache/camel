@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.CamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class OnCompletionAndInterceptGlobalSSEnabledTest extends OnCompletionAndInterceptGlobalTest {
 

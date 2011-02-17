@@ -22,7 +22,7 @@ import org.apache.camel.management.EventNotifierSupport;
 import org.apache.camel.management.event.ExchangeSentEvent;
 
 /**
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: e1
 public class MyLoggingSentEventNotifer extends EventNotifierSupport {

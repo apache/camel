@@ -21,7 +21,7 @@ import java.util.Properties;
 /**
  * A parser to parse properties for a given input
  *
- * @version $Revision$
+ * @version 
  */
 public interface PropertiesParser {
 

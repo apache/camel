@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SplitterStreamCacheTest extends ContextTestSupport {
 

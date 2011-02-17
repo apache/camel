@@ -42,7 +42,7 @@ import org.apache.camel.util.ServiceHelper;
  * href="http://camel.apache.org/queue.html">Queue components</a> for
  * asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  *
- * @version $Revision$
+ * @version 
  */
 public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
     private volatile BlockingQueue<Exchange> queue;

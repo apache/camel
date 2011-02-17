@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Exception when failing to create a {@link org.apache.camel.Route}.
  *
- * @version $Revision$
+ * @version 
  */
 public class FailedToCreateRouteException extends CamelException {
 

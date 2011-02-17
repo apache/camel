@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 /**
  * Object holder for a bean.
  *
- * @version $Revision$
+ * @version 
  */
 public interface BeanHolder {
 

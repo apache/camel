@@ -28,7 +28,7 @@ import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
 

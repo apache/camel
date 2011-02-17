@@ -27,7 +27,7 @@ import org.apache.camel.impl.DefaultExchange;
  * in a {@link java.util.List} as a exchange property with the key
  * {@link org.apache.camel.Exchange#GROUPED_EXCHANGE}.
  *
- * @version $Revision$
+ * @version 
  */
 public class GroupedExchangeAggregationStrategy implements AggregationStrategy {
 

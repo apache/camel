@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * URI utilities.
  *
- * @version $Revision$
+ * @version 
  */
 public final class URISupport {
 

@@ -22,7 +22,7 @@ package org.apache.camel;
  * and <a href="http://camel.apache.org/message-translator.html"> Message Translator</a>
  * patterns and to process message exchanges.
  * 
- * @version $Revision$
+ * @version 
  */
 public interface Processor {
 

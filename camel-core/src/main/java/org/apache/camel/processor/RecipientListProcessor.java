@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * runs under the hood. Also this implementation supports the asynchronous routing engine which makes the code
  * more trickier.
  *
- * @version $Revision$
+ * @version 
  */
 public class RecipientListProcessor extends MulticastProcessor {
 

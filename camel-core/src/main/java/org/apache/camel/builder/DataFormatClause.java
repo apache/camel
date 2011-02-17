@@ -47,7 +47,7 @@ import org.apache.camel.model.dataformat.ZipDataFormat;
  * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}
  * options.
  *
- * @version $Revision$
+ * @version 
  */
 public class DataFormatClause<T extends ProcessorDefinition<?>> {
     private final T processorType;

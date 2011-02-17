@@ -26,7 +26,7 @@ import org.apache.camel.processor.ThroughputLogger;
 /**
  * A factory of {@link MockEndpoint} instances
  *
- * @version $Revision$
+ * @version 
  */
 public class MockComponent extends DefaultComponent {
 

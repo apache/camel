@@ -23,7 +23,7 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 /**
  * An {@link ErrorHandler} which uses commons-logging to dump the error
  *
- * @version $Revision$
+ * @version 
  */
 public class LoggingErrorHandler extends DefaultErrorHandler {
 

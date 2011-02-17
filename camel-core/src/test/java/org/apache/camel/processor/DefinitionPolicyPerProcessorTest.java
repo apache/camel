@@ -28,7 +28,7 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * @version $Revision: 937165 $
+ * @version 
  */
 public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
 

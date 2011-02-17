@@ -29,7 +29,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSupport {
 

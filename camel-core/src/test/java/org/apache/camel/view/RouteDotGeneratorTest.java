@@ -19,7 +19,7 @@ package org.apache.camel.view;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class RouteDotGeneratorTest extends TestCase {
 

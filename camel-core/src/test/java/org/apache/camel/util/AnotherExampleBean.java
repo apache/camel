@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class AnotherExampleBean {
     private String id;

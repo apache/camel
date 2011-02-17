@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 /**
  * Helper for Camel OGNL expressions.
  *
- * @version $Revision$
+ * @version 
  */
 public final class OgnlHelper {
 

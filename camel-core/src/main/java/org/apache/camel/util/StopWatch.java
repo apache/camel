@@ -21,7 +21,7 @@ package org.apache.camel.util;
  * <p/>
  * This implementation is not thread safe and can only time one task at any given time.
  *
- * @version $Revision$
+ * @version 
  */
 public final class StopWatch {
 

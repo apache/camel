@@ -29,7 +29,7 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 
 /**
- * @version $Revision: 1043882 $
+ * @version 
  */
 public class SplitterParallelBigFileTest extends ContextTestSupport {
 

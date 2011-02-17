@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Represents an XML &lt;stop/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "stop")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -30,7 +30,7 @@ import org.apache.camel.Processor;
  * a correlation key to perform the sticky load balancing; rather like jsessionid in the web
  * or JMSXGroupID in JMS.
  *
- * @version $Revision$
+ * @version 
  */
 public class StickyLoadBalancer extends QueueLoadBalancer {
     private Expression correlationExpression;

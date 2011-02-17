@@ -41,7 +41,7 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 /**
  * Represents an XML &lt;try/&gt; element
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "doTry")
 @XmlAccessorType(XmlAccessType.FIELD)

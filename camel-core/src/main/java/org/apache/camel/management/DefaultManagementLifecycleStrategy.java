@@ -102,7 +102,7 @@ import org.slf4j.LoggerFactory;
  * {@link org.apache.camel.spi.ManagementStrategy}.
  *
  * @see org.apache.camel.spi.ManagementStrategy
- * @version $Revision$
+ * @version 
  */
 @SuppressWarnings("deprecation")
 public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Service, CamelContextAware {

@@ -30,7 +30,7 @@ import org.apache.camel.spi.DataFormat;
 /**
  * Test that data format receives callback if its a service / CamelContextAware
  *
- * @version $Revision$
+ * @version 
  */
 public class DataFormatServiceTest extends ContextTestSupport {
 

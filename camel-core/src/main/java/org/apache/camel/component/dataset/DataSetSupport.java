@@ -27,7 +27,7 @@ import org.apache.camel.util.ExchangeHelper;
 /**
  * Base class for DataSet
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class DataSetSupport implements DataSet {
     private Map<String, Object> defaultHeaders;

@@ -29,7 +29,7 @@ import org.apache.camel.Processor;
  * <p/>
  * This implementation will block while waiting.
  *
- * @version $Revision$
+ * @version 
  */
 public class Delayer extends DelayProcessorSupport implements Traceable {
     private Expression delay;

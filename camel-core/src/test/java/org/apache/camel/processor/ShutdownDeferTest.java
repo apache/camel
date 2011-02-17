@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.ShutdownRoute.Defer;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ShutdownDeferTest extends ContextTestSupport {
 

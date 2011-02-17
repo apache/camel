@@ -24,7 +24,7 @@ import static org.apache.camel.builder.PredicateBuilder.not;
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XPathMockTest extends ContextTestSupport {
 

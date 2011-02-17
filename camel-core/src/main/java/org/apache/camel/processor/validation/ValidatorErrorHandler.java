@@ -27,7 +27,7 @@ import org.apache.camel.ValidationException;
 /**
  * Validator error handler.
  *
- * @version $Revision$
+ * @version 
  */
 public interface ValidatorErrorHandler extends ErrorHandler {
 

@@ -20,7 +20,7 @@ package org.apache.camel.component.timer;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class TimerRouteWithTracerTest extends TimerRouteTest {
 

@@ -22,7 +22,7 @@ import org.apache.camel.RuntimeExpressionException;
 /**
  * Exception thrown if invocation of bean failed.
  *
- * @version $Revision$
+ * @version 
  */
 public class RuntimeBeanExpressionException extends RuntimeExpressionException {
     private static final long serialVersionUID = -7184254079414493118L;

@@ -29,7 +29,7 @@ import org.apache.camel.Processor;
  * The {@link org.apache.camel.processor.MulticastProcessor} is more powerful as it offers
  * option to run in parallel and decide whether or not to stop on failure etc.
  *
- * @version $Revision$
+ * @version 
  */
 public class TopicLoadBalancer extends LoadBalancerSupport {
 

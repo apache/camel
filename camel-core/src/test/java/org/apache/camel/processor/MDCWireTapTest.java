@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.MDC;
 
 /**
- * @version $Revision: 807500 $
+ * @version 
  */
 public class MDCWireTapTest extends ContextTestSupport {
 
