@@ -71,7 +71,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * Spring XML or found by searching the classpath for Java classes which extend
  * {@link RouteBuilder} using the nested {@link #setPackages(String[])}.
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 /**
  * A simple processor which transforms the input
  *
- * @version $Revision$
+ * @version 
 */
 public class MyProcessor implements Processor {
     public void process(Exchange exchange) {

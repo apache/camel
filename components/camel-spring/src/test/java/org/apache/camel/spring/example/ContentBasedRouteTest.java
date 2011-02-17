@@ -25,7 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ContentBasedRouteTest extends SpringTestSupport {
     protected MockEndpoint matchedEndpoint;

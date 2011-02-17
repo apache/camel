@@ -21,7 +21,7 @@ import org.apache.camel.CamelContext;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringPropertiesComponentEIPChoiceConvertBodyToTest extends PropertiesComponentEIPChoiceConvertBodyToTest {
 

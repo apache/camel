@@ -22,7 +22,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Test for LifecycleStrategy injection.
  *
- * @version $Revision$
+ * @version 
  */
 public class MultipleLifecycleStrategyInjectionTest extends SpringTestSupport {
 

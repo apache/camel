@@ -24,7 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @ContextConfiguration
 public class ProduceTest extends AbstractJUnit38SpringContextTests {

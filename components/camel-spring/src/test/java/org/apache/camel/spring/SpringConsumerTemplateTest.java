@@ -27,7 +27,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
 /**
  * Unit test using the ConsumerTemplate
  *
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: e1
 @ContextConfiguration

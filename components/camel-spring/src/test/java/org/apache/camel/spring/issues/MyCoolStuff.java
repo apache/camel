@@ -17,7 +17,7 @@
 package org.apache.camel.spring.issues;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public interface MyCoolStuff {
 

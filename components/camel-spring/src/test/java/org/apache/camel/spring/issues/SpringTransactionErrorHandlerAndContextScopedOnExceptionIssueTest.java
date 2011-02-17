@@ -26,7 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest extends SpringTestSupport {
     protected JdbcTemplate jdbc;

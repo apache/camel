@@ -19,7 +19,7 @@ package org.apache.camel.spring.util;
 import org.apache.camel.TestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MainRunnerTest extends TestSupport {
 

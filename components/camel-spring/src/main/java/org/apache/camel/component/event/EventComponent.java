@@ -28,7 +28,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * An <a href="http://camel.apache.org/event.html">Event Component</a>
  * for working with Spring ApplicationEvents
  * 
- * @version $Revision$
+ * @version 
  */
 public class EventComponent extends DefaultComponent implements ApplicationContextAware {
     private ApplicationContext applicationContext;

@@ -28,7 +28,7 @@ import org.springframework.core.io.ResourceLoader;
  * A useful base class for components which depend on a resource
  * such as things like Velocity or XQuery based components.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class ResourceBasedComponent extends DefaultComponent {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());

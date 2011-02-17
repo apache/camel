@@ -27,7 +27,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class EndpointReferenceTest extends SpringTestSupport {
     protected static Object body = "<hello>world!</hello>";

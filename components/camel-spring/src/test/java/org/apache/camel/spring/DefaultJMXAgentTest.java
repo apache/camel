@@ -29,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Test that verifies JMX is enabled by default.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultJMXAgentTest extends SpringTestSupport {
 

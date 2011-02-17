@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.example.MyProcessor;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MainExampleTest extends TestCase {
 

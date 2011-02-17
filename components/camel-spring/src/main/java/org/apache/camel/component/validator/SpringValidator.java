@@ -28,7 +28,7 @@ import org.springframework.core.io.Resource;
 /**
  * Validator that uses Spring for reading the scheme resource.
  *
- * @version $Revision$
+ * @version 
  */
 public class SpringValidator extends ValidatingProcessor {
     private Resource schemaResource;

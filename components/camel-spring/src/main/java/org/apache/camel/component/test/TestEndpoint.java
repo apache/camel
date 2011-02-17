@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * <a href="http://camel.apache.org/mock.html">Mock Endpoint</a> for testing but it will
  * pull all messages from the nested endpoint and use those as expected message body assertions.
  *
- * @version $Revision$
+ * @version 
  */
 public class TestEndpoint extends MockEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);

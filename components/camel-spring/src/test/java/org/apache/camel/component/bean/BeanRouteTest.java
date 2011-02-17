@@ -22,7 +22,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanRouteTest extends SpringTestSupport {
     protected Object body = "James";

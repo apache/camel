@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XmlConfigTestSupport extends TestSupport {
     protected static final transient Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBeanTest.class);

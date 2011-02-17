@@ -35,7 +35,7 @@ import org.springframework.context.ApplicationContextAware;
  * A Spring {@link org.springframework.beans.factory.FactoryBean} for creating a new {@link org.apache.camel.ConsumerTemplate}
  * instance with a minimum of XML
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "consumerTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -24,7 +24,7 @@ import org.apache.camel.spi.UuidGenerator;
 import org.springframework.context.support.StaticApplicationContext;
 
 /**
- * @version $Revision: $
+ * @version 
  */
 public class CamelContextFactoryBeanTest extends TestCase {
     

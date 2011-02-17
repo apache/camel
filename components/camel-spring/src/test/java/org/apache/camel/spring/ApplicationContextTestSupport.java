@@ -21,7 +21,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public abstract class ApplicationContextTestSupport extends TestCase {
     protected AbstractXmlApplicationContext applicationContext;

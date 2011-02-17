@@ -21,7 +21,7 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.spring.Main;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringMainStartFailedIssueTest extends TestSupport {
 

@@ -23,7 +23,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringComplexBlockWithEndTest extends ContextTestSupport {
 

@@ -29,7 +29,7 @@ import org.springframework.util.StringUtils;
 /**
  * A base class for a parser for a bean.
  *
- * @version $Revision$
+ * @version 
  */
 public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
     private final Class type;

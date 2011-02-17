@@ -28,7 +28,7 @@ import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 /**
  * Used to configure the errorHandler type
  *
- * @version $Revision: 932938 $
+ * @version 
  */
 @XmlType
 @XmlEnum(String.class)

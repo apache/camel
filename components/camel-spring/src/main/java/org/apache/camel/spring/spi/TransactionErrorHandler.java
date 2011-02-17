@@ -35,7 +35,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * The <a href="http://camel.apache.org/transactional-client.html">Transactional Client</a>
  * EIP pattern.
  *
- * @version $Revision$
+ * @version 
  */
 public class TransactionErrorHandler extends RedeliveryErrorHandler {
 

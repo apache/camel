@@ -31,7 +31,7 @@ import org.springframework.context.ApplicationContextAware;
 /**
  * A {@link org.springframework.beans.factory.FactoryBean} which instantiates {@link org.apache.camel.processor.RedeliveryPolicy} objects
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "redeliveryPolicyProfile")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -21,7 +21,7 @@ import org.apache.camel.processor.DelayerPerRouteTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringDelayerPerRouteTest extends DelayerPerRouteTest {
 

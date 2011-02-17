@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

@@ -21,7 +21,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 938471 $
+ * @version 
  */
 public class OneRouteRefOnExceptionAndTwoDLCErrorHandlerTest extends SpringTestSupport {
 

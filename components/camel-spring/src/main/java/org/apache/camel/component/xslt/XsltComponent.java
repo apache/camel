@@ -36,7 +36,7 @@ import org.springframework.core.io.Resource;
  * An <a href="http://camel.apache.org/xslt.html">XSLT Component</a>
  * for performing XSLT transforms of messages
  *
- * @version $Revision$
+ * @version 
  */
 public class XsltComponent extends ResourceBasedComponent {
     private XmlConverter xmlConverter;

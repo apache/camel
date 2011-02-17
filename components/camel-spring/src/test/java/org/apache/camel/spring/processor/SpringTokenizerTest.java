@@ -21,7 +21,7 @@ import org.apache.camel.processor.SplitterMethodCallTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringTokenizerTest extends SplitterMethodCallTest {
     protected CamelContext createCamelContext() throws Exception {

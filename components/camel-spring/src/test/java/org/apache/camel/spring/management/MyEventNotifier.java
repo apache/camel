@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.camel.management.EventNotifierSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyEventNotifier extends EventNotifierSupport {
 

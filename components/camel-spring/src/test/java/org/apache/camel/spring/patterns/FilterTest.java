@@ -27,7 +27,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
 /**
  * Tests filtering using Spring Test and XML Config
   *
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: example
 @ContextConfiguration

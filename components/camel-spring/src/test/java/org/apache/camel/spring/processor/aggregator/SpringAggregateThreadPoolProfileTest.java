@@ -22,7 +22,7 @@ import org.apache.camel.processor.aggregator.AggregateThreadPoolProfileTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringAggregateThreadPoolProfileTest extends AggregateThreadPoolProfileTest {
 

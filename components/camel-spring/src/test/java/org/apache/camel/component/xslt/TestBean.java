@@ -18,7 +18,7 @@ package org.apache.camel.component.xslt;
 
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class TestBean {
     private String subject;

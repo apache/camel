@@ -23,7 +23,7 @@ import org.apache.camel.FailedToCreateRouteException;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
 

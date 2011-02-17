@@ -22,7 +22,7 @@ import org.apache.camel.processor.aggregator.AggregateExpressionSizeFallbackTest
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringAggregateExpressionSizeFallbackTest extends AggregateExpressionSizeFallbackTest {
 

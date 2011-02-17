@@ -23,7 +23,7 @@ import org.apache.camel.RecipientList;
  * An example POJO which has a method {@link #route) which can be used as a
  * Dynamic Recipient List
  *
- * @version $Revision$
+ * @version 
  */
 public class RouterBean {
 

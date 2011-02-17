@@ -22,7 +22,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyRouteBuilderWithAutowiredPojo extends SpringRouteBuilder {
 

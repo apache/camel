@@ -22,7 +22,7 @@ import org.apache.camel.processor.FailoverRoundRobinTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringFailoverRoundRobinTest extends FailoverRoundRobinTest {
 

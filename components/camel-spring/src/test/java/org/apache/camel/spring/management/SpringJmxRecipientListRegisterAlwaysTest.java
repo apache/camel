@@ -25,7 +25,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 812099 $
+ * @version 
  */
 public class SpringJmxRecipientListRegisterAlwaysTest extends SpringTestSupport {
 

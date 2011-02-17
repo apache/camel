@@ -21,7 +21,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: e1
 public class FooEventConsumer {

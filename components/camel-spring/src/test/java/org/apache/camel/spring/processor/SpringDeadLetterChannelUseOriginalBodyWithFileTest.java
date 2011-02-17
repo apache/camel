@@ -21,7 +21,7 @@ import org.apache.camel.processor.DeadLetterChannelUseOriginalInBodyWithFileTest
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringDeadLetterChannelUseOriginalBodyWithFileTest extends DeadLetterChannelUseOriginalInBodyWithFileTest {
 

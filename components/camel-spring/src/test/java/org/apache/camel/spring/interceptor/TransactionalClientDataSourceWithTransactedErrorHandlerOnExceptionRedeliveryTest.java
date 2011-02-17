@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class TransactionalClientDataSourceWithTransactedErrorHandlerOnExceptionRedeliveryTest extends TransactionalClientDataSourceRedeliveryTest {
 

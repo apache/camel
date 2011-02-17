@@ -21,7 +21,7 @@ import org.apache.camel.processor.XPathFilterTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringXPathFilterTest extends XPathFilterTest {
     protected CamelContext createCamelContext() throws Exception {

@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ConfiguredRouteBuilder extends RouteBuilder {
     private String fromUri;

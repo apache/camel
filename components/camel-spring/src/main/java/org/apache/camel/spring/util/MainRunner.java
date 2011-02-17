@@ -33,7 +33,7 @@ import static org.apache.camel.util.ObjectHelper.name;
  * usually asynchronous in a background thread; which is useful for demos such
  * as running Swing programs in the same JVM.
  *
- * @version $Revision$
+ * @version 
  */
 public class MainRunner implements InitializingBean, Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(MainRunner.class);

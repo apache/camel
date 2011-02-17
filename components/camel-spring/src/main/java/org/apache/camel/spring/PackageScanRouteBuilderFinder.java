@@ -31,7 +31,7 @@ import org.springframework.context.ApplicationContext;
 /**
  * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} instances on the classpath
  *
- * @version $Revision$
+ * @version 
  */
 public class PackageScanRouteBuilderFinder {
     private static final transient Logger LOG = LoggerFactory.getLogger(PackageScanRouteBuilderFinder.class);

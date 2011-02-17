@@ -34,7 +34,7 @@ import org.springframework.core.io.ResourceLoader;
  * A useful base class for endpoints which depend on a resource
  * such as things like Velocity or XQuery based components.
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());

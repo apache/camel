@@ -22,7 +22,7 @@ import org.apache.camel.management.PublishEventNotifierTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringPublishEventNotifierTest extends PublishEventNotifierTest {
 

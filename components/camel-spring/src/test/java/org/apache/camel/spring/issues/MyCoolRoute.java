@@ -19,7 +19,7 @@ package org.apache.camel.spring.issues;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyCoolRoute extends RouteBuilder {
 

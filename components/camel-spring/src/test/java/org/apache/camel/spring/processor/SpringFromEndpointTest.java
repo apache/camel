@@ -21,7 +21,7 @@ import org.apache.camel.impl.FromEndpointTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringFromEndpointTest extends FromEndpointTest {
     @Override

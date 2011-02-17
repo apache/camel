@@ -22,7 +22,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Test that verifies JMX properties can be configured via Spring.
  *
- * @version $Revision$
+ * @version 
  */
 public class JMXAgentPropertiesTest extends JMXAgentTest {
 

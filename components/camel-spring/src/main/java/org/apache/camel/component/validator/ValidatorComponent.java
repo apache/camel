@@ -27,7 +27,7 @@ import org.springframework.core.io.Resource;
  * The <a href="http://camel.apache.org/validator.html">Validator Component</a>
  * for validating XML against some schema
  *
- * @version $Revision$
+ * @version 
  */
 public class ValidatorComponent extends ResourceBasedComponent {
 

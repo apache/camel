@@ -21,7 +21,7 @@ import org.apache.camel.management.ManagedStatisticsLevelRoutesOnlyTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringManagedStatisticsLevelRoutesOnlyTest extends ManagedStatisticsLevelRoutesOnlyTest {
 

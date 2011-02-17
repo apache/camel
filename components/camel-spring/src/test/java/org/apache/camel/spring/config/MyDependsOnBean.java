@@ -17,7 +17,7 @@
 package org.apache.camel.spring.config;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyDependsOnBean {
 

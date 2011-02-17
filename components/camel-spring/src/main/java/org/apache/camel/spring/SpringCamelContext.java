@@ -49,7 +49,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * as well as supporting accessing components and beans via the Spring
  * {@link ApplicationContext}
  *
- * @version $Revision$
+ * @version 
  */
 public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean,
         ApplicationContextAware {

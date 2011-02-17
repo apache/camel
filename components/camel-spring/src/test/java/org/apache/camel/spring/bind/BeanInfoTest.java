@@ -29,7 +29,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanInfoTest extends TestCase {
     protected DefaultCamelContext camelContext = new DefaultCamelContext();

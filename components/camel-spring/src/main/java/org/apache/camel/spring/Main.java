@@ -36,7 +36,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
  * A command line tool for booting up a CamelContext using an optional Spring
  * ApplicationContext
  *
- * @version $Revision$
+ * @version 
  */
 public class Main extends MainSupport {
     protected static Main instance;

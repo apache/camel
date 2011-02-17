@@ -36,7 +36,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * An <a href="http://camel.apache.org/event.html">Event Endpoint</a>
  * for working with Spring ApplicationEvents
  *
- * @version $Revision$
+ * @version 
  */
 public class EventEndpoint extends DefaultEndpoint implements ApplicationContextAware {
     private LoadBalancer loadBalancer;

@@ -23,7 +23,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanAsEndpointTest extends SpringTestSupport {
     protected Object body = "James";

@@ -29,7 +29,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CustomProcessorWithNamespacesTest extends TestSupport {
     protected String body = "<hello>world!</hello>";

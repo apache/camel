@@ -29,7 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @ContextConfiguration
 public class SpringRemotingWithOneWayTest extends AbstractJUnit38SpringContextTests {

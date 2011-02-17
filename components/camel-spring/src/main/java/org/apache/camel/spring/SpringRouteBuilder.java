@@ -29,7 +29,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * An extension of the {@link RouteBuilder} to provide some additional helper
  * methods
  *
- * @version $Revision$
+ * @version 
  */
 public abstract class SpringRouteBuilder extends RouteBuilder implements ApplicationContextAware {
     private ApplicationContext applicationContext;

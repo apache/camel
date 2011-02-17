@@ -36,7 +36,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public abstract class SpringTestSupport extends ContextTestSupport {
     protected AbstractXmlApplicationContext applicationContext;

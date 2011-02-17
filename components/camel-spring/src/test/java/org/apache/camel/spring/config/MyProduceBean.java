@@ -21,7 +21,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.Producer;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyProduceBean {
 

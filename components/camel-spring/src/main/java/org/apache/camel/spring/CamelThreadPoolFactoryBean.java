@@ -33,7 +33,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A {@link org.springframework.beans.factory.FactoryBean} which instantiates {@link java.util.concurrent.ExecutorService} objects
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "threadPool")
 @XmlAccessorType(XmlAccessType.FIELD)

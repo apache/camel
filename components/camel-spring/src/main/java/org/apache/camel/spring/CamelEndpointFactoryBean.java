@@ -33,7 +33,7 @@ import org.springframework.context.ApplicationContextAware;
 /**
  * A {@link FactoryBean} which instantiates {@link Endpoint} objects
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)

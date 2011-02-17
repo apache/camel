@@ -61,7 +61,7 @@ import org.springframework.context.ApplicationContextAware;
  * then one of these bean post processors is implicitly installed and configured for you. So you should never have to
  * explicitly create or configure one of these instances.
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "beanPostProcessor")
 @XmlAccessorType(XmlAccessType.FIELD)

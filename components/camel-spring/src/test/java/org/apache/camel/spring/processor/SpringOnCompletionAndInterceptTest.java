@@ -21,7 +21,7 @@ import org.apache.camel.processor.OnCompletionAndInterceptTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringOnCompletionAndInterceptTest extends OnCompletionAndInterceptTest {
 

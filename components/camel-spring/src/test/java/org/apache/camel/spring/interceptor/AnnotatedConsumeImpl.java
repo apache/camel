@@ -22,7 +22,7 @@ import org.apache.camel.ProducerTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Transactional(propagation = org.springframework.transaction.annotation.Propagation.NEVER, readOnly = true)
 public class AnnotatedConsumeImpl implements AnnotatedConsume {

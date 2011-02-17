@@ -22,7 +22,7 @@ import org.springframework.context.ApplicationEvent;
 /**
  * Represents a Spring {@link ApplicationEvent} which contains a Camel {@link Exchange}
  *
- * @version $Revision$
+ * @version 
  */
 public class CamelEvent extends ApplicationEvent {
     private final Exchange exchange;

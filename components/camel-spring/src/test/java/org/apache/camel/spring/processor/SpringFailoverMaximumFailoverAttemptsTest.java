@@ -22,7 +22,7 @@ import org.apache.camel.processor.FailoverMaximumFailoverAttemptsTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision: 630591 $
+ * @version 
  */
 public class SpringFailoverMaximumFailoverAttemptsTest extends FailoverMaximumFailoverAttemptsTest {
 

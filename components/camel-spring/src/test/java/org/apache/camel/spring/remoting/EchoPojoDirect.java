@@ -20,7 +20,7 @@ import org.apache.camel.Consume;
 import org.apache.camel.Produce;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class EchoPojoDirect {
 

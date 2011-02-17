@@ -23,7 +23,7 @@ import org.apache.camel.Header;
 import org.apache.camel.Headers;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyCoolAopBean {
 

@@ -20,7 +20,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
 import org.springframework.stereotype.Component;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Component("coolRoute")
 public class MyOtherRoute extends SpringRouteBuilder {

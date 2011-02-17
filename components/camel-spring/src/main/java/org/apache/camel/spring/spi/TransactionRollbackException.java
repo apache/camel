@@ -19,7 +19,7 @@ package org.apache.camel.spring.spi;
 /**
  * We use a runtime exception to force Spring transaction manager to rollback the transaction.
  *
- * @version $Revision$
+ * @version 
  */
 public class TransactionRollbackException extends RuntimeException {
 

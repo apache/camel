@@ -19,7 +19,7 @@ package org.apache.camel.component.properties.route;
 import org.apache.camel.spring.SpringRouteBuilder;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringSimpleRoute extends SpringRouteBuilder {
 

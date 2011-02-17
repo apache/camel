@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ConfiguredRouteBuilder2 extends RouteBuilder {
     private String queueName;

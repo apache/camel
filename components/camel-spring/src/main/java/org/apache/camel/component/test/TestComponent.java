@@ -31,7 +31,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  *
  * @see org.apache.camel.component.test.TestEndpoint
  *
- * @version $Revision$
+ * @version 
  */
 public class TestComponent extends DefaultComponent {
 

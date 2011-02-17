@@ -31,7 +31,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * Wraps the processor in a Spring transaction
  *
- * @version $Revision$
+ * @version 
  */
 public class SpringTransactionPolicy implements TransactedPolicy {
     private static final transient Logger LOG = LoggerFactory.getLogger(SpringTransactionPolicy.class);

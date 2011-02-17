@@ -19,7 +19,7 @@ package org.apache.camel.spring.issues;
 import org.apache.camel.Produce;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CoolService {
 

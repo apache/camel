@@ -29,7 +29,7 @@ import org.apache.camel.model.RedeliveryPolicyDefinition;
 /**
  * The &lt;errorHandler&gt; tag element.
  *
- * @version $Revision: 938746 $
+ * @version 
  */
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)

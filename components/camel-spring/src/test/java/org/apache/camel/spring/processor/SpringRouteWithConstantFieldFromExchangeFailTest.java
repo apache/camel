@@ -24,7 +24,7 @@ import org.apache.camel.processor.RouteWithConstantFieldFromExchangeFailTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision: 630591 $
+ * @version 
  */
 public class SpringRouteWithConstantFieldFromExchangeFailTest extends RouteWithConstantFieldFromExchangeFailTest {
 

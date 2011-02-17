@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class SpringMethodCallTest extends ContextTestSupport {
 
