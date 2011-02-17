@@ -30,7 +30,7 @@ import org.apache.camel.example.cxf.incident.OutputStatusIncident;
 /**
  * The Camel route
  *
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: e1
 public class CamelRoute extends RouteBuilder {

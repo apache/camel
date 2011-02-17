@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.apache.camel.guice.Main;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class IntegrationTest extends TestCase {
 

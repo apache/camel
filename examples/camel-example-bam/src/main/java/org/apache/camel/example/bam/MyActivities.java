@@ -25,7 +25,7 @@ import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 import static org.apache.camel.util.Time.seconds;
 
 /**
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: demo
 public class MyActivities extends ProcessBuilder {

@@ -29,7 +29,7 @@ import org.springframework.util.ClassUtils;
 /**
  * A Message Transformer of an XML document to a Customer entity bean
  * 
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: example
 @Converter

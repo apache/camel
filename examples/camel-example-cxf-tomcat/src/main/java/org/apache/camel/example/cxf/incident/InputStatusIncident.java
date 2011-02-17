@@ -17,7 +17,7 @@
 package org.apache.camel.example.cxf.incident;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class InputStatusIncident {
 

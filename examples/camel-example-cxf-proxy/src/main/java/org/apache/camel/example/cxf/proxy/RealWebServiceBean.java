@@ -23,7 +23,7 @@ import javax.xml.ws.Endpoint;
  * <p/>
  * This implementation uses pure JAX-WS (no CXF, no Camel).
  *
- * @version $Revision$
+ * @version 
  */
 public class RealWebServiceBean {
 

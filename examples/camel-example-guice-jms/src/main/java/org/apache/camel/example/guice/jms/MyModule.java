@@ -28,7 +28,7 @@ import org.guiceyfruit.jndi.JndiBind;
  * Configures the CamelContext, RouteBuilder, Component and Endpoint instances using
  * Guice
  *
- * @version $Revision$
+ * @version 
  */
 public class MyModule extends CamelModuleWithMatchingRoutes {
 

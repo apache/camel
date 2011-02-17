@@ -38,7 +38,7 @@ import org.springframework.osgi.context.BundleContextAware;
 /**
  * A simple example router from a file system to an ActiveMQ queue and then to a file system
  *
- * @version $Revision$
+ * @version 
  */
 @Configuration
 public class MyRouteConfig extends SingleRouteCamelConfiguration implements InitializingBean, BundleContextAware {

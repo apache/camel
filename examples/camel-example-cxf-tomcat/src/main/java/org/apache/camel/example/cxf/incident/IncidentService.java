@@ -21,7 +21,7 @@ package org.apache.camel.example.cxf.incident;
  * <p/>
  * This is a basic example, you can use the JAX-WS annotations to control the contract.
  *
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: e1
 public interface IncidentService {

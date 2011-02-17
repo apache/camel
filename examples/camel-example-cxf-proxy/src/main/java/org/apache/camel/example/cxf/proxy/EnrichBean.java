@@ -22,7 +22,7 @@ import org.w3c.dom.Node;
 /**
  * A bean to enrich the proxied web service to ensure the input is valid and add additional information
  *
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: e1
 public class EnrichBean {

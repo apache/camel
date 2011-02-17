@@ -19,7 +19,7 @@ package org.apache.camel.example.guice.jms;
 import com.google.inject.Inject;
 
 /**
- * @version $Revision$
+ * @version 
 */
 public class SomeBean {
     @Inject

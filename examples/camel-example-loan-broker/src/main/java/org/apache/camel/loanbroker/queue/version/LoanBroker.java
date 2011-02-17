@@ -28,7 +28,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 /**
  * The LoanBroker is a RouteBuilder which builds the whole loan message routing rules
  *
- * @version $Revision$
+ * @version 
  */
 public class LoanBroker extends RouteBuilder {
 

@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * An example entity bean which can be marshalled to/from XML
  * 
- * @version $Revision$
+ * @version 
  */
 @Entity(name = "customer")
 @XmlRootElement(name = "customer")

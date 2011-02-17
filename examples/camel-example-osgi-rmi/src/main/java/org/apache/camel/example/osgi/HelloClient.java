@@ -22,7 +22,7 @@ import java.rmi.registry.Registry;
 /**
  * Client to invoke the RMI service hosted on another JVM running on localhost.
  *
- * @version $Revision$
+ * @version 
  */
 public final class HelloClient {
 

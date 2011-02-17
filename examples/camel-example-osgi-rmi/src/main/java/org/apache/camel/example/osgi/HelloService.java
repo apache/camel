@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
  * Interface for the service to expose. Notice we must extend {@link Remote} which
  * is required when using RMI.
  *
- * @version $Revision$
+ * @version 
  */
 public interface HelloService extends Remote {
 

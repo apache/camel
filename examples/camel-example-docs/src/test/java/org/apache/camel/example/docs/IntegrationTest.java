@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.apache.camel.spring.Main;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class IntegrationTest extends TestCase {
 

@@ -17,7 +17,7 @@
 package org.apache.camel.example.bam;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public final class Main {
     private Main() {

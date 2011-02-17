@@ -21,7 +21,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
- * @version $Revision$
+ * @version 
  */
 // START SNIPPET: example
 public class EtlRoutes extends SpringRouteBuilder {

@@ -30,7 +30,7 @@ import org.apache.camel.impl.JndiRegistry;
 /**
  * A simple example router from Cafe Demo
  *
- * @version $Revision$
+ * @version 
  */
 public class CafeRouteBuilder extends RouteBuilder {
     

@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * A simple example router from a file system to an ActiveMQ queue and then to a file system
  *
- * @version $Revision$
+ * @version 
  */
 public class MyRouteBuilder extends RouteBuilder {
 

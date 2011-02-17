@@ -24,7 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Unit test the example.
  *
- * @version $Revision$
+ * @version 
  */
 public class RmiTest extends CamelSpringTestSupport {
 

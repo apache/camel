@@ -22,7 +22,7 @@ import org.apache.camel.spring.Main;
 /**
  * A simple example router to show how to define the route with Java DSL
  *
- * @version $Revision$
+ * @version 
  */
 public class MyRouteBuilder extends RouteBuilder {
 

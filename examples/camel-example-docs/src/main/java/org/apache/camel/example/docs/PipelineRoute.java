@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * A simple pipeline example
  *
- * @version $Revision$
+ * @version 
  */
 public class PipelineRoute extends RouteBuilder {
     public void configure() throws Exception {

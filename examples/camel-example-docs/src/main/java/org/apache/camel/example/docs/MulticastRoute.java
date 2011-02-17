@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * A simple multicast example
  *
- * @version $Revision$
+ * @version 
  */
 public class MulticastRoute extends RouteBuilder {
     public void configure() throws Exception {

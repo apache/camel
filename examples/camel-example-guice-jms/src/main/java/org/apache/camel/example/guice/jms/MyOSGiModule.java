@@ -28,7 +28,7 @@ import org.osgi.framework.BundleContext;
  * Configures the CamelContext, RouteBuilder, Component and Endpoint instances using
  * Guice within OSGi platform
  *
- * @version $Revision$
+ * @version 
  */
 public class MyOSGiModule extends MyModule {
     private OSGiCamelContextProvider provider;

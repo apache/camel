@@ -19,7 +19,7 @@ package org.apache.camel.example.osgi;
 /**
  * Implementation of the service which returns a message.
  *
- * @version $Revision$
+ * @version 
  */
 public class HelloServiceImpl implements HelloService {
 
