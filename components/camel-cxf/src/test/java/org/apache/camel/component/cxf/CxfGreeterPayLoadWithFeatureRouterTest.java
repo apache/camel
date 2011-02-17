@@ -23,7 +23,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * A unit test for testing a CXF client invoking a CXF server via route 
  * in PAYLOAD mode and with CXF features specified in the Spring config.
  * 
- * @version $Revision$
+ * @version 
  */
 public class CxfGreeterPayLoadWithFeatureRouterTest extends CXFGreeterRouterTest {
     

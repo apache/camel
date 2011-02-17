@@ -39,7 +39,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class CxfSpringEndpoint extends CxfEndpoint {
 

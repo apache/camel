@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link MessageHeaderFilter} to drop all SOAP headers.
  *
- * @version $Revision$
+ * @version 
  */
 public class SoapMessageHeaderFilter implements MessageHeaderFilter {
     private static final Logger LOG = LoggerFactory.getLogger(SoapMessageHeaderFilter.class);

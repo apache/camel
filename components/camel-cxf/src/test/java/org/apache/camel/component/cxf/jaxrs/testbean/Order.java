@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "Order")
 public class Order {

@@ -22,7 +22,7 @@ import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class CxfRsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 

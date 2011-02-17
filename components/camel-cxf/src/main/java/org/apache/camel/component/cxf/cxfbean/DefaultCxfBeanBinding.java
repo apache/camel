@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultCxfBeanBinding implements CxfBeanBinding {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfBeanBinding.class);

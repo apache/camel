@@ -40,7 +40,7 @@ import static org.junit.Assert.assertNull;
  * Unit test that verify header propagation functionality for CxfRsProducer
  * that uses WebClient API.
  *  
- * @version $Revision$
+ * @version 
  */
 @ContextConfiguration
 public class CxfRsProducerHeaderTest extends AbstractJUnit4SpringContextTests {

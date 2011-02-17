@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * CXF Bean TransportFactory that overrides CamelTransportFactory to create
  * a specific Destination (@link CxfBeanDestination}.
  * 
- * @version $Revision$
+ * @version 
  */
 public class CxfBeanTransportFactory extends CamelTransportFactory  {
     public static final String TRANSPORT_ID = "http://cxf.apache.org/transports/camel/cxfbean";

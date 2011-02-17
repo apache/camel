@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CxfProducerOperationTest extends CxfProducerTest {
     private static final String NAMESPACE = "http://apache.org/hello_world_soap_http";

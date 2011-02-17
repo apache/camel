@@ -30,7 +30,7 @@ import org.apache.cxf.message.Message;
 /**
  * Utility class to propagate headers to and from CXF message.
  *
- * @version $Revision$
+ * @version 
  */
 public final class CxfHeaderHelper {
 

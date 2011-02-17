@@ -31,7 +31,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * A unit test for spring configured cxf endpoint.
  * 
- * @version $Revision$
+ * @version 
  */
 public class CxfEndpointTest extends Assert {
     

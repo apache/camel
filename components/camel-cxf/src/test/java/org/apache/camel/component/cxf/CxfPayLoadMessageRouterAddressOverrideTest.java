@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * A unit test for testing reading SOAP body with address override in PAYLOAD mode.
  * 
- * @version $Revision$
+ * @version 
  */
 public class CxfPayLoadMessageRouterAddressOverrideTest extends CxfPayLoadMessageRouterTest {
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";

@@ -19,7 +19,7 @@ package org.apache.camel.component.cxf;
 /**
  * Constants used in this module
  *
- * @version $Revision$
+ * @version 
  */
 public interface CxfConstants {
     String METHOD = "method";

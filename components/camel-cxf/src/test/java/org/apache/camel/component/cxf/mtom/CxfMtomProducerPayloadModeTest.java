@@ -52,7 +52,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 /**
 * Unit test for exercising MTOM feature of a CxfProducer in PAYLOAD mode
 * 
-* @version $Revision$
+* @version 
 */
 @ContextConfiguration
 public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextTests {

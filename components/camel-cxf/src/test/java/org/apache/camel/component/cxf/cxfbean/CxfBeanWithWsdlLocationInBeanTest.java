@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  *
- * @version $Revision: 835174 $
+ * @version 
  */
 @ContextConfiguration
 public class CxfBeanWithWsdlLocationInBeanTest extends AbstractJUnit4SpringContextTests {

@@ -35,7 +35,7 @@ import javax.ws.rs.core.Response;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 @Path("/customerservice/")
 public class CustomerService {

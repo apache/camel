@@ -23,7 +23,7 @@ import org.apache.cxf.message.Message;
 /**
  * A Strategy to bind a Camel exchange to a CXF message used by {@link CxfBeanDestination}.
  *
- * @version $Revision$
+ * @version 
  */
 public interface CxfBeanBinding {
 

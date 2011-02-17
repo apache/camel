@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * route for processing. It is also responsible for converting and sending
  * back responses to CXF client.
  *
- * @version $Revision$
+ * @version 
  */
 public class CxfConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(CxfConsumer.class);

@@ -26,7 +26,7 @@ import org.apache.cxf.helpers.IOUtils;
 /**
  * Package local test helper
  * 
- * @version $Revision$
+ * @version 
  */
 public final class MtomTestHelper {
     

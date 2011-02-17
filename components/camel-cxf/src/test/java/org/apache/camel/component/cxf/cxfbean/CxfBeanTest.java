@@ -48,7 +48,7 @@ import static org.junit.Assert.fail;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 @ContextConfiguration
 public class CxfBeanTest extends AbstractJUnit4SpringContextTests {

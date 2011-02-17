@@ -26,7 +26,7 @@ import org.apache.cxf.message.Exchange;
 /**
  * Interface to bind between Camel and CXF exchange for RESTful resources.
  *
- * @version $Revision$
+ * @version 
  */
 public interface CxfRsBinding {
 

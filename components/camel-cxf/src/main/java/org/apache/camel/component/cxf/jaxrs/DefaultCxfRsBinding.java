@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * Default strategy  to bind between Camel and CXF exchange for RESTful resources.
  *
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfRsBinding.class);

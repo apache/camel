@@ -26,7 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Unit test for testing CXF bus injection.
  *
- * @version $Revision$
+ * @version 
  */
 public class CxfEndpointBeanWithBusTest extends CxfEndpointBeanTest {
     

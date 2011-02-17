@@ -28,7 +28,7 @@ import org.apache.cxf.service.invoker.Invoker;
  * (SEI).
  * It will pick the first one service name and first one port/endpoint name in the WSDL, if 
  * there is service name or port/endpoint name setted.
- * @version $Revision$
+ * @version 
  */
 public class WSDLServiceFactoryBean extends ReflectionServiceFactoryBean {
     

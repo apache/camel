@@ -29,7 +29,7 @@ import org.apache.camel.cxf.mtom_feature.Hello;
 
 /**
  * Hello Test Impl class
- * @version $Revision$
+ * @version 
  */
 public class HelloImpl implements Hello {
 

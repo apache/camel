@@ -40,7 +40,7 @@ import org.apache.cxf.transport.DestinationFactoryManager;
  * a {@link CxfBeanDestination}.  It delegates the processing of Camel 
  * Exchanges to the associated CxfBeanDestination.
  *  
- * @version $Revision$
+ * @version 
  */
 public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterStrategyAware {
     private static final String URI_PREFIX = "cxfbean";

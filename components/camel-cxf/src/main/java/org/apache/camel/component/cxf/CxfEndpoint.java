@@ -71,7 +71,7 @@ import org.springframework.context.ApplicationContext;
  * {@link CxfBinding}, and {@link HeaderFilterStrategy}.  The default DataFormat 
  * mode is {@link DataFormat#POJO}.  
  *
- * @version $Revision$
+ * @version 
  */
 public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
     

@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * A CXF transport {@link org.apache.cxf.transport.Destination} that listens 
  * Camel {@link Exchange} from an associated {@link CxfBeanEndpoint}.
  *  
- * @version $Revision$
+ * @version 
  */
 public class CxfBeanDestination extends CamelDestination implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(CxfBeanDestination.class);

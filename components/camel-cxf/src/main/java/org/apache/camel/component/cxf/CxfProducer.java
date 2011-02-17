@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * client, and sends the request to a CXF to a server.  Any response will 
  * be bound to Camel exchange. 
  *
- * @version $Revision$
+ * @version 
  */
 public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(CxfProducer.class);

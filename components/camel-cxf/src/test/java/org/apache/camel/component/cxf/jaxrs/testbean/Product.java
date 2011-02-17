@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement(name = "Product")
 public class Product {

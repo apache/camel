@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode for SOAP 1.2
  * 
- * @version $Revision$
+ * @version 
  */
 @ContextConfiguration
 public class CxfMtomRouterPayloadMode12Test extends CxfMtomRouterPayloadModeTest {

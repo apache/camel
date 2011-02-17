@@ -27,7 +27,7 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 /**
  * CxfMessage body type when {@link DataFormat#PAYLOAD} is used.
  * 
- * @version $Revision$
+ * @version 
  */
 public class CxfPayload<T> {
     

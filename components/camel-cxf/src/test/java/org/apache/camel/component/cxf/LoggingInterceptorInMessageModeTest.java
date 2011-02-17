@@ -37,7 +37,7 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 @ContextConfiguration
 public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringContextTests {

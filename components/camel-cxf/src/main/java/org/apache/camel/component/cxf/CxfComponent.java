@@ -29,7 +29,7 @@ import org.apache.cxf.message.Message;
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a> 
  * 
- * @version $Revision$
+ * @version 
  */
 public class CxfComponent extends HeaderFilterStrategyComponent {
         

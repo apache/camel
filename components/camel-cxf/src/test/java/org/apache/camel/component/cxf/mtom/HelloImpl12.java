@@ -23,7 +23,7 @@ import org.apache.camel.cxf.mtom_feature.Hello;
 
 /**
  * Hello Test Impl class for SOAP 1.2
- * @version $Revision$
+ * @version 
  */
 
 @WebService(serviceName = "HelloService12")

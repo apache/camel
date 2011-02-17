@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 @ContextConfiguration
 public class WSAddressingTest extends AbstractJUnit4SpringContextTests {

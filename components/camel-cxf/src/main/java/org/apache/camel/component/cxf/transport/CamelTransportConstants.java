@@ -17,7 +17,7 @@
 package org.apache.camel.component.cxf.transport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public final class CamelTransportConstants {
 
