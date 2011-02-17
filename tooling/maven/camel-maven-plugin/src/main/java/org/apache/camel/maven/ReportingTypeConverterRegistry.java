@@ -28,7 +28,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
  * <p/>
  * Used by the camel-maven-plugin.
  *
- * @version $Revision$
+ * @version 
  */
 public class ReportingTypeConverterRegistry implements TypeConverterRegistry {
     private final List<String> errors = new ArrayList<String>();

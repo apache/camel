@@ -49,7 +49,7 @@ import org.codehaus.plexus.util.cli.Commandline;
  * way to <a href="http://camel.apache.org/guice.html">bootstrap via Guice</a>
  * then the DOT files are created, then they are converted from DOT files to another format such as PNG
  *
- * @version $Revision$
+ * @version 
  * @goal dot
  * @requiresDependencyResolution runtime
  * @phase prepare-package

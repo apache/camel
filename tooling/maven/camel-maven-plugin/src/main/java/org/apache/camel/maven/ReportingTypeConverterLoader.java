@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * Used by the camel-maven-plugin.
  *
- * @version $Revision$
+ * @version 
  */
 public class ReportingTypeConverterLoader extends AnnotationTypeConverterLoader {
 
