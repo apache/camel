@@ -30,7 +30,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public abstract class BaseJettyTest extends CamelTestSupport {
     private static volatile int port;

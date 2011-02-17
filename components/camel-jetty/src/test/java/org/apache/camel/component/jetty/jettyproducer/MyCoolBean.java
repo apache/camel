@@ -19,7 +19,7 @@ package org.apache.camel.component.jetty.jettyproducer;
 import java.io.Serializable;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyCoolBean implements Serializable {
 

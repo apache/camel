@@ -47,7 +47,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultHttpBinding implements HttpBinding {
 

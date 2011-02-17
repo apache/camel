@@ -22,7 +22,7 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JettyHttpProducerTransferExceptionTest extends BaseJettyTest {
 

@@ -21,7 +21,7 @@ import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HttpConsumer extends DefaultConsumer implements SuspendableService {
     private final HttpEndpoint endpoint;

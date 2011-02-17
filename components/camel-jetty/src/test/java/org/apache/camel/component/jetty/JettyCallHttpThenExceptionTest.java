@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JettyCallHttpThenExceptionTest extends BaseJettyTest {
 

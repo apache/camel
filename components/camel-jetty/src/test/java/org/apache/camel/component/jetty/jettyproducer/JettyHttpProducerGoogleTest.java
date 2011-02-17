@@ -22,7 +22,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JettyHttpProducerGoogleTest extends CamelTestSupport {
 

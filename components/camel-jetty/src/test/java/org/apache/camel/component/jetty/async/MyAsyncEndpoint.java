@@ -23,7 +23,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyAsyncEndpoint extends DefaultEndpoint {
 

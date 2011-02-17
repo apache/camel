@@ -25,7 +25,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HttpFilterCamelHeadersTest extends BaseJettyTest {
 

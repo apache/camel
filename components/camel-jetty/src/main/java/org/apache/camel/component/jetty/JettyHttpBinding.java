@@ -22,7 +22,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 /**
  * Jetty specific binding to parse the response when using {@link org.apache.camel.component.jetty.JettyHttpProducer}
  *
- * @version $Revision$
+ * @version 
  */
 public interface JettyHttpBinding {
 

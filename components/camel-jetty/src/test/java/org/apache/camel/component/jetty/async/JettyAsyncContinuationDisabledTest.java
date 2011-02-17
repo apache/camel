@@ -21,7 +21,7 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
 /**
- * @version $Revision: 1027376 $
+ * @version 
  */
 public class JettyAsyncContinuationDisabledTest extends BaseJettyTest {
 

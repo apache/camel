@@ -40,7 +40,7 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HttpRouteTest extends BaseJettyTest {
     protected static final String POST_MESSAGE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> "

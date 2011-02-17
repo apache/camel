@@ -65,7 +65,7 @@ import org.slf4j.LoggerFactory;
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
  * the http endpoints.
  *
- * @version $Revision$
+ * @version 
  */
 public class JettyHttpComponent extends HttpComponent {
     public static final String TMP_DIR = "CamelJettyTempDir";

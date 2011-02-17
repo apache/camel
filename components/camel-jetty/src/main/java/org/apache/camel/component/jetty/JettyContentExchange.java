@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Jetty specific exchange which keeps track of the the request and response.
  *
- * @version $Revision$
+ * @version 
  */
 public class JettyContentExchange extends ContentExchange {
 

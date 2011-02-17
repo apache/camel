@@ -22,7 +22,7 @@ import org.apache.camel.component.http.HttpOperationFailedException;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JettySuspendTest extends BaseJettyTest {
 

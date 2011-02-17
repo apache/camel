@@ -38,7 +38,7 @@ import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HttpBasicAuthTest extends BaseJettyTest {
 

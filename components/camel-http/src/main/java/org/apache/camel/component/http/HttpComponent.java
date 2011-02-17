@@ -38,7 +38,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  * Defines the <a href="http://camel.apache.org/http.html">HTTP
  * Component</a>
  *
- * @version $Revision$
+ * @version 
  */
 public class HttpComponent extends HeaderFilterStrategyComponent {
     protected HttpClientConfigurer httpClientConfigurer;

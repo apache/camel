@@ -32,7 +32,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 /**
  * A polling HTTP consumer which by default performs a GET
  *
- * @version $Revision$
+ * @version 
  */
 public class HttpPollingConsumer extends PollingConsumerSupport {
     private final HttpEndpoint endpoint;

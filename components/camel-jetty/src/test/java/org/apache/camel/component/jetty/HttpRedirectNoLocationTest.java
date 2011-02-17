@@ -24,7 +24,7 @@ import org.apache.camel.component.http.HttpOperationFailedException;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HttpRedirectNoLocationTest extends BaseJettyTest {
 

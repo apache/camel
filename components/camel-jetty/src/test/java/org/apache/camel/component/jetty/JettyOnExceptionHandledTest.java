@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JettyOnExceptionHandledTest extends BaseJettyTest {
 

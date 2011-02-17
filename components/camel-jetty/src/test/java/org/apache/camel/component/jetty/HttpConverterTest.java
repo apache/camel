@@ -29,7 +29,7 @@ import org.apache.camel.component.http.HttpMessage;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HttpConverterTest extends BaseJettyTest {
 

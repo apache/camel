@@ -19,7 +19,7 @@ package org.apache.camel.component.http;
 import java.io.Serializable;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class HttpConfiguration implements Serializable {
 

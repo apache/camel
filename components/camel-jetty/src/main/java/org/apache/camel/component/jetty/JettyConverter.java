@@ -24,7 +24,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Converter
 public final class JettyConverter {

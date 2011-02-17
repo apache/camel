@@ -22,7 +22,7 @@ import org.junit.Ignore;
 /**
  * Based on end user on forum how to get the 404 error code in his enrich aggregator
  *
- * @version $Revision$
+ * @version 
  */
 public class JettyProducerHandle404Test extends JettyHandle404Test {
 

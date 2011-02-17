@@ -34,7 +34,7 @@ import org.junit.Test;
 /**
  * Jetty HTTP producer concurrent test.
  *
- * @version $Revision$
+ * @version 
  */
 public class JettyHttpProducerConcurrentTest extends BaseJettyTest {
 

@@ -24,7 +24,7 @@ import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
 /**
- * @version $Revision: 1027376 $
+ * @version 
  */
 public class JettyAsyncContinuationTimeoutTest extends BaseJettyTest {
 

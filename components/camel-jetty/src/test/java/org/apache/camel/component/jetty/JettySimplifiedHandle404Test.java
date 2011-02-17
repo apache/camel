@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  * Based on end user on forum how to get the 404 error code in his enrich aggregator
  *
- * @version $Revision$
+ * @version 
  */
 public class JettySimplifiedHandle404Test extends BaseJettyTest {
 

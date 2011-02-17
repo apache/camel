@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 /**
- * @version $Revision: 1027376 $
+ * @version 
  */
 public class JettyContinuationDisabledTest extends BaseJettyTest {
 
