@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyService {
     private String name;

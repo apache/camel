@@ -23,7 +23,7 @@ import javax.jms.Session;
 /**
  * Callback when a {@link Message} has been sent.
  *
- * @version $Revision$
+ * @version 
  */
 public interface MessageSentCallback {
 

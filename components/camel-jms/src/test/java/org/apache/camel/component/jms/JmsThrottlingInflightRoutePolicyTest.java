@@ -28,7 +28,7 @@ import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsThrottlingInflightRoutePolicyTest extends CamelTestSupport {
 

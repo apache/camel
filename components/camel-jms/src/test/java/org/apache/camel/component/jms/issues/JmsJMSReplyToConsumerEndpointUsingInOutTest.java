@@ -31,7 +31,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * Unit test using a fixed replyTo specified on the JMS endpoint
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsJMSReplyToConsumerEndpointUsingInOutTest extends CamelTestSupport {
 

@@ -39,7 +39,7 @@ import org.springframework.jms.support.converter.SimpleMessageConverter;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsEndpointConfigurationTest extends CamelTestSupport {
 

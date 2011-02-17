@@ -45,7 +45,7 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Component</a>
  *
- * @version $Revision:520964 $
+ * @version 
  */
 public class JmsComponent extends DefaultComponent implements ApplicationContextAware, HeaderFilterStrategyAware {
 

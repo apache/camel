@@ -32,7 +32,7 @@ import org.springframework.jms.support.destination.DestinationResolver;
 /**
  * A {@link ReplyManager} when using persistent queues.
  *
- * @version $Revision$
+ * @version 
  */
 public class PersistentQueueReplyManager extends ReplyManagerSupport {
 

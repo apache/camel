@@ -19,7 +19,7 @@ package org.apache.camel.component.jms;
 /**
  * With the passthrough option
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsRouteWithPassThroughKeyFormatStrategyTest extends JmsRouteWithDefaultKeyFormatStrategyTest {
 

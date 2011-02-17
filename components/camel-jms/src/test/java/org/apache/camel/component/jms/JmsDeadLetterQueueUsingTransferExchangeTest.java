@@ -31,7 +31,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * Unit test for using JMS as DLQ and to preserve the Exchange using transferExchange=true option
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsDeadLetterQueueUsingTransferExchangeTest extends CamelTestSupport {
 

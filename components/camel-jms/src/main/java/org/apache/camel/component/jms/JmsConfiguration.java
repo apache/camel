@@ -45,7 +45,7 @@ import org.springframework.util.Assert;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsConfiguration implements Cloneable {
 

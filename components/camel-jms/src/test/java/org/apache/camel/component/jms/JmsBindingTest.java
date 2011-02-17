@@ -22,7 +22,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertNull;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsBindingTest {
 

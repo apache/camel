@@ -31,7 +31,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * Unit test based on user on user forum with an issue.
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsMessageHeaderContentBasedRouterTest extends CamelTestSupport {
 

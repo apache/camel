@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 786464 $
+ * @version 
  */
 public class JmsDestinationResolverTest extends CamelTestSupport {
 

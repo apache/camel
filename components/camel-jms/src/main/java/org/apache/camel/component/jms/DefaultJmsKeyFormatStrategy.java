@@ -21,7 +21,7 @@ package org.apache.camel.component.jms;
  * <p/>
  * This can be used for sending keys containg package names that is common by Java frameworks.
  *
- * @version $Revision$
+ * @version 
  */
 public class DefaultJmsKeyFormatStrategy implements JmsKeyFormatStrategy {
 

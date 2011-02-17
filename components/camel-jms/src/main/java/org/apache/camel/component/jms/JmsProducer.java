@@ -42,7 +42,7 @@ import org.springframework.jms.core.MessageCreator;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsProducer extends DefaultAsyncProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(JmsProducer.class);

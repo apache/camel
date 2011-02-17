@@ -21,7 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.util.DefaultTimeoutMap;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CorrelationMap extends DefaultTimeoutMap<String, ReplyHandler> {
 

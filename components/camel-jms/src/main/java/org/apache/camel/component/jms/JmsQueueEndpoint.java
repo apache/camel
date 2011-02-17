@@ -31,7 +31,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 /**
  * An endpoint for a JMS Queue which is also browsable
  *
- * @version $Revision$
+ * @version 
  */
 @ManagedResource(description = "Managed JMS Queue Endpoint")
 public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {

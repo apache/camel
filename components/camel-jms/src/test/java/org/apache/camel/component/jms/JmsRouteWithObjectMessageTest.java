@@ -19,7 +19,7 @@ package org.apache.camel.component.jms;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsRouteWithObjectMessageTest extends JmsRouteTest {
 

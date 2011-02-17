@@ -31,7 +31,7 @@ import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsCustomHeaderFilterStrategyTest extends CamelTestSupport {
 

@@ -33,7 +33,7 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 /**
  * Utility class for {@link javax.jms.Message}.
  *
- * @version $Revision$
+ * @version 
  */
 public final class JmsMessageHelper {
 

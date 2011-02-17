@@ -24,7 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * JMS with XPath
  *
- * @version $Revision: 827439 $
+ * @version 
  */
 public class SpringJmsXPathHeaderTest extends CamelSpringTestSupport {
 

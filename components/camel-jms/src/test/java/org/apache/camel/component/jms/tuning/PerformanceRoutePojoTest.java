@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Ignore
 public class PerformanceRoutePojoTest extends CamelSpringTestSupport {

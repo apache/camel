@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class TemporaryTopicRouteTest extends TemporaryQueueRouteTest {
     private static final transient Logger LOG = LoggerFactory.getLogger(TemporaryQueueRouteTest.class);

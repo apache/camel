@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.springframework.jms.core.JmsOperations;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public interface QueueBrowseStrategy {
 

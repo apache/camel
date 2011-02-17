@@ -29,7 +29,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * JMSPriority being ordered using the resequencer in batch mode.
  * 
- * @version $Revision: 724291 $
+ * @version 
  */
 public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
     

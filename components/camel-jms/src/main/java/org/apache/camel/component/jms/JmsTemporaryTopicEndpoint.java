@@ -27,7 +27,7 @@ import javax.jms.TemporaryTopic;
  * <p/>
  * <b>Important:</b> Need to be really careful to always use the same Connection otherwise the destination goes stale
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsTemporaryTopicEndpoint extends JmsEndpoint implements DestinationEndpoint {
     private Destination jmsDestination;

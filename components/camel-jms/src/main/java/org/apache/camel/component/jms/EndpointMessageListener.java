@@ -44,7 +44,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  *
  * Note that instance of this object has to be thread safe (reentrant)
  *
- * @version $Revision$
+ * @version 
  */
 public class EndpointMessageListener implements MessageListener {
     private static final transient Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);

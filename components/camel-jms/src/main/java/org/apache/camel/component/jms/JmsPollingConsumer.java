@@ -24,7 +24,7 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsPollingConsumer extends PollingConsumerSupport {
     private JmsOperations template;

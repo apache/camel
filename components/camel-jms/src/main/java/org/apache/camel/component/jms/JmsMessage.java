@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS
  *
- * @version $Revision:520964 $
+ * @version 
  */
 public class JmsMessage extends DefaultMessage {
     private static final transient Logger LOG = LoggerFactory.getLogger(JmsMessage.class);

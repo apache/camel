@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BrowsableQueueTest extends CamelTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(BrowsableQueueTest.class);

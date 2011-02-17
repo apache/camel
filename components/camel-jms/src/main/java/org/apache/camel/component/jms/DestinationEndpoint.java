@@ -24,7 +24,7 @@ import javax.jms.Session;
  * An optional interface that a {@link JmsEndpoint} may implement to return the
  * underlying {@link Destination} object
  *
- * @version $Revision$
+ * @version 
  */
 public interface DestinationEndpoint {
 

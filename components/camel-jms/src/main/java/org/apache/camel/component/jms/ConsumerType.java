@@ -17,7 +17,7 @@
 package org.apache.camel.component.jms;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public enum ConsumerType {
     Simple, Default

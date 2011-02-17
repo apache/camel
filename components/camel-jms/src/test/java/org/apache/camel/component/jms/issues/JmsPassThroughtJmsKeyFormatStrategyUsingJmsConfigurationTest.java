@@ -32,7 +32,7 @@ import org.apache.camel.test.CamelTestSupport;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extends CamelTestSupport {
 

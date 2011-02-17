@@ -25,7 +25,7 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
  * This implementation extends Springs {@link DefaultMessageListenerContainer} supporting
  * automatic recovery and throttling.
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsMessageListenerContainer extends DefaultMessageListenerContainer {
 

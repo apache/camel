@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 /**
  * {@link ReplyHandler} to handle processing replies when using persistent queues.
  *
- * @version $Revision$
+ * @version 
  */
 public class PersistentQueueReplyHandler extends TemporaryQueueReplyHandler {
 

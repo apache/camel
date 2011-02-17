@@ -28,7 +28,7 @@ import org.springframework.jms.support.JmsUtils;
 /**
  * A {@link org.apache.camel.Consumer} which uses Spring's {@link DefaultMessageListenerContainer} implementations to consume JMS messages
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsConsumer extends DefaultConsumer implements SuspendableService {
     private DefaultMessageListenerContainer listenerContainer;

@@ -65,7 +65,7 @@ import static org.apache.camel.component.jms.JmsMessageType.Text;
  * A Strategy used to convert between a Camel {@link Exchange} and {@link JmsMessage}
  * to and from a JMS {@link Message}
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsBinding {
     private static final transient Logger LOG = LoggerFactory.getLogger(JmsBinding.class);

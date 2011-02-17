@@ -30,7 +30,7 @@ import org.apache.camel.component.jms.JmsEndpoint;
  * The {@link ReplyManager} is responsible for handling <a href="http://camel.apache.org/request-reply.html">request-reply</a>
  * over JMS.
  *
- * @version $Revision$
+ * @version 
  */
 public interface ReplyManager extends MessageListener {
 

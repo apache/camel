@@ -24,7 +24,7 @@ import org.apache.camel.Headers;
 import org.apache.camel.ProducerTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyBean {
     private Map headers;

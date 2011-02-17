@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsRouteUsingDifferentHeadersTest extends ContextTestSupport {
 

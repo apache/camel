@@ -34,7 +34,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * without mutating it and that it can handle the default keyFormatStrategy with _HYPHEN_
  * in the key name 
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends CamelTestSupport {
 

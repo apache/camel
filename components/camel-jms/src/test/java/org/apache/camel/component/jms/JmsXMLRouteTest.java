@@ -35,7 +35,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * For unit testing with XML streams that can be troublesome with the StreamCache
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsXMLRouteTest extends CamelTestSupport {
 

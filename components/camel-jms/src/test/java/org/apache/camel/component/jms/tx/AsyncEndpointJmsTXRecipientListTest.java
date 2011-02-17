@@ -26,7 +26,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class AsyncEndpointJmsTXRecipientListTest extends CamelSpringTestSupport {
     private static String beforeThreadName;

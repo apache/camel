@@ -62,7 +62,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
  *
- * @version $Revision:520964 $
+ * @version 
  */
 @ManagedResource(description = "Managed JMS Endpoint")
 public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport, Service {

@@ -29,7 +29,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * JMS with XPath
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsXPathHeaderTest extends CamelTestSupport {
 

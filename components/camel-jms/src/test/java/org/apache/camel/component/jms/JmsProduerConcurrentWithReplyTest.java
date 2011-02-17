@@ -33,7 +33,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsProduerConcurrentWithReplyTest extends CamelTestSupport {
 

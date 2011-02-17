@@ -27,7 +27,7 @@ import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * @version $Revision: 992224 $
+ * @version 
  */
 public class JmsDurableTopicInvalidConfigurationTest extends CamelTestSupport {
 

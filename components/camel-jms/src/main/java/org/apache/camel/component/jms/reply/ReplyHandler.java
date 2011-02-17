@@ -21,7 +21,7 @@ import javax.jms.Message;
 /**
  * Handles a reply.
  *
- * @version $Revision$
+ * @version 
  */
 public interface ReplyHandler {
 

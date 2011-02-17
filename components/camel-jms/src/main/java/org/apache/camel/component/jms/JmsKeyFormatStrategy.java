@@ -19,7 +19,7 @@ package org.apache.camel.component.jms;
 /**
  * Strategy for applying encoding and decoding of JMS headers so they apply to the JMS spec.
  *
- * @version $Revision$
+ * @version 
  */
 public interface JmsKeyFormatStrategy {
 

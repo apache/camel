@@ -28,7 +28,7 @@ import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * @version $Revision: 978995 $
+ * @version 
  */
 public class JmsInOutSynchronousFalseTest extends CamelTestSupport {
 

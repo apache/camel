@@ -23,7 +23,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * With the passthrough option
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefaultKeyFormatStrategyTest {
 

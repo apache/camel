@@ -41,7 +41,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
     protected JmsTemplate jmsTemplate;

@@ -40,7 +40,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 /**
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsHeaderFilteringTest extends CamelTestSupport {
 

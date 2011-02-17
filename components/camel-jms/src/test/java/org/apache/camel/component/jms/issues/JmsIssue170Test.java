@@ -26,7 +26,7 @@ import org.apache.camel.issues.Issue170Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsIssue170Test extends Issue170Test {
     @Override

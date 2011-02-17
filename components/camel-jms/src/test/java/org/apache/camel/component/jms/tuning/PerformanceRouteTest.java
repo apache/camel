@@ -29,7 +29,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Ignore
 public class PerformanceRouteTest extends CamelTestSupport {

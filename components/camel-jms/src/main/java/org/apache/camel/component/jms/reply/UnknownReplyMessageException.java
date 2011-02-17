@@ -23,7 +23,7 @@ import org.apache.camel.RuntimeCamelException;
 /**
  * A reply message which cannot be correlated to a match request message.
  *
- * @version $Revision$
+ * @version 
  */
 public class UnknownReplyMessageException extends RuntimeCamelException {
 
