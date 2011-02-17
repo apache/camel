@@ -23,7 +23,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Ignore("Disabled due CI servers fails on full build running with these tests")
 public class SftpSimpleConsumeTest extends SftpServerTestSupport {

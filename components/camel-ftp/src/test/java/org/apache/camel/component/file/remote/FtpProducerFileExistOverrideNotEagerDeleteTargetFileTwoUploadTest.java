@@ -17,7 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 /**
- * @version $Revision: 889125 $
+ * @version 
  */
 public class FtpProducerFileExistOverrideNotEagerDeleteTargetFileTwoUploadTest extends FtpProducerFileExistOverrideTwoUploadTest {
 

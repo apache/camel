@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultPollingConsumerPollStrategy;
 /**
  * Remote file consumer polling strategy that attempts to help recovering from lost connections.
  *
- * @version $Revision$
+ * @version 
  */
 public class RemoteFilePollingConsumerPollStrategy extends DefaultPollingConsumerPollStrategy {
 

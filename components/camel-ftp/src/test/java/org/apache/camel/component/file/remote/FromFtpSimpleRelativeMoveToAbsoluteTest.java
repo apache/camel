@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FromFtpSimpleRelativeMoveToAbsoluteTest extends FtpServerTestSupport {
 

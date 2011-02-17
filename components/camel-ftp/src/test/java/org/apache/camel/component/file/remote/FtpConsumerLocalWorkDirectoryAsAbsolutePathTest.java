@@ -30,7 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FtpConsumerLocalWorkDirectoryAsAbsolutePathTest extends FtpServerTestSupport {
 

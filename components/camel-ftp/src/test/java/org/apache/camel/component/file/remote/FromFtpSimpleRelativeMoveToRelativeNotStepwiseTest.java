@@ -17,7 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class FromFtpSimpleRelativeMoveToRelativeNotStepwiseTest extends FromFtpSimpleRelativeMoveToRelativeTest {
 

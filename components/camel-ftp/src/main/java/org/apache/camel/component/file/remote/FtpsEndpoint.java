@@ -34,7 +34,7 @@ import org.apache.commons.net.ftp.FTPSClient;
 /**
  * FTP Secure (FTP over SSL/TLS) endpoint
  * 
- * @version $Revision$
+ * @version 
  */
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     

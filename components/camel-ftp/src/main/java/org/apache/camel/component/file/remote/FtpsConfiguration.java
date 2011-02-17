@@ -21,7 +21,7 @@ import java.net.URI;
 /**
  * FTP Secure (FTP over SSL/TLS) configuration
  * 
- * @version $Revision$
+ * @version 
  */
 public class FtpsConfiguration extends FtpConfiguration {
 

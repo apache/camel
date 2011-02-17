@@ -20,7 +20,7 @@ import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyPasswordAuthenticator implements PasswordAuthenticator {
 

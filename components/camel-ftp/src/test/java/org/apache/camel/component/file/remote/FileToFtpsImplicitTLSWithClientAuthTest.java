@@ -23,7 +23,7 @@ import org.junit.Test;
 /**
  * Test the ftps component over TLS (implicit) with client authentication
  * 
- * @version $Revision$
+ * @version 
  */
 public class FileToFtpsImplicitTLSWithClientAuthTest extends FtpsServerImplicitTLSWithClientAuthTestSupport {
     

@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Ignore;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Ignore("Disabled due CI servers fails on full build running with these tests")
 public class SftpSimpleConsumeNotStepwiseTest extends SftpSimpleConsumeTest {

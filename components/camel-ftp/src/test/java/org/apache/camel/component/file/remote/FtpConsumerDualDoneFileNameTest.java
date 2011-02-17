@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 /**
- * @version $Revision: 1032261 $
+ * @version 
  */
 public class FtpConsumerDualDoneFileNameTest extends FtpServerTestSupport {
 

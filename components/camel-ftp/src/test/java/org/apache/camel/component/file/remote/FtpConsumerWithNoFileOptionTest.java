@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  * Unit test CAMEL-1247
  *
- * @version $Revision$
+ * @version 
  */
 public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
 
