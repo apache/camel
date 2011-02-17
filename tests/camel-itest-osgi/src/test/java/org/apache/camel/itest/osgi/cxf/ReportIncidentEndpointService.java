@@ -21,7 +21,7 @@ import org.apache.camel.example.reportincident.OutputReportIncident;
 import org.apache.camel.example.reportincident.ReportIncidentEndpoint;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ReportIncidentEndpointService implements ReportIncidentEndpoint {
 

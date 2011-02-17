@@ -17,7 +17,7 @@
 package org.apache.camel.itest.osgi.dozer.model;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class Address {
 

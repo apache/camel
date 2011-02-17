@@ -19,7 +19,7 @@ package org.apache.camel.itest.ibatis;
 import org.apache.camel.ExchangeException;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class ExceptionRethrower {
 

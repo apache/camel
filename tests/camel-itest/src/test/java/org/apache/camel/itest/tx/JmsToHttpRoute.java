@@ -32,7 +32,7 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
  * Notice we use the SpringRouteBuilder that supports transacted
  * error handler.
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsToHttpRoute extends SpringRouteBuilder {
     protected static int counter;    

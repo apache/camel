@@ -31,7 +31,7 @@ import org.junit.Test;
 /**
  * Based on user forum.
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsHttpJmsTest extends CamelTestSupport {
 

@@ -25,7 +25,7 @@ import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsMediumQueuePerformanceTest extends JmsPerformanceTest {
     protected int mediumQueueCount = 1000;

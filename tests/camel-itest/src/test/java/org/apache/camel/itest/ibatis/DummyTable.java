@@ -19,7 +19,7 @@ package org.apache.camel.itest.ibatis;
 import java.util.Collection;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public interface DummyTable extends Iterable<Integer> {
 

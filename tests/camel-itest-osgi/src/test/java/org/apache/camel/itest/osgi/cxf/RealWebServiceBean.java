@@ -19,7 +19,7 @@ package org.apache.camel.itest.osgi.cxf;
 import javax.xml.ws.Endpoint;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class RealWebServiceBean {
 

@@ -22,7 +22,7 @@ import java.util.Iterator;
 import org.springframework.orm.ibatis.support.SqlMapClientDaoSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DummyTableImpl extends SqlMapClientDaoSupport implements DummyTable {
 

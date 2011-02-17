@@ -17,7 +17,7 @@
 package org.apache.camel.itest.osgi.dozer.service;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class Customer {
 

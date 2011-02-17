@@ -42,7 +42,7 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @RunWith(JUnit4TestRunner.class)
 public class CamelBlueprintTest extends OSGiBlueprintTestSupport {

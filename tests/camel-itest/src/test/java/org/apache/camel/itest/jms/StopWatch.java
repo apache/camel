@@ -19,7 +19,7 @@ package org.apache.camel.itest.jms;
 import java.text.NumberFormat;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class StopWatch {
     private final String id;

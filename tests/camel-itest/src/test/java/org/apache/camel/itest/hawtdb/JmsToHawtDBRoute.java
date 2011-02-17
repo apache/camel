@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hawtdb.HawtDBAggregationRepository;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsToHawtDBRoute extends RouteBuilder {
 

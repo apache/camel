@@ -17,7 +17,7 @@
 package org.apache.camel.itest.jms;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class InvalidOrderException extends Exception {
 

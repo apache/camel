@@ -24,7 +24,7 @@ import org.junit.Test;
 import static org.apache.camel.language.groovy.GroovyLanguage.groovy;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JettyGroovySetHeaderTest extends CamelTestSupport {
 

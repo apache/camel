@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @RunWith(JUnit4TestRunner.class)
 public class SedaTest extends OSGiIntegrationTestSupport {

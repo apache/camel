@@ -23,7 +23,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JdbcTableService implements InitializingBean, DisposableBean {
 

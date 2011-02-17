@@ -24,7 +24,7 @@ import org.junit.Test;
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JettySimpleSetHeaderTest extends CamelTestSupport {
 

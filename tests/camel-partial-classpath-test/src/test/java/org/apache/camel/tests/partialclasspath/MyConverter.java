@@ -20,7 +20,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @Converter
 public class MyConverter {

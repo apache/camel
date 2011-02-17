@@ -20,7 +20,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BaseClass implements MessageListener {
 

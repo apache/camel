@@ -17,7 +17,7 @@
 package org.apache.camel.itest.osgi.core.bean;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public interface FooService {
 

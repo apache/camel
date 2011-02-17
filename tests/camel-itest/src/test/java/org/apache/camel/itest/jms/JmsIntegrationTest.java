@@ -29,7 +29,7 @@ import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 /**
- * @version $Revision:520964 $
+ * @version 
  */
 public class JmsIntegrationTest extends CamelTestSupport {
     protected CountDownLatch receivedCountDown = new CountDownLatch(1);

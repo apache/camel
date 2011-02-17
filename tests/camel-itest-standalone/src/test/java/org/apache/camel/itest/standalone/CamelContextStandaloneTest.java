@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class CamelContextStandaloneTest extends TestCase {
 

@@ -33,7 +33,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class AsyncEndpointTransacted2Test extends CamelSpringTestSupport {
     @EndpointInject(uri = "direct:start")

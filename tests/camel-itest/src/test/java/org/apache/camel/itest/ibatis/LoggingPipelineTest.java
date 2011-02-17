@@ -34,7 +34,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class LoggingPipelineTest extends CamelSpringTestSupport {
 

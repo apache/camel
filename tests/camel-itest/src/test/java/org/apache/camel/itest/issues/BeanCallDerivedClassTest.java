@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class BeanCallDerivedClassTest extends CamelSpringTestSupport {
 

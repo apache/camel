@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision:520964 $
+ * @version 
  */
 public class JmsPerformanceTest extends CamelTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(JmsPerformanceTest.class);

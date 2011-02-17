@@ -31,7 +31,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @ContextConfiguration
 public class JmsPollingConsumerTest extends AbstractJUnit4SpringContextTests {

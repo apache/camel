@@ -26,7 +26,7 @@ import org.apache.camel.Processor;
  * Notice we use the SpringRouteBuilder that supports transacted
  * error handler.
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsToHttpWithRollbackRoute extends JmsToHttpRoute {
 

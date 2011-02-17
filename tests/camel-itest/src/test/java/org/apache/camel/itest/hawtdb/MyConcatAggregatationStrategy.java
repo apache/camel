@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class MyConcatAggregatationStrategy implements AggregationStrategy {
 

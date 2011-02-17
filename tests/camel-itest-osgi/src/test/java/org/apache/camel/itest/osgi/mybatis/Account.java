@@ -17,7 +17,7 @@
 package org.apache.camel.itest.osgi.mybatis;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class Account {
     private int id;

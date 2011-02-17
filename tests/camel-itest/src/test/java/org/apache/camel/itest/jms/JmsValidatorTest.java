@@ -27,7 +27,7 @@ import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class JmsValidatorTest extends CamelTestSupport {
 

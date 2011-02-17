@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -17,7 +17,7 @@
 package org.apache.camel.itest.issues;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class DerivedClass extends BaseClass {
 

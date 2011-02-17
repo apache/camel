@@ -32,7 +32,7 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 /**
- * @version $Revision$
+ * @version 
  */
 @RunWith(JUnit4TestRunner.class)
 public class JmsTest extends OSGiIntegrationSpringTestSupport {

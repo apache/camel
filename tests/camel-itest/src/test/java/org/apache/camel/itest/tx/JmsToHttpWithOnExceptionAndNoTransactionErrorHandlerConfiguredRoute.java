@@ -28,7 +28,7 @@ import org.apache.camel.component.http.HttpOperationFailedException;
  * Notice we use the SpringRouteBuilder that supports transacted
  * error handler.
  *
- * @version $Revision$
+ * @version 
  */
 public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute extends JmsToHttpRoute {
 

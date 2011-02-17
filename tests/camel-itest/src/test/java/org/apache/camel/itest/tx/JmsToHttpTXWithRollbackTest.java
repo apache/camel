@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
  * We use Spring Testing for unit test, eg we extend AbstractJUnit38SpringContextTests
  * that is a Spring class.
  *
- * @version $Revision$
+ * @version 
  */
 @ContextConfiguration
 public class JmsToHttpTXWithRollbackTest extends AbstractJUnit4SpringContextTests {
