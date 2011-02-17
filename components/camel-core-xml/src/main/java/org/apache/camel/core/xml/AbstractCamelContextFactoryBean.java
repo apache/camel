@@ -319,7 +319,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
 
     private void initJMXAgent() throws Exception {
         CamelJMXAgentDefinition camelJMXAgent = getCamelJMXAgent();
-        if (camelJMXAgent != null && camelJMXAgent.isAgentDisabled()) {
+
+        boolean disabled = false;
+        if (camelJMXAgent != null) {
+            disabled = CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getDisabled());
+        }
+
+        if (disabled) {
             LOG.info("JMXAgent disabled");
             // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
             getContext().getLifecycleStrategies().clear();

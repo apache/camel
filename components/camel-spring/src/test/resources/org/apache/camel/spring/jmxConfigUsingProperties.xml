@@ -32,7 +32,7 @@
         <propertyPlaceholder id="properties" location="org/apache/camel/spring/jmx.properties"/>
 
         <!-- we can use propery placeholders when we define the JMX agent -->
-        <jmxAgent id="agent" registryPort="{{myjmx.port}}"
+        <jmxAgent id="agent" registryPort="{{myjmx.port}}" disabled="{{myjmx.disabled}}"
                   usePlatformMBeanServer="{{myjmx.usePlatform}}"
                   createConnector="true"
                   statisticsLevel="RoutesOnly"/>

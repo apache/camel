@@ -109,10 +109,6 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return disabled;
     }
 
-    public boolean isAgentDisabled() {
-        return disabled != null && Boolean.parseBoolean(disabled);
-    }
-
     public void setDisabled(String disabled) {
         this.disabled = disabled;
     }
