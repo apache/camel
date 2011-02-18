@@ -116,6 +116,17 @@ public class XmlConverterTest extends ContextTestSupport {
         assertSame(source, out);
     }
 
+    public void testToDomSourceByByteArray() throws Exception {
+        XmlConverter conv = new XmlConverter();
+
+        byte[] bytes = "<foo>bar</foo>".getBytes();
+        DOMSource source = conv.toDOMSource(bytes);
+        assertNotNull(source);
+
+        byte[] out = conv.toByteArray(source, null);
+        assertEquals(new String(bytes), new String(out));
+    }
+
     public void testToDomSourceByStaxSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
