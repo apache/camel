@@ -44,6 +44,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+import static org.junit.Assert.assertEquals;
+
 /**
 * Unit test for exercising MTOM feature of a CxfConsumer in PAYLOAD mode
 * 
@@ -61,6 +63,7 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
 
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
+                assertEquals("Get a wrong Content-Type header", "application/xop+xml", exchange.getIn().getHeader("Content-Type"));
                 List<Element> elements = new ArrayList<Element>();
                 elements.add(DOMUtils.readXml(new StringReader(getRequestMessage())).getDocumentElement());
                 CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),

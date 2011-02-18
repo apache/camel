@@ -460,11 +460,25 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {
                 if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), 
                                                                        entry.getValue(), exchange)) {
-                    camelHeaders.put(entry.getKey(), entry.getValue().get(0));
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Populate header from CXF header=" + entry.getKey() + " value="
-                                + entry.getValue());
+                    // We need to filter the content type with multi-part, 
+                    // as the multi-part stream is already consumed by AttachmentInInterceptor,
+                    // it will cause some trouble when route this message to another CXF endpoint.
+                    if ("Content-Type".compareToIgnoreCase(entry.getKey()) == 0
+                        && entry.getValue().get(0) != null
+                        && entry.getValue().get(0).startsWith("multipart/related")) {
+                        String contentType = replaceMultiPartContentType(entry.getValue().get(0));
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Find the multi-part Conent-Type, and replace it with " + contentType);
+                        }
+                        camelHeaders.put(entry.getKey(), contentType);
+                    } else {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Populate header from CXF header=" + entry.getKey() + " value="
+                                    + entry.getValue());
+                        }
+                        camelHeaders.put(entry.getKey(), entry.getValue().get(0));
                     }
+                    
                 }
             }
         }
@@ -483,6 +497,25 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 ((List<?>)value).clear();
             }
         }       
+    }
+    
+    // replace the multi-part content-type
+    protected String replaceMultiPartContentType(String contentType) {
+        String result = "";
+        String[] parts = contentType.split(";");
+        for (String part : parts) {
+            part = part.trim();
+            if (part.startsWith("type=")) {
+                part = part.substring(5).trim();
+                if (part.charAt(0) == '\"') {
+                    result = part.substring(1, part.length() - 1);
+                } else {
+                    result = part.substring(5);
+                }
+                break;
+            }
+        }
+        return result;
     }
 
     @SuppressWarnings("unchecked")
