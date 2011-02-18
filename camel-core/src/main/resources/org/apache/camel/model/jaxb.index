@@ -66,6 +66,7 @@ RoutingSlipDefinition
 SamplingDefinition
 SetBodyDefinition
 SetExchangePatternDefinition
+SetFaultBodyDefinition
 SetHeaderDefinition
 SetOutHeaderDefinition
 SetPropertyDefinition
