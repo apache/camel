@@ -245,16 +245,16 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             completion = new SubmitOrderedCompletionService<Exchange>(executorService);
         }
 
-        // when parallel then aggregate on the fly
-        final AtomicBoolean running = new AtomicBoolean(true);
         final AtomicInteger total = new AtomicInteger(0);
-        final AtomicBoolean allTasksSubmitted = new AtomicBoolean();
-        final CountDownLatch aggregationOnTheFlyDone = new CountDownLatch(1);
-        final AtomicException executionException = new AtomicException();
-
         final Iterator<ProcessorExchangePair> it = pairs.iterator();
 
         if (it.hasNext()) {
+            // when parallel then aggregate on the fly
+            final AtomicBoolean running = new AtomicBoolean(true);
+            final AtomicBoolean allTasksSubmitted = new AtomicBoolean();
+            final CountDownLatch aggregationOnTheFlyDone = new CountDownLatch(1);
+            final AtomicException executionException = new AtomicException();
+
             // issue task to execute in separate thread so it can aggregate on-the-fly
             // while we submit new tasks, and those tasks complete concurrently
             // this allows us to optimize work and reduce memory consumption
@@ -263,71 +263,71 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
             // and start the aggregation task so we can aggregate on-the-fly
             aggregateExecutorService.submit(task);
-        }
 
-        LOG.trace("Starting to submit parallel tasks");
+            LOG.trace("Starting to submit parallel tasks");
 
-        while (it.hasNext()) {
-            final ProcessorExchangePair pair = it.next();
-            final Exchange subExchange = pair.getExchange();
-            updateNewExchange(subExchange, total.intValue(), pairs, it);
+            while (it.hasNext()) {
+                final ProcessorExchangePair pair = it.next();
+                final Exchange subExchange = pair.getExchange();
+                updateNewExchange(subExchange, total.intValue(), pairs, it);
 
-            completion.submit(new Callable<Exchange>() {
-                public Exchange call() throws Exception {
-                    if (!running.get()) {
-                        // do not start processing the task if we are not running
+                completion.submit(new Callable<Exchange>() {
+                    public Exchange call() throws Exception {
+                        if (!running.get()) {
+                            // do not start processing the task if we are not running
+                            return subExchange;
+                        }
+
+                        try {
+                            doProcessParallel(pair);
+                        } catch (Throwable e) {
+                            subExchange.setException(e);
+                        }
+
+                        // Decide whether to continue with the multicast or not; similar logic to the Pipeline
+                        Integer number = getExchangeIndex(subExchange);
+                        boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + number, LOG);
+                        if (stopOnException && !continueProcessing) {
+                            // signal to stop running
+                            running.set(false);
+                            // throw caused exception
+                            if (subExchange.getException() != null) {
+                                // wrap in exception to explain where it failed
+                                throw new CamelExchangeException("Parallel processing failed for number " + number, subExchange, subExchange.getException());
+                            }
+                        }
+
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Parallel processing complete for exchange: " + subExchange);
+                        }
                         return subExchange;
                     }
+                });
 
-                    try {
-                        doProcessParallel(pair);
-                    } catch (Throwable e) {
-                        subExchange.setException(e);
-                    }
-
-                    // Decide whether to continue with the multicast or not; similar logic to the Pipeline
-                    Integer number = getExchangeIndex(subExchange);
-                    boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + number, LOG);
-                    if (stopOnException && !continueProcessing) {
-                        // signal to stop running
-                        running.set(false);
-                        // throw caused exception
-                        if (subExchange.getException() != null) {
-                            // wrap in exception to explain where it failed
-                            throw new CamelExchangeException("Parallel processing failed for number " + number, subExchange, subExchange.getException());
-                        }
-                    }
-
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Parallel processing complete for exchange: " + subExchange);
-                    }
-                    return subExchange;
-                }
-            });
-
-            total.incrementAndGet();
-        }
-
-        // signal all tasks has been submitted
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Signaling that all " + total.get() + " tasks has been submitted.");
-        }
-        allTasksSubmitted.set(true);
-
-        // its to hard to do parallel async routing so we let the caller thread be synchronously
-        // and have it pickup the replies and do the aggregation (eg we use a latch to wait)
-        // wait for aggregation to be done
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Waiting for on-the-fly aggregation to complete aggregating " + total.get() + " responses.");
-        }
-        aggregationOnTheFlyDone.await();
-
-        // did we fail for whatever reason, if so throw that caused exception
-        if (executionException.get() != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Parallel processing failed due " + executionException.get().getMessage());
+                total.incrementAndGet();
             }
-            throw executionException.get();
+
+            // signal all tasks has been submitted
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Signaling that all " + total.get() + " tasks has been submitted.");
+            }
+            allTasksSubmitted.set(true);
+
+            // its to hard to do parallel async routing so we let the caller thread be synchronously
+            // and have it pickup the replies and do the aggregation (eg we use a latch to wait)
+            // wait for aggregation to be done
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Waiting for on-the-fly aggregation to complete aggregating " + total.get() + " responses.");
+            }
+            aggregationOnTheFlyDone.await();
+
+            // did we fail for whatever reason, if so throw that caused exception
+            if (executionException.get() != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Parallel processing failed due " + executionException.get().getMessage());
+                }
+                throw executionException.get();
+            }
         }
 
         // no everything is okay so we are done
