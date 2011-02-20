@@ -47,4 +47,14 @@ public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends Pr
             }
         }
     }
+
+    @Override
+    public String getShortName() {
+        return "output";
+    }
+
+    @Override
+    public String toString() {
+        return getShortName() + " -> [" + outputs + "]";
+    }
 }

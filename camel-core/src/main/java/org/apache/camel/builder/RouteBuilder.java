@@ -30,6 +30,9 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is
  * used to build {@link org.apache.camel.impl.DefaultRoute} instances in a {@link CamelContext} for smart routing.
@@ -37,6 +40,7 @@ import org.apache.camel.model.RoutesDefinition;
  * @version 
  */
 public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder {
+    protected Logger log = LoggerFactory.getLogger(getClass());
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RoutesDefinition routeCollection = new RoutesDefinition();
 
@@ -343,6 +347,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     /**
      * Factory method
+     *
      * @return the CamelContext
      */
     protected CamelContext createContainer() {
@@ -356,7 +361,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     /**
      * Adds a collection of routes to this context
      *
-     * @param routes
+     * @param routes the routes
      * @throws Exception if the routes could not be created for whatever reason
      * @deprecated use {@link #includeRoutes(org.apache.camel.RoutesBuilder) includeRoutes} instead.
      */

@@ -37,6 +37,8 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
@@ -179,6 +181,10 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Advices this route with the route builder.
      * <p/>
+     * You can use a regular {@link RouteBuilder} but the specialized {@link org.apache.camel.builder.AdviceWithRouteBuilder}
+     * has additional features when using the <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
+     * We therefore suggest you to use the {@link org.apache.camel.builder.AdviceWithRouteBuilder}.
+     * <p/>
      * The advice process will add the interceptors, on exceptions, on completions etc. configured
      * from the route builder to this route.
      * <p/>
@@ -190,13 +196,28 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @param builder      the route builder
      * @return a new route which is this route merged with the route builder
      * @throws Exception can be thrown from the route builder
+     * @see AdviceWithRouteBuilder
      */
     public RouteDefinition adviceWith(CamelContext camelContext, RouteBuilder builder) throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
         ObjectHelper.notNull(builder, "RouteBuilder");
 
+        if (log.isDebugEnabled()) {
+            log.debug("AdviceWith route before: " + this);
+        }
+
+        // inject this route into the advice route builder so it can access this route
+        // and offer features to manipulate the route directly
+        if (builder instanceof AdviceWithRouteBuilder) {
+            ((AdviceWithRouteBuilder) builder).setOriginalRoute(this);
+        }
+
         // configure and prepare the routes from the builder
         RoutesDefinition routes = builder.configureRoutes(camelContext);
+
+        if (log.isDebugEnabled()) {
+            log.debug("AdviceWith routes: " + routes);
+        }
 
         // we can only advice with a route builder without any routes
         if (!routes.getRoutes().isEmpty()) {
@@ -211,11 +232,22 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         // stop and remove this existing route
         camelContext.removeRouteDefinition(this);
 
+        // any advice with tasks we should execute first?
+        if (builder instanceof AdviceWithRouteBuilder) {
+            List<AdviceWithTask> tasks = ((AdviceWithRouteBuilder) builder).getAdviceWithTasks();
+            for (AdviceWithTask task : tasks) {
+                task.task();
+            }
+        }
+
         // now merge which also ensures that interceptors and the likes get mixed in correctly as well
         RouteDefinition merged = routes.route(this);
 
         // add the new merged route
         camelContext.getRouteDefinitions().add(0, merged);
+
+        // log the merged route at info level to make it easier to end users to spot any mistakes they may have made
+        log.info("AdviceWith route after: " + merged);
 
         // and start it
         camelContext.startRoute(merged);

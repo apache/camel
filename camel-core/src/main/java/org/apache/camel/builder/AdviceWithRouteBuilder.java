@@ -16,18 +16,56 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * A {@link RouteBuilder} which has extended features when using
- * {@link org.apache.camel.model.RouteDefinition#adviceWith(org.apache.camel.CamelContext, RouteBuilder) adviceWith}.
+ * A {@link RouteBuilder} which has extended capabilities when using
+ * the <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
  *
- * @version 
+ * @see org.apache.camel.model.RouteDefinition#adviceWith(org.apache.camel.CamelContext, RouteBuilder)
  */
 public abstract class AdviceWithRouteBuilder extends RouteBuilder {
 
+    private RouteDefinition originalRoute;
+    private final List<AdviceWithTask> adviceWithTasks = new ArrayList<AdviceWithTask>();
+
+    /**
+     * Sets the original route which we advice.
+     *
+     * @param originalRoute the original route we advice.
+     */
+    public void setOriginalRoute(RouteDefinition originalRoute) {
+        this.originalRoute = originalRoute;
+    }
+
+    /**
+     * Gets the original route we advice.
+     *
+     * @return the original route.
+     */
+    public RouteDefinition getOriginalRoute() {
+        return originalRoute;
+    }
+
+    /**
+     * Gets a list of additional tasks to execute after the {@link #configure()} method has been executed
+     * during the advice process.
+     *
+     * @return a list of additional {@link AdviceWithTask} tasks to be executed during the advice process.
+     */
+    public List<AdviceWithTask> getAdviceWithTasks() {
+        return adviceWithTasks;
+    }
+
     /**
      * Mock all endpoints in the route.
+     *
+     * @throws Exception can be thrown if error occurred
      */
     public void mockEndpoints() throws Exception {
         getContext().removeEndpoints("*");
@@ -37,12 +75,43 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     /**
      * Mock all endpoints matching the given pattern.
      *
-     * @param pattern  the pattern.
+     * @param pattern the pattern.
+     * @throws Exception can be thrown if error occurred
      * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
      */
     public void mockEndpoints(String pattern) throws Exception {
         getContext().removeEndpoints(pattern);
         getContext().addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
+    }
+
+    /**
+     * Advices by matching id of the nodes in the route.
+     * <p/>
+     * Uses the {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)} matching algorithm.
+     *
+     * @param pattern the pattern
+     * @return the builder
+     * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
+     */
+    public AdviceWithBuilder adviceById(String pattern) {
+        ObjectHelper.notNull(originalRoute, "originalRoute", this);
+
+        return new AdviceWithBuilder(this, pattern, null);
+    }
+
+    /**
+     * Advices by matching the to string representation of the nodes in the route.
+     * <p/>
+     * Uses the {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)} matching algorithm.
+     *
+     * @param pattern the pattern
+     * @return the builder
+     * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
+     */
+    public AdviceWithBuilder adviceByToString(String pattern) {
+        ObjectHelper.notNull(originalRoute, "originalRoute", this);
+
+        return new AdviceWithBuilder(this, null, pattern);
     }
 
 }
