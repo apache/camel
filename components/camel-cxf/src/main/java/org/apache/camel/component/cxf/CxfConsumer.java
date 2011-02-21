@@ -66,9 +66,9 @@ public class CxfConsumer extends DefaultConsumer {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Received CXF Request: " + cxfExchange);
                 }                
-                Continuation continuation = getContinuation(cxfExchange);
+                Continuation continuation;
                 // Only calling the continuation API for CXF 2.3.x 
-                if (continuation != null && !endpoint.isSynchronous() && Version.getCurrentVersion().startsWith("2.3")) {
+                if (!endpoint.isSynchronous() && (continuation = getContinuation(cxfExchange)) != null && Version.getCurrentVersion().startsWith("2.3")) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Calling the Camel async processors.");
                     }
