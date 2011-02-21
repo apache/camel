@@ -891,7 +891,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             if (service instanceof IsSingleton) {
                 singleton = ((IsSingleton) service).isSingleton();
             }
-            if (singleton) {
+            // do not add endpoints as they have their own list
+            if (singleton && !(service instanceof Endpoint)) {
                 servicesToClose.add(service);
             }
         }
