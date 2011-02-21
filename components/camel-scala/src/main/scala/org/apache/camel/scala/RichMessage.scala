@@ -6,7 +6,6 @@ import java.lang.{Class, String}
 import javax.activation.DataHandler
 
 /**
- * @version $Revision: 1.1 $
  */
 
 class RichMessage(val message: Message) extends Message {

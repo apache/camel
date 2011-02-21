@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A ClassLoader delegating to a given OSGi bundle.
  *
- * @version $Rev: 896324 $, $Date: 2010-01-06 07:05:04 +0100 (Wed, 06 Jan 2010) $
  */
 public class BundleDelegatingClassLoader extends ClassLoader {
     private static final transient Logger LOG = LoggerFactory.getLogger(BundleDelegatingClassLoader.class);

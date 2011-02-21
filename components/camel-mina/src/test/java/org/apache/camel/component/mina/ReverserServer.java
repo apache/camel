@@ -29,7 +29,6 @@ import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
  * (<b>Entry point</b>) Reverser server which reverses all text lines from
  * clients.
  *
- * @version $Rev$, $Date$,
  */
 public class ReverserServer {
     protected int port = 6321;

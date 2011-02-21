@@ -21,7 +21,6 @@ import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
- * @version $Revision: 1.1 $
  */
 class ConfigureCamel implements Runnable {
 

@@ -17,7 +17,6 @@
     limitations under the License.
 
 -->
-<!-- $Rev$ $Date$ -->
 <wsdl:definitions name="non-wrapper"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
