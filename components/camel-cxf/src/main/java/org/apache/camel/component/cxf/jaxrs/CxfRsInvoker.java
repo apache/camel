@@ -54,9 +54,9 @@ public class CxfRsInvoker extends JAXRSInvoker {
             // don't delegate the sub resource locator call to camel processor
             return method.invoke(serviceObject, paramArray);
         }
-        Continuation continuation = getContinuation(cxfExchange);
-        // Only calling the continuation API for CXF 2.3.x 
-        if (continuation != null && !endpoint.isSynchronous() && Version.getCurrentVersion().startsWith("2.3")) {
+        Continuation continuation;
+        if (!endpoint.isSynchronous() && (continuation = getContinuation(cxfExchange)) != null && Version.getCurrentVersion().startsWith("2.3")) {
+            // Only calling the continuation API for CXF 2.3.x
             return asyncInvoke(cxfExchange, serviceObject, method, paramArray, continuation);
         } else {
             return syncInvoke(cxfExchange, serviceObject, method, paramArray);
