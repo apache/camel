@@ -29,7 +29,6 @@ import org.apache.cxf.continuations.ContinuationProvider;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.message.Exchange;
-import org.apache.cxf.version.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,10 +54,15 @@ public class CxfRsInvoker extends JAXRSInvoker {
             return method.invoke(serviceObject, paramArray);
         }
         Continuation continuation;
-        if (!endpoint.isSynchronous() && (continuation = getContinuation(cxfExchange)) != null && Version.getCurrentVersion().startsWith("2.3")) {
-            // Only calling the continuation API for CXF 2.3.x
+        if (!endpoint.isSynchronous() && (continuation = getContinuation(cxfExchange)) != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Calling the Camel async processors.");
+            }
             return asyncInvoke(cxfExchange, serviceObject, method, paramArray, continuation);
         } else {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Calling the Camel sync processors.");
+            }
             return syncInvoke(cxfExchange, serviceObject, method, paramArray);
         }
     }
