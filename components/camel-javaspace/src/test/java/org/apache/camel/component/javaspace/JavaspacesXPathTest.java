@@ -61,8 +61,8 @@ public class JavaspacesXPathTest extends CamelTestSupport {
                 from("javaspace:jini://localhost?spaceName=mySpace&verb=take&concurrentConsumers=1&transactional=false")
                         .filter().xpath("/person[@name='James']").process(new Processor() {
                             public void process(Exchange exc) throws Exception {
-                                byte[] body = exc.getIn().getBody(byte[].class);
-                                assertEquals("<person name='James' city='London'/>".getBytes(), body);
+                                String body = exc.getIn().getBody(String.class);
+                                assertEquals("<person name='James' city='London'/>", body);
                                 latch.countDown();
                             }
                         });

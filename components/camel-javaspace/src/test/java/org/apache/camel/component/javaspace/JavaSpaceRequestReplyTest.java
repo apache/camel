@@ -46,7 +46,7 @@ public class JavaSpaceRequestReplyTest extends CamelTestSupport {
         ITestPojo proxy = ProxyHelper.createProxy(endpoint, ITestPojo.class);
         Request req = new Request();
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 1000; ++i) {
+        for (int i = 0; i < 100; ++i) {
             req.setPayload("REQUEST " + i);
             Reply reply = proxy.method(req);
             Assert.assertTrue(reply.getPayload().equals("REPLY for REQUEST " + i));
@@ -62,7 +62,7 @@ public class JavaSpaceRequestReplyTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:input");
         ExecutorService es = Executors.newFixedThreadPool(10);
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 1000; ++i) {
+        for (int i = 0; i < 100; ++i) {
             Request req = new Request();
             req.setPayload("REQUEST " + i);
             ITestPojo proxy = ProxyHelper.createProxy(endpoint, ITestPojo.class);
@@ -93,11 +93,11 @@ public class JavaSpaceRequestReplyTest extends CamelTestSupport {
             public void configure() {
                 from("direct:input").to("javaspace:jini://localhost?spaceName=mySpace");
 
-                from("javaspace:jini://localhost?concurrentConsumers=10&spaceName=mySpace").to("pojo:pojo");
+                from("javaspace:jini://localhost?concurrentConsumers=10&spaceName=mySpace").to("bean:pojo");
 
-                from("javaspace:jini://localhost?concurrentConsumers=10&spaceName=mySpace").to("pojo:pojo");
+                from("javaspace:jini://localhost?concurrentConsumers=10&spaceName=mySpace").to("bean:pojo");
 
-                from("javaspace:jini://localhost?concurrentConsumers=10&spaceName=mySpace").to("pojo:pojo");
+                from("javaspace:jini://localhost?concurrentConsumers=10&spaceName=mySpace").to("bean:pojo");
             }
         };
     }
