@@ -69,7 +69,6 @@
     <module>camel-jaxb</module>
     <module>camel-jibx</module>
     <module>camel-jdbc</module>
-    <module>camel-jdbc-aggregator</module>
     <module>camel-jetty</module>
     <module>camel-jing</module>
     <module>camel-jms</module>

@@ -32,10 +32,12 @@
 	<properties>
 		<camel.osgi.export.pkg>
 			org.apache.camel.component.sql.*;${camel.osgi.version},
+			org.apache.camel.processor.aggregate.jdbc.*;${camel.osgi.version},
 			org.apache.camel.processor.idempotent.jdbc.*;${camel.osgi.version}
 		</camel.osgi.export.pkg>
 		<camel.osgi.import.pkg>
 			!org.apache.camel.component.sql.*,
+			!org.apache.camel.processor.aggregate.jdbc.*,
 			!org.apache.camel.processor.idempotent.jdbc.*,
 			*
 		</camel.osgi.import.pkg>
@@ -68,7 +70,6 @@
 			<optional>true</optional>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -89,5 +90,22 @@
 	      <artifactId>hsqldb</artifactId>
 	      <scope>test</scope>
 	    </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
+	
+    <build>
+        <plugins>
+            <!-- use per test fork mode to avoid side effects -->
+            <plugin>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <configuration>
+                <forkMode>pertest</forkMode>
+              </configuration>
+            </plugin>
+      </plugins>
+    </build>
 </project>

@@ -193,10 +193,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jdbc-aggregator</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jetty</artifactId>
     </dependency>
     <dependency>
