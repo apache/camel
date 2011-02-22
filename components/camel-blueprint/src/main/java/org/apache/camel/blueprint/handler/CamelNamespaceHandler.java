@@ -25,11 +25,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
-
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -89,7 +87,6 @@ import org.osgi.service.blueprint.reflect.ValueMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class CamelNamespaceHandler implements NamespaceHandler {
 
     private static final String CAMEL_CONTEXT = "camelContext";
@@ -121,9 +118,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     @SuppressWarnings("unchecked")
     public Set<Class> getManagedClasses() {
-        return new HashSet<Class>(Arrays.asList(
-                BlueprintCamelContext.class
-        ));
+        return new HashSet<Class>(Arrays.asList(BlueprintCamelContext.class));
     }
 
     public Metadata parse(Element element, ParserContext context) {
@@ -588,12 +583,11 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 }
             } catch (UnsupportedOperationException e) {
                 LOG.warn("Unable to add dependencies on to camel components OSGi services.  "
-                        + "The Apache Aries blueprint implementation used it too old and the blueprint bundle can not see the org.apache.camel.spi package.");
+                    + "The Apache Aries blueprint implementation used it too old and the blueprint bundle can not see the org.apache.camel.spi package.");
                 components.clear();
                 languages.clear();
                 dataformats.clear();
             }
-
 
         }
 
@@ -626,7 +620,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                         findLanguage(((ExpressionNode) def).getExpression(), languages);
                     }
                     if (def instanceof ResequenceDefinition) {
-                        findLanguage(((ResequenceDefinition) def).getExpressions(), languages);
+                        findLanguage(((ResequenceDefinition) def).getExpression(), languages);
                     }
                     if (def instanceof AggregateDefinition) {
                         findLanguage(((AggregateDefinition) def).getExpression(), languages);
