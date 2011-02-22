@@ -14,26 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.component.properties;
+
+import org.apache.camel.CamelContext;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * Various constants.
- *
- * @version 
+ * Spring placeholder DSL test
  */
-public final class Constants {
+public class SpringOptionalPropertiesDslTest extends OptionalPropertiesDslTest {
 
-    public static final String JAXB_CONTEXT_PACKAGES = ""
-        + "org.apache.camel:"
-        + "org.apache.camel.model:"
-        + "org.apache.camel.model.config:"
-        + "org.apache.camel.model.dataformat:"
-        + "org.apache.camel.model.language:"
-        + "org.apache.camel.model.loadbalancer";
-
-    public static final String PLACEHOLDER_QNAME = "http://camel.apache.org/schema/placeholder";
-
-    private Constants() {
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/component/properties/SpringOptionalPropertiesDslTest.xml");
     }
 
 }

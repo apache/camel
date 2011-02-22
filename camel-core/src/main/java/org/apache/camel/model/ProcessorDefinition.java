@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,8 +29,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.namespace.QName;
 
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
@@ -48,6 +49,7 @@ import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
@@ -88,6 +90,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     private final LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorDefinition<?> parent;
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
+
+    // use xs:any to support optional property placeholders
+    private Map<QName, Object> otherAttributes;
 
     // else to use an optional attribute in JAXB2
     public abstract List<ProcessorDefinition> getOutputs();
@@ -427,9 +432,33 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             log.trace("Resolving property placeholders for: " + definition);
         }
 
-        // find all String getter/setter
+        // find all getter/setter which we can use for property placeholders
         Map<Object, Object> properties = new HashMap<Object, Object>();
         IntrospectionSupport.getProperties(definition, properties, null);
+
+        // include additional properties which have the Camel placeholder QName
+        // and when the definition parameter is this (otherAttributes belong to this)
+        if (definition.getOtherAttributes() != null) {
+            for (Object key : definition.getOtherAttributes().keySet()) {
+                QName qname = (QName) key;
+                if (Constants.PLACEHOLDER_QNAME.equals(qname.getNamespaceURI())) {
+                    String local = qname.getLocalPart();
+                    Object value = definition.getOtherAttributes().get(key);
+                    if (value != null && value instanceof String ) {
+                        // value must be enclosed with placeholder tokens
+                        String s = (String) value;
+                        if (!s.startsWith(PropertiesComponent.PREFIX_TOKEN)) {
+                            s = PropertiesComponent.PREFIX_TOKEN + s;
+                        }
+                        if (!s.endsWith(PropertiesComponent.SUFFIX_TOKEN)) {
+                            s = s + PropertiesComponent.SUFFIX_TOKEN;
+                        }
+                        value = s;
+                    }
+                    properties.put(local, value);
+                }
+            }
+        }
 
         if (!properties.isEmpty()) {
             if (log.isTraceEnabled()) {
@@ -442,12 +471,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 String name = (String) entry.getKey();
                 Object value = entry.getValue();
                 if (value instanceof String) {
-                    // we can only resolve String typed values
+                    // value must be a String, as a String is the key for a property placeholder
                     String text = (String) value;
                     text = routeContext.getCamelContext().resolvePropertyPlaceholders(text);
                     if (text != value) {
                         // invoke setter as the text has changed
-                        IntrospectionSupport.setProperty(definition, name, text);
+                        boolean changed = IntrospectionSupport.setProperty(routeContext.getCamelContext().getTypeConverter(), definition, name, text);
+                        if (!changed) {
+                            throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + definition);
+                        }
                         if (log.isDebugEnabled()) {
                             log.debug("Changed property [" + name + "] from: " + value + " to: " + text);
                         }
@@ -523,6 +555,35 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * Adds a placeholder for the given option
+     * <p/>
+     * Requires using the {@link org.apache.camel.component.properties.PropertiesComponent}
+     *
+     * @param option  the name of the option
+     * @param key     the placeholder key
+     * @return the builder
+     */
+    public Type placeholder(String option, String key) {
+        QName name = new QName(Constants.PLACEHOLDER_QNAME, option);
+        return attribute(name, key);
+    }
+
+    /**
+     * Adds an optional attribute
+     *
+     * @param name    the name of the attribute
+     * @param value   the value
+     * @return the builder
+     */
+    public Type attribute(QName name, Object value) {
+        if (otherAttributes == null) {
+            otherAttributes = new HashMap<QName, Object>();
+        }
+        otherAttributes.put(name, value);
+        return (Type) this;
+    }
 
     /**
      * Sends the exchange to the given endpoint
@@ -2920,6 +2981,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @XmlAttribute
     public void setInheritErrorHandler(Boolean inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
+    }
+
+    public Map<QName, Object> getOtherAttributes() {
+        return otherAttributes;
+    }
+
+    @XmlAnyAttribute
+    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
+        this.otherAttributes = otherAttributes;
     }
 
     /**
