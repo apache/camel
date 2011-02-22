@@ -30,7 +30,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
             context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    adviceByToString("xxx").replace().to("mock:xxx");
+                    weaveByToString("xxx").replace().to("mock:xxx");
                 }
             });
             fail("Should hve thrown exception");
@@ -44,9 +44,9 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // advice nodes in the route which has foo anywhere in their to string representation
+                // weave nodes in the route which has foo anywhere in their to string representation
                 // and replace them with the following route path
-                adviceByToString(".*foo.*").replace().multicast().to("mock:a").to("mock:b");
+                weaveByToString(".*foo.*").replace().multicast().to("mock:a").to("mock:b");
             }
         });
         // END SNIPPET: e1
@@ -66,7 +66,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                adviceByToString(".*bar.*").remove();
+                weaveByToString(".*bar.*").remove();
             }
         });
 
@@ -84,7 +84,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                adviceByToString(".*bar.*").before().to("mock:a").transform(constant("Bye World"));
+                weaveByToString(".*bar.*").before().to("mock:a").transform(constant("Bye World"));
             }
         });
 
@@ -102,7 +102,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                adviceByToString(".*bar.*").after().to("mock:a").transform(constant("Bye World"));
+                weaveByToString(".*bar.*").after().to("mock:a").transform(constant("Bye World"));
             }
         });
 

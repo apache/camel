@@ -30,7 +30,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
             context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    adviceById("xxx").replace().to("mock:xxx");
+                    weaveById("xxx").replace().to("mock:xxx");
                 }
             });
             fail("Should hve thrown exception");
@@ -44,9 +44,9 @@ public class AdviceWithTasksTest extends ContextTestSupport {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // advice the node in the route which has id = bar
+                // weave the node in the route which has id = bar
                 // and replace it with the following route path
-                adviceById("bar").replace().multicast().to("mock:a").to("mock:b");
+                weaveById("bar").replace().multicast().to("mock:a").to("mock:b");
             }
         });
         // END SNIPPET: e1
@@ -67,8 +67,8 @@ public class AdviceWithTasksTest extends ContextTestSupport {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // advice the node in the route which has id = bar and remove it
-                adviceById("bar").remove();
+                // weave the node in the route which has id = bar and remove it
+                weaveById("bar").remove();
             }
         });
         // END SNIPPET: e2
@@ -88,9 +88,9 @@ public class AdviceWithTasksTest extends ContextTestSupport {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // advice the node in the route which has id = bar
+                // weave the node in the route which has id = bar
                 // and insert the following route path before the adviced node
-                adviceById("bar").before().to("mock:a").transform(constant("Bye World"));
+                weaveById("bar").before().to("mock:a").transform(constant("Bye World"));
             }
         });
         // END SNIPPET: e3
@@ -110,9 +110,9 @@ public class AdviceWithTasksTest extends ContextTestSupport {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // advice the node in the route which has id = bar
+                // weave the node in the route which has id = bar
                 // and insert the following route path after the advice node
-                adviceById("bar").after().to("mock:a").transform(constant("Bye World"));
+                weaveById("bar").after().to("mock:a").transform(constant("Bye World"));
             }
         });
         // END SNIPPET: e4

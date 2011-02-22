@@ -30,7 +30,7 @@ public class AdviceWithTasksMatchTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // replace all gold id's with the following route path
-                adviceById("gold*").replace().multicast().to("mock:a").to("mock:b");
+                weaveById("gold*").replace().multicast().to("mock:a").to("mock:b");
             }
         });
 

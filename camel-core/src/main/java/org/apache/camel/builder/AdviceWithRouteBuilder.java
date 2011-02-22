@@ -85,7 +85,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Advices by matching id of the nodes in the route.
+     * Weaves by matching id of the nodes in the route.
      * <p/>
      * Uses the {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)} matching algorithm.
      *
@@ -93,14 +93,14 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @return the builder
      * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
      */
-    public AdviceWithBuilder adviceById(String pattern) {
+    public AdviceWithBuilder weaveById(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
 
         return new AdviceWithBuilder(this, pattern, null);
     }
 
     /**
-     * Advices by matching the to string representation of the nodes in the route.
+     * Weaves by matching the to string representation of the nodes in the route.
      * <p/>
      * Uses the {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)} matching algorithm.
      *
@@ -108,7 +108,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @return the builder
      * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
      */
-    public AdviceWithBuilder adviceByToString(String pattern) {
+    public AdviceWithBuilder weaveByToString(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
 
         return new AdviceWithBuilder(this, null, pattern);
