@@ -29,13 +29,6 @@
   <name>A Camel Route</name>
   <url>http://www.myorganization.org</url>
 
-  <properties>
-    <camel-version>$CAMEL_VERSION_REPLACEME$</camel-version>
-    <log4j-version>$LOG4J_VERSION_REPLACEME$</log4j-version>
-    <jaxb-api-version>$JAXB_API_VERSION_REPLACEME$</jaxb-api-version>
-    <jaxb-impl-version>$JAXB_IMPL_VERSION_REPLACEME$</jaxb-impl-version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -61,7 +54,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>$MAVEN_COMPILER_PLUGIN_VERSION_REPLACEME$</version>
+        <version>${maven-compiler-plugin-version}</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
