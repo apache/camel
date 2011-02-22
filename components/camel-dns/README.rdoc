@@ -1,0 +1,64 @@
+=Camel-DNS
+
+This is an additional component for Camel to run DNS queries, using DNSJava.
+
+The component should be a thin layer on top of DNSJava.
+
+==License
+
+Licensed under ASL 2.0
+
+See the LICENSE file.
+
+=Functionalities
+
+==IP lookup
+
+<code>
+        <route id="IPCheck">
+            <from uri="direct:start"/>
+            <to uri="dns:ip"/>
+            ...
+        </route>
+</code>
+
+This looks up a domain's IP. For example, www.example.com resolves to 192.0.32.10.
+
+The dns:ip URI will look for those headers:
+* dns.domain: the domain name.
+
+==DNS lookup
+
+<code>
+        <route id="IPCheck">
+            <from uri="direct:start"/>
+            <to uri="dns:lookup"/>
+            ...
+        </route>
+</code>
+
+This returns a set of DNS records associated with a domain.
+
+The dns:lookup URI will look for those headers:
+* dns.name: the lookup name. Usually the domain. Mandatory.
+* dns.type: the type of the lookup. Should match the values of org.xbill.dns.Type. Optional.
+* dns.class: the DNS class of the lookup. Should match the values of org.xbill.dns.DClass. Optional.
+
+==DNS Dig
+
+Dig is a Unix command-line utility to run DNS queries.
+
+<code>
+        <route id="IPCheck">
+            <from uri="direct:start"/>
+            <to uri="dns:dig"/>
+            ....
+        </route>
+</code>
+
+
+The dns:dig URI will look for those headers:
+* dns.server: the server in particular for the query. If none is given, the default one specified by the OS will be used.
+* dns.query: the query itself. Mandatory.
+* dns.type: the type of the lookup. Should match the values of org.xbill.dns.Type. Optional.
+* dns.class: the DNS class of the lookup. Should match the values org.xbill.dns.DClass. Optional.

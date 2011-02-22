@@ -47,6 +47,7 @@
     <module>camel-crypto</module>
     <module>camel-csv</module>
     <module>camel-cxf</module>
+    <module>camel-dns</module>
     <module>camel-dozer</module>
     <module>camel-eclipse</module>
     <module>camel-ejb</module>
