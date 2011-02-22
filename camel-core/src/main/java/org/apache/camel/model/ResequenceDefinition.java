@@ -16,15 +16,20 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
@@ -38,11 +43,18 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ResequenceDefinition extends ExpressionNode {
+public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {
+
+    // TODO: extend OutputDefinition, and use propOrder to control the ordering if possible
+
     @XmlElement(name = "batch-config", required = false)
     private BatchResequencerConfig batchConfig;
     @XmlElement(name = "stream-config", required = false)
     private StreamResequencerConfig streamConfig;
+    @XmlElementRef
+    private ExpressionDefinition expression;
+    @XmlElementRef
+    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
     public ResequenceDefinition() {
     }
@@ -50,6 +62,11 @@ public class ResequenceDefinition extends ExpressionNode {
     @Override
     public String getShortName() {
         return "resequence";
+    }
+
+    @Override
+    public List<ProcessorDefinition> getOutputs() {
+        return outputs;
     }
 
     // Fluent API
@@ -196,6 +213,12 @@ public class ResequenceDefinition extends ExpressionNode {
         return this;
     }
 
+    public ExpressionClause<ResequenceDefinition> createAndSetExpression() {
+        ExpressionClause<ResequenceDefinition> clause = new ExpressionClause<ResequenceDefinition>(this);
+        this.setExpression(clause);
+        return clause;
+    }
+
     @Override
     public String toString() {
         return "Resequencer[" + getExpression() + " -> " + getOutputs() + "]";
@@ -203,7 +226,11 @@ public class ResequenceDefinition extends ExpressionNode {
 
     @Override
     public String getLabel() {
-        return "Resequencer[" + super.getLabel() + "]";
+        String s = "";
+        if (getExpression() != null) {
+            s = getExpression().getLabel();
+        }
+        return "Resequencer[" + s + "]";
     }
 
     public BatchResequencerConfig getBatchConfig() {
@@ -220,6 +247,14 @@ public class ResequenceDefinition extends ExpressionNode {
 
     public void setStreamConfig(StreamResequencerConfig streamConfig) {
         this.streamConfig = streamConfig;
+    }
+
+    public ExpressionDefinition getExpression() {
+        return expression;
+    }
+
+    public void setExpression(ExpressionDefinition expression) {
+        this.expression = expression;
     }
 
     @Override

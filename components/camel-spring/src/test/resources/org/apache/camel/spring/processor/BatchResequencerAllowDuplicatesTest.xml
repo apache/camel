@@ -27,9 +27,9 @@
         <route>
             <from uri="direct:start"/>
             <resequence>
+                <batch-config allowDuplicates="true"/>
                 <header>id</header>
                 <to uri="mock:result"/>
-                <batch-config allowDuplicates="true"/>
             </resequence>
         </route>
     </camelContext>

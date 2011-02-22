@@ -23,22 +23,22 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
        
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <jmxAgent id="agent" disabled="true" />
+
         <route>
            <from uri="activemq:queue:in1"/>           
   		   <resequence>  		        
+                <batch-config batchSize="100" batchTimeout="10000"/>
     			<simple>body</simple>
     			<to uri="mock:result"/>
-    			<batch-config batchSize="100" batchTimeout="10000"/>    			
   			</resequence>
-  			
 		</route>
 		
 		<route>
            <from uri="activemq:queue:in2"/>           
   		   <resequence>  		        
-    			<simple>header.num</simple>    			
+                <stream-config timeout="2000"/>
+    			<simple>header.num</simple>
     			<to uri="mock:result"/>
-    			<stream-config timeout="2000"/>
   			</resequence>
 		</route>          
         

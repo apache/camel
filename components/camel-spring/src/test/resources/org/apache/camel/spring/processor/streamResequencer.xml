@@ -27,9 +27,9 @@
     <route>
       <from uri="direct:start"/>
       <resequence>
+        <stream-config/>
         <simple>in.header.seqnum</simple>
         <to uri="mock:result" />
-        <stream-config />
       </resequence>
     </route>
   </camelContext>

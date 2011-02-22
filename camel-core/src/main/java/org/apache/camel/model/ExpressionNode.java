@@ -39,9 +39,9 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
     @XmlElementRef
-    private ExpressionDefinition expression;
+    protected ExpressionDefinition expression;
     @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    protected List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
     public ExpressionNode() {
     }

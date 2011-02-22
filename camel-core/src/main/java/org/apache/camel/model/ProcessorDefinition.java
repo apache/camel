@@ -444,7 +444,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 if (Constants.PLACEHOLDER_QNAME.equals(qname.getNamespaceURI())) {
                     String local = qname.getLocalPart();
                     Object value = definition.getOtherAttributes().get(key);
-                    if (value != null && value instanceof String ) {
+                    if (value != null && value instanceof String) {
                         // value must be enclosed with placeholder tokens
                         String s = (String) value;
                         if (!s.startsWith(PropertiesComponent.PREFIX_TOKEN)) {
@@ -464,7 +464,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             if (log.isTraceEnabled()) {
                 log.trace("There are " + properties.size() + " properties on: " + definition);
             }
-
             // lookup and resolve properties for String based properties
             for (Map.Entry entry : properties.entrySet()) {
                 // the name is always a String
@@ -1681,8 +1680,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ExpressionClause<ResequenceDefinition> resequence() {
         ResequenceDefinition answer = new ResequenceDefinition();
         addOutput(answer);
-        ExpressionClause<ResequenceDefinition> clause = new ExpressionClause<ResequenceDefinition>(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return answer.createAndSetExpression();
     }
 
     /**

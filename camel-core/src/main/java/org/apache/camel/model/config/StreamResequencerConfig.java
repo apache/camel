@@ -30,7 +30,7 @@ import org.apache.camel.processor.resequencer.ExpressionResultComparator;
  *
  * @version 
  */
-@XmlRootElement(name = "stream-config")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StreamResequencerConfig {
 

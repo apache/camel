@@ -60,7 +60,7 @@ public class ResequencerTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:start")
-                    .resequence(body())
+                    .resequence().body()
                     .to("mock:result");
                 // END SNIPPET: example
             }
