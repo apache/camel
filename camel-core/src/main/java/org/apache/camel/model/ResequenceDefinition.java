@@ -16,23 +16,20 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
-import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;resequence/&gt; element
@@ -40,32 +37,21 @@ import org.apache.camel.spi.RouteContext;
  * @version 
  */
 @XmlRootElement(name = "resequence")
-public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {
-    @XmlElementRef
-    private List<ExpressionDefinition> expressions = new ArrayList<ExpressionDefinition>();
-    @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
-    // Binding annotation at setter
+@XmlAccessorType(XmlAccessType.FIELD)
+public class ResequenceDefinition extends ExpressionNode {
+    @XmlElement(name = "batch-config", required = false)
     private BatchResequencerConfig batchConfig;
-    // Binding annotation at setter
+    @XmlElement(name = "stream-config", required = false)
     private StreamResequencerConfig streamConfig;
-    @XmlTransient
-    private List<Expression> expressionList;
 
     public ResequenceDefinition() {
-        this(null);
-    }
-
-    public ResequenceDefinition(List<Expression> expressions) {
-        this.expressionList = expressions;
-        this.batch();
     }
 
     @Override
     public String getShortName() {
         return "resequence";
     }
-    
+
     // Fluent API
     // -------------------------------------------------------------------------
     /**
@@ -115,17 +101,6 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     }
 
     /**
-     * Sets the expression to use for reordering
-     *
-     * @param expression  the expression
-     * @return the builder
-     */
-    public ResequenceDefinition expression(ExpressionDefinition expression) {
-        expressions.add(expression);
-        return this;
-    }
-
-    /**
      * Sets the timeout
      * @param timeout  timeout in millis
      * @return the builder
@@ -145,8 +120,12 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
      * @return the builder
      */
     public ResequenceDefinition size(int batchSize) {
-        if (batchConfig == null) {
+        if (streamConfig != null) {
             throw new IllegalStateException("size() only supported for batch resequencer");
+        }
+        // initialize batch mode as its default mode
+        if (batchConfig == null) {
+            batch();
         }
         batchConfig.setBatchSize(batchSize);
         return this;
@@ -172,8 +151,12 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
      * @return the builder
      */
     public ResequenceDefinition allowDuplicates() {
-        if (batchConfig == null) {
+        if (streamConfig != null) {
             throw new IllegalStateException("allowDuplicates() only supported for batch resequencer");
+        }
+        // initialize batch mode as its default mode
+        if (batchConfig == null) {
+            batch();
         }
         batchConfig.setAllowDuplicates(true);
         return this;
@@ -188,8 +171,12 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
      * @return the builder
      */
     public ResequenceDefinition reverse() {
-        if (batchConfig == null) {
+        if (streamConfig != null) {
             throw new IllegalStateException("reverse() only supported for batch resequencer");
+        }
+        // initialize batch mode as its default mode
+        if (batchConfig == null) {
+            batch();
         }
         batchConfig.setReverse(true);
         return this;
@@ -211,35 +198,15 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
 
     @Override
     public String toString() {
-        return "Resequencer[" + getExpressions() + " -> " + getOutputs() + "]";
+        return "Resequencer[" + getExpression() + " -> " + getOutputs() + "]";
     }
 
     @Override
     public String getLabel() {
-        return ExpressionDefinition.getLabel(getExpressions());
-    }
-
-    public List<ExpressionDefinition> getExpressions() {
-        return expressions;
-    }
-
-    public List<Expression> getExpressionList() {
-        return expressionList;
-    }
-
-    public List<ProcessorDefinition> getOutputs() {
-        return outputs;
-    }
-
-    public void setOutputs(List<ProcessorDefinition> outputs) {
-        this.outputs = outputs;
+        return "Resequencer[" + super.getLabel() + "]";
     }
 
     public BatchResequencerConfig getBatchConfig() {
-        return batchConfig;
-    }
-
-    public BatchResequencerConfig getBatchConfig(BatchResequencerConfig defaultConfig) {
         return batchConfig;
     }
 
@@ -247,29 +214,29 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         return streamConfig;
     }
 
-    @XmlElement(name = "batch-config", required = false)
     public void setBatchConfig(BatchResequencerConfig batchConfig) {
-        batch(batchConfig);
+        this.batchConfig = batchConfig;
     }
 
-    @XmlElement(name = "stream-config", required = false)
     public void setStreamConfig(StreamResequencerConfig streamConfig) {
-        stream(streamConfig);
+        this.streamConfig = streamConfig;
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        if (batchConfig != null) {
-            return createBatchResequencer(routeContext, batchConfig);
-        } else {
-            // streamConfig should be non-null if batchConfig is null
+        if (streamConfig != null) {
             return createStreamResequencer(routeContext, streamConfig);
+        } else {
+            if (batchConfig == null) {
+                // default as batch mode
+                batch();
+            }
+            return createBatchResequencer(routeContext, batchConfig);
         }
     }
 
     /**
-     * Creates a batch {@link Resequencer} instance applying the given
-     * <code>config</code>.
+     * Creates a batch {@link Resequencer} instance applying the given <code>config</code>.
      * 
      * @param routeContext route context.
      * @param config batch resequencer configuration.
@@ -277,10 +244,14 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
      * @throws Exception can be thrown
      */
     protected Resequencer createBatchResequencer(RouteContext routeContext,
-            BatchResequencerConfig config) throws Exception {
-
+                                                 BatchResequencerConfig config) throws Exception {
         Processor processor = this.createChildProcessor(routeContext, true);
-        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), processor, resolveExpressionList(routeContext),
+        Expression expression = getExpression().createExpression(routeContext);
+
+        ObjectHelper.notNull(config, "config", this);
+        ObjectHelper.notNull(expression, "expression", this);
+
+        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), processor, expression,
                 config.isAllowDuplicates(), config.isReverse());
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
@@ -288,36 +259,28 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     }
 
     /**
-     * Creates a {@link StreamResequencer} instance applying the given
-     * <code>config</code>.
+     * Creates a {@link StreamResequencer} instance applying the given <code>config</code>.
      * 
      * @param routeContext route context.
      * @param config stream resequencer configuration.
      * @return the configured stream resequencer.
      * @throws Exception can be thrwon
      */
-    protected StreamResequencer createStreamResequencer(RouteContext routeContext, 
-            StreamResequencerConfig config) throws Exception {
-
-        config.getComparator().setExpressions(resolveExpressionList(routeContext));
+    protected StreamResequencer createStreamResequencer(RouteContext routeContext,
+                                                        StreamResequencerConfig config) throws Exception {
         Processor processor = this.createChildProcessor(routeContext, true);
-        StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), processor, config.getComparator());
+        Expression expression = getExpression().createExpression(routeContext);
+
+        ObjectHelper.notNull(config, "config", this);
+        ObjectHelper.notNull(expression, "expression", this);
+
+        ExpressionResultComparator comparator = config.getComparator();
+        comparator.setExpression(expression);
+
+        StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), processor, comparator);
         resequencer.setTimeout(config.getTimeout());
         resequencer.setCapacity(config.getCapacity());
         return resequencer;
-        
     }
 
-    private List<Expression> resolveExpressionList(RouteContext routeContext) {
-        if (expressionList == null) {
-            expressionList = new ArrayList<Expression>();
-            for (ExpressionDefinition expression : expressions) {
-                expressionList.add(expression.createExpression(routeContext));
-            }
-        }
-        if (expressionList.isEmpty()) {
-            throw new IllegalArgumentException("No expressions configured for: " + this);
-        }
-        return expressionList;
-    }
 }

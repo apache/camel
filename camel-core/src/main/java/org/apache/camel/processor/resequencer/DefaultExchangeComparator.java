@@ -16,20 +16,13 @@
  */
 package org.apache.camel.processor.resequencer;
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 
 /**
  * Compares elements of an {@link Exchange} sequence by comparing
  * <code>long</code> values returned by this comaprator's
- * <code>expression</code>. The expression is set during route definition
- * e.g.
- * 
- * <pre>
- *    ...resequencer(header(&quot;seqnum&quot;)).stream()...
- * </pre>
+ * <code>expression</code>.
  * 
  * @version 
  */
@@ -37,21 +30,8 @@ public class DefaultExchangeComparator implements ExpressionResultComparator {
 
     private Expression expression;
 
-    public Expression getExpression() {
-        return expression;
-    }
-
     public void setExpression(Expression expression) {
         this.expression = expression;
-    }
-
-    public void setExpressions(List<Expression> expressions) {
-        if (expressions.isEmpty()) {
-            throw new IllegalArgumentException("Expression required to resolve sequence number");
-        } else if (expressions.size() > 1) {
-            throw new IllegalArgumentException("More than one expression currently not supported");
-        }
-        expression = expressions.get(0);
     }
 
     public boolean predecessor(Exchange o1, Exchange o2) {
@@ -75,5 +55,4 @@ public class DefaultExchangeComparator implements ExpressionResultComparator {
     private long getSequenceNumber(Exchange exchange) {
         return expression.evaluate(exchange, Long.class);
     }
-    
 }

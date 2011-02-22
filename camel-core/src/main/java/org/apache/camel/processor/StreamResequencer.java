@@ -47,7 +47,7 @@ import org.apache.camel.util.ServiceHelper;
  * successor is known. For example a message with the sequence number 3 has a
  * predecessor message with the sequence number 2 and a successor message with
  * the sequence number 4. The message sequence 2,3,5 has a gap because the
- * sucessor of 3 is missing. The resequencer therefore has to retain message 5
+ * successor of 3 is missing. The resequencer therefore has to retain message 5
  * until message 4 arrives (or a timeout occurs).
  * <p>
  * Instances of this class poll for {@link Exchange}s from a given

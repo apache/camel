@@ -24,46 +24,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * Defines the configuration parameters for the batch-processing
  * {@link org.apache.camel.processor.Resequencer}. Usage example:
- * 
- * <pre>
- * from(&quot;direct:start&quot;).resequence(body()).batch(
- *         BatchResequencerConfig.getDefault()).to(&quot;mock:result&quot;)
- * </pre>
- * is equivalent to
- * 
- * <pre>
- * from(&quot;direct:start&quot;).resequence(body()).batch().to(&quot;mock:result&quot;)
- * </pre>
- * 
- * or
- * 
- * <pre>
- * from(&quot;direct:start&quot;).resequence(body()).to(&quot;mock:result&quot;)
- * </pre>
- * 
- * Custom values for <code>batchSize</code> and <code>batchTimeout</code>
- * can be set like in this example:
- * 
- * <pre>
- * from(&quot;direct:start&quot;).resequence(body()).batch(
- *         new BatchResequencerConfig(300, 400L)).to(&quot;mock:result&quot;)
- * </pre>
- * 
- * @version 
  */
-@XmlRootElement
+@XmlRootElement(name = "batch-config")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BatchResequencerConfig {
 
     @XmlAttribute
-    private Integer batchSize; // optional XML attribute requires wrapper object 
-
+    private Integer batchSize;
     @XmlAttribute
-    private Long batchTimeout; // optional XML attribute requires wrapper object
-
+    private Long batchTimeout;
     @XmlAttribute
     private Boolean allowDuplicates;
-
     @XmlAttribute
     private Boolean reverse;
 
@@ -75,26 +46,24 @@ public class BatchResequencerConfig {
     public BatchResequencerConfig() {
         this(100, 1000L);
     }
-    
+
     /**
      * Creates a new {@link BatchResequencerConfig} instance using the given
      * values for <code>batchSize</code> and <code>batchTimeout</code>.
-     * 
-     * @param batchSize
-     *            size of the batch to be re-ordered.
-     * @param batchTimeout
-     *            timeout for collecting elements to be re-ordered.
+     *
+     * @param batchSize    size of the batch to be re-ordered.
+     * @param batchTimeout timeout for collecting elements to be re-ordered.
      */
     public BatchResequencerConfig(int batchSize, long batchTimeout) {
         this.batchSize = batchSize;
         this.batchTimeout = batchTimeout;
     }
-    
+
     /**
      * Returns a new {@link BatchResequencerConfig} instance using default
      * values for <code>batchSize</code> (100) and <code>batchTimeout</code>
      * (1000L).
-     * 
+     *
      * @return a default {@link BatchResequencerConfig}.
      */
     public static BatchResequencerConfig getDefault() {

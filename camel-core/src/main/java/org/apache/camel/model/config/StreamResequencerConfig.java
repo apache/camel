@@ -27,39 +27,17 @@ import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 
 /**
  * Defines the configuration parameters for the {@link org.apache.camel.processor.StreamResequencer}.
- * Usage example:
- * 
- * <pre>
- * from(&quot;direct:start&quot;).resequencer(header(&quot;seqnum&quot;)).stream(
- *         StreamResequencerConfig.getDefault()).to(&quot;mock:result&quot;)
- * </pre>
- * 
- * is equivalent to
- * 
- * <pre>
- * from(&quot;direct:start&quot;).resequencer(header(&quot;seqnum&quot;)).stream().to(&quot;mock:result&quot;)
- * </pre>
- * 
- * Custom values for <code>capacity</code> and <code>timeout</code> can be
- * set like in this example:
- * 
- * <pre>
- * from(&quot;direct:start&quot;).resequencer(header(&quot;seqnum&quot;)).stream(
- *         new StreamResequencerConfig(300, 400L)).to(&quot;mock:result&quot;)
- * </pre>
- * 
+ *
  * @version 
  */
-@XmlRootElement
+@XmlRootElement(name = "stream-config")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StreamResequencerConfig {
 
     @XmlAttribute
-    private Integer capacity; // optional XML attribute requires wrapper object
-
+    private Integer capacity;
     @XmlAttribute
-    private Long timeout; // optional XML attribute requires wrapper object
-    
+    private Long timeout;
     @XmlTransient
     private ExpressionResultComparator comparator;
 

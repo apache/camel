@@ -42,9 +42,9 @@ public class Resequencer extends BatchProcessor implements Traceable {
         this(camelContext, processor, createSet(expression, false, false));
     }
 
-    public Resequencer(CamelContext camelContext, Processor processor, List<Expression> expressions,
+    public Resequencer(CamelContext camelContext, Processor processor, Expression expression,
                        boolean allowDuplicates, boolean reverse) {
-        this(camelContext, processor, createSet(expressions, allowDuplicates, reverse));
+        this(camelContext, processor, createSet(expression, allowDuplicates, reverse));
     }
 
     public Resequencer(CamelContext camelContext, Processor processor, Set<Exchange> collection) {

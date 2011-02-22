@@ -1621,8 +1621,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         ResequenceDefinition answer = new ResequenceDefinition();
         addOutput(answer);
         ExpressionClause<ResequenceDefinition> clause = new ExpressionClause<ResequenceDefinition>(answer);
-        answer.expression(clause);
-        return clause;
+        return ExpressionClause.createAndSetExpression(answer);
     }
 
     /**
@@ -1633,33 +1632,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ResequenceDefinition resequence(Expression expression) {
-        return resequence(Collections.<Expression>singletonList(expression));
-    }
-
-    /**
-     * <a href="http://camel.apache.org/resequencer.html">Resequencer EIP:</a>
-     * Creates a resequencer allowing you to reorganize messages based on some comparator.
-     *
-     * @param expressions the list of expressions on which to compare messages in order
-     * @return the builder
-     */
-    public ResequenceDefinition resequence(List<Expression> expressions) {
-        ResequenceDefinition answer = new ResequenceDefinition(expressions);
+        ResequenceDefinition answer = new ResequenceDefinition();
+        answer.setExpression(new ExpressionDefinition(expression));
         addOutput(answer);
         return answer;
-    }
-
-    /**
-     * <a href="http://camel.apache.org/resequencer.html">Resequencer EIP:</a>
-     * Creates a splitter allowing you to reorganise messages based on some comparator.
-     *
-     * @param expressions the list of expressions on which to compare messages in order
-     * @return the builder
-     */
-    public ResequenceDefinition resequence(Expression... expressions) {
-        List<Expression> list = new ArrayList<Expression>();
-        list.addAll(Arrays.asList(expressions));
-        return resequence(list);
     }
 
     /**

@@ -41,7 +41,7 @@ public interface SequenceElementComparator<E> extends Comparator<E> {
      * 
      * @param o1 a sequence element.
      * @param o2 a sequence element.
-     * @return true if its an immediate sucessor
+     * @return true if its an immediate successor
      */
     boolean successor(E o1, E o2);
     
