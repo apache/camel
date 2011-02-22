@@ -42,7 +42,7 @@ public class HL7DataFormat extends DataFormatDefinition {
 
     public boolean isValidate() {
         // defaults to true if not configured
-        return validate == null || validate.booleanValue();
+        return validate != null ? validate : true;
     }
 
     public Boolean getValidate() {

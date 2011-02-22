@@ -40,7 +40,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = false)
     private String secureTag;
     @XmlAttribute(required = false)
-    private boolean secureTagContents;
+    private Boolean secureTagContents;
 
     public XMLSecurityDataFormat() {
         super("secureXML");
@@ -115,11 +115,15 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
         this.secureTag = secureTag;
     }
 
-    public boolean isSecureTagContents() {
+    public Boolean getSecureTagContents() {
         return secureTagContents;
     }
 
-    public void setSecureTagContents(boolean secureTagContents) {
+    public void setSecureTagContents(Boolean secureTagContents) {
         this.secureTagContents = secureTagContents;
+    }
+
+    public boolean isSecureTagContents() {
+        return secureTagContents != null && secureTagContents;
     }
 }

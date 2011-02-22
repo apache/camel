@@ -241,12 +241,16 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
         this.delimiter = delimiter;
     }
 
-    public boolean isParallelProcessing() {
-        return parallelProcessing != null && parallelProcessing;
+    public Boolean getParallelProcessing() {
+        return parallelProcessing;
     }
 
-    public void setParallelProcessing(boolean parallelProcessing) {
+    public void setParallelProcessing(Boolean parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
+    }
+
+    public boolean isParallelProcessing() {
+        return parallelProcessing != null && parallelProcessing;
     }
 
     public String getStrategyRef() {
@@ -264,8 +268,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }
-    
-    public Boolean isIgnoreInvalidEndpoints() {
+
+    public Boolean getIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }
 
@@ -273,12 +277,20 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
 
-    public Boolean isStopOnException() {
+    public boolean isIgnoreInvalidEndpoints() {
+        return ignoreInvalidEndpoints != null && ignoreInvalidEndpoints;
+    }
+
+    public Boolean getStopOnException() {
         return stopOnException;
     }
 
     public void setStopOnException(Boolean stopOnException) {
         this.stopOnException = stopOnException;
+    }
+
+    public boolean isStopOnException() {
+        return stopOnException != null && stopOnException;
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -297,12 +309,16 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
         this.executorService = executorService;
     }
 
-    public void setStreaming(boolean streaming) {
+    public Boolean getStreaming() {
+        return streaming;
+    }
+
+    public void setStreaming(Boolean streaming) {
         this.streaming = streaming;
     }
 
     public boolean isStreaming() {
-        return streaming != null ? streaming : false;
+        return streaming != null && streaming;
     }
 
     public Long getTimeout() {

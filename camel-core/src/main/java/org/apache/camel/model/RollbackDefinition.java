@@ -69,14 +69,13 @@ public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
         // validate that only either mark rollbacks is chosen and not both
-        if (markRollbackOnly != null && markRollbackOnly.booleanValue()
-            && markRollbackOnlyLast != null && markRollbackOnlyLast.booleanValue()) {
+        if (isMarkRollbackOnly() && isMarkRollbackOnlyLast()) {
             throw new IllegalArgumentException("Only either one of markRollbackOnly and markRollbackOnlyLast is possible to select as true");
         }
 
         RollbackProcessor answer = new RollbackProcessor(message);
-        answer.setMarkRollbackOnly(markRollbackOnly != null ? markRollbackOnly : false);
-        answer.setMarkRollbackOnlyLast(markRollbackOnlyLast != null ? markRollbackOnlyLast : false);
+        answer.setMarkRollbackOnly(isMarkRollbackOnly());
+        answer.setMarkRollbackOnlyLast(isMarkRollbackOnlyLast());
         return answer;
     }
 
@@ -86,7 +85,7 @@ public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> 
         return Collections.EMPTY_LIST;
     }
 
-    public Boolean isMarkRollbackOnly() {
+    public Boolean getMarkRollbackOnly() {
         return markRollbackOnly;
     }
 
@@ -94,11 +93,19 @@ public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> 
         this.markRollbackOnly = markRollbackOnly;
     }
 
-    public Boolean isMarkRollbackOnlyLast() {
+    public boolean isMarkRollbackOnly() {
+        return markRollbackOnly != null && markRollbackOnly;
+    }
+
+    public Boolean getMarkRollbackOnlyLast() {
         return markRollbackOnlyLast;
     }
 
     public void setMarkRollbackOnlyLast(Boolean markRollbackOnlyLast) {
         this.markRollbackOnlyLast = markRollbackOnlyLast;
+    }
+
+    public boolean isMarkRollbackOnlyLast() {
+        return markRollbackOnlyLast != null && markRollbackOnlyLast;
     }
 }

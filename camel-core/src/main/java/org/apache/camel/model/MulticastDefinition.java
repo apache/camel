@@ -186,28 +186,40 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         return this;
     }
 
+    public Boolean getParallelProcessing() {
+        return parallelProcessing;
+    }
+
+    public void setParallelProcessing(Boolean parallelProcessing) {
+        this.parallelProcessing = parallelProcessing;
+    }
+
     public boolean isParallelProcessing() {
-        return parallelProcessing != null ? parallelProcessing : false;
+        return parallelProcessing != null && parallelProcessing;
     }
 
-    public void setParallelProcessing(boolean parallelProcessing) {
-        this.parallelProcessing = parallelProcessing;        
+    public Boolean getStreaming() {
+        return streaming;
     }
 
-    public boolean isStreaming() {
-        return streaming != null ? streaming : false;
-    }
-
-    public void setStreaming(boolean streaming) {
+    public void setStreaming(Boolean streaming) {
         this.streaming = streaming;
     }
 
-    public Boolean isStopOnException() {
-        return stopOnException != null ? stopOnException : false;
+    public boolean isStreaming() {
+        return streaming != null && streaming;
+    }
+
+    public Boolean getStopOnException() {
+        return stopOnException;
     }
 
     public void setStopOnException(Boolean stopOnException) {
         this.stopOnException = stopOnException;
+    }
+
+    public Boolean isStopOnException() {
+        return stopOnException != null && stopOnException;
     }
 
     public ExecutorService getExecutorService() {

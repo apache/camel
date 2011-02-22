@@ -801,14 +801,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         return useOriginalMessagePolicy;
     }
 
-    @XmlTransient
-    public boolean isUseOriginalMessage() {
-        // should be false by default
-        return useOriginalMessagePolicy != null ? useOriginalMessagePolicy : false;
-    }
-
     public void setUseOriginalMessagePolicy(Boolean useOriginalMessagePolicy) {
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
+    }
+
+    public boolean isUseOriginalMessage() {
+        return useOriginalMessagePolicy != null && useOriginalMessagePolicy;
     }
 
     public boolean isAsyncDelayedRedelivery(CamelContext context) {

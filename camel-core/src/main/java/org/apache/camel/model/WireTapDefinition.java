@@ -74,13 +74,8 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "WireTap");
         }
         WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern(), executorService);
-        if (isCopy() == null) {
-            // should default be true
-            answer.setCopy(true);
-        } else {
-            answer.setCopy(isCopy());
-        }
 
+        answer.setCopy(isCopy());
         if (newExchangeProcessorRef != null) {
             newExchangeProcessor = routeContext.lookup(newExchangeProcessorRef, Processor.class);
         }
@@ -162,11 +157,16 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
         this.executorServiceRef = executorServiceRef;
     }
 
-    public Boolean isCopy() {
+    public Boolean getCopy() {
         return copy;
     }
 
     public void setCopy(Boolean copy) {
         this.copy = copy;
+    }
+
+    public boolean isCopy() {
+        // should default to true if not configured
+        return copy != null ? copy : true;
     }
 }

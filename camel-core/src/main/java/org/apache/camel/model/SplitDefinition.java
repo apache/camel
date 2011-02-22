@@ -157,7 +157,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     
     /**
      * Enables streaming. 
-     * See {@link SplitDefinition#setStreaming(boolean)} for more information
+     * See {@link org.apache.camel.model.SplitDefinition#isStreaming()} for more information
      *
      * @return the builder
      */
@@ -215,24 +215,17 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
-    
-    public boolean isParallelProcessing() {
-        return parallelProcessing != null ? parallelProcessing : false;
+
+    public Boolean getParallelProcessing() {
+        return parallelProcessing;
     }
 
-    public void setParallelProcessing(boolean parallelProcessing) {
+    public void setParallelProcessing(Boolean parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
     }
-    
-    /**
-     * The splitter should use streaming -- exchanges are being sent as the data for them becomes available.
-     * This improves throughput and memory usage, but it has a drawback: 
-     * - the sent exchanges will no longer contain the {@link org.apache.camel.Exchange#SPLIT_SIZE} header property
-     * 
-     * @return whether or not streaming should be used
-     */
-    public boolean isStreaming() {
-        return streaming != null ? streaming : false;
+
+    public boolean isParallelProcessing() {
+        return parallelProcessing != null && parallelProcessing;
     }
 
     public Boolean getStreaming() {
@@ -243,12 +236,27 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         this.streaming = streaming;
     }
 
-    public Boolean isStopOnException() {
-        return stopOnException != null ? stopOnException : false;
+    /**
+     * The splitter should use streaming -- exchanges are being sent as the data for them becomes available.
+     * This improves throughput and memory usage, but it has a drawback:
+     * - the sent exchanges will no longer contain the {@link org.apache.camel.Exchange#SPLIT_SIZE} header property
+     *
+     * @return whether or not streaming should be used
+     */
+    public boolean isStreaming() {
+        return streaming != null && streaming;
+    }
+
+    public Boolean getStopOnException() {
+        return stopOnException;
     }
 
     public void setStopOnException(Boolean stopOnException) {
         this.stopOnException = stopOnException;
+    }
+
+    public Boolean isStopOnException() {
+        return stopOnException != null && stopOnException;
     }
 
     public ExecutorService getExecutorService() {

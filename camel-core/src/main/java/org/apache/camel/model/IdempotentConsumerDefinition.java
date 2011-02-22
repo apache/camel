@@ -124,12 +124,17 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         this.idempotentRepository = idempotentRepository;
     }
 
-    public Boolean isEager() {
+    public Boolean getEager() {
         return eager;
     }
 
     public void setEager(Boolean eager) {
         this.eager = eager;
+    }
+
+    public boolean isEager() {
+        // defaults to true if not configured
+        return eager != null ? eager : true;
     }
 
     @Override
@@ -145,10 +150,8 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         routeContext.getCamelContext().addService(idempotentRepository);
 
         Expression expression = getExpression().createExpression(routeContext);
-        // should be eager by default
-        boolean isEager = isEager() != null ? isEager() : true;
 
-        return new IdempotentConsumer(expression, idempotentRepository, isEager, childProcessor);
+        return new IdempotentConsumer(expression, idempotentRepository, isEager(), childProcessor);
     }
 
     /**

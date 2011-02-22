@@ -50,7 +50,7 @@ public class CastorDataFormat extends DataFormatDefinition {
 
     public boolean isValidation() {
         // defaults to true if not configured
-        return validation == null || validation.booleanValue();
+        return validation != null ? validation : true;
     }
 
     public Boolean getValidation() {

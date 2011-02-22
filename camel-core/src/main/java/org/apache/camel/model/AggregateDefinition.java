@@ -193,19 +193,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (getCompletionSize() != null) {
             answer.setCompletionSize(getCompletionSize());
         }
-        if (isCompletionFromBatchConsumer() != null) {
+        if (getCompletionFromBatchConsumer() != null) {
             answer.setCompletionFromBatchConsumer(isCompletionFromBatchConsumer());
         }
-        if (isEagerCheckCompletion() != null) {
+        if (getEagerCheckCompletion() != null) {
             answer.setEagerCheckCompletion(isEagerCheckCompletion());
         }
-        if (isIgnoreInvalidCorrelationKeys() != null) {
+        if (getIgnoreInvalidCorrelationKeys() != null) {
             answer.setIgnoreInvalidCorrelationKeys(isIgnoreInvalidCorrelationKeys());
         }
         if (getCloseCorrelationKeyOnCompletion() != null) {
             answer.setCloseCorrelationKeyOnCompletion(getCloseCorrelationKeyOnCompletion());
         }
-        if (isDiscardOnCompletionTimeout() != null) {
+        if (getDiscardOnCompletionTimeout() != null) {
             answer.setDiscardOnCompletionTimeout(isDiscardOnCompletionTimeout());
         }
 
@@ -307,16 +307,24 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.completionSizeExpression = completionSizeExpression;
     }
 
-    public Boolean isGroupExchanges() {
+    public Boolean getGroupExchanges() {
         return groupExchanges;
+    }
+
+    public boolean isGroupExchanges() {
+        return groupExchanges != null && groupExchanges;
     }
 
     public void setGroupExchanges(Boolean groupExchanges) {
         this.groupExchanges = groupExchanges;
     }
 
-    public Boolean isCompletionFromBatchConsumer() {
+    public Boolean getCompletionFromBatchConsumer() {
         return completionFromBatchConsumer;
+    }
+
+    public boolean isCompletionFromBatchConsumer() {
+        return completionFromBatchConsumer != null && completionFromBatchConsumer;
     }
 
     public void setCompletionFromBatchConsumer(Boolean completionFromBatchConsumer) {
@@ -329,6 +337,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public Boolean getParallelProcessing() {
+        return parallelProcessing;
     }
 
     public boolean isParallelProcessing() {
@@ -355,16 +367,24 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.strategyRef = strategyRef;
     }
 
-    public Boolean isEagerCheckCompletion() {
+    public Boolean getEagerCheckCompletion() {
         return eagerCheckCompletion;
+    }
+
+    public boolean isEagerCheckCompletion() {
+        return eagerCheckCompletion != null && eagerCheckCompletion;
     }
 
     public void setEagerCheckCompletion(Boolean eagerCheckCompletion) {
         this.eagerCheckCompletion = eagerCheckCompletion;
     }
 
-    public Boolean isIgnoreInvalidCorrelationKeys() {
+    public Boolean getIgnoreInvalidCorrelationKeys() {
         return ignoreInvalidCorrelationKeys;
+    }
+
+    public boolean isIgnoreInvalidCorrelationKeys() {
+        return ignoreInvalidCorrelationKeys != null && ignoreInvalidCorrelationKeys;
     }
 
     public void setIgnoreInvalidCorrelationKeys(Boolean ignoreInvalidCorrelationKeys) {
@@ -395,8 +415,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.aggregationRepositoryRef = aggregationRepositoryRef;
     }
 
-    public Boolean isDiscardOnCompletionTimeout() {
+    public Boolean getDiscardOnCompletionTimeout() {
         return discardOnCompletionTimeout;
+    }
+
+    public boolean isDiscardOnCompletionTimeout() {
+        return discardOnCompletionTimeout != null && discardOnCompletionTimeout;
     }
 
     public void setDiscardOnCompletionTimeout(Boolean discardOnCompletionTimeout) {

@@ -80,7 +80,7 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     }
 
     public boolean isRoundRobin() {
-        return roundRobin != null && roundRobin.booleanValue();
+        return roundRobin != null && roundRobin;
     }
 
     public Boolean getRoundRobin() {

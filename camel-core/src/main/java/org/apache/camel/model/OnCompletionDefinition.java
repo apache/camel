@@ -225,10 +225,6 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         this.outputs = outputs;
     }
 
-    public boolean isOnCompleteOnly() {
-        return onCompleteOnly != null && onCompleteOnly.booleanValue();
-    }
-
     public Boolean getOnCompleteOnly() {
         return onCompleteOnly;
     }
@@ -237,8 +233,8 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         this.onCompleteOnly = onCompleteOnly;
     }
 
-    public boolean isOnFailureOnly() {
-        return onFailureOnly != null && onFailureOnly.booleanValue();
+    public boolean isOnCompleteOnly() {
+        return onCompleteOnly != null && onCompleteOnly;
     }
 
     public Boolean getOnFailureOnly() {
@@ -247,6 +243,10 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
 
     public void setOnFailureOnly(Boolean onFailureOnly) {
         this.onFailureOnly = onFailureOnly;
+    }
+
+    public boolean isOnFailureOnly() {
+        return onFailureOnly != null && onFailureOnly;
     }
 
     public WhenDefinition getOnWhen() {
