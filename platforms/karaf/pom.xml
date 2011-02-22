@@ -34,13 +34,14 @@
     <name>Camel :: Platforms :: Apache Karaf</name>
 
     <properties>
-      <karaf-version>2.1.4-SNAPSHOT</karaf-version>
+      <karaf-version>2.1.4</karaf-version>
     </properties>
 
     <modules>
       <module>features</module>
     </modules>
 
+<!-- Needed when using SNAPSHOT version of Karaf 
     <pluginRepositories>
       <pluginRepository>
         <snapshots>
@@ -54,5 +55,5 @@
         <url>http://repository.apache.org/snapshots</url>
       </pluginRepository>
     </pluginRepositories>
- 
+-->
 </project>
