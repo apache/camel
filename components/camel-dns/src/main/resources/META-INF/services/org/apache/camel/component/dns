@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-class=org.apache.camel.component.dns.DNSComponent
+class=org.apache.camel.component.dns.DnsComponent

@@ -33,7 +33,7 @@ import org.xbill.DNS.Record;
 /**
  * A set of test cases to make DNS lookups.
  */
-public class DNSLookupEndpointTest extends CamelTestSupport {
+public class DnsLookupEndpointTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.dns;
 
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,27 +26,23 @@ import org.xbill.DNS.DClass;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Name;
 import org.xbill.DNS.Record;
-import org.xbill.DNS.Section;
 import org.xbill.DNS.SimpleResolver;
 import org.xbill.DNS.Type;
 
 /**
- * an endpoint to make queries against wikipedia using
- * the short TXT query.
+ * An endpoint for dig-like operations over DNS adresses.
  * <p/>
- * See here for a reference:
- * http://www.commandlinefu.com/commands/view/2829/query-wikipedia-via-console-over-dns
- * <p/>
- * This endpoint accepts the following header:
- * term: a simple term to use to query wikipedia.
+ * Inspired from Dig.java coming with the distribution of dnsjava,
+ * though most if not all options are unsupported.
  */
-public class WikipediaEndpoint extends DefaultEndpoint {
+public class DnsDigEndpoint extends DefaultEndpoint {
 
-    public WikipediaEndpoint(Component component) {
-        super("dns:///wikipedia", component);
+    public DnsDigEndpoint(DnsComponent component) {
+        super("dns://dig", component);
+
     }
 
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor arg0) throws Exception {
         throw new UnsupportedOperationException();
     }
 
@@ -55,18 +50,27 @@ public class WikipediaEndpoint extends DefaultEndpoint {
         return new DefaultProducer(this) {
 
             public void process(Exchange exchange) throws Exception {
-                SimpleResolver resolver = new SimpleResolver();
-                int type = Type.TXT;
-                Name name = Name.fromString(String.valueOf(exchange.getIn().getHeader(DnsConstants.TERM)) + ".wp.dg.cx", Name.root);
-                Record rec = Record.newRecord(name, type, DClass.IN);
+                String server = null;
+                if (exchange.getIn().getHeader(DnsConstants.DNS_SERVER) != null) {
+                    server = String.valueOf(exchange.getIn().
+                        getHeader(DnsConstants.DNS_SERVER));
+                }
+                SimpleResolver resolver = new SimpleResolver(server);
+                int type = Type.value(String.valueOf(exchange.getIn().getHeader(DnsConstants.DNS_TYPE)));
+                if (type == -1) {
+                    // default: if unparsable value given, use A.
+                    type = Type.A;
+                }
+                int dclass = DClass.value(String.valueOf(exchange.getIn().getHeader(DnsConstants.DNS_CLASS)));
+                if (dclass == -1) {
+                    // by default, value is IN.
+                    dclass = DClass.IN;
+                }
+                Name name = Name.fromString(String.valueOf(exchange.getIn().getHeader(DnsConstants.DNS_NAME)), Name.root);
+                Record rec = Record.newRecord(name, type, dclass);
                 Message query = Message.newQuery(rec);
                 Message response = resolver.send(query);
-                Record[] records = response.getSectionArray(Section.ANSWER);
-                if (records.length > 0) {
-                    exchange.getOut().setBody(records[0].rdataToString());
-                } else {
-                    exchange.getOut().setBody(null);
-                }
+                exchange.getOut().setBody(response);
             }
         };
     }

@@ -34,7 +34,7 @@ import org.xbill.DNS.Record;
 /**
  * A set of test cases to make DNS lookups.
  */
-public class DNSLookupEndpointSpringTest extends CamelSpringTestSupport {
+public class DnsLookupEndpointSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
