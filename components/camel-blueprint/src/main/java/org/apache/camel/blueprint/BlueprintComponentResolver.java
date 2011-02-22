@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.core.osgi.OsgiComponentResolver;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.util.CamelContextHelper;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,13 @@ public class BlueprintComponentResolver extends OsgiComponentResolver {
                     LOG.debug("Found component: " + name + " in registry: " + bean);
                 }
                 return (Component) bean;
+            } else {
+                // lets use Camel's type conversion mechanism to convert things like CamelContext
+                // and other types into a valid Component
+                Component component = CamelContextHelper.convertTo(context, Component.class, bean);
+                if (component != null) {
+                    return component;
+                }
             }
         } catch (Exception e) {
             LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
