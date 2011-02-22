@@ -19,6 +19,7 @@ package org.apache.camel.core.osgi;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -47,6 +48,13 @@ public class OsgiComponentResolver implements ComponentResolver {
         }
         if (bean instanceof Component) {
             return (Component)bean;
+        } else {
+            // lets use Camel's type conversion mechanism to convert things like CamelContext
+            // and other types into a valid Component
+            Component component = CamelContextHelper.convertTo(context, Component.class, bean);
+            if (component != null) {
+                return component;
+            }
         }
 
         // Check in OSGi bundles
