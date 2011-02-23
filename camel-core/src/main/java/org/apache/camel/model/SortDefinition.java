@@ -16,21 +16,20 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.SortProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
+
 import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 
 /**
@@ -38,19 +37,17 @@ import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
  */
 @XmlRootElement(name = "sort")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SortDefinition extends OutputDefinition<SortDefinition> {
+public class SortDefinition extends NoOutputExpressionNode {
     @XmlTransient
     private Comparator<Object> comparator;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String comparatorRef;
-    @XmlElement(name = "expression", required = false)
-    private ExpressionSubElementDefinition expression;
 
     public SortDefinition() {
     }
 
     public SortDefinition(Expression expression) {
-        setExpression(expression);
+        setExpression(new ExpressionDefinition(expression));
     }
 
     public SortDefinition(Expression expression, Comparator<Object> comparator) {
@@ -86,22 +83,13 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
         }
 
         // if no expression provided then default to body expression
+        Expression exp;
         if (getExpression() == null) {
-            setExpression(bodyExpression());
-        }
-
-        Expression exp = expression.getExpression();
-        // fallback to the type when its been initialized from JAXB using camel-spring
-        if (exp == null) {
-            exp = expression.getExpressionType();
+            exp = bodyExpression();
+        } else {
+            exp = getExpression().createExpression(routeContext);
         }
         return new SortProcessor(exp, getComparator());
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
-        return Collections.EMPTY_LIST;
     }
 
     public Comparator<Object> getComparator() {
@@ -118,18 +106,6 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
 
     public void setComparatorRef(String comparatorRef) {
         this.comparatorRef = comparatorRef;
-    }
-
-    public ExpressionSubElementDefinition getExpression() {
-        return expression;
-    }
-
-    public void setExpression(Expression expression) {
-        this.expression = new ExpressionSubElementDefinition(expression);
-    }
-
-    public void setExpression(ExpressionSubElementDefinition expression) {
-        this.expression = expression;
     }
 
     /**

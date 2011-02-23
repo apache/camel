@@ -2547,26 +2547,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sorts the IN message body using the given comparator.
-     * The IN body mut be convertable to {@link List}.
+     * Sorts the expression using a default sorting based on toString representation.
      *
-     * @param comparator  the comparator to use for sorting
+     * @param expression  the expression, must be convertable to {@link List}
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
-    public Type sortBody(Comparator comparator) {
-        addOutput(new SortDefinition(body(), comparator));
-        return (Type) this;
-    }
-
-    /**
-     * Sorts the IN message body using a default sorting based on toString representation.
-     * The IN body mut be convertable to {@link List}.
-     *
-     * @return the builder
-     */
-    public Type sortBody() {
-        return sortBody(null);
+    public Type sort(Expression expression) {
+        return sort(expression, null);
     }
 
     /**
@@ -2583,13 +2570,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Sorts the expression using a default sorting based on toString representation. 
+     * Sorts the expression
      *
-     * @param expression  the expression, must be convertable to {@link List}
      * @return the builder
      */
-    public Type sort(Expression expression) {
-        return sort(expression, null);
+    public ExpressionClause<SortDefinition> sort() {
+        SortDefinition answer = new SortDefinition();
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
     }
 
     /**

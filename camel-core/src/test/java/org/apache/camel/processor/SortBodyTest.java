@@ -43,7 +43,7 @@ public class SortBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").sortBody().to("mock:result");
+                from("direct:start").sort().body().to("mock:result");
                 // END SNIPPET: e1
             }
         };

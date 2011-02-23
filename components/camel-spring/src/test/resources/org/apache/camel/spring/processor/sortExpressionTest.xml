@@ -28,9 +28,7 @@
             <from uri="direct:start"/>
             <!-- will tokenize the body by comma and sort it -->
             <sort>
-                <expression>
-                    <tokenize token=","/>
-                </expression>
+                <tokenize token=","/>
             </sort>
             <to uri="mock:result"/>
         </route>
@@ -39,9 +37,7 @@
             <from uri="direct:reverse"/>
             <!-- will tokenize the body by comma and sort it using the comparator -->
             <sort comparatorRef="myReverseComparator">
-                <expression>
-                    <tokenize token=","/>
-                </expression>
+                <tokenize token=","/>
             </sort>
             <to uri="mock:result"/>
         </route>

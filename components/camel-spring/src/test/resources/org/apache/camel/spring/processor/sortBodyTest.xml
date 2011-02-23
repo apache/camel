@@ -26,8 +26,10 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <!-- will default sort the body using a default comparator -->
-            <sort/>
+            <!-- will sort the body using a default comparator -->
+            <sort>
+                <simple>body</simple>
+            </sort>
             <to uri="mock:result"/>
         </route>
     </camelContext>
