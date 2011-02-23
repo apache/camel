@@ -129,7 +129,7 @@ public class JmsPerformanceTest extends CamelTestSupport {
         answer.bind("myBean", myBean);
 
         // add ActiveMQ client
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61617");
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker7");
         answer.bind("activemq", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 
         return answer;

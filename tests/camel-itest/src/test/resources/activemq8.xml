@@ -22,9 +22,9 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
   http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-   <broker:broker id="broker" useJmx="false" persistent="false" dataDirectory="target/activemq">
+   <broker:broker id="broker8" useJmx="false" persistent="false" dataDirectory="target/activemq">
     <broker:transportConnectors>
-       <broker:transportConnector name="openwire" uri="tcp://localhost:61618"/>
+       <broker:transportConnector name="openwire" uri="vm:broker8"/>
     </broker:transportConnectors>
   </broker:broker>
 

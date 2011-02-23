@@ -42,7 +42,7 @@ public class JmsMediumQueuePerformanceTest extends JmsPerformanceTest {
         answer.bind("myBean", myBean);
 
         // add ActiveMQ client
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61618");
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker8");
         answer.bind("activemq", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 
         return answer;
