@@ -53,13 +53,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.restlet</groupId>
+      <groupId>org.restlet.jse</groupId>
       <artifactId>org.restlet</artifactId>
-    </dependency>
-    <!-- restlet engine is needed at runtime -->
-    <dependency>
-      <groupId>com.noelios.restlet</groupId>
-      <artifactId>com.noelios.restlet</artifactId>      
+      <version>${restlet-version}</version>
     </dependency>
 
     <!-- test artifacts -->

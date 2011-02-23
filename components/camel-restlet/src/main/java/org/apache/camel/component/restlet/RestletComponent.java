@@ -27,12 +27,13 @@ import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.restlet.Component;
-import org.restlet.Guard;
 import org.restlet.Restlet;
 import org.restlet.Server;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Method;
 import org.restlet.data.Protocol;
+import org.restlet.security.ChallengeAuthenticator;
+import org.restlet.security.MapVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,11 +189,13 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         
         Map<String, String> realm = endpoint.getRestletRealm();
         if (realm != null && realm.size() > 0) {
-            Guard guard = new Guard(component.getContext().createChildContext(), 
+            ChallengeAuthenticator guard = new ChallengeAuthenticator(component.getContext().createChildContext(),
                     ChallengeScheme.HTTP_BASIC, "Camel-Restlet Endpoint Realm");
+            MapVerifier verifier = new MapVerifier();
             for (Map.Entry<String, String> entry : realm.entrySet()) {
-                guard.getSecrets().put(entry.getKey(), entry.getValue().toCharArray());
+                verifier.getLocalSecrets().put(entry.getKey(), entry.getValue().toCharArray());
             }
+            guard.setVerifier(verifier);
             guard.setNext(target);
             target = guard;
             if (LOG.isDebugEnabled()) {
