@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.xbill.DNS.Address;
 
 /**
@@ -40,22 +41,21 @@ public class DnsIpEndpoint extends DefaultEndpoint {
         return new DefaultProducer(this) {
 
             public void process(Exchange exchange) throws Exception {
-                Object domain = exchange.getIn().getHeader("dns.domain");
-                if (!(domain instanceof String) || ((String) domain).length() == 0) {
-                    throw new IllegalArgumentException("Invalid or null domain :" + domain);
-                }
-                InetAddress address = Address.getByName((String) domain);
+                String domain = exchange.getIn().getHeader(DnsConstants.DNS_DOMAIN, String.class);
+                ObjectHelper.notEmpty(domain, "Header " + DnsConstants.DNS_DOMAIN);
+
+                InetAddress address = Address.getByName(domain);
                 exchange.getOut().setBody(address);
             }
         };
     }
 
-    public boolean isSingleton() {
-        return false;
-    }
-
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Creating a consumer is not supported");
+    }
+
+    public boolean isSingleton() {
+        return false;
     }
 
 }

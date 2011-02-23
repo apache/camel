@@ -29,6 +29,7 @@ public class DnsConstants {
     public static final String DNS_CLASS = "dns.class";
 
     public static final String DNS_NAME = "dns.name";
+    public static final String DNS_DOMAIN = "dns.domain";
 
     public static final String DNS_SERVER = "dns.server";
     public static final String DNS_TYPE = "dns.type";

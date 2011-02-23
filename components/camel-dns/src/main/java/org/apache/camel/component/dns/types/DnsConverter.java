@@ -30,64 +30,43 @@ import org.xbill.DNS.Record;
  * A converter for all the DNS objects used by the DNS component.
  */
 @Converter
-public class DnsConverter {
+public final class DnsConverter {
 
-    /**
-     * @param record
-     * @return the String representation of a record.
-     */
+    private DnsConverter() {
+    }
+
     @Converter
-    public String convert(Record record) {
+    public static String toString(Record record) {
         return record.toString();
     }
 
-    /**
-     * @param records
-     * @return the String representation of a record.
-     */
     @Converter
-    public List<String> convert(Record[] records) {
+    public static List<String> toList(Record[] records) {
         List<String> list = new ArrayList<String>();
         for (Record rec : records) {
-            list.add(convert(rec));
+            list.add(toString(rec));
         }
         return list;
     }
 
-    /**
-     * @param message
-     * @return the String representation of a message.
-     */
     @Converter
-    public String convert(Message message) {
+    public static String toString(Message message) {
         return message.toString();
     }
 
-    /**
-     * @param address a DNS address
-     * @return its String representation.
-     */
     @Converter
-    public String convert(Address address) {
+    public static String toString(Address address) {
         return address.toString();
     }
 
-    /**
-     * @param address
-     * @return the host name of the address.
-     */
     @Converter
-    public String convert(InetAddress address) {
+    public static String toString(InetAddress address) {
         return address.getHostAddress();
     }
 
-    /**
-     * @param domain
-     * @return the InetAddress object for a given domain.
-     * @throws UnknownHostException
-     */
     @Converter
-    public InetAddress convert(String domain) throws UnknownHostException {
-        return Address.getByName((String) domain);
+    public static InetAddress toInetAddress(String domain) throws UnknownHostException {
+        return Address.getByName(domain);
     }
+
 }

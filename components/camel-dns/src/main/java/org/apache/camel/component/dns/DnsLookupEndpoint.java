@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Lookup;
 import org.xbill.DNS.Type;
@@ -42,13 +43,10 @@ public class DnsLookupEndpoint extends DefaultEndpoint {
 
     public Producer createProducer() throws Exception {
         return new DefaultProducer(this) {
-
             public void process(Exchange exchange) throws Exception {
-                Object name = exchange.getIn().getHeader(DnsConstants.DNS_NAME);
-                if (name == null || "".equals(name)) {
-                    throw new IllegalArgumentException("name is null or empty");
-                }
-                String dnsName = String.valueOf(name);
+                String dnsName = exchange.getIn().getHeader(DnsConstants.DNS_NAME, String.class);
+                ObjectHelper.notEmpty(dnsName, "Header " + DnsConstants.DNS_NAME);
+
                 Object type = exchange.getIn().getHeader(DnsConstants.DNS_TYPE);
                 Integer dnsType = null;
                 if (type != null) {
@@ -60,7 +58,7 @@ public class DnsLookupEndpoint extends DefaultEndpoint {
                     dnsClass = DClass.value(String.valueOf(dclass));
                 }
 
-                Lookup lookup = null;
+                Lookup lookup;
                 if (dnsType != null && dnsClass != null) {
                     lookup = new Lookup(dnsName, dnsType, dnsClass);
                 } else {
@@ -78,7 +76,6 @@ public class DnsLookupEndpoint extends DefaultEndpoint {
                     exchange.getOut().setBody(lookup.getErrorString());
                 }
             }
-
         };
     }
 

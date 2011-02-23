@@ -70,20 +70,14 @@ public class DnsComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (DnsConstants.OPERATION_IP.equals(remaining)) {
             return new DnsIpEndpoint(this);
+        } else if (DnsConstants.OPERATION_LOOKUP.equals(remaining)) {
+            return new DnsLookupEndpoint(this);
+        } else if (DnsConstants.OPERATION_DIG.equals(remaining)) {
+            return new DnsDigEndpoint(this);
+        } else if (DnsConstants.OPERATION_WIKIPEDIA.equals(remaining)) {
+            return new WikipediaEndpoint(this);
         } else {
-            if (DnsConstants.OPERATION_LOOKUP.equals(remaining)) {
-                return new DnsLookupEndpoint(this);
-            } else {
-                if (DnsConstants.OPERATION_DIG.equals(remaining)) {
-                    return new DnsDigEndpoint(this);
-                } else {
-                    if (DnsConstants.OPERATION_WIKIPEDIA.equals(remaining)) {
-                        return new WikipediaEndpoint(this);
-                    } else {
-                        throw new IllegalArgumentException(uri + "is unsupported by the DNS component");
-                    }
-                }
-            }
+            throw new IllegalArgumentException(uri + " is unsupported by the DNS component");
         }
     }
 

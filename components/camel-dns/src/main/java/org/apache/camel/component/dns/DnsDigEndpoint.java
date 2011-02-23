@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Name;
@@ -39,7 +40,6 @@ public class DnsDigEndpoint extends DefaultEndpoint {
 
     public DnsDigEndpoint(DnsComponent component) {
         super("dns://dig", component);
-
     }
 
     public Consumer createConsumer(Processor arg0) throws Exception {
@@ -48,25 +48,23 @@ public class DnsDigEndpoint extends DefaultEndpoint {
 
     public Producer createProducer() throws Exception {
         return new DefaultProducer(this) {
-
             public void process(Exchange exchange) throws Exception {
-                String server = null;
-                if (exchange.getIn().getHeader(DnsConstants.DNS_SERVER) != null) {
-                    server = String.valueOf(exchange.getIn().
-                        getHeader(DnsConstants.DNS_SERVER));
-                }
+                String server = exchange.getIn().getHeader(DnsConstants.DNS_SERVER, String.class);
+                ObjectHelper.notEmpty(server, "Header " + DnsConstants.DNS_SERVER);
+
                 SimpleResolver resolver = new SimpleResolver(server);
-                int type = Type.value(String.valueOf(exchange.getIn().getHeader(DnsConstants.DNS_TYPE)));
+                int type = Type.value(exchange.getIn().getHeader(DnsConstants.DNS_TYPE, String.class));
                 if (type == -1) {
                     // default: if unparsable value given, use A.
                     type = Type.A;
                 }
-                int dclass = DClass.value(String.valueOf(exchange.getIn().getHeader(DnsConstants.DNS_CLASS)));
+                int dclass = DClass.value(exchange.getIn().getHeader(DnsConstants.DNS_CLASS, String.class));
                 if (dclass == -1) {
                     // by default, value is IN.
                     dclass = DClass.IN;
                 }
-                Name name = Name.fromString(String.valueOf(exchange.getIn().getHeader(DnsConstants.DNS_NAME)), Name.root);
+
+                Name name = Name.fromString(exchange.getIn().getHeader(DnsConstants.DNS_NAME, String.class), Name.root);
                 Record rec = Record.newRecord(name, type, dclass);
                 Message query = Message.newQuery(rec);
                 Message response = resolver.send(query);

@@ -53,7 +53,6 @@ public class WikipediaEndpoint extends DefaultEndpoint {
 
     public Producer createProducer() throws Exception {
         return new DefaultProducer(this) {
-
             public void process(Exchange exchange) throws Exception {
                 SimpleResolver resolver = new SimpleResolver();
                 int type = Type.TXT;

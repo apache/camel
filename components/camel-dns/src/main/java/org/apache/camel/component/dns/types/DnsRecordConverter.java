@@ -18,6 +18,7 @@ package org.apache.camel.component.dns.types;
 
 import java.io.IOException;
 
+import org.apache.camel.Converter;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.ExtendedResolver;
 import org.xbill.DNS.Message;
@@ -31,14 +32,18 @@ import org.xbill.DNS.Type;
 /**
  * More converters for all the DNS objects used by the DNS component.
  */
-public class DnsRecordConverter {
+@Converter
+public final class DnsRecordConverter {
+
+    private DnsRecordConverter() {
+    }
 
     /**
      * @param ip, like "192.168.1.1"
      * @return the complete DNS record for that IP.
-     * @throws IOException
      */
-    public Record convert(String ip) throws IOException {
+    @Converter
+    public static Record toRecord(String ip) throws IOException {
         Resolver res = new ExtendedResolver();
 
         Name name = ReverseMap.fromAddress(ip);
