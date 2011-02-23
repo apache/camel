@@ -115,16 +115,9 @@
             <artifactId>camel-restlet</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- restlet engine -->
-        <dependency>
-          <groupId>com.noelios.restlet</groupId>
-          <artifactId>com.noelios.restlet</artifactId>
-          <version>${restlet-version}</version>
-          <scope>test</scope>
-        </dependency>
         <!-- restlet JAXB binding -->
         <dependency>
-            <groupId>org.restlet</groupId>
+            <groupId>org.restlet.jse</groupId>
             <artifactId>org.restlet.ext.jaxb</artifactId>
             <version>${restlet-version}</version>
             <scope>test</scope>
