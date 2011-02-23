@@ -25,7 +25,8 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 @RunWith(JUnit4TestRunner.class)
 public class CamelJdbcAggregatorTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelJdbcAggregatorTest.class);
+    // the aggregator is included in the camel-sql artifact
+    public static final String COMPONENT = "sql";
 
     @Test
     public void test() throws Exception {
