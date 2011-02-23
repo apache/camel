@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "removeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemovePropertyDefinition extends OutputDefinition<RemovePropertyDefinition> {
+public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyDefinition> {
     @XmlAttribute(required = true)
     private String propertyName;   
     

@@ -39,6 +39,10 @@ public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends Pr
         return outputs;
     }
 
+    public boolean isOutputSupported() {
+        return true;
+    }
+
     public void setOutputs(List<ProcessorDefinition> outputs) {
         this.outputs = outputs;
         if (outputs != null) {

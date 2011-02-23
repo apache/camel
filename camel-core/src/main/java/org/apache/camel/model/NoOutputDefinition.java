@@ -14,27 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.loadbalancer;
+package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.camel.model.LoadBalancerDefinition;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.spi.RouteContext;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Represents an XML &lt;random/&gt; element
+ * Base class for definitions which does not support outputs.
  */
-@XmlRootElement(name = "random")
-public class RandomLoadBalancerDefinition extends LoadBalancerDefinition {
+public abstract class NoOutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
 
-    @Override
-    protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        return new org.apache.camel.processor.loadbalancer.RandomLoadBalancer();
+    @SuppressWarnings("unchecked")
+    public List<ProcessorDefinition> getOutputs() {
+        return Collections.EMPTY_LIST;
     }
 
-    @Override
-    public String toString() {
-        return "RandomLoadBalancer";
+    public boolean isOutputSupported() {
+        return false;
     }
 }

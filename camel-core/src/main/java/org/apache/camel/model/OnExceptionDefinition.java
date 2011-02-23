@@ -686,6 +686,10 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         this.outputs = outputs;
     }
 
+    public boolean isOutputSupported() {
+        return true;
+    }
+
     public List<Class> getExceptionClasses() {
         if (exceptionClasses == null) {
             exceptionClasses = createExceptionClasses();

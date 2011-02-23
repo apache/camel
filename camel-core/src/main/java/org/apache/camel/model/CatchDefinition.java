@@ -116,6 +116,10 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
         this.outputs = outputs;
     }
 
+    public boolean isOutputSupported() {
+        return true;
+    }
+
     public List<Class> getExceptionClasses() {
         if (exceptionClasses == null) {
             exceptionClasses = createExceptionClasses();

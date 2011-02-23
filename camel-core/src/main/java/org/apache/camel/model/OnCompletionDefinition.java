@@ -225,6 +225,10 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         this.outputs = outputs;
     }
 
+    public boolean isOutputSupported() {
+        return true;
+    }
+
     public Boolean getOnCompleteOnly() {
         return onCompleteOnly;
     }

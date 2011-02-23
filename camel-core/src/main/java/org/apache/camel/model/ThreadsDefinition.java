@@ -46,6 +46,8 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
 
+    // TODO: Camel 3.0 Should extend NoOutputDefinition
+
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute

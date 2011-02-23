@@ -93,6 +93,10 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         }
     }
 
+    public boolean isOutputSupported() {
+        return true;
+    }
+
     public String getRef() {
         return ref;
     }

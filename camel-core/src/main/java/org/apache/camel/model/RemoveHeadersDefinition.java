@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "removeHeaders")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoveHeadersDefinition extends OutputDefinition<RemoveHeadersDefinition> {
+public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDefinition> {
     @XmlAttribute(required = true)
     private String pattern;
     @XmlAttribute(required = false)

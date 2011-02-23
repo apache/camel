@@ -16,9 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -37,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "convertBodyTo")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConvertBodyDefinition extends ProcessorDefinition<ConvertBodyDefinition> {
+public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinition> {
     @XmlAttribute
     private String type;
     @XmlAttribute(required = false)
@@ -88,12 +85,6 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ConvertBodyDefini
         }
 
         return new ConvertBodyProcessor(getTypeClass(), getCharset());
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
-        return Collections.EMPTY_LIST;
     }
 
     public String getType() {

@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "process")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProcessDefinition extends OutputDefinition<ProcessDefinition> {
+public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     @XmlAttribute(required = true)
     private String ref;
     @XmlTransient

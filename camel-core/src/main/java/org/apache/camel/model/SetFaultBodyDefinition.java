@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessorBuilder;
-import org.apache.camel.processor.SetBodyProcessor;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -31,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "setFaultBody")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetFaultBodyDefinition extends ExpressionNode {
+public class SetFaultBodyDefinition extends NoOutputExpressionNode {
 
     public SetFaultBodyDefinition() {
     }

@@ -37,6 +37,9 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrottleDefinition extends OutputDefinition<ThrottleDefinition> implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
+
+    // TODO: Camel 3.0 Should extend NoOutputDefinition
+
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute

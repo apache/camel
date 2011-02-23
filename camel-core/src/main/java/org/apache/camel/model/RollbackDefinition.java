@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -32,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "rollback")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> {
+public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
 
     @XmlAttribute
     private Boolean markRollbackOnly;
@@ -77,12 +75,6 @@ public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> 
         answer.setMarkRollbackOnly(isMarkRollbackOnly());
         answer.setMarkRollbackOnlyLast(isMarkRollbackOnlyLast());
         return answer;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
-        return Collections.EMPTY_LIST;
     }
 
     public Boolean getMarkRollbackOnly() {

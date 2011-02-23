@@ -149,6 +149,10 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         }
     }
 
+    public boolean isOutputSupported() {
+        return true;
+    }
+
     public OtherwiseDefinition getOtherwise() {
         return otherwise;
     }

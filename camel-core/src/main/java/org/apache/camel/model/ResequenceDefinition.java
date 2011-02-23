@@ -45,8 +45,6 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {
 
-    // TODO: extend OutputDefinition, and use propOrder to control the ordering if possible
-
     @XmlElement(name = "batch-config", required = false)
     private BatchResequencerConfig batchConfig;
     @XmlElement(name = "stream-config", required = false)
@@ -64,9 +62,17 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         return "resequence";
     }
 
-    @Override
     public List<ProcessorDefinition> getOutputs() {
         return outputs;
+    }
+
+    public void setOutputs(List<ProcessorDefinition> outputs) {
+        this.outputs = outputs;
+    }
+
+    @Override
+    public boolean isOutputSupported() {
+        return true;
     }
 
     // Fluent API

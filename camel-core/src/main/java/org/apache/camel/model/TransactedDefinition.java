@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;

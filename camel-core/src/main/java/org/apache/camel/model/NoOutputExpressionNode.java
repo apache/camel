@@ -59,6 +59,11 @@ public class NoOutputExpressionNode extends ExpressionNode {
     }
 
     @Override
+    public boolean isOutputSupported() {
+        return false;
+    }
+
+    @Override
     public void addOutput(ProcessorDefinition output) {
         // add it to the parent as we do not support outputs
         getParent().addOutput(output);

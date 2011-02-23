@@ -687,6 +687,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return outputs;
     }
 
+    public boolean isOutputSupported() {
+        return true;
+    }
+
     public void setOutputs(List<ProcessorDefinition> outputs) {
         this.outputs = outputs;
     }

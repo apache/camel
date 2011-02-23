@@ -84,6 +84,10 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
         this.outputs = outputs;
     }
 
+    public boolean isOutputSupported() {
+        return true;
+    }
+
     @Override
     public String getLabel() {
         if (getExpression() == null) {

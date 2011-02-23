@@ -16,9 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -38,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
+public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type> {
     @XmlAttribute(required = false)
     protected String uri;
     @XmlAttribute(required = false)
@@ -104,10 +101,6 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public ExchangePattern getPattern() {
         return null;
-    }
-
-    public List<ProcessorDefinition> getOutputs() {
-        return Collections.emptyList();
     }
 
     /**

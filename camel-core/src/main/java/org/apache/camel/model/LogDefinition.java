@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -38,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LogDefinition extends ProcessorDefinition {
+public class LogDefinition extends NoOutputDefinition {
 
     @XmlAttribute
     private String message;
@@ -62,12 +60,6 @@ public class LogDefinition extends ProcessorDefinition {
     @Override
     public String getShortName() {
         return "log";
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
-        return Collections.EMPTY_LIST;
     }
 
     @Override

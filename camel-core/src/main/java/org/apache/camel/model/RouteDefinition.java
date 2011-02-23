@@ -527,6 +527,10 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
     }
 
+    public boolean isOutputSupported() {
+        return true;
+    }
+
     /**
      * The group that this route belongs to; could be the name of the RouteBuilder class
      * or be explicitly configured in the XML.

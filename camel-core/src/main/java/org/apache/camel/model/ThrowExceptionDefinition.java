@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "throwException")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThrowExceptionDefinition extends ProcessorDefinition<ThrowExceptionDefinition> {
+public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionDefinition> {
     @Required
     @XmlAttribute(name = "ref", required = true)
     // the ref is required from tooling and XML DSL
@@ -64,12 +62,6 @@ public class ThrowExceptionDefinition extends ProcessorDefinition<ThrowException
 
         ObjectHelper.notNull(exception, "exception or ref", this);
         return new ThrowExceptionProcessor(exception);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
-        return Collections.EMPTY_LIST;
     }
 
     public Exception getException() {

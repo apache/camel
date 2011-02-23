@@ -16,13 +16,10 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
@@ -35,8 +32,6 @@ import org.apache.camel.ExchangePattern;
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDefinition extends SendDefinition<ToDefinition> {
-    @XmlTransient
-    private final List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlAttribute(required = false)
     private ExchangePattern pattern;
 
@@ -59,11 +54,6 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     public ToDefinition(Endpoint endpoint, ExchangePattern pattern) {
         this(endpoint);
         this.pattern = pattern;
-    }
-
-    @Override
-    public List<ProcessorDefinition> getOutputs() {
-        return outputs;
     }
 
     @Override

@@ -97,6 +97,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     // else to use an optional attribute in JAXB2
     public abstract List<ProcessorDefinition> getOutputs();
 
+    public abstract boolean isOutputSupported();
+
     /**
      * Whether this model is abstract or not.
      * <p/>

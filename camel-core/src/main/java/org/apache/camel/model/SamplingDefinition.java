@@ -38,7 +38,9 @@ import org.apache.camel.spi.RouteContext;
 public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
 
     // use Long to let it be optional in JAXB so when using XML the default is 1 second
-    
+
+    // TODO: Camel 3.0 Should extend NoOutputDefinition
+
     @XmlAttribute
     private Long samplePeriod;
 

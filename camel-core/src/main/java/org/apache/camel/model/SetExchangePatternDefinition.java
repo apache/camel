@@ -34,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "setExchangePattern")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetExchangePatternDefinition extends OutputDefinition<SetExchangePatternDefinition> {
+public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchangePatternDefinition> {
     @XmlAttribute(required = true)
     private ExchangePattern pattern;
     @XmlTransient
