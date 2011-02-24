@@ -193,6 +193,15 @@ public class CamelBlueprintTest extends OSGiBlueprintTestSupport {
         assertEquals(DeadLetterChannelBuilder.class.getName(), eh.getClass().getName());
     }
 
+    @Test
+    public void testRouteWithNonStdComponentFromBlueprint() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle15").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle15)", 10000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle15)", 10000);
+        assertEquals(1, ctx.getRoutes().size());
+        assertSame(ctn.getComponentInstance("mycomp"), ctx.getComponent("mycomp"));
+    }
+
     @Configuration
     public static Option[] configure() throws Exception {
 
@@ -277,6 +286,13 @@ public class CamelBlueprintTest extends OSGiBlueprintTestSupport {
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-14.xml"))
                         .add(TestProxySender.class)
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle14")
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .build()).noStart(),
+
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-15.xml"))
+                        .add(TestProxySender.class)
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle15")
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
 
