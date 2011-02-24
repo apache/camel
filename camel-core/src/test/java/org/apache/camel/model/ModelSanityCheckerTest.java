@@ -38,14 +38,14 @@ public class ModelSanityCheckerTest extends TestCase {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModelSanityCheckerTest.class);
 
-    private Set<Class<?>> discoverJAxbClasses() {
+    private Set<Class<?>> discoverJaxbClasses() {
         PackageScanClassResolver resolver = new DefaultPackageScanClassResolver();
         String[] packages = Constants.JAXB_CONTEXT_PACKAGES.split(":");
         return resolver.findAnnotated(XmlAccessorType.class, packages);
     }
 
     public void testSanity() throws Exception {
-        Set<Class<?>> classes = discoverJAxbClasses();
+        Set<Class<?>> classes = discoverJaxbClasses();
         assertNotNull(classes);
         assertTrue("There should be > 140 classes, was: " + classes.size(), classes.size() > 140);
 
@@ -90,7 +90,7 @@ public class ModelSanityCheckerTest extends TestCase {
             for (Method method : clazz.getDeclaredMethods()) {
                 LOG.debug("Class {} has method {}", clazz.getName(), method.getName());
 
-                // does the field have a jaxb annotation?
+                // does the method have a jaxb annotation?
                 boolean attribute = method.getAnnotation(XmlAttribute.class) != null;
                 boolean element = method.getAnnotation(XmlElement.class) != null;
                 boolean elementRef = method.getAnnotation(XmlElementRef.class) != null;
