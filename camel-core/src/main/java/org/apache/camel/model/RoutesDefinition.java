@@ -198,50 +198,12 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @return the builder
      */
     public RouteDefinition route(RouteDefinition route) {
-
-        // configure intercept
-        for (InterceptDefinition intercept : getIntercepts()) {
-            // add as first output so intercept is handled before the actual route and that gives
-            // us the needed head start to init and be able to intercept all the remaining processing steps
-            route.getOutputs().add(0, intercept);
-        }
-
-        // configure intercept from
-        for (InterceptFromDefinition intercept : getInterceptFroms()) {
-
-            // should we only apply interceptor for a given endpoint uri
-            boolean match = true;
-            if (intercept.getUri() != null) {
-                match = false;
-                for (FromDefinition input : route.getInputs()) {
-                    if (EndpointHelper.matchEndpoint(input.getUri(), intercept.getUri())) {
-                        match = true;
-                        break;
-                    }
-                }
-            }
-
-            if (match) {
-                // add as first output so intercept is handled before the acutal route and that gives
-                // us the needed head start to init and be able to intercept all the remaining processing steps
-                route.getOutputs().add(0, intercept);
-            }
-        }
-
-        // configure intercept send to endpoint
-        for (InterceptSendToEndpointDefinition sendTo : getInterceptSendTos()) {
-            // add as first output so intercept is handled before the actual route and that gives
-            // us the needed head start to init and be able to intercept all the remaining processing steps
-            route.getOutputs().add(0, sendTo);
-        }
-
-        // add on completions after the interceptors
-        route.getOutputs().addAll(getOnCompletions());
-
-        // add on exceptions at top since we need to inject this by the error handlers
-        route.getOutputs().addAll(0, getOnExceptions());
-
+        // must prepare the route before we can add it to the routes list
+        RouteDefinitionHelper.prepareRoute(route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
+                getInterceptSendTos(), getOnCompletions());
         getRoutes().add(route);
+        // mark this route as prepared
+        route.markPrepared();
         return route;
     }
 
