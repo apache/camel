@@ -43,12 +43,24 @@ public class BindyDataFormat extends DataFormatDefinition {
     public BindyDataFormat() {
     }
 
-    public void setPackages(String[] packages) {
-        this.packages = packages;
+    public BindyType getType() {
+        return type;
     }
 
     public void setType(BindyType type) {
         this.type = type;
+    }
+
+    public String[] getPackages() {
+        return packages;
+    }
+
+    public void setPackages(String[] packages) {
+        this.packages = packages;
+    }
+
+    public String getLocale() {
+        return locale;
     }
 
     public void setLocale(String locale) {

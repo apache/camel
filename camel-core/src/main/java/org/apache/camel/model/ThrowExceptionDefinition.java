@@ -62,6 +62,14 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
         return new ThrowExceptionProcessor(exception);
     }
 
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
     public Exception getException() {
         return exception;
     }

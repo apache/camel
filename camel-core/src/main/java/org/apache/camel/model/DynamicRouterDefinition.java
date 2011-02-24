@@ -70,8 +70,8 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition> extends N
         String delimiter = getUriDelimiter() != null ? getUriDelimiter() : DEFAULT_DELIMITER;
 
         DynamicRouter dynamicRouter = new DynamicRouter(routeContext.getCamelContext(), expression, delimiter);
-        if (getIgnoreInvalidEndpoint() != null) {
-            dynamicRouter.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoint());
+        if (getIgnoreInvalidEndpoints() != null) {
+            dynamicRouter.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoints());
         }
         return dynamicRouter;
     }
@@ -88,7 +88,7 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition> extends N
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
 
-    public Boolean getIgnoreInvalidEndpoint() {
+    public Boolean getIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }
 

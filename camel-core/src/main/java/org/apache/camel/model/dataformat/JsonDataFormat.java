@@ -75,6 +75,14 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.unmarshalType = unmarshalType;
     }
 
+    public JsonLibrary getLibrary() {
+        return library;
+    }
+
+    public void setLibrary(JsonLibrary library) {
+        this.library = library;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (library == JsonLibrary.XStream) {
@@ -90,7 +98,6 @@ public class JsonDataFormat extends DataFormatDefinition {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         }
-        Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
 
         return super.createDataFormat(routeContext);
     }

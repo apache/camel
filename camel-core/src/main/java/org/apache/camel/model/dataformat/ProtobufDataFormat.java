@@ -47,15 +47,23 @@ public class ProtobufDataFormat extends DataFormatDefinition {
         this();
         setInstanceClass(instanceClass); 
     }
-    
+
+    public String getInstanceClass() {
+        return instanceClass;
+    }
+
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
     }
-    
-    public void setDefaultInstance(Object instance) {
-        this.defaultInstance = instance;
+
+    public Object getDefaultInstance() {
+        return defaultInstance;
     }
-    
+
+    public void setDefaultInstance(Object defaultInstance) {
+        this.defaultInstance = defaultInstance;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         if (this.instanceClass != null) {

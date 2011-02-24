@@ -37,7 +37,6 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated
 public class AOPDefinition extends OutputDefinition<AOPDefinition> {
-
     @XmlAttribute
     private String beforeUri;
     @XmlAttribute
@@ -57,12 +56,24 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
         return beforeUri;
     }
 
+    public void setBeforeUri(String beforeUri) {
+        this.beforeUri = beforeUri;
+    }
+
     public String getAfterUri() {
         return afterUri;
     }
 
+    public void setAfterUri(String afterUri) {
+        this.afterUri = afterUri;
+    }
+
     public String getAfterFinallyUri() {
         return afterFinallyUri;
+    }
+
+    public void setAfterFinallyUri(String afterFinallyUri) {
+        this.afterFinallyUri = afterFinallyUri;
     }
 
     @Override

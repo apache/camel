@@ -91,8 +91,16 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         return distributionRatio;
     }
 
-    public void setDistributionRatioList(String distributionRatio) {
+    public void setDistributionRatio(String distributionRatio) {
         this.distributionRatio = distributionRatio;
+    }
+
+    public String getDistributionRatioDelimiter() {
+        return distributionRatioDelimiter;
+    }
+
+    public void setDistributionRatioDelimiter(String distributionRatioDelimiter) {
+        this.distributionRatioDelimiter = distributionRatioDelimiter;
     }
 
     @Override

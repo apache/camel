@@ -81,8 +81,8 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition> extends NoO
         String delimiter = getUriDelimiter() != null ? getUriDelimiter() : DEFAULT_DELIMITER;
 
         RoutingSlip routingSlip = new RoutingSlip(routeContext.getCamelContext(), expression, delimiter);
-        if (getIgnoreInvalidEndpoint() != null) {
-            routingSlip.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoint());
+        if (getIgnoreInvalidEndpoints() != null) {
+            routingSlip.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoints());
         }
         return routingSlip;
     }
@@ -104,7 +104,7 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition> extends NoO
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
     
-    public Boolean getIgnoreInvalidEndpoint() {
+    public Boolean getIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }
     

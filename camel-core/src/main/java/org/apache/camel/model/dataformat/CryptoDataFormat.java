@@ -103,39 +103,75 @@ public class CryptoDataFormat extends DataFormatDefinition {
         }
     }
 
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
+    }
+
+    public String getCryptoProvider() {
+        return cryptoProvider;
     }
 
     public void setCryptoProvider(String cryptoProvider) {
         this.cryptoProvider = cryptoProvider;
     }
 
-    public void setKeyReference(String keyReference) {
-        this.keyRef = keyReference;
+    public String getKeyRef() {
+        return keyRef;
+    }
+
+    public void setKeyRef(String keyRef) {
+        this.keyRef = keyRef;
+    }
+
+    public String getInitVectorRef() {
+        return initVectorRef;
     }
 
     public void setInitVectorRef(String initVectorRef) {
         this.initVectorRef = initVectorRef;
     }
 
+    public String getAlgorithmParameterRef() {
+        return algorithmParameterRef;
+    }
+
     public void setAlgorithmParameterRef(String algorithmParameterRef) {
         this.algorithmParameterRef = algorithmParameterRef;
+    }
+
+    public Integer getBuffersize() {
+        return buffersize;
     }
 
     public void setBuffersize(Integer buffersize) {
         this.buffersize = buffersize;
     }
 
+    public String getMacAlgorithm() {
+        return macAlgorithm;
+    }
+
     public void setMacAlgorithm(String macAlgorithm) {
         this.macAlgorithm = macAlgorithm;
+    }
+
+    public Boolean getShouldAppendHMAC() {
+        return shouldAppendHMAC;
     }
 
     public void setShouldAppendHMAC(Boolean shouldAppendHMAC) {
         this.shouldAppendHMAC = shouldAppendHMAC;
     }
 
-    public void setShouldInlineInitVector(Boolean inline) {
+    public Boolean getInline() {
+        return inline;
+    }
+
+    public void setInline(Boolean inline) {
         this.inline = inline;
     }
 }

@@ -74,21 +74,29 @@ public class JaxbDataFormat extends DataFormatDefinition {
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
-    
+
     public Boolean getIgnoreJAXBElement() {
         return ignoreJAXBElement;
     }
-    
+
     public void setIgnoreJAXBElement(Boolean ignoreJAXBElement) {
         this.ignoreJAXBElement = ignoreJAXBElement;
     }
-    
+
     public Boolean getFilterNonXmlChars() {
         return filterNonXmlChars;
     }
-    
+
     public void setFilterNonXmlChars(Boolean filterNonXmlChars) {
         this.filterNonXmlChars = filterNonXmlChars;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     public String getPartClass() {
@@ -99,16 +107,12 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.partClass = partClass;
     }
 
+    public String getPartNamespace() {
+        return partNamespace;
+    }
+
     public void setPartNamespace(String partNamespace) {
         this.partNamespace = partNamespace;
-    }
-
-    public String getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
     }
 
     @Override

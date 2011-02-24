@@ -91,12 +91,44 @@ public class MethodCallExpression extends ExpressionDefinition {
         return "bean";
     }
 
+    public String getBean() {
+        return bean;
+    }
+
+    public void setBean(String bean) {
+        this.bean = bean;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
     public String getMethod() {
         return method;
     }
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public Class<?> getBeanType() {
+        return beanType;
+    }
+
+    public void setBeanType(Class<?> beanType) {
+        this.beanType = beanType;
+    }
+
+    public Object getInstance() {
+        return instance;
+    }
+
+    public void setInstance(Object instance) {
+        this.instance = instance;
     }
 
     @Override
