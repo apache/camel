@@ -314,8 +314,13 @@ public class MailBinding {
                     String fileName = part.getFileName();
                     if (fileName != null) {
                         LOG.debug("Mail contains file attachment: " + fileName);
-                        // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
-                        CollectionHelper.appendValue(map, fileName, part.getDataHandler());
+                        if (!map.containsKey(fileName)) {
+                            // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
+                            map.put(fileName, part.getDataHandler());
+                        }
+                        else {
+                            LOG.warn("Cannot extract duplicate attachment: " + fileName);
+                        }
                     }
                 }
             }
