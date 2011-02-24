@@ -317,8 +317,7 @@ public class MailBinding {
                         if (!map.containsKey(fileName)) {
                             // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
                             map.put(fileName, part.getDataHandler());
-                        }
-                        else {
+                        } else {
                             LOG.warn("Cannot extract duplicate attachment: " + fileName);
                         }
                     }
