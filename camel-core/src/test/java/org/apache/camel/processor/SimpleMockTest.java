@@ -49,6 +49,7 @@ public class SimpleMockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                fromF()
                 from("direct:start").to("log:foo").to("log:bar").to("mock:result");
             }
         };

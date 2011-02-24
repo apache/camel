@@ -35,8 +35,6 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptFromDefinition extends InterceptDefinition {
 
-    // TODO: Support lookup endpoint by ref (requires a bit more work)
-
     @XmlAttribute(required = false)
     protected String uri;
 

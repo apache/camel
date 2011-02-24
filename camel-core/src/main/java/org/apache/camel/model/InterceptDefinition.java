@@ -39,8 +39,6 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
 
-    // TODO: support stop later (its a bit hard as it needs to break entire processing of route)
-
     @XmlTransient
     protected Processor output;
 
@@ -73,8 +71,7 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     @Override
     public Processor createProcessor(final RouteContext routeContext) throws Exception {
         // create the output processor
-        // TODO: This should be mandatory (but ExceptionHandlerStreamCacheTest fails)
-        output = this.createChildProcessor(routeContext, false);
+        output = this.createChildProcessor(routeContext, true);
 
         // add the output as a intercept strategy to the route context so its invoked on each processing step
         routeContext.getInterceptStrategies().add(new InterceptStrategy() {
