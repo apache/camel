@@ -26,7 +26,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.http4.HttpConstants;
 import org.apache.camel.component.http4.HttpConverter;
 import org.apache.camel.component.http4.HttpEndpoint;
@@ -158,6 +158,13 @@ public final class HttpHelper {
             uri = endpoint.getHttpUri().toASCIIString();
         }
 
+        // resolve placeholders in uri
+        try {
+            uri = exchange.getContext().resolvePropertyPlaceholders(uri);
+        } catch (Exception e) {
+            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uri, exchange, e);
+        }
+
         // append HTTP_PATH to HTTP_URI if it is provided in the header
         String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
         if (path != null) {
@@ -181,11 +188,10 @@ public final class HttpHelper {
                             path = path.substring(1);
                         }
                     } else {
-                        throw new RuntimeCamelException("Cannot analyze the Exchange.HTTP_PATH header, due to: cannot find the right HTTP_BASE_URI");
+                        throw new RuntimeExchangeException("Cannot analyze the Exchange.HTTP_PATH header, due to: cannot find the right HTTP_BASE_URI", exchange);
                     }
                 } catch (Throwable t) {
-                    throw new RuntimeCamelException("Cannot analyze the Exchange.HTTP_PATH header, due to: "
-                            + t.getMessage(), t);
+                    throw new RuntimeExchangeException("Cannot analyze the Exchange.HTTP_PATH header, due to: " + t.getMessage(), exchange, t);
                 }
 
             }

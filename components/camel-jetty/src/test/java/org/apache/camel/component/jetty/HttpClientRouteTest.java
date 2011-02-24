@@ -66,13 +66,13 @@ public class HttpClientRouteTest extends BaseJettyTest {
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
         
         // should get the Content-Length
-        assertNotNull("Should get the content-lenghth ", headers.get("Content-Length"));
+        assertNotNull("Should get the content-length", headers.get("Content-Length"));
     }
     
     @Test
     public void testHttpRouteWithQuery() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
-        mockEndpoint.expectedBodiesReceived("%40 query");        
+        mockEndpoint.expectedBodiesReceived("@ query");
         
         template.sendBody("direct:start3", null);
         mockEndpoint.assertIsSatisfied();        

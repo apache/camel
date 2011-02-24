@@ -92,8 +92,22 @@ public final class URISupport {
      * Creates a URI with the given query
      */
     public static URI createURIWithQuery(URI uri, String query) throws URISyntaxException {
-        return new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), uri.getPath(),
-                       query, uri.getFragment());
+        ObjectHelper.notNull(uri, "uri");
+
+        // assemble string as new uri and replace parameters with the query instead
+        String s = uri.toString();
+        String before = ObjectHelper.before(s, "?");
+        if (before != null) {
+            s = before;
+        }
+        if (query != null) {
+            s = s + "?" + query;
+        }
+        if (uri.getFragment() != null) {
+            s = s + "#" + uri.getFragment();
+        }
+
+        return new URI(s);
     }
 
     public static String stripPrefix(String value, String prefix) {

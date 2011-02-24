@@ -22,7 +22,6 @@ import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.http.localserver.LocalTestServer;
 import org.junit.Test;
 
-
 /**
  *
  * @version 
@@ -54,7 +53,6 @@ public class HttpQueryTest extends BaseHttpTest {
     public void httpQueryWithEscapedCharacter() throws Exception {
         Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/test/?my=%40%20camel", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                
             }
         });
 
@@ -64,6 +62,6 @@ public class HttpQueryTest extends BaseHttpTest {
     @Override
     protected void registerHandler(LocalTestServer server) {
         server.register("/", new BasicValidationHandler("GET", "hl=en&q=camel", null, getExpectedContent()));
-        server.register("/test/", new BasicValidationHandler("GET", "my=%40+camel", null, getExpectedContent()));
+        server.register("/test/", new BasicValidationHandler("GET", "my=@+camel", null, getExpectedContent()));
     }
 }

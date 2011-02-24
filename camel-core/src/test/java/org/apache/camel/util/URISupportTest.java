@@ -18,6 +18,7 @@ package org.apache.camel.util;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
@@ -123,6 +124,25 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals(2, params.size());
         assertEquals("0 0 * * * ?", params.get("cron"));
         assertEquals("123", params.get("bar"));
+    }
+
+    public void testCreateRemainingURIEncoding() throws Exception {
+        // the uri is already encoded, but we create a new one with new query parameters
+        String uri = "http://localhost:23271/myapp/mytest?columns=name%2Ctotalsens%2Cupsens&username=apiuser";
+
+        // these are the parameters which is tricky to encode
+        Map map = new LinkedHashMap();
+        map.put("foo", "abc def");
+        map.put("bar", "123,456");
+        map.put("name", "S\u00F8ren"); // danish letter
+
+        System.out.println(map.get("name"));
+
+        // create new uri with the parameters
+        URI out = URISupport.createRemainingURI(new URI(uri), map);
+        assertNotNull(out);
+        assertEquals("http://localhost:23271/myapp/mytest?foo=abc+def&bar=123%2C456&name=S%C3%B8ren", out.toString());
+        assertEquals("http://localhost:23271/myapp/mytest?foo=abc+def&bar=123%2C456&name=S%C3%B8ren", out.toASCIIString());
     }
 
 }

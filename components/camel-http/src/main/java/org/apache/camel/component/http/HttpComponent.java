@@ -232,7 +232,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         String part = httpUri.getSchemeSpecificPart();
         if (part != null) {
             part = part.toLowerCase();
-            if (part.startsWith("//http//") || part.startsWith("//https//")) {
+            if (part.startsWith("//http//") || part.startsWith("//https//") || part.startsWith("//http://") || part.startsWith("//https://")) {
                 throw new ResolveEndpointFailedException(uri,
                         "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
             }
