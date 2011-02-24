@@ -89,10 +89,12 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Prepares the route definition to be ready to be added to {@link CamelContext}
+     *
+     * @param context the camel context
      */
-    public void prepare() {
+    public void prepare(CamelContext context) {
         if (prepared.compareAndSet(false, true)) {
-            RouteDefinitionHelper.prepareRoute(this);
+            RouteDefinitionHelper.prepareRoute(context, this);
         }
     }
 

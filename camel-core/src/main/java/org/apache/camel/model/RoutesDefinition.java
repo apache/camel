@@ -199,7 +199,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      */
     public RouteDefinition route(RouteDefinition route) {
         // must prepare the route before we can add it to the routes list
-        RouteDefinitionHelper.prepareRoute(route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
+        RouteDefinitionHelper.prepareRoute(getCamelContext(), route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
                 getInterceptSendTos(), getOnCompletions());
         getRoutes().add(route);
         // mark this route as prepared

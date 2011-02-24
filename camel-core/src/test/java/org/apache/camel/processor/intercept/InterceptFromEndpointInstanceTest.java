@@ -23,11 +23,12 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Testing intercept from can intercept when endpoint is an instance
  */
-public class InterceptFromEndpointNotUriTest extends ContextTestSupport {
+public class InterceptFromEndpointInstanceTest extends ContextTestSupport {
 
-    public void testInterceptLog() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+    public void testIntercept() throws Exception {
+        getMockEndpoint("mock:intercepted").expectedMessageCount(1);
         getMockEndpoint("mock:first").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
 
@@ -37,7 +38,7 @@ public class InterceptFromEndpointNotUriTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                interceptFrom("direct*").to("log:received");
+                interceptFrom("direct*").to("mock:intercepted");
 
                 Endpoint direct = context.getEndpoint("direct:start");
                 Endpoint seda = context.getEndpoint("seda:bar");

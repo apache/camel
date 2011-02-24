@@ -307,7 +307,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
     private void prepareRoutes() {
         for (RouteDefinition route : getRoutes()) {
             // leverage logic from route definition helper to prepare the route
-            RouteDefinitionHelper.prepareRoute(route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
+            RouteDefinitionHelper.prepareRoute(getContext(), route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
                     getInterceptSendToEndpoints(), getOnCompletions());
 
             // mark the route as prepared now

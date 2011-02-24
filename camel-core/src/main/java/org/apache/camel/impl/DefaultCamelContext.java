@@ -700,7 +700,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         isStartingRoutes.set(true);
         try {
             // must ensure route is prepared, before we can start it
-            route.prepare();
+            route.prepare(this);
 
             List<Route> routes = new ArrayList<Route>();
             List<RouteContext> routeContexts = route.addRoutes(this, routes);
