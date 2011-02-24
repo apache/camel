@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -31,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "output")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
+public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
     @XmlElementRef
     protected List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
