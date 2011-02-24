@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model.language;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -24,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version 
  */
 @XmlRootElement(name = "spel")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class SpELExpression extends ExpressionDefinition {
 
     public SpELExpression() {

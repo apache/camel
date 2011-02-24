@@ -33,6 +33,9 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StopDefinition extends NoOutputDefinition<StopDefinition> {
 
+    public StopDefinition() {
+    }
+
     @Override
     public String getShortName() {
         return "stop";

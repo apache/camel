@@ -35,9 +35,9 @@ import org.apache.camel.language.tokenizer.TokenizeLanguage;
 public class TokenizerExpression extends ExpressionDefinition {
     @XmlAttribute(required = true)
     private String token;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String headerName;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean regex;
 
     public TokenizerExpression() {

@@ -32,7 +32,7 @@ import org.apache.camel.ExchangePattern;
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDefinition extends SendDefinition<ToDefinition> {
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private ExchangePattern pattern;
 
     public ToDefinition() {

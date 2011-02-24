@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model.loadbalancer;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
@@ -26,7 +28,11 @@ import org.apache.camel.spi.RouteContext;
  * Represents an XML &lt;roundRobin/&gt; element
  */
 @XmlRootElement(name = "roundRobin")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class RoundRobinLoadBalancerDefinition extends LoadBalancerDefinition {
+
+    public RoundRobinLoadBalancerDefinition() {
+    }
 
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {

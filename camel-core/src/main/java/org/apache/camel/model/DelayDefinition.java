@@ -46,7 +46,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
 
     @XmlTransient
     private ExecutorService executorService;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
     private Boolean asyncDelayed;

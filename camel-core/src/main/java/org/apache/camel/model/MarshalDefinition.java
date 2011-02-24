@@ -34,10 +34,13 @@ import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
+import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
+import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
+import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
@@ -55,25 +58,28 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MarshalDefinition extends OutputDefinition<MarshalDefinition> {
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String ref;
     // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
     @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
     @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
-    @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
     @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
+    @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
     @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
     @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
     @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
     @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
     @XmlElement(required = false, name = "jibx", type = JibxDataFormat.class),
     @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
+    @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),
     @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
     @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
     @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
+    @XmlElement(required = false, name = "soapjaxb", type = SoapJaxbDataFormat.class),
     @XmlElement(required = false, name = "string", type = StringDataFormat.class),
     @XmlElement(required = false, name = "syslog", type = SyslogDataFormat.class),
+    @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
     @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
     @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
     @XmlElement(required = false, name = "zip", type = ZipDataFormat.class)}

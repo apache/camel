@@ -43,10 +43,8 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
 
     @XmlAttribute
     private Long samplePeriod;
-
     @XmlAttribute
     private Long messageFrequency;
-
     @XmlAttribute
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     private TimeUnit units;

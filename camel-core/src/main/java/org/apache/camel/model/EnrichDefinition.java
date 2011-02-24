@@ -37,12 +37,11 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> {
-
     @XmlAttribute(name = "uri")
     private String resourceUri;
     @XmlAttribute(name = "ref")
     private String resourceRef;
-    @XmlAttribute(name = "strategyRef", required = false)
+    @XmlAttribute(name = "strategyRef")
     private String aggregationStrategyRef;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;

@@ -36,7 +36,6 @@ import org.apache.camel.spi.ClassResolver;
 @XmlRootElement(name = "xquery")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XQueryExpression extends NamespaceAwareExpression {
-
     @XmlAttribute(required = false)
     private String type;
     @XmlTransient

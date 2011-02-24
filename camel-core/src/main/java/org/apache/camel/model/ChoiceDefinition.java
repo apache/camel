@@ -42,11 +42,13 @@ import org.apache.camel.util.CollectionStringBuffer;
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
-
     @XmlElementRef
     private List<WhenDefinition> whenClauses = new ArrayList<WhenDefinition>();
-    @XmlElement(required = false)
+    @XmlElement
     private OtherwiseDefinition otherwise;
+
+    public ChoiceDefinition() {
+    }
 
     @Override
     public String toString() {

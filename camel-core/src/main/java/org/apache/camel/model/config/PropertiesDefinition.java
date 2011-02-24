@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "properties")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertiesDefinition {
-    @XmlElement(name = "property", required = false)
+    @XmlElement(name = "property")
     private List<PropertyDefinition> properties;
     
     public PropertiesDefinition() {

@@ -34,6 +34,9 @@ import org.apache.camel.util.CollectionStringBuffer;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> implements Block {
 
+    public OtherwiseDefinition() {
+    }
+
     @Override
     public String toString() {
         return "Otherwise[" + getOutputs() + "]";

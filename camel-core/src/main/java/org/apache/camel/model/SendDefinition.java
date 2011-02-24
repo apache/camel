@@ -36,9 +36,9 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type> {
-    @XmlAttribute(required = false)
+    @XmlAttribute
     protected String uri;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     protected String ref;
     @XmlTransient
     protected Endpoint endpoint;

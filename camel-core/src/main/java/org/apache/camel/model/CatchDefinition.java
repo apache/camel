@@ -47,9 +47,9 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
-    @XmlElement(name = "onWhen", required = false)
+    @XmlElement(name = "onWhen")
     private WhenDefinition onWhen;
-    @XmlElement(name = "handled", required = false)
+    @XmlElement(name = "handled")
     private ExpressionSubElementDefinition handled;
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();

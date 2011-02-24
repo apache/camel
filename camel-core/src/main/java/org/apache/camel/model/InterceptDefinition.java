@@ -38,10 +38,8 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
-
     @XmlTransient
     protected Processor output;
-
     @XmlTransient
     protected final List<Processor> intercepted = new ArrayList<Processor>();
 

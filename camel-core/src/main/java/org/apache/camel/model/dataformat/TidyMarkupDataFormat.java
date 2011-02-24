@@ -26,16 +26,13 @@ import org.w3c.dom.Node;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 
-
 /**
  * Represents a wellformed HTML document (XML well Formed) {@link DataFormat}
- *
  */
 @XmlRootElement(name = "tidyMarkup")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TidyMarkupDataFormat extends DataFormatDefinition {
-
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Class<?> dataObjectType;
 
     public TidyMarkupDataFormat() {

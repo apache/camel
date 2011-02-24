@@ -55,6 +55,9 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     @XmlTransient
     private List<ProcessorDefinition> outputsWithoutCatches;
 
+    public TryDefinition() {
+    }
+
     @Override
     public String toString() {
         return "DoTry[" + getOutputs() + "]";

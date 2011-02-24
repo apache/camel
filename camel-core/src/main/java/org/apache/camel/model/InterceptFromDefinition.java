@@ -34,8 +34,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "interceptFrom")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptFromDefinition extends InterceptDefinition {
-
-    @XmlAttribute(required = false)
+    @XmlAttribute
     protected String uri;
 
     public InterceptFromDefinition() {

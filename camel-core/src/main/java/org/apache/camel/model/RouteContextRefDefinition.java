@@ -34,7 +34,6 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "routeContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteContextRefDefinition {
-
     @XmlAttribute(required = true)
     private String ref;
 

@@ -29,6 +29,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "gzip")
 public class GzipDataFormat extends DataFormatDefinition {
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         return new org.apache.camel.impl.GzipDataFormat();

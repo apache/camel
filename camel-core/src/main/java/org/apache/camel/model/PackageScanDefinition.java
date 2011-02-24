@@ -30,15 +30,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "packageScan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PackageScanDefinition {
-
     @XmlElement(name = "package", required = true)
     private List<String> packages = new ArrayList<String>();
-
-    @XmlElement(name = "excludes", required = false)
+    @XmlElement
     private List<String> excludes = new ArrayList<String>();
-
-    @XmlElement(name = "includes", required = false)
+    @XmlElement
     private List<String> includes = new ArrayList<String>();
+
+    public PackageScanDefinition() {
+    }
 
     public List<String> getExcludes() {
         return excludes;

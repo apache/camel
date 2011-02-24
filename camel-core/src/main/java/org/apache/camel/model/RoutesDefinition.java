@@ -54,6 +54,9 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     @XmlTransient
     private ErrorHandlerBuilder errorHandlerBuilder;
 
+    public RoutesDefinition() {
+    }
+
     @Override
     public String toString() {
         return "Routes: " + routes;

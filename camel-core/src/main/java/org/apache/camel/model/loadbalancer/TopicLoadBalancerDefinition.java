@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model.loadbalancer;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
@@ -27,7 +29,11 @@ import org.apache.camel.spi.RouteContext;
  * 
  */
 @XmlRootElement(name = "topic")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class TopicLoadBalancerDefinition extends LoadBalancerDefinition {
+
+    public TopicLoadBalancerDefinition() {
+    }
 
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {

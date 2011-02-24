@@ -32,7 +32,6 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "jibx")
 @XmlAccessorType(XmlAccessType.NONE)
 public class JibxDataFormat extends DataFormatDefinition {
-
     @XmlAttribute
     private Class unmarshallClass;
 

@@ -34,7 +34,6 @@ import org.apache.camel.spi.RouteContext;
 public class ValidateDefinition extends NoOutputExpressionNode {
 
     public ValidateDefinition() {
-        super();
     }
     
     @Override

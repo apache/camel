@@ -30,17 +30,16 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlRootElement(name = "description")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DescriptionDefinition {
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String lang;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Double layoutX;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Double layoutY;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Double layoutWidth;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Double layoutHeight;
-
     @XmlValue
     private String text;
 

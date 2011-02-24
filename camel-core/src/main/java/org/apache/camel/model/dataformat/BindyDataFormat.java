@@ -33,15 +33,15 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "bindy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BindyDataFormat extends DataFormatDefinition {
-
     @XmlAttribute(required = true)
     private BindyType type;
-
     @XmlAttribute(required = true)
     private String[] packages;
-
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String locale;
+
+    public BindyDataFormat() {
+    }
 
     public void setPackages(String[] packages) {
         this.packages = packages;
@@ -49,6 +49,10 @@ public class BindyDataFormat extends DataFormatDefinition {
 
     public void setType(BindyType type) {
         this.type = type;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 
     protected DataFormat createDataFormat(RouteContext routeContext) {
@@ -59,7 +63,6 @@ public class BindyDataFormat extends DataFormatDefinition {
         }
         return super.createDataFormat(routeContext);
     }
-
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {

@@ -20,22 +20,21 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.namespace.QName;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ObjectHelper;
 
 @XmlRootElement(name = "soapjaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SoapJaxbDataFormat extends DataFormatDefinition {
-    @XmlAttribute(required = false)
+    @XmlAttribute(required = true)
     private String contextPath;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String encoding;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String elementNameStrategyRef;
-    
+    @XmlTransient
     private Object elementNameStrategy;
     
     public SoapJaxbDataFormat() {
@@ -94,15 +93,12 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         if (elementNameStrategy != null) {
             setProperty(dataFormat, "elementNameStrategy", elementNameStrategy);
         }
-        
         if (elementNameStrategyRef != null) {
             setProperty(dataFormat, "elementNameStrategyRef", elementNameStrategyRef);
         }
-       
         if (encoding != null) {
             setProperty(dataFormat, "encoding", encoding);
         }
-        
         setProperty(dataFormat, "contextPath", contextPath);
     }
 
@@ -110,7 +106,6 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
     public void setElementNameStrategy(Object elementNameStrategy) {
         this.elementNameStrategy = elementNameStrategy;
     }
-
 
     public Object getElementNameStrategy() {
         return elementNameStrategy;

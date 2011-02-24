@@ -37,12 +37,11 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinition> {
-
     @XmlAttribute(name = "uri")
     private String resourceUri;
     @XmlAttribute(name = "ref")
     private String resourceRef;
-    @XmlAttribute(name = "timeout")
+    @XmlAttribute
     private Long timeout;
     @XmlAttribute(name = "strategyRef")
     private String aggregationStrategyRef;

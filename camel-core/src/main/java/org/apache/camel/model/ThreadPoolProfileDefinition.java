@@ -36,20 +36,19 @@ import org.apache.camel.spi.ThreadPoolProfile;
 @XmlRootElement(name = "threadPoolProfile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition implements ThreadPoolProfile {
-
-    @XmlAttribute()
+    @XmlAttribute
     private Boolean defaultProfile;
-    @XmlAttribute()
+    @XmlAttribute
     private Integer poolSize;
-    @XmlAttribute()
+    @XmlAttribute
     private Integer maxPoolSize;
-    @XmlAttribute()
+    @XmlAttribute
     private Long keepAliveTime;
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     private TimeUnit timeUnit;
-    @XmlAttribute()
+    @XmlAttribute
     private Integer maxQueueSize;
-    @XmlAttribute()
+    @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy;
 
     public ThreadPoolProfileDefinition() {

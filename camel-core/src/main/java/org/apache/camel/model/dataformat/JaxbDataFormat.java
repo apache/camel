@@ -34,21 +34,20 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "jaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxbDataFormat extends DataFormatDefinition {
-    @XmlAttribute(required = false)
+    @XmlAttribute(required = true)
     private String contextPath;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean prettyPrint;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean ignoreJAXBElement;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean filterNonXmlChars;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String encoding;
-
     // Partial encoding
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String partClass;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String partNamespace;
 
     public JaxbDataFormat() {
@@ -104,6 +103,14 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.partNamespace = partNamespace;
     }
 
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
@@ -135,4 +142,5 @@ public class JaxbDataFormat extends DataFormatDefinition {
         }
         setProperty(dataFormat, "contextPath", contextPath);
     }
+
 }

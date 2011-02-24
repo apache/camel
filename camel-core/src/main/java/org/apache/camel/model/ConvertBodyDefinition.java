@@ -35,9 +35,9 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "convertBodyTo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinition> {
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String type;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String charset;
     @XmlTransient
     private Class<?> typeClass;

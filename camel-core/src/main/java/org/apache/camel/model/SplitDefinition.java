@@ -45,17 +45,17 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
     private ExecutorService executorService;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean parallelProcessing;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String strategyRef;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean streaming;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean stopOnException;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Long timeout;
 
     public SplitDefinition() {

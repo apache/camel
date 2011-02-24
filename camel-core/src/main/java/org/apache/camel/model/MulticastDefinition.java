@@ -39,23 +39,25 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MulticastDefinition extends OutputDefinition<MulticastDefinition> implements ExecutorServiceAwareDefinition<MulticastDefinition> {
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean parallelProcessing;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String strategyRef;
     @XmlTransient
     private ExecutorService executorService;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean streaming;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean stopOnException;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Long timeout;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
 
+    public MulticastDefinition() {
+    }
 
     @Override
     public String toString() {

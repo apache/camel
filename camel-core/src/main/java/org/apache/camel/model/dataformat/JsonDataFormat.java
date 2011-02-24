@@ -35,16 +35,12 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "json")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonDataFormat extends DataFormatDefinition {
-    
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean prettyPrint;
-
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private JsonLibrary library = JsonLibrary.XStream;
-
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String unmarshalTypeName;
-
     @XmlTransient
     private Class<?> unmarshalType;
 
@@ -61,6 +57,14 @@ public class JsonDataFormat extends DataFormatDefinition {
 
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
     }
 
     public Class<?> getUnmarshalType() {
@@ -86,6 +90,7 @@ public class JsonDataFormat extends DataFormatDefinition {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         }
+        Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
 
         return super.createDataFormat(routeContext);
     }
@@ -94,6 +99,9 @@ public class JsonDataFormat extends DataFormatDefinition {
     protected void configureDataFormat(DataFormat dataFormat) {
         if (unmarshalType != null) {
             setProperty(dataFormat, "unmarshalType", unmarshalType);
+        }
+        if (prettyPrint != null) {
+            setProperty(dataFormat, "prettyPrint", unmarshalType);
         }
     }
 

@@ -40,26 +40,25 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RecipientListDefinition<Type extends ProcessorDefinition> extends NoOutputExpressionNode implements ExecutorServiceAwareDefinition<RecipientListDefinition> {
-
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
     private ExecutorService executorService;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String delimiter;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean parallelProcessing;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String strategyRef;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean stopOnException;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean ignoreInvalidEndpoints;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean streaming;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Long timeout;
 
     public RecipientListDefinition() {

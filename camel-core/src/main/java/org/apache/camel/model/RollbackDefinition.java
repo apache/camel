@@ -31,7 +31,6 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "rollback")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
-
     @XmlAttribute
     private Boolean markRollbackOnly;
     @XmlAttribute

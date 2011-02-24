@@ -38,11 +38,11 @@ import org.apache.camel.spi.RouteContext;
 @Deprecated
 public class AOPDefinition extends OutputDefinition<AOPDefinition> {
 
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String beforeUri;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String afterUri;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String afterFinallyUri;
 
     public AOPDefinition() {

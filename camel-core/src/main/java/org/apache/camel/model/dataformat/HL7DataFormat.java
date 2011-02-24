@@ -32,8 +32,7 @@ import org.apache.camel.spi.DataFormat;
 @XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {
-
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean validate;
 
     public HL7DataFormat() {
@@ -57,7 +56,5 @@ public class HL7DataFormat extends DataFormatDefinition {
     protected void configureDataFormat(DataFormat dataFormat) {
         setProperty(dataFormat, "validate", isValidate());
     }
-
-
 
 }

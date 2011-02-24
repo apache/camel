@@ -37,8 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogDefinition extends NoOutputDefinition {
-
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String message;
     @XmlAttribute
     private LoggingLevel loggingLevel;

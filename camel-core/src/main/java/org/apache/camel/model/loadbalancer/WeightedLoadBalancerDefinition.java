@@ -38,14 +38,16 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "weighted")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
-    
     @XmlAttribute
     private Boolean roundRobin;
     @XmlAttribute(required = true)
     private String distributionRatio;
     @XmlAttribute
     private String distributionRatioDelimiter;
-    
+
+    public WeightedLoadBalancerDefinition() {
+    }
+
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         WeightedLoadBalancer loadBalancer;

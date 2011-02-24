@@ -29,12 +29,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "contextScan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ContextScanDefinition {
-
-    @XmlElement(name = "excludes", required = false)
+    @XmlElement(name = "excludes")
     private List<String> excludes = new ArrayList<String>();
-
-    @XmlElement(name = "includes", required = false)
+    @XmlElement(name = "includes")
     private List<String> includes = new ArrayList<String>();
+
+    public ContextScanDefinition() {
+    }
 
     public List<String> getExcludes() {
         return excludes;

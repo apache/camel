@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDefinition> {
     @XmlAttribute(required = true)
     private String pattern;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String excludePattern;
     // in XML we cannot use String[] for attributes, so we provide a single attribute instead
     @XmlTransient

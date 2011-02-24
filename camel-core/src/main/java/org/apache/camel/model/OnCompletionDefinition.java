@@ -44,21 +44,20 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 @XmlRootElement(name = "onCompletion")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
-
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean onCompleteOnly;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean onFailureOnly;
-    @XmlElement(name = "onWhen", required = false)
+    @XmlElement(name = "onWhen")
     private WhenDefinition onWhen;
+    @XmlAttribute
+    private String executorServiceRef;
+    @XmlAttribute(name = "useOriginalMessage")
+    private Boolean useOriginalMessagePolicy;
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
     private ExecutorService executorService;
-    @XmlAttribute(required = false)
-    private String executorServiceRef;
-    @XmlAttribute(name = "useOriginalMessage", required = false)
-    private Boolean useOriginalMessagePolicy;
 
     public OnCompletionDefinition() {
     }

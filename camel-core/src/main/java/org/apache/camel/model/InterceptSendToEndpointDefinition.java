@@ -49,7 +49,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
 
     @XmlAttribute(required = true)
     private String uri;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean skipSendToOriginalEndpoint;
 
     public InterceptSendToEndpointDefinition() {

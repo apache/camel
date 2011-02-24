@@ -48,29 +48,22 @@ import org.apache.camel.util.ObjectHelper;
 public class XStreamDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String encoding;
-
     @XmlAttribute
     private String driver = "xml";
-
     @XmlAttribute
     private String driverRef;
-
     @XmlJavaTypeAdapter(ConvertersAdapter.class)
     @XmlElement(name = "converters")
     private List<String> converters;
-
     @XmlJavaTypeAdapter(AliasAdapter.class)
     @XmlElement(name = "aliases")
     private Map<String, String> aliases;
-
     @XmlJavaTypeAdapter(OmitFieldsAdapter.class)
     @XmlElement(name = "omitFields")
     private Map<String, String[]> omitFields;
-
     @XmlJavaTypeAdapter(ImplicitCollectionsAdapter.class)
     @XmlElement(name = "implicitCollections")
     private Map<String, String[]> implicitCollections;
-
 
     public XStreamDataFormat() {
         super("xstream");
@@ -221,7 +214,6 @@ public class XStreamDataFormat extends DataFormatDefinition {
         public void setClsName(String clsName) {
             this.clsName = clsName;
         }
-
     }
 
     @XmlTransient
@@ -330,7 +322,6 @@ public class XStreamDataFormat extends DataFormatDefinition {
             }
             return answer;
         }
-
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
@@ -466,4 +457,5 @@ public class XStreamDataFormat extends DataFormatDefinition {
             return "OmitField[" + clsName + ", fields=" + Arrays.asList(this.fields) + "]";
         }
     }
+
 }

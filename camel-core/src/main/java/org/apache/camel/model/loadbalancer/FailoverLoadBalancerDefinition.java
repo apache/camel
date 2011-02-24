@@ -35,13 +35,15 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "failover")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
-
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlAttribute
     private Boolean roundRobin;
     @XmlAttribute
     private Integer maximumFailoverAttempts;
+
+    public FailoverLoadBalancerDefinition() {
+    }
 
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {

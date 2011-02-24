@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "language")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LanguageExpression extends ExpressionDefinition {
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String language;
 
     public LanguageExpression() {

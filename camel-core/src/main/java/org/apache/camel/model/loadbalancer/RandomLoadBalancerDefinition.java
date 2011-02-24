@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model.loadbalancer;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
@@ -26,7 +28,11 @@ import org.apache.camel.spi.RouteContext;
  * Represents an XML &lt;random/&gt; element
  */
 @XmlRootElement(name = "random")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class RandomLoadBalancerDefinition extends LoadBalancerDefinition {
+
+    public RandomLoadBalancerDefinition() {
+    }
 
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {

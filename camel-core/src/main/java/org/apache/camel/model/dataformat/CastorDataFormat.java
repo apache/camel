@@ -32,16 +32,15 @@ import org.apache.camel.spi.DataFormat;
 @XmlRootElement(name = "castor")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CastorDataFormat extends DataFormatDefinition {
-
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String mappingFile;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean validation;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String encoding;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String[] packages;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String[] classes;
 
     public CastorDataFormat() {

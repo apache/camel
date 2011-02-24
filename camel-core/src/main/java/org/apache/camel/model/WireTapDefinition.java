@@ -40,7 +40,6 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition extends SendDefinition<WireTapDefinition> implements ExecutorServiceAwareDefinition<ProcessorDefinition> {
-
     @XmlTransient
     private Processor newExchangeProcessor;
     @XmlAttribute(name = "processorRef")
