@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.util.EndpointHelper;
 
 /**
@@ -144,12 +143,26 @@ public final class RouteDefinitionHelper {
             if (output instanceof OnExceptionDefinition) {
                 // on exceptions must be added at top, so the route flow is correct as
                 // on exceptions should be the first outputs
-                upper.add(0, output);
+
+                // find the index to add the on exception, it should be in the top
+                // but it should add itself after any existing onException
+                int index = 0;
+                for (int i = 0; i < upper.size(); i++) {
+                    ProcessorDefinition up = upper.get(i);
+                    if (!(up instanceof OnExceptionDefinition)) {
+                        index = i;
+                        break;
+                    } else {
+                        index++;
+                    }
+                }
+                upper.add(index, output);
             }
         }
     }
 
-    private static void initInterceptors(RouteDefinition route, List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper,
+    private static void initInterceptors(RouteDefinition route,
+                                         List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper,
                                          List<InterceptDefinition> intercepts,
                                          List<InterceptFromDefinition> interceptFromDefinitions,
                                          List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
@@ -178,9 +191,9 @@ public final class RouteDefinitionHelper {
     }
 
     private static void doInitInterceptors(RouteDefinition route, List<ProcessorDefinition> upper,
-                                         List<InterceptDefinition> intercepts,
-                                         List<InterceptFromDefinition> interceptFromDefinitions,
-                                         List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
+                                           List<InterceptDefinition> intercepts,
+                                           List<InterceptFromDefinition> interceptFromDefinitions,
+                                           List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
 
         // configure intercept
         if (intercepts != null && !intercepts.isEmpty()) {

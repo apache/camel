@@ -79,7 +79,7 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
 
                 // here we define onException to catch MyUserException as a kind
                 // of fallback when the above did not match.
-                // Noitce: The order how we have defined these onException is
+                // Notice: The order how we have defined these onException is
                 // important as Camel will resolve in the same order as they
                 // have been defined
                 onException(MyUserException.class)
