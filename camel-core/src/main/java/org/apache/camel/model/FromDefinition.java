@@ -77,8 +77,15 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
 
     // Properties
     // -----------------------------------------------------------------------
+
     public String getUri() {
-        return uri;
+        if (uri != null) {
+            return uri;
+        } else if (endpoint != null) {
+            return endpoint.getEndpointUri();
+        } else {
+            return null;
+        }
     }
 
     /**
