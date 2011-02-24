@@ -31,10 +31,12 @@
     <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
     <!-- use the CXF servlet -->
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
-
+    
+    <bean id="myRoutes" class="org.apache.camel.example.cxf.CamelRoute"/>
+    
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <!-- let Camel automatic find the route in this java package -->
-        <package>org.apache.camel.example.cxf</package>
+        <routeBuilder ref="myRoutes"/>
     </camelContext>
 
 </beans>

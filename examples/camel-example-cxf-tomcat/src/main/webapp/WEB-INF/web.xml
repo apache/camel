@@ -39,6 +39,10 @@
 		<servlet-name>CXFServlet</servlet-name>
 		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
+		<!-- If you want to leverage the Servlet3's async feature in Tomcat, 
+		 please enable this feature 
+		<async-supported>true</async-supported>
+		-->
 	</servlet>
 
 	<!-- all our webservices are mapped under this URI pattern -->
