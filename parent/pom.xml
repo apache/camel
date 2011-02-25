@@ -87,7 +87,7 @@
     <icu4j-version>4.0.1</icu4j-version>
     <jackson-version>1.7.1</jackson-version>
     <jain-sip-ri-bundle-version>1.2.154_1</jain-sip-ri-bundle-version>
-    <jasypt-version>1.6</jasypt-version>
+    <jasypt-version>1.7</jasypt-version>
     <javassist-bundle-version>3.9.0.GA_1</javassist-bundle-version>
     <javax-mail-version>1.4.3</javax-mail-version>
     <jaxen-version>1.1.1</jaxen-version>
@@ -1122,18 +1122,6 @@
         <artifactId>jetty-webapp</artifactId>
         <version>${jetty-version}</version>
       </dependency>
-      
-      <!-- optional crypto support -->
-      <dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
-        <version>${commons-codec}</version>      
-      </dependency> 
-      <dependency>
-        <groupId>bouncycastle</groupId>
-        <artifactId>bcprov-jdk15</artifactId>
-        <version>${bouncycastle-version}</version>
-      </dependency> 
       
       <!-- optional jakarta http core support -->
       <dependency>

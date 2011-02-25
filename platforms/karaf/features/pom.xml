@@ -77,7 +77,7 @@
       <isorelax-bundle-version>20050913_1</isorelax-bundle-version>
       <jackrabbit-version>1.5.3</jackrabbit-version>
       <jaxb-bundle-version>2.2.1.1_1</jaxb-bundle-version>
-      <jasypt-bundle-version>1.6_1</jasypt-bundle-version>
+      <jasypt-bundle-version>1.7_2</jasypt-bundle-version>
       <jexcelapi-bundle-version>2.4.2_2</jexcelapi-bundle-version>
       <javax.el-bundle-version>2.1.0</javax.el-bundle-version>
       <jcr-bundle-version>1.0_2</jcr-bundle-version>

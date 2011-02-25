@@ -34,6 +34,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.jasypt.*</camel.osgi.export.pkg>
+        <camel.osgi.import.before.defaults>org.jasypt.encryption.*;version="[1.7,2)"</camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>
@@ -50,12 +51,6 @@
             <version>${jasypt-version}</version>
         </dependency>
         
-        <dependency>                               
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>${commons-lang-version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
@@ -121,7 +116,7 @@
                         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                             <classpathPrefix>optional/</classpathPrefix>
+                            <classpathPrefix>optional/</classpathPrefix>
                             <mainClass>org.apache.camel.component.jasypt.Main</mainClass>
                         </manifest>
                     </archive>

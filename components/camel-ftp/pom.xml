@@ -117,6 +117,7 @@
       <dependency>
           <groupId>bouncycastle</groupId>
           <artifactId>bcprov-jdk15</artifactId>
+          <version>${bouncycastle-version}</version>
           <scope>test</scope>
       </dependency>
 
