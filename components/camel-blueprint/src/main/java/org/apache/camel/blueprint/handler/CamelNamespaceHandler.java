@@ -29,7 +29,6 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import org.osgi.service.blueprint.reflect.ServiceReferenceMetadata;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -89,7 +88,8 @@ import org.osgi.service.blueprint.reflect.ValueMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.*;
+import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.AVAILABILITY_MANDATORY;
+import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.AVAILABILITY_OPTIONAL;
 
 public class CamelNamespaceHandler implements NamespaceHandler {
 
