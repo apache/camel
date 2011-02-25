@@ -20,7 +20,7 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
@@ -167,4 +167,51 @@ public final class JmsMessageHelper {
             return destination;
         }
     }
+
+    /**
+     * Sets the JMSReplyTo on the message.
+     *
+     * @param message  the message
+     * @param replyTo  the reply to destination
+     */
+    public static void setJMSReplyTo(Message message, Destination replyTo) {
+        try {
+            message.setJMSReplyTo(replyTo);
+        } catch (Exception e) {
+            // ignore due OracleAQ does not support accessing JMSReplyTo
+        }
+    }
+
+    /**
+     * Gets the JMSReplyTo from the message.
+     *
+     * @param message  the message
+     * @return the reply to, can be <tt>null</tt>
+     */
+    public static Destination getJMSReplyTo(Message message) {
+        try {
+            return message.getJMSReplyTo();
+        } catch (Exception e) {
+            // ignore due OracleAQ does not support accessing JMSReplyTo
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the JMSType from the message.
+     *
+     * @param message  the message
+     * @return the type, can be <tt>null</tt>
+     */
+    public static String getJMSType(Message message) {
+        try {
+            return message.getJMSType();
+        } catch (Exception e) {
+            // ignore due OracleAQ does not support accessing JMSType
+        }
+
+        return null;
+    }
+
 }

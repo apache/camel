@@ -148,7 +148,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                 if (replyTo == null) {
                     throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
                 }
-                message.setJMSReplyTo(replyTo);
+                JmsMessageHelper.setJMSReplyTo(message, replyTo);
                 replyManager.setReplyToSelectorHeader(in, message);
 
                 String correlationId = determineCorrelationId(message, provisionalCorrelationId);
@@ -227,13 +227,13 @@ public class JmsProducer extends DefaultAsyncProducer {
                 // there is a JMSReplyTo from the header/endpoint and
                 // we have been told to preserveMessageQos
 
-                Object jmsReplyTo = answer.getJMSReplyTo();
+                Object jmsReplyTo = JmsMessageHelper.getJMSReplyTo(answer);
                 if (endpoint.isDisableReplyTo()) {
                     // honor disable reply to configuration
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("ReplyTo is disabled on endpoint: " + endpoint);
                     }
-                    answer.setJMSReplyTo(null);
+                    JmsMessageHelper.setJMSReplyTo(answer, null);
                 } else {
                     // if the binding did not create the reply to then we have to try to create it here
                     if (jmsReplyTo == null) {
@@ -296,10 +296,10 @@ public class JmsProducer extends DefaultAsyncProducer {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Using JMSReplyTo destination: " + replyTo);
                     }
-                    answer.setJMSReplyTo(replyTo);
+                    JmsMessageHelper.setJMSReplyTo(answer, replyTo);
                 } else {
                     // do not use JMSReplyTo
-                    answer.setJMSReplyTo(null);
+                    JmsMessageHelper.setJMSReplyTo(answer, null);
                 }
 
                 return answer;

@@ -175,18 +175,8 @@ public class JmsBinding {
                 map.put("JMSRedelivered", jmsMessage.getJMSRedelivered());
                 map.put("JMSTimestamp", jmsMessage.getJMSTimestamp());
 
-                // to work around OracleAQ not supporting the JMSReplyTo header (CAMEL-2909)
-                try {
-                    map.put("JMSReplyTo", jmsMessage.getJMSReplyTo());
-                } catch (JMSException e) {
-                    LOG.trace("Cannot read JMSReplyTo header. Will ignore this exception.", e);
-                }
-                // to work around OracleAQ not supporting the JMSType header (CAMEL-2909)
-                try {
-                    map.put("JMSType", jmsMessage.getJMSType());
-                } catch (JMSException e) {
-                    LOG.trace("Cannot read JMSType header. Will ignore this exception.", e);
-                }
+                map.put("JMSReplyTo", JmsMessageHelper.getJMSReplyTo(jmsMessage));
+                map.put("JMSType", JmsMessageHelper.getJMSType(jmsMessage));
 
                 // this works around a bug in the ActiveMQ property handling
                 map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
@@ -324,7 +314,8 @@ public class JmsBinding {
                     // if the value is a String we must normalize it first
                     headerValue = normalizeDestinationName((String) headerValue);
                 }
-                jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
+                Destination replyTo = ExchangeHelper.convertToType(exchange, Destination.class, headerValue);
+                JmsMessageHelper.setJMSReplyTo(jmsMessage, replyTo);
             } else if (headerName.equals("JMSType")) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (headerName.equals("JMSPriority")) {

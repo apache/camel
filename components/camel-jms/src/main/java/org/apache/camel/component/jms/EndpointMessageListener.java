@@ -317,13 +317,7 @@ public class EndpointMessageListener implements MessageListener {
         // lets send a response back if we can
         Object destination = getReplyToDestination();
         if (destination == null) {
-            try {
-                destination = message.getJMSReplyTo();
-            } catch (JMSException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Cannot read JMSReplyTo header. Will ignore this exception.", e);
-                }
-            }
+            destination = JmsMessageHelper.getJMSReplyTo(message);
         }
         return destination;
     }
