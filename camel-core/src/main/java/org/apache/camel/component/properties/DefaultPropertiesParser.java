@@ -57,7 +57,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
         return answer;
     }
 
-    public String parsePropertyValue(String value) {
+    public String parseProperty(String key, String value, Properties properties) {
         return value;
     }
 
@@ -94,21 +94,21 @@ public class DefaultPropertiesParser implements PropertiesParser {
     }
 
     private String createConstantPart(String uri, int start, int end) {
-        return parsePropertyValue(uri.substring(start, end));
+        return uri.substring(start, end);
     }
 
-    private String createPlaceholderPart(String placeholderPart, Properties properties, List<String> replaced) {
+    private String createPlaceholderPart(String key, Properties properties, List<String> replaced) {
         // keep track of which parts we have replaced
-        replaced.add(placeholderPart);
+        replaced.add(key);
         
-        String propertyValue = System.getProperty(placeholderPart);
+        String propertyValue = System.getProperty(key);
         if (propertyValue != null) {
-            log.info("Found a JVM system property: " + placeholderPart + ". Overriding property set via Property Location");
-        } else {
-            propertyValue = properties.getProperty(placeholderPart);
+            log.debug("Found a JVM system property: {} with value: {} to be used.", key, propertyValue);
+        } else if (properties != null) {
+            propertyValue = properties.getProperty(key);
         }
 
-        return parsePropertyValue(propertyValue);
+        return parseProperty(key, propertyValue, properties);
     }
 
 }

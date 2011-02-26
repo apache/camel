@@ -19,7 +19,6 @@ package org.apache.camel.blueprint;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -33,6 +32,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiEventAdminNotifier;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
@@ -89,6 +89,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private String autoStartup = "true";
     @XmlAttribute(required = false)
     private String useMDCLogging;
+    @XmlAttribute(required = false)
+    private Boolean useBlueprintPropertyResolver;
     @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
     @XmlAttribute(required = false)
@@ -194,6 +196,37 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
             return objects.iterator().next();
         }
         return null;
+    }
+
+    @Override
+    protected void initPropertyPlaceholder() throws Exception {
+        super.initPropertyPlaceholder();
+
+        // if blueprint property resolver is enabled on CamelContext then bridge PropertiesComponent to blueprint
+        if (isUseBlueprintPropertyResolver()) {
+            // lookup existing configured properties component
+            PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
+
+            BlueprintPropertiesParser parser = new BlueprintPropertiesParser(blueprintContainer, pc.getPropertiesParser());
+            BlueprintPropertiesResolver resolver = new BlueprintPropertiesResolver(pc.getPropertiesResolver(), parser);
+
+            // no locations has been set, so its a default component
+            if (pc.getLocations() == null) {
+                StringBuilder sb = new StringBuilder();
+                String[] ids = parser.lookupPropertyPlaceholderIds();
+                for (String id : ids) {
+                    sb.append("blueprint:").append(id).append(",");
+                }
+                // location supports multiple separated by comma
+                pc.setLocation(sb.toString());
+            }
+
+            if (pc.getLocations() != null) {
+                // bridge camel properties with blueprint
+                pc.setPropertiesParser(parser);
+                pc.setPropertiesResolver(resolver);
+            }
+        }
     }
 
     @Override
@@ -490,6 +523,19 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     
     public void setImplicitId(boolean flag) {
         implicitId = flag;
+    }
+
+    public Boolean getUseBlueprintPropertyResolver() {
+        return useBlueprintPropertyResolver;
+    }
+
+    public void setUseBlueprintPropertyResolver(Boolean useBlueprintPropertyResolver) {
+        this.useBlueprintPropertyResolver = useBlueprintPropertyResolver;
+    }
+
+    public boolean isUseBlueprintPropertyResolver() {
+        // enable by default
+        return useBlueprintPropertyResolver == null || useBlueprintPropertyResolver.booleanValue();
     }
 
 }

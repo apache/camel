@@ -27,8 +27,8 @@ public class JasyptPropertiesParserTest extends TestCase {
         JasyptPropertiesParser parser = new JasyptPropertiesParser();
         parser.setPassword("secret");
 
-        assertEquals("foo", parser.parsePropertyValue("foo"));
-        assertEquals("tiger", parser.parsePropertyValue("ENC(bsW9uV37gQ0QHFu7KO03Ww==)"));
+        assertEquals("foo", parser.parseProperty(null, "foo", null));
+        assertEquals("tiger", parser.parseProperty(null, "ENC(bsW9uV37gQ0QHFu7KO03Ww==)", null));
     }
 
     public void testJasyptPropertiesParserSys() throws Exception {
@@ -37,8 +37,8 @@ public class JasyptPropertiesParserTest extends TestCase {
         JasyptPropertiesParser parser = new JasyptPropertiesParser();
         parser.setPassword("sys:myfoo");
 
-        assertEquals("foo", parser.parsePropertyValue("foo"));
-        assertEquals("tiger", parser.parsePropertyValue("ENC(bsW9uV37gQ0QHFu7KO03Ww==)"));
+        assertEquals("foo", parser.parseProperty(null, "foo", null));
+        assertEquals("tiger", parser.parseProperty(null, "ENC(bsW9uV37gQ0QHFu7KO03Ww==)", null));
 
         System.clearProperty("myfoo");
     }

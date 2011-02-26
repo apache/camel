@@ -20,13 +20,11 @@ import java.util.Properties;
 
 /**
  * A parser to parse properties for a given input
- *
- * @version 
  */
 public interface PropertiesParser {
 
     /**
-     * Parses the string and replaces the property placeholders with values from the given properties
+     * Parses the string and replaces the property placeholders with values from the given properties.
      *
      * @param text        the text to be parsed
      * @param properties  the properties resolved which values should be looked up
@@ -38,10 +36,15 @@ public interface PropertiesParser {
     String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException;
 
     /**
-     * Parses the property value
+     * While parsing the uri using {@link #parseUri(String, java.util.Properties, String, String) parseUri} each
+     * parsed property found invokes this callback.
+     * <p/>
+     * This strategy method allows you to hook into the parsing and do custom lookup and return the actual value to use.
      *
-     * @param value the value
-     * @return the parsed value
+     * @param key        the key
+     * @param value      the value
+     * @param properties the properties resolved which values should be looked up
+     * @return the value to use
      */
-    String parsePropertyValue(String value);
+    String parseProperty(String key, String value, Properties properties);
 }

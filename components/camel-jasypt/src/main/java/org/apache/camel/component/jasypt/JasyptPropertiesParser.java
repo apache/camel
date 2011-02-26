@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jasypt;
 
+import java.util.Properties;
+
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.util.ObjectHelper;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
@@ -33,7 +35,6 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     public static final String JASYPT_PREFIX_TOKEN = "ENC(";
     public static final String JASYPT_SUFFIX_TOKEN = ")";
 
-    // TODO: A JasyptComponent we can leverage instead of directly from here
     private StandardPBEStringEncryptor encryptor;
     private String password;
     private String algorithm;
@@ -76,7 +77,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     }
 
     @Override
-    public String parsePropertyValue(String value) {
+    public String parseProperty(String key, String value, Properties properties) {
         // check if the value is using the tokens
         String text = ObjectHelper.between(value, JASYPT_PREFIX_TOKEN, JASYPT_SUFFIX_TOKEN);
         if (text == null) {

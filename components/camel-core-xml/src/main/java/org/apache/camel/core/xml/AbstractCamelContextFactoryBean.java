@@ -317,7 +317,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
 
     protected abstract void initCustomRegistry(T context);
 
-    private void initJMXAgent() throws Exception {
+    protected void initJMXAgent() throws Exception {
         CamelJMXAgentDefinition camelJMXAgent = getCamelJMXAgent();
 
         boolean disabled = false;
@@ -358,7 +358,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         }
     }
 
-    private void initPropertyPlaceholder() throws Exception {
+    protected void initPropertyPlaceholder() throws Exception {
         if (getCamelPropertyPlaceholder() != null) {
             CamelPropertyPlaceholderDefinition def = getCamelPropertyPlaceholder();
 
@@ -384,7 +384,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         }
     }
 
-    private void initRouteRefs() throws Exception {
+    protected void initRouteRefs() throws Exception {
         // add route refs to existing routes
         if (getRouteRefs() != null) {
             for (RouteContextRefDefinition ref : getRouteRefs()) {
@@ -519,7 +519,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         }
     }
 
-    private void initThreadPoolProfiles(T context) {
+    protected void initThreadPoolProfiles(T context) {
         Set<String> defaultIds = new HashSet<String>();
 
         // lookup and use custom profiles from the registry
