@@ -115,7 +115,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class, required = false)
     private CamelJMXAgentDefinition camelJMXAgent;
     @XmlElements({
-            @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
             @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
             @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
             @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),

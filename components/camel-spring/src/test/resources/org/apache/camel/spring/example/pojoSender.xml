@@ -23,9 +23,7 @@
     ">
 
   <!-- START SNIPPET: example -->
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <beanPostProcessor/>
-  </camelContext>
+  <camelContext xmlns="http://camel.apache.org/schema/spring"/>
   <!-- END SNIPPET: example -->
 
   <bean id="mySender" class="org.apache.camel.spring.example.MySender"/>

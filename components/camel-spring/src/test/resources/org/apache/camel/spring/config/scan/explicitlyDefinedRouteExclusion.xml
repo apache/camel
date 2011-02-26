@@ -26,7 +26,6 @@
            http://www.springframework.org/schema/context/spring-context.xsd">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <beanPostProcessor />
     <endpoint id="start" uri="direct:start"/>
     <endpoint id="result" uri="mock:end"/>
   </camelContext>
@@ -34,7 +33,6 @@
   <bean id="explicitlyDefinedRoute" class="org.apache.camel.spring.config.scan.route.MyRouteBuilder" autowire="byType" />
   <bean id="explicitlyDefinedButExcludedRoute" class="org.apache.camel.spring.config.unscanned.MyExplicitlyDefinedButExcludedRouteBuilder" />
   
-  <context:component-scan
-    base-package="org.apache.camel.spring.config.scan.component" />
+  <context:component-scan base-package="org.apache.camel.spring.config.scan.component" />
 
 </beans>
