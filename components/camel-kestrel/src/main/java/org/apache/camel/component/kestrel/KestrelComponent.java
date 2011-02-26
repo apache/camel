@@ -64,6 +64,8 @@ public class KestrelComponent extends DefaultComponent {
         super.doStart();
 
         ConnectionFactoryBuilder builder = new ConnectionFactoryBuilder();
+        // VERY IMPORTANT! Otherwise, spymemcached optimizes away concurrent gets
+        builder.setShouldOptimize(false);
         // We never want spymemcached to time out
         builder.setOpTimeout(9999999);
         // Retry upon failure
