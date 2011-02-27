@@ -18,6 +18,8 @@ package org.apache.camel.component.properties;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
@@ -36,6 +38,10 @@ public class PropertiesComponent extends DefaultComponent {
     public static final String PREFIX_TOKEN = "{{";
     public static final String SUFFIX_TOKEN = "}}";
 
+    // must be non greedy patterns
+    private static final Pattern ENV_PATTERN = Pattern.compile("\\$\\{env:(.*?)\\}", Pattern.DOTALL);
+    private static final Pattern SYS_PATTERN = Pattern.compile("\\$\\{(.*?)\\}", Pattern.DOTALL);
+
     private static final transient Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
     private final Map<String[], Properties> cacheMap = new LRUCache<String[], Properties>(1000);
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
@@ -46,8 +52,12 @@ public class PropertiesComponent extends DefaultComponent {
     public PropertiesComponent() {
     }
     
+    public PropertiesComponent(String location) {
+        setLocation(location);
+    }
+
     public PropertiesComponent(String... locations) {
-        this.locations = locations;
+        setLocations(locations);
     }
 
     @Override
@@ -62,7 +72,6 @@ public class PropertiesComponent extends DefaultComponent {
             }
             paths = locations.split(",");
         }
-        
         String endpointUri = parseUri(remaining, paths);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Endpoint uri parsed as: " + endpointUri);
@@ -77,12 +86,16 @@ public class PropertiesComponent extends DefaultComponent {
     public String parseUri(String uri, String... paths) throws Exception {
         ObjectHelper.notNull(paths, "paths");
 
+        // location may contain JVM system property or OS environment variables
+        // so we need to parse those
+        String[] locations = parseLocations(paths);
+
         // check cache first
-        Properties prop = cache ? cacheMap.get(paths) : null;
+        Properties prop = cache ? cacheMap.get(locations) : null;
         if (prop == null) {
-            prop = propertiesResolver.resolveProperties(getCamelContext(), paths);
+            prop = propertiesResolver.resolveProperties(getCamelContext(), locations);
             if (cache) {
-                cacheMap.put(paths, prop);
+                cacheMap.put(locations, prop);
             }
         }
 
@@ -140,6 +153,44 @@ public class PropertiesComponent extends DefaultComponent {
     protected void doStop() throws Exception {
         cacheMap.clear();
         super.doStop();
+    }
+
+    private String[] parseLocations(String[] locations) {
+        String[] answer = new String[locations.length];
+
+        for (int i = 0; i < locations.length; i++) {
+            String location = locations[i];
+            LOG.trace("Parsing location: {} ", location);
+
+            Matcher matcher = ENV_PATTERN.matcher(location);
+            while (matcher.find()) {
+                String key = matcher.group(1);
+                String value = System.getenv(key);
+                if (ObjectHelper.isEmpty(value)) {
+                    throw new IllegalArgumentException("Cannot find system environment with key: " + key);
+                }
+                location = matcher.replaceFirst(value);
+                // must match again as location is changed
+                matcher = ENV_PATTERN.matcher(location);
+            }
+
+            matcher = SYS_PATTERN.matcher(location);
+            while (matcher.find()) {
+                String key = matcher.group(1);
+                String value = System.getProperty(key);
+                if (ObjectHelper.isEmpty(value)) {
+                    throw new IllegalArgumentException("Cannot find JVM system property with key: " + key);
+                }
+                location = matcher.replaceFirst(value);
+                // must match again as location is changed
+                matcher = SYS_PATTERN.matcher(location);
+            }
+
+            LOG.debug("Parsed location: {} ", location);
+            answer[i] = location;
+        }
+
+        return answer;
     }
 
 }

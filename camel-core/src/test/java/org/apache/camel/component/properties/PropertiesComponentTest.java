@@ -206,6 +206,22 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testJvmSystemPropertyNotFound() throws Exception {
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start").to("properties:xxx?locations=foo/${xxx}");
+                }
+            });
+            context.start();
+            fail("Should thrown an exception");
+        } catch (FailedToCreateRouteException e) {
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            assertEquals("Cannot find JVM system property with key: xxx", cause.getMessage());
+        }
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
