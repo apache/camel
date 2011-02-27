@@ -192,8 +192,9 @@ public class SmppConsumer extends DefaultConsumer {
 
     private void closeSession(SMPPSession session) {
         if (session != null) {
-            session.removeSessionStateListener(this.sessionStateListener);
             session.unbindAndClose();
+            // throws the java.util.ConcurrentModificationException
+            //session.removeSessionStateListener(this.sessionStateListener);
             session = null;
         }
     }

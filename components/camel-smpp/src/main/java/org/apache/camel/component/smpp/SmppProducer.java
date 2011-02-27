@@ -59,7 +59,7 @@ public class SmppProducer extends DefaultProducer {
     public SmppProducer(SmppEndpoint endpoint, SmppConfiguration config) {
         super(endpoint);
         this.configuration = config;
-        this.sessionStateListener = new SessionStateListener() { 
+        this.sessionStateListener = new SessionStateListener() {
             public void onStateChange(SessionState newState, SessionState oldState, Object source) {
                 if (newState.equals(SessionState.CLOSED)) {
                     LOG.warn("Loosing connection to: " + getEndpoint().getConnectionString() + " - trying to reconnect...");
@@ -180,8 +180,9 @@ public class SmppProducer extends DefaultProducer {
     
     private void closeSession(SMPPSession session) {
         if (session != null) {
-            session.removeSessionStateListener(this.sessionStateListener);
             session.unbindAndClose();
+            // throws the java.util.ConcurrentModificationException
+            //session.removeSessionStateListener(this.sessionStateListener);
             session = null;
         }
     }
