@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "dynamicRouter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DynamicRouterDefinition<Type extends ProcessorDefinition> extends NoOutputExpressionNode {
+public class DynamicRouterDefinition<Type extends ProcessorDefinition> extends ExpressionNode {
 
     public static final String DEFAULT_DELIMITER = ",";
 

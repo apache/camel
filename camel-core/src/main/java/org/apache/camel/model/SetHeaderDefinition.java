@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetHeaderDefinition extends NoOutputExpressionNode {
+public class SetHeaderDefinition extends ExpressionNode {
     @XmlAttribute(required = true)
     private String headerName;
     

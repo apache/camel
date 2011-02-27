@@ -33,7 +33,7 @@ import org.apache.camel.Predicate;
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Class<?> resultType;
 
     public XPathExpression() {

@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "setBody")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetBodyDefinition extends NoOutputExpressionNode {
+public class SetBodyDefinition extends ExpressionNode {
 
     public SetBodyDefinition() {
     }

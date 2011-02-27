@@ -16,57 +16,56 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 
 /**
- * An {@link org.apache.camel.model.ExpressionNode} which does <b>not</b> support any outputs.
- * <p/>
- * This node is to be extended by definitions which need to support an expression but the definition should not
- * contain any outputs, such as {@link org.apache.camel.model.TransformDefinition}.
+ * A base class for nodes which contain an expression and a number of outputs
  *
  * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class NoOutputExpressionNode extends ExpressionNode {
+public class OutputExpressionNode extends ExpressionNode {
+    @XmlElementRef
+    protected List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
-    public NoOutputExpressionNode() {
-        super();
+    public OutputExpressionNode() {
     }
 
-    public NoOutputExpressionNode(ExpressionDefinition expression) {
+    public OutputExpressionNode(ExpressionDefinition expression) {
         super(expression);
     }
 
-    public NoOutputExpressionNode(Expression expression) {
+    public OutputExpressionNode(Expression expression) {
         super(expression);
     }
 
-    public NoOutputExpressionNode(Predicate predicate) {
+    public OutputExpressionNode(Predicate predicate) {
         super(predicate);
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
     public List<ProcessorDefinition> getOutputs() {
-        return Collections.EMPTY_LIST;
+        return outputs;
+    }
+
+    public void setOutputs(List<ProcessorDefinition> outputs) {
+        this.outputs = outputs;
     }
 
     @Override
     public boolean isOutputSupported() {
-        return false;
+        return true;
     }
 
     @Override
     public void addOutput(ProcessorDefinition output) {
-        // add it to the parent as we do not support outputs
-        getParent().addOutput(output);
+        outputs.add(output);
     }
-
 }

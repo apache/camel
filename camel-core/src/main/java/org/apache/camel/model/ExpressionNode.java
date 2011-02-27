@@ -16,9 +16,8 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -28,20 +27,21 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * A base class for nodes which contain an expression and a number of outputs
+ * A base class for nodes which contain an expression
+ * <p/>
+ * This node is to be extended by definitions which need to support an expression but the definition should not
+ * contain any outputs, such as {@link org.apache.camel.model.TransformDefinition}.
  *
  * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
+public class ExpressionNode extends ProcessorDefinition<OutputExpressionNode> {
+
     @XmlElementRef
     protected ExpressionDefinition expression;
-    @XmlElementRef
-    protected List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
     public ExpressionNode() {
     }
@@ -66,26 +66,30 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
     public String getShortName() {
         return "exp";
     }
-      
+
     public ExpressionDefinition getExpression() {
         return expression;
     }
 
-    @Required
     public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
     public List<ProcessorDefinition> getOutputs() {
-        return outputs;
+        return Collections.EMPTY_LIST;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
-        this.outputs = outputs;
-    }
-
+    @Override
     public boolean isOutputSupported() {
-        return true;
+        return false;
+    }
+
+    @Override
+    public void addOutput(ProcessorDefinition output) {
+        // add it to the parent as we do not support outputs
+        getParent().addOutput(output);
     }
 
     @Override
