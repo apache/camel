@@ -45,7 +45,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
             // check the replaced with the visited to avoid circular reference
             for (String replace : replaced) {
                 if (visited.contains(replace)) {
-                    throw new IllegalArgumentException("Circular reference detected with key [" + replace + "] in uri " + text);
+                    throw new IllegalArgumentException("Circular reference detected with key [" + replace + "] from text: " + text);
                 }
             }
             // okay all okay so add the replaced as visited
@@ -78,13 +78,13 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 pivot = idx + prefixToken.length();
                 int endIdx = uri.indexOf(suffixToken, pivot);
                 if (endIdx < 0) {
-                    throw new IllegalArgumentException("Expecting " + suffixToken + " but found end of string for uri: " + uri);
+                    throw new IllegalArgumentException("Expecting " + suffixToken + " but found end of string from text: " + uri);
                 }
                 String key = uri.substring(pivot, endIdx);
 
                 String part = createPlaceholderPart(key, properties, replaced);
                 if (part == null) {
-                    throw new IllegalArgumentException("Property with key [" + key + "] not found in properties for uri: " + uri);
+                    throw new IllegalArgumentException("Property with key [" + key + "] not found in properties from text: " + uri);
                 }
                 sb.append(part);
                 pivot = endIdx + suffixToken.length();

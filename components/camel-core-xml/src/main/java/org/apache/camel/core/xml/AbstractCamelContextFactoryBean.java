@@ -519,7 +519,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         }
     }
 
-    protected void initThreadPoolProfiles(T context) {
+    protected void initThreadPoolProfiles(T context) throws Exception {
         Set<String> defaultIds = new HashSet<String>();
 
         // lookup and use custom profiles from the registry
@@ -543,10 +543,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             for (ThreadPoolProfileDefinition profile : getThreadPoolProfiles()) {
                 if (profile.isDefaultProfile()) {
                     LOG.info("Using custom default ThreadPoolProfile with id: " + profile.getId() + " and implementation: " + profile);
-                    context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(profile);
+                    context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(profile.asThreadPoolProfile(context));
                     defaultIds.add(profile.getId());
                 } else {
-                    context.getExecutorServiceStrategy().registerThreadPoolProfile(profile);
+                    context.getExecutorServiceStrategy().registerThreadPoolProfile(profile.asThreadPoolProfile(context));
                 }
             }
         }

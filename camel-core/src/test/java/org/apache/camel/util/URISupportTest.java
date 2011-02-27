@@ -136,8 +136,6 @@ public class URISupportTest extends ContextTestSupport {
         map.put("bar", "123,456");
         map.put("name", "S\u00F8ren"); // danish letter
 
-        System.out.println(map.get("name"));
-
         // create new uri with the parameters
         URI out = URISupport.createRemainingURI(new URI(uri), map);
         assertNotNull(out);

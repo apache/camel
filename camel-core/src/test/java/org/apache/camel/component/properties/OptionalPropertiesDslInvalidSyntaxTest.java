@@ -40,7 +40,7 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Property with key [xxx] not found in properties for uri: {{xxx}}", cause.getMessage());
+            assertEquals("Property with key [xxx] not found in properties from text: {{xxx}}", cause.getMessage());
         }
     }
 

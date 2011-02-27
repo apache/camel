@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
+import org.apache.camel.util.CamelContextHelper;
 
 /**
  * A factory which instantiates {@link java.util.concurrent.ExecutorService} objects
@@ -37,36 +38,49 @@ import org.apache.camel.builder.xml.TimeUnitAdapter;
 public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFactoryBean<ExecutorService> {
 
     @XmlAttribute(required = true)
-    private Integer poolSize;
+    private String poolSize;
     @XmlAttribute
-    private Integer maxPoolSize;
+    private String maxPoolSize;
     @XmlAttribute
-    private Long keepAliveTime = 60L;
+    private String keepAliveTime;
     @XmlAttribute
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     @XmlAttribute
-    private Integer maxQueueSize = -1;
+    private String maxQueueSize;
     @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy = ThreadPoolRejectedPolicy.CallerRuns;
     @XmlAttribute(required = true)
     private String threadName;
-    @XmlAttribute
-    private Boolean daemon = Boolean.TRUE;
 
     public ExecutorService getObject() throws Exception {
-        if (poolSize == null || poolSize <= 0) {
+        int size = CamelContextHelper.parseInteger(getCamelContext(), poolSize);
+        if (size <= 0) {
             throw new IllegalArgumentException("PoolSize must be a positive number");
         }
 
-        int max = getMaxPoolSize() != null ? getMaxPoolSize() : getPoolSize();
+        int max = size;
+        if (maxPoolSize != null) {
+            max = CamelContextHelper.parseInteger(getCamelContext(), maxPoolSize);
+        }
+
         RejectedExecutionHandler rejected = null;
         if (rejectedPolicy != null) {
             rejected = rejectedPolicy.asRejectedExecutionHandler();
         }
 
-        ExecutorService answer = getCamelContext().getExecutorServiceStrategy().newThreadPool(getId(), getThreadName(), getPoolSize(), max,
-                    getKeepAliveTime(), getTimeUnit(), getMaxQueueSize(), rejected, isDaemon());
+        long keepAlive = 60;
+        if (keepAliveTime != null) {
+            keepAlive = CamelContextHelper.parseLong(getCamelContext(), keepAliveTime);
+        }
+
+        int queueSize = -1;
+        if (maxQueueSize != null) {
+            queueSize = CamelContextHelper.parseInteger(getCamelContext(), keepAliveTime);
+        }
+
+        ExecutorService answer = getCamelContext().getExecutorServiceStrategy().newThreadPool(getId(), getThreadName(),
+                size, max, keepAlive, getTimeUnit(), queueSize, rejected, true);
         return answer;
     }
 
@@ -76,27 +90,27 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         return ExecutorService.class;
     }
 
-    public Integer getPoolSize() {
+    public String getPoolSize() {
         return poolSize;
     }
 
-    public void setPoolSize(Integer poolSize) {
+    public void setPoolSize(String poolSize) {
         this.poolSize = poolSize;
     }
 
-    public Integer getMaxPoolSize() {
+    public String getMaxPoolSize() {
         return maxPoolSize;
     }
 
-    public void setMaxPoolSize(Integer maxPoolSize) {
+    public void setMaxPoolSize(String maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
     }
 
-    public Long getKeepAliveTime() {
+    public String getKeepAliveTime() {
         return keepAliveTime;
     }
 
-    public void setKeepAliveTime(Long keepAliveTime) {
+    public void setKeepAliveTime(String keepAliveTime) {
         this.keepAliveTime = keepAliveTime;
     }
 
@@ -108,11 +122,11 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         this.timeUnit = timeUnit;
     }
 
-    public Integer getMaxQueueSize() {
+    public String getMaxQueueSize() {
         return maxQueueSize;
     }
 
-    public void setMaxQueueSize(Integer maxQueueSize) {
+    public void setMaxQueueSize(String maxQueueSize) {
         this.maxQueueSize = maxQueueSize;
     }
 
@@ -132,12 +146,5 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         this.threadName = threadName;
     }
 
-    public Boolean isDaemon() {
-        return daemon;
-    }
-
-    public void setDaemon(Boolean daemon) {
-        this.daemon = daemon;
-    }
 
 }

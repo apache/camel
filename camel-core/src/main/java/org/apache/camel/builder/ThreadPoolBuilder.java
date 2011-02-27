@@ -17,11 +17,13 @@
 package org.apache.camel.builder;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
+import org.apache.camel.util.CamelContextHelper;
 
 /**
  * A builder to create thread pools.
@@ -74,8 +76,9 @@ public final class ThreadPoolBuilder {
      *
      * @param name name which is appended to the thread name
      * @return the created thread pool
+     * @throws Exception is thrown if error building the thread pool
      */
-    public ExecutorService build(String name) {
+    public ExecutorService build(String name) throws Exception {
         return build(null, name);
     }
 
@@ -85,13 +88,18 @@ public final class ThreadPoolBuilder {
      * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name   name which is appended to the thread name
      * @return the created thread pool
+     * @throws Exception is thrown if error building the thread pool
      */
-    public ExecutorService build(Object source, String name) {
-        ExecutorService answer = camelContext.getExecutorServiceStrategy().newThreadPool(source, name,
-                threadPoolDefinition.getPoolSize(), threadPoolDefinition.getMaxPoolSize(),
-                threadPoolDefinition.getKeepAliveTime(), threadPoolDefinition.getTimeUnit(),
-                threadPoolDefinition.getMaxQueueSize(), threadPoolDefinition.getRejectedExecutionHandler(), false);
+    public ExecutorService build(Object source, String name) throws Exception {
+        int size = CamelContextHelper.parseInteger(camelContext, threadPoolDefinition.getPoolSize());
+        int max = CamelContextHelper.parseInteger(camelContext, threadPoolDefinition.getMaxPoolSize());
+        long keepAlive = CamelContextHelper.parseLong(camelContext, threadPoolDefinition.getKeepAliveTime());
+        int queueSize = CamelContextHelper.parseInteger(camelContext, threadPoolDefinition.getMaxQueueSize());
+        TimeUnit unit = threadPoolDefinition.getTimeUnit();
+        RejectedExecutionHandler handler = threadPoolDefinition.getRejectedExecutionHandler();
 
+        ExecutorService answer = camelContext.getExecutorServiceStrategy().newThreadPool(source, name,
+                size, max, keepAlive, unit, queueSize, handler, true);
         return answer;
     }
 

@@ -145,7 +145,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         } catch (FailedToCreateRouteException e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("Property with key [foo.unknown] not found in properties for uri: {{foo.unknown}}", iae.getMessage());
+            assertEquals("Property with key [foo.unknown] not found in properties from text: {{foo.unknown}}", iae.getMessage());
         }
     }
 
@@ -162,7 +162,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         } catch (FailedToCreateRouteException e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("Circular reference detected with key [cool.a] in uri {{cool.a}}", iae.getMessage());
+            assertEquals("Circular reference detected with key [cool.a] from text: {{cool.a}}", iae.getMessage());
         }
     }
 

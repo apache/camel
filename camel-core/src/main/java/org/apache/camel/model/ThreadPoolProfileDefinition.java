@@ -24,9 +24,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
+import org.apache.camel.impl.ThreadPoolProfileSupport;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;threadPoolProfile/&gt; element
@@ -35,19 +39,19 @@ import org.apache.camel.spi.ThreadPoolProfile;
  */
 @XmlRootElement(name = "threadPoolProfile")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition implements ThreadPoolProfile {
+public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition {
     @XmlAttribute
     private Boolean defaultProfile;
     @XmlAttribute
-    private Integer poolSize;
+    private String poolSize;
     @XmlAttribute
-    private Integer maxPoolSize;
+    private String maxPoolSize;
     @XmlAttribute
-    private Long keepAliveTime;
+    private String keepAliveTime;
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     private TimeUnit timeUnit;
     @XmlAttribute
-    private Integer maxQueueSize;
+    private String maxQueueSize;
     @XmlAttribute
     private ThreadPoolRejectedPolicy rejectedPolicy;
 
@@ -56,26 +60,38 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition im
 
     public ThreadPoolProfileDefinition(ThreadPoolProfile threadPoolProfile) {
         setDefaultProfile(threadPoolProfile.isDefaultProfile());
-        setPoolSize(threadPoolProfile.getPoolSize());
-        setMaxPoolSize(threadPoolProfile.getMaxPoolSize());
-        setKeepAliveTime(threadPoolProfile.getKeepAliveTime());
+        setPoolSize("" + threadPoolProfile.getPoolSize());
+        setMaxPoolSize("" + threadPoolProfile.getMaxPoolSize());
+        setKeepAliveTime("" + threadPoolProfile.getKeepAliveTime());
         setTimeUnit(threadPoolProfile.getTimeUnit());
-        setMaxQueueSize(threadPoolProfile.getMaxQueueSize());
+        setMaxQueueSize("" + threadPoolProfile.getMaxQueueSize());
         setRejectedPolicy(threadPoolProfile.getRejectedPolicy());
     }
 
     public ThreadPoolProfileDefinition poolSize(int poolSize) {
+        return poolSize("" + poolSize);
+    }
+
+    public ThreadPoolProfileDefinition poolSize(String poolSize) {
         setPoolSize(poolSize);
         return this;
     }
 
     public ThreadPoolProfileDefinition maxPoolSize(int maxPoolSize) {
-        setMaxPoolSize(maxPoolSize);
+        return maxPoolSize("" + maxQueueSize);
+    }
+
+    public ThreadPoolProfileDefinition maxPoolSize(String maxPoolSize) {
+        setMaxPoolSize("" + maxPoolSize);
         return this;
     }
 
     public ThreadPoolProfileDefinition keepAliveTime(long keepAliveTime) {
-        setKeepAliveTime(keepAliveTime);
+        return keepAliveTime("" + keepAliveTime);
+    }
+
+    public ThreadPoolProfileDefinition keepAliveTime(String keepAliveTime) {
+        setKeepAliveTime("" + keepAliveTime);
         return this;
     }
 
@@ -85,7 +101,11 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition im
     }
 
     public ThreadPoolProfileDefinition maxQueueSize(int maxQueueSize) {
-        setMaxQueueSize(maxQueueSize);
+        return maxQueueSize("" + maxQueueSize);
+    }
+
+    public ThreadPoolProfileDefinition maxQueueSize(String maxQueueSize) {
+        setMaxQueueSize("" + maxQueueSize);
         return this;
     }
 
@@ -106,28 +126,36 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition im
         return defaultProfile != null && defaultProfile;
     }
 
-    public Integer getPoolSize() {
+    public String getPoolSize() {
         return poolSize;
     }
 
-    public void setPoolSize(Integer poolSize) {
+    public void setPoolSize(String poolSize) {
         this.poolSize = poolSize;
     }
 
-    public Integer getMaxPoolSize() {
+    public String getMaxPoolSize() {
         return maxPoolSize;
     }
 
-    public void setMaxPoolSize(Integer maxPoolSize) {
+    public void setMaxPoolSize(String maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
     }
 
-    public Long getKeepAliveTime() {
+    public String getKeepAliveTime() {
         return keepAliveTime;
     }
 
-    public void setKeepAliveTime(Long keepAliveTime) {
+    public void setKeepAliveTime(String keepAliveTime) {
         this.keepAliveTime = keepAliveTime;
+    }
+
+    public String getMaxQueueSize() {
+        return maxQueueSize;
+    }
+
+    public void setMaxQueueSize(String maxQueueSize) {
+        this.maxQueueSize = maxQueueSize;
     }
 
     public TimeUnit getTimeUnit() {
@@ -136,14 +164,6 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition im
 
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
-    }
-
-    public Integer getMaxQueueSize() {
-        return maxQueueSize;
-    }
-
-    public void setMaxQueueSize(Integer maxQueueSize) {
-        this.maxQueueSize = maxQueueSize;
     }
 
     public ThreadPoolRejectedPolicy getRejectedPolicy() {
@@ -159,5 +179,26 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition im
 
     public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
+    }
+
+    /**
+     * Creates a {@link ThreadPoolProfile} instance based on this definition.
+     *
+     * @param context    the camel context
+     * @return           the profile
+     * @throws Exception is thrown if error creating the profile
+     */
+    public ThreadPoolProfile asThreadPoolProfile(CamelContext context) throws Exception {
+        ObjectHelper.notNull(context, "CamelContext", this);
+
+        ThreadPoolProfileSupport answer = new ThreadPoolProfileSupport(getId());
+        answer.setDefaultProfile(getDefaultProfile());
+        answer.setPoolSize(CamelContextHelper.parseInteger(context, getPoolSize()));
+        answer.setMaxPoolSize(CamelContextHelper.parseInteger(context, getMaxPoolSize()));
+        answer.setKeepAliveTime(CamelContextHelper.parseLong(context, getKeepAliveTime()));
+        answer.setMaxQueueSize(CamelContextHelper.parseInteger(context, getMaxQueueSize()));
+        answer.setRejectedPolicy(getRejectedPolicy());
+        answer.setTimeUnit(getTimeUnit());
+        return answer;
     }
 }

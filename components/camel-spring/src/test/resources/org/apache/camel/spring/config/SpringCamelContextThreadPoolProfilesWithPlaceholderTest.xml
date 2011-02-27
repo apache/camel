@@ -22,29 +22,27 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: e1 -->
-    <!-- define a custom thread pool -->
-    <threadPool id="myPool"
-                poolSize="2"
-                maxPoolSize="4"
-                maxQueueSize="2000"
-                threadName="myPool"
-                keepAliveTime="30"
-                rejectedPolicy="DiscardOldest"
-                timeUnit="SECONDS"
-                xmlns="http://camel.apache.org/schema/spring"/>
+    <camelContext id="camel-C" xmlns="http://camel.apache.org/schema/spring">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <propertyPlaceholder id="properties" location="org/apache/camel/spring/config/pool.properties"/>
+
+        <!-- define a low profile -->
+        <threadPoolProfile id="low"
+                           poolSize="{{low.min}}"
+                           maxPoolSize="{{low.max}}"/>
+
+        <!-- define a big profile with many threads -->
+        <threadPoolProfile id="big"
+                           poolSize="{{big.min}}"
+                           maxPoolSize="{{big.max}}" rejectedPolicy="DiscardOldest"/>
 
         <route>
             <from uri="direct:start"/>
-            <!-- use the custom thread pool in the camel route -->
-            <threads executorServiceRef="myPool">
+            <threads>
                 <to uri="mock:result"/>
             </threads>
         </route>
-        
+
     </camelContext>
-    <!-- END SNIPPET: e1 -->
 
 </beans>
