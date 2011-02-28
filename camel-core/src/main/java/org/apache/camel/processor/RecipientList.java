@@ -111,7 +111,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
                                                                 isParallelProcessing(), getExecutorService(), isStreaming(), isStopOnException(), getTimeout()) {
             @Override
-            protected ExecutorService createAggregateExecutorService(String name) {
+            protected synchronized ExecutorService createAggregateExecutorService(String name) {
                 // use a shared executor service to avoid creating new thread pools
                 if (aggregateExecutorService == null) {
                     aggregateExecutorService = super.createAggregateExecutorService("RecipientList-AggregateTask");

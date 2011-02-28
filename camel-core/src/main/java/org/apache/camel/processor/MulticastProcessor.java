@@ -900,7 +900,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * @param name  the suggested name for the background thread
      * @return the thread pool
      */
-    protected ExecutorService createAggregateExecutorService(String name) {
+    protected synchronized ExecutorService createAggregateExecutorService(String name) {
         return camelContext.getExecutorServiceStrategy().newThreadPool(this, name, 1, Integer.MAX_VALUE);
     }
 
