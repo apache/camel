@@ -72,6 +72,7 @@
     <module>camel-gae</module>
     <module>camel-guice</module>
     <module>camel-hawtdb</module>
+    <module>camel-hazelcast</module>
     <module>camel-hl7</module>
     <module>camel-ibatis</module>
     <module>camel-irc</module>
