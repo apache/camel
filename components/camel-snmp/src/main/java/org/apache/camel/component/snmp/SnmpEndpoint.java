@@ -17,6 +17,7 @@
 package org.apache.camel.component.snmp;
 
 import java.net.URI;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -203,5 +204,11 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+
+    @Override
+    public String toString() {
+        // only show address to avoid user and password details to be shown
+        return "SnmpEndpoint[" + address + "]";
     }
 }
