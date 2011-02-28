@@ -61,6 +61,7 @@
         <include>org.apache.camel:camel-guice</include>
         <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-hawtdb</include>
+        <include>org.apache.camel:camel-hazelcast</include>
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-http4</include>
         <include>org.apache.camel:camel-ibatis</include>
