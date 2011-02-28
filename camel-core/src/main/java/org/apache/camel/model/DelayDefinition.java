@@ -40,7 +40,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DelayDefinition extends OutputExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {
+public class DelayDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {
 
     // TODO: Camel 3.0 Should extend NoOutputExpressionNode
 

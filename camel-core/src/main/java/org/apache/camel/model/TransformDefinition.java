@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "transform")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TransformDefinition extends ExpressionNode {
+public class TransformDefinition extends NoOutputExpressionNode {
 
     public TransformDefinition() {
     }

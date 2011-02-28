@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "setFaultBody")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetFaultBodyDefinition extends ExpressionNode {
+public class SetFaultBodyDefinition extends NoOutputExpressionNode {
 
     public SetFaultBodyDefinition() {
     }

@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class IdempotentConsumerDefinition extends OutputExpressionNode {
+public class IdempotentConsumerDefinition extends ExpressionNode {
     @XmlAttribute
     private String messageIdRepositoryRef;
     @XmlAttribute

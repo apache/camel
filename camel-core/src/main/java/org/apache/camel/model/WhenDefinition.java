@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  * @version 
  */
 @XmlRootElement(name = "when")
-public class WhenDefinition extends OutputExpressionNode {
+public class WhenDefinition extends ExpressionNode {
 
     public WhenDefinition() {
     }

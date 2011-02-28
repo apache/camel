@@ -37,7 +37,7 @@ import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
  */
 @XmlRootElement(name = "sort")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SortDefinition extends ExpressionNode {
+public class SortDefinition extends NoOutputExpressionNode {
     @XmlTransient
     private Comparator<Object> comparator;
     @XmlAttribute

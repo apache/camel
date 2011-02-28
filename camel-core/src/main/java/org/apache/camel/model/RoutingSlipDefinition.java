@@ -35,7 +35,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RoutingSlipDefinition<Type extends ProcessorDefinition> extends ExpressionNode {
+public class RoutingSlipDefinition<Type extends ProcessorDefinition> extends NoOutputExpressionNode {
     public static final String DEFAULT_DELIMITER = ",";
 
     @XmlAttribute
