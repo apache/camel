@@ -75,7 +75,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      */
     public boolean matchContext(String context) {
         if (ObjectHelper.isNotEmpty(context)) {
-            if (!camelContext.getName().equals(context)) {
+            if (!getCamelContext().getName().equals(context)) {
                 return false;
             }
         }

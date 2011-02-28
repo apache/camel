@@ -38,7 +38,7 @@ public class JavaDslBlackBoxTest extends CamelTestSupport {
     private ProducerTemplate template;
 
     @Test
-    public void testUsingBlackBox() throws Exception {
+    public void testUsingContextComponent() throws Exception {
         resultEndpoint.expectedHeaderReceived("received", "true");
         resultEndpoint.expectedMessageCount(2);
 
@@ -58,8 +58,8 @@ public class JavaDslBlackBoxTest extends CamelTestSupport {
         blackBox.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // receive purchase orders, lets process it in some way then send an invoice
-                // to our invoice endpoint
+                // receive purchase orders, lets process it in some way then
+                // send an invoice to our invoice endpoint
                 from("direct:purchaseOrder").setHeader("received").constant("true").to("direct:invoice");
             }
         });
