@@ -192,9 +192,14 @@ public class SmppConsumer extends DefaultConsumer {
 
     private void closeSession(SMPPSession session) {
         if (session != null) {
-            session.unbindAndClose();
-            // throws the java.util.ConcurrentModificationException
-            //session.removeSessionStateListener(this.sessionStateListener);
+            session.removeSessionStateListener(this.sessionStateListener);
+            // remove this hack after http://code.google.com/p/jsmpp/issues/detail?id=93 is fixed
+            try {
+                Thread.sleep(1000);
+                session.unbindAndClose();
+            } catch (Exception e) {
+                LOG.warn("Could not close session " + session);
+            }
             session = null;
         }
     }
