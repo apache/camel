@@ -55,6 +55,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     private boolean streaming;
     private long timeout;
     private ExecutorService executorService;
+    private ExecutorService aggregateExecutorService;
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
 
     public RecipientList(CamelContext camelContext) {
@@ -108,7 +109,16 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         Iterator<Object> iter = ObjectHelper.createIterator(recipientList, delimiter);
 
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
-                                                                isParallelProcessing(), getExecutorService(), isStreaming(), isStopOnException(), getTimeout());
+                                                                isParallelProcessing(), getExecutorService(), isStreaming(), isStopOnException(), getTimeout()) {
+            @Override
+            protected ExecutorService createAggregateExecutorService(String name) {
+                // use a shared executor service to avoid creating new thread pools
+                if (aggregateExecutorService == null) {
+                    aggregateExecutorService = super.createAggregateExecutorService("RecipientList-AggregateTask");
+                }
+                return aggregateExecutorService;
+            }
+        };
         rlp.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
 
         // start the service
@@ -144,7 +154,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
     }
-    
+
     public boolean isStreaming() {
         return streaming;
     }
@@ -200,4 +210,5 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
+
 }

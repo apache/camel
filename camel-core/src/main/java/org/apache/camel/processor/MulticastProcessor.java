@@ -888,9 +888,20 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // keep at least one thread in the pool so we re-use the thread avoiding to create new threads because
             // the pool shrank to zero.
             String name = getClass().getSimpleName() + "-AggregateTask";
-            aggregateExecutorService = camelContext.getExecutorServiceStrategy().newThreadPool(this, name, 1, Integer.MAX_VALUE);
+            aggregateExecutorService = createAggregateExecutorService(name);
         }
         ServiceHelper.startServices(processors);
+    }
+
+    /**
+     * Strategy to create the thread pool for the aggregator background task which waits for and aggregates
+     * completed tasks when running in parallel mode.
+     *
+     * @param name  the suggested name for the background thread
+     * @return the thread pool
+     */
+    protected ExecutorService createAggregateExecutorService(String name) {
+        return camelContext.getExecutorServiceStrategy().newThreadPool(this, name, 1, Integer.MAX_VALUE);
     }
 
     protected void doStop() throws Exception {
