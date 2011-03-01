@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +16,8 @@
  */
 package org.apache.camel.component.context;
 
+import java.util.List;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -24,19 +25,14 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-import java.util.List;
 
 /**
  * Test defining a context component using the Spring XML DSL
  */
 @ContextConfiguration
 public class SpringDslContextComponentTest extends AbstractJUnit4SpringContextTests {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SpringDslContextComponentTest.class);
 
     @EndpointInject(uri = "tester:results")
     private MockEndpoint resultEndpoint;
@@ -46,9 +42,8 @@ public class SpringDslContextComponentTest extends AbstractJUnit4SpringContextTe
 
     @Test
     public void testUsingContextComponent() throws Exception {
-
         Object accounts = applicationContext.getBean("accounts");
-        System.out.println("Found accounts: " + accounts);
+        logger.info("Found accounts: " + accounts);
 
         resultEndpoint.expectedHeaderReceived("received", "true");
         resultEndpoint.expectedMessageCount(2);
@@ -61,7 +56,7 @@ public class SpringDslContextComponentTest extends AbstractJUnit4SpringContextTe
         List<Exchange> receivedExchanges = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : receivedExchanges) {
             Message in = exchange.getIn();
-            LOG.info("Received from: " + exchange.getFromEndpoint() + " headers: " + in.getHeaders() + " body: " + in.getBody());
+            logger.info("Received from: " + exchange.getFromEndpoint() + " headers: " + in.getHeaders() + " body: " + in.getBody());
         }
     }
 }

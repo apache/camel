@@ -65,13 +65,11 @@ public class LocalContextComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
         throws Exception {
 
-
-
         // lets first check if we are using a fully qualified name: [context:]contextId:endpointUri
         Map<String, Endpoint> map = getLocalCamelContext().getEndpointMap();
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Trying to lookup " + remaining + " in local map " + map.keySet());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Trying to lookup " + remaining + " in local map " + map.keySet());
         }
         Endpoint endpoint = map.get(remaining);
         if (endpoint != null) {
@@ -97,7 +95,7 @@ public class LocalContextComponent extends DefaultComponent {
 
     protected void logUsingEndpoint(String uri, Endpoint endpoint) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Mapping the URI " + uri + " to local endpoint " + endpoint);
+            LOG.debug("Mapping the URI: " + uri + " to local endpoint: " + endpoint);
         }
     }
 

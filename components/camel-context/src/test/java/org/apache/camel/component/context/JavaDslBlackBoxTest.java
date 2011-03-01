@@ -67,7 +67,6 @@ public class JavaDslBlackBoxTest extends CamelTestSupport {
 
         registry.bind("accounts", blackBox);
         return registry;
-
     }
 
     @Override
@@ -76,6 +75,7 @@ public class JavaDslBlackBoxTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("accounts:purchaseOrder");
+
                 from("accounts:invoice").to("mock:results");
             }
         };

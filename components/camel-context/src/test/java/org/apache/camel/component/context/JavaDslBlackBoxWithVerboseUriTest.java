@@ -29,6 +29,7 @@ public class JavaDslBlackBoxWithVerboseUriTest extends JavaDslBlackBoxTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("context:accounts:direct://purchaseOrder");
+
                 from("context:accounts:direct://invoice").to("mock:results");
             }
         };
