@@ -162,7 +162,9 @@ public class RecipientListProcessor extends MulticastProcessor {
                 producer = producerCache.acquireProducer(endpoint);
             } catch (Exception e) {
                 if (isIgnoreInvalidEndpoints()) {
-                    LOG.info("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                    }
                     continue;
                 } else {
                     // failure so break out

@@ -207,7 +207,9 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
             if (isIgnoreInvalidEndpoints()) {
                 FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
                 if (e != null) {
-                    log.info("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
+                    }
                     current.setException(null);
                 }
             }
@@ -291,7 +293,9 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                             if (isIgnoreInvalidEndpoints()) {
                                 FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
                                 if (e != null) {
-                                    log.info("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
+                                    if (log.isDebugEnabled()) {
+                                        log.debug("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
+                                    }
                                     current.setException(null);
                                 }
                             }
