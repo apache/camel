@@ -100,7 +100,7 @@ public final class AsyncProcessorHelper {
      */
     public static void process(final AsyncProcessor processor, final Exchange exchange) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AsyncCallback callback = new AsyncCallback() {
+        boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 if (!doneSync) {
                     if (LOG.isTraceEnabled()) {
@@ -108,17 +108,13 @@ public final class AsyncProcessorHelper {
                     }
                     latch.countDown();
                 }
-
             }
 
             @Override
             public String toString() {
                 return "Done " + processor;
             }
-        };
-
-        boolean sync = process(processor, exchange, callback);
-
+        });
         if (!sync) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
