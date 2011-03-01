@@ -14,46 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.component.log;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.processor.CamelLogger;
 
 /**
- * A processor which evaluates an Expression and logs it.
- *
- * @version 
+ * Log producer.
  */
-public class LogProcessor implements AsyncProcessor, Traceable {
+public class LogProducer extends DefaultAsyncProducer {
 
-    private final Expression expression;
     private final CamelLogger logger;
 
-    public LogProcessor(Expression expression, CamelLogger logger) {
-        this.expression = expression;
+    public LogProducer(Endpoint endpoint, CamelLogger logger) {
+        super(endpoint);
         this.logger = logger;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        String msg = expression.evaluate(exchange, String.class);
-        logger.log(msg);
+        logger.process(exchange);
+        callback.done(true);
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "Log[" + expression + "]";
-    }
-
-    public String getTraceLabel() {
-        return "log[" + expression + "]";
     }
 }

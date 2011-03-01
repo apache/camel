@@ -30,6 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -43,8 +44,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.CamelContextHelper;
@@ -256,9 +257,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new DefaultProducer(this) {
-            public void process(Exchange exchange) {
+        return new DefaultAsyncProducer(this) {
+            public boolean process(Exchange exchange, AsyncCallback callback) {
                 onExchange(exchange);
+                callback.done(true);
+                return true;
             }
         };
     }
