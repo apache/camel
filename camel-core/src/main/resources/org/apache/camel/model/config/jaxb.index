@@ -17,4 +17,5 @@
 BatchResequencerConfig
 PropertiesDefinition
 PropertyDefinition
+ResequencerConfig
 StreamResequencerConfig

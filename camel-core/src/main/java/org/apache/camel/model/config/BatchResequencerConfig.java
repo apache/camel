@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BatchResequencerConfig {
+public class BatchResequencerConfig extends ResequencerConfig {
     @XmlAttribute
     private Integer batchSize;
     @XmlAttribute

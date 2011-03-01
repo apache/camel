@@ -32,7 +32,7 @@ import org.apache.camel.processor.resequencer.ExpressionResultComparator;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StreamResequencerConfig {
+public class StreamResequencerConfig extends ResequencerConfig {
     @XmlAttribute
     private Integer capacity;
     @XmlAttribute

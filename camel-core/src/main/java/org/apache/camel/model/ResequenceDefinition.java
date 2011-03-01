@@ -22,12 +22,15 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.config.BatchResequencerConfig;
+import org.apache.camel.model.config.ResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Resequencer;
@@ -44,9 +47,14 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {
-    @XmlElement(name = "batch-config")
+    @XmlElements({
+    @XmlElement(required = false, name = "batch-config", type = BatchResequencerConfig.class),
+    @XmlElement(required = false, name = "stream-config", type = StreamResequencerConfig.class)}
+    )
+    private ResequencerConfig resequencerConfig;
+    @XmlTransient
     private BatchResequencerConfig batchConfig;
-    @XmlElement(name = "stream-config")
+    @XmlTransient
     private StreamResequencerConfig streamConfig;
     @XmlElementRef
     private ExpressionDefinition expression;
@@ -238,11 +246,25 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         return "Resequencer[" + s + "]";
     }
 
+    public ResequencerConfig getResequencerConfig() {
+        return resequencerConfig;
+    }
+
+    public void setResequencerConfig(ResequencerConfig resequencerConfig) {
+        this.resequencerConfig = resequencerConfig;
+    }
+
     public BatchResequencerConfig getBatchConfig() {
+        if (batchConfig == null && resequencerConfig != null && resequencerConfig instanceof BatchResequencerConfig) {
+            return (BatchResequencerConfig) resequencerConfig;
+        }
         return batchConfig;
     }
 
     public StreamResequencerConfig getStreamConfig() {
+        if (streamConfig == null && resequencerConfig != null && resequencerConfig instanceof StreamResequencerConfig) {
+            return (StreamResequencerConfig) resequencerConfig;
+        }
         return streamConfig;
     }
 
@@ -264,6 +286,15 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
+        // if configured from XML then streamConfig has been set with the configuration
+        if (resequencerConfig != null) {
+            if (resequencerConfig instanceof StreamResequencerConfig) {
+                streamConfig = (StreamResequencerConfig) resequencerConfig;
+            } else {
+                batchConfig = (BatchResequencerConfig) resequencerConfig;
+            }
+        }
+
         if (streamConfig != null) {
             return createStreamResequencer(routeContext, streamConfig);
         } else {
