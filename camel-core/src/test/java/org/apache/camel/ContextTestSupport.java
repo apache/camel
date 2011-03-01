@@ -104,8 +104,8 @@ public abstract class ContextTestSupport extends TestSupport {
             for (RouteBuilder builder : builders) {
                 log.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
-                startCamelContext();
             }
+            startCamelContext();
         } else {
             log.debug("isUseRouteBuilder() is false");
         }
