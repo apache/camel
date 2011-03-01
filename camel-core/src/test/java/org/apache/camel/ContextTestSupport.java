@@ -43,7 +43,13 @@ public abstract class ContextTestSupport extends TestSupport {
     protected volatile NotifyBuilder oneExchangeDone;
     private boolean useRouteBuilder = true;
     private Service camelContextService;
-
+    
+    /**
+     * Use the RouteBuilder or not
+     * @return 
+     *  If the return value is true, the camel context will be started in the setup method.
+     *  If the return value is false, the camel context will not be started in the setup method.
+     */
     public boolean isUseRouteBuilder() {
         return useRouteBuilder;
     }
@@ -98,11 +104,12 @@ public abstract class ContextTestSupport extends TestSupport {
             for (RouteBuilder builder : builders) {
                 log.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
+                startCamelContext();
             }
-            startCamelContext();
         } else {
             log.debug("isUseRouteBuilder() is false");
         }
+        
     }
 
     @Override

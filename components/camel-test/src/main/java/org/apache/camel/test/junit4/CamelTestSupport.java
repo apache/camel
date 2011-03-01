@@ -63,6 +63,12 @@ public abstract class CamelTestSupport extends TestSupport {
     private Service camelContextService;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
 
+    /**
+     * Use the RouteBuilder or not
+     * @return 
+     *  If the return value is true, the camel context will be started in the setup method.
+     *  If the return value is false, the camel context will not be started in the setup method.
+     */
     public boolean isUseRouteBuilder() {
         return useRouteBuilder;
     }
