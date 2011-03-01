@@ -2229,7 +2229,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param bean  the bean to invoke
-     * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
      * @return the builder
      */
     @SuppressWarnings("unchecked")
@@ -2251,7 +2251,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type bean(Class beanType) {
         BeanDefinition answer = new BeanDefinition();
-        answer.setBeanType(beanType);
+        answer.setBeanType(beanType.getName());
         addOutput(answer);
         return (Type) this;
     }
@@ -2261,13 +2261,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param  beanType  the bean class, Camel will instantiate an object at runtime
-     * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
      * @return the builder
      */
     @SuppressWarnings("unchecked")
     public Type bean(Class beanType, String method) {
         BeanDefinition answer = new BeanDefinition();
-        answer.setBeanType(beanType);
+        answer.setBeanType(beanType.getName());
         answer.setMethod(method);
         addOutput(answer);
         return (Type) this;
@@ -2292,7 +2292,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param ref  reference to a bean to lookup in the registry
-     * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
      * @return the builder
      */
     @SuppressWarnings("unchecked")
@@ -2505,7 +2505,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param name  the header name
      * @return the builder
+     * @deprecated use {@link #removeHeader(String)}
      */
+    @Deprecated
     public Type removeFaultHeader(String name) {
         return process(ProcessorBuilder.removeFaultHeader(name));
     }

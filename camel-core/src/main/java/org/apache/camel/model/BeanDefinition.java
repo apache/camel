@@ -45,7 +45,7 @@ public class BeanDefinition extends OutputDefinition<BeanDefinition> {
     @XmlAttribute
     private String method;
     @XmlAttribute
-    private Class<?> beanType;
+    private String beanType;
     @XmlTransient
     private Object bean;
 
@@ -92,14 +92,14 @@ public class BeanDefinition extends OutputDefinition<BeanDefinition> {
         this.bean = bean;
     }
 
-    public Class<?> getBeanType() {
+    public String getBeanType() {
         return beanType;
     }
 
-    public void setBeanType(Class<?> beanType) {
+    public void setBeanType(String beanType) {
         this.beanType = beanType;
     }
-    
+
     // Fluent API
     //-------------------------------------------------------------------------
     /**
@@ -157,7 +157,13 @@ public class BeanDefinition extends OutputDefinition<BeanDefinition> {
         } else {
             if (bean == null) {
                 ObjectHelper.notNull(beanType, "bean, ref or beanType", this);
-                bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), beanType);
+                Class<?> clazz;
+                try {
+                    clazz = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(beanType);
+                } catch (ClassNotFoundException e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+                bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), clazz);
             }
             ObjectHelper.notNull(bean, "bean", this);
 
@@ -192,7 +198,7 @@ public class BeanDefinition extends OutputDefinition<BeanDefinition> {
         } else if (bean != null) {
             return bean.toString();
         } else if (beanType != null) {
-            return beanType.getName();
+            return beanType;
         } else {
             return "";
         }
