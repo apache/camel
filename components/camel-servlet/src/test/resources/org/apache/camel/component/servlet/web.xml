@@ -28,10 +28,7 @@
   <servlet>
     <servlet-name>CamelServlet</servlet-name>
     <display-name>Camel Http Transport Servlet</display-name>
-    <servlet-class>
-        org.apache.camel.component.servlet.CamelHttpTransportServlet
-    </servlet-class>
-    
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>

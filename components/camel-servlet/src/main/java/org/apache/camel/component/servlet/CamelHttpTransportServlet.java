@@ -16,59 +16,64 @@
  */
 package org.apache.camel.component.servlet;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
 import org.apache.camel.component.http.CamelServlet;
+import org.apache.camel.component.http.HttpConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CamelHttpTransportServlet extends CamelServlet implements CamelServletService {
+/**
+ * Camel HTTP servlet which can be used in Camel routes to route servlet invocations in routes.
+ */
+public class CamelHttpTransportServlet extends CamelServlet {
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelHttpTransportServlet.class);
-    private static final Map<String, CamelServlet> CAMEL_SERVLET_MAP = new ConcurrentHashMap<String, CamelServlet>();
+    private static final Map<String, CamelServletService> CAMEL_SERVLET_MAP = new ConcurrentHashMap<String, CamelServletService>();
     private String servletName;
-    private AbstractApplicationContext applicationContext;
-    
+
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        servletName = config.getServletName();
-        // parser the servlet init parameters
-        CAMEL_SERVLET_MAP.put(servletName, this);
-        String contextConfigLocation = config.getInitParameter("contextConfigLocation");
-        if (contextConfigLocation != null) {
-            //Create a spring application context for it
-            applicationContext = new ClassPathXmlApplicationContext(contextConfigLocation.split(","));
-            LOG.info("Started the application context rightly");
-        }
-    }
-    
-    public void destroy() {        
-        if (applicationContext != null) {
-            applicationContext.stop();
-        }
-        // Need to remove the servlet from map after 
-        // the ApplicationContext is removed
-        CAMEL_SERVLET_MAP.remove(servletName);
-    }
-    
-    public static CamelServlet getCamelServlet(String servletName) {
-        CamelServlet answer = null;
-        if (servletName != null) {
-            answer = CAMEL_SERVLET_MAP.get(servletName);
+        this.servletName = config.getServletName();
+        // do we already know this servlet?
+        CamelServletService service = CAMEL_SERVLET_MAP.get(servletName);
+
+        // we cannot control the startup ordering, sometimes the Camel routes start first
+        // other times the servlet, so we need to cater for both situations
+
+        if (service == null) {
+            // no we don't so create a new early service with this servlet
+            service = new DefaultCamelServletService(servletName, this);
+            CAMEL_SERVLET_MAP.put(servletName, service);
         } else {
-            if (CAMEL_SERVLET_MAP.size() > 0) {
-                // return the first one servlet
-                Iterator<CamelServlet> iterator = CAMEL_SERVLET_MAP.values().iterator();
-                answer = iterator.next();
-                LOG.info("Since no servlet name is specified, using the first element of camelServlet map [" + answer.getServletName() + "]");
+            // use this servlet
+            service.setCamelServlet(this);
+            // and start the existing consumers we already have registered
+            for (HttpConsumer consumer : service.getConsumers()) {
+                connect(consumer);
             }
-        }        
+        }
+        LOG.info("Initialized CamelHttpTransportServlet[" + servletName + "]");
+    }
+    
+    public void destroy() {
+        CAMEL_SERVLET_MAP.remove(servletName);
+        LOG.info("Destroyed CamelHttpTransportServlet[" + servletName + "]");
+    }
+    
+    public static synchronized CamelServletService getCamelServletService(String servletName, HttpConsumer consumer) {
+        // we cannot control the startup ordering, sometimes the Camel routes start first
+        // other times the servlet, so we need to cater for both situations
+
+        CamelServletService answer = CAMEL_SERVLET_MAP.get(servletName);
+        if (answer == null) {
+            answer = new DefaultCamelServletService(servletName, consumer);
+            CAMEL_SERVLET_MAP.put(servletName, answer);
+        } else {
+            answer.addConsumer(consumer);
+        }
         return answer;
     }
 
@@ -76,8 +81,6 @@ public class CamelHttpTransportServlet extends CamelServlet implements CamelServ
     public String getServletName() {
         return servletName;
     }
-    
-    
-    
+
 }
 

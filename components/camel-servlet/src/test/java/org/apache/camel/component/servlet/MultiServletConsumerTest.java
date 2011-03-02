@@ -21,73 +21,55 @@ import com.meterware.httpunit.HttpNotFoundException;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.CamelServlet;
 import org.junit.Test;
 
 public class MultiServletConsumerTest extends ServletCamelRouterTestSupport {
-    /**
-     * @return The web.xml to use for testing.
-     */
+
     protected String getConfiguration() {
         return "/org/apache/camel/component/servlet/multiServletWeb.xml";
     }
-    
-    protected void loadServlets() throws Exception {
-        try {
-            sr.newClient().getResponse(CONTEXT_URL + "/services1");
-        } catch (HttpNotFoundException e) {
-            // ignore, we just want to boot up the servlet
-        }
-        
-        try {
-            sr.newClient().getResponse(CONTEXT_URL + "/services2");
-        } catch (HttpNotFoundException e) {
-            // ignore, we just want to boot up the servlet
-        }
-    }
-    
+
     @Test
     public void testMultiServletsConsumers() throws Exception {
-        // this bit is needed because the default servlet chosen (when none is specified)
-        // differs in various JDK versions
-        CamelServlet camelServlet = CamelHttpTransportServlet.getCamelServlet(null);
-        String helloServiceServlet = camelServlet.getServletName().contains("2") ? "2" : "1";
-        
-        String result = getService("/services" + helloServiceServlet + "/hello");
-        assertEquals("Get a wrong response", "/mycontext/services" + helloServiceServlet + "/hello", result);
-        
-        result = getService("/services1/echo");
-        assertEquals("Get a wrong response", "/mycontext/services1/echo", result);
-        
-        result = getService("/services2/echo");
-        assertEquals("Get a wrong response", "/mycontext/services2/echo", result);
+        String result = getService("/services1/hello?name=Camel");
+        assertEquals("Hello Camel", result);
+
+        result = getService("/services2/echo?name=Camel");
+        assertEquals("Camel Camel", result);
     }
-    
+
+    @Test
+    public void testMultiServletsConsumersCannotAccessEachOther() throws Exception {
+        try {
+            getService("/services2/hello?name=Camel");
+            fail("Should have thrown an exception");
+        } catch (HttpNotFoundException e) {
+            assertEquals(404, e.getResponseCode());
+        }
+
+        try {
+            getService("/services1/echo?name=Camel");
+            fail("Should have thrown an exception");
+        } catch (HttpNotFoundException e) {
+            assertEquals(404, e.getResponseCode());
+        }
+    }
+
     public String getService(String path) throws Exception {
         WebRequest req = new GetMethodWebRequest(CONTEXT_URL + path);
         ServletUnitClient client = newClient();
         WebResponse response = client.getResponse(req);
-        
+
         return response.getText();
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            Processor echoRequestURIProcessor = new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-                    exchange.getOut().setBody(uri);
-                }
-            };
-            
             public void configure() {
-                errorHandler(noErrorHandler());
-                from("servlet:///hello").process(echoRequestURIProcessor);
-                from("servlet:///echo?servletName=CamelServlet1").process(echoRequestURIProcessor);
-                from("servlet:///echo?servletName=CamelServlet2").process(echoRequestURIProcessor);
+                from("servlet:/hello?servletName=CamelServlet1").transform(simple("Hello ${header.name}"));
+
+                from("servlet:/echo?servletName=CamelServlet2").transform(simple("${header.name} ${header.name}"));
             }
         };
     }

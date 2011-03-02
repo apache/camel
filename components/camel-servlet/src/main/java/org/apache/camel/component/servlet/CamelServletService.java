@@ -16,12 +16,56 @@
  */
 package org.apache.camel.component.servlet;
 
+import java.util.Set;
+
+import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpConsumer;
 
+/**
+ * Service which binds {@link CamelServlet} to the consumers it should service.
+ */
 public interface CamelServletService {
-    
-    void connect(HttpConsumer consumer); 
 
+    /**
+     * Adds the given consumer to this service.
+     *
+     * @param consumer the consumer
+     */
+    void addConsumer(HttpConsumer consumer);
+
+    /**
+     * Gets the known consumers this service services.
+     *
+     * @return the consumers.
+     */
+    Set<HttpConsumer> getConsumers();
+
+    /**
+     * Sets the servlet to use.
+     *
+     * @param camelServlet the servlet to use.
+     */
+    void setCamelServlet(CamelServlet camelServlet);
+
+    /**
+     * Connect the given consumer to the servlet.
+     *
+     * @param consumer the consumer
+     */
+    void connect(HttpConsumer consumer);
+
+    /**
+     * Disconnects the given consumer from the servlet.
+     *
+     * @param consumer the consumer
+     */
     void disconnect(HttpConsumer consumer);
+
+    /**
+     * Gets the name of the servlet used.
+     *
+     * @return the name of the servlet used.
+     */
+    String getServletName();
 
 }

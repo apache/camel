@@ -18,7 +18,6 @@ package org.apache.camel.component.http;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -50,12 +49,14 @@ public class CamelServlet extends HttpServlet {
         // Is there a consumer registered for the request.
         HttpConsumer consumer = resolve(request);
         if (consumer == null) {
+            log.debug("No consumer to service request {}", request);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
         // are we suspended?
         if (consumer.isSuspended()) {
+            log.debug("Consumer suspended, cannot service request {}", request);
             response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             return;
         }
@@ -117,10 +118,12 @@ public class CamelServlet extends HttpServlet {
     }
 
     public void connect(HttpConsumer consumer) {
+        log.debug("Connecting consumer: {}", consumer);
         consumers.put(consumer.getPath(), consumer);
     }
 
     public void disconnect(HttpConsumer consumer) {
+        log.debug("Disconnecting consumer: {}", consumer);
         consumers.remove(consumer.getPath());
     }
     

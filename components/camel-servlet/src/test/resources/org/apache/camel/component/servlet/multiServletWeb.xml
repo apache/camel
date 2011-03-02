@@ -28,17 +28,13 @@
   <servlet>
     <servlet-name>CamelServlet1</servlet-name>
     <display-name>Camel Http Transport Servlet1</display-name>
-    <servlet-class>
-        org.apache.camel.component.servlet.CamelHttpTransportServlet
-    </servlet-class>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
   </servlet>
   
   <servlet>
     <servlet-name>CamelServlet2</servlet-name>
     <display-name>Camel Http Transport Servlet2</display-name>
-    <servlet-class>
-        org.apache.camel.component.servlet.CamelHttpTransportServlet
-    </servlet-class>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -50,6 +46,5 @@
     <servlet-name>CamelServlet2</servlet-name>
     <url-pattern>/services2/*</url-pattern>
   </servlet-mapping>
-
 
 </web-app>

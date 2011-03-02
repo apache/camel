@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!DOCTYPE web-app
-    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-    "http://java.sun.com/dtd/web-app_2_3.dtd">
-    
+        PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd">
+
 <!--
   Licensed to the Apache Software Foundation (ASF) under one
   or more contributor license agreements. See the NOTICE file
@@ -22,33 +22,36 @@
   specific language governing permissions and limitations
   under the License.
 -->
-<!-- START SNIPPET: web -->    
+<!-- START SNIPPET: web -->
 <web-app>
 
-  <servlet>
-    <servlet-name>CamelServlet</servlet-name>
-    <display-name>Camel Http Transport Servlet</display-name>
-    <servlet-class>
-        org.apache.camel.component.servlet.CamelHttpTransportServlet
-    </servlet-class>
-    <init-param> 
-      <param-name>matchOnUriPrefix</param-name> 
-      <param-value>true</param-value>
-    </init-param>
-    <!-- Set the camel context application file location here. 
-         From Camel 2.3.0, you can specify more than one application context configure file 
-         which is separated by ','.
-    -->
-    <init-param>
-      <param-name>contextConfigLocation</param-name>
-	  <param-value>/org/apache/camel/component/servlet/camelContext.xml</param-value>
-    </init-param>
-  </servlet>
+    <!-- tell Spring where it should load the XML file -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:org/apache/camel/component/servlet/camelContext.xml</param-value>
+    </context-param>
 
-  <servlet-mapping>
-    <servlet-name>CamelServlet</servlet-name>
-    <url-pattern>/services/*</url-pattern>
-  </servlet-mapping>
-  
+    <!-- spring context listener which loads the XML file -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- Camel Servlet -->
+    <servlet>
+        <servlet-name>CamelServlet</servlet-name>
+        <display-name>Camel Http Transport Servlet</display-name>
+        <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+        <init-param>
+            <param-name>matchOnUriPrefix</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <!-- Camel Servlet mappings -->
+    <servlet-mapping>
+        <servlet-name>CamelServlet</servlet-name>
+        <url-pattern>/services/*</url-pattern>
+    </servlet-mapping>
+
 </web-app>
 <!-- END SNIPPET: web -->

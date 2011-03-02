@@ -18,11 +18,8 @@ package org.apache.camel.component.servlet.osgi;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
-
-import javax.servlet.Servlet;
 import javax.servlet.http.HttpServlet;
 
-import org.apache.camel.component.servlet.CamelHttpTransportServlet;
 import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
 import org.springframework.beans.factory.InitializingBean;
@@ -34,6 +31,9 @@ import org.springframework.context.Lifecycle;
  * HttpService</a>
  */
 public class OsgiServletRegisterer implements Lifecycle, InitializingBean {
+
+    // TODO: There must be a better way than depend on spring for registering a servlet into OSGi!
+
     /**
      * The alias is the name in the URI namespace of the Http Service at which the registration will be mapped
      * An alias must begin with slash ('/') and must not end with slash ('/'), with the exception that an alias 

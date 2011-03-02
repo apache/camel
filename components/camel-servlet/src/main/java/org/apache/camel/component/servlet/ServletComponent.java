@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.http.AuthMethod;
-import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpComponent;
@@ -37,35 +36,29 @@ import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 public class ServletComponent extends HttpComponent {
-    
-    private CamelServlet camelServlet;
-    
-    private CamelServletService camelServletService;
-        
-    public void setCamelServlet(CamelServlet servlet) {
-        camelServlet = servlet;
-    }
-    
-    public void setCamelServletService(CamelServletService service) {
-        camelServletService = service;
+
+    private String servletName = "CamelServlet";
+
+    public String getServletName() {
+        return servletName;
     }
 
-    public CamelServlet getCamelServlet(String servletName) {
-        CamelServlet answer;
-        if (camelServlet == null) {
-            answer = CamelHttpTransportServlet.getCamelServlet(servletName);
-        } else {
-            answer = camelServlet;
-        }
-        if (answer == null) {
-            throw new IllegalArgumentException("Cannot find the deployed servlet, please configure the ServletComponent"
-                + " or configure a org.apache.camel.component.servlet.CamelHttpTransportServlet servlet in web.xml ");
-        }
-        return answer;
+    public void setServletName(String servletName) {
+        this.servletName = servletName;
     }
-    
-    public CamelServletService getCamelServletService() {
-        return camelServletService;
+
+    /**
+     * Strategy to get the {@link CamelServletService} for the given endpoint.
+     *
+     * @param endpoint  the http endpoint.
+     * @return the service
+     */
+    public CamelServletService getCamelServletService(ServletEndpoint endpoint, HttpConsumer consumer) {
+        CamelServletService service = CamelHttpTransportServlet.getCamelServletService(endpoint.getServletName(), consumer);
+        if (service == null) {
+            throw new IllegalArgumentException("Servlet: " + getServletName() + " not found.");
+        }
+        return service;
     }
     
     @Override
@@ -85,12 +78,13 @@ public class ServletComponent extends HttpComponent {
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
+        String servletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), CastUtils.cast(parameters));
         uri = httpUri.toString();
 
-        ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), configurer);
+        ServletEndpoint endpoint = createServletEndpoint(servletName, uri, this, httpUri, params, getHttpConnectionManager(), configurer);
         setEndpointHeaderFilterStrategy(endpoint);
 
         // prefer to use endpoint configured over component configured
@@ -120,34 +114,28 @@ public class ServletComponent extends HttpComponent {
         return endpoint;
     }
 
-    protected ServletEndpoint createServletEndpoint(String endpointUri,
+    /**
+     * Strategy to create the servlet endpoint.
+     */
+    protected ServletEndpoint createServletEndpoint(String servletName, String endpointUri,
             ServletComponent component, URI httpUri, HttpClientParams params,
             HttpConnectionManager httpConnectionManager,
             HttpClientConfigurer clientConfigurer) throws Exception {
-        return new ServletEndpoint(endpointUri, component, httpUri, params,
-                httpConnectionManager, clientConfigurer);
+        return new ServletEndpoint(servletName, endpointUri, component, httpUri, params, httpConnectionManager, clientConfigurer);
     }
     
     public void connect(HttpConsumer consumer) throws Exception {
-        if (getCamelServletService() != null) {
-            getCamelServletService().connect(consumer);
-        } else {
-            ServletEndpoint endpoint = (ServletEndpoint) consumer.getEndpoint();
-            CamelServlet servlet = getCamelServlet(endpoint.getServletName());
-            ObjectHelper.notNull(servlet, "CamelServlet");
-            servlet.connect(consumer);
-        }
+        ServletEndpoint endpoint = (ServletEndpoint) consumer.getEndpoint();
+        CamelServletService servlet = getCamelServletService(endpoint, consumer);
+        ObjectHelper.notNull(servlet, "CamelServlet");
+        servlet.connect(consumer);
     }
 
     public void disconnect(HttpConsumer consumer) throws Exception {
-        if (getCamelServletService() != null) {
-            getCamelServletService().disconnect(consumer);
-        } else {
-            ServletEndpoint endpoint = (ServletEndpoint) consumer.getEndpoint();
-            CamelServlet servlet = getCamelServlet(endpoint.getServletName());
-            ObjectHelper.notNull(servlet, "CamelServlet");
-            servlet.disconnect(consumer);
-        }
+        ServletEndpoint endpoint = (ServletEndpoint) consumer.getEndpoint();
+        CamelServletService servlet = getCamelServletService(endpoint, consumer);
+        ObjectHelper.notNull(servlet, "CamelServlet");
+        servlet.disconnect(consumer);
     }
 
 }

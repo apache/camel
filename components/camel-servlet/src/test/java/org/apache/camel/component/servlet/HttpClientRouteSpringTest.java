@@ -19,6 +19,7 @@ package org.apache.camel.component.servlet;
 import org.junit.Before;
 
 public class HttpClientRouteSpringTest extends HttpClientRouteTest {
+
     @Before
     public void setUp() throws Exception {
         startCamelContext = false;

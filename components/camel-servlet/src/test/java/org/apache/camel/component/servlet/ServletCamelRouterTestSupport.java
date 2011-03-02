@@ -17,7 +17,7 @@
 package org.apache.camel.component.servlet;
 
 import java.io.InputStream;
-import com.meterware.httpunit.HttpNotFoundException;
+
 import com.meterware.httpunit.HttpUnitOptions;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
@@ -37,8 +37,6 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         assertNotNull("The configuration input stream should not be null", is);
         sr = new ServletRunner(is, CONTEXT);
         
-        loadServlets();
-        
         HttpUnitOptions.setExceptionsThrownOnErrorStatus(true);
         if (startCamelContext) {        
             super.setUp();
@@ -53,14 +51,6 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         sr.shutDown();
     }
     
-    protected void loadServlets() throws Exception {
-        try {
-            sr.newClient().getResponse(CONTEXT_URL + "/services");
-        } catch (HttpNotFoundException e) {
-            // ignore, we just want to boot up the servlet
-        } 
-    }
-
     /**
      * @return The web.xml to use for testing.
      */
@@ -71,6 +61,5 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
     protected ServletUnitClient newClient() {
         return sr.newClient();
     }
-
 
 }
