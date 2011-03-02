@@ -36,10 +36,9 @@ public class ServletEndpoint extends HttpEndpoint {
         super();
     }
 
-    public ServletEndpoint(String servletName, String endPointURI, ServletComponent component, URI httpUri, HttpClientParams params,
+    public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri, HttpClientParams params,
                            HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endPointURI, component, httpUri, params, httpConnectionManager, clientConfigurer);
-        this.servletName = servletName;
     }
     
     public void setServletName(String name) {

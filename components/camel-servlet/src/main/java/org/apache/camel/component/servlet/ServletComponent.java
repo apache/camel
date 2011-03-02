@@ -84,7 +84,8 @@ public class ServletComponent extends HttpComponent {
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), CastUtils.cast(parameters));
         uri = httpUri.toString();
 
-        ServletEndpoint endpoint = createServletEndpoint(servletName, uri, this, httpUri, params, getHttpConnectionManager(), configurer);
+        ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), configurer);
+        endpoint.setServletName(servletName);
         setEndpointHeaderFilterStrategy(endpoint);
 
         // prefer to use endpoint configured over component configured
@@ -117,11 +118,11 @@ public class ServletComponent extends HttpComponent {
     /**
      * Strategy to create the servlet endpoint.
      */
-    protected ServletEndpoint createServletEndpoint(String servletName, String endpointUri,
+    protected ServletEndpoint createServletEndpoint(String endpointUri,
             ServletComponent component, URI httpUri, HttpClientParams params,
             HttpConnectionManager httpConnectionManager,
             HttpClientConfigurer clientConfigurer) throws Exception {
-        return new ServletEndpoint(servletName, endpointUri, component, httpUri, params, httpConnectionManager, clientConfigurer);
+        return new ServletEndpoint(endpointUri, component, httpUri, params, httpConnectionManager, clientConfigurer);
     }
     
     public void connect(HttpConsumer consumer) throws Exception {
