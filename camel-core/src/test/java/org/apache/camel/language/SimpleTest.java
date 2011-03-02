@@ -260,6 +260,32 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
+    public void testHeaderEmptyBody() throws Exception {
+        // set an empty body
+        exchange.getIn().setBody(null);
+
+        assertExpression("header.foo", "abc");
+        assertExpression("headers.foo", "abc");
+        assertExpression("in.header.foo", "abc");
+        assertExpression("in.headers.foo", "abc");
+        assertExpression("${header.foo}", "abc");
+        assertExpression("${headers.foo}", "abc");
+        assertExpression("${in.header.foo}", "abc");
+        assertExpression("${in.headers.foo}", "abc");
+    }
+
+    public void testIsInstanceOfEmptyBody() throws Exception {
+        // set an empty body
+        exchange.getIn().setBody(null);
+
+        try {
+            assertExpression("${body} is null", false);
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Syntax error in is operator: ${body} is null cannot be null. It must be a class type.", e.getMessage());
+        }
+    }
+
     public void testHeaderAs() throws Exception {
         assertExpression("${headerAs(foo,String)}", "abc");
 

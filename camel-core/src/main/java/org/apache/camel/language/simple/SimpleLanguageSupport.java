@@ -244,6 +244,10 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                     }
                 } else if (operator == IS || operator == NOT_IS) {
                     String name = right.evaluate(exchange, String.class);
+                    if (name == null) {
+                        throw new IllegalArgumentException("Syntax error in " + operatorText + " operator: " + expression
+                                    + " cannot be null. It must be a class type.");
+                    }
                     Class<?> rightType = exchange.getContext().getClassResolver().resolveClass(name);
                     if (rightType == null) {
                         throw new IllegalArgumentException("Syntax error in " + operatorText + " operator: " + expression
