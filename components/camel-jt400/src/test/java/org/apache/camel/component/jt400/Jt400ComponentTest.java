@@ -38,10 +38,10 @@ public class Jt400ComponentTest extends Assert {
     }
 
     /**
-     * Test creation of a {@link Jt400DataQueueEndpoint}
+     * Test creation of a {@link Jt400DataQueueEndpoint} for Datq
      */
     @Test
-    public void testCreateEndpoint() throws Exception {
+    public void testCreateDatqEndpoint() throws Exception {
         Endpoint endpoint = component
             .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq",
                             "/user:password@host/qsys.lib/library.lib/queue.dtaq", new HashMap());
@@ -50,13 +50,25 @@ public class Jt400ComponentTest extends Assert {
     }
 
     /**
+     * Test creation of a {@link Jt400DataQueueEndpoint} for pgm calls
+     */
+    @Test
+    public void testCreatePgmEndpoint() throws Exception {
+        Endpoint endpoint = component
+            .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.pgm",
+                            "/user:password@host/qsys.lib/library.lib/queue.pgm", new HashMap());
+        assertNotNull(endpoint);
+        assertTrue(endpoint instanceof Jt400PgmEndpoint);
+    }
+
+    /**
      * Test exception when trying to access any other object type on AS/400
      */
     @Test
     public void testCreateEndpointForOtherObjectType() throws Exception {
         try {
-            component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.pgm",
-                                     "/user:password@host/qsys.lib/library.lib/program.pgm", new HashMap());
+            component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx",
+                                     "/user:password@host/qsys.lib/library.lib/program.xxx", new HashMap());
             fail("Exception should been thrown when trying to create an endpoint for an unsupported object type");
         } catch (CamelException e) {
             // this is just what we expected

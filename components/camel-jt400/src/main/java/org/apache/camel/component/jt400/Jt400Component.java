@@ -25,11 +25,12 @@ import org.apache.camel.impl.DefaultComponent;
 /**
  * {@link Component} to provide integration with AS/400 objects. 
  * 
- * Current implementation only supports working with data queues (*DTAQ)
+ * Current implementation supports working with data queues (*DTAQ) and Program calls (*PGM)
  */
 public class Jt400Component extends DefaultComponent {
 
     private static final String DATA_QUEUE = "DTAQ";
+    private static final String PGM = "PGM";
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> properties) throws Exception {
@@ -38,6 +39,11 @@ public class Jt400Component extends DefaultComponent {
         if (DATA_QUEUE.equals(type)) {
             return new Jt400DataQueueEndpoint(uri, this);
         }
+        
+        if (PGM.equals(type)) {
+            return new Jt400PgmEndpoint(uri, this);
+        }
+        
         throw new CamelException(String.format("AS/400 Object type %s is not supported", type));
     }
 }
