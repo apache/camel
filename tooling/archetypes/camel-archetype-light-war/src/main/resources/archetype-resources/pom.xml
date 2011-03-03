@@ -31,12 +31,6 @@
   
   <packaging>war</packaging>
 
-  <properties>
-    <camel-version>$CAMEL_VERSION_REPLACEME$</camel-version>
-    <spring-version>$SPRING_VERSION_REPLACEME$</spring-version>
-    <jetty-version>$JETTY_VERSION_REPLACEME$</jetty-version>
-  </properties>
-
   <dependencies>
 
     <!-- Camel Dependencies -->
@@ -56,12 +50,24 @@
       <version>${camel-version}</version>
     </dependency>
 
-    <!-- Spring -->
+    <!-- Spring Web -->
     <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-web</artifactId>
-       <version>${spring-version}</version>
-     </dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>${spring-version}</version>
+    </dependency>
+     
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId> 
+      <artifactId>log4j</artifactId> 
+      <version>${log4j-version}</version> 
+    </dependency>
 
   </dependencies>
 
@@ -72,19 +78,14 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>$MAVEN_COMPILER_PLUGIN_VERSION_REPLACEME$</version>
+        <version>${maven-compiler-plugin-version}</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
         </configuration>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${camel-version}</version>
-      </plugin>
-
+      
+      <!-- plugin so you can run mvn jetty:run -->
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
@@ -107,4 +108,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>
