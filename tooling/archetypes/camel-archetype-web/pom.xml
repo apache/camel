@@ -29,9 +29,9 @@
   </parent>
 
   <groupId>org.apache.camel.archetypes</groupId>
-  <artifactId>camel-archetype-light-war</artifactId>
-  <name>Camel :: Archetypes :: Camel Routes Light WAR</name>
-  <description>Creates a new Camel project that deploys the Camel routes as a WAR</description>
+  <artifactId>camel-archetype-web</artifactId>
+  <name>Camel :: Archetypes :: Camel Routes WAR</name>
+  <description>Creates a new Camel web project that deploys the Camel routes as a WAR</description>
   <packaging>maven-archetype</packaging>
 
   <build>
