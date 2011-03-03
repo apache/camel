@@ -40,6 +40,8 @@
       <artifactId>camel-spring</artifactId>
       <version>${camel-version}</version>
     </dependency>
+    
+    <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>

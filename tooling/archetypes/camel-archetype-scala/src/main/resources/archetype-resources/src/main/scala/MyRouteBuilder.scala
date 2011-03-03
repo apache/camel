@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${packageName}
+package ${package}
 
 import org.apache.camel.Exchange
 import org.apache.camel.scala.dsl.builder.RouteBuilder
@@ -25,7 +25,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 class MyRouteBuilder extends RouteBuilder {
 
    //an example for the simple DSL syntax...
-   "timer://foo?fixedRate=true&delay=0&period=10000" setbody("simple test") to "log:simple"
+   "timer://foo?fixedRate=true&delay=0&period=10s" setbody("simple test") to "log:simple"
 
    // an example of a Processor method
    val myProcessorMethod = (exchange: Exchange) => {
@@ -33,7 +33,7 @@ class MyRouteBuilder extends RouteBuilder {
    }
    
    // ...and another one using Scala blocks
-   "timer://foo?fixedRate=true&delay=5000&period=10000" ==> {
+   "timer://foo?fixedRate=true&delay=5s&period=10s" ==> {
       process(myProcessorMethod)
       to("log:block")
    }
