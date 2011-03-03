@@ -29,16 +29,6 @@
   <name>A Camel Route</name>
   <url>http://www.myorganization.org</url>
 
-  <properties>
-    <camel-version>$CAMEL_VERSION_REPLACEME$</camel-version>
-    <activemq-version>$ACTIVEMQ_VERSION_REPLACEME$</activemq-version>
-    <xbean-spring-version>$XBEAN_VERSION_REPLACEME$</xbean-spring-version>
-    <log4j-version>$LOG4J_VERSION_REPLACEME$</log4j-version>
-    <spring-version>$SPRING_VESRION_REPLACEME$</spring-version>
-    <jaxb-api-version>$JAXB_API_VERSION_REPLACEME$</jaxb-api-version>
-    <jaxb-impl-version>$JAXB_IMPL_VERSION_REPLACEME$</jaxb-impl-version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -76,6 +66,11 @@
       <version>${spring-version}</version>
     </dependency>   
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version> 
+    </dependency>
+    <dependency>
       <groupId>log4j</groupId> 
       <artifactId>log4j</artifactId> 
       <version>${log4j-version}</version> 
@@ -89,7 +84,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>$MAVEN_COMPILER_PLUGIN_VERSION_REPLACEME$</version>
+        <version>${maven-compiler-plugin-version}</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>

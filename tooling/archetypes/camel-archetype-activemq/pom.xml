@@ -34,41 +34,26 @@
   <description>Creates a new Camel project that configures and interacts with ActiveMQ.</description>
   <packaging>maven-archetype</packaging>
 
-  <build>
+ <build>
     <extensions>
       <extension>
         <groupId>org.apache.maven.archetype</groupId>
         <artifactId>archetype-packaging</artifactId>
       </extension>
     </extensions>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <replace casesensitive="true" file="${project.build.directory}/classes/archetype-resources/pom.xml">
-                  <replacefilter token="$CAMEL_VERSION_REPLACEME$" value="${project.version}" /> 
-                  <replacefilter token="$ACTIVEMQ_VERSION_REPLACEME$" value="${activemq-version}" /> 
-                  <replacefilter token="$XBEAN_VERSION_REPLACEME$" value="${xbean-spring-version}" /> 
-                  <replacefilter token="$LOG4J_VERSION_REPLACEME$" value="${log4j-version}" />
-                  <replacefilter token="$SPRING_VESRION_REPLACEME$" value="${spring-version}" />
-                  <replacefilter token="$JAXB_API_VERSION_REPLACEME$" value="${jaxb-api-version}" /> 
-                  <replacefilter token="$JAXB_IMPL_VERSION_REPLACEME$" value="${jaxb-version}" />
-                  <replacefilter token="$MAVEN_COMPILER_PLUGIN_VERSION_REPLACEME$" value="${maven-compiler-plugin-version}" />
-                </replace>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource> 
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/archetype-metadata.xml</include>
+        </includes>
+      </resource>
+    </resources>
   </build>
 
 </project>
