@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${packageName};
+package ${package};
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultConsumer;

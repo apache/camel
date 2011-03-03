@@ -29,10 +29,6 @@
   <name>A Camel Component</name>
   <url>http://www.myorganization.org</url>
 
-  <properties>
-    <camel-version>$CAMEL_VERSION_REPLACEME$</camel-version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -42,17 +38,22 @@
 
     <!-- for testing -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>   
-      <version>4.8.1</version>   
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
       <version>${camel-version}</version>      
       <scope>test</scope>
-    </dependency>      
+    </dependency>
+    <!-- logging -->      
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId> 
+      <artifactId>log4j</artifactId> 
+      <version>${log4j-version}</version> 
+    </dependency>
   </dependencies>
 
   <build>
@@ -62,7 +63,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>$MAVEN_COMPILER_PLUGIN_VERSION_REPLACEME$</version>
+        <version>${maven-compiler-plugin-version}</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
