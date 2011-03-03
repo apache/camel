@@ -38,7 +38,7 @@ public class ServletComponentTest extends OSGiIntegrationSpringTestSupport {
     public void testSendMessage() {
         String endpointURI = "http://localhost:9080/camel/services/hello";
         String response = template.requestBody(endpointURI, "Hello World", String.class);
-        assertEquals("response is " , "Echo Hello World", response);
+        assertEquals("Echo Hello World", response);
     }
     
     @Configuration
@@ -58,8 +58,7 @@ public class ServletComponentTest extends OSGiIntegrationSpringTestSupport {
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
                           "camel-core", "camel-spring", "camel-test", "camel-http", "camel-servlet"),
-          
-                
+
             workingDirectory("target/paxrunner/"),
 
             felix(), equinox());

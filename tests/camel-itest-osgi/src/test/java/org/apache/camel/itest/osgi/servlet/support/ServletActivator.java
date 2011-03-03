@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.osgi.servlet.support;
+
 // START SNIPPET: activator
 import java.util.Dictionary;
 import java.util.Hashtable;
-
-import javax.servlet.Servlet;
 
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
 import org.osgi.framework.BundleActivator;
@@ -61,7 +60,7 @@ public final class ServletActivator implements BundleActivator, BundleContextAwa
         httpServiceRef = bundleContext.getServiceReference(HttpService.class.getName());
         
         if (httpServiceRef != null && !registerService) {
-            LOG.info("Regist the servlet service");
+            LOG.info("Register the servlet service");
             final HttpService httpService = (HttpService)bundleContext.getService(httpServiceRef);
             if (httpService != null) {
                 // create a default context to share between registrations
@@ -69,9 +68,9 @@ public final class ServletActivator implements BundleActivator, BundleContextAwa
                 // register the hello world servlet
                 final Dictionary<String, String> initParams = new Hashtable<String, String>();
                 initParams.put("matchOnUriPrefix", "false");
-                initParams.put("servlet-name", "camelServlet");
+                initParams.put("servlet-name", "CamelServlet");
                 httpService.registerServlet("/camel/services", // alias
-                    (Servlet)new CamelHttpTransportServlet(), // register servlet
+                    new CamelHttpTransportServlet(), // register servlet
                     initParams, // init params
                     httpContext // http context
                 );
@@ -84,7 +83,7 @@ public final class ServletActivator implements BundleActivator, BundleContextAwa
         try {
             registerServlet(bc);
         } catch (Exception e) {
-            LOG.error("Can't register the servlet, the reason is " + e);
+            LOG.error("Cannot register the servlet, the reason is " + e);
         }
     }
 

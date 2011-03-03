@@ -15,7 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
- <!-- START SNIPPET: camelContext -->
+<!-- START SNIPPET: camelContext -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
@@ -25,20 +25,19 @@
        http://www.springframework.org/schema/osgi  http://www.springframework.org/schema/osgi/spring-osgi.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-   <osgi:reference id="camelHttpTransportServlet" interface="org.apache.camel.component.servlet.CamelServletService"/>
-        
-   <bean id="servlet" class="org.apache.camel.component.servlet.ServletComponent">
-      <property name = "camelServletService" ref="camelHttpTransportServlet" />
-   </bean>
+    <!-- refer to the CamelServlet using servlet as id, which we can use in the Camel routes -->
+    <osgi:reference id="servlet" interface="javax.servlet.Servlet" bean-name="camelServlet"/>
 
-   <bean id="servletProcessor" class="org.apache.camel.itest.osgi.servlet.ServletProcessor" />
-  
-   <camelContext xmlns="http://camel.apache.org/schema/spring">
-     <camel:route>
-       <camel:from uri="servlet:///hello"/>
-       <camel:process ref="servletProcessor"/>
-     </camel:route>
-   </camelContext>
+    <!-- a processor to compute the reply to send back -->
+    <bean id="servletProcessor" class="org.apache.camel.itest.osgi.servlet.ServletProcessor"/>
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <!-- notice how we can use the servlet scheme which is that osgi:reference above -->
+            <from uri="servlet:///hello"/>
+            <process ref="servletProcessor"/>
+        </route>
+    </camelContext>
 
 </beans>
 <!-- END SNIPPET: camelContext -->

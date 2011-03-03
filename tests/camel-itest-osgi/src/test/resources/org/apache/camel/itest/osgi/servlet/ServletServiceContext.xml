@@ -22,13 +22,14 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/osgi  http://www.springframework.org/schema/osgi/spring-osgi.xsd">
-      
-    <bean id="osgiServlet" class="org.apache.camel.component.servlet.CamelHttpTransportServlet"/>
-     
-    <osgi:service ref="osgiServlet">
+
+    <!-- define the Camel servlet -->
+    <bean id="camelServlet" class="org.apache.camel.component.servlet.CamelHttpTransportServlet"/>
+
+    <!-- enlist it in OSGi HTTP service registry -->
+    <osgi:service ref="camelServlet">
         <osgi:interfaces>
      		<value>javax.servlet.Servlet</value>
-     		<value>org.apache.camel.component.servlet.CamelServletService</value>
   		</osgi:interfaces>
         <osgi:service-properties>
             <entry key="alias" value="/camel/services" />
