@@ -48,7 +48,7 @@ public class BlueprintPropertiesRouteTest extends OSGiBlueprintTestSupport {
         getInstalledBundle(name).start();
 
         // must use the camel context from osgi
-        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=" + name + ")", 5000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=" + name + ")", 10000);
 
         ProducerTemplate myTemplate = ctx.createProducerTemplate();
         myTemplate.start();

@@ -20,7 +20,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
         <route>
             <from uri="direct:start"/>
-            <to uri="smtp://james@localhost"/>
+            <to uri="ftp://someserver.com?username=foo&amp;password=secret"/>
         </route>
     </camelContext>
 

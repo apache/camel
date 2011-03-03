@@ -16,14 +16,7 @@
  */
 package org.apache.camel.itest.osgi.blueprint;
 
-import java.lang.reflect.Method;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.model.RouteDefinition;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -33,11 +26,11 @@ import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
+import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.vmOption;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
@@ -61,38 +54,38 @@ public class CamelBlueprintTest extends OSGiBlueprintTestSupport {
 
     @Test
     public void testRouteWithMissingComponent() throws Exception {
-        getInstalledBundle("org.apache.camel.camel-mail").stop();
+        getInstalledBundle("org.apache.camel.camel-ftp").stop();
         try {
-            getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle2)", 1000);
+            getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle2)", 500);
             fail("The blueprint container should not be available");
         } catch (Exception e) {
         }
         getInstalledBundle("CamelBlueprintTestBundle2").start();
         try {
-            getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle2)", 1000);
+            getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle2)", 500);
             fail("The blueprint container should not be available");
         } catch (Exception e) {
         }
-        getInstalledBundle("org.apache.camel.camel-mail").start();
+        getInstalledBundle("org.apache.camel.camel-ftp").start();
         getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle2)", 10000);
         getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle2)", 10000);
     }
 
     @Test
     public void testRouteWithMissingDataFormat() throws Exception {
-        getInstalledBundle("org.apache.camel.camel-jaxb").stop();
+        getInstalledBundle("org.apache.camel.camel-jackson").stop();
         try {
-            getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle3)", 1000);
+            getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle3)", 500);
             fail("The blueprint container should not be available");
         } catch (Exception e) {
         }
         getInstalledBundle("CamelBlueprintTestBundle3").start();
         try {
-            getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle3)", 1000);
+            getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle3)", 500);
             fail("The blueprint container should not be available");
         } catch (Exception e) {
         }
-        getInstalledBundle("org.apache.camel.camel-jaxb").start();
+        getInstalledBundle("org.apache.camel.camel-jackson").start();
         getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle3)", 10000);
         getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle3)", 10000);
     }
@@ -147,59 +140,6 @@ public class CamelBlueprintTest extends OSGiBlueprintTestSupport {
         BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle9)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle9)", 10000);
         assertEquals(1, ctx.getRoutes().size());
-    }
-
-    @Test
-    public void testEndpointInjection() throws Exception {
-        getInstalledBundle("CamelBlueprintTestBundle10").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle10)", 10000);
-        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle10)", 10000);
-        Object producer = ctn.getComponentInstance("producer");
-        assertNotNull(producer);
-        assertEquals(TestProducer.class.getName(), producer.getClass().getName());
-        Method mth = producer.getClass().getMethod("getTestEndpoint");
-        assertNotNull(mth.invoke(producer));
-    }
-
-    @Test
-    public void testRouteContext() throws Exception {
-        getInstalledBundle("CamelBlueprintTestBundle11").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle11)", 10000);
-        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle11)", 10000);
-        assertEquals(3, ctx.getRoutes().size());
-    }
-
-    @Test
-    @Ignore("TODO: Does not work")
-    public void testProxy() throws Exception {
-        getInstalledBundle("CamelBlueprintTestBundle12").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle12)", 10000);
-        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle12)", 10000);
-        Object proxy = ctn.getComponentInstance("myProxySender");
-        assertNotNull(proxy);
-        assertEquals(1, proxy.getClass().getInterfaces().length);
-        assertEquals(TestProxySender.class.getName(), proxy.getClass().getInterfaces()[0].getName());
-    }
-
-    @Test
-    public void testErrorHandler() throws Exception {
-        getInstalledBundle("CamelBlueprintTestBundle14").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle14)", 10000);
-        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle14)", 10000);
-        assertEquals(1, ctx.getRoutes().size());
-        RouteDefinition rd = ctx.getRouteDefinitions().get(0);
-        assertNotNull(rd.getErrorHandlerRef());
-        Object eh = ctx.getRegistry().lookup(rd.getErrorHandlerRef());
-        assertEquals(DeadLetterChannelBuilder.class.getName(), eh.getClass().getName());
-    }
-
-    @Test
-    public void testRouteWithNonStdComponentFromBlueprint() throws Exception {
-        getInstalledBundle("CamelBlueprintTestBundle15").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle15)", 10000);
-        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle15)", 10000);
-        assertEquals(1, ctx.getRoutes().size());
-        assertSame(ctn.getComponentInstance("mycomp"), ctx.getComponent("mycomp"));
     }
 
     @Configuration
@@ -263,39 +203,6 @@ public class CamelBlueprintTest extends OSGiBlueprintTestSupport {
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
 
-                bundle(newBundle()
-                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-10.xml"))
-                        .add(TestProducer.class)
-                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle10")
-                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                        .build()).noStart(),
-
-                bundle(newBundle()
-                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-11.xml"))
-                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle11")
-                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                        .build()).noStart(),
-
-                bundle(newBundle()
-                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-12.xml"))
-                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle12")
-                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                        .build()).noStart(),
-
-                bundle(newBundle()
-                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-14.xml"))
-                        .add(TestProxySender.class)
-                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle14")
-                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                        .build()).noStart(),
-
-                bundle(newBundle()
-                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-15.xml"))
-                        .add(TestProxySender.class)
-                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle15")
-                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                        .build()).noStart(),
-
                 // install the spring dm profile
                 profile("spring.dm").version("1.2.0"),
                 // this is how you set the default log level when using pax logging (logProfile)
@@ -310,13 +217,13 @@ public class CamelBlueprintTest extends OSGiBlueprintTestSupport {
 
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-core", "camel-blueprint", "camel-test", "camel-mail", "camel-jaxb", "camel-jms"),
+                        "camel-core", "camel-blueprint", "camel-test", "camel-ftp", "camel-jackson", "camel-jms"),
 
                 workingDirectory("target/paxrunner/"),
 
 //                vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
 
-                //felix(),
+                felix(),
                 equinox());
 
         return options;

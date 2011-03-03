@@ -17,11 +17,9 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-    <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent">
-        <property name="location" value="classpath:org/apache/camel/component/properties/cheese.properties"/>
-    </bean>
+    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/blueprint">
+        <propertyPlaceholder location="classpath:org/apache/camel/component/properties/cheese.properties"/>
 
-    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
         <route>
             <from uri="{{input}}"/>
             <to uri="mock:result"/>
