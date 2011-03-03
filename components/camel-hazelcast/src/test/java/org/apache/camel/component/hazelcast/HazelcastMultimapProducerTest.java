@@ -31,17 +31,10 @@ public class HazelcastMultimapProducerTest extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        super.setUp();
-
         this.map = Hazelcast.getMultiMap("bar");
         this.map.clear();
-    }
 
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-
-        this.map.clear();
+        super.setUp();
     }
 
     @Test

@@ -33,17 +33,10 @@ public class HazelcastMapConsumerTest extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        super.setUp();
-
         this.map = Hazelcast.getMap("foo");
         this.map.clear();
-    }
 
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-
-        this.map.clear();
+        super.setUp();
     }
 
     @Test
@@ -107,7 +100,6 @@ public class HazelcastMapConsumerTest extends CamelTestSupport {
                         .log("...added").to("mock:added").when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ENVICTED)).log("...envicted").to("mock:envicted")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.UPDATED)).log("...updated").to("mock:updated")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED)).log("...removed").to("mock:removed").otherwise().log("fail!");
-
             }
         };
     }

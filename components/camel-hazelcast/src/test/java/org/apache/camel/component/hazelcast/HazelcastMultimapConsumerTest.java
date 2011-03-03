@@ -34,17 +34,10 @@ public class HazelcastMultimapConsumerTest extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        super.setUp();
-
         this.map = Hazelcast.getMultiMap("mm");
         this.map.clear();
-    }
 
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-
-        this.map.clear();
+        super.setUp();
     }
 
     @Test
@@ -79,7 +72,6 @@ public class HazelcastMultimapConsumerTest extends CamelTestSupport {
         // assertMockEndpointsSatisfied(30000, TimeUnit.MILLISECONDS);
 
         assertTrue(true);
-
     }
 
     @Test
@@ -92,7 +84,6 @@ public class HazelcastMultimapConsumerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.REMOVED);
-
     }
 
     @Override

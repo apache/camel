@@ -33,17 +33,10 @@ public class HazelcastMapProducerForSpringTest extends CamelSpringTestSupport im
 
     @Override
     public void setUp() throws Exception {
-        super.setUp();
-
         this.map = Hazelcast.getMap("foo");
         this.map.clear();
-    }
 
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-
-        this.map.clear();
+        super.setUp();
     }
 
     @Override

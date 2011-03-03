@@ -21,17 +21,25 @@ import java.util.concurrent.BlockingQueue;
 
 import com.hazelcast.core.Hazelcast;
 
+import com.hazelcast.core.MultiMap;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class HazelcastQueueProducerTest extends CamelTestSupport {
 
-    @Test
-    public void put() throws InterruptedException {
-        Queue<Object> queue = Hazelcast.getQueue("bar");
+    private BlockingQueue<String> queue;
+
+    @Override
+    public void setUp() throws Exception {
+        queue = Hazelcast.getQueue("bar");
         queue.clear();
 
+        super.setUp();
+    }
+
+    @Test
+    public void put() throws InterruptedException {
         template.sendBody("direct:put", "foo");
 
         assertTrue(queue.contains("foo"));
@@ -41,9 +49,6 @@ public class HazelcastQueueProducerTest extends CamelTestSupport {
 
     @Test
     public void add() throws InterruptedException {
-        Queue<Object> queue = Hazelcast.getQueue("bar");
-        queue.clear();
-
         template.sendBody("direct:add", "bar");
 
         assertTrue(queue.contains("bar"));
@@ -53,9 +58,6 @@ public class HazelcastQueueProducerTest extends CamelTestSupport {
 
     @Test
     public void offer() throws InterruptedException {
-        Queue<Object> queue = Hazelcast.getQueue("bar");
-        queue.clear();
-
         template.sendBody("direct:offer", "foobar");
         assertTrue(queue.contains("foobar"));
 
@@ -64,9 +66,6 @@ public class HazelcastQueueProducerTest extends CamelTestSupport {
 
     @Test
     public void removeValue() throws InterruptedException {
-        BlockingQueue<String> queue = Hazelcast.getQueue("bar");
-        queue.clear();
-
         queue.put("foo1");
         queue.put("foo2");
         queue.put("foo3");
@@ -89,9 +88,6 @@ public class HazelcastQueueProducerTest extends CamelTestSupport {
 
     @Test
     public void poll() throws InterruptedException {
-        BlockingQueue<String> queue = Hazelcast.getQueue("bar");
-        queue.clear();
-
         queue.put("foo");
         assertEquals(1, queue.size());
 
@@ -105,9 +101,6 @@ public class HazelcastQueueProducerTest extends CamelTestSupport {
 
     @Test
     public void peek() throws InterruptedException {
-        BlockingQueue<String> queue = Hazelcast.getQueue("bar");
-        queue.clear();
-
         queue.put("foo");
         assertEquals(1, queue.size());
 
@@ -124,7 +117,6 @@ public class HazelcastQueueProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
                 from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
 
                 from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
@@ -137,7 +129,6 @@ public class HazelcastQueueProducerTest extends CamelTestSupport {
 
                 from("direct:removevalue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVEVALUE_OPERATION)).to(
                         String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
-
             }
         };
     }

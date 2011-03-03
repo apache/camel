@@ -28,13 +28,20 @@ import org.junit.Test;
 
 public class HazelcastListConsumerTest extends CamelTestSupport {
 
+    private List<String> list;
+
+    @Override
+    public void setUp() throws Exception {
+        list = Hazelcast.getList("mm");
+        list.clear();
+
+        super.setUp();
+    }
+
     @Test
     public void add() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
-
-        List<String> list = Hazelcast.getList("mm");
-        list.clear();
 
         list.add("foo");
 
@@ -46,11 +53,7 @@ public class HazelcastListConsumerTest extends CamelTestSupport {
     @Test
     public void remove() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:removed");
-
         out.expectedMessageCount(1);
-
-        List<String> list = Hazelcast.getList("mm");
-        list.clear();
 
         list.add("foo");
         list.remove("foo");

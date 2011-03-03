@@ -21,7 +21,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.Hazelcast;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -29,12 +28,21 @@ import org.junit.Test;
 
 public class HazelcastQueueConsumerTest extends CamelTestSupport {
 
+    private BlockingQueue<String> map;
+
+    @Override
+    public void setUp() throws Exception {
+        this.map = Hazelcast.getQueue("mm");
+        this.map.clear();
+
+        super.setUp();
+    }
+
     @Test
     public void add() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
 
-        BlockingQueue<String> map = Hazelcast.getQueue("mm");
         map.put("foo");
 
         assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
@@ -47,7 +55,7 @@ public class HazelcastQueueConsumerTest extends CamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:removed");
         out.expectedMessageCount(1);
 
-        BlockingQueue<String> map = Hazelcast.getQueue("mm");
+        map.put("foo");
         map.remove();
 
         assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
@@ -62,7 +70,6 @@ public class HazelcastQueueConsumerTest extends CamelTestSupport {
                 from(String.format("hazelcast:%smm", HazelcastConstants.QUEUE_PREFIX)).log("object...").choice().when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
                         .log("...added").to("mock:added").when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED)).log("...removed").to("mock:removed").otherwise()
                         .log("fail!");
-
             }
         };
     }

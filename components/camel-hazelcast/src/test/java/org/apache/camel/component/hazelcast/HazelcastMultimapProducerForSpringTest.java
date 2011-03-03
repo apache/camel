@@ -32,17 +32,10 @@ public class HazelcastMultimapProducerForSpringTest extends CamelSpringTestSuppo
 
     @Override
     public void setUp() throws Exception {
-        super.setUp();
-
         this.map = Hazelcast.getMultiMap("foo");
         this.map.clear();
-    }
 
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-
-        this.map.clear();
+        super.setUp();
     }
 
     @Override

@@ -27,6 +27,16 @@ import org.junit.Test;
 
 public class HazelcastListProducerTest extends CamelTestSupport {
 
+    private List<String> list;
+
+    @Override
+    public void setUp() throws Exception {
+        list = Hazelcast.getList("bar");
+        list.clear();
+
+        super.setUp();
+    }
+
     // @Test
     public void add() throws InterruptedException {
         List<Object> list = Hazelcast.getList("bar");
