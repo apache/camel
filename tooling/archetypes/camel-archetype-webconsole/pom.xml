@@ -29,8 +29,8 @@
   </parent>
 
   <groupId>org.apache.camel.archetypes</groupId>
-  <artifactId>camel-archetype-war</artifactId>
-  <name>Camel :: Archetypes :: Camel Router WAR</name>
+  <artifactId>camel-archetype-webconsole</artifactId>
+  <name>Camel :: Archetypes :: Camel Router with web console</name>
   <description>Creates a new Camel project that deploys the Camel Web Console, REST API, and your routes as a WAR</description>
   <packaging>maven-archetype</packaging>
 
