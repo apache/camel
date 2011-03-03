@@ -12,3 +12,7 @@ favorite web container or just run
 mvn jetty:run
 
 to start up and deploy to Jetty.
+
+For more help see the Apache Camel documentation
+
+    http://camel.apache.org/

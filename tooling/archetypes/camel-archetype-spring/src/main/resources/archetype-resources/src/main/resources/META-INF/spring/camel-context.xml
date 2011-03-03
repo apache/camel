@@ -36,9 +36,11 @@
       <camel:choice>
         <camel:when>
           <camel:xpath>/person/city = 'London'</camel:xpath>
+          <camel:log message="UK message"/>
           <camel:to uri="file:target/messages/uk"/>
         </camel:when>
         <camel:otherwise>
+          <camel:log message="Other message"/>
           <camel:to uri="file:target/messages/others"/>
         </camel:otherwise>
       </camel:choice>
