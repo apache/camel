@@ -25,11 +25,19 @@
        http://www.springframework.org/schema/osgi  http://www.springframework.org/schema/osgi/spring-osgi.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <!-- refer to the CamelServlet using servlet as id, which we can use in the Camel routes -->
-    <osgi:reference id="servlet" interface="javax.servlet.Servlet" bean-name="camelServlet"/>
+	<osgi:reference id="servletref" interface="org.apache.camel.component.http.CamelServlet">
+  		<osgi:listener bind-method="register" unbind-method="unregister">
+     		<ref bean="httpRegistry"/>
+  		</osgi:listener>
+	</osgi:reference>
+	
+	<bean id="httpRegistry" class="org.apache.camel.component.servlet.HttpRegistryImpl"/>
+        
+	<bean id="servlet" class="org.apache.camel.component.servlet.ServletComponent">
+    	<property name="httpRegistry" ref="httpRegistry" />
+	</bean>
 
-    <!-- a processor to compute the reply to send back -->
-    <bean id="servletProcessor" class="org.apache.camel.itest.osgi.servlet.ServletProcessor"/>
+	<bean id="servletProcessor" class="org.apache.camel.itest.osgi.servlet.ServletProcessor" />
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>

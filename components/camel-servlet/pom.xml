@@ -42,10 +42,9 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    <!-- TODO: Get tid of spring dependency -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
+      <artifactId>camel-core-xml</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

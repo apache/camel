@@ -22,17 +22,16 @@ import javax.servlet.http.HttpServlet;
 
 import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.Lifecycle;
 
 /**
  * Register the given (CamelHttpTransport) Servlet with the OSGI 
  * <a href="http://www.osgi.org/javadoc/r4v42/org/osgi/service/http/HttpService.html">
  * HttpService</a>
+ * 
+ * See src/test/resources/osgiservletregisterer.xml
+ * 
  */
-public class OsgiServletRegisterer implements Lifecycle, InitializingBean {
-
-    // TODO: There must be a better way than depend on spring for registering a servlet into OSGi!
+public class OsgiServletRegisterer {
 
     /**
      * The alias is the name in the URI namespace of the Http Service at which the registration will be mapped
@@ -40,6 +39,8 @@ public class OsgiServletRegisterer implements Lifecycle, InitializingBean {
      * of the form "/" is used to denote the root alias.
      */
     private String alias;
+    
+    private String servletName;
 
     /**
      * Servlet to be registered
@@ -63,6 +64,9 @@ public class OsgiServletRegisterer implements Lifecycle, InitializingBean {
         this.alias = alias;
     }
 
+    public void setServletName(String servletName) {
+        this.servletName = servletName;
+    }
     public void setServlet(HttpServlet servlet) {
         this.servlet = servlet;
     }
@@ -70,43 +74,24 @@ public class OsgiServletRegisterer implements Lifecycle, InitializingBean {
     public void setHttpContext(HttpContext httpContext) {
         this.httpContext = httpContext;
     }
-    
-    @Override
-    public void afterPropertiesSet() throws Exception {
+ 
+    public void register() throws Exception {
         HttpContext actualHttpContext = (httpContext == null) 
             ? httpService.createDefaultHttpContext()
             : httpContext;
         final Dictionary<String, String> initParams = new Hashtable<String, String>();
         // The servlet will always have to match on uri prefix as some endpoints may do so
         initParams.put("matchOnUriPrefix", "true");
-        
-        try {
-            String servletName = servlet.getServletName();
-            initParams.put("servlet-name", servletName);
-        } catch (Exception e) {
-            // If getServletName is not implemented the default is to throw an exception
-            // In this case we simply do not set a servlet name
-        }
-        
+        initParams.put("servlet-name", servletName);
         httpService.registerServlet(alias, servlet, initParams, actualHttpContext);
         alreadyRegistered = true;
     }
-    
-    @Override
-    public void start() {
-    }
-    
-    @Override
-    public void stop() {
+ 
+    public void unregister() {
         if (alreadyRegistered) {
             httpService.unregister(alias);
             alreadyRegistered = false;
         }
     }
-    
-    @Override
-    public boolean isRunning() {
-        return alreadyRegistered;
-    }
-    
+
 }

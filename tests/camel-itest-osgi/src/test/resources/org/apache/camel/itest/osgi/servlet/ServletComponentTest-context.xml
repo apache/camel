@@ -15,20 +15,24 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xmlns:osgi="http://www.springframework.org/schema/osgi"
-       xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
-       xmlns:ctx="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/osgi  http://www.springframework.org/schema/osgi/spring-osgi.xsd
-       http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
   
    <bean id="servletActivator" class="org.apache.camel.itest.osgi.servlet.support.ServletActivator"/>
+
+   <bean id="servletProcessor" class="org.apache.camel.itest.osgi.servlet.ServletProcessor" />
+  
+   <camelContext xmlns="http://camel.apache.org/schema/spring">
+     <camel:route>
+       <camel:from uri="servlet:///hello"/>
+       <camel:process ref="servletProcessor"/>
+     </camel:route>
+   </camelContext>
 
 </beans>

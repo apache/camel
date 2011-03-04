@@ -19,6 +19,7 @@ package org.apache.camel.itest.osgi.servlet;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
@@ -47,21 +48,25 @@ public class ServletServicesTest extends OSGiIntegrationSpringTestSupport {
             
             // install the spring dm profile            
             profile("spring.dm").version("1.2.0"),
+            CoreOptions.mavenBundle("org.apache.felix", "org.apache.felix.fileinstall", "3.0.2"),
             // need to install some karaf features
             scanFeatures(getKarafFeatureUrl(), "http", "war"),
             // set the system property for pax web
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.osgi.service.http.port").value("9080"),
             
             // this is how you set the default log level when using pax logging (logProfile)
-            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
+            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("DEBUG"),
             
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
-                          "camel-core", "camel-spring", "camel-test", "camel-http", "camel-servlet"),
+                "camel-core", "camel-blueprint", "camel-spring", "camel-test", "camel-http", "camel-servlet"),
  
             workingDirectory("target/paxrunner/"),
+            //PaxRunnerOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
 
-            felix(), equinox());
+            felix(),
+            equinox()
+        );
         
         return options;
     }

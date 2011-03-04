@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.servlet;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.Resource;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
@@ -30,56 +29,42 @@ import org.slf4j.LoggerFactory;
  * Camel HTTP servlet which can be used in Camel routes to route servlet invocations in routes.
  */
 public class CamelHttpTransportServlet extends CamelServlet {
+    private static final long serialVersionUID = -1797014782158930490L;
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelHttpTransportServlet.class);
-    private static final Map<String, CamelServletService> CAMEL_SERVLET_MAP = new ConcurrentHashMap<String, CamelServletService>();
-    private String servletName;
+    
+    @Resource
+    private HttpRegistry httpRegistry;
 
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        this.servletName = config.getServletName();
-        // do we already know this servlet?
-        CamelServletService service = CAMEL_SERVLET_MAP.get(servletName);
-
-        // we cannot control the startup ordering, sometimes the Camel routes start first
-        // other times the servlet, so we need to cater for both situations
-
-        if (service == null) {
-            // no we don't so create a new early service with this servlet
-            service = new DefaultCamelServletService(servletName, this);
-            CAMEL_SERVLET_MAP.put(servletName, service);
-        } else {
-            // use this servlet
-            service.setCamelServlet(this);
-            // and start the existing consumers we already have registered
-            for (HttpConsumer consumer : service.getConsumers()) {
-                connect(consumer);
-            }
+        this.setServletName(config.getServletName());
+        if (httpRegistry == null) {
+            httpRegistry = HttpRegistryImpl.getSingletonHttpRegistry();
         }
-        LOG.info("Initialized CamelHttpTransportServlet[" + servletName + "]");
+        httpRegistry.register(this);
+        LOG.info("Initialized CamelHttpTransportServlet[" + getServletName() + "]");
     }
     
+    @Override
     public void destroy() {
-        CAMEL_SERVLET_MAP.remove(servletName);
-        LOG.info("Destroyed CamelHttpTransportServlet[" + servletName + "]");
+        httpRegistry.unregister(this);
+        LOG.info("Destroyed CamelHttpTransportServlet[" + getServletName() + "]");
     }
     
-    public static synchronized CamelServletService getCamelServletService(String servletName, HttpConsumer consumer) {
-        // we cannot control the startup ordering, sometimes the Camel routes start first
-        // other times the servlet, so we need to cater for both situations
-
-        CamelServletService answer = CAMEL_SERVLET_MAP.get(servletName);
-        if (answer == null) {
-            answer = new DefaultCamelServletService(servletName, consumer);
-            CAMEL_SERVLET_MAP.put(servletName, answer);
-        } else {
-            answer.addConsumer(consumer);
+    private ServletEndpoint getServletEndpoint(HttpConsumer consumer) {
+        if (!(consumer.getEndpoint() instanceof ServletEndpoint)) {
+            throw new RuntimeException("Invalid consumer type. Must be ServletEndpoint");
         }
-        return answer;
+        return (ServletEndpoint)consumer.getEndpoint();
     }
 
     @Override
-    public String getServletName() {
-        return servletName;
+    public void connect(HttpConsumer consumer) {
+        ServletEndpoint endpoint = getServletEndpoint(consumer);
+        if (endpoint.getServletName() != null && endpoint.getServletName().equals(getServletName())) {
+            super.connect(consumer);
+        }
     }
 
 }

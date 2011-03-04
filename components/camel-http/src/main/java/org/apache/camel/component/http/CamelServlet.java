@@ -18,6 +18,8 @@ package org.apache.camel.component.http;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,12 +36,23 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class CamelServlet extends HttpServlet {
-
     private static final long serialVersionUID = -7061982839117697829L;
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    
+    /**
+     *  We have to define this explicitly so the name can be set as we can not always be
+     *  sure that it is already set via the init method
+     */
+    private String servletName;
 
     private ConcurrentHashMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
    
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        this.servletName = config.getServletName();
+    }
+
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (log.isTraceEnabled()) {
@@ -125,6 +138,14 @@ public class CamelServlet extends HttpServlet {
     public void disconnect(HttpConsumer consumer) {
         log.debug("Disconnecting consumer: {}", consumer);
         consumers.remove(consumer.getPath());
+    }
+
+    public String getServletName() {
+        return servletName;
+    }
+
+    public void setServletName(String servletName) {
+        this.servletName = servletName;
     }
     
 }
