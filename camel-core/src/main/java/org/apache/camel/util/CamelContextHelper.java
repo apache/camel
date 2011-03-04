@@ -166,13 +166,15 @@ public final class CamelContextHelper {
      * @throws IllegalArgumentException is thrown if the property is illegal
      */
     public static int getMaximumCachePoolSize(CamelContext camelContext) throws IllegalArgumentException {
-        String s = camelContext.getProperties().get(Exchange.MAXIMUM_CACHE_POOL_SIZE);
-        if (s != null) {
-            Integer size = camelContext.getTypeConverter().convertTo(Integer.class, s);
-            if (size == null || size <= 0) {
-                throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_CACHE_POOL_SIZE + " must be a positive number, was: " + s);
+        if (camelContext != null) {
+            String s = camelContext.getProperties().get(Exchange.MAXIMUM_CACHE_POOL_SIZE);
+            if (s != null) {
+                Integer size = camelContext.getTypeConverter().convertTo(Integer.class, s);
+                if (size == null || size <= 0) {
+                    throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_CACHE_POOL_SIZE + " must be a positive number, was: " + s);
+                }
+                return size;
             }
-            return size;
         }
 
         // 1000 is the default fallback
