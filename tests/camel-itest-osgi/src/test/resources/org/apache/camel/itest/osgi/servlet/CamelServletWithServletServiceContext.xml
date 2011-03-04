@@ -31,7 +31,7 @@
   		</osgi:listener>
 	</osgi:reference>
 	
-	<bean id="httpRegistry" class="org.apache.camel.component.servlet.HttpRegistryImpl"/>
+	<bean id="httpRegistry" class="org.apache.camel.component.servlet.DefaultHttpRegistry"/>
         
 	<bean id="servlet" class="org.apache.camel.component.servlet.ServletComponent">
     	<property name="httpRegistry" ref="httpRegistry" />

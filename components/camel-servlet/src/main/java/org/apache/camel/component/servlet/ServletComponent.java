@@ -59,7 +59,7 @@ public class ServletComponent extends HttpComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         
         if (httpRegistry == null) {
-            httpRegistry = HttpRegistryImpl.getSingletonHttpRegistry();
+            httpRegistry = DefaultHttpRegistry.getSingletonHttpRegistry();
         }
 
         uri = uri.startsWith("servlet:") ? remaining : uri;

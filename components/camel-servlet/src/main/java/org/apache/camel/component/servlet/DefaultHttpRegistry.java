@@ -28,15 +28,15 @@ import org.apache.camel.component.http.HttpConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HttpRegistryImpl implements HttpRegistry {
-    private static final transient Logger LOG = LoggerFactory.getLogger(HttpRegistryImpl.class);
+public class DefaultHttpRegistry implements HttpRegistry {
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultHttpRegistry.class);
 
     private static HttpRegistry singleton;
     
-    private Set<HttpConsumer> consumers;
-    private Set<CamelServlet> providers;
+    private final Set<HttpConsumer> consumers;
+    private final Set<CamelServlet> providers;
     
-    public HttpRegistryImpl() {
+    public DefaultHttpRegistry() {
         consumers = new HashSet<HttpConsumer>();
         providers = new HashSet<CamelServlet>();
     }
@@ -48,7 +48,7 @@ public class HttpRegistryImpl implements HttpRegistry {
      */
     public static synchronized HttpRegistry getSingletonHttpRegistry() {
         if (singleton == null) {
-            singleton = new HttpRegistryImpl();
+            singleton = new DefaultHttpRegistry();
         }
         return singleton;
     }
@@ -58,7 +58,8 @@ public class HttpRegistryImpl implements HttpRegistry {
      */
     @Override
     public void register(HttpConsumer consumer) {
-        LOG.debug("Registering consumer for path" + consumer.getPath() + " providers present: " + providers.size());
+        LOG.debug("Registering consumer for path {} providers present: {}",
+                consumer.getPath(), providers.size());
         consumers.add(consumer);
         for (CamelServlet provider : providers) {
             provider.connect(consumer);
@@ -70,7 +71,7 @@ public class HttpRegistryImpl implements HttpRegistry {
      */
     @Override
     public void unregister(HttpConsumer consumer) {
-        LOG.debug("Unregistering consumer for path " + consumer.getPath());
+        LOG.debug("Unregistering consumer for path {} ", consumer.getPath());
         consumers.remove(consumer);
         for (CamelServlet provider : providers) {
             provider.disconnect(consumer);
@@ -79,7 +80,7 @@ public class HttpRegistryImpl implements HttpRegistry {
     
     @SuppressWarnings("rawtypes")
     public void register(CamelServlet provider, Map properties) {
-        LOG.debug("Registering provider through OSGi service listener " + properties);
+        LOG.debug("Registering provider through OSGi service listener {}", properties);
         if (provider instanceof CamelServlet) {
             CamelServlet camelServlet = (CamelServlet)provider;
             camelServlet.setServletName((String) properties.get("servlet-name"));
@@ -98,7 +99,8 @@ public class HttpRegistryImpl implements HttpRegistry {
      */
     @Override
     public void register(CamelServlet provider) {
-        LOG.debug("Registering CamelServlet with name " + provider.getServletName() + " consumers present: " + consumers.size());
+        LOG.debug("Registering CamelServlet with name {} consumers present: {}", 
+                provider.getServletName(), consumers.size());
         providers.add(provider);
         for (HttpConsumer consumer : consumers) {
             provider.connect(consumer);

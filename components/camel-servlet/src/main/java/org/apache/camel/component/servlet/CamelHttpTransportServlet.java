@@ -38,23 +38,23 @@ public class CamelHttpTransportServlet extends CamelServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        this.setServletName(config.getServletName());
         if (httpRegistry == null) {
-            httpRegistry = HttpRegistryImpl.getSingletonHttpRegistry();
+            httpRegistry = DefaultHttpRegistry.getSingletonHttpRegistry();
         }
         httpRegistry.register(this);
-        LOG.info("Initialized CamelHttpTransportServlet[" + getServletName() + "]");
+        LOG.info("Initialized CamelHttpTransportServlet[{}]", getServletName());
     }
     
     @Override
     public void destroy() {
         httpRegistry.unregister(this);
-        LOG.info("Destroyed CamelHttpTransportServlet[" + getServletName() + "]");
+        LOG.info("Destroyed CamelHttpTransportServlet[{}]", getServletName());
     }
     
     private ServletEndpoint getServletEndpoint(HttpConsumer consumer) {
         if (!(consumer.getEndpoint() instanceof ServletEndpoint)) {
-            throw new RuntimeException("Invalid consumer type. Must be ServletEndpoint");
+            throw new RuntimeException("Invalid consumer type. Must be ServletEndpoint but is " 
+                    + consumer.getClass().getName());
         }
         return (ServletEndpoint)consumer.getEndpoint();
     }
