@@ -24,7 +24,6 @@ import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.ProgramCall;
 import com.ibm.as400.access.ProgramParameter;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultProducer;
@@ -34,14 +33,14 @@ import org.slf4j.LoggerFactory;
 
 public class Jt400PgmProducer extends DefaultProducer {
 
-    private static final Logger LOG =  LoggerFactory.getLogger(Jt400PgmProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Jt400PgmProducer.class);
 
     public Jt400PgmProducer(Jt400PgmEndpoint endpoint) {
         super(endpoint);
     }
 
     private Jt400PgmEndpoint getISeriesEndpoint() {
-        return (Jt400PgmEndpoint)super.getEndpoint();
+        return (Jt400PgmEndpoint) super.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -57,30 +56,27 @@ public class Jt400PgmProducer extends DefaultProducer {
 
         if (LOG.isDebugEnabled()) {
             LOG.trace("Starting to call PGM '" + commandStr + "' in host '" + iSeries.getSystemName()
-                      + "' authenticatin with the user '" + iSeries.getUserId() + "'");
+                    + "' authentication with the user '" + iSeries.getUserId() + "'");
         }
 
         boolean result = pgmCall.run();
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Executed PGM '" + commandStr + "' in host '" + iSeries.getSystemName() + "'. Success?"
-                     + result);
+            LOG.trace("Executed PGM '" + commandStr + "' in host '" + iSeries.getSystemName() + "'. Success? " + result);
         }
 
         if (result) {
             handlePGMOutput(exchange, pgmCall, parameterList);
         } else {
-            // TODO Do we need to throw an exception
-            handleMessages(pgmCall);
+            throw new Jt400PgmCallException(getOutputMessages(pgmCall));
         }
-
     }
 
     private ProgramParameter[] getParameterList(Exchange exchange) throws InvalidPayloadException {
 
         Object body = ExchangeHelper.getMandatoryInBody(exchange);
 
-        String[] params = (String[])body;
+        String[] params = (String[]) body;
 
         ProgramParameter[] parameterList = new ProgramParameter[params.length];
         for (int i = 0; i < params.length; i++) {
@@ -92,7 +88,7 @@ public class Jt400PgmProducer extends DefaultProducer {
             byte[] inputData = null;
             int outputLength = -1;
             if (input) {
-                String value = (String)param;
+                String value = (String) param;
                 inputData = new AS400Text(value.length()).toBytes(value);
             }
             if (output) {
@@ -113,11 +109,10 @@ public class Jt400PgmProducer extends DefaultProducer {
         return parameterList;
     }
 
-    private void handlePGMOutput(Exchange exchange, ProgramCall pgmCall, ProgramParameter[] inputs)
-        throws InvalidPayloadException {
+    private void handlePGMOutput(Exchange exchange, ProgramCall pgmCall, ProgramParameter[] inputs) throws InvalidPayloadException {
 
         Object bodyIN = ExchangeHelper.getMandatoryInBody(exchange);
-        String[] params = (String[])bodyIN;
+        String[] params = (String[]) bodyIN;
 
         List<String> results = new ArrayList<String>();
 
@@ -129,10 +124,9 @@ public class Jt400PgmProducer extends DefaultProducer {
 
             if (output != null) {
                 int length = pgmParam.getOutputDataLength();
-                length = pgmParam.getOutputDataLength();
 
                 AS400Text text = new AS400Text(length);
-                value = (String)text.toObject(output);
+                value = (String) text.toObject(output);
             }
 
             results.add(value);
@@ -145,16 +139,19 @@ public class Jt400PgmProducer extends DefaultProducer {
         exchange.getOut().setBody(bodyOUT);
     }
 
-    private void handleMessages(ProgramCall pgmCall) throws Exception {
+    private String getOutputMessages(ProgramCall pgmCall) throws Exception {
+        StringBuilder outputMsg = new StringBuilder();
         // Show messages.
-        if (LOG.isDebugEnabled()) {
-            AS400Message[] messageList = pgmCall.getMessageList();
-            for (int i = 0; i < messageList.length; ++i) {
-                // Load additional message information.
-                messageList[i].load();
-                // Show each message.
-                LOG.debug("The message list [" + i + "]" + messageList[i].getText() + ", help info: " + messageList[i].getHelp());
-            }
+        AS400Message[] messageList = pgmCall.getMessageList();
+        for (int i = 0; i < messageList.length; ++i) {
+            // Load additional message information.
+            messageList[i].load();
+            outputMsg.append(i + ") ");
+            outputMsg.append(messageList[i].getText());
+            outputMsg.append(" - ");
+            outputMsg.append(messageList[i].getHelp());
+            outputMsg.append("\n");
         }
+        return outputMsg.toString();
     }
 }
