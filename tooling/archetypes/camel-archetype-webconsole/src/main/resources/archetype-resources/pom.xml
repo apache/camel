@@ -31,13 +31,6 @@
   
   <packaging>war</packaging>
 
-  <properties>
-    <camel-version>$CAMEL_VERSION_REPLACEME$</camel-version>
-    <activemq-version>$ACTIVEMQ_VERSION_REPLACEME$</activemq-version>
-    <jetty-version>$JETTY_VERSION_REPLACEME$</jetty-version>
-    <xbean-spring-version>$XBEAN_VERSION_REPLACEME$</xbean-spring-version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -52,6 +45,11 @@
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-camel</artifactId>
       <version>${activemq-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jms_1.1_spec</artifactId>
+      <version>${geronimo-jms-spec-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
@@ -71,6 +69,19 @@
       <artifactId>camel-stream</artifactId>
       <version>${camel-version}</version>
     </dependency>
+    
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version> 
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId> 
+      <artifactId>log4j</artifactId> 
+      <version>${log4j-version}</version> 
+    </dependency>
+    
   </dependencies>
 
   <build>
@@ -80,7 +91,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>$MAVEN_COMPILER_PLUGIN_VERSION_REPLACEME$</version>
+        <version>${maven-compiler-plugin-version}</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
@@ -115,4 +126,5 @@
       </plugin>
     </plugins>
   </build>
+  
 </project>

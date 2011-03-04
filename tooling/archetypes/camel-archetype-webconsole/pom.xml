@@ -41,29 +41,19 @@
         <artifactId>archetype-packaging</artifactId>
       </extension>
     </extensions>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$CAMEL_VERSION_REPLACEME$" value="${project.version}" casesensitive="true" />
-                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$ACTIVEMQ_VERSION_REPLACEME$" value="${activemq-version}" casesensitive="true" />
-                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$JETTY_VERSION_REPLACEME$" value="${jetty-version}" casesensitive="true" />
-                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$XBEAN_VERSION_REPLACEME$" value="${xbean-spring-version}" casesensitive="true" />
-                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$MAVEN_COMPILER_PLUGIN_VERSION_REPLACEME$" value="${maven-compiler-plugin-version}" casesensitive="true" />
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource> 
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/archetype-metadata.xml</include>
+        </includes>
+      </resource>
+    </resources>
   </build>
 
 </project>
