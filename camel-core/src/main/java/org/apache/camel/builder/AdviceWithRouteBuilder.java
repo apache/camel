@@ -68,7 +68,6 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @throws Exception can be thrown if error occurred
      */
     public void mockEndpoints() throws Exception {
-        getContext().removeEndpoints("*");
         getContext().addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(null));
     }
 
@@ -80,7 +79,6 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
      */
     public void mockEndpoints(String pattern) throws Exception {
-        getContext().removeEndpoints(pattern);
         getContext().addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
     }
 
@@ -95,7 +93,6 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public AdviceWithBuilder weaveById(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-
         return new AdviceWithBuilder(this, pattern, null);
     }
 
@@ -110,7 +107,6 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public AdviceWithBuilder weaveByToString(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-
         return new AdviceWithBuilder(this, null, pattern);
     }
 
