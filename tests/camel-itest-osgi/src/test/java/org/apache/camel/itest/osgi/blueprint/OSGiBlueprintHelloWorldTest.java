@@ -68,6 +68,8 @@ public class OSGiBlueprintHelloWorldTest extends OSGiBlueprintTestSupport {
         myTemplate.sendBodyAndHeader("file:target/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
+
+        myTemplate.stop();
     }
 
     @Configuration

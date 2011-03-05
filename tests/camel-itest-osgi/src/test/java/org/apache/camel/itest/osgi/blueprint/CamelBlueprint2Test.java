@@ -139,7 +139,7 @@ public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
                 // install the spring dm profile
                 profile("spring.dm").version("1.2.0"),
                 // this is how you set the default log level when using pax logging (logProfile)
-                org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("TRACE"),
+                //org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("TRACE"),
 
                 // install blueprint requirements
                 mavenBundle("org.apache.felix", "org.apache.felix.configadmin"),
