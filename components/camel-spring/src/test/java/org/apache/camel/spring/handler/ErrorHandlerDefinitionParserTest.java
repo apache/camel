@@ -40,7 +40,8 @@ public class ErrorHandlerDefinitionParserTest extends TestCase {
     public void testLoggingErrorHandler() {
         LoggingErrorHandlerBuilder errorHandler = (LoggingErrorHandlerBuilder) ctx.getBean("loggingErrorHandler");
         assertNotNull(errorHandler);
-        assertEquals("The loglevel should be INFO", LoggingLevel.INFO, errorHandler.getLevel());
+        assertEquals("The log level should be INFO", LoggingLevel.INFO, errorHandler.getLevel());
+        assertEquals("The log name should be foo", "foo", errorHandler.getLogName());
     }
     
     public void testDefaultErrorHandler() {

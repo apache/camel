@@ -122,4 +122,22 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
             // expected
         }
     }
+
+    public void testLoggingErrorHandler5() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                errorHandler(loggingErrorHandler().level(LoggingLevel.ERROR).logName("foo"));
+
+                from("direct:start").to("mock:foo").throwException(new IllegalArgumentException("Damn"));
+            }
+        });
+        context.start();
+
+        try {
+            template.sendBody("direct:start", "Hello World");
+        } catch (Exception e) {
+            // expected
+        }
+    }
 }

@@ -73,6 +73,14 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         this.log = log;
     }
 
+    public String getLogName() {
+        return log != null ? log.getName() : null;
+    }
+
+    public void setLogName(String logName) {
+        this.log = LoggerFactory.getLogger(logName);
+    }
+
     public LoggingErrorHandlerBuilder level(final LoggingLevel level) {
         this.level = level;
         return this;
@@ -80,6 +88,11 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public LoggingErrorHandlerBuilder log(final Logger log) {
         this.log = log;
+        return this;
+    }
+
+    public LoggingErrorHandlerBuilder logName(final String logName) {
+        setLogName(logName);
         return this;
     }
 

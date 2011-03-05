@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.aries.blueprint.ExtendedBlueprintContainer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
@@ -32,6 +31,8 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
+import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.util.CamelContextHelper;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.NoSuchComponentException;
 
@@ -46,11 +47,15 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     @XmlAttribute
     private LoggingLevel level = LoggingLevel.ERROR;
     @XmlAttribute
+    private String logName;
+    @XmlAttribute
     private Boolean useOriginalMessage;
     @XmlAttribute
     private String onRedeliveryRef;
     @XmlAttribute
     private String retryWhileRef;
+    @XmlAttribute
+    private String redeliveryPolicyRef;
     @XmlElement
     private RedeliveryPolicyDefinition redeliveryPolicy;
     @XmlTransient
@@ -70,6 +75,11 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
             if (redeliveryPolicy != null) {
                 handler.setRedeliveryPolicy(redeliveryPolicy.createRedeliveryPolicy(getCamelContext(), null));
             }
+            if (redeliveryPolicyRef != null) {
+                // lookup redelivery
+                RedeliveryPolicy policy = CamelContextHelper.mandatoryLookup(getCamelContext(), redeliveryPolicyRef, RedeliveryPolicy.class);
+                handler.setRedeliveryPolicy(policy);
+            }
             if (onRedeliveryRef != null) {
                 handler.setOnRedelivery(lookup(onRedeliveryRef, Processor.class));
             }
@@ -80,6 +90,9 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
             LoggingErrorHandlerBuilder handler = (LoggingErrorHandlerBuilder) errorHandler;
             if (level != null) {
                 handler.setLevel(level);
+            }
+            if (logName != null) {
+                handler.setLogName(logName);
             }
         }
         return errorHandler;

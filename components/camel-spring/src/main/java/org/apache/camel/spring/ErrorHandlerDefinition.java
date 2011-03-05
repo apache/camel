@@ -42,6 +42,8 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     private LoggingLevel level = LoggingLevel.ERROR;
     @XmlAttribute
+    private String logName;
+    @XmlAttribute
     private Boolean useOriginalMessage;
     @XmlAttribute
     private String transactionTemplateRef;
