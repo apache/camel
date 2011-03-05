@@ -114,7 +114,6 @@ public class InterceptSendToEndpoint implements Endpoint {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Sending to endpoint: " + getEndpointUri() + " is intercepted and detoured to: " + detour + " for exchange: " + exchange);
                 }
-                LOG.info("Sending to endpoint: " + getEndpointUri() + " is intercepted and detoured to: " + detour + " for exchange: " + exchange);
                 // add header with the real endpoint uri
                 exchange.getIn().setHeader(Exchange.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
 
