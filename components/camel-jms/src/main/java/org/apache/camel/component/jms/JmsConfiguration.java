@@ -813,9 +813,6 @@ public class JmsConfiguration implements Cloneable {
             container.setDurableSubscriptionName(durableSubscriptionName);
             container.setSubscriptionDurable(true);
         }
-        if (durableSubscriptionName != null && clientId == null) {
-            throw new IllegalArgumentException("ClientId must be configured when subscription is durable for " + endpoint);
-        }
         if (clientId != null) {
             container.setClientId(clientId);
         }
