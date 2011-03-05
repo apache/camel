@@ -48,6 +48,12 @@
         <include>**/*.properties</include>
       </includes>
     </fileSet>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>src/test/java</directory>
+      <includes>
+        <include>**/*.java</include>
+      </includes>
+    </fileSet>
     <fileSet encoding="UTF-8">
       <directory>src/data</directory>
       <includes>

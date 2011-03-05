@@ -23,8 +23,6 @@ import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
  * A Camel Router
- *
- * @version $
  */
 public class MyRouteBuilder extends RouteBuilder {
 
