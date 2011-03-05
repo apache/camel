@@ -21,8 +21,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.http.AuthMethod;
 import org.apache.camel.component.http.HttpBinding;
@@ -40,7 +38,6 @@ public class ServletComponent extends HttpComponent {
 
     private String servletName = "CamelServlet";
     
-    @Resource
     private HttpRegistry httpRegistry;
 
     public String getServletName() {
