@@ -33,7 +33,7 @@ public class DualSpringManagedThreadsThreadPoolTest extends SpringTestSupport {
     public void testDualManagedThreadPool() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=myPool");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=\"myPool\"");
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(2, corePoolSize.intValue());
@@ -57,7 +57,7 @@ public class DualSpringManagedThreadsThreadPoolTest extends SpringTestSupport {
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals(null, routeId);
 
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=myOtherPool");
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=\"myOtherPool\"");
 
         corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(7, corePoolSize.intValue());
