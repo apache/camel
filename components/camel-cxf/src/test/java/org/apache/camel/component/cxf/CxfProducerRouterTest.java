@@ -139,6 +139,14 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         String response = out.getBody(String.class);
         assertTrue("It should has the echo message", response.indexOf("echo " + TEST_MESSAGE) > 0);
         assertTrue("It should has the echoResponse tag", response.indexOf("echoResponse") > 0);
+        
+        senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
+        senderExchange.getIn().setBody(REQUEST_PAYLOAD);
+        // Don't specify operation information here
+        exchange = template.send("direct:EndpointC", senderExchange);
+        
+        assertNotNull("Expect exception here.", exchange.getException());
+        assertTrue(exchange.getException() instanceof IllegalArgumentException);
 
     }
 

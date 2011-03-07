@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import java.lang.reflect.Proxy;
+import java.security.InvalidParameterException;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -622,6 +623,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                         .equals(elements.get(i).getLocalName())) {
                         content.put(partInfo, elements.get(i++));
                     }
+                }
+                
+                if (content.size() < elements.size()) {
+                    LOG.warn("Cannot set right payload paremeters. Please check the BindingOperation and PayLoadMessage.");
+                    throw new IllegalArgumentException("The PayLoad elements cannot fit with the message parts of the BindingOperation. Please check the BindingOperation and PayLoadMessage.");
                 }
 
                 message.setContent(List.class, content);
