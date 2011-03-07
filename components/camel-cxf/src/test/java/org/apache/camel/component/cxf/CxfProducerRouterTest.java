@@ -16,10 +16,17 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -44,6 +51,8 @@ public class CxfProducerRouterTest extends CamelTestSupport {
             + "<soap:Body><ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
             + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">Hello World!</arg0>"
             + "</ns1:echo></soap:Body></soap:Envelope>";
+    private static final String REQUEST_PAYLOAD = "<ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+        + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">Hello World!</arg0></ns1:echo>";
 
     private static final String ECHO_OPERATION = "echo";
     private static final String TEST_MESSAGE = "Hello World!";
@@ -65,6 +74,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
             public void configure() {
                 from("direct:EndpointA").to(getSimpleEndpointUri());
                 from("direct:EndpointB").to(getSimpleEndpointUri() + "&dataFormat=MESSAGE");
+                from("direct:EndpointC").to(getSimpleEndpointUri() + "&dataFormat=PAYLOAD");
             }
         };
     }
@@ -109,6 +119,21 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
         senderExchange.getIn().setBody(REQUEST_MESSAGE);
         Exchange exchange = template.send("direct:EndpointB", senderExchange);
+
+        org.apache.camel.Message out = exchange.getOut();
+        String response = out.getBody(String.class);
+        assertTrue("It should has the echo message", response.indexOf("echo " + TEST_MESSAGE) > 0);
+        assertTrue("It should has the echoResponse tag", response.indexOf("echoResponse") > 0);
+
+    }
+    
+    @Test
+    public void testInvokingSimpleServerWithPayLoadDataFormat() throws Exception {
+        Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
+        senderExchange.getIn().setBody(REQUEST_PAYLOAD);
+        // We need to specify the operation name to help CxfProducer to look up the BindingOperationInfo
+        senderExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");
+        Exchange exchange = template.send("direct:EndpointC", senderExchange);
 
         org.apache.camel.Message out = exchange.getOut();
         String response = out.getBody(String.class);
