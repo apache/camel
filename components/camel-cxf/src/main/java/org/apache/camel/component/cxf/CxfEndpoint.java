@@ -17,7 +17,6 @@
 package org.apache.camel.component.cxf;
 
 import java.lang.reflect.Proxy;
-import java.security.InvalidParameterException;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
