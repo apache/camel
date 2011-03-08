@@ -42,23 +42,15 @@ public class PublishSubscribeTest extends CamelTestSupport {
     
     @Test
     public void testPresenceAgentBasedPubSub() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testStatefulTransactionalTCPRequestReply()");
-        }
-
         unreachableEndpoint.expectedMessageCount(0);
         resultEndpoint.expectedMinimumMessageCount(1);
         
         producerTemplate.sendBodyAndHeader(
-            "sip://agent@localhost:5152?stackName=client&eventHeaderName=evtHdrName&eventId=evtid&fromUser=user2&fromHost=localhost&fromPort=3534", 
+            "sip://agent@localhost:5252?stackName=client&eventHeaderName=evtHdrName&eventId=evtid&fromUser=user2&fromHost=localhost&fromPort=3534", 
             "EVENT_A",
             "REQUEST_METHOD", Request.PUBLISH);         
 
         assertMockEndpointsSatisfied();
-            
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testStatefulTransactionalTCPRequestReply()");
-        }        
     }
     
     @Override
@@ -67,10 +59,10 @@ public class PublishSubscribeTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {  
                 // Create PresenceAgent
-                from("sip://agent@localhost:5152?stackName=PresenceAgent&presenceAgent=true&eventHeaderName=evtHdrName&eventId=evtid")
+                from("sip://agent@localhost:5252?stackName=PresenceAgent&presenceAgent=true&eventHeaderName=evtHdrName&eventId=evtid")
                     .to("mock:neverland");
                 
-                from("sip://johndoe@localhost:5154?stackName=Subscriber&toUser=agent&toHost=localhost&toPort=5152&eventHeaderName=evtHdrName&eventId=evtid")
+                from("sip://johndoe@localhost:5254?stackName=Subscriber&toUser=agent&toHost=localhost&toPort=5252&eventHeaderName=evtHdrName&eventId=evtid")
                     .to("log:ReceivedEvent")
                     .to("mock:notification");
             }
