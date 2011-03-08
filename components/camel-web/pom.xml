@@ -68,12 +68,6 @@
 
     <pluginRepositories>
         <pluginRepository>
-            <id>fusesource.m2</id>
-            <url>http://repo.fusesource.com/maven2-all</url>
-            <name>Fusesource Dependency Repository</name>
-            <layout>default</layout>
-        </pluginRepository>
-        <pluginRepository>
             <id>java.net.m2</id>
             <name>Java.net Repository for Maven</name>
             <url>http://download.java.net/maven/2/</url>
@@ -462,29 +456,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>com.sun.tools.jxc.maven2</groupId>
-                    <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <phase>process-sources</phase>
-                            <goals>
-                                <goal>generate</goal>
-                            </goals>
-                            <configuration>
-                                <destdir>${project.build.directory}/schema</destdir>
-                                <srcdir>src/main/java/org/apache/camel/web/model</srcdir>
-                                <schemas>
-                                    <schema>
-                                        <namespace>http://camel.apache.org/schema/web</namespace>
-                                        <file>camel-web.xsd</file>
-                                    </schema>
-                                </schemas>
-                                <!--<verbose>false</verbose>-->
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <configuration>
@@ -520,13 +491,40 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>com.sun.tools.jxc.maven2</groupId>
-                        <artifactId>maven-jaxb-schemagen-plugin</artifactId>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <inherited>true</inherited>
                         <executions>
                             <execution>
+                                <id>process-sources</id>
                                 <phase>process-sources</phase>
+                                <configuration>
+                                    <tasks>
+                                        <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
+
+                                        <echo>Copying to code together for the XSD generation</echo>
+                                        <mkdir dir="${project.build.directory}/schema-src" />
+                                        <mkdir dir="${project.build.directory}/schema" />
+                                        <copy todir="${project.build.directory}/schema-src">
+                                            <fileset dir="${basedir}/src/main/java">
+                                                <include name="org/apache/camel/web/model/Camel.java" />
+                                                <include name="org/apache/camel/web/model/EndpointLink.java" />
+                                                <include name="org/apache/camel/web/model/Endpoints.java" />
+                                                <include name="org/apache/camel/web/model/Route.java" />
+                                                <include name="org/apache/camel/web/model/package-info.java" />
+                                            </fileset>
+                                        </copy>
+
+                                        <echo>Generating XSD schema</echo>
+                                        <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
+                                            <schema namespace="http://camel.apache.org/schema/web" file="camel-web.xsd" />
+                                            <classpath refid="maven.compile.classpath" />
+                                        </schemagen>
+
+                                    </tasks>
+                                </configuration>
                                 <goals>
-                                    <goal>generate</goal>
+                                    <goal>run</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -534,6 +532,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>on-ibmjdk</id>
             <activation>

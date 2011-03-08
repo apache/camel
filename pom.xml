@@ -270,29 +270,6 @@
         </plugin>
   
         <plugin>
-          <groupId>com.sun.tools.jxc.maven2</groupId>
-          <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-          <version>1.3-dev</version>
-          <dependencies>
-             <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>${jaxb-api-version}</version>
-             </dependency>
-             <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>${jaxb-version}</version>
-             </dependency>
-             <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-xjc</artifactId>
-                <version>${jaxb-version}</version>
-             </dependency>
-          </dependencies>
-        </plugin>
-  
-        <plugin>
           <groupId>org.mortbay.jetty</groupId>
           <artifactId>jetty-maven-plugin</artifactId>
           <version>${jetty-version}</version>
