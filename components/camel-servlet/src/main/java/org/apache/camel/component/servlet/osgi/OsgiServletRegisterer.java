@@ -29,7 +29,6 @@ import org.osgi.service.http.HttpService;
  * HttpService</a>
  * 
  * See src/test/resources/osgiservletregisterer.xml
- * 
  */
 public class OsgiServletRegisterer {
 

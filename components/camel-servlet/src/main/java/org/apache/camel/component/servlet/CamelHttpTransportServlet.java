@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.servlet;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
@@ -31,8 +30,7 @@ import org.slf4j.LoggerFactory;
 public class CamelHttpTransportServlet extends CamelServlet {
     private static final long serialVersionUID = -1797014782158930490L;
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelHttpTransportServlet.class);
-    
-    @Resource
+
     private HttpRegistry httpRegistry;
 
     @Override
