@@ -33,7 +33,8 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.example.guice.jms.*</camel.osgi.export.pkg>
-        <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
+        <camel.osgi.import.additional>
+            org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
         </camel.osgi.import.additional>
         <camel.osgi.activator>org.apache.camel.example.guice.jms.MyActivator</camel.osgi.activator>
     </properties>
@@ -63,11 +64,6 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.osgi</groupId>
-            <artifactId>spring-osgi-core</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -131,13 +127,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!-- Allows the routes to be run via 'mvn guice:run' -->
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>guice-maven-plugin</artifactId>
-                <version>${project.version}</version>
             </plugin>
 
             <!-- Allows the example to be run via 'mvn compile exec:java' -->
