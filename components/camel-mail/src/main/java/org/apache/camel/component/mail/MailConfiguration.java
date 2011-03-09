@@ -110,9 +110,6 @@ public class MailConfiguration implements Cloneable {
     protected JavaMailSenderImpl createJavaMailSender() {
         JavaMailSenderImpl answer = new JavaMailSenderImpl();
 
-        // sets the debug mode of the underlying mail framework
-        answer.getSession().setDebug(debugMode);
-
         if (javaMailProperties != null) {
             answer.setJavaMailProperties(javaMailProperties);
         } else {
@@ -133,6 +130,9 @@ public class MailConfiguration implements Cloneable {
         if (port >= 0) {
             answer.setPort(port);
         }
+        if (username != null) {
+            answer.setUsername(username);
+        }
         if (password != null) {
             answer.setPassword(password);
         }
@@ -143,17 +143,10 @@ public class MailConfiguration implements Cloneable {
             answer.setSession(session);
         } else {
             // use our authenticator that does no live user interaction but returns the already configured username and password
-            Session session;
-            try {
-                session = Session.getDefaultInstance(answer.getJavaMailProperties(), getAuthenticator());
-            } catch (Throwable t) {
-                // fallback as default instance may not be allowed on some systems
-                session = Session.getInstance(answer.getJavaMailProperties(), getAuthenticator());
-            }
+            Session session = Session.getInstance(answer.getJavaMailProperties(), getAuthenticator());
+            // sets the debug mode of the underlying mail framework
+            session.setDebug(debugMode);
             answer.setSession(session);
-        }
-        if (username != null) {
-            answer.setUsername(username);
         }
 
         return answer;
