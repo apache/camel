@@ -26,6 +26,7 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,24 +99,17 @@ public class CacheProducer extends DefaultProducer {
     private void performCacheOperation(Exchange exchange, String operation, String key) throws Exception {
         Object element;
 
-        Object body = exchange.getIn().getBody();
-        if (body instanceof Serializable) {
-            element = body;
-        } else {
-            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
-            // Read InputStream into a byte[] buffer
-            element = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, is);
-        }
-
         if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_ADD)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Adding an element with key " + key + " into the Cache");
             }
+            element = createElementFromBody(exchange, CacheConstants.CACHE_OPERATION_ADD);
             cache.put(new Element(key, element), true);
         } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_UPDATE)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Updating an element with key " + key + " into the Cache");
             }
+            element = createElementFromBody(exchange, CacheConstants.CACHE_OPERATION_UPDATE);
             cache.put(new Element(key, element), true);
         } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_DELETEALL)) {
             if (LOG.isDebugEnabled()) {
@@ -149,6 +143,21 @@ public class CacheProducer extends DefaultProducer {
         } else {
             throw new CacheException("Operation " + operation + " is not supported.");
         }
+    }
+
+    private Object createElementFromBody(Exchange exchange, String cacheOperation) throws NoTypeConversionAvailableException {
+        Object element;
+        Object body = exchange.getIn().getBody();
+        if (body == null) {
+            throw new CacheException("Body cannot be null for operation " + cacheOperation);
+        } else if (body instanceof Serializable) {
+            element = body;
+        } else {
+            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
+            // Read InputStream into a byte[] buffer
+            element = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, is);
+        }
+        return element;
     }
 
 }

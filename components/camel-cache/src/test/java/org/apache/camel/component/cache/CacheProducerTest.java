@@ -45,8 +45,11 @@ public class CacheProducerTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:CacheProducerTest.result")
     protected MockEndpoint resultEndpoint;
 
-    @EndpointInject(uri = "mock:CacheProducerTest.exception")
-    protected MockEndpoint exceptionEndpoint;
+    @EndpointInject(uri = "mock:CacheProducerTest.cacheException")
+    protected MockEndpoint cacheExceptionEndpoint;
+
+    @EndpointInject(uri = "mock:CacheProducerTest.noTypeConversionAvailableException")
+    private MockEndpoint noTypeConversionAvailableExceptionEndpoint;
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -67,6 +70,14 @@ public class CacheProducerTest extends CamelTestSupport {
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
                 in.setBody(buffer);
+            }
+        });
+    }
+
+    private void sendEmptyBody() {
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(null);
             }
         });
     }
@@ -120,6 +131,28 @@ public class CacheProducerTest extends CamelTestSupport {
     }
 
     @Test
+    public void testAddingDataToCacheDoesFailOnEmptyBody() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                onException(CacheException.class).
+                        handled(true).
+                        to("log:*** LOGGER").
+                        to("mock:CacheProducerTest.cacheException");
+
+                from("direct:a").
+                        setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD)).
+                        setHeader(CacheConstants.CACHE_KEY, constant("Ralph_Waldo_Emerson")).
+                        to("cache://TestCache1");
+            }
+        });
+        cacheExceptionEndpoint.expectedMessageCount(1);
+        context.start();
+        LOG.debug("------------Beginning CacheProducer Add Does Fail On Empty Body Test---------------");
+        sendEmptyBody();
+        cacheExceptionEndpoint.assertIsSatisfied();
+    }
+
+    @Test
     public void testAddingSerializableDataToCache() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -150,6 +183,28 @@ public class CacheProducerTest extends CamelTestSupport {
     }
 
     @Test
+    public void testUpdatingDataInCacheDoesFailOnEmptyBody() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                onException(CacheException.class).
+                        handled(true).
+                        to("log:*** LOGGER").
+                        to("mock:CacheProducerTest.cacheException");
+
+                from("direct:a").
+                        setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_UPDATE)).
+                        setHeader(CacheConstants.CACHE_KEY, constant("Ralph_Waldo_Emerson")).
+                        to("cache://TestCache1");
+            }
+        });
+        cacheExceptionEndpoint.expectedMessageCount(1);
+        context.start();
+        LOG.debug("------------Beginning CacheProducer Update Does Fail On Empty Body Test---------------");
+        sendEmptyBody();
+        cacheExceptionEndpoint.assertIsSatisfied();
+    }
+
+    @Test
     public void testDeletingDataFromCache() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -162,6 +217,28 @@ public class CacheProducerTest extends CamelTestSupport {
         context.start();
         LOG.debug("------------Beginning CacheProducer Delete Test---------------");
         sendUpdatedFile();
+    }
+
+    @Test
+    public void testDeletingDataFromCacheDoesNotFailOnEmptyBody() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                onException(CacheException.class).
+                        handled(true).
+                        to("log:*** LOGGER").
+                        to("mock:CacheProducerTest.cacheException");
+
+                from("direct:a").
+                        setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_DELETE)).
+                        setHeader(CacheConstants.CACHE_KEY, constant("Ralph_Waldo_Emerson")).
+                        to("cache://TestCache1");
+            }
+        });
+        cacheExceptionEndpoint.expectedMessageCount(0);
+        context.start();
+        LOG.debug("------------Beginning CacheProducer Delete Does Not Fail On Empty Body Test---------------");
+        sendEmptyBody();
+        cacheExceptionEndpoint.assertIsSatisfied();
     }
 
     @Test
@@ -179,13 +256,34 @@ public class CacheProducerTest extends CamelTestSupport {
     }
 
     @Test
+    public void testDeletingAllDataFromCacheDoesNotFailOnEmptyBody() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                onException(CacheException.class).
+                        handled(true).
+                        to("log:*** LOGGER").
+                        to("mock:CacheProducerTest.cacheException");
+
+                from("direct:a").
+                        setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_DELETEALL)).
+                        to("cache://TestCache1");
+            }
+        });
+        cacheExceptionEndpoint.expectedMessageCount(0);
+        context.start();
+        LOG.debug("------------Beginning CacheProducer Delete All Elements Does Not Fail On Empty Body Test---------------");
+        sendEmptyBody();
+        cacheExceptionEndpoint.assertIsSatisfied();
+    }
+
+    @Test
     public void testUnknownOperation() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 onException(CacheException.class).
                         handled(true).
                         to("log:*** LOGGER").
-                        to("mock:CacheProducerTest.exception");
+                        to("mock:CacheProducerTest.cacheException");
 
                 from("direct:a").
                         setHeader(CacheConstants.CACHE_OPERATION, constant("UNKNOWN")).
@@ -195,12 +293,40 @@ public class CacheProducerTest extends CamelTestSupport {
             }
         });
         resultEndpoint.expectedMessageCount(0);
-        exceptionEndpoint.expectedMessageCount(1);
+        cacheExceptionEndpoint.expectedMessageCount(1);
         context.start();
         LOG.debug("------------Beginning CacheProducer Query An Elements Test---------------");
         sendUpdatedFile();
         resultEndpoint.assertIsSatisfied();
-        exceptionEndpoint.assertIsSatisfied();
+        cacheExceptionEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testUnknownOperationDoesNotFailOnEmptyBody() throws Exception {
+        final RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                onException(CacheException.class).
+                        handled(true).
+                        choice().when(exceptionMessage().isEqualTo("Operation UNKNOWN is not supported.")).
+                        to("log:*** LOGGER").
+                        to("mock:CacheProducerTest.cacheException").end();
+
+                from("direct:a").
+                        setHeader(CacheConstants.CACHE_OPERATION, constant("UNKNOWN")).
+                        setHeader(CacheConstants.CACHE_KEY, constant("Ralph_Waldo_Emerson")).
+                        to("cache://TestCache1").
+                        to("mock:CacheProducerTest.result");
+            }
+        };
+        context.setTracing(true);
+        context.addRoutes(builder);
+        resultEndpoint.expectedMessageCount(0);
+        cacheExceptionEndpoint.expectedMessageCount(1);
+        context.start();
+        LOG.debug("------------Beginning CacheProducer Query An Elements Does Fail On Empty Body Test---------------");
+        sendEmptyBody();
+        resultEndpoint.assertIsSatisfied();
+        cacheExceptionEndpoint.assertIsSatisfied();
     }
 
     @Test
@@ -210,7 +336,7 @@ public class CacheProducerTest extends CamelTestSupport {
                 onException(CacheException.class).
                         handled(true).
                         to("log:*** LOGGER").
-                        to("mock:CacheProducerTest.exception");
+                        to("mock:CacheProducerTest.cacheException");
 
                 from("direct:a").
                         setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_DELETEALL)).
@@ -223,12 +349,40 @@ public class CacheProducerTest extends CamelTestSupport {
             }
         });
         resultEndpoint.expectedMessageCount(0);
-        exceptionEndpoint.expectedMessageCount(0);
+        cacheExceptionEndpoint.expectedMessageCount(0);
         context.start();
         LOG.debug("------------Beginning CacheProducer Query An Elements Test---------------");
         sendUpdatedFile();
         resultEndpoint.assertIsSatisfied();
-        exceptionEndpoint.assertIsSatisfied();
+        cacheExceptionEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testQueringNonExistingDataFromCacheDoesNotFailOnEmptyBody() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                onException(CacheException.class).
+                        handled(true).
+                        to("log:*** LOGGER").
+                        to("mock:CacheProducerTest.cacheException");
+
+                from("direct:a").
+                        setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_DELETEALL)).
+                        to("cache://TestCache1").
+                        setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_GET)).
+                        setHeader(CacheConstants.CACHE_KEY, constant("Ralph_Waldo_Emerson")).
+                        to("cache://TestCache1").
+                        choice().when(header(CacheConstants.CACHE_ELEMENT_WAS_FOUND).isNotNull()).
+                        to("mock:CacheProducerTest.result").end();
+            }
+        });
+        resultEndpoint.expectedMessageCount(0);
+        cacheExceptionEndpoint.expectedMessageCount(0);
+        context.start();
+        LOG.debug("------------Beginning CacheProducer Query An Elements Does Not Fail On Empty Body Test---------------");
+        sendEmptyBody();
+        resultEndpoint.assertIsSatisfied();
+        cacheExceptionEndpoint.assertIsSatisfied();
     }
 
     @Test
@@ -238,7 +392,7 @@ public class CacheProducerTest extends CamelTestSupport {
                 onException(CacheException.class).
                         handled(true).
                         to("log:*** LOGGER").
-                        to("mock:CacheProducerTest.exception");
+                        to("mock:CacheProducerTest.cacheException");
 
                 from("direct:a").
                         setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD)).
@@ -254,14 +408,13 @@ public class CacheProducerTest extends CamelTestSupport {
         });
 
         resultEndpoint.expectedMessageCount(1);
-        exceptionEndpoint.expectedMessageCount(0);
+        cacheExceptionEndpoint.expectedMessageCount(0);
         String body = new String(getFileAsByteArray(FILEPATH_UPDATEDTEST_TXT), "UTF-8");
         resultEndpoint.expectedBodiesReceived(body);
         context.start();
         LOG.debug("------------Beginning CacheProducer Query An Elements Test---------------");
         sendUpdatedFile();
         resultEndpoint.assertIsSatisfied();
-        exceptionEndpoint.assertIsSatisfied();
+        cacheExceptionEndpoint.assertIsSatisfied();
     }
-
 }
